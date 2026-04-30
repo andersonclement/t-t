@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isPharmacist() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'pharmacist';
+    }
+
+    function isDoctor() {
+      return isSignedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'hospital' || 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'practitioner'
+      );
+    }
+
+    // [8 PILLARS IMPLEMENTATION]
+    
+    // Users
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId);
+    }
+
+    // Medications
+    match /medications/{medicationId} {
+      allow read: if true;
+      allow write: if isPharmacist(); // Only pharmacists can edit stock/items
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow create: if isSignedIn() && request.resource.data.patientId == request.auth.uid;
+      allow read: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid || 
+        isPharmacist()
+      );
+      allow update: if isSignedIn() && (
+        (isOwner(resource.data.patientId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])) ||
+        (isPharmacist() && request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']))
+      );
+    }
+
+    // Prescriptions
+    match /prescriptions/{prescriptionId} {
+      allow create: if isSignedIn() && request.resource.data.patientId == request.auth.uid;
+      allow read: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid || 
+        isPharmacist()
+      );
+    }
+
+    // Hospitals
+    match /hospitals/{hospitalId} {
+      allow read: if true;
+      allow write: if isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'hospital';
+    }
+
+    // Recipes
+    match /recipes/{recipeId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        resource.data.authorId == request.auth.uid || 
+        isPharmacist() || isDoctor()
+      );
+    }
+  }
+}

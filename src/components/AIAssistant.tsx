@@ -1,0 +1,119 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { MessageCircle, X, Send, User, Bot, Sparkles } from 'lucide-react';
+import { chatWithMedicalCoach } from '../services/geminiService';
+import ReactMarkdown from 'react-markdown';
+import { cn } from '../lib/utils';
+
+export function AIAssistant() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([
+    { role: 'model', text: 'Bonjour ! Je suis votre assistant PharmaConnect. Comment puis-je vous aider aujourd\'hui ?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    
+    const userMessage = input;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    setIsTyping(true);
+
+    const history = messages.map(m => ({ 
+      role: m.role, 
+      parts: [{ text: m.text }] 
+    }));
+
+    const response = await chatWithMedicalCoach(userMessage, history);
+    setMessages(prev => [...prev, { role: 'model', text: response || '' }]);
+    setIsTyping(false);
+  };
+
+  return (
+    <>
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-24 left-6 z-40 bg-clinical-600 text-white p-4 rounded-full shadow-xl flex items-center gap-2 group transition-all"
+      >
+        <Sparkles size={24} />
+      </motion.button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 100, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 100, scale: 0.8 }}
+            className="fixed inset-0 z-50 flex flex-col bg-white md:inset-auto md:bottom-24 md:left-6 md:w-96 md:h-[600px] md:rounded-2xl md:shadow-2xl overflow-hidden border border-slate-200"
+          >
+            <div className="bg-clinical-600 p-4 text-white flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <Bot className="w-6 h-6" />
+                <div>
+                  <h3 className="font-display font-bold">Coach Santé IA</h3>
+                  <p className="text-xs text-blue-100 italic">Conseils et orientation</p>
+                </div>
+              </div>
+              <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-1 rounded">
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 medical-gradient">
+              {messages.map((msg, i) => (
+                <div key={i} className={cn("flex", msg.role === 'user' ? "justify-end" : "justify-start")}>
+                  <div className={cn(
+                    "max-w-[85%] p-3 rounded-2xl shadow-sm border",
+                    msg.role === 'user' 
+                      ? "bg-clinical-600 text-white border-clinical-700 rounded-tr-none" 
+                      : "bg-white text-slate-800 border-slate-100 rounded-tl-none"
+                  )}>
+                    <div className="markdown-body text-sm prose prose-slate max-w-none">
+                      <ReactMarkdown>{msg.text}</ReactMarkdown>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-white p-3 rounded-2xl border border-slate-100 rounded-tl-none flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" />
+                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]" />
+                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]" />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t border-slate-100 bg-slate-50">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                  placeholder="Décrivez vos symptômes..."
+                  className="flex-1 bg-white border border-slate-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-clinical-600"
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={isTyping}
+                  className="bg-clinical-600 text-white p-2 rounded-full hover:bg-clinical-700 disabled:opacity-50 transition-colors"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-2 text-center">
+                L'IA ne remplace pas un avis médical. En cas d'urgence, contactez le 124.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

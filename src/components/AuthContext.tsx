@@ -1,0 +1,140 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { 
+  onAuthStateChanged, 
+  User, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile
+} from 'firebase/auth';
+import { auth, db } from '../lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+
+interface AuthContextType {
+  user: User | null;
+  profile: any | null;
+  loading: boolean;
+  signInWithGoogle: () => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string, phone?: string) => Promise<void>;
+  signInWithEmail: (email: string, pass: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  logout: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const profileDoc = await getDoc(doc(db, 'users', user.uid));
+          if (profileDoc.exists()) {
+            setProfile(profileDoc.data());
+          } else {
+            // New user registration or missing doc
+            // We use a default profile if it's not present yet
+            // (mostly for Google sign-in where we might not have a signUp step)
+            const newProfile = {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              role: 'patient',
+              createdAt: new Date().toISOString(),
+            };
+            await setDoc(doc(db, 'users', user.uid), newProfile);
+            setProfile(newProfile);
+          }
+        } catch (err) {
+          console.error("Profile fetch error:", err);
+        }
+      } else {
+        setProfile(null);
+      }
+      setUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  };
+
+  const signUpWithEmail = async (email: string, pass: string, name: string, phone?: string) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(userCredential.user, { displayName: name });
+      
+      const newProfile = {
+        uid: userCredential.user.uid,
+        email: email,
+        displayName: name,
+        phoneNumber: phone || null,
+        photoURL: null,
+        role: 'patient',
+        createdAt: new Date().toISOString(),
+      };
+      
+      await setDoc(doc(db, 'users', userCredential.user.uid), newProfile);
+      setProfile(newProfile);
+    } catch (error: any) {
+      console.error("Auth Error (Signup):", error.code, error.message);
+      if (error.code === 'auth/operation-not-allowed') {
+        throw new Error("L'inscription par email n'est pas encore activée. Veuillez l'activer dans votre console Firebase (Authentication > Sign-in method > Email/Password).");
+      }
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error("Cette adresse email est déjà utilisée par un autre compte.");
+      }
+      throw error;
+    }
+  };
+
+  const signInWithEmail = async (email: string, pass: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        throw new Error("Identifiants incorrects. Veuillez vérifier votre email et mot de passe.");
+      }
+      throw error;
+    }
+  };
+
+  const resetPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        throw new Error("Aucun compte n'est associé à cette adresse email.");
+      }
+      throw error;
+    }
+  };
+
+  const logout = () => signOut(auth);
+
+  return (
+    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signUpWithEmail, signInWithEmail, resetPassword, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

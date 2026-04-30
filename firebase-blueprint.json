@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Base profile for all users (Patient, Pharmacist, Hospital Staff, Lab Staff, Traditional Practitioner)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["patient", "pharmacist", "hospital", "laboratory", "practitioner", "admin"] },
+        "photoURL": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "address": { "type": "string" },
+        "medicalHistory": { "type": "object", "description": "Allergies, contraindications for patients" },
+        "specialties": { "type": "array", "description": "For practitioners and facilities" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Medication": {
+      "title": "Medication",
+      "description": "Medicine catalog entry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "dci": { "type": "string", "description": "International Non-proprietary Name" },
+        "category": { "type": "string", "enum": ["prescription", "otc", "parapharmacy", "equipment"] },
+        "price": { "type": "number" },
+        "stock": { "type": "number" },
+        "description": { "type": "string" },
+        "dosage": { "type": "string" },
+        "indications": { "type": "string" },
+        "contraindications": { "type": "string" },
+        "image": { "type": "string" }
+      }
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Medicine order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientId": { "type": "string" },
+        "pharmacistId": { "type": "string" },
+        "items": { "type": "array" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending_validation", "validated", "preparing", "out_for_delivery", "delivered", "rejected"] },
+        "mode": { "type": "string", "enum": ["delivery", "pickup"] },
+        "prescriptionId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Prescription": {
+      "title": "Prescription",
+      "description": "Digitalized medical prescription",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientId": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "verified", "rejected"] },
+        "verifiedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Hospital": {
+      "title": "Hospital",
+      "description": "Healthcare facility info",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "location": { "type": "object", "description": "lat/lng" },
+        "services": { "type": "array" },
+        "equipment": { "type": "array" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "website": { "type": "string" },
+        "rating": { "type": "number" }
+      }
+    },
+    "TraditionalRecipe": {
+      "title": "Traditional Recipe",
+      "description": "Community shared natural remedy",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "authorId": { "type": "string" },
+        "plants": { "type": "array" },
+        "preparation": { "type": "string" },
+        "indications": { "type": "string" },
+        "validated": { "type": "boolean" },
+        "validatedBy": { "type": "string", "description": "Pharmacist or doctor UID" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "User profiles" },
+    "/medications/{medicationId}": { "schema": "Medication", "description": "Medicines catalog" },
+    "/orders/{orderId}": { "schema": "Order", "description": "Orders for medicines" },
+    "/prescriptions/{prescriptionId}": { "schema": "Prescription", "description": "Patient prescriptions" },
+    "/hospitals/{hospitalId}": { "schema": "Hospital", "description": "Hospital directory" },
+    "/recipes/{recipeId}": { "schema": "TraditionalRecipe", "description": "Traditional recipes" }
+  }
+}
