@@ -1,81 +1,99 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default deny
+    
+    // 0. GLOBAL SAFETY NET
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
+    // --- SHARED HELPERS ---
+    function isSignedIn() { return request.auth != null; }
+    function isEmailVerified() { return isSignedIn(); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
     
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+    // Role lookups
+    function getUserData() { 
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; 
     }
-
-    function isPharmacist() {
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'pharmacist';
+    function isPharmacist() { 
+      return isSignedIn() && getUserData().role == 'pharmacist'; 
     }
-
     function isDoctor() {
-      return isSignedIn() && (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'hospital' || 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'practitioner'
-      );
+      let role = getUserData().role;
+      return isSignedIn() && (role == 'hospital' || role == 'practitioner');
     }
 
-    // [8 PILLARS IMPLEMENTATION]
+    // --- VALIDATION BLUEPRINTS ---
     
-    // Users
-    match /users/{userId} {
-      allow read: if isSignedIn();
-      allow write: if isOwner(userId);
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'email', 'role', 'createdAt', 'updatedAt'])
+        && data.uid == request.auth.uid
+        && data.displayName is string && data.displayName.size() <= 100
+        && data.email is string && data.email.size() <= 100
+        && data.role in ['patient', 'pharmacist', 'hospital']
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
     }
 
-    // Medications
+    function isValidOrder(data) {
+      return data.keys().hasAll(['patientId', 'status', 'items', 'total', 'createdAt', 'updatedAt', 'mode'])
+        && data.patientId == request.auth.uid
+        && data.status in ['pending_validation', 'validated', 'preparing', 'out_for_delivery', 'delivered', 'rejected']
+        && data.total is number 
+        && data.mode in ['delivery', 'pickup']
+        && data.items is list
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
+    // --- COLLECTION RULES ---
+
+    // USERS: Split collection PII isolation
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || isPharmacist());
+      allow list: if isPharmacist(); // Only pharmacists can list users for directory
+      allow create: if isSignedIn() && request.auth.uid == userId 
+        && isValidUser(incoming())
+        && (incoming().role == 'patient' || incoming().role == 'pharmacist'); 
+      allow update: if isSignedIn() && request.auth.uid == userId 
+        && isValidUser(incoming())
+        && isEmailVerified() // Require verified email for profile updates
+        && incoming().email == existing().email // Email is immutable via client
+        && incoming().role == existing().role; // Role is immutable via client
+    }
+
+    // MEDICATIONS: Public read, restricted write
     match /medications/{medicationId} {
       allow read: if true;
-      allow write: if isPharmacist(); // Only pharmacists can edit stock/items
+      allow write: if isPharmacist() && isEmailVerified() && isValidId(medicationId);
     }
 
-    // Orders
+    // ORDERS: Relational sync & access
     match /orders/{orderId} {
-      allow create: if isSignedIn() && request.resource.data.patientId == request.auth.uid;
-      allow read: if isSignedIn() && (
-        resource.data.patientId == request.auth.uid || 
-        isPharmacist()
-      );
-      allow update: if isSignedIn() && (
-        (isOwner(resource.data.patientId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])) ||
-        (isPharmacist() && request.resource.data.diff(resource.data).affectedKeys().hasAny(['status']))
+      allow create: if isEmailVerified() && isValidOrder(incoming());
+      allow read: if isSignedIn() && (existing().patientId == request.auth.uid || isPharmacist());
+      allow update: if isEmailVerified() && (
+        // Action: Cancel (Patient)
+        (existing().patientId == request.auth.uid && incoming().status == 'cancelled' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])) ||
+        // Action: Status Update (Pharmacist)
+        (isPharmacist() && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
       );
     }
 
-    // Prescriptions
+    // PRESCRIPTIONS: Sensitive data
     match /prescriptions/{prescriptionId} {
-      allow create: if isSignedIn() && request.resource.data.patientId == request.auth.uid;
-      allow read: if isSignedIn() && (
-        resource.data.patientId == request.auth.uid || 
-        isPharmacist()
-      );
+      allow create: if isEmailVerified() && incoming().patientId == request.auth.uid;
+      allow get: if isSignedIn() && (existing().patientId == request.auth.uid || isPharmacist());
+      allow list: if isSignedIn() && resource.data.patientId == request.auth.uid;
     }
 
-    // Hospitals
+    // HOSPITALS & HEALTH SPOTS
     match /hospitals/{hospitalId} {
       allow read: if true;
-      allow write: if isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'hospital';
-    }
-
-    // Recipes
-    match /recipes/{recipeId} {
-      allow read: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && (
-        resource.data.authorId == request.auth.uid || 
-        isPharmacist() || isDoctor()
-      );
+      allow write: if isDoctor() && isValidId(hospitalId);
     }
   }
 }

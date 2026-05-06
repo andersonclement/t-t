@@ -102,7 +102,10 @@ const MOCK_PHARMACIES: PharmacyEntity[] = [
   }
 ];
 
+import { useOrders } from '../components/OrderContext';
+
 export function Pharmacy() {
+  const { addOrder } = useOrders();
   const [view, setView] = useState<'pharmacies' | 'catalog' | 'prescriptions' | 'results'>('pharmacies');
   const [selectedPharmacy, setSelectedPharmacy] = useState<PharmacyEntity | null>(null);
   const [search, setSearch] = useState('');
@@ -164,11 +167,27 @@ export function Pharmacy() {
     }, 4000);
   };
 
-  const handleCheckout = () => {
-    setShowCheckoutSuccess(true);
-    setCart([]);
-    setIsCartOpen(false);
-    setTimeout(() => setShowCheckoutSuccess(false), 5000);
+  const handleCheckout = async () => {
+    try {
+      await addOrder({
+        items: cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          count: 1,
+          image: item.image
+        })),
+        total: cartTotal,
+        mode: 'pickup',
+        paymentMethod: 'Mobile Money'
+      });
+      setShowCheckoutSuccess(true);
+      setCart([]);
+      setIsCartOpen(false);
+      setTimeout(() => setShowCheckoutSuccess(false), 5000);
+    } catch (err) {
+      console.error("Checkout failed:", err);
+    }
   };
 
   const addToCart = (med: Medication) => {

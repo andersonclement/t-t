@@ -13,7 +13,8 @@ import {
   Shield,
   HelpCircle,
   Mail,
-  Calendar
+  Calendar,
+  Building2
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { useOrders, Order } from '../components/OrderContext';
@@ -63,7 +64,7 @@ export function Profile() {
         </div>
         <div className="flex-1 text-center md:text-left">
           <div className="inline-flex items-center gap-2 bg-brand-50 text-brand-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-2">
-             Patient Vérifié
+             {profile?.role === 'pharmacist' ? 'Pharmacien Certifié' : 'Patient Vérifié'}
           </div>
           <h2 className="text-3xl font-display font-bold text-slate-900">{user.displayName || 'Utilisateur'}</h2>
           <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-2">
@@ -88,29 +89,53 @@ export function Profile() {
       {/* Conditional Rendering: Main Hub vs Order History */}
       {!showOrders ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Health Data Card */}
+          {/* Main Context Card */}
           <div className="space-y-4">
-            <h3 className="text-lg font-display font-bold text-slate-900 px-1 italic">Santé & Administratif</h3>
+            <h3 className="text-lg font-display font-bold text-slate-900 px-1 italic">
+              {profile?.role === 'pharmacist' ? 'Ma Pharmacie & Boutique' : 'Santé & Administratif'}
+            </h3>
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-              <ProfileLink icon={<FileText className="text-blue-500" />} label="Dossier Médical" trailing="Complet à 80%" />
-              <ProfileLink icon={<CreditCard className="text-emerald-500" />} label="Carte Vitale / Mutuelle" trailing="Vérifiée" />
-              <ProfileLink icon={<Heart className="text-red-500" />} label="Antécédents & Allergies" />
-              <ProfileLink icon={<Shield className="text-slate-400" />} label="Sécurité des données" />
+              {profile?.role === 'pharmacist' ? (
+                <>
+                  <ProfileLink icon={<FileText className="text-blue-500" />} label="Licence Professionnelle" trailing="Valide" />
+                  <ProfileLink icon={<Building2 className="text-emerald-500" />} label="Informations Établissement" />
+                  <ProfileLink icon={<Shield className="text-slate-400" />} label="Paramètres de Sécurité" />
+                </>
+              ) : (
+                <>
+                  <ProfileLink icon={<FileText className="text-blue-500" />} label="Dossier Médical" trailing="Complet à 80%" />
+                  <ProfileLink icon={<CreditCard className="text-emerald-500" />} label="Carte Vitale / Mutuelle" trailing="Vérifiée" />
+                  <ProfileLink icon={<Heart className="text-red-500" />} label="Antécédents & Allergies" />
+                  <ProfileLink icon={<Shield className="text-slate-400" />} label="Sécurité des données" />
+                </>
+              )}
             </div>
           </div>
 
           {/* Activity & Settings Card */}
           <div className="space-y-4">
-            <h3 className="text-lg font-display font-bold text-slate-900 px-1 italic">Commandes & Activité</h3>
+            <h3 className="text-lg font-display font-bold text-slate-900 px-1 italic">
+              {profile?.role === 'pharmacist' ? 'Gestion & Activité' : 'Commandes & Activité'}
+            </h3>
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-              <ProfileLink 
-                icon={<ShoppingBag className="text-purple-500" />} 
-                label="Historique de commandes" 
-                trailing={orders.length.toString()} 
-                onClick={() => setShowOrders(true)}
-              />
-              <ProfileLink icon={<Bell className="text-orange-500" />} label="Notifications & Rappels" trailing="3 actifs" />
-              <ProfileLink icon={<HelpCircle className="text-slate-400" />} label="Centre d'aide / FAQ" />
+              {profile?.role === 'pharmacist' ? (
+                <>
+                  <ProfileLink icon={<ShoppingBag className="text-purple-500" />} label="Dashboard Ventes" onClick={() => window.location.href = '/'} />
+                  <ProfileLink icon={<Bell className="text-orange-500" />} label="Alertes de Stock" trailing="12 alertes" />
+                  <ProfileLink icon={<HelpCircle className="text-slate-400" />} label="Support Professionnel" />
+                </>
+              ) : (
+                <>
+                  <ProfileLink 
+                    icon={<ShoppingBag className="text-purple-500" />} 
+                    label="Historique de commandes" 
+                    trailing={orders.length.toString()} 
+                    onClick={() => setShowOrders(true)}
+                  />
+                  <ProfileLink icon={<Bell className="text-orange-500" />} label="Notifications & Rappels" trailing="3 actifs" />
+                  <ProfileLink icon={<HelpCircle className="text-slate-400" />} label="Centre d'aide / FAQ" />
+                </>
+              )}
             </div>
           </div>
         </div>

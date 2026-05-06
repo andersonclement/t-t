@@ -108,7 +108,7 @@ export function AIAssistant() {
                 </button>
               </div>
               <p className="text-[10px] text-slate-400 mt-2 text-center">
-                L'IA ne remplace pas un avis médical. En cas d'urgence, contactez le 124.
+              ⚠️ L'IA ne remplace pas un avis médical. En cas d'urgence vitale, contactez le 15 (SAMU) ou le 112.
               </p>
             </div>
           </motion.div>

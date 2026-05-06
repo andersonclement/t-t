@@ -6,7 +6,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './components/AuthContext';
 import { OrderProvider } from './components/OrderContext';
-import { Shell, MobileBottomNav } from './components/Navigation';
+import { Shell } from './components/Navigation';
 
 // Lazy load views for better performance
 import { Dashboard } from './views/Dashboard';
@@ -17,6 +17,9 @@ import { Profile } from './views/Profile';
 import { Login } from './views/Login';
 import { Signup } from './views/Signup';
 import { Landing } from './views/Landing';
+import { VerifyEmail } from './views/VerifyEmail';
+import { Orders } from './views/Orders';
+import { Inventory } from './views/Inventory';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -41,6 +44,7 @@ export default function App() {
             <Route path="/welcome" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/*" element={
               <ProtectedRoute>
                 <Shell>
@@ -50,9 +54,10 @@ export default function App() {
                     <Route path="/map" element={<MapView />} />
                     <Route path="/ai-sante" element={<AISante />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/inventory" element={<Inventory />} />
                   </Routes>
                 </Shell>
-                <MobileBottomNav />
               </ProtectedRoute>
             } />
           </Routes>

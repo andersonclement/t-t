@@ -14,7 +14,7 @@ import {
   User,
   Bot
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { chatWithMedicalCoach } from '../services/geminiService';
 import { cn } from '../lib/utils';
 
 // Diagnostic Tool component
@@ -39,16 +39,13 @@ function DiagnosticAssistant() {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: userMessage.content,
-        config: {
-          systemInstruction: "Tu es une IA assistante médicale nommée DiagAI pour l'application DiagPharma. Ton rôle est d'informer les utilisateurs sur les symptômes, les médicaments et les premiers soins. IMPORTANT: Précise toujours que tes conseils ne remplacent pas une consultation médicale. Sois empathique, clair et structuré.",
-        }
-      });
+      const history = messages.map(m => ({ 
+        role: m.role === 'assistant' ? 'model' as const : 'user' as const, 
+        parts: [{ text: m.content }] 
+      }));
 
-      setMessages(prev => [...prev, { role: 'assistant', content: response.text || "Désolé, je n'ai pas pu générer de réponse." }]);
+      const response = await chatWithMedicalCoach(userMessage.content, history);
+      setMessages(prev => [...prev, { role: 'assistant', content: response || "Désolé, je n'ai pas pu générer de réponse." }]);
     } catch (error) {
       console.error(error);
       setMessages(prev => [...prev, { role: 'assistant', content: "Une erreur est survenue lors de la connexion à l'IA." }]);

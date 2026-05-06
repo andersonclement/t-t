@@ -1,16 +1,16 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../components/AuthContext';
-import { LogIn, Mail, ShieldCheck, HeartPulse, Activity, Phone, ArrowLeft } from 'lucide-react';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { LogIn, Mail, ShieldCheck, HeartPulse, Activity, Lock, ArrowLeft } from 'lucide-react';
+import { Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 
 export function Login() {
   const { user, signInWithGoogle, signInWithEmail, resetPassword, loading } = useAuth();
   const navigate = useNavigate();
-  const [method, setMethod] = React.useState<'options' | 'email' | 'phone' | 'forgot-password'>('options');
-  const [email, setEmail] = React.useState('');
+  const location = useLocation();
+  const [method, setMethod] = React.useState<'options' | 'email' | 'forgot-password'>(location.state?.email ? 'email' : 'options');
+  const [email, setEmail] = React.useState(location.state?.email || '');
   const [password, setPassword] = React.useState('');
-  const [phone, setPhone] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
@@ -40,14 +40,26 @@ export function Login() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email) {
+      setError("Veuillez entrer votre adresse email.");
+      return;
+    }
     setIsSubmitting(true);
     setError(null);
     setSuccess(null);
     try {
       await resetPassword(email);
-      setSuccess("Un email de récupération a été envoyé à votre adresse.");
+      setSuccess("Un email de récupération a été envoyé. Pensez à vérifier vos courriers indésirables (spam).");
+      console.log("Password reset email sent to:", email);
     } catch (err: any) {
-      setError(err.message || "Une erreur est survenue lors de l'envoi du mail.");
+      console.error("Password Reset Error:", err);
+      if (err.code === 'auth/too-many-requests') {
+        setError("Trop de tentatives. Veuillez réessayer plus tard.");
+      } else if (err.code === 'auth/invalid-email') {
+        setError("Format d'email invalide.");
+      } else {
+        setError(err.message || "Une erreur est survenue lors de l'envoi du mail.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -63,10 +75,18 @@ export function Login() {
       console.error("Google Auth Error:", err);
       if (err.code === 'auth/popup-blocked') {
         setError("Le popup de connexion a été bloqué par votre navigateur. Veuillez l'autoriser.");
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setError("La fenêtre de connexion a été fermée. Veuillez réessayer.");
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError("La connexion Google n'est pas activée dans votre console Firebase. Activez-la dans Authentication > Sign-in method.");
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError("Ce domaine n'est pas autorisé dans votre console Firebase. Ajoutez-le dans Authentication > Settings > Authorized domains.");
       } else if (err.code === 'auth/cancelled-popup-request') {
-        // Ignorer si l'utilisateur ferme le popup lui-même
+        // Ignorer si une autre requête est déjà en cours
+      } else if (err.code === 'auth/network-request-failed') {
+        setError("Erreur réseau. Vérifiez votre connexion internet.");
       } else {
-        setError("Erreur lors de la connexion Google. Veuillez réessayer.");
+        setError(`Erreur lors de la connexion Google (${err.code || 'Inconnue'}). Veuillez réessayer.`);
       }
     } finally {
       setIsSubmitting(false);
@@ -102,8 +122,7 @@ export function Login() {
               </motion.div>
             </div>
             <div>
-              <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">DiagPharma</h1>
-              <p className="text-slate-500 mt-2 font-medium">Santé & Pharmacie Connectée au Cameroun</p>
+              <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Dokta</h1>              <p className="text-slate-500 mt-2 font-medium">Santé & Pharmacie Connectée au Cameroun</p>
             </div>
           </div>
 
@@ -136,20 +155,13 @@ export function Login() {
                     Continuer avec Google
                   </button>
 
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                  <div className="flex flex-col gap-3 md:gap-4">
                     <button 
                       onClick={() => setMethod('email')}
-                      className="bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3.5 md:py-4 rounded-xl md:rounded-2xl flex flex-col items-center justify-center gap-2 transition-all group"
+                      className="bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3.5 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 transition-all group"
                     >
                       <Mail size={18} className="text-brand-600 group-hover:scale-110 transition-transform md:w-5 md:h-5" />
-                      <span className="text-[10px] md:text-xs">Email</span>
-                    </button>
-                    <button 
-                      onClick={() => setMethod('phone')}
-                      className="bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3.5 md:py-4 rounded-xl md:rounded-2xl flex flex-col items-center justify-center gap-2 transition-all group"
-                    >
-                      <Phone size={18} className="text-emerald-600 group-hover:scale-110 transition-transform md:w-5 md:h-5" />
-                      <span className="text-[10px] md:text-xs">Téléphone</span>
+                      <span className="text-xs">Continuer avec Email</span>
                     </button>
                   </div>
                 </motion.div>
@@ -180,7 +192,7 @@ export function Login() {
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Mot de passe</label>
                         <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 rotate-90" size={18} />
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                           <input 
                             type="password" 
                             required
@@ -221,34 +233,6 @@ export function Login() {
                         </button>
                       </div>
                     </form>
-                  ) : method === 'phone' ? (
-                    <div className="space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Numéro de Téléphone</label>
-                        <div className="relative">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                          <input 
-                            type="tel" 
-                            placeholder="+237 6XX XXX XXX"
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600 transition-all font-medium"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-3">
-                        <button 
-                          onClick={handleBack}
-                          className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all"
-                        >
-                          <LogIn className="rotate-180" size={20} />
-                        </button>
-                        <button className="flex-1 bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-900/10 hover:bg-brand-600 transition-all opacity-50 cursor-not-allowed">
-                          Bientôt disponible
-                        </button>
-                      </div>
-                    </div>
                   ) : (
                     <form onSubmit={handleForgotPassword} className="space-y-6">
                       <div className="space-y-2">
@@ -295,7 +279,7 @@ export function Login() {
               <div className="flex items-start gap-4 bg-slate-50 p-5 rounded-[1.5rem] border border-slate-100">
                 <ShieldCheck className="text-brand-500 shrink-0 mt-0.5" size={18} />
                 <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                  Vos données médicales sont protégées par chiffrement de bout en bout. DiagPharma respecte la souveraineté numérique du Cameroun.
+                  Vos données médicales sont protégées par chiffrement de bout en bout. Dokta respecte la souveraineté numérique du Cameroun.
                 </p>
               </div>
             </div>

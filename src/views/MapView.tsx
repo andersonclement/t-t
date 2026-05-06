@@ -81,22 +81,30 @@ export function MapView() {
   const customIcon = (type: string, isActive: boolean) => {
     const color = type === 'hospital' ? '#2563eb' : type === 'pharmacy' ? '#10b981' : '#a855f7';
     const emoji = type === 'pharmacy' ? '💊' : type === 'hospital' ? '🏥' : '🔬';
-    const size = isActive ? 48 : 36;
+    const size = isActive ? 48 : 38;
+    
     return L.divIcon({
-      html: `<div style="background-color: ${color}; width: ${size}px; height: ${size}px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); font-size: ${size/2}px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);">
-                ${emoji}
-             </div>`,
+      html: `
+        <div class="relative flex items-center justify-center" style="width: ${size}px; height: ${size}px;">
+          <svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full drop-shadow-lg" fill="${color}" stroke="white" stroke-width="1.5">
+            <path d="M12 21.7C12 21.7 20 16 20 9.5C20 5.1 16.4 1.5 12 1.5C7.6 1.5 4 5.1 4 9.5C4 16 12 21.7 12 21.7Z" />
+            <circle cx="12" cy="9.5" r="4.5" fill="white" />
+          </svg>
+          <div class="relative z-10 text-[${size/4}px] mb-2">${emoji}</div>
+          ${isActive ? '<div class="absolute -bottom-1 w-2 h-0.5 bg-black/20 blur-[1px] rounded-full"></div>' : ''}
+        </div>
+      `,
       className: 'custom-marker',
       iconSize: [size, size],
-      iconAnchor: [size/2, size/2],
-      popupAnchor: [0, -size/2],
+      iconAnchor: [size/2, size], // Anchor at bottom center
+      popupAnchor: [0, -size],
     });
   };
 
   return (
     <div className={cn(
-      "h-[calc(100vh-140px)] md:h-[calc(100vh-100px)] flex flex-col md:flex-row gap-4 transition-all duration-500",
-      isExpanded && "fixed inset-0 z-[100] h-screen w-screen p-0 md:p-4 bg-slate-900/40 backdrop-blur-md overflow-hidden"
+      "h-[calc(100dvh-220px)] md:h-[calc(100vh-160px)] flex flex-col md:flex-row gap-4 transition-all duration-500",
+      isExpanded && "fixed inset-0 z-[1000] h-[100dvh] w-screen p-0 bg-white md:p-4 md:bg-slate-900/40 md:backdrop-blur-md overflow-hidden"
     )}>
       {/* Search & Sidebar */}
       <div className={cn(
@@ -115,7 +123,7 @@ export function MapView() {
             />
           </div>
           
-          <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <div className="flex flex-wrap gap-2 pb-1">
             <MapFilter label="Tous" active={filter === 'all'} onClick={() => setFilter('all')} />
             <MapFilter label="Pharmacies" active={filter === 'pharmacy'} onClick={() => setFilter('pharmacy')} />
             <MapFilter label="Hôpitaux" active={filter === 'hospital'} onClick={() => setFilter('hospital')} />
@@ -179,9 +187,14 @@ export function MapView() {
                    <button className="bg-slate-100 text-slate-600 p-2 rounded-lg hover:bg-slate-200 transition-colors">
                      <PhoneCall size={14} />
                    </button>
-                   <button className="bg-brand-600 text-white p-2 rounded-lg hover:bg-brand-700 transition-colors">
-                     <Route size={14} />
-                   </button>
+                   <a 
+                     href={`https://www.google.com/maps/dir/?api=1&destination=${actor.coordinates[0]},${actor.coordinates[1]}`}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="bg-brand-600 text-white p-2 rounded-lg hover:bg-brand-700 transition-colors"
+                   >
+                     <Navigation size={14} />
+                   </a>
                 </div>
               </div>
             </motion.div>
@@ -198,12 +211,14 @@ export function MapView() {
           key={isExpanded ? 'expanded' : 'normal'} // Force re-render to recalculate size
           center={mapCenter} 
           zoom={13} 
+          minZoom={3}
+          maxZoom={19}
           scrollWheelZoom={true} 
           className="w-full h-full"
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           />
           <ChangeView center={mapCenter} />
           {filtered.map(actor => (
@@ -216,12 +231,35 @@ export function MapView() {
               }}
             >
               <Popup>
-                <div className="p-1 font-sans">
-                  <h5 className="font-bold text-slate-900 border-b border-slate-100 pb-1 mb-2">{actor.name}</h5>
-                  <p className="text-[10px] text-slate-500 mb-2">{actor.address}</p>
-                  <button className="w-full bg-brand-600 text-white text-[10px] py-2 rounded-lg font-bold">
-                    Voir détails
-                  </button>
+                <div className="p-1 font-sans min-w-[200px]">
+                  <h5 className="font-bold text-slate-900 border-b border-slate-100 pb-2 mb-2 flex items-center justify-between">
+                    <span>{actor.name}</span>
+                  </h5>
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1 text-orange-400">
+                      <Star size={12} fill="currentColor" />
+                      <span className="text-xs font-bold">{actor.rating}</span>
+                    </div>
+                    <span className="text-[10px] text-slate-400 font-medium">• {actor.distance}</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mb-4 flex items-start gap-1 leading-relaxed">
+                    <MapPin size={12} className="mt-0.5 shrink-0 text-brand-600" />
+                    {actor.address}
+                  </p>
+                  <div className="flex gap-2">
+                    <a 
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${actor.coordinates[0]},${actor.coordinates[1]}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-brand-600 text-white text-[10px] py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brand-700 transition-all shadow-sm active:scale-95"
+                    >
+                      <Navigation size={14} />
+                      Itinéraire
+                    </a>
+                    <button className="w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors">
+                      <PhoneCall size={14} />
+                    </button>
+                  </div>
                 </div>
               </Popup>
             </Marker>
@@ -229,10 +267,10 @@ export function MapView() {
         </MapContainer>
         
         {/* Map Overlays */}
-        <div className="absolute top-6 left-6 z-[1000] flex items-center gap-3">
-          <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/40 shadow-xl">
-             <div className="w-3 h-3 bg-blue-500 rounded-full animate-ping" />
-             <span className="text-xs font-bold text-slate-800">Map Interactive</span>
+        <div className="absolute top-6 left-6 z-[1000] flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/40 shadow-xl">
+             <div className="w-3 h-3 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.5)]" />
+             <span className="text-xs font-bold text-slate-800 tracking-tight">Carte Haute Précision</span>
           </div>
 
           <button 

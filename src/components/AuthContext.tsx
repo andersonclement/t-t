@@ -8,20 +8,23 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
+  sendEmailVerification
 } from 'firebase/auth';
 import { auth, db } from '../lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
   profile: any | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, name: string, phone?: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string, role: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
+  resendVerification: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,16 +45,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // New user registration or missing doc
             // We use a default profile if it's not present yet
             // (mostly for Google sign-in where we might not have a signUp step)
-            const newProfile = {
+            const newProfileData = {
               uid: user.uid,
               email: user.email,
               displayName: user.displayName,
               photoURL: user.photoURL,
               role: 'patient',
-              createdAt: new Date().toISOString(),
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
             };
-            await setDoc(doc(db, 'users', user.uid), newProfile);
-            setProfile(newProfile);
+            await setDoc(doc(db, 'users', user.uid), newProfileData);
+            setProfile({
+              ...newProfileData,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            });
           }
         } catch (err) {
           console.error("Profile fetch error:", err);
@@ -71,23 +79,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithPopup(auth, provider);
   };
 
-  const signUpWithEmail = async (email: string, pass: string, name: string, phone?: string) => {
+  const refreshUser = async () => {
+    if (auth.currentUser) {
+      try {
+        await auth.currentUser.reload();
+        // Standard spread triggers React update
+        setUser({ ...auth.currentUser } as User);
+        console.log("User reloaded, emailVerified:", auth.currentUser.emailVerified);
+      } catch (err: any) {
+        // If it's a network error, we don't necessarily want to crash the UI
+        // especially during background checks
+        if (err.code === 'auth/network-request-failed') {
+          console.warn("Network request failed during user refresh. Retrying later...");
+          return;
+        }
+        console.error("Failed to reload user:", err);
+        throw err;
+      }
+    }
+  };
+
+  const signUpWithEmail = async (email: string, pass: string, name: string, role: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await updateProfile(userCredential.user, { displayName: name });
       
-      const newProfile = {
+      // Verification email disabled for now
+      /*
+      try {
+        await sendEmailVerification(userCredential.user);
+        console.log("Verification email sent to:", email);
+      } catch (emailErr) {
+        console.error("Failed to send verification email:", emailErr);
+      }
+      */
+      
+      const newProfileData = {
         uid: userCredential.user.uid,
         email: email,
         displayName: name,
-        phoneNumber: phone || null,
         photoURL: null,
-        role: 'patient',
-        createdAt: new Date().toISOString(),
+        role: role || 'patient',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       };
       
-      await setDoc(doc(db, 'users', userCredential.user.uid), newProfile);
-      setProfile(newProfile);
+      await setDoc(doc(db, 'users', userCredential.user.uid), newProfileData);
+      setProfile({
+        ...newProfileData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
     } catch (error: any) {
       console.error("Auth Error (Signup):", error.code, error.message);
       if (error.code === 'auth/operation-not-allowed') {
@@ -122,10 +164,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resendVerification = async () => {
+    if (auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
   const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signUpWithEmail, signInWithEmail, resetPassword, logout }}>
+    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signUpWithEmail, signInWithEmail, resetPassword, logout, resendVerification, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
