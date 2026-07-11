@@ -36,7 +36,7 @@ export function Navigation() {
               </div>
               <div className="flex flex-col items-start">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-display font-bold text-lg md:text-xl text-slate-900 leading-none">Dokta</span>
+                  <span className="font-display font-bold text-lg md:text-xl text-slate-900 leading-none">Medimap</span>
                   <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform md:hidden", isOpen && "rotate-180")} />
                 </div>
                 <span className="text-[10px] text-brand-600 font-bold uppercase tracking-widest mt-0.5 hidden sm:block">

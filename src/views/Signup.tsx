@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../components/AuthContext';
-import { ShieldCheck, HeartPulse, Mail, Lock, User, ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
+import { ShieldCheck, HeartPulse, Mail, Lock, User, ArrowLeft, ArrowRight, Check, X, Sparkles } from 'lucide-react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
@@ -24,10 +24,16 @@ function RequirementItem({ met, label }: { met: boolean; label: string }) {
 }
 
 export function Signup() {
-  const { user, loading, signUpWithEmail, signInWithGoogle } = useAuth();
+  const { user, loading, signUpWithEmail, signInWithGoogle, signInAsDemo } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isIframe, setIsIframe] = useState(false);
+
+  React.useEffect(() => {
+    setIsIframe(window.self !== window.top);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -45,9 +51,9 @@ export function Signup() {
     } catch (err: any) {
       console.error("Google Auth Error:", err);
       if (err.code === 'auth/popup-blocked') {
-        setError("Le popup de connexion a été bloqué par votre navigateur. Veuillez l'autoriser.");
+        setError("Le popup de connexion a été bloqué par votre navigateur. Astuce: Ouvrez l'application dans un nouvel onglet (icône en haut à droite) ou autorisez les popups.");
       } else if (err.code === 'auth/popup-closed-by-user') {
-        setError("La fenêtre de connexion a été fermée. Veuillez réessayer.");
+        setError("La fenêtre de connexion Google a été fermée. Astuce: Les navigateurs bloquent souvent l'inscription Google dans les cadres d'aperçu (iframes). Ouvrez l'application dans un nouvel onglet (bouton en haut à droite) ou utilisez l'inscription par e-mail.");
       } else if (err.code === 'auth/operation-not-allowed') {
         setError("La connexion Google n'est pas activée dans votre console Firebase. Activez-la dans Authentication > Sign-in method.");
       } else if (err.code === 'auth/unauthorized-domain') {
@@ -55,8 +61,22 @@ export function Signup() {
       } else if (err.code === 'auth/network-request-failed') {
         setError("Erreur réseau. Vérifiez votre connexion internet.");
       } else {
-        setError(`Erreur lors de la connexion Google (${err.code || 'Inconnue'}). Veuillez réessayer.`);
+        setError(`Erreur lors de la connexion Google (${err.code || 'Inconnue'}). Veuillez réessayer. Astuce: Essayez d'ouvrir l'application dans un nouvel onglet.`);
       }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDemoSignup = async () => {
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await signInAsDemo();
+      navigate('/');
+    } catch (err: any) {
+      console.error("Demo Auth Error:", err);
+      setError("Une erreur est survenue lors de la connexion démo. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }
@@ -170,7 +190,7 @@ export function Signup() {
                 L'avenir de la santé au <span className="text-brand-400">Cameroun</span>
               </h2>
               <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xs font-medium">
-                Rejoignez Dokta pour une expérience de santé connectée, humaine et sécurisée.
+                Rejoignez Medimap pour une expérience de santé connectée, humaine et sécurisée.
               </p>
             </motion.div>
           </div>
@@ -229,6 +249,47 @@ export function Signup() {
                 )}
               </motion.div>
             )}
+
+            {isIframe && (
+              <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-xs text-amber-800 space-y-3 mb-2 text-left">
+                <div className="flex items-start gap-2.5">
+                  <span className="text-base shrink-0 mt-0.5">💡</span>
+                  <div>
+                    <p className="font-bold text-amber-950">Aperçu limité par le navigateur</p>
+                    <p className="mt-1 leading-relaxed text-[11px] text-amber-900/90 font-medium">
+                      Les navigateurs bloquent l'inscription Google dans les cadres d'aperçu intégrés (iframes). 
+                      Veuillez ouvrir l'application dans un nouvel onglet pour vous inscrire avec Google en toute sécurité.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-end pt-1">
+                  <a 
+                    href={window.location.href} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3 py-2 rounded-xl text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                  >
+                    Ouvrir dans un nouvel onglet
+                  </a>
+                </div>
+              </div>
+            )}
+
+            <button 
+              type="button"
+              onClick={handleDemoSignup}
+              disabled={isSubmitting}
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 text-sm disabled:opacity-50 border border-slate-900"
+            >
+              <Sparkles size={18} className="text-amber-400 animate-pulse" />
+              Connexion Démo Rapide (Recommandé)
+            </button>
+
+            <div className="relative py-1 flex items-center">
+              <div className="flex-grow border-t border-slate-100"></div>
+              <span className="flex-shrink mx-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">ou</span>
+              <div className="flex-grow border-t border-slate-100"></div>
+            </div>
 
             <button 
               type="button"

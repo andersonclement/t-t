@@ -74,7 +74,7 @@ export function Dashboard() {
           </div>
           <div className="flex items-center gap-3">
              <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                <ShieldCheck size={16} /> Certifié Dokta
+                <ShieldCheck size={16} /> Certifié Medimap
              </div>
           </div>
         </header>
@@ -122,7 +122,7 @@ export function Dashboard() {
               <div className="relative z-10 space-y-4">
                 <h3 className="text-xl font-display font-bold">Gestion des Stocks</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  Mettez à jour vos inventaires pour apparaître dans les résultats de recherche Dokta.
+                  Mettez à jour vos inventaires pour apparaître dans les résultats de recherche Medimap.
                 </p>
                 <button className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-emerald-500 transition-all">
                   Ouvrir l'inventaire

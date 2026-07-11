@@ -31,7 +31,7 @@ export function Landing() {
             <div className="w-8 h-8 md:w-10 md:h-10 bg-brand-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-brand-600/20">
               <HeartPulse className="text-white" size={20} />
             </div>
-            <span className="text-lg md:text-xl font-display font-bold tracking-tight">Dokta</span>
+            <span className="text-lg md:text-xl font-display font-bold tracking-tight">Medimap</span>
           </div>
           <div className="flex items-center gap-4 md:gap-8">
             <div className="hidden md:flex items-center gap-8">
@@ -59,14 +59,14 @@ export function Landing() {
           >
             <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-100">
                <Sparkles size={14} />
-               Propulsé par Dokta-IA
+               Propulsé par Medimap-IA
             </div>
             <h1 className="text-4xl md:text-7xl font-display font-bold leading-tight tracking-tight text-slate-900">
               Votre santé au <br className="hidden md:block" />
               <span className="text-brand-600">Cameroun</span>, simplifiée.
             </h1>
             <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Dokta centralise pharmacies, hôpitaux et laboratoires. Analysez vos ordonnances par IA et trouvez vos médicaments instantanément au meilleur prix.
+              Medimap centralise pharmacies, hôpitaux et laboratoires. Analysez vos ordonnances par IA et trouvez vos médicaments instantanément au meilleur prix.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0">
               <button 
@@ -186,9 +186,9 @@ export function Landing() {
             <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
               <HeartPulse className="text-white" size={18} />
             </div>
-            <span className="text-lg font-display font-bold">Dokta</span>
+            <span className="text-lg font-display font-bold">Medimap</span>
           </div>
-          <p className="text-slate-500 text-sm">© 2026 Dokta Cameroun. Tous droits réservés.</p>
+          <p className="text-slate-500 text-sm">© 2026 Medimap Cameroun. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors">Politique de confidentialité</a>
             <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors">Mentions légales</a>

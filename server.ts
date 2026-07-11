@@ -32,7 +32,7 @@ async function startServer() {
   app.use("/api/ai/", apiLimiter);
 
   const medicalCoachSystemInstruction = `
-Tu es Dokta-IA, un assistant d'orientation médicale préliminaire spécialisé pour le contexte camerounais.
+Tu es Medimap-IA, un assistant d'orientation médicale préliminaire spécialisé pour le contexte camerounais.
 Tu es SOUS AUCUN PRÉTEXTE un médecin. Tu ne fais pas de diagnostic définitif et tu ne prescris pas de médicaments sur ordonnance.
 
 RÈGLES STRICTES :

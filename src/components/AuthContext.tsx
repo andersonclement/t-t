@@ -19,6 +19,7 @@ interface AuthContextType {
   profile: any | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInAsDemo: () => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string, role: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -77,6 +78,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
+  };
+
+  const signInAsDemo = async () => {
+    const demoEmail = 'demo@medimap.cm';
+    const demoPass = 'Medimap123!';
+    try {
+      await signInWithEmailAndPassword(auth, demoEmail, demoPass);
+    } catch (err: any) {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        // Try to sign up if the demo user does not exist yet
+        await signUpWithEmail(demoEmail, demoPass, 'Patient Démo', 'patient');
+      } else {
+        throw err;
+      }
+    }
   };
 
   const refreshUser = async () => {
@@ -173,7 +189,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signUpWithEmail, signInWithEmail, resetPassword, logout, resendVerification, refreshUser }}>
+    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signInAsDemo, signUpWithEmail, signInWithEmail, resetPassword, logout, resendVerification, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

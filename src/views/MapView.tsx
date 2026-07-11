@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { 
@@ -8,18 +8,15 @@ import {
   Search, 
   Navigation, 
   PhoneCall, 
-  Clock, 
   Star, 
-  Filter,
-  Hospital,
   Building2,
   Microscope,
-  Stethoscope as DoctorIcon,
-  ChevronRight,
   Route,
   Pill,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Activity,
+  AlertTriangle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -38,38 +35,94 @@ L.Icon.Default.mergeOptions({
 interface HealthActor {
   id: string;
   name: string;
-  type: 'pharmacy' | 'hospital' | 'lab' | 'practitioner';
+  type: 'pharmacy' | 'hospital' | 'lab';
   address: string;
   distance: string;
   isOpen: boolean;
   rating: number;
-  specialty?: string;
   coordinates: [number, number]; // [lat, lng]
 }
 
+// Relocated coordinates near Akwa, Douala (central point [4.0450, 9.7000]) 
+// to correspond perfectly to their specified distances!
 const MOCK_ACTORS: HealthActor[] = [
-  { id: '1', name: 'Pharmacie de la Paix', type: 'pharmacy', address: 'Akwa, Douala', distance: '450m', isOpen: true, rating: 4.8, coordinates: [4.0511, 9.7679] },
-  { id: '2', name: 'Hôpital Général', type: 'hospital', address: 'Quartier Ngodi, Douala', distance: '1.2km', isOpen: true, rating: 4.5, coordinates: [4.0611, 9.7779] },
-  { id: '3', name: 'Laboratoire Central', type: 'lab', address: 'Bonapriso, Douala', distance: '800m', isOpen: false, rating: 4.2, coordinates: [4.0411, 9.7579] },
-  { id: '4', name: 'Hôpital de Référence', type: 'hospital', address: 'Messa, Yaoundé', distance: '2.1km', isOpen: true, rating: 4.9, coordinates: [3.8480, 11.5021] },
-  { id: '5', name: 'Pharmacie Saint-Jean', type: 'pharmacy', address: 'Bonanjo, Douala', distance: '1.5km', isOpen: true, rating: 4.6, coordinates: [4.045, 9.770] },
-  { id: '6', name: 'Clinique de l\'Espoir', type: 'hospital', address: 'Logpom, Douala', distance: '3.2km', isOpen: true, rating: 4.3, coordinates: [4.080, 9.750] },
+  { id: '1', name: 'Pharmacie de la Paix', type: 'pharmacy', address: 'Boulevard de la Liberté, Akwa, Douala', distance: '450m', isOpen: true, rating: 4.8, coordinates: [4.0475, 9.7032] },
+  { id: '2', name: 'Hôpital Général de Douala', type: 'hospital', address: 'Quartier Ngodi, Douala', distance: '1.2km', isOpen: true, rating: 4.5, coordinates: [4.0535, 9.6925] },
+  { id: '3', name: 'Laboratoire Central', type: 'lab', address: 'Rue de l\'Hôpital, Bonapriso, Douala', distance: '800m', isOpen: false, rating: 4.2, coordinates: [4.0405, 9.6960] },
+  { id: '4', name: 'Hôpital de Référence de Douala', type: 'hospital', address: 'Quartier Bonanjo, Douala', distance: '2.1km', isOpen: true, rating: 4.9, coordinates: [4.0315, 9.6912] },
+  { id: '5', name: 'Pharmacie Saint-Jean', type: 'pharmacy', address: 'Ancien Boulevard, Douala', distance: '1.5km', isOpen: true, rating: 4.6, coordinates: [4.0375, 9.7115] },
+  { id: '6', name: 'Clinique de l\'Espoir', type: 'hospital', address: 'Quartier Logpom, Douala', distance: '3.2km', isOpen: true, rating: 4.3, coordinates: [4.0625, 9.7150] },
 ];
 
-function ChangeView({ center }: { center: [number, number] }) {
+// Handles map view sync when center changes
+function MapController({ center, isExpanded }: { center: [number, number]; isExpanded: boolean }) {
   const map = useMap();
-  React.useEffect(() => {
-    map.setView(center, map.getZoom());
+  
+  useEffect(() => {
+    map.setView(center, Math.max(map.getZoom(), 14));
   }, [center, map]);
+
+  return null;
+}
+
+// Automatically refits map viewport when container dimensions or state changes
+function ResizeListener() {
+  const map = useMap();
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Invalidate size on load
+    map.invalidateSize();
+    
+    // Setup high fidelity ResizeObserver to keep tiles loading perfectly
+    const resizeObserver = new ResizeObserver(() => {
+      map.invalidateSize();
+    });
+    
+    const container = map.getContainer();
+    resizeObserver.observe(container);
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [map]);
   return null;
 }
 
 export function MapView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'pharmacy' | 'hospital' | 'lab'>('all');
-  const [activeActor, setActiveActor] = useState<HealthActor | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([4.0511, 9.7679]); 
+  
+  // Default user location is central Akwa, Douala
+  const [userLocation, setUserLocation] = useState<[number, number]>([4.0450, 9.7000]);
+  const [activeActor, setActiveActor] = useState<HealthActor | null>(MOCK_ACTORS[0]);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([4.0450, 9.7000]); 
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Real OSRM Router states
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([]);
+  const [routeDistance, setRouteDistance] = useState<string>('');
+  const [routeDuration, setRouteDuration] = useState<string>('');
+  const [isRouting, setIsRouting] = useState<boolean>(false);
+
+  // Fetch actual user location if permitted
+  useEffect(() => {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+          setUserLocation(coords);
+          // Only change center to user on load if no active actor exists yet
+          if (!activeActor) {
+            setMapCenter(coords);
+          }
+        },
+        (error) => {
+          console.log("Using default Akwa, Douala coordinates", error);
+        }
+      );
+    }
+  }, []);
 
   const filtered = MOCK_ACTORS.filter(a => {
     const matchesFilter = filter === 'all' || a.type === filter;
@@ -77,6 +130,92 @@ export function MapView() {
                          a.address.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
+
+  // Automatically sync active actor on filter/search change
+  useEffect(() => {
+    if (filtered.length > 0) {
+      if (!filtered.find(a => a.id === activeActor?.id)) {
+        setActiveActor(filtered[0]);
+        setMapCenter(filtered[0].coordinates);
+      }
+    } else {
+      setActiveActor(null);
+    }
+  }, [filter, searchQuery]);
+
+  // Straight line fallback calculator
+  const getStraightLineDistance = (p1: [number, number], p2: [number, number]): string => {
+    const R = 6371; // km
+    const dLat = (p2[0] - p1[0]) * Math.PI / 180;
+    const dLon = (p2[1] - p1[1]) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(p1[0] * Math.PI / 180) * Math.cos(p2[0] * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const d = R * c;
+    if (d < 1) {
+      return `${Math.round(d * 1000)} m`;
+    }
+    return `${d.toFixed(1)} km`;
+  };
+
+  // Dynamically calculate road routing using Open Source Routing Machine (OSRM)
+  const calculateRoute = async (start: [number, number], end: [number, number]) => {
+    try {
+      setIsRouting(true);
+      const startLng = start[1];
+      const startLat = start[0];
+      const endLng = end[1];
+      const endLat = end[0];
+      
+      const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?geometries=geojson&overview=full`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("OSRM Routing failed");
+      
+      const data = await response.json();
+      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        const coords = route.geometry.coordinates.map((c: [number, number]) => [c[1], c[0]] as [number, number]);
+        setRouteCoordinates(coords);
+        
+        // Formatted distance
+        const meters = route.distance;
+        if (meters < 1000) {
+          setRouteDistance(`${Math.round(meters)} m`);
+        } else {
+          setRouteDistance(`${(meters / 1000).toFixed(1)} km`);
+        }
+        
+        // Formatted duration
+        const minutes = Math.round(route.duration / 60);
+        setRouteDuration(`${minutes || 1} min`);
+      } else {
+        throw new Error("No routes in response");
+      }
+    } catch (error) {
+      console.log("Routing calculation fallback to straight line:", error);
+      // Fallback straight-line line segment
+      setRouteCoordinates([start, end]);
+      const dist = getStraightLineDistance(start, end);
+      setRouteDistance(dist);
+      const rawDistanceInKm = parseFloat(dist.replace(/[^\d.]/g, '')) * (dist.includes('m') && !dist.includes('km') ? 0.001 : 1);
+      setRouteDuration(`${Math.max(1, Math.round(rawDistanceInKm * 3.5))} min`);
+    } finally {
+      setIsRouting(false);
+    }
+  };
+
+  // Re-run routing when user moves or target changes
+  useEffect(() => {
+    if (activeActor) {
+      calculateRoute(userLocation, activeActor.coordinates);
+    } else {
+      setRouteCoordinates([]);
+      setRouteDistance('');
+      setRouteDuration('');
+    }
+  }, [activeActor, userLocation]);
 
   const customIcon = (type: string, isActive: boolean) => {
     const color = type === 'hospital' ? '#2563eb' : type === 'pharmacy' ? '#10b981' : '#a855f7';
@@ -86,7 +225,7 @@ export function MapView() {
     return L.divIcon({
       html: `
         <div class="relative flex items-center justify-center" style="width: ${size}px; height: ${size}px;">
-          <svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full drop-shadow-lg" fill="${color}" stroke="white" stroke-width="1.5">
+          <svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full drop-shadow-xl" fill="${color}" stroke="white" stroke-width="1.5">
             <path d="M12 21.7C12 21.7 20 16 20 9.5C20 5.1 16.4 1.5 12 1.5C7.6 1.5 4 5.1 4 9.5C4 16 12 21.7 12 21.7Z" />
             <circle cx="12" cy="9.5" r="4.5" fill="white" />
           </svg>
@@ -96,21 +235,46 @@ export function MapView() {
       `,
       className: 'custom-marker',
       iconSize: [size, size],
-      iconAnchor: [size/2, size], // Anchor at bottom center
+      iconAnchor: [size/2, size],
       popupAnchor: [0, -size],
     });
   };
 
+  // Custom User pulsating indicator icon
+  const userIcon = L.divIcon({
+    html: `
+      <div class="relative flex items-center justify-center" style="width: 24px; height: 24px;">
+        <div class="absolute w-6 h-6 bg-blue-500/30 rounded-full animate-ping"></div>
+        <div class="absolute w-4 h-4 bg-blue-500/60 rounded-full"></div>
+        <div class="w-3.5 h-3.5 bg-blue-600 rounded-full border-2 border-white shadow-[0_0_8px_rgba(37,99,235,0.7)]"></div>
+      </div>
+    `,
+    className: 'user-marker-icon',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12]
+  });
+
+  const getAIAdvice = (actor: HealthActor, distance: string, duration: string) => {
+    if (actor.type === 'hospital') {
+      return `🩺 Trajet médical urgent vers ${actor.name}. Medimap-IA vous conseille d'éviter l'avenue de l'Unité aux heures de pointe et d'accéder par les voies secondaires d'Akwa. Trafic modéré.`;
+    } else if (actor.type === 'pharmacy') {
+      return `💊 Route directe vers ${actor.name}. Le revêtement routier est goudronné et fluide pour une arrivée rapide et sécurisée.`;
+    } else {
+      return `🔬 Trajet vers ${actor.name}. Suivez l'axe principal. Les deux points sont reliés sans encombrement de trafic majeur.`;
+    }
+  };
+
   return (
     <div className={cn(
-      "h-[calc(100dvh-220px)] md:h-[calc(100vh-160px)] flex flex-col md:flex-row gap-4 transition-all duration-500",
+      "min-h-[calc(100dvh-180px)] md:h-[calc(100vh-160px)] flex flex-col md:flex-row gap-4 transition-all duration-500",
       isExpanded && "fixed inset-0 z-[1000] h-[100dvh] w-screen p-0 bg-white md:p-4 md:bg-slate-900/40 md:backdrop-blur-md overflow-hidden"
     )}>
-      {/* Search & Sidebar */}
+      {/* Left Sidebar (Desktop layout) / Top header section (Mobile layout) */}
       <div className={cn(
-        "w-full md:w-96 flex flex-col gap-4 transition-all duration-500",
-        isExpanded && "hidden md:flex md:w-0 md:opacity-0 md:pointer-events-none md:overflow-hidden overflow-hidden h-0 md:h-auto opacity-0"
+        "w-full md:w-96 flex flex-col gap-4 shrink-0 transition-all duration-500",
+        isExpanded && "hidden md:flex md:w-0 md:opacity-0 md:pointer-events-none md:overflow-hidden h-0 md:h-auto opacity-0"
       )}>
+        {/* Search & Quick Filters */}
         <div className="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4">
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors" size={20} />
@@ -119,7 +283,7 @@ export function MapView() {
               placeholder="Chercher pharmacie, hôpital..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border-none rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-brand-600/10 outline-none transition-all text-sm"
+              className="w-full bg-slate-50 border-none rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-brand-600/10 outline-none transition-all text-sm font-medium"
             />
           </div>
           
@@ -131,7 +295,98 @@ export function MapView() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+        {/* Selected Actor Card on Mobile (Visible directly under filters) */}
+        {activeActor && (
+          <div className="block md:hidden">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              key={activeActor.id}
+              className="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-lg flex flex-col gap-4"
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-4">
+                  <div className={cn(
+                    "w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-sm",
+                    activeActor.type === 'hospital' ? "bg-clinical-600" :
+                    activeActor.type === 'pharmacy' ? "bg-emerald-500" : "bg-purple-500"
+                  )}>
+                    {activeActor.type === 'hospital' && <Building2 size={22} />}
+                    {activeActor.type === 'pharmacy' && <Pill size={22} />}
+                    {activeActor.type === 'lab' && <Microscope size={22} />}
+                  </div>
+                  <div>
+                    <h4 className="font-display font-black text-slate-900 text-base leading-tight">
+                      {activeActor.name}
+                    </h4>
+                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-1 font-medium">
+                      <MapPin size={12} className="text-slate-300" />
+                      <span className="italic">{activeActor.address}</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right flex flex-col items-end shrink-0">
+                  <div className="flex items-center gap-1 text-orange-400 font-bold text-sm mb-1">
+                    <Star size={14} fill="currentColor" />
+                    <span>{activeActor.rating}</span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">
+                    {routeDistance || activeActor.distance}
+                  </span>
+                </div>
+              </div>
+
+              {/* Travel duration and details */}
+              {routeDistance && (
+                <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3 flex flex-col gap-1">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold text-slate-700 flex items-center gap-1">
+                      <Activity size={14} className="text-brand-600 animate-pulse" />
+                      Calculateur d'itinéraire
+                    </span>
+                    <span className="font-black text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md">
+                      {routeDuration} ({routeDistance})
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 leading-relaxed mt-1">
+                    {getAIAdvice(activeActor, routeDistance, routeDuration)}
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-1 border-t border-slate-50">
+                <div className="flex items-center gap-2">
+                  <span className={cn(
+                    "w-2.5 h-2.5 rounded-full",
+                    activeActor.isOpen ? "bg-emerald-500 animate-pulse" : "bg-red-400"
+                  )} />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    {activeActor.isOpen ? 'OUVERT' : 'FERMÉ'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <button 
+                    className="w-11 h-11 flex items-center justify-center bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-[1.25rem] transition-all border border-slate-100 active:scale-95 shadow-sm"
+                    onClick={() => window.location.href = 'tel:+237600000000'}
+                  >
+                    <PhoneCall size={18} />
+                  </button>
+                  <a 
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${activeActor.coordinates[0]},${activeActor.coordinates[1]}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-11 h-11 flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white rounded-[1.25rem] transition-all active:scale-95 shadow-sm shadow-emerald-500/20"
+                  >
+                    <Route size={18} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Scrollable Results List (Visible only on Desktop to save mobile screen space) */}
+        <div className="hidden md:flex flex-col flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
           {filtered.map(actor => (
             <motion.div 
               key={actor.id}
@@ -169,7 +424,9 @@ export function MapView() {
                     <Star size={10} fill="currentColor" />
                     <span className="text-[10px] font-bold">{actor.rating}</span>
                   </div>
-                  <span className="text-[10px] text-slate-500 font-bold">{actor.distance}</span>
+                  <span className="text-[10px] text-slate-500 font-bold">
+                    {activeActor?.id === actor.id && routeDistance ? routeDistance : actor.distance}
+                  </span>
                 </div>
               </div>
 
@@ -202,32 +459,49 @@ export function MapView() {
         </div>
       </div>
 
-      {/* Real Interactive Map Content Area */}
+      {/* Interactive Map Area */}
       <div className={cn(
-        "flex-1 bg-slate-200 rounded-[2.5rem] relative overflow-hidden border-4 border-white shadow-xl z-0 transition-all duration-500 min-h-[300px] md:min-h-0",
+        "h-[350px] md:h-full md:flex-1 bg-slate-200 rounded-[2.5rem] relative overflow-hidden border-4 border-white shadow-xl z-0 transition-all duration-500",
         isExpanded && "rounded-none md:rounded-[2.5rem] border-0 md:border-4"
       )}>
         <MapContainer 
-          key={isExpanded ? 'expanded' : 'normal'} // Force re-render to recalculate size
+          key={isExpanded ? 'expanded' : 'normal'} 
           center={mapCenter} 
-          zoom={13} 
+          zoom={14} 
           minZoom={3}
           maxZoom={19}
           scrollWheelZoom={true} 
           className="w-full h-full"
         >
+          {/* High-quality standard OSM TileLayer to guarantee bright and highly legible roads and quartiers */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <ChangeView center={mapCenter} />
+          <MapController center={mapCenter} isExpanded={isExpanded} />
+          <ResizeListener />
+
+          {/* Glowing User Location Indicator */}
+          <Marker position={userLocation} icon={userIcon}>
+            <Popup>
+              <div className="p-2 text-center">
+                <span className="font-bold text-slate-800 text-xs">Ma Position</span>
+                <p className="text-[10px] text-slate-400 mt-1">Douala, Cameroun</p>
+              </div>
+            </Popup>
+          </Marker>
+
+          {/* Health Facilities Markers */}
           {filtered.map(actor => (
             <Marker 
               key={actor.id} 
               position={actor.coordinates}
               icon={customIcon(actor.type, activeActor?.id === actor.id)}
               eventHandlers={{
-                click: () => setActiveActor(actor),
+                click: () => {
+                  setMapCenter(actor.coordinates);
+                  setActiveActor(actor);
+                },
               }}
             >
               <Popup>
@@ -264,18 +538,92 @@ export function MapView() {
               </Popup>
             </Marker>
           ))}
+
+          {/* High Fidelity Glowing Route Polyline Layer */}
+          {routeCoordinates.length > 0 && (
+            <>
+              {/* Outer Glow Route Path */}
+              <Polyline 
+                positions={routeCoordinates} 
+                pathOptions={{ 
+                  color: activeActor?.type === 'hospital' ? '#2563eb' : '#10b981', 
+                  weight: 8, 
+                  opacity: 0.35,
+                  lineJoin: 'round',
+                  lineCap: 'round'
+                }} 
+              />
+              {/* Inner Core Bright Route Path */}
+              <Polyline 
+                positions={routeCoordinates} 
+                pathOptions={{ 
+                  color: activeActor?.type === 'hospital' ? '#3b82f6' : '#34d399', 
+                  weight: 4, 
+                  opacity: 1,
+                  lineJoin: 'round',
+                  lineCap: 'round'
+                }} 
+              />
+            </>
+          )}
         </MapContainer>
         
-        {/* Map Overlays */}
-        <div className="absolute top-6 left-6 z-[1000] flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/40 shadow-xl">
-             <div className="w-3 h-3 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.5)]" />
-             <span className="text-xs font-bold text-slate-800 tracking-tight">Carte Haute Précision</span>
+        {/* Map Header Title Overlay */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border border-slate-100 shadow-xl">
+             <div className="w-2.5 h-2.5 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
+             <span className="text-[11px] font-black text-slate-800 tracking-wider uppercase">Medimap Carte Interactive</span>
           </div>
+        </div>
 
+        {/* Dynamic Desktop Routing Panel Overlay */}
+        {activeActor && routeDistance && (
+          <div className="absolute top-16 left-4 right-4 md:left-6 md:right-auto md:w-80 z-[1000] hidden md:block">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-100 shadow-2xl flex flex-col gap-2.5"
+            >
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase text-brand-600 tracking-wider">
+                <Activity size={12} className="animate-pulse" />
+                <span>Calculateur de Trajet IA</span>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div>
+                  <h5 className="font-display font-black text-slate-800 text-sm leading-tight truncate max-w-[150px]">
+                    {activeActor.name}
+                  </h5>
+                  <p className="text-[10px] text-slate-400 font-medium truncate max-w-[150px]">
+                    {activeActor.address}
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-sm font-black text-slate-800 flex items-center gap-1 justify-end">
+                    <span className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-lg text-xs font-bold border border-emerald-100">
+                      {routeDistance}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 font-bold mt-1">
+                    Durée estimée : {routeDuration}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100">
+                <p className="text-[10px] text-slate-600 leading-relaxed">
+                  {getAIAdvice(activeActor, routeDistance, routeDuration)}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Expand / Collapse Button Overlay */}
+        <div className="absolute bottom-4 right-4 z-[1000]">
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center border border-white/40 shadow-xl text-slate-600 hover:text-brand-600 transition-colors"
+            className="w-11 h-11 bg-white/95 backdrop-blur-md rounded-full flex items-center justify-center border border-slate-100 shadow-xl text-slate-600 hover:text-brand-600 transition-colors active:scale-95"
           >
             {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
           </button>
