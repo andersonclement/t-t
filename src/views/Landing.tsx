@@ -59,7 +59,7 @@ export function Landing() {
           >
             <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-100">
                <Sparkles size={14} />
-               Propulsé par Medimap-IA
+               Propulsé par Care IA
             </div>
             <h1 className="text-4xl md:text-7xl font-display font-bold leading-tight tracking-tight text-slate-900">
               Votre santé au <br className="hidden md:block" />

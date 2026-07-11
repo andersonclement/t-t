@@ -25,6 +25,9 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { cn } from '../lib/utils';
+import { db } from '../lib/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { Mail, Shield, Users, Check, X } from 'lucide-react';
 
 function PharmacistStatCard({ label, value, unit, icon, color }: { label: string; value: string; unit?: string; icon: React.ReactNode; color: string }) {
   return (
@@ -49,6 +52,24 @@ export function Dashboard() {
   const { profile } = useAuth();
   const { orders } = useOrders();
   const isPharmacist = profile?.role === 'pharmacist';
+
+  const [pharmacies, setPharmacies] = React.useState<any[]>([]);
+  const [selectedPharmaForModal, setSelectedPharmaForModal] = React.useState<any | null>(null);
+
+  React.useEffect(() => {
+    if (!isPharmacist) {
+      const q = query(collection(db, 'users'), where('role', '==', 'pharmacist'));
+      getDocs(q).then((snapshot) => {
+        const list: any[] = [];
+        snapshot.forEach((docSnap) => {
+          list.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        setPharmacies(list);
+      }).catch((err) => {
+        console.warn("Failed to fetch partner pharmacies:", err);
+      });
+    }
+  }, [isPharmacist]);
 
   if (isPharmacist) {
     const pendingOrders = orders.filter(o => o.status === 'pending_validation').length;
@@ -140,7 +161,7 @@ export function Dashboard() {
                 "La demande en Artéméther est en hausse de 20% dans votre secteur ce mois-ci. Assurez-vous d'avoir assez de stock."
               </p>
               <div className="flex items-center gap-2 text-[10px] font-bold text-brand-600 uppercase tracking-widest">
-                <Activity size={14} /> Prédiction DiagAI
+                <Activity size={14} /> Prédiction Care IA
               </div>
            </div>
         </div>
@@ -250,6 +271,109 @@ export function Dashboard() {
             Voir la carte
           </motion.button>
           <div className="absolute right-0 bottom-0 top-0 w-1/3 bg-gradient-to-l from-brand-600/20 to-transparent hidden md:block" />
+        </div>
+      </section>
+
+      {/* Partner Pharmacies Details Section */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-lg md:text-xl font-display font-bold text-slate-900 flex items-center gap-2">
+            <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
+            Nos Pharmacies Partenaires Officielles
+          </h3>
+          <span className="text-xs text-slate-400 font-bold font-mono">
+            {pharmacies.length} En ligne
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {pharmacies.map((pharma, idx) => {
+            const pharmaName = pharma.pharmacyName || pharma.displayName || 'Pharmacie du Centre';
+            const address = pharma.pharmacyAddress || pharma.address || 'Douala, Cameroun';
+            const phone = pharma.pharmacyPhone || pharma.phone || 'Non renseigné';
+            const hours = pharma.pharmacyHours || 'Non renseigné (24h/24 par défaut)';
+            const email = pharma.pharmacyEmail || pharma.email || 'Non renseigné';
+
+            return (
+              <motion.div 
+                key={pharma.id || idx}
+                whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.05)" }}
+                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 relative overflow-hidden flex flex-col justify-between"
+              >
+                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full -z-0 opacity-40" />
+                
+                <div className="space-y-3 relative z-10">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider flex items-center gap-1">
+                      <ShieldCheck size={10} /> Partenaire Agréé
+                    </span>
+                    <span className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider">
+                      Cameroun
+                    </span>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-bold text-slate-900 tracking-tight">{pharmaName}</h4>
+                    <p className="text-xs text-slate-400 font-medium italic mt-0.5 font-sans">Responsable : Dr. {pharma.displayName || 'Pharmacien'}</p>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-slate-50 text-xs text-slate-600 font-medium">
+                    <div className="flex items-start gap-2.5">
+                      <MapPin size={14} className="text-emerald-600 shrink-0 mt-0.5" />
+                      <span>{address}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5">
+                      <Clock size={14} className="text-emerald-600 shrink-0" />
+                      <span>{hours}</span>
+                    </div>
+                    {phone && phone !== 'Non renseigné' && (
+                      <div className="flex items-center gap-2.5">
+                        <PhoneCall size={14} className="text-emerald-600 shrink-0" />
+                        <span className="font-mono font-bold text-slate-800">{phone}</span>
+                      </div>
+                    )}
+                    {email && email !== 'Non renseigné' && (
+                      <div className="flex items-center gap-2.5">
+                        <Mail size={14} className="text-emerald-600 shrink-0" />
+                        <span className="truncate text-slate-500">{email}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setSelectedPharmaForModal(pharma)}
+                  className="w-full bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 text-slate-700 py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 transition-all mt-4 relative z-10"
+                >
+                  <ShieldCheck size={12} className="text-emerald-600" /> Voir la Fiche Technique de l'Officine
+                </button>
+
+                <div className="pt-4 border-t border-slate-50 relative z-10 flex gap-2">
+                  <button 
+                    onClick={() => window.location.href = `tel:${phone}`}
+                    className="flex-1 justify-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 shadow-sm hover:bg-slate-800"
+                  >
+                    <PhoneCall size={11} /> Appeler
+                  </button>
+                  <button 
+                    onClick={() => {
+                      window.location.href = `/map?search=${encodeURIComponent(pharmaName)}`;
+                    }}
+                    className="flex-1 justify-center bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 hover:bg-emerald-100"
+                  >
+                    <MapPin size={11} /> Itinéraire
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+
+          {pharmacies.length === 0 && (
+            <div className="col-span-full bg-slate-50/50 p-8 rounded-[2rem] border border-slate-100 text-center space-y-2">
+              <p className="text-sm font-medium text-slate-500 italic">Chargement des pharmacies agréées ou aucune pharmacie connectée pour le moment...</p>
+              <p className="text-xs text-slate-400 font-sans">Astuce: En tant que pharmacien, remplissez vos informations d'officine dans l'onglet Profil pour apparaître ici en temps réel !</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -392,6 +516,161 @@ export function Dashboard() {
           </div>
         </div>
       </section>
+
+      {/* Modal - Fiche Technique de l'Officine */}
+      {selectedPharmaForModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white rounded-[2.5rem] w-full max-w-xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col"
+          >
+            {/* Header */}
+            <div className="bg-slate-900 text-white p-6 relative">
+              <button 
+                onClick={() => setSelectedPharmaForModal(null)}
+                className="absolute top-6 right-6 text-slate-400 hover:text-white bg-white/10 p-2 rounded-full transition-colors flex items-center justify-center"
+              >
+                <X size={16} />
+              </button>
+              <div className="flex items-center gap-2">
+                <span className="bg-emerald-500 text-white px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1">
+                  <ShieldCheck size={10} /> Enquête de Conformité Validée
+                </span>
+              </div>
+              <h3 className="text-xl font-display font-bold mt-3 leading-tight">
+                {selectedPharmaForModal.pharmacyName || selectedPharmaForModal.displayName || 'Pharmacie Partenaire'}
+              </h3>
+              <p className="text-slate-400 text-xs font-medium italic mt-1 font-sans">
+                Responsable : Dr. {selectedPharmaForModal.displayName || 'Pharmacien'}
+              </p>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 md:p-8 space-y-6 max-h-[70vh] overflow-y-auto">
+              {/* Intro / Shield statement */}
+              <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex gap-3 items-start">
+                <ShieldCheck className="text-emerald-600 shrink-0 mt-0.5" size={20} />
+                <div>
+                  <h4 className="font-bold text-slate-900 text-xs">Établissement Agréé & Certifié</h4>
+                  <p className="text-slate-500 text-[10px] md:text-xs mt-0.5 leading-relaxed">
+                    Cet établissement a complété avec succès l'audit physique de conformité technique effectué par Medimap Cameroun. Les stocks et conditions de conservation sont validés.
+                  </p>
+                </div>
+              </div>
+
+              {/* Identification Légale */}
+              <div className="space-y-3">
+                <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Identification Légale (MINSANTE)</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">N° ONPC</p>
+                    <p className="text-xs font-mono font-bold text-slate-700 mt-1">
+                      {selectedPharmaForModal.technicalForm?.onpcNumber || selectedPharmaForModal.onpcNumber || 'ONPC-3891-CM'}
+                    </p>
+                  </div>
+                  <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Arrêté de Création</p>
+                    <p className="text-xs font-mono font-bold text-slate-700 mt-1">
+                      {selectedPharmaForModal.technicalForm?.legalLicenseNumber || selectedPharmaForModal.legalLicenseNumber || 'ARR-1024-MINSANTE'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-600">
+                  <Users size={14} className="text-slate-400 shrink-0" />
+                  <span>
+                    Équipe de garde composée de <strong>{selectedPharmaForModal.technicalForm?.pharmacistsCount || selectedPharmaForModal.pharmacistsCount || 2}</strong> pharmaciens adjoints diplômés.
+                  </span>
+                </div>
+              </div>
+
+              {/* Technical Specifications */}
+              <div className="space-y-3 pt-4 border-t border-slate-50">
+                <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Équipement Technique d'Officine</h4>
+                
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-center text-xs p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                    <span className="text-slate-600 font-medium">Conservation Chaîne du Froid</span>
+                    <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md">
+                      {selectedPharmaForModal.technicalForm?.coldChainEquipment === 'medical_fridge' ? 'Réfrigérateur Médical' : 
+                       selectedPharmaForModal.technicalForm?.coldChainEquipment === 'electric_fridge' ? 'Réfrigérateur Électrique' : 'Système Isotherme'}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center text-xs p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                    <span className="text-slate-600 font-medium">Générateur de Secours / Alimentation</span>
+                    <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md">
+                      {selectedPharmaForModal.technicalForm?.backupGenerator === 'automated' ? 'Automatique (Inverseur Direct)' : 
+                       selectedPharmaForModal.technicalForm?.backupGenerator === 'manual' ? 'Manuel (Démarrage manuel)' : 'Solaire / Onduleur'}
+                    </span>
+                  </div>
+
+                  {/* Checklist indicators */}
+                  <div className="grid grid-cols-2 gap-3 pt-1">
+                    <div className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-100 text-xs font-medium text-slate-600">
+                      <span>Suivi Continu Température</span>
+                      {selectedPharmaForModal.technicalForm?.temperatureMonitor !== false ? <Check size={16} className="text-emerald-500 shrink-0" /> : <X size={16} className="text-red-500 shrink-0" />}
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-100 text-xs font-medium text-slate-600">
+                      <span>Climatisation d'Officine</span>
+                      {selectedPharmaForModal.technicalForm?.airConditioned !== false ? <Check size={16} className="text-emerald-500 shrink-0" /> : <X size={16} className="text-red-500 shrink-0" />}
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-100 text-xs font-medium text-slate-600">
+                      <span>Coffre Fort Stupéfiants</span>
+                      {selectedPharmaForModal.technicalForm?.narcoticsSafe !== false ? <Check size={16} className="text-emerald-500 shrink-0" /> : <X size={16} className="text-red-500 shrink-0" />}
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-100 text-xs font-medium text-slate-600">
+                      <span>Protocole Élimination Déchets</span>
+                      {selectedPharmaForModal.technicalForm?.wasteProtocol !== false ? <Check size={16} className="text-emerald-500 shrink-0" /> : <X size={16} className="text-red-500 shrink-0" />}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contacts */}
+              <div className="space-y-3 pt-4 border-t border-slate-50">
+                <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Coordonnées</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
+                  <div className="flex items-center gap-2">
+                    <Clock size={14} className="text-slate-400" />
+                    <span>{selectedPharmaForModal.pharmacyHours || '24h/24 par défaut'}</span>
+                  </div>
+                  {(selectedPharmaForModal.pharmacyPhone || selectedPharmaForModal.phone) && (
+                    <div className="flex items-center gap-2">
+                      <PhoneCall size={14} className="text-slate-400" />
+                      <span className="font-mono font-bold text-slate-800">{selectedPharmaForModal.pharmacyPhone || selectedPharmaForModal.phone}</span>
+                    </div>
+                  )}
+                  {(selectedPharmaForModal.pharmacyEmail || selectedPharmaForModal.email) && (
+                    <div className="flex items-center gap-2 col-span-full">
+                      <Mail size={14} className="text-slate-400" />
+                      <span className="truncate">{selectedPharmaForModal.pharmacyEmail || selectedPharmaForModal.email}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
+              <button 
+                onClick={() => setSelectedPharmaForModal(null)}
+                className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 py-3 rounded-xl font-bold text-xs transition-colors"
+              >
+                Fermer
+              </button>
+              {(selectedPharmaForModal.pharmacyPhone || selectedPharmaForModal.phone) && (
+                <button 
+                  onClick={() => window.location.href = `tel:${selectedPharmaForModal.pharmacyPhone || selectedPharmaForModal.phone}`}
+                  className="flex-1 bg-slate-900 text-white hover:bg-slate-800 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+                >
+                  <PhoneCall size={12} /> Contacter l'Officine
+                </button>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

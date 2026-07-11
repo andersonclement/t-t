@@ -26,6 +26,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   resendVerification: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  updateUserProfile: (newData: any) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               displayName: user.displayName,
               photoURL: user.photoURL,
               role: 'patient',
+              status: 'activated',
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
             };
@@ -136,6 +138,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         displayName: name,
         photoURL: null,
         role: role || 'patient',
+        status: (role || 'patient') === 'pharmacist' ? 'pending_technical_file' : 'activated',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -188,8 +191,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => signOut(auth);
 
+  const updateUserProfile = async (newData: any) => {
+    if (!auth.currentUser) throw new Error("Aucun utilisateur connecté.");
+    const userRef = doc(db, 'users', auth.currentUser.uid);
+    await setDoc(userRef, { ...newData, updatedAt: serverTimestamp() }, { merge: true });
+    setProfile((prev: any) => ({ ...prev, ...newData, updatedAt: new Date().toISOString() }));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signInAsDemo, signUpWithEmail, signInWithEmail, resetPassword, logout, resendVerification, refreshUser }}>
+    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signInAsDemo, signUpWithEmail, signInWithEmail, resetPassword, logout, resendVerification, refreshUser, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

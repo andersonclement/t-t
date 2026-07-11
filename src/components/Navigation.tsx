@@ -234,20 +234,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </AnimatePresence>
       </main>
       
-      {/* Floating Emergency Button */}
-      <div className="fixed bottom-24 right-4 md:bottom-8 md:right-8 z-40 flex flex-col gap-3">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-rose-600 text-white p-4 rounded-2xl shadow-xl shadow-rose-200 flex items-center gap-3 group transition-all"
-          onClick={() => window.location.href = 'tel:15'}
-        >
-          <PhoneCall size={20} className="relative z-10" />
-          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 font-bold whitespace-nowrap uppercase tracking-widest text-xs">
-            Urgence 15 / 112
-          </span>
-        </motion.button>
-      </div>
       <MobileBottomNav />
       <AIAssistant />
     </div>

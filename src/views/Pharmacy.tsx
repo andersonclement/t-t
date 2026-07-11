@@ -618,7 +618,7 @@ export function Pharmacy() {
                           <h2 className="text-2xl font-display font-bold">Analyse AI Terminée</h2>
                           <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                             Document Authentifié par DiagAI
+                             Document Authentifié par Care IA
                           </p>
                        </div>
                     </div>

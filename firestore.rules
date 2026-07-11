@@ -34,7 +34,6 @@ service cloud.firestore {
         && data.displayName is string && data.displayName.size() <= 100
         && data.email is string && data.email.size() <= 100
         && data.role in ['patient', 'pharmacist', 'hospital']
-        && data.createdAt == request.time
         && data.updatedAt == request.time;
     }
 
@@ -53,13 +52,15 @@ service cloud.firestore {
 
     // USERS: Split collection PII isolation
     match /users/{userId} {
-      allow get: if isSignedIn() && (request.auth.uid == userId || isPharmacist());
-      allow list: if isPharmacist(); // Only pharmacists can list users for directory
+      allow get: if (isSignedIn() && request.auth.uid == userId) || isPharmacist() || (resource != null && resource.data.role == 'pharmacist');
+      allow list: if isPharmacist() || resource.data.role == 'pharmacist';
       allow create: if isSignedIn() && request.auth.uid == userId 
         && isValidUser(incoming())
+        && incoming().createdAt == request.time
         && (incoming().role == 'patient' || incoming().role == 'pharmacist'); 
       allow update: if isSignedIn() && request.auth.uid == userId 
         && isValidUser(incoming())
+        && incoming().createdAt == existing().createdAt
         && isEmailVerified() // Require verified email for profile updates
         && incoming().email == existing().email // Email is immutable via client
         && incoming().role == existing().role; // Role is immutable via client
@@ -69,6 +70,17 @@ service cloud.firestore {
     match /medications/{medicationId} {
       allow read: if true;
       allow write: if isPharmacist() && isEmailVerified() && isValidId(medicationId);
+    }
+
+    // MEDICATION STOCK: Public read/list, restricted write for pharmacists
+    match /medication_stock/{medId} {
+      allow read, list: if true;
+      allow write: if isPharmacist() && isEmailVerified();
+    }
+
+    // STOCK MOVEMENTS: Only pharmacists can read/write their stock logs
+    match /stock_movements/{movementId} {
+      allow read, write: if isPharmacist() && isEmailVerified();
     }
 
     // ORDERS: Relational sync & access

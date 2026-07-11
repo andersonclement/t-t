@@ -16,7 +16,9 @@ import {
   Maximize2,
   Minimize2,
   Activity,
-  AlertTriangle
+  AlertTriangle,
+  Car,
+  Footprints
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -93,6 +95,10 @@ export function MapView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'pharmacy' | 'hospital' | 'lab'>('all');
   
+  // Map style and Google Maps integration state
+  const [mapStyle, setMapStyle] = useState<'google_roadmap' | 'google_altered' | 'google_hybrid' | 'google_terrain' | 'osm'>('google_roadmap');
+  const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "44a563acc4145db94b88e1aafd9b8fca815b61e47a3fb3e1528edebb11308d69";
+
   // Default user location is central Akwa, Douala
   const [userLocation, setUserLocation] = useState<[number, number]>([4.0450, 9.7000]);
   const [activeActor, setActiveActor] = useState<HealthActor | null>(MOCK_ACTORS[0]);
@@ -104,6 +110,7 @@ export function MapView() {
   const [routeDistance, setRouteDistance] = useState<string>('');
   const [routeDuration, setRouteDuration] = useState<string>('');
   const [isRouting, setIsRouting] = useState<boolean>(false);
+  const [travelMode, setTravelMode] = useState<'driving' | 'walking'>('driving');
 
   // Fetch actual user location if permitted
   useEffect(() => {
@@ -169,7 +176,8 @@ export function MapView() {
       const endLng = end[1];
       const endLat = end[0];
       
-      const url = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?geometries=geojson&overview=full`;
+      const profile = travelMode === 'walking' ? 'foot' : 'driving';
+      const url = `https://router.project-osrm.org/route/v1/${profile}/${startLng},${startLat};${endLng},${endLat}?geometries=geojson&overview=full`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("OSRM Routing failed");
       
@@ -200,13 +208,19 @@ export function MapView() {
       const dist = getStraightLineDistance(start, end);
       setRouteDistance(dist);
       const rawDistanceInKm = parseFloat(dist.replace(/[^\d.]/g, '')) * (dist.includes('m') && !dist.includes('km') ? 0.001 : 1);
-      setRouteDuration(`${Math.max(1, Math.round(rawDistanceInKm * 3.5))} min`);
+      
+      if (travelMode === 'walking') {
+        // Walking speed is approx 5 km/h -> 12 min per km
+        setRouteDuration(`${Math.max(1, Math.round(rawDistanceInKm * 12))} min`);
+      } else {
+        setRouteDuration(`${Math.max(1, Math.round(rawDistanceInKm * 3.5))} min`);
+      }
     } finally {
       setIsRouting(false);
     }
   };
 
-  // Re-run routing when user moves or target changes
+  // Re-run routing when user moves, target changes, or travelMode changes
   useEffect(() => {
     if (activeActor) {
       calculateRoute(userLocation, activeActor.coordinates);
@@ -215,7 +229,7 @@ export function MapView() {
       setRouteDistance('');
       setRouteDuration('');
     }
-  }, [activeActor, userLocation]);
+  }, [activeActor, userLocation, travelMode]);
 
   const customIcon = (type: string, isActive: boolean) => {
     const color = type === 'hospital' ? '#2563eb' : type === 'pharmacy' ? '#10b981' : '#a855f7';
@@ -255,8 +269,11 @@ export function MapView() {
   });
 
   const getAIAdvice = (actor: HealthActor, distance: string, duration: string) => {
+    if (travelMode === 'walking') {
+      return `🚶 Trajet de marche active vers ${actor.name} (${distance}, environ ${duration}). Conseillé pour garder la forme et éviter les embouteillages. Restez vigilant sur les axes de Douala.`;
+    }
     if (actor.type === 'hospital') {
-      return `🩺 Trajet médical urgent vers ${actor.name}. Medimap-IA vous conseille d'éviter l'avenue de l'Unité aux heures de pointe et d'accéder par les voies secondaires d'Akwa. Trafic modéré.`;
+      return `🩺 Trajet médical urgent vers ${actor.name}. Care IA vous conseille d'éviter l'avenue de l'Unité aux heures de pointe et d'accéder par les voies secondaires d'Akwa. Trafic modéré.`;
     } else if (actor.type === 'pharmacy') {
       return `💊 Route directe vers ${actor.name}. Le revêtement routier est goudronné et fluide pour une arrivée rapide et sécurisée.`;
     } else {
@@ -334,6 +351,34 @@ export function MapView() {
                     {routeDistance || activeActor.distance}
                   </span>
                 </div>
+              </div>
+
+              {/* Transport Mode Selector */}
+              <div className="grid grid-cols-2 bg-slate-50 border border-slate-100 p-1 rounded-xl">
+                <button
+                  onClick={() => setTravelMode('driving')}
+                  className={cn(
+                    "flex items-center justify-center gap-2 py-1.5 rounded-lg text-xs font-bold transition-all",
+                    travelMode === 'driving' 
+                      ? "bg-white text-slate-800 shadow-sm border border-slate-100" 
+                      : "text-slate-400 hover:text-slate-600"
+                  )}
+                >
+                  <Car size={14} />
+                  En voiture
+                </button>
+                <button
+                  onClick={() => setTravelMode('walking')}
+                  className={cn(
+                    "flex items-center justify-center gap-2 py-1.5 rounded-lg text-xs font-bold transition-all",
+                    travelMode === 'walking' 
+                      ? "bg-white text-brand-600 shadow-sm border border-slate-100" 
+                      : "text-slate-400 hover:text-brand-600"
+                  )}
+                >
+                  <Footprints size={14} />
+                  À pied
+                </button>
               </div>
 
               {/* Travel duration and details */}
@@ -473,11 +518,26 @@ export function MapView() {
           scrollWheelZoom={true} 
           className="w-full h-full"
         >
-          {/* High-quality standard OSM TileLayer to guarantee bright and highly legible roads and quartiers */}
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          {/* High-quality Google Maps TileLayer with multiple layout options or standard fallback OSM */}
+          {mapStyle === 'osm' ? (
+            <TileLayer
+              key="style-osm"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+          ) : (
+            <TileLayer
+              key={`style-${mapStyle}`}
+              attribution='&copy; Google Maps'
+              url={`https://mt{s}.google.com/vt/lyrs=${
+                mapStyle === 'google_roadmap' ? 'm' : 
+                mapStyle === 'google_altered' ? 'r' : 
+                mapStyle === 'google_hybrid' ? 'y' : 'p'
+              }&x={x}&y={y}&z={z}&key=${GOOGLE_MAPS_API_KEY}`}
+              subdomains="0123"
+              maxZoom={20}
+            />
+          )}
           <MapController center={mapCenter} isExpanded={isExpanded} />
           <ResizeListener />
 
@@ -576,6 +636,65 @@ export function MapView() {
           </div>
         </div>
 
+        {/* Floating Map Style Selector */}
+        <div className="absolute top-4 right-4 z-[1000] flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-2xl border border-slate-100 shadow-xl max-w-[calc(100vw-32px)] overflow-x-auto">
+          <button
+            onClick={() => setMapStyle('google_roadmap')}
+            className={cn(
+              "px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-tight transition-all whitespace-nowrap",
+              mapStyle === 'google_roadmap' 
+                ? "bg-slate-900 text-white shadow-sm" 
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            Google Plan
+          </button>
+          <button
+            onClick={() => setMapStyle('google_altered')}
+            className={cn(
+              "px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-tight transition-all whitespace-nowrap",
+              mapStyle === 'google_altered' 
+                ? "bg-slate-900 text-white shadow-sm" 
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            Plan Épuré
+          </button>
+          <button
+            onClick={() => setMapStyle('google_hybrid')}
+            className={cn(
+              "px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-tight transition-all whitespace-nowrap",
+              mapStyle === 'google_hybrid' 
+                ? "bg-slate-900 text-white shadow-sm" 
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            Satellite
+          </button>
+          <button
+            onClick={() => setMapStyle('google_terrain')}
+            className={cn(
+              "px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-tight transition-all whitespace-nowrap",
+              mapStyle === 'google_terrain' 
+                ? "bg-slate-900 text-white shadow-sm" 
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            Relief
+          </button>
+          <button
+            onClick={() => setMapStyle('osm')}
+            className={cn(
+              "px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-tight transition-all whitespace-nowrap",
+              mapStyle === 'osm' 
+                ? "bg-slate-900 text-white shadow-sm" 
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            OSM
+          </button>
+        </div>
+
         {/* Dynamic Desktop Routing Panel Overlay */}
         {activeActor && routeDistance && (
           <div className="absolute top-16 left-4 right-4 md:left-6 md:right-auto md:w-80 z-[1000] hidden md:block">
@@ -608,6 +727,34 @@ export function MapView() {
                     Durée estimée : {routeDuration}
                   </p>
                 </div>
+              </div>
+
+              {/* Transport Mode Selector */}
+              <div className="grid grid-cols-2 bg-slate-50 border border-slate-100 p-1 rounded-xl">
+                <button
+                  onClick={() => setTravelMode('driving')}
+                  className={cn(
+                    "flex items-center justify-center gap-2 py-1 rounded-lg text-[10px] font-black transition-all",
+                    travelMode === 'driving' 
+                      ? "bg-white text-slate-800 shadow-sm border border-slate-100" 
+                      : "text-slate-400 hover:text-slate-600"
+                  )}
+                >
+                  <Car size={12} />
+                  En voiture
+                </button>
+                <button
+                  onClick={() => setTravelMode('walking')}
+                  className={cn(
+                    "flex items-center justify-center gap-2 py-1 rounded-lg text-[10px] font-black transition-all",
+                    travelMode === 'walking' 
+                      ? "bg-white text-brand-600 shadow-sm border border-slate-100" 
+                      : "text-slate-400 hover:text-brand-600"
+                  )}
+                >
+                  <Footprints size={12} />
+                  À pied
+                </button>
               </div>
 
               <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100">

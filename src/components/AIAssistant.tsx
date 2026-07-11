@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, X, Send, User, Bot, Sparkles } from 'lucide-react';
 import { chatWithMedicalCoach } from '../services/geminiService';
+import { useAuth } from './AuthContext';
+import { useOrders } from './OrderContext';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '../lib/utils';
 
 export function AIAssistant() {
+  const { profile } = useAuth();
+  const { orders } = useOrders();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([
-    { role: 'model', text: 'Bonjour ! Je suis votre assistant PharmaConnect. Comment puis-je vous aider aujourd\'hui ?' }
+    { role: 'model', text: 'Bonjour ! Je suis Care IA. Comment puis-je vous aider aujourd\'hui ?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -26,7 +30,7 @@ export function AIAssistant() {
       parts: [{ text: m.text }] 
     }));
 
-    const response = await chatWithMedicalCoach(userMessage, history);
+    const response = await chatWithMedicalCoach(userMessage, history, profile, orders);
     setMessages(prev => [...prev, { role: 'model', text: response || '' }]);
     setIsTyping(false);
   };
@@ -54,7 +58,7 @@ export function AIAssistant() {
               <div className="flex items-center gap-2">
                 <Bot className="w-6 h-6" />
                 <div>
-                  <h3 className="font-display font-bold">Coach Santé IA</h3>
+                  <h3 className="font-display font-bold">Care IA</h3>
                   <p className="text-xs text-blue-100 italic">Conseils et orientation</p>
                 </div>
               </div>
@@ -108,7 +112,7 @@ export function AIAssistant() {
                 </button>
               </div>
               <p className="text-[10px] text-slate-400 mt-2 text-center">
-              ⚠️ L'IA ne remplace pas un avis médical. En cas d'urgence vitale, contactez le 15 (SAMU) ou le 112.
+              ⚠️ L'IA ne remplace pas un avis médical. Consultez un professionnel de santé.
               </p>
             </div>
           </motion.div>

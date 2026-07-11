@@ -15,10 +15,14 @@ import {
   Bot
 } from 'lucide-react';
 import { chatWithMedicalCoach } from '../services/geminiService';
+import { useAuth } from '../components/AuthContext';
+import { useOrders } from '../components/OrderContext';
 import { cn } from '../lib/utils';
 
 // Diagnostic Tool component
 function DiagnosticAssistant() {
+  const { profile } = useAuth();
+  const { orders } = useOrders();
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +48,7 @@ function DiagnosticAssistant() {
         parts: [{ text: m.content }] 
       }));
 
-      const response = await chatWithMedicalCoach(userMessage.content, history);
+      const response = await chatWithMedicalCoach(userMessage.content, history, profile, orders);
       setMessages(prev => [...prev, { role: 'assistant', content: response || "Désolé, je n'ai pas pu générer de réponse." }]);
     } catch (error) {
       console.error(error);
@@ -62,7 +66,7 @@ function DiagnosticAssistant() {
                <Brain size={18} className="md:w-5 md:h-5" />
             </div>
             <div>
-               <h3 className="font-display font-bold text-sm md:text-base">Assistant DiagAI</h3>
+               <h3 className="font-display font-bold text-sm md:text-base">Care IA</h3>
                <p className="text-[9px] md:text-[10px] text-emerald-400 font-bold uppercase tracking-widest">En ligne & Sécurisé</p>
             </div>
          </div>
@@ -168,10 +172,10 @@ export function AISante() {
            <div className="bg-slate-900 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl space-y-4 md:space-y-6">
               <div className="flex items-center gap-3">
                  <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-lg md:rounded-xl flex items-center justify-center"><ShieldCheck size={18} className="text-brand-500" /></div>
-                 <h3 className="font-display font-bold text-base md:text-lg">Confidialité AI</h3>
+                 <h3 className="font-display font-bold text-base md:text-lg">Confidentialité AI</h3>
               </div>
               <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
-                 Toutes vos conversations avec DiagAI sont anonymisées et sécurisées au Cameroun.
+                 Toutes vos conversations avec Care IA sont anonymisées et sécurisées au Cameroun.
               </p>
               <button className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 md:py-4 rounded-xl md:rounded-2xl transition-all text-[10px] md:text-xs uppercase tracking-widest">
                  Règles de sécurité

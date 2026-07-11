@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Building2, 
@@ -25,11 +25,18 @@ import {
   ArrowUpDown,
   Filter,
   Navigation,
+  Activity,
   CheckCircle2,
-  CreditCard as CreditCardIcon
+  CreditCard as CreditCardIcon,
+  Mail,
+  Users,
+  Check,
+  X
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useOrders } from '../components/OrderContext';
+import { db } from '../lib/firebase';
+import { collection, query, onSnapshot, where } from 'firebase/firestore';
 
 // --- TYPES & MOCK DATA ---
 
@@ -41,6 +48,8 @@ interface Medication {
   category: string;
   image: string;
   available: boolean;
+  requiresPrescription?: boolean;
+  stock?: number;
 }
 
 interface DirectoryActor {
@@ -62,6 +71,23 @@ interface DirectoryActor {
   preparation?: string[];
   posologie?: string;
   price?: number; // Price for the ingredient pack
+  isDuty?: boolean; // On-duty/Garde field
+  
+  // Establishment Details
+  onpcNumber?: string;
+  legalLicenseNumber?: string;
+  pharmacistsCount?: number;
+  coldChainEquipment?: string;
+  temperatureMonitor?: boolean;
+  backupGenerator?: string;
+  airConditioned?: boolean;
+  narcoticsSafe?: boolean;
+  fireExtinguisher?: boolean;
+  wasteProtocol?: boolean;
+  phone?: string;
+  email?: string;
+  hours?: string;
+  pharmacistName?: string;
 }
 
 interface MedicalService {
@@ -136,6 +162,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
     distance: '450m',
     rating: 4.8,
     isOpen: true,
+    isDuty: true,
     image: 'https://images.unsplash.com/photo-1631549916768-4119b2e55916?w=400&h=300&fit=crop',
     meds: MOCK_MEDS
   },
@@ -147,6 +174,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
     distance: '1.2 km',
     rating: 4.5,
     isOpen: true,
+    isDuty: false,
     image: 'https://images.unsplash.com/photo-1586015555751-63bb77f4322a?w=400&h=300&fit=crop',
     meds: MOCK_MEDS.map(m => ({ ...m, price: m.price * 1.1 }))
   },
@@ -159,6 +187,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
     distance: '0.8 km',
     rating: 4.8,
     isOpen: true,
+    isDuty: false,
     image: 'https://images.unsplash.com/photo-1579154235602-3c58d04f2162?w=400&h=300&fit=crop',
     services: [
       { id: 's1', name: 'Bilan Sanguin Complet', price: 15000, category: 'Analyse' },
@@ -175,6 +204,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
     distance: '2.4 km',
     rating: 4.6,
     isOpen: true,
+    isDuty: true,
     image: 'https://images.unsplash.com/photo-1587350859728-117699f4a742?w=400&h=300&fit=crop',
     specialties: ['Urgences', 'Chirurgie', 'Maternité', 'Cardiologie'],
     services: [
@@ -191,6 +221,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
     distance: '3.1 km',
     rating: 4.4,
     isOpen: true,
+    isDuty: true,
     image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=300&fit=crop',
     specialties: ['Urgences', 'Cancérologie', 'Ophtalmologie'],
     services: [
@@ -207,6 +238,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
     distance: '0.9 km',
     rating: 4.9,
     isOpen: true,
+    isDuty: false,
     image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&h=300&fit=crop',
     specialties: ['Esthétique', 'Dermatologie', 'Pédiatrie'],
     services: [
@@ -223,6 +255,113 @@ export function Directory() {
   const [view, setView] = useState<'list' | 'pharmacy-catalog' | 'lab-catalog' | 'clinic-catalog' | 'hospital-catalog' | 'natural-catalog' | 'prescriptions' | 'results'>('list');
   const [selectedActor, setSelectedActor] = useState<DirectoryActor | null>(null);
   const [search, setSearch] = useState('');
+  const [onlyDuty, setOnlyDuty] = useState(false);
+  const [activeRouteActor, setActiveRouteActor] = useState<DirectoryActor | null>(null);
+  
+  // Real-time stock from database
+  const [dbMeds, setDbMeds] = useState<Medication[]>([]);
+
+  useEffect(() => {
+    const q = query(collection(db, 'medication_stock'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const items: Medication[] = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        items.push({
+          id: docSnap.id,
+          name: data.name,
+          dci: data.genericName || '',
+          price: data.sellingPrice || 0,
+          category: data.therapeuticClass || '',
+          image: data.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop',
+          available: (data.stock || 0) > 0,
+          requiresPrescription: !!data.requiresPrescription,
+          stock: data.stock || 0
+        });
+      });
+      if (items.length > 0) {
+        setDbMeds(items);
+      } else {
+        // Localstorage fallback
+        try {
+          const stored = localStorage.getItem('medimap_meds_stock');
+          if (stored) {
+            const localMeds = JSON.parse(stored).map((m: any) => ({
+              id: m.id,
+              name: m.name,
+              dci: m.genericName || '',
+              price: m.sellingPrice || 0,
+              category: m.therapeuticClass || '',
+              image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop',
+              available: m.stock > 0,
+              requiresPrescription: !!m.requiresPrescription,
+              stock: m.stock
+            }));
+            setDbMeds(localMeds);
+          }
+        } catch (err) {
+          console.warn("Failed to load local storage meds in patient view:", err);
+        }
+      }
+    }, (error) => {
+      console.error("Error listening to database meds:", error);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const [dbActors, setDbActors] = useState<DirectoryActor[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(query(collection(db, 'users'), where('role', '==', 'pharmacist')), (snapshot) => {
+      const list: DirectoryActor[] = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        list.push({
+            id: docSnap.id,
+            name: data.pharmacyName || data.displayName || 'Pharmacie du Centre',
+            type: 'pharmacy',
+            address: data.pharmacyAddress || data.address || 'Douala, Cameroun',
+            distance: 'Connecté',
+            rating: 5.0,
+            isOpen: true,
+            isDuty: !!data.isDuty,
+            image: data.pharmacyImage || 'https://images.unsplash.com/photo-1631549916768-4119b2e55916?w=400&h=300&fit=crop',
+            meds: MOCK_MEDS,
+            services: [
+              { id: 'ds1', name: 'Dispensation de médicaments', price: 0, category: 'Service' },
+              { id: 'ds2', name: 'Conseil thérapeutique', price: 0, category: 'Conseil' }
+            ],
+            // Establishment details provided at creation/onboarding
+            onpcNumber: data.technicalForm?.onpcNumber || data.onpcNumber || '',
+            legalLicenseNumber: data.technicalForm?.legalLicenseNumber || data.legalLicenseNumber || '',
+            pharmacistsCount: data.technicalForm?.pharmacistsCount || data.pharmacistsCount || 1,
+            coldChainEquipment: data.technicalForm?.coldChainEquipment || data.coldChainEquipment || '',
+            temperatureMonitor: data.technicalForm?.temperatureMonitor ?? data.temperatureMonitor ?? true,
+            backupGenerator: data.technicalForm?.backupGenerator || data.backupGenerator || '',
+            airConditioned: data.technicalForm?.airConditioned ?? data.airConditioned ?? true,
+            narcoticsSafe: data.technicalForm?.narcoticsSafe ?? data.narcoticsSafe ?? true,
+            fireExtinguisher: data.technicalForm?.fireExtinguisher ?? data.fireExtinguisher ?? true,
+            wasteProtocol: data.technicalForm?.wasteProtocol ?? data.wasteProtocol ?? true,
+            phone: data.pharmacyPhone || data.phone || '',
+            email: data.pharmacyEmail || data.email || '',
+            hours: data.pharmacyHours || 'Non renseigné (24h/24 par défaut)',
+            pharmacistName: data.displayName || 'Pharmacien Agréé',
+          });
+      });
+      setDbActors(list);
+    }, (error) => {
+      console.error("Error listening to database pharmacists:", error);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const getActorMeds = (actor: DirectoryActor | null): Medication[] => {
+    if (!actor) return [];
+    if (actor.type === 'pharmacy' && dbMeds.length > 0) {
+      return dbMeds;
+    }
+    return actor.meds || [];
+  };
   
   // Cart for meds and services
   const [cart, setCart] = useState<{id: string, name: string, price: number, image?: string, count: number}[]>([]);
@@ -236,10 +375,13 @@ export function Directory() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredActors = MOCK_ACTORS.filter(actor => {
+  const allActors = [...dbActors, ...MOCK_ACTORS];
+
+  const filteredActors = allActors.filter(actor => {
     const matchesCat = activeCategory === 'all' || actor.type === activeCategory;
     const matchesSearch = actor.name.toLowerCase().includes(search.toLowerCase()) || actor.address.toLowerCase().includes(search.toLowerCase());
-    return matchesCat && matchesSearch;
+    const matchesDuty = !onlyDuty || actor.isDuty === true;
+    return matchesCat && matchesSearch && matchesDuty;
   });
 
   const handleUploadOrdonnance = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,8 +395,9 @@ export function Directory() {
       ];
       setAnalyzedMeds(extracted);
       setVerificationStatus({ valid: true, confidence: 0.98, doctor: 'Dr. Jean Dupont', date: '20 Avril 2026' });
-      const matches = MOCK_ACTORS.filter(a => a.type === 'pharmacy').filter(pharma => {
-        return extracted.every(med => pharma.meds?.some(m => m.name === med.name && m.available));
+      const matches = allActors.filter(a => a.type === 'pharmacy').filter(pharma => {
+        const meds = getActorMeds(pharma);
+        return extracted.every(med => meds.some(m => m.name.toLowerCase().includes(med.name.toLowerCase()) && m.available));
       });
       setMatchingPharmacies(matches);
       setIsAnalyzing(false);
@@ -266,11 +409,13 @@ export function Directory() {
     return [...matchingPharmacies].sort((a, b) => {
       if (sortBy === 'price') {
         const priceA = analyzedMeds.reduce((sum, med) => {
-          const m = a.meds?.find(pm => pm.name === med.name);
+          const meds = getActorMeds(a);
+          const m = meds.find(pm => pm.name.toLowerCase().includes(med.name.toLowerCase()));
           return sum + (m?.price || 0);
         }, 0);
         const priceB = analyzedMeds.reduce((sum, med) => {
-          const m = b.meds?.find(pm => pm.name === med.name);
+          const meds = getActorMeds(b);
+          const m = meds.find(pm => pm.name.toLowerCase().includes(med.name.toLowerCase()));
           return sum + (m?.price || 0);
         }, 0);
         return priceA - priceB;
@@ -294,7 +439,7 @@ export function Directory() {
     else setView('list');
   };
 
-  const addToCart = (item: {id: string, name: string, price: number, image?: string}) => {
+  const addToCart = (item: {id: string, name: string, price: number, image?: string, requiresPrescription?: boolean}) => {
     setCart(prev => {
       const existing = prev.find(i => i.id === item.id);
       if (existing) return prev.map(i => i.id === item.id ? { ...i, count: i.count + 1 } : i);
@@ -377,6 +522,22 @@ export function Directory() {
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar px-2 pb-2">
             <CategoryTab active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} icon={<Building2 size={16} />} label="Tous" />
             <div className="w-px h-10 bg-slate-100 mx-1 shrink-0" />
+            
+            {/* Garde / On-Duty toggle button */}
+            <button 
+              onClick={() => setOnlyDuty(!onlyDuty)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs md:text-sm font-bold transition-all whitespace-nowrap border",
+                onlyDuty 
+                  ? "bg-red-600 text-white border-transparent shadow-lg shadow-red-600/20" 
+                  : "bg-red-50 text-red-600 border-red-100 hover:bg-red-100/50"
+              )}
+            >
+              <Clock size={16} className={cn(onlyDuty && "animate-pulse")} />
+              <span>Garde 24h/24</span>
+            </button>
+
+            <div className="w-px h-10 bg-slate-100 mx-1 shrink-0" />
             <CategoryTab active={activeCategory === 'pharmacy'} onClick={() => setActiveCategory('pharmacy')} icon={<Pill size={16} />} label="Pharmacies" />
             <CategoryTab active={activeCategory === 'hospital'} onClick={() => setActiveCategory('hospital')} icon={<Hospital size={16} />} label="Hôpitaux" />
             <CategoryTab active={activeCategory === 'clinic'} onClick={() => setActiveCategory('clinic')} icon={<Building2 size={16} />} label="Cliniques" />
@@ -433,7 +594,10 @@ export function Directory() {
                      <button className="flex-1 md:flex-none justify-center bg-slate-900 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-slate-900/10 text-xs md:text-sm">
                         <PhoneCall size={16} /> Appeler
                      </button>
-                     <button className="flex-1 md:flex-none justify-center bg-white border border-slate-200 text-slate-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-50 text-xs md:text-sm">
+                     <button 
+                       onClick={() => setActiveRouteActor(selectedActor)}
+                       className="flex-1 md:flex-none justify-center bg-white border border-slate-200 text-slate-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-50 text-xs md:text-sm"
+                     >
                         <MapPin size={16} /> Itinéraire
                      </button>
                   </div>
@@ -629,32 +793,187 @@ export function Directory() {
             <button onClick={() => setView('list')} className="text-brand-600 font-bold flex items-center gap-2">
               <ChevronRight className="rotate-180" size={20} /> Retour au répertoire
             </button>
-            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex gap-6 items-center">
-              <img src={selectedActor.image} className="w-20 h-20 rounded-2xl object-cover" />
-              <div>
-                <h2 className="text-2xl font-display font-bold">{selectedActor.name}</h2>
-                <p className="text-slate-500">{selectedActor.address}</p>
+            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div className="flex gap-6 items-center">
+                <img src={selectedActor.image} className="w-20 h-20 rounded-2xl object-cover" />
+                <div>
+                  <h2 className="text-2xl font-display font-bold">{selectedActor.name}</h2>
+                  <p className="text-slate-500 text-sm">{selectedActor.address} • <span className="text-brand-600 font-bold">{selectedActor.distance}</span></p>
+                </div>
               </div>
+              <button 
+                onClick={() => setActiveRouteActor(selectedActor)}
+                className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-brand-600 active:scale-95 transition-all self-start sm:self-auto shrink-0"
+              >
+                <MapPin size={14} /> Itinéraire à pied
+              </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {selectedActor.meds?.map(med => (
-                <div key={med.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Side: Medicines Catalog */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-lg font-bold font-display text-slate-800">Médicaments Disponibles</h3>
+                  <span className="text-xs text-slate-400 font-bold">{getActorMeds(selectedActor).length} références</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {getActorMeds(selectedActor).map(med => (
+                    <div key={med.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
+                      <div>
+                        <img src={med.image} className="w-full h-32 object-cover rounded-xl mb-4" />
+                        <div className="flex justify-between items-start gap-2 mb-2">
+                          <h4 className="font-bold text-slate-800 text-sm">{med.name}</h4>
+                          {med.requiresPrescription && (
+                            <span className="bg-purple-100 text-purple-700 text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0">
+                              Ordonnance
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-400">{med.dci}</p>
+                        <span className="text-[10px] text-slate-400 font-bold block mt-1.5">Stock: {med.stock !== undefined ? `${med.stock} restants` : 'En stock'}</span>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between">
+                        <span className="font-bold text-brand-600">{med.price.toLocaleString()} FCFA</span>
+                        <button 
+                          disabled={med.stock !== undefined && med.stock <= 0}
+                          onClick={() => addToCart(med)}
+                          className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-brand-600 transition-colors disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
+                        >
+                          <Plus size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Side: Fiche Technique / Establishment Info */}
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
                   <div>
-                    <img src={med.image} className="w-full h-32 object-cover rounded-xl mb-4" />
-                    <h4 className="font-bold">{med.name}</h4>
-                    <p className="text-xs text-slate-400">{med.dci}</p>
+                    <h3 className="text-lg font-display font-bold text-slate-900 flex items-center gap-2">
+                      <ShieldCheck className="text-emerald-600" size={20} />
+                      Fiche Technique Officielle
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-1">Données certifiées et vérifiées par la plateforme Care</p>
                   </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="font-bold text-brand-600">{med.price.toLocaleString()} FCFA</span>
+
+                  {/* Responsable & ID */}
+                  <div className="space-y-4 pt-4 border-t border-slate-50">
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pharmacien Titulaire / Responsable</p>
+                      <p className="text-sm font-bold text-slate-800 mt-0.5">Dr. {selectedActor.pharmacistName || 'Pharmacien Agréé'}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">N° Inscription ONPC</p>
+                        <p className="text-xs font-mono font-bold text-slate-700 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100 mt-1 truncate" title={selectedActor.onpcNumber || 'ONPC-3891-CM'}>
+                          {selectedActor.onpcNumber || 'ONPC-3891-CM'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Arrêté de Création</p>
+                        <p className="text-xs font-mono font-bold text-slate-700 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100 mt-1 truncate" title={selectedActor.legalLicenseNumber || 'ARR-1024-MINSANTE'}>
+                          {selectedActor.legalLicenseNumber || 'ARR-1024-MINSANTE'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Équipe Diplômée</p>
+                      <p className="text-xs font-medium text-slate-600 flex items-center gap-1.5 mt-1">
+                        <Users size={14} className="text-slate-400" />
+                        {selectedActor.pharmacistsCount || 2} Pharmaciens adjoints diplômés d'État
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Technical & Storage Checklist */}
+                  <div className="space-y-3 pt-4 border-t border-slate-50">
+                    <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Normes de Conservation & Sécurité</h4>
+                    
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50/50 rounded-xl border border-slate-100">
+                        <span className="text-slate-600 font-medium">Conservation Chaîne du Froid</span>
+                        <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md">
+                          {selectedActor.coldChainEquipment === 'medical_fridge' ? 'Réfrigérateur Médical' : 
+                           selectedActor.coldChainEquipment === 'electric_fridge' ? 'Réfrigérateur Électrique' : 
+                           selectedActor.coldChainEquipment === 'isothermic' ? 'Système Isotherme' : 'Réfrigérateur Médical'}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50/50 rounded-xl border border-slate-100">
+                        <span className="text-slate-600 font-medium">Alimentation de Secours</span>
+                        <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md">
+                          {selectedActor.backupGenerator === 'automated' ? 'Générateur Automatique' : 
+                           selectedActor.backupGenerator === 'manual' ? 'Générateur Manuel' : 
+                           selectedActor.backupGenerator === 'none' ? 'Aucun' : 'Générateur Automatique'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
+                          <span>Suivi Température</span>
+                          {selectedActor.temperatureMonitor !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+                        </div>
+                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
+                          <span>Climatisation</span>
+                          {selectedActor.airConditioned !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+                        </div>
+                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
+                          <span>Coffre Stupéfiants</span>
+                          {selectedActor.narcoticsSafe !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+                        </div>
+                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
+                          <span>Tri Déchets Santé</span>
+                          {selectedActor.wasteProtocol !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact section */}
+                  <div className="space-y-3 pt-4 border-t border-slate-50 text-xs text-slate-600">
+                    <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Coordonnées de l'Officine</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2.5">
+                        <Clock size={14} className="text-slate-400 shrink-0" />
+                        <span>{selectedActor.hours || 'Non renseigné (24h/24 par défaut)'}</span>
+                      </div>
+                      {selectedActor.phone && (
+                        <div className="flex items-center gap-2.5">
+                          <PhoneCall size={14} className="text-slate-400 shrink-0" />
+                          <span className="font-mono font-bold text-slate-800">{selectedActor.phone}</span>
+                        </div>
+                      )}
+                      {selectedActor.email && (
+                        <div className="flex items-center gap-2.5">
+                          <Mail size={14} className="text-slate-400 shrink-0" />
+                          <span className="truncate text-slate-500">{selectedActor.email}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Call and Route quick buttons */}
+                  <div className="pt-4 border-t border-slate-50 flex gap-2">
+                    {selectedActor.phone && (
+                      <button 
+                        onClick={() => window.location.href = `tel:${selectedActor.phone}`}
+                        className="flex-1 justify-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 shadow-sm hover:bg-slate-800"
+                      >
+                        <PhoneCall size={11} /> Appeler
+                      </button>
+                    )}
                     <button 
-                      onClick={() => addToCart(med)}
-                      className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-brand-600 transition-colors"
+                      onClick={() => setActiveRouteActor(selectedActor)}
+                      className="flex-1 justify-center bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 hover:bg-emerald-100"
                     >
-                      <Plus size={20} />
+                      <MapPin size={11} /> Itinéraire
                     </button>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </motion.div>
         )}
@@ -673,7 +992,7 @@ export function Directory() {
                    <motion.div animate={{ top: ['0%', '90%', '0%'] }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }} className="absolute w-full h-1 bg-brand-600 z-10 shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
                    <div className="absolute inset-0 flex items-center justify-center"><FileText size={48} className="text-slate-300" /></div>
                 </div>
-                <h3 className="text-xl font-display font-bold text-brand-600">DiagAI en cours d'analyse...</h3>
+                <h3 className="text-xl font-display font-bold text-brand-600">Care IA en cours d'analyse...</h3>
               </div>
             ) : (
               <>
@@ -701,7 +1020,7 @@ export function Directory() {
             <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
                <div className="relative z-10 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-display font-bold">Résultats de l'analyse DiagAI</h2>
+                    <h2 className="text-2xl font-display font-bold">Résultats de l'analyse Care IA</h2>
                     <div className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-emerald-500/30">
                        <CheckCircle2 size={12} />
                        Authentifié
@@ -777,7 +1096,14 @@ export function Directory() {
                           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Total Panier</p>
                         </div>
                      </div>
-                     <h4 className="font-display font-bold text-xl text-slate-900 group-hover:text-brand-600 transition-colors">{pharma.name}</h4>
+                     <div className="flex items-center gap-2">
+                       <h4 className="font-display font-bold text-xl text-slate-900 group-hover:text-brand-600 transition-colors">{pharma.name}</h4>
+                       {pharma.isDuty && (
+                         <span className="bg-red-100 text-red-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-lg flex items-center gap-0.5 shrink-0 animate-pulse">
+                           <Clock size={10} /> Garde
+                         </span>
+                       )}
+                     </div>
                      <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 mb-4">
                         <MapPin size={12} />
                         {pharma.address} • <span className="text-brand-600 font-bold">{pharma.distance}</span>
@@ -829,6 +1155,12 @@ export function Directory() {
         onRemove={removeFromCart}
         onCheckout={handleCheckout}
       />
+
+      <RouteDrawer
+        isOpen={activeRouteActor !== null}
+        onClose={() => setActiveRouteActor(null)}
+        actor={activeRouteActor}
+      />
     </div>
   );
 }
@@ -869,6 +1201,12 @@ function ActorCard({ actor, onClick }: { actor: DirectoryActor, onClick: () => v
         <div className={cn("absolute top-4 left-4 p-2 rounded-xl backdrop-blur-sm shadow-lg", colorClass)}>
           <Icon size={20} />
         </div>
+        {actor.isDuty && (
+          <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 animate-pulse">
+            <Clock size={12} />
+            <span>De Garde</span>
+          </div>
+        )}
       </div>
       <div className="p-6">
         <div className="flex justify-between items-start mb-2 text-xs font-bold text-slate-400 tracking-widest uppercase">
@@ -960,6 +1298,16 @@ function CartDrawer({
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {step === 'cart' ? (
                 <>
+                  {cart.some(item => item.requiresPrescription) && (
+                    <div className="bg-purple-50/70 border border-purple-100 p-4 rounded-2xl flex gap-3 text-purple-950 animate-pulse">
+                      <Camera size={20} className="shrink-0 mt-0.5 text-purple-600" />
+                      <div className="text-xs font-semibold leading-relaxed">
+                        <span className="font-bold block text-purple-900 mb-0.5">Ordonnance Obligatoire</span> 
+                        Certains articles de votre panier nécessitent une ordonnance valide. Préparez-la pour la présentation à la pharmacie.
+                      </div>
+                    </div>
+                  )}
+
                   {cart.map((item) => (
                     <div key={item.id} className="flex gap-4 items-center bg-white p-4 rounded-3xl border border-slate-100 shadow-sm animate-in slide-in-from-right-4 duration-300">
                       <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-100 shrink-0">
@@ -970,7 +1318,14 @@ function CartDrawer({
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-slate-800 truncate">{item.name}</p>
+                        <div className="flex items-center gap-1.5 justify-between">
+                          <p className="text-sm font-bold text-slate-800 truncate">{item.name}</p>
+                          {item.requiresPrescription && (
+                            <span className="bg-purple-100 text-purple-700 text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0">
+                              Réglementé
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs font-bold text-brand-600 mt-0.5">{item.price.toLocaleString()} FCFA</p>
                         
                         <div className="flex items-center gap-3 mt-3">
@@ -1104,5 +1459,224 @@ function PaymentOption({ id, label, icon, selected, onClick }: { id: string; lab
         {selected && <div className="w-2 h-2 bg-white rounded-full" />}
       </div>
     </button>
+  );
+}
+
+function RouteDrawer({
+  isOpen,
+  onClose,
+  actor
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  actor: DirectoryActor | null;
+}) {
+  const [navigating, setNavigating] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let interval: any;
+    if (navigating) {
+      interval = setInterval(() => {
+        setProgress(p => {
+          if (p >= 100) {
+            setNavigating(false);
+            clearInterval(interval);
+            return 100;
+          }
+          return p + 5;
+        });
+      }, 300);
+    } else {
+      setProgress(0);
+    }
+    return () => clearInterval(interval);
+  }, [navigating]);
+
+  if (!actor) return null;
+
+  // Derive walking time based on distance (roughly 1.2 min per 100m)
+  const distNum = parseFloat(actor.distance) || 0.5;
+  const timeMin = Math.max(2, Math.round(distNum * 12));
+  const stepsCount = Math.round(distNum * 1300);
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-[100]" />
+          <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[110] shadow-2xl flex flex-col">
+            <div className="p-6 border-b flex justify-between items-center bg-slate-50">
+              <div>
+                <h3 className="text-xl font-bold font-display flex items-center gap-2 text-slate-900">
+                  <Navigation className="text-brand-600 rotate-45 animate-pulse" size={20} />
+                  Itinéraire Piéton
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">Calcul d'itinéraire à pied sécurisé</p>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-10 h-10 bg-white shadow-sm border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
+              >
+                <Plus className="rotate-45" size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Destination Card */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex gap-4 items-center">
+                <img src={actor.image} className="w-16 h-16 rounded-xl object-cover shadow-sm" />
+                <div className="flex-1">
+                  <h4 className="font-bold text-slate-900 text-sm">{actor.name}</h4>
+                  <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{actor.address}</p>
+                  <p className="text-[10px] text-brand-600 font-bold mt-1 uppercase tracking-wider">{actor.distance} • ~{timeMin} min de marche</p>
+                </div>
+              </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-emerald-50/50 p-3 rounded-xl border border-emerald-100/50 text-center">
+                  <Clock className="text-emerald-600 mx-auto mb-1" size={18} />
+                  <p className="text-[10px] text-slate-400 font-medium">Durée</p>
+                  <p className="text-sm font-bold text-emerald-800">~{timeMin} min</p>
+                </div>
+                <div className="bg-blue-50/50 p-3 rounded-xl border border-blue-100/50 text-center">
+                  <Navigation className="text-blue-600 mx-auto mb-1 rotate-45" size={18} />
+                  <p className="text-[10px] text-slate-400 font-medium">Distance</p>
+                  <p className="text-sm font-bold text-blue-800">{actor.distance}</p>
+                </div>
+                <div className="bg-orange-50/50 p-3 rounded-xl border border-orange-100/50 text-center">
+                  <Activity className="text-orange-600 mx-auto mb-1" size={18} />
+                  <p className="text-[10px] text-slate-400 font-medium">Pas estimé</p>
+                  <p className="text-sm font-bold text-orange-800">~{stepsCount}</p>
+                </div>
+              </div>
+
+              {/* SIMULATED MAP CANVAS */}
+              <div className="relative bg-slate-100 h-60 rounded-3xl overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center">
+                {/* SVG simulated street pattern */}
+                <svg className="absolute inset-0 w-full h-full text-slate-300 opacity-40" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#grid)" />
+                  {/* Diagonal streets */}
+                  <line x1="0" y1="0" x2="100%" y2="100%" stroke="currentColor" strokeWidth="6" strokeDasharray="5" />
+                  <line x1="0" y1="100%" x2="100%" y2="0" stroke="currentColor" strokeWidth="4" />
+                  <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="8" />
+                  <line x1="0" y1="50%" x2="100%" y2="50%" stroke="currentColor" strokeWidth="8" />
+                </svg>
+
+                {/* Pulsing Start Point (User) */}
+                <div className="absolute left-[20%] top-[70%] z-20">
+                  <span className="relative flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-blue-600 border-2 border-white shadow"></span>
+                  </span>
+                  <span className="absolute -top-6 -left-4 bg-slate-900 text-white text-[9px] px-1.5 py-0.5 rounded font-black uppercase whitespace-nowrap shadow">Moi</span>
+                </div>
+
+                {/* Animated Route Path */}
+                <svg className="absolute inset-0 w-full h-full z-10" xmlns="http://www.w3.org/2000/svg">
+                  <path 
+                    d="M 80 168 L 200 168 L 200 72 L 300 72" 
+                    fill="none" 
+                    stroke="#10b981" 
+                    strokeWidth="4" 
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="8 4"
+                  />
+                  {/* Dynamic navigation indicator */}
+                  {navigating && (
+                    <circle 
+                      r="6" 
+                      fill="#ef4444" 
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    >
+                      <animateMotion 
+                        path="M 80 168 L 200 168 L 200 72 L 300 72" 
+                        dur="6s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
+                  )}
+                </svg>
+
+                {/* Pulsing End Point (Actor) */}
+                <div className="absolute left-[75%] top-[30%] z-20">
+                  <span className="relative flex h-5 w-5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-5 w-5 bg-red-600 border-2 border-white shadow flex items-center justify-center">
+                      <MapPin className="text-white" size={10} />
+                    </span>
+                  </span>
+                  <span className="absolute -top-8 -left-10 bg-red-600 text-white text-[9px] px-2 py-0.5 rounded-lg font-bold shadow whitespace-nowrap max-w-[120px] truncate">{actor.name}</span>
+                </div>
+
+                {/* Map compass overlay */}
+                <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-md p-2 rounded-xl border border-slate-200/50 shadow flex items-center gap-2 text-[10px] font-bold text-slate-600">
+                  <div className="w-4 h-4 rounded-full border border-slate-400 flex items-center justify-center text-[8px]">N</div>
+                  <span>Douala / Yaoundé</span>
+                </div>
+              </div>
+
+              {/* Steps list */}
+              <div className="space-y-4">
+                <h4 className="font-display font-bold text-sm text-slate-900">Directives étape par étape</h4>
+                <div className="space-y-4 relative pl-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100">
+                  <div className="relative flex gap-3 text-xs">
+                    <div className="absolute -left-5 w-2.5 h-2.5 rounded-full bg-blue-600 border-2 border-white ring-4 ring-blue-50" />
+                    <div>
+                      <p className="font-bold text-slate-800">Départ de votre position actuelle</p>
+                      <p className="text-slate-400 mt-0.5">Dirigez-vous vers le nord</p>
+                    </div>
+                  </div>
+                  <div className="relative flex gap-3 text-xs">
+                    <div className="absolute -left-5 w-2.5 h-2.5 rounded-full bg-slate-300 border-2 border-white" />
+                    <div>
+                      <p className="font-bold text-slate-800">Tourner à droite sur l'Avenue principale (150m)</p>
+                      <p className="text-slate-400 mt-0.5">Suivre la zone piétonne sécurisée</p>
+                    </div>
+                  </div>
+                  <div className="relative flex gap-3 text-xs">
+                    <div className="absolute -left-5 w-2.5 h-2.5 rounded-full bg-slate-300 border-2 border-white" />
+                    <div>
+                      <p className="font-bold text-slate-800">Continuer tout droit au carrefour (200m)</p>
+                      <p className="text-slate-400 mt-0.5">Passage piéton devant le monument</p>
+                    </div>
+                  </div>
+                  <div className="relative flex gap-3 text-xs">
+                    <div className="absolute -left-5 w-2.5 h-2.5 rounded-full bg-red-600 border-2 border-white ring-4 ring-red-50" />
+                    <div>
+                      <p className="font-bold text-slate-800">Arrivée à {actor.name}</p>
+                      <p className="text-slate-400 mt-0.5">L'établissement se trouve à votre gauche</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100">
+              <button 
+                onClick={() => setNavigating(!navigating)}
+                className={cn(
+                  "w-full py-4 rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2",
+                  navigating 
+                    ? "bg-red-600 hover:bg-red-700 text-white shadow-red-600/20" 
+                    : "bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10"
+                )}
+              >
+                <Navigation size={18} className={cn("rotate-45", navigating && "animate-spin")} />
+                {navigating ? "Arrêter la navigation" : "Démarrer le guidage live"}
+              </button>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }

@@ -20,9 +20,10 @@ import { Landing } from './views/Landing';
 import { VerifyEmail } from './views/VerifyEmail';
 import { Orders } from './views/Orders';
 import { Inventory } from './views/Inventory';
+import { PharmacistOnboarding } from './views/PharmacistOnboarding';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -31,6 +32,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   );
   
   if (!user) return <Navigate to="/welcome" replace />;
+  
+  // If the user is a pharmacist and not activated, show the onboarding screen
+  if (profile?.role === 'pharmacist' && profile?.status !== 'activated') {
+    return <PharmacistOnboarding />;
+  }
   
   return <>{children}</>;
 }
