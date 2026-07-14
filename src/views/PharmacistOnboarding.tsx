@@ -172,7 +172,7 @@ export function PharmacistOnboarding() {
               <ShieldCheck className="text-white" size={20} />
             </div>
             <div>
-              <span className="font-display font-bold text-lg md:text-xl text-slate-900 leading-none">Medimap</span>
+              <span className="font-display font-bold text-lg md:text-xl text-slate-900 leading-none">Dokta</span>
               <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest block">
                 Agrément & Conformité Officinale
               </span>
@@ -201,7 +201,7 @@ export function PharmacistOnboarding() {
             Activez votre Espace Pharmacien
           </h1>
           <p className="text-slate-500 text-sm mt-1.5 max-w-xl mx-auto leading-relaxed">
-            Pour garantir la sécurité sanitaire de nos patients, l'accès à l'inventaire et aux commandes de Medimap est conditionné par la vérification réglementaire de votre officine.
+            Pour garantir la sécurité sanitaire de nos patients, l'accès à l'inventaire et aux commandes de Dokta est conditionné par la vérification réglementaire de votre officine.
           </p>
         </div>
 
@@ -432,7 +432,7 @@ export function PharmacistOnboarding() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                     <Calendar size={20} className="text-brand-600" />
-                    2. Prendre Rendez-vous d'Inspection avec l'Équipe Medimap
+                    2. Prendre Rendez-vous d'Inspection avec l'Équipe Dokta
                   </h3>
                   <p className="text-slate-400 text-xs mt-1 leading-relaxed">
                     Afin d'activer définitivement votre compte, vous devez planifier un entretien obligatoire avec l'un de nos pharmaciens validateurs. Cet entretien permet de confirmer les informations de votre fiche technique.
@@ -470,7 +470,7 @@ export function PharmacistOnboarding() {
                       <Building2 size={28} className={appointment.type === 'onsite' ? 'text-emerald-600' : 'text-slate-400'} />
                       <div className="text-center">
                         <p className="font-bold">Visite Physique sur Site</p>
-                        <p className="text-[10px] text-slate-400 font-medium mt-1">Un inspecteur Medimap se déplace dans vos locaux (Douala/Yaoundé uniquement).</p>
+                        <p className="text-[10px] text-slate-400 font-medium mt-1">Un inspecteur Dokta se déplace dans vos locaux (Douala/Yaoundé uniquement).</p>
                       </div>
                     </button>
                   </div>
@@ -580,7 +580,7 @@ export function PharmacistOnboarding() {
                       Dossier en attente d'activation
                     </h3>
                     <p className="text-slate-500 text-xs leading-relaxed font-medium">
-                      Votre dossier d'accréditation a été soumis avec succès à l'équipe de validation de Medimap Cameroun. 
+                      Votre dossier d'accréditation a été soumis avec succès à l'équipe de validation de Dokta Cameroun. 
                     </p>
                   </div>
                 </div>
@@ -611,7 +611,7 @@ export function PharmacistOnboarding() {
                 <div className="bg-brand-50 p-4 rounded-2xl border border-brand-100 flex gap-3 items-start">
                   <HelpCircle size={18} className="text-brand-600 shrink-0 mt-0.5" />
                   <p className="text-xs text-brand-900 leading-relaxed font-medium">
-                    <strong>Que se passe-t-il maintenant ?</strong> Un inspecteur de Medimap vous appellera au numéro de téléphone spécifié le <strong>{appointment.date ? new Date(appointment.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : ''} à {appointment.time}</strong> pour mener l'évaluation de conformité de l'officine. Votre espace complet sera déverrouillé immédiatement à l'issue de cet entretien.
+                    <strong>Que se passe-t-il maintenant ?</strong> Un inspecteur de Dokta vous appellera au numéro de téléphone spécifié le <strong>{appointment.date ? new Date(appointment.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : ''} à {appointment.time}</strong> pour mener l'évaluation de conformité de l'officine. Votre espace complet sera déverrouillé immédiatement à l'issue de cet entretien.
                   </p>
                 </div>
 
@@ -639,13 +639,13 @@ export function PharmacistOnboarding() {
                 <Settings className="text-amber-400 animate-spin-slow" size={16} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white uppercase tracking-wider">Simulateur d'Administration Medimap</h4>
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider">Simulateur d'Administration Dokta</h4>
                 <p className="text-[10px] text-slate-400">Réservé pour la revue et l'évaluation du projet</p>
               </div>
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed">
-              En conditions réelles de production, la validation est accordée par l'administrateur Medimap après vérification minutieuse lors du rendez-vous d'inspection. Pour faciliter l'évaluation de cette application, vous pouvez forcer la validation immédiate ou réinitialiser le processus d'onboarding à tout moment :
+              En conditions réelles de production, la validation est accordée par l'administrateur Dokta après vérification minutieuse lors du rendez-vous d'inspection. Pour faciliter l'évaluation de cette application, vous pouvez forcer la validation immédiate ou réinitialiser le processus d'onboarding à tout moment :
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -677,7 +677,7 @@ export function PharmacistOnboarding() {
       {/* Footer */}
       <footer className="bg-white border-t border-slate-100 py-6 text-center shrink-0">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-          © 2026 Medimap Cameroun - Ministère de la Santé Publique
+          © 2026 Dokta Cameroun - Ministère de la Santé Publique
         </p>
       </footer>
 

@@ -62,14 +62,16 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     let q;
     if (profile.role === 'pharmacist') {
-      // Pharmacists see all orders (initially, or can be scoped to their pharmacy)
-      q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+      // Scope to the pharmacist's own orders
+      q = query(
+        collection(db, 'orders'),
+        where('pharmacistId', '==', auth.currentUser.uid)
+      );
     } else {
       // Patients only see their own orders
       q = query(
         collection(db, 'orders'), 
-        where('patientId', '==', auth.currentUser.uid),
-        orderBy('createdAt', 'desc')
+        where('patientId', '==', auth.currentUser.uid)
       );
     }
 
@@ -89,6 +91,14 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
           }) : 'Date inconnue'
         } as Order;
       });
+
+      // Sort in JavaScript to guarantee index-free operation
+      ordersData.sort((a, b) => {
+        const timeA = a.createdAt?.seconds || 0;
+        const timeB = b.createdAt?.seconds || 0;
+        return timeB - timeA;
+      });
+
       setOrders(ordersData);
       setLoading(false);
     }, (error) => {

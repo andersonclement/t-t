@@ -31,7 +31,7 @@ export function Landing() {
             <div className="w-8 h-8 md:w-10 md:h-10 bg-brand-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-brand-600/20">
               <HeartPulse className="text-white" size={20} />
             </div>
-            <span className="text-lg md:text-xl font-display font-bold tracking-tight">Medimap</span>
+            <span className="text-lg md:text-xl font-display font-bold tracking-tight">Dokta</span>
           </div>
           <div className="flex items-center gap-4 md:gap-8">
             <div className="hidden md:flex items-center gap-8">
@@ -66,7 +66,7 @@ export function Landing() {
               <span className="text-brand-600">Cameroun</span>, simplifiée.
             </h1>
             <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Medimap centralise pharmacies, hôpitaux et laboratoires. Analysez vos ordonnances par IA et trouvez vos médicaments instantanément au meilleur prix.
+              Dokta centralise pharmacies, hôpitaux et laboratoires. Analysez vos ordonnances par IA et trouvez vos médicaments instantanément au meilleur prix.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0">
               <button 
@@ -116,7 +116,8 @@ export function Landing() {
                     </div>
                     <div>
                        <p className="text-[10px] font-bold text-slate-400 uppercase">Ordonnance</p>
-                       <p className="text-xs md:text-sm font-bold text-slate-900 leading-tight">Analyse 100% Validée</p>
+                       <p className="text-xs md:text-sm font-bold text-slate-900 leading-tight">Analyse Care IA</p>
+                       <p className="text-[10px] text-slate-500 font-medium leading-none mt-1">En attente de validation médicale</p>
                     </div>
                  </div>
               </div>
@@ -186,9 +187,9 @@ export function Landing() {
             <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
               <HeartPulse className="text-white" size={18} />
             </div>
-            <span className="text-lg font-display font-bold">Medimap</span>
+            <span className="text-lg font-display font-bold">Dokta</span>
           </div>
-          <p className="text-slate-500 text-sm">© 2026 Medimap Cameroun. Tous droits réservés.</p>
+          <p className="text-slate-500 text-sm">© 2026 Dokta Cameroun. Tous droits réservés.</p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors">Politique de confidentialité</a>
             <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors">Mentions légales</a>

@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useOrders } from '../components/OrderContext';
+import { useAuth } from '../components/AuthContext';
 import { db } from '../lib/firebase';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
 
@@ -251,6 +252,7 @@ const MOCK_ACTORS: DirectoryActor[] = [
 
 export function Directory() {
   const { addOrder } = useOrders();
+  const { user, profile } = useAuth();
   const [activeCategory, setActiveCategory] = useState<'all' | 'hospital' | 'clinic' | 'laboratory' | 'pharmacy' | 'natural'>('all');
   const [view, setView] = useState<'list' | 'pharmacy-catalog' | 'lab-catalog' | 'clinic-catalog' | 'hospital-catalog' | 'natural-catalog' | 'prescriptions' | 'results'>('list');
   const [selectedActor, setSelectedActor] = useState<DirectoryActor | null>(null);
@@ -358,7 +360,15 @@ export function Directory() {
   const getActorMeds = (actor: DirectoryActor | null): Medication[] => {
     if (!actor) return [];
     if (actor.type === 'pharmacy' && dbMeds.length > 0) {
-      return dbMeds;
+      const filtered = dbMeds.filter((med: any) => med.pharmacistId === actor.id);
+      if (filtered.length > 0) {
+        return filtered;
+      }
+      // If it's a real database actor (from Firestore), but has 0 real meds, return empty
+      const isDbActor = dbActors.some(dba => dba.id === actor.id);
+      if (isDbActor) {
+        return [];
+      }
     }
     return actor.meds || [];
   };
@@ -467,38 +477,39 @@ export function Directory() {
       items: cart,
       total,
       paymentMethod,
-      mode: 'pickup'
+      mode: 'pickup',
+      pharmacistId: selectedActor?.id
     });
     setCart([]);
     setIsCartOpen(false);
   };
 
   return (
-    <div className="space-y-6">
-      <header className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="space-y-1">
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-slate-900 tracking-tight flex items-center gap-3">
-              <div className="w-2 h-10 bg-brand-600 rounded-full" />
+    <div className="space-y-4">
+      <header className="space-y-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-0.5">
+            <h1 className="text-xl md:text-2xl font-display font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
               Répertoire Santé
             </h1>
-            <p className="text-slate-500 font-medium">Accédez aux meilleurs établissements du Cameroun.</p>
+            <p className="text-slate-400 text-xs font-medium">Accédez aux meilleurs établissements du Cameroun.</p>
           </div>
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full md:w-auto">
             <button 
               onClick={() => setView('prescriptions')}
-              className="flex-1 md:flex-none bg-slate-900 text-white px-6 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-xl shadow-slate-900/20 active:scale-95 transition-all"
+              className="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
             >
-              <Camera size={18} />
+              <Camera size={14} />
               <span>Ordonnance</span>
             </button>
             <button 
               onClick={() => setIsCartOpen(true)}
-              className="relative bg-white p-3.5 rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-90"
+              className="relative bg-white p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-90"
             >
-              <ShoppingCart size={22} />
+              <ShoppingCart size={18} />
               {cart.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-black ring-4 ring-white">
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] w-4.5 h-4.5 flex items-center justify-center rounded-full font-bold ring-2 ring-white">
                   {cart.length}
                 </span>
               )}
@@ -507,42 +518,42 @@ export function Directory() {
         </div>
 
         {/* Search & Categories Bar combined for cleaner look */}
-        <div className="bg-white p-2 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 space-y-2">
+        <div className="bg-white p-2 rounded-2xl border border-slate-200 space-y-2">
           <div className="relative">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
               type="text" 
               placeholder="Rechercher une pharmacie, un laboratoire, un hôpital..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50/50 border-none rounded-[1.5rem] py-4 pl-14 pr-4 focus:ring-0 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
+              className="w-full bg-white border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
             />
           </div>
           
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar px-2 pb-2">
-            <CategoryTab active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} icon={<Building2 size={16} />} label="Tous" />
-            <div className="w-px h-10 bg-slate-100 mx-1 shrink-0" />
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-1 pb-1">
+            <CategoryTab active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} icon={<Building2 size={12} />} label="Tous" />
+            <div className="w-px h-6 bg-slate-200 mx-1 shrink-0" />
             
             {/* Garde / On-Duty toggle button */}
             <button 
               onClick={() => setOnlyDuty(!onlyDuty)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs md:text-sm font-bold transition-all whitespace-nowrap border",
+                "flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap border",
                 onlyDuty 
-                  ? "bg-red-600 text-white border-transparent shadow-lg shadow-red-600/20" 
-                  : "bg-red-50 text-red-600 border-red-100 hover:bg-red-100/50"
+                  ? "bg-white text-red-600 border-red-500 font-extrabold" 
+                  : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
               )}
             >
-              <Clock size={16} className={cn(onlyDuty && "animate-pulse")} />
+              <Clock size={12} className={cn(onlyDuty && "animate-pulse")} />
               <span>Garde 24h/24</span>
             </button>
 
-            <div className="w-px h-10 bg-slate-100 mx-1 shrink-0" />
-            <CategoryTab active={activeCategory === 'pharmacy'} onClick={() => setActiveCategory('pharmacy')} icon={<Pill size={16} />} label="Pharmacies" />
-            <CategoryTab active={activeCategory === 'hospital'} onClick={() => setActiveCategory('hospital')} icon={<Hospital size={16} />} label="Hôpitaux" />
-            <CategoryTab active={activeCategory === 'clinic'} onClick={() => setActiveCategory('clinic')} icon={<Building2 size={16} />} label="Cliniques" />
-            <CategoryTab active={activeCategory === 'laboratory'} onClick={() => setActiveCategory('laboratory')} icon={<Microscope size={16} />} label="Labs" />
-            <CategoryTab active={activeCategory === 'natural'} onClick={() => setActiveCategory('natural')} icon={<Leaf size={16} />} label="Médecine Bio" />
+            <div className="w-px h-6 bg-slate-200 mx-1 shrink-0" />
+            <CategoryTab active={activeCategory === 'pharmacy'} onClick={() => setActiveCategory('pharmacy')} icon={<Pill size={12} />} label="Pharmacies" />
+            <CategoryTab active={activeCategory === 'hospital'} onClick={() => setActiveCategory('hospital')} icon={<Hospital size={12} />} label="Hôpitaux" />
+            <CategoryTab active={activeCategory === 'clinic'} onClick={() => setActiveCategory('clinic')} icon={<Building2 size={12} />} label="Cliniques" />
+            <CategoryTab active={activeCategory === 'laboratory'} onClick={() => setActiveCategory('laboratory')} icon={<Microscope size={12} />} label="Labs" />
+            <CategoryTab active={activeCategory === 'natural'} onClick={() => setActiveCategory('natural')} icon={<Leaf size={12} />} label="Médecine Bio" />
           </div>
         </div>
       </header>
@@ -567,58 +578,57 @@ export function Directory() {
             key={`${selectedActor.type}-catalog`}
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="space-y-6"
+            className="space-y-4"
           >
-            <button onClick={() => setView('list')} className="text-brand-600 font-bold flex items-center gap-2 mb-4 hover:translate-x-[-4px] transition-transform">
-              <ChevronRight className="rotate-180" size={20} /> Retour au répertoire
+            <button onClick={() => setView('list')} className="text-emerald-600 font-bold flex items-center gap-1 mb-2 hover:translate-x-[-2px] transition-transform text-xs">
+              <ChevronRight className="rotate-180" size={16} /> Retour au répertoire
             </button>
             
-            <div className="bg-white p-4 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4 md:gap-8 items-center md:items-start relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-brand-50 rounded-bl-full -z-0 opacity-50" />
-               <img src={selectedActor.image} className="w-24 h-24 md:w-40 md:h-40 rounded-2xl md:rounded-3xl object-cover shadow-xl relative z-10" />
-               <div className="flex-1 space-y-3 md:space-y-4 relative z-10 text-center md:text-left">
-                  <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                     <span className="bg-brand-100 text-brand-700 px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest">{selectedActor.type}</span>
+            <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col md:flex-row gap-4 items-center md:items-start relative overflow-hidden">
+               <img src={selectedActor.image} className="w-16 h-16 md:w-24 md:h-24 rounded-xl object-cover" />
+               <div className="flex-1 space-y-2 text-center md:text-left">
+                  <div className="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                     <span className="bg-white border border-slate-200 text-slate-500 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider">{selectedActor.type}</span>
                      {selectedActor.isOpen ? (
-                       <span className="bg-emerald-100 text-emerald-700 px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Ouvert</span>
+                       <span className="bg-white border border-emerald-500 text-emerald-700 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider">Ouvert</span>
                      ) : (
-                       <span className="bg-red-100 text-red-700 px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Fermé</span>
+                       <span className="bg-white border border-red-500 text-red-700 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider">Fermé</span>
                      )}
                   </div>
-                  <h2 className="text-2xl md:text-4xl font-display font-bold text-slate-900 leading-tight">{selectedActor.name}</h2>
-                  <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 text-slate-500 text-[10px] md:text-sm">
-                     <p className="flex items-center justify-center md:justify-start gap-1"><MapPin size={14} /> {selectedActor.address}</p>
-                     <p className="flex items-center justify-center md:justify-start gap-1 md:border-l md:pl-4"><StarIcon size={14} className="text-orange-400 fill-current" /> {selectedActor.rating}</p>
+                  <h2 className="text-lg md:text-xl font-display font-bold text-slate-900 leading-tight">{selectedActor.name}</h2>
+                  <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 text-slate-400 text-[10px] md:text-xs">
+                     <p className="flex items-center justify-center md:justify-start gap-1"><MapPin size={12} /> {selectedActor.address}</p>
+                     <p className="flex items-center justify-center md:justify-start gap-1 md:border-l md:pl-3"><StarIcon size={12} className="text-orange-400 fill-current" /> {selectedActor.rating}</p>
                   </div>
-                  <div className="flex gap-2 md:gap-3 flex-wrap justify-center md:justify-start">
-                     <button className="flex-1 md:flex-none justify-center bg-slate-900 text-white px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-slate-900/10 text-xs md:text-sm">
-                        <PhoneCall size={16} /> Appeler
+                  <div className="flex gap-2 flex-wrap justify-center md:justify-start pt-1">
+                     <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 text-xs">
+                        <PhoneCall size={12} /> Appeler
                      </button>
                      <button 
                        onClick={() => setActiveRouteActor(selectedActor)}
-                       className="flex-1 md:flex-none justify-center bg-white border border-slate-200 text-slate-700 px-4 md:px-6 py-2.5 md:py-3 rounded-xl md:rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-50 text-xs md:text-sm"
+                       className="bg-white border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 hover:bg-slate-50 text-xs"
                      >
-                        <MapPin size={16} /> Itinéraire
+                        <MapPin size={12} /> Itinéraire
                      </button>
                   </div>
                </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-               <div className="lg:col-span-2 space-y-6">
-                  <h3 className="text-2xl font-display font-bold text-slate-900 px-2">Services & Prestations</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+               <div className="lg:col-span-2 space-y-4">
+                  <h3 className="text-sm font-display font-bold text-slate-900 px-1">Services & Prestations</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                      {selectedActor.services?.map(service => (
-                       <div key={service.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
-                          <p className="text-[10px] font-bold text-brand-600 uppercase tracking-widest mb-2">{service.category}</p>
-                          <h4 className="text-lg font-bold text-slate-900 mb-4">{service.name}</h4>
+                       <div key={service.id} className="bg-white p-4 rounded-xl border border-slate-200 group">
+                          <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest mb-1">{service.category}</p>
+                          <h4 className="text-xs font-bold text-slate-900 mb-3">{service.name}</h4>
                           <div className="flex items-center justify-between">
-                             <p className="text-2xl font-display font-bold text-slate-900">{service.price.toLocaleString()} FCFA</p>
+                             <p className="text-sm font-display font-bold text-slate-900">{service.price.toLocaleString()} FCFA</p>
                              <button 
                                onClick={() => addToCart(service)}
-                               className="bg-slate-900 text-white p-3 rounded-2xl shadow-lg shadow-slate-900/20 hover:bg-brand-600 transition-colors"
+                               className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition-colors"
                              >
-                                <Plus size={20} />
+                                <Plus size={16} />
                              </button>
                           </div>
                        </div>
@@ -626,32 +636,32 @@ export function Directory() {
                   </div>
                </div>
                
-               <div className="space-y-6">
-                  <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl space-y-6">
-                     <h3 className="text-xl font-display font-bold">Planifiez votre visite</h3>
-                     <p className="text-sm text-slate-400">Gagnez du temps en pré-payant vos actes ou en réservant un créneau.</p>
-                     <div className="space-y-4">
-                        <div className="flex items-center gap-3 bg-white/5 p-4 rounded-2xl border border-white/10">
-                           <Calendar className="text-brand-500" />
+               <div className="space-y-4">
+                  <div className="bg-white text-slate-800 p-5 rounded-xl border border-slate-200 space-y-4">
+                     <h3 className="text-sm font-display font-bold text-slate-900">Planifiez votre visite</h3>
+                     <p className="text-xs text-slate-400">Gagnez du temps en pré-payant vos actes ou en réservant un créneau.</p>
+                     <div className="space-y-3">
+                        <div className="flex items-center gap-2.5 bg-white p-3 rounded-lg border border-slate-200">
+                           <Calendar className="text-emerald-600" size={16} />
                            <div>
-                              <p className="text-xs font-bold uppercase">Prochain RDV</p>
-                              <p className="font-medium">Demain, 09:30</p>
+                              <p className="text-[9px] font-bold uppercase text-slate-400">Prochain RDV</p>
+                              <p className="text-xs font-semibold text-slate-855">Demain, 09:30</p>
                            </div>
                         </div>
-                        <button className="w-full bg-brand-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-brand-600/20 hover:scale-[1.02] active:scale-95 transition-all">
+                        <button className="w-full bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold transition-all hover:bg-emerald-700">
                            Prendre Rendez-vous
                         </button>
                      </div>
                   </div>
 
                   {selectedActor.specialties && (
-                    <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-                       <h3 className="text-lg font-display font-bold text-slate-900 mb-6">Plateau Technique</h3>
-                       <div className="space-y-3">
+                    <div className="bg-white p-5 rounded-xl border border-slate-200">
+                       <h3 className="text-sm font-display font-bold text-slate-900 mb-4">Plateau Technique</h3>
+                       <div className="space-y-2">
                           {selectedActor.specialties.map(spec => (
-                            <div key={spec} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl text-sm font-medium text-slate-700">
+                            <div key={spec} className="flex items-center justify-between p-2.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-700">
                                {spec}
-                               <ShieldCheck size={16} className="text-brand-600" />
+                               <ShieldCheck size={14} className="text-emerald-600" />
                             </div>
                           ))}
                        </div>
@@ -665,54 +675,51 @@ export function Directory() {
         {view === 'natural-catalog' && selectedActor && (
           <motion.div 
             key="natural-catalog"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
+            className="space-y-4"
           >
-            <button onClick={() => setView('list')} className="text-brand-600 font-bold flex items-center gap-2 mb-4 hover:translate-x-[-4px] transition-transform">
-              <ChevronRight className="rotate-180" size={20} /> Retour au répertoire
+            <button onClick={() => setView('list')} className="text-emerald-600 font-bold flex items-center gap-1 mb-2 hover:translate-x-[-2px] transition-transform text-xs">
+              <ChevronRight className="rotate-180" size={16} /> Retour au répertoire
             </button>
             
-            <div className="bg-slate-900 rounded-[3rem] overflow-hidden relative min-h-[400px] flex items-center p-8 md:p-16">
-               <div className="absolute inset-0 z-0">
-                  <img src={selectedActor.image} className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-1000" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/60 to-transparent" />
-               </div>
-               <div className="relative z-10 max-w-2xl space-y-6">
-                  <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest">
-                     <Leaf size={16} />
+            <div className="bg-white rounded-xl border border-slate-200 p-5 flex flex-col md:flex-row gap-5 items-center">
+               <img src={selectedActor.image} className="w-16 h-16 md:w-24 md:h-24 rounded-xl object-cover" />
+               <div className="flex-1 space-y-2 text-center md:text-left">
+                  <div className="inline-flex items-center gap-1 bg-white border border-emerald-500 text-emerald-700 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider">
+                     <Leaf size={12} />
                      Patrimoine Naturel
                   </div>
-                  <h2 className="text-5xl font-display font-bold text-white leading-tight">{selectedActor.name}</h2>
-                  <p className="text-slate-300 text-lg leading-relaxed">{selectedActor.description}</p>
-                  <div className="flex items-center gap-4 pt-4">
-                     <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-white">
+                  <h2 className="text-lg md:text-xl font-display font-bold text-slate-900 leading-tight">{selectedActor.name}</h2>
+                  <p className="text-slate-500 text-xs leading-relaxed">{selectedActor.description}</p>
+                  <div className="flex items-center justify-center md:justify-start gap-4 pt-1">
+                     <div className="flex items-center gap-1.5">
+                        <div className="w-6 h-6 rounded-md bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 text-xs">
                            {selectedActor.author?.[0]}
                         </div>
-                        <div className="text-xs">
-                           <p className="text-slate-400 uppercase font-bold tracking-widest">Auteur</p>
-                           <p className="text-white font-bold">{selectedActor.author}</p>
+                        <div className="text-left text-[10px]">
+                           <p className="text-slate-400 uppercase font-bold tracking-wider">Auteur</p>
+                           <p className="text-slate-700 font-bold">{selectedActor.author}</p>
                         </div>
                      </div>
-                     <div className="h-8 w-px bg-white/10 mx-4" />
-                     <div>
-                        <p className="text-slate-400 text-[10px] uppercase font-bold tracking-widest">Catégorie</p>
-                        <p className="text-white font-bold text-sm">{selectedActor.category}</p>
+                     <div className="h-4 w-px bg-slate-200" />
+                     <div className="text-left">
+                        <p className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Catégorie</p>
+                        <p className="text-slate-700 font-bold text-xs">{selectedActor.category}</p>
                      </div>
                   </div>
                </div>
             </div>
 
-            <div className="bg-white p-10 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-12">
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                  <div className="space-y-8">
+            <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-6">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
                      <div>
-                        <h3 className="text-2xl font-display font-bold text-slate-900 mb-4">Ingrédients requis</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <h3 className="text-xs font-display font-bold text-slate-900 mb-3 uppercase tracking-wider">Ingrédients requis</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                            {selectedActor.ingredients?.map(ing => (
-                             <div key={ing} className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl text-sm font-medium text-slate-700 border border-slate-100">
-                                <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                             <div key={ing} className="flex items-center gap-2 p-2.5 bg-white rounded-lg text-xs font-medium text-slate-700 border border-slate-200">
+                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full shrink-0" />
                                 {ing}
                              </div>
                            ))}
@@ -720,46 +727,46 @@ export function Directory() {
                      </div>
 
                      <div>
-                        <h3 className="text-2xl font-display font-bold text-slate-900 mb-4">Méthode de préparation</h3>
-                        <div className="space-y-4">
+                        <h3 className="text-xs font-display font-bold text-slate-900 mb-3 uppercase tracking-wider">Méthode de préparation</h3>
+                        <div className="space-y-3">
                            {selectedActor.preparation?.map((step, idx) => (
-                             <div key={idx} className="flex gap-4">
-                                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs">{idx + 1}</span>
-                                <p className="text-slate-600 text-sm leading-relaxed pt-1">{step}</p>
+                             <div key={idx} className="flex gap-3">
+                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-white border border-slate-300 text-slate-700 flex items-center justify-center font-bold text-xs">{idx + 1}</span>
+                                <p className="text-slate-500 text-xs leading-relaxed pt-0.5">{step}</p>
                              </div>
                            ))}
                         </div>
                      </div>
                   </div>
 
-                  <div className="space-y-8">
-                     <div className="bg-emerald-50 p-8 rounded-[2.5rem] border border-emerald-100 space-y-6">
-                        <div className="flex items-center gap-3 text-emerald-900">
-                           <ShieldCheck size={24} className="text-emerald-500" />
-                           <h4 className="text-xl font-display font-bold">Posologie & Conseils</h4>
+                  <div className="space-y-4">
+                     <div className="bg-white p-4 rounded-xl border border-emerald-500 space-y-4">
+                        <div className="flex items-center gap-2 text-emerald-900">
+                           <ShieldCheck size={16} className="text-emerald-600" />
+                           <h4 className="text-xs font-display font-bold uppercase tracking-wider">Posologie & Conseils</h4>
                         </div>
-                        <p className="text-emerald-800 font-medium bg-white/50 p-4 rounded-2xl border border-emerald-200/50">
+                        <p className="text-emerald-800 text-xs font-medium bg-white p-3 rounded-lg border border-emerald-100">
                            {selectedActor.posologie}
                         </p>
-                        <ul className="space-y-3">
+                        <ul className="space-y-2">
                            {['Respecter les dosages recommandés', 'Conserver à l\'abri de la lumière', 'Consulter un médecin si les symptômes persistent'].map(text => (
-                             <li key={text} className="flex items-center gap-3 text-sm text-emerald-700">
-                                <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+                             <li key={text} className="flex items-center gap-2 text-xs text-emerald-700">
+                                <div className="w-1 h-1 bg-emerald-400 rounded-full" />
                                 {text}
                              </li>
                            ))}
                         </ul>
                      </div>
 
-                     <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl space-y-6">
+                     <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-4">
                         <div className="flex justify-between items-end">
                            <div>
-                              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pack complet</p>
-                              <p className="text-3xl font-display font-bold">{selectedActor.price?.toLocaleString()} FCFA</p>
+                              <p className="text-slate-400 text-[9px] font-bold uppercase tracking-wider mb-0.5">Pack complet</p>
+                              <p className="text-sm font-display font-bold text-slate-900">{selectedActor.price?.toLocaleString()} FCFA</p>
                            </div>
                            <div className="text-right">
-                              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">Disponibilité</p>
-                              <p className="text-white font-bold">En stock</p>
+                              <p className="text-emerald-600 text-[9px] font-bold uppercase tracking-wider">Disponibilité</p>
+                              <p className="text-slate-700 text-xs font-bold">En stock</p>
                            </div>
                         </div>
                         <button 
@@ -771,9 +778,9 @@ export function Directory() {
                             });
                             setIsCartOpen(true);
                           }}
-                          className="w-full bg-brand-600 text-white font-bold py-5 rounded-2xl shadow-lg shadow-brand-600/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                          className="w-full bg-emerald-600 text-white font-bold py-2 rounded-lg text-xs transition-all hover:bg-emerald-700 flex items-center justify-center gap-1.5"
                         >
-                           <ShoppingCart size={20} />
+                           <ShoppingCart size={14} />
                            Commander les ingrédients
                         </button>
                      </div>
@@ -786,59 +793,59 @@ export function Directory() {
         {view === 'pharmacy-catalog' && selectedActor && (
           <motion.div 
             key="pharmacy-catalog"
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 15 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
+            className="space-y-4"
           >
-            <button onClick={() => setView('list')} className="text-brand-600 font-bold flex items-center gap-2">
-              <ChevronRight className="rotate-180" size={20} /> Retour au répertoire
+            <button onClick={() => setView('list')} className="text-emerald-600 font-bold flex items-center gap-1 mb-2 hover:translate-x-[-2px] transition-transform text-xs">
+              <ChevronRight className="rotate-180" size={16} /> Retour au répertoire
             </button>
-            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-              <div className="flex gap-6 items-center">
-                <img src={selectedActor.image} className="w-20 h-20 rounded-2xl object-cover" />
+            <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4 shadow-none">
+              <div className="flex gap-4 items-center">
+                <img src={selectedActor.image} className="w-14 h-14 rounded-lg object-cover" />
                 <div>
-                  <h2 className="text-2xl font-display font-bold">{selectedActor.name}</h2>
-                  <p className="text-slate-500 text-sm">{selectedActor.address} • <span className="text-brand-600 font-bold">{selectedActor.distance}</span></p>
+                  <h2 className="text-base font-display font-bold text-slate-900">{selectedActor.name}</h2>
+                  <p className="text-slate-400 text-xs">{selectedActor.address} • <span className="text-emerald-600 font-bold">{selectedActor.distance}</span></p>
                 </div>
               </div>
               <button 
                 onClick={() => setActiveRouteActor(selectedActor)}
-                className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-brand-600 active:scale-95 transition-all self-start sm:self-auto shrink-0"
+                className="bg-white text-slate-800 border border-slate-200 hover:bg-slate-50 px-3 py-1.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all self-start sm:self-auto shrink-0"
               >
-                <MapPin size={14} /> Itinéraire à pied
+                <MapPin size={12} /> Itinéraire à pied
               </button>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Side: Medicines Catalog */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-lg font-bold font-display text-slate-800">Médicaments Disponibles</h3>
+                  <h3 className="text-sm font-bold font-display text-slate-800">Médicaments Disponibles</h3>
                   <span className="text-xs text-slate-400 font-bold">{getActorMeds(selectedActor).length} références</span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {getActorMeds(selectedActor).map(med => (
-                    <div key={med.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
+                    <div key={med.id} className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col justify-between h-full">
                       <div>
-                        <img src={med.image} className="w-full h-32 object-cover rounded-xl mb-4" />
-                        <div className="flex justify-between items-start gap-2 mb-2">
-                          <h4 className="font-bold text-slate-800 text-sm">{med.name}</h4>
+                        <img src={med.image} className="w-full h-24 object-cover rounded-lg mb-3" />
+                        <div className="flex justify-between items-start gap-2 mb-1">
+                          <h4 className="font-bold text-slate-800 text-xs">{med.name}</h4>
                           {med.requiresPrescription && (
-                            <span className="bg-purple-100 text-purple-700 text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0">
+                            <span className="bg-white border border-red-300 text-red-600 text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0">
                               Ordonnance
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400">{med.dci}</p>
-                        <span className="text-[10px] text-slate-400 font-bold block mt-1.5">Stock: {med.stock !== undefined ? `${med.stock} restants` : 'En stock'}</span>
+                        <p className="text-[10px] text-slate-400">{med.dci}</p>
+                        <span className="text-[9px] text-slate-400 font-bold block mt-1">Stock: {med.stock !== undefined ? `${med.stock} restants` : 'En stock'}</span>
                       </div>
-                      <div className="mt-4 flex items-center justify-between">
-                        <span className="font-bold text-brand-600">{med.price.toLocaleString()} FCFA</span>
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="font-bold text-emerald-600 text-xs">{med.price.toLocaleString()} FCFA</span>
                         <button 
                           disabled={med.stock !== undefined && med.stock <= 0}
                           onClick={() => addToCart(med)}
-                          className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center hover:bg-brand-600 transition-colors disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
+                          className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center hover:bg-emerald-700 transition-colors disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
                         >
-                          <Plus size={20} />
+                          <Plus size={16} />
                         </button>
                       </div>
                     </div>
@@ -847,108 +854,114 @@ export function Directory() {
               </div>
 
               {/* Right Side: Fiche Technique / Establishment Info */}
-              <div className="space-y-6">
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
+              <div className="space-y-4">
+                <div className="bg-white p-5 rounded-xl border border-slate-200 space-y-4">
                   <div>
-                    <h3 className="text-lg font-display font-bold text-slate-900 flex items-center gap-2">
-                      <ShieldCheck className="text-emerald-600" size={20} />
-                      Fiche Technique Officielle
+                    <h3 className="text-xs font-display font-bold text-slate-900 flex items-center gap-1.5 uppercase tracking-wider">
+                      <ShieldCheck className="text-emerald-600" size={16} />
+                      {profile?.role !== 'patient' ? "Fiche Technique Officielle" : "Informations Pratiques"}
                     </h3>
-                    <p className="text-xs text-slate-400 mt-1">Données certifiées et vérifiées par la plateforme Care</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      {profile?.role !== 'patient' ? "Données certifiées et vérifiées par la plateforme Care" : "Horaires et coordonnées de l'établissement"}
+                    </p>
                   </div>
 
-                  {/* Responsable & ID */}
-                  <div className="space-y-4 pt-4 border-t border-slate-50">
-                    <div>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Pharmacien Titulaire / Responsable</p>
-                      <p className="text-sm font-bold text-slate-800 mt-0.5">Dr. {selectedActor.pharmacistName || 'Pharmacien Agréé'}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">N° Inscription ONPC</p>
-                        <p className="text-xs font-mono font-bold text-slate-700 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100 mt-1 truncate" title={selectedActor.onpcNumber || 'ONPC-3891-CM'}>
-                          {selectedActor.onpcNumber || 'ONPC-3891-CM'}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Arrêté de Création</p>
-                        <p className="text-xs font-mono font-bold text-slate-700 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100 mt-1 truncate" title={selectedActor.legalLicenseNumber || 'ARR-1024-MINSANTE'}>
-                          {selectedActor.legalLicenseNumber || 'ARR-1024-MINSANTE'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Équipe Diplômée</p>
-                      <p className="text-xs font-medium text-slate-600 flex items-center gap-1.5 mt-1">
-                        <Users size={14} className="text-slate-400" />
-                        {selectedActor.pharmacistsCount || 2} Pharmaciens adjoints diplômés d'État
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Technical & Storage Checklist */}
-                  <div className="space-y-3 pt-4 border-t border-slate-50">
-                    <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Normes de Conservation & Sécurité</h4>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50/50 rounded-xl border border-slate-100">
-                        <span className="text-slate-600 font-medium">Conservation Chaîne du Froid</span>
-                        <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md">
-                          {selectedActor.coldChainEquipment === 'medical_fridge' ? 'Réfrigérateur Médical' : 
-                           selectedActor.coldChainEquipment === 'electric_fridge' ? 'Réfrigérateur Électrique' : 
-                           selectedActor.coldChainEquipment === 'isothermic' ? 'Système Isotherme' : 'Réfrigérateur Médical'}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50/50 rounded-xl border border-slate-100">
-                        <span className="text-slate-600 font-medium">Alimentation de Secours</span>
-                        <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md">
-                          {selectedActor.backupGenerator === 'automated' ? 'Générateur Automatique' : 
-                           selectedActor.backupGenerator === 'manual' ? 'Générateur Manuel' : 
-                           selectedActor.backupGenerator === 'none' ? 'Aucun' : 'Générateur Automatique'}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
-                          <span>Suivi Température</span>
-                          {selectedActor.temperatureMonitor !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+                  {profile?.role !== 'patient' && (
+                    <>
+                      {/* Responsable & ID */}
+                      <div className="space-y-3 pt-3 border-t border-slate-100">
+                        <div>
+                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Pharmacien Titulaire / Responsable</p>
+                          <p className="text-xs font-bold text-slate-800 mt-0.5">Dr. {selectedActor.pharmacistName || 'Pharmacien Agréé'}</p>
                         </div>
-                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
-                          <span>Climatisation</span>
-                          {selectedActor.airConditioned !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">N° Inscription ONPC</p>
+                            <p className="text-[10px] font-mono font-bold text-slate-700 bg-white px-2 py-1 rounded-lg border border-slate-200 mt-1 truncate" title={selectedActor.onpcNumber || 'ONPC-3891-CM'}>
+                              {selectedActor.onpcNumber || 'ONPC-3891-CM'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Arrêté de Création</p>
+                            <p className="text-[10px] font-mono font-bold text-slate-700 bg-white px-2 py-1 rounded-lg border border-slate-200 mt-1 truncate" title={selectedActor.legalLicenseNumber || 'ARR-1024-MINSANTE'}>
+                              {selectedActor.legalLicenseNumber || 'ARR-1024-MINSANTE'}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
-                          <span>Coffre Stupéfiants</span>
-                          {selectedActor.narcoticsSafe !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
-                        </div>
-                        <div className="flex items-center justify-between p-2.5 bg-slate-50/50 rounded-xl border border-slate-100 text-[11px] font-medium text-slate-600">
-                          <span>Tri Déchets Santé</span>
-                          {selectedActor.wasteProtocol !== false ? <Check size={14} className="text-emerald-500 shrink-0" /> : <X size={14} className="text-red-500 shrink-0" />}
+
+                        <div>
+                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Équipe Diplômée</p>
+                          <p className="text-[10px] font-medium text-slate-600 flex items-center gap-1.5 mt-1">
+                            <Users size={12} className="text-slate-400" />
+                            {selectedActor.pharmacistsCount || 2} Pharmaciens adjoints diplômés d'État
+                          </p>
                         </div>
                       </div>
-                    </div>
-                  </div>
+
+                      {/* Technical & Storage Checklist */}
+                      <div className="space-y-3 pt-3 border-t border-slate-100">
+                        <h4 className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Normes de Conservation & Sécurité</h4>
+                        
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between items-center text-[10px] p-2 bg-white rounded-lg border border-slate-200">
+                            <span className="text-slate-600 font-medium">Conservation Chaîne du Froid</span>
+                            <span className="text-[9px] font-bold uppercase text-emerald-700 bg-white border border-emerald-500 px-2 py-0.5 rounded-md">
+                              {selectedActor.coldChainEquipment === 'medical_fridge' ? 'Réfrigérateur Médical' : 
+                               selectedActor.coldChainEquipment === 'electric_fridge' ? 'Réfrigérateur Électrique' : 
+                               selectedActor.coldChainEquipment === 'isothermic' ? 'Système Isotherme' : 'Réfrigérateur Médical'}
+                            </span>
+                          </div>
+
+                          <div className="flex justify-between items-center text-[10px] p-2 bg-white rounded-lg border border-slate-200">
+                            <span className="text-slate-600 font-medium">Alimentation de Secours</span>
+                            <span className="text-[9px] font-bold uppercase text-emerald-700 bg-white border border-emerald-500 px-2 py-0.5 rounded-md">
+                              {selectedActor.backupGenerator === 'automated' ? 'Générateur Automatique' : 
+                               selectedActor.backupGenerator === 'manual' ? 'Générateur Manuel' : 
+                               selectedActor.backupGenerator === 'none' ? 'Aucun' : 'Générateur Automatique'}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-1.5">
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 text-[10px] font-medium text-slate-600">
+                              <span>Suivi Température</span>
+                              {selectedActor.temperatureMonitor !== false ? <Check size={12} className="text-emerald-500 shrink-0" /> : <X size={12} className="text-red-500 shrink-0" />}
+                            </div>
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 text-[10px] font-medium text-slate-600">
+                              <span>Climatisation</span>
+                              {selectedActor.airConditioned !== false ? <Check size={12} className="text-emerald-500 shrink-0" /> : <X size={12} className="text-red-500 shrink-0" />}
+                            </div>
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 text-[10px] font-medium text-slate-600">
+                              <span>Coffre Stupéfiants</span>
+                              {selectedActor.narcoticsSafe !== false ? <Check size={12} className="text-emerald-500 shrink-0" /> : <X size={12} className="text-red-500 shrink-0" />}
+                            </div>
+                            <div className="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200 text-[10px] font-medium text-slate-600">
+                              <span>Tri Déchets Santé</span>
+                              {selectedActor.wasteProtocol !== false ? <Check size={12} className="text-emerald-500 shrink-0" /> : <X size={12} className="text-red-500 shrink-0" />}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   {/* Contact section */}
-                  <div className="space-y-3 pt-4 border-t border-slate-50 text-xs text-slate-600">
-                    <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Coordonnées de l'Officine</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2.5">
-                        <Clock size={14} className="text-slate-400 shrink-0" />
+                  <div className="space-y-3 pt-3 border-t border-slate-100 text-[11px] text-slate-600">
+                    <h4 className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Coordonnées de l'Officine</h4>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <Clock size={12} className="text-slate-400 shrink-0" />
                         <span>{selectedActor.hours || 'Non renseigné (24h/24 par défaut)'}</span>
                       </div>
                       {selectedActor.phone && (
-                        <div className="flex items-center gap-2.5">
-                          <PhoneCall size={14} className="text-slate-400 shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <PhoneCall size={12} className="text-slate-400 shrink-0" />
                           <span className="font-mono font-bold text-slate-800">{selectedActor.phone}</span>
                         </div>
                       )}
                       {selectedActor.email && (
-                        <div className="flex items-center gap-2.5">
-                          <Mail size={14} className="text-slate-400 shrink-0" />
+                        <div className="flex items-center gap-2">
+                          <Mail size={12} className="text-slate-400 shrink-0" />
                           <span className="truncate text-slate-500">{selectedActor.email}</span>
                         </div>
                       )}
@@ -956,20 +969,20 @@ export function Directory() {
                   </div>
 
                   {/* Call and Route quick buttons */}
-                  <div className="pt-4 border-t border-slate-50 flex gap-2">
+                  <div className="pt-3 border-t border-slate-100 flex gap-2">
                     {selectedActor.phone && (
                       <button 
                         onClick={() => window.location.href = `tel:${selectedActor.phone}`}
-                        className="flex-1 justify-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 shadow-sm hover:bg-slate-800"
+                        className="flex-1 justify-center bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-bold text-[10px] flex items-center gap-1.5 transition-all active:scale-95 shadow-none"
                       >
-                        <PhoneCall size={11} /> Appeler
+                        <PhoneCall size={10} /> Appeler
                       </button>
                     )}
                     <button 
                       onClick={() => setActiveRouteActor(selectedActor)}
-                      className="flex-1 justify-center bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 hover:bg-emerald-100"
+                      className="flex-1 justify-center bg-white border border-emerald-600 text-emerald-700 px-3 py-2 rounded-lg font-bold text-[10px] flex items-center gap-1.5 transition-all active:scale-95 hover:bg-emerald-50"
                     >
-                      <MapPin size={11} /> Itinéraire
+                      <MapPin size={10} /> Itinéraire
                     </button>
                   </div>
                 </div>
@@ -1016,22 +1029,22 @@ export function Directory() {
         )}
 
         {view === 'results' && (
-          <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
-               <div className="relative z-10 space-y-4">
+          <motion.div key="results" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            <div className="bg-white text-slate-800 p-5 rounded-xl border border-emerald-500 relative overflow-hidden">
+               <div className="relative z-10 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-display font-bold">Résultats de l'analyse Care IA</h2>
-                    <div className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-emerald-500/30">
-                       <CheckCircle2 size={12} />
-                       Authentifié
+                    <h2 className="text-sm font-display font-bold text-slate-900">Analyse IA Préliminaire (Care IA)</h2>
+                    <div className="flex items-center gap-1.5 bg-white text-amber-600 px-2 py-0.5 rounded border border-amber-500 text-[8px] font-bold uppercase tracking-wider">
+                       <Clock size={10} />
+                       Validation requise
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {analyzedMeds.map(m => (
-                      <div key={m.name} className="bg-white/10 p-4 rounded-2xl border border-white/5 backdrop-blur-sm">
-                        <p className="text-emerald-400 font-bold text-[10px] uppercase tracking-tighter mb-1">Médicament Détecté</p>
-                        <p className="font-bold">{m.name}</p>
-                        <p className="text-xs opacity-60 italic">{m.dosage}</p>
+                      <div key={m.name} className="bg-white p-3 rounded-lg border border-slate-200">
+                        <p className="text-emerald-600 font-bold text-[9px] uppercase tracking-wider mb-0.5">Médicament Détecté</p>
+                        <p className="font-bold text-xs text-slate-800">{m.name}</p>
+                        <p className="text-[10px] text-slate-400 italic">{m.dosage}</p>
                       </div>
                     ))}
                   </div>
@@ -1039,17 +1052,17 @@ export function Directory() {
             </div>
 
             {/* Filters Bar */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm">
-               <div className="flex items-center gap-2 text-slate-500 px-2">
-                  <Filter size={16} />
-                  <span className="text-xs font-bold uppercase tracking-widest">Trier par :</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-2 rounded-xl border border-slate-200">
+               <div className="flex items-center gap-1.5 text-slate-500 px-1">
+                  <Filter size={14} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Trier par :</span>
                </div>
-               <div className="flex bg-slate-50 p-1.5 rounded-2xl gap-1 w-full sm:w-auto">
+               <div className="flex bg-white border border-slate-200 p-1 rounded-lg gap-1 w-full sm:w-auto">
                   <button 
                     onClick={() => setSortBy('price')}
                     className={cn(
-                      "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2",
-                      sortBy === 'price' ? "bg-white text-brand-600 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                      "flex-1 sm:flex-none px-3 py-1 rounded text-xs font-bold transition-all flex items-center justify-center gap-1",
+                      sortBy === 'price' ? "bg-emerald-600 text-white shadow-none" : "text-slate-500 hover:text-slate-900"
                     )}
                   >
                     Prix
@@ -1057,8 +1070,8 @@ export function Directory() {
                   <button 
                     onClick={() => setSortBy('distance')}
                     className={cn(
-                      "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2",
-                      sortBy === 'distance' ? "bg-white text-brand-600 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                      "flex-1 sm:flex-none px-3 py-1 rounded text-xs font-bold transition-all flex items-center justify-center gap-1",
+                      sortBy === 'distance' ? "bg-emerald-600 text-white shadow-none" : "text-slate-500 hover:text-slate-900"
                     )}
                   >
                     Distance
@@ -1066,8 +1079,8 @@ export function Directory() {
                   <button 
                     onClick={() => setSortBy('rating')}
                     className={cn(
-                      "flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2",
-                      sortBy === 'rating' ? "bg-white text-brand-600 shadow-sm" : "text-slate-500 hover:text-slate-900"
+                      "flex-1 sm:flex-none px-3 py-1 rounded text-xs font-bold transition-all flex items-center justify-center gap-1",
+                      sortBy === 'rating' ? "bg-emerald-600 text-white shadow-none" : "text-slate-500 hover:text-slate-900"
                     )}
                   >
                     Note
@@ -1075,52 +1088,52 @@ export function Directory() {
                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {getSortedPharmacies().map(pharma => (
-                <div key={pharma.id} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group">
+                <div key={pharma.id} className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col justify-between group">
                    <div>
-                     <div className="flex justify-between items-start mb-4">
+                      <div className="flex justify-between items-start mb-3">
                         <div className="relative">
-                          <img src={pharma.image} className="w-16 h-16 rounded-2xl object-cover" />
-                          <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-1 rounded-lg border-2 border-white">
-                             <CheckCircle2 size={12} />
+                          <img src={pharma.image} className="w-12 h-12 rounded-lg object-cover" />
+                          <div className="absolute -bottom-1 -right-1 bg-emerald-500 text-white p-0.5 rounded border border-white">
+                             <CheckCircle2 size={10} />
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-display font-bold text-slate-900">
+                          <p className="text-sm font-display font-bold text-slate-900">
                              {analyzedMeds.reduce((sum, med) => {
                                const foundMed = pharma.meds?.find(m => m.name === med.name);
                                return sum + (foundMed?.price || 0);
                              }, 0).toLocaleString()} FCFA
                           </p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Total Panier</p>
+                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Total Panier</p>
                         </div>
-                     </div>
-                     <div className="flex items-center gap-2">
-                       <h4 className="font-display font-bold text-xl text-slate-900 group-hover:text-brand-600 transition-colors">{pharma.name}</h4>
-                       {pharma.isDuty && (
-                         <span className="bg-red-100 text-red-700 text-[9px] font-black uppercase px-2 py-0.5 rounded-lg flex items-center gap-0.5 shrink-0 animate-pulse">
-                           <Clock size={10} /> Garde
-                         </span>
-                       )}
-                     </div>
-                     <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 mb-4">
-                        <MapPin size={12} />
-                        {pharma.address} • <span className="text-brand-600 font-bold">{pharma.distance}</span>
-                     </div>
-                     <div className="space-y-1 mb-6">
-                        {analyzedMeds.map(am => {
-                          const foundMed = pharma.meds?.find(m => m.name === am.name);
-                          return (
-                            <div key={am.name} className="flex justify-between items-center text-xs p-2 bg-slate-50 rounded-xl">
-                              <span className="text-slate-600 tabular-nums">{am.name}</span>
-                              <span className="font-bold text-emerald-600 flex items-center gap-1">
-                                {foundMed?.price.toLocaleString()} FCFA
-                              </span>
-                            </div>
-                          );
-                        })}
-                     </div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="font-display font-bold text-xs text-slate-900 group-hover:text-emerald-600 transition-colors">{pharma.name}</h4>
+                        {pharma.isDuty && (
+                          <span className="bg-white text-red-600 border border-red-500 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded flex items-center gap-0.5 shrink-0">
+                            <Clock size={8} /> Garde
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5 mb-3">
+                         <MapPin size={10} />
+                         {pharma.address} • <span className="text-emerald-600 font-bold">{pharma.distance}</span>
+                      </div>
+                      <div className="space-y-1 mb-4">
+                         {analyzedMeds.map(am => {
+                           const foundMed = pharma.meds?.find(m => m.name === am.name);
+                           return (
+                             <div key={am.name} className="flex justify-between items-center text-[10px] p-1.5 bg-white border border-slate-100 rounded-md">
+                               <span className="text-slate-600 tabular-nums">{am.name}</span>
+                               <span className="font-bold text-emerald-600">
+                                 {foundMed?.price.toLocaleString()} FCFA
+                               </span>
+                             </div>
+                           );
+                         })}
+                      </div>
                    </div>
                    <button 
                     onClick={() => { 
@@ -1130,16 +1143,16 @@ export function Directory() {
                       const medsToOrder = pharma.meds?.filter(m => analyzedMeds.some(am => am.name === m.name)) || [];
                       medsToOrder.forEach(m => addToCart(m));
                     }}
-                    className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg shadow-slate-900/10 hover:bg-brand-600 active:scale-95 transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-emerald-600 text-white py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-1 text-xs"
                    >
-                     <ShoppingCart size={18} />
+                     <ShoppingCart size={14} />
                      Commander tout ({analyzedMeds.length})
                    </button>
                 </div>
               ))}
             </div>
             {matchingPharmacies.length === 0 && (
-              <div className="text-center py-20 bg-white rounded-[2.5rem] border border-slate-100 italic text-slate-400">
+              <div className="text-center py-12 bg-white rounded-xl border border-slate-200 italic text-xs text-slate-400">
                 Aucune pharmacie ne dispose de tout le stock à proximité.
               </div>
             )}
@@ -1154,6 +1167,10 @@ export function Directory() {
         onUpdateCount={updateCartCount}
         onRemove={removeFromCart}
         onCheckout={handleCheckout}
+        onRequirePrescription={() => {
+          setView('prescriptions');
+          setIsCartOpen(false);
+        }}
       />
 
       <RouteDrawer
@@ -1170,8 +1187,8 @@ function CategoryTab({ active, onClick, icon, label }: { active: boolean, onClic
     <button 
       onClick={onClick}
       className={cn(
-        "flex items-center gap-2 px-4 md:px-5 py-2 md:py-2.5 rounded-xl md:rounded-2xl text-xs md:text-sm font-bold transition-all whitespace-nowrap",
-        active ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10" : "bg-white text-slate-500 border border-slate-100 hover:bg-slate-50"
+        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap",
+        active ? "bg-emerald-600 text-white shadow-sm" : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
       )}
     >
       {icon}
@@ -1185,52 +1202,49 @@ function ActorCard({ actor, onClick }: { actor: DirectoryActor, onClick: () => v
                actor.type === 'pharmacy' ? Pill : 
                actor.type === 'laboratory' ? Microscope :
                actor.type === 'natural' ? Leaf : Building2;
-  const colorClass = actor.type === 'hospital' ? "text-blue-600 bg-blue-50" : 
-                    actor.type === 'pharmacy' ? "text-emerald-600 bg-emerald-50" : 
-                    actor.type === 'laboratory' ? "text-purple-600 bg-purple-50" :
-                    actor.type === 'natural' ? "text-emerald-700 bg-emerald-100" : "text-brand-600 bg-brand-50";
+  const colorClass = "text-emerald-600 bg-white border border-slate-100";
 
   return (
     <motion.div 
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -3 }}
       onClick={onClick}
-      className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm cursor-pointer group"
+      className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-none cursor-pointer group"
     >
-      <div className="h-40 relative">
-        <img src={actor.image} alt={actor.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-        <div className={cn("absolute top-4 left-4 p-2 rounded-xl backdrop-blur-sm shadow-lg", colorClass)}>
-          <Icon size={20} />
+      <div className="h-32 relative">
+        <img src={actor.image} alt={actor.name} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500" />
+        <div className={cn("absolute top-3 left-3 p-1.5 rounded-lg backdrop-blur-sm shadow-sm", colorClass)}>
+          <Icon size={14} />
         </div>
         {actor.isDuty && (
-          <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 animate-pulse">
-            <Clock size={12} />
+          <div className="absolute top-3 right-3 bg-white text-red-600 border border-red-500 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1">
+            <Clock size={10} />
             <span>De Garde</span>
           </div>
         )}
       </div>
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-2 text-xs font-bold text-slate-400 tracking-widest uppercase">
+      <div className="p-4">
+        <div className="flex justify-between items-start mb-1 text-[9px] font-bold text-slate-400 tracking-widest uppercase">
           <span>{actor.type}</span>
           <span>{actor.distance}</span>
         </div>
-        <h3 className="text-xl font-display font-bold text-slate-900 line-clamp-1">{actor.name}</h3>
-        <p className="text-xs text-slate-400 mt-1 mb-4 line-clamp-1">{actor.address}</p>
+        <h3 className="text-xs md:text-sm font-display font-bold text-slate-900 line-clamp-1">{actor.name}</h3>
+        <p className="text-[10px] text-slate-400 mt-0.5 mb-3 line-clamp-1">{actor.address}</p>
         
         {actor.specialties && (
-          <div className="flex flex-wrap gap-1 mb-4">
+          <div className="flex flex-wrap gap-1 mb-3">
             {actor.specialties.slice(0, 3).map(s => (
-              <span key={s} className="bg-slate-50 text-slate-500 px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase">{s}</span>
+              <span key={s} className="bg-white text-slate-500 border border-slate-100 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase">{s}</span>
             ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
            <div className="flex items-center gap-1 text-orange-400">
-             <StarIcon size={14} fill="currentColor" />
-             <span className="text-sm font-bold text-slate-700">{actor.rating}</span>
+             <StarIcon size={12} fill="currentColor" />
+             <span className="text-xs font-bold text-slate-700">{actor.rating}</span>
            </div>
-           <button className="text-brand-600 text-xs font-bold flex items-center gap-1">
-             Consulter <ChevronRight size={14} />
+           <button className="text-emerald-600 text-[10px] font-bold flex items-center gap-1">
+             Consulter <ChevronRight size={12} />
            </button>
         </div>
       </div>
@@ -1244,14 +1258,16 @@ function CartDrawer({
   cart, 
   onUpdateCount, 
   onRemove,
-  onCheckout
+  onCheckout,
+  onRequirePrescription
 }: { 
   isOpen: boolean, 
   onClose: () => void, 
   cart: any[],
   onUpdateCount: (id: string, delta: number) => void,
   onRemove: (id: string) => void,
-  onCheckout: (method: string) => void
+  onCheckout: (method: string) => void,
+  onRequirePrescription: () => void
 }) {
   const [step, setStep] = useState<'cart' | 'payment'>('cart');
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
@@ -1406,13 +1422,28 @@ function CartDrawer({
               </div>
               
               {step === 'cart' ? (
-                <button 
-                  disabled={cart.length === 0}
-                  onClick={() => setStep('payment')}
-                  className="w-full bg-slate-900 text-white font-bold py-5 rounded-[2rem] shadow-xl shadow-slate-900/10 hover:scale-[1.02] active:scale-95 transition-all text-lg disabled:opacity-50"
-                >
-                  Procéder au paiement
-                </button>
+                cart.some(item => item.requiresPrescription) ? (
+                  <div className="space-y-3 w-full">
+                    <button 
+                      onClick={onRequirePrescription}
+                      className="w-full bg-purple-600 text-white font-bold py-5 rounded-[2rem] shadow-xl shadow-purple-600/15 hover:scale-[1.02] active:scale-95 transition-all text-lg flex items-center justify-center gap-2"
+                    >
+                      <Camera size={20} />
+                      Soumettre l'Ordonnance requis
+                    </button>
+                    <p className="text-[11px] text-center text-purple-700 font-semibold">
+                      Un ou plusieurs articles nécessitent une ordonnance validée par Care IA.
+                    </p>
+                  </div>
+                ) : (
+                  <button 
+                    disabled={cart.length === 0}
+                    onClick={() => setStep('payment')}
+                    className="w-full bg-slate-900 text-white font-bold py-5 rounded-[2rem] shadow-xl shadow-slate-900/10 hover:scale-[1.02] active:scale-95 transition-all text-lg disabled:opacity-50"
+                  >
+                    Procéder au paiement
+                  </button>
+                )
               ) : (
                 <button 
                   disabled={!selectedMethod || isProcessing}

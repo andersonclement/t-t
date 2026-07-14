@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, 
@@ -15,6 +15,8 @@ import {
   PhoneCall
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 interface Medication {
   id: string;
@@ -123,12 +125,81 @@ export function Pharmacy() {
   const [matchingPharmacies, setMatchingPharmacies] = useState<PharmacyEntity[]>([]);
   const [showCheckoutSuccess, setShowCheckoutSuccess] = useState(false);
 
-  const filteredMeds = selectedPharmacy?.meds.filter(m => {
+  // Firestore-fetched pharmacies and stock
+  const [dbPharmacies, setDbPharmacies] = useState<PharmacyEntity[]>([]);
+  const [dbMeds, setDbMeds] = useState<any[]>([]);
+
+  useEffect(() => {
+    const unsubPharmacies = onSnapshot(
+      query(collection(db, 'users'), where('role', '==', 'pharmacist')),
+      (snapshot) => {
+        const list: PharmacyEntity[] = [];
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          list.push({
+            id: docSnap.id,
+            name: data.pharmacyName || data.displayName || 'Pharmacie du Centre',
+            address: data.pharmacyAddress || data.address || 'Douala, Cameroun',
+            distance: 'Connecté',
+            rating: 5.0,
+            isOpen: true,
+            image: data.pharmacyImage || 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=400&h=300&fit=crop',
+            meds: []
+          });
+        });
+        setDbPharmacies(list);
+      },
+      (err) => console.warn("Failed to subscribe to pharmacies in PharmacyView:", err)
+    );
+
+    const unsubMeds = onSnapshot(
+      collection(db, 'medication_stock'),
+      (snapshot) => {
+        const list: any[] = [];
+        snapshot.forEach((docSnap) => {
+          list.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        setDbMeds(list);
+      },
+      (err) => console.warn("Failed to subscribe to medications in PharmacyView:", err)
+    );
+
+    return () => {
+      unsubPharmacies();
+      unsubMeds();
+    };
+  }, []);
+
+  const allPharmacies = [...dbPharmacies, ...MOCK_PHARMACIES];
+
+  const getSelectedPharmacyMeds = (): Medication[] => {
+    if (!selectedPharmacy) return [];
+    
+    // Check if the selected pharmacy is a database pharmacy
+    const isDbPharma = dbPharmacies.some(p => p.id === selectedPharmacy.id);
+    if (isDbPharma) {
+      return dbMeds
+        .filter(m => m.pharmacistId === selectedPharmacy.id)
+        .map(m => ({
+          id: m.id,
+          name: m.name,
+          dci: m.genericName || '',
+          price: m.sellingPrice || 0,
+          category: m.therapeuticClass || '',
+          image: m.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop',
+          available: (m.stock || 0) > 0
+        }));
+    }
+    
+    return selectedPharmacy.meds || [];
+  };
+
+  const filteredMeds = getSelectedPharmacyMeds().filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) || 
                          m.dci.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = selectedCategory === 'Tous' || m.category === selectedCategory;
     return matchesSearch && matchesCategory;
-  }) || [];
+  });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -155,9 +226,16 @@ export function Pharmacy() {
         date: '20 Avril 2026'
       });
       
-      const matches = MOCK_PHARMACIES.filter(pharma => {
+      const matches = allPharmacies.filter(pharma => {
+        const isDbPharma = dbPharmacies.some(p => p.id === pharma.id);
+        const medsOfPharma = isDbPharma
+          ? dbMeds
+              .filter(m => m.pharmacistId === pharma.id)
+              .map(m => ({ name: m.name, available: (m.stock || 0) > 0 }))
+          : pharma.meds.map(m => ({ name: m.name, available: m.available }));
+
         return extracted.every(med => 
-          pharma.meds.some(m => m.name === med.name && m.available)
+          medsOfPharma.some(m => m.name === med.name && m.available)
         );
       });
       
@@ -179,7 +257,8 @@ export function Pharmacy() {
         })),
         total: cartTotal,
         mode: 'pickup',
-        paymentMethod: 'Mobile Money'
+        paymentMethod: 'Mobile Money',
+        pharmacistId: selectedPharmacy?.id
       });
       setShowCheckoutSuccess(true);
       setCart([]);
@@ -359,7 +438,7 @@ export function Pharmacy() {
             exit={{ opacity: 0, scale: 0.98 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {MOCK_PHARMACIES.map((pharmacy) => (
+            {allPharmacies.map((pharmacy) => (
               <motion.div 
                 key={pharmacy.id}
                 whileHover={{ y: -5 }}
@@ -615,10 +694,10 @@ export function Pharmacy() {
                           <FileText size={24} />
                        </div>
                        <div>
-                          <h2 className="text-2xl font-display font-bold">Analyse AI Terminée</h2>
+                          <h2 className="text-2xl font-display font-bold">Analyse IA Préliminaire</h2>
                           <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                             Document Authentifié par Care IA
+                             Aide au diagnostic • En attente de validation médicale (Care IA)
                           </p>
                        </div>
                     </div>

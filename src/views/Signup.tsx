@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../components/AuthContext';
-import { ShieldCheck, HeartPulse, Mail, Lock, User, ArrowLeft, ArrowRight, Check, X, Sparkles } from 'lucide-react';
+import { ShieldCheck, HeartPulse, Mail, Lock, User, ArrowLeft, ArrowRight, Check, X, Sparkles, Building2, Key } from 'lucide-react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
@@ -39,7 +39,9 @@ export function Signup() {
     email: '',
     password: '',
     role: 'patient',
-    confirmPassword: ''
+    confirmPassword: '',
+    pharmacyName: '',
+    inviteCode: ''
   });
 
   const handleGoogleSignup = async () => {
@@ -133,11 +135,22 @@ export function Signup() {
       setError('Les mots de passe ne correspondent pas');
       return;
     }
+
+    if (formData.role === 'pharmacist') {
+      if (!formData.pharmacyName.trim()) {
+        setError("Le nom de la pharmacie est requis pour l'inscription d'un pharmacien.");
+        return;
+      }
+      if (formData.inviteCode.trim().toUpperCase() !== 'DOKTA-PRO-2026') {
+        setError("Le code d'autorisation administrateur est incorrect ou expiré. L'inscription professionnelle requiert l'accord préalable de l'administrateur. Veuillez le contacter à admin@dokta.cm pour obtenir votre code d'accès.");
+        return;
+      }
+    }
     
     setIsSubmitting(true);
     setError(null);
     try {
-      await signUpWithEmail(formData.email, formData.password, formData.name, formData.role);
+      await signUpWithEmail(formData.email, formData.password, formData.name, formData.role, formData.pharmacyName);
       navigate('/');
     } catch (err: any) {
       console.error(err);
@@ -190,7 +203,7 @@ export function Signup() {
                 L'avenir de la santé au <span className="text-brand-400">Cameroun</span>
               </h2>
               <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xs font-medium">
-                Rejoignez Medimap pour une expérience de santé connectée, humaine et sécurisée.
+                Rejoignez Dokta pour une expérience de santé connectée, humaine et sécurisée.
               </p>
             </motion.div>
           </div>
@@ -250,30 +263,7 @@ export function Signup() {
               </motion.div>
             )}
 
-            {isIframe && (
-              <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-xs text-amber-800 space-y-3 mb-2 text-left">
-                <div className="flex items-start gap-2.5">
-                  <span className="text-base shrink-0 mt-0.5">💡</span>
-                  <div>
-                    <p className="font-bold text-amber-950">Aperçu limité par le navigateur</p>
-                    <p className="mt-1 leading-relaxed text-[11px] text-amber-900/90 font-medium">
-                      Les navigateurs bloquent l'inscription Google dans les cadres d'aperçu intégrés (iframes). 
-                      Veuillez ouvrir l'application dans un nouvel onglet pour vous inscrire avec Google en toute sécurité.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-end pt-1">
-                  <a 
-                    href={window.location.href} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3 py-2 rounded-xl text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
-                  >
-                    Ouvrir dans un nouvel onglet
-                  </a>
-                </div>
-              </div>
-            )}
+
 
             <button 
               type="button"
@@ -341,29 +331,29 @@ export function Signup() {
 
             <div className="space-y-3">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Je suis un...</label>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <motion.button
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
                   type="button"
                   onClick={() => setFormData({...formData, role: 'patient'})}
                   className={cn(
-                    "relative py-5 rounded-3xl border-2 transition-all font-bold text-sm flex flex-col items-center gap-3 overflow-hidden",
+                    "relative py-4 rounded-2xl border-2 transition-all font-bold text-xs flex flex-col items-center gap-2 overflow-hidden",
                     formData.role === 'patient' 
                       ? "border-brand-600 bg-brand-50 text-brand-600 shadow-xl shadow-brand-600/10" 
                       : "border-slate-100 bg-slate-50/50 text-slate-400 hover:border-slate-200"
                   )}
                 >
                   <div className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors shadow-sm",
+                    "w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm",
                     formData.role === 'patient' ? "bg-brand-600 text-white" : "bg-white text-slate-400"
                   )}>
-                    <User size={24} />
+                    <User size={20} />
                   </div>
                   Patient
                   {formData.role === 'patient' && (
-                    <motion.div layoutId="role-check" className="absolute top-2 right-2 flex items-center justify-center w-5 h-5 bg-brand-600 rounded-full text-white shadow-lg">
-                       <Check size={12} />
+                    <motion.div layoutId="role-check" className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 bg-brand-600 rounded-full text-white shadow-sm">
+                       <Check size={10} />
                     </motion.div>
                   )}
                 </motion.button>
@@ -373,27 +363,72 @@ export function Signup() {
                   type="button"
                   onClick={() => setFormData({...formData, role: 'pharmacist'})}
                   className={cn(
-                    "relative py-5 rounded-3xl border-2 transition-all font-bold text-sm flex flex-col items-center gap-3 overflow-hidden",
+                    "relative py-4 rounded-2xl border-2 transition-all font-bold text-xs flex flex-col items-center gap-2 overflow-hidden",
                     formData.role === 'pharmacist' 
                       ? "border-emerald-600 bg-emerald-50 text-emerald-600 shadow-xl shadow-emerald-600/10" 
                       : "border-slate-100 bg-slate-50/50 text-slate-400 hover:border-slate-200"
                   )}
                 >
                   <div className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors shadow-sm",
+                    "w-10 h-10 rounded-xl flex items-center justify-center transition-colors shadow-sm",
                     formData.role === 'pharmacist' ? "bg-emerald-600 text-white" : "bg-white text-slate-400"
                   )}>
-                    <ShieldCheck size={24} />
+                    <ShieldCheck size={20} />
                   </div>
                   Pharmacien
                   {formData.role === 'pharmacist' && (
-                    <motion.div layoutId="role-check" className="absolute top-2 right-2 flex items-center justify-center w-5 h-5 bg-emerald-600 rounded-full text-white shadow-lg">
-                       <Check size={12} />
+                    <motion.div layoutId="role-check" className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 bg-emerald-600 rounded-full text-white shadow-sm">
+                       <Check size={10} />
                     </motion.div>
                   )}
                 </motion.button>
               </div>
             </div>
+
+            {formData.role === 'pharmacist' && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4 p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100 text-left"
+              >
+                <p className="text-[11px] font-medium text-emerald-800 leading-relaxed">
+                  🔒 <strong>Note d'approbation requise :</strong> Pour garantir la conformité réglementaire, la création d'un compte Pharmacien nécessite la validation préalable de l'administrateur de <strong>Dokta</strong>.
+                </p>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Nom de la Pharmacie (Officine)</label>
+                  <div className="relative group">
+                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                    <input 
+                      type="text" 
+                      required={formData.role === 'pharmacist'}
+                      placeholder="Ex: Pharmacie du Centre, Pharmacie de l'Avenue"
+                      className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 transition-all font-medium text-slate-900 placeholder:text-slate-300"
+                      value={formData.pharmacyName}
+                      onChange={(e) => setFormData({...formData, pharmacyName: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Code d'Autorisation Administrateur</label>
+                  <div className="relative group">
+                    <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                    <input 
+                      type="text" 
+                      required={formData.role === 'pharmacist'}
+                      placeholder="Saisissez le code d'autorisation pro"
+                      className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 transition-all font-mono font-bold text-slate-900 placeholder:text-slate-300"
+                      value={formData.inviteCode}
+                      onChange={(e) => setFormData({...formData, inviteCode: e.target.value})}
+                    />
+                  </div>
+                  <p className="text-[9px] text-slate-400 px-1">
+                    Pour tester, utilisez le code temporaire : <span className="font-mono font-bold text-slate-600">DOKTA-PRO-2026</span>
+                  </p>
+                </div>
+              </motion.div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-2">

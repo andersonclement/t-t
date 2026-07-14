@@ -26,7 +26,7 @@ import {
 import { useAuth } from '../components/AuthContext';
 import { cn } from '../lib/utils';
 import { db } from '../lib/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { Mail, Shield, Users, Check, X } from 'lucide-react';
 
 function PharmacistStatCard({ label, value, unit, icon, color }: { label: string; value: string; unit?: string; icon: React.ReactNode; color: string }) {
@@ -49,12 +49,14 @@ function PharmacistStatCard({ label, value, unit, icon, color }: { label: string
 import { useOrders } from '../components/OrderContext';
 
 export function Dashboard() {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const { orders } = useOrders();
   const isPharmacist = profile?.role === 'pharmacist';
 
   const [pharmacies, setPharmacies] = React.useState<any[]>([]);
   const [selectedPharmaForModal, setSelectedPharmaForModal] = React.useState<any | null>(null);
+  const [pendingPrescriptionsCount, setPendingPrescriptionsCount] = React.useState(0);
+  const [medications, setMedications] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     if (!isPharmacist) {
@@ -71,6 +73,59 @@ export function Dashboard() {
     }
   }, [isPharmacist]);
 
+  React.useEffect(() => {
+    if (isPharmacist && user) {
+      // Query the prescriptions collection for pending status
+      const q = query(collection(db, 'prescriptions'), where('status', '==', 'pending'));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        setPendingPrescriptionsCount(snapshot.size);
+      }, (err) => {
+        console.warn("Failed to subscribe to prescriptions count:", err);
+      });
+      return () => unsubscribe();
+    }
+  }, [isPharmacist, user]);
+
+  React.useEffect(() => {
+    if (isPharmacist) {
+      let unsubscribe = () => {};
+      if (user) {
+        const q = query(collection(db, 'medication_stock'), where('pharmacistId', '==', user.uid));
+        unsubscribe = onSnapshot(q, (snapshot) => {
+          let items: any[] = [];
+          snapshot.forEach((docSnap) => {
+            items.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          if (items.length === 0) {
+            try {
+              const stored = localStorage.getItem('medimap_meds_stock');
+              if (stored) {
+                items = JSON.parse(stored);
+              }
+            } catch (e) {}
+          }
+          setMedications(items);
+        }, (err) => {
+          console.warn("Failed to subscribe to stock on Dashboard:", err);
+          try {
+            const stored = localStorage.getItem('medimap_meds_stock');
+            if (stored) {
+              setMedications(JSON.parse(stored));
+            }
+          } catch (e) {}
+        });
+      } else {
+        try {
+          const stored = localStorage.getItem('medimap_meds_stock');
+          if (stored) {
+            setMedications(JSON.parse(stored));
+          }
+        } catch (e) {}
+      }
+      return () => unsubscribe();
+    }
+  }, [isPharmacist, user]);
+
   if (isPharmacist) {
     const pendingOrders = orders.filter(o => o.status === 'pending_validation').length;
     const todaySales = orders
@@ -82,6 +137,12 @@ export function Dashboard() {
         return today === orderDate;
       })
       .reduce((sum, o) => sum + o.total, 0);
+
+    const outOfStockMeds = medications.filter(m => Number(m.stock) === 0);
+    const lowStockMeds = medications.filter(m => {
+      const min = m.minThreshold !== undefined ? Number(m.minThreshold) : 10;
+      return Number(m.stock) > 0 && Number(m.stock) <= min;
+    });
 
     return (
       <div className="space-y-8 pb-16">
@@ -95,14 +156,14 @@ export function Dashboard() {
           </div>
           <div className="flex items-center gap-3">
              <div className="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                <ShieldCheck size={16} /> Certifié Medimap
+                <ShieldCheck size={16} /> Certifié Dokta
              </div>
           </div>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <PharmacistStatCard label="Commandes en attente" value={pendingOrders.toString()} icon={<Clock className="text-amber-500" />} color="bg-amber-50" />
-          <PharmacistStatCard label="Ordonnances à valider" value="5" icon={<ShieldCheck className="text-blue-500" />} color="bg-blue-50" />
+          <PharmacistStatCard label="Ordonnances à valider" value={pendingPrescriptionsCount.toString()} icon={<ShieldCheck className="text-blue-500" />} color="bg-blue-50" />
           <PharmacistStatCard label="Ventes aujourd'hui" value={todaySales.toLocaleString()} unit="FCFA" icon={<TrendingUp className="text-emerald-500" />} color="bg-emerald-50" />
         </div>
 
@@ -143,7 +204,7 @@ export function Dashboard() {
               <div className="relative z-10 space-y-4">
                 <h3 className="text-xl font-display font-bold">Gestion des Stocks</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">
-                  Mettez à jour vos inventaires pour apparaître dans les résultats de recherche Medimap.
+                  Mettez à jour vos inventaires pour apparaître dans les résultats de recherche Dokta.
                 </p>
                 <button className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-emerald-500 transition-all">
                   Ouvrir l'inventaire
@@ -157,9 +218,25 @@ export function Dashboard() {
                 <Sparkles size={20} className="text-brand-600" />
                 Conseils IA Business
               </h3>
-              <p className="text-slate-600 text-sm italic leading-relaxed">
-                "La demande en Artéméther est en hausse de 20% dans votre secteur ce mois-ci. Assurez-vous d'avoir assez de stock."
-              </p>
+              {outOfStockMeds.length > 0 || lowStockMeds.length > 0 ? (
+                <p className="text-slate-600 text-sm italic leading-relaxed">
+                  "Attention Dr. {profile?.displayName || 'Pharmacien'} ! Nous détectons{" "}
+                  {outOfStockMeds.length > 0 ? (
+                    <>
+                      <span className="font-bold text-red-600">{outOfStockMeds.length} produit(s) en rupture totale</span>
+                      {lowStockMeds.length > 0 && " et "}
+                    </>
+                  ) : null}
+                  {lowStockMeds.length > 0 ? (
+                    <span className="font-bold text-amber-600">{lowStockMeds.length} produit(s) sous le seuil d'alerte</span>
+                  ) : null}
+                  . Veuillez réapprovisionner rapidement (notamment <span className="font-semibold text-slate-800">{outOfStockMeds[0]?.name || lowStockMeds[0]?.name}</span>) pour répondre aux besoins de vos patients."
+                </p>
+              ) : (
+                <p className="text-slate-600 text-sm italic leading-relaxed">
+                  "Félicitations, Dr. {profile?.displayName || 'Pharmacien'} ! Vos stocks de médicaments sont optimaux. Tous vos produits d'officine disposent d'un volume suffisant."
+                </p>
+              )}
               <div className="flex items-center gap-2 text-[10px] font-bold text-brand-600 uppercase tracking-widest">
                 <Activity size={14} /> Prédiction Care IA
               </div>
@@ -341,12 +418,14 @@ export function Dashboard() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setSelectedPharmaForModal(pharma)}
-                  className="w-full bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 text-slate-700 py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 transition-all mt-4 relative z-10"
-                >
-                  <ShieldCheck size={12} className="text-emerald-600" /> Voir la Fiche Technique de l'Officine
-                </button>
+                {profile?.role !== 'patient' && (
+                  <button
+                    onClick={() => setSelectedPharmaForModal(pharma)}
+                    className="w-full bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 text-slate-700 py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-1.5 transition-all mt-4 relative z-10"
+                  >
+                    <ShieldCheck size={12} className="text-emerald-600" /> Voir la Fiche Technique de l'Officine
+                  </button>
+                )}
 
                 <div className="pt-4 border-t border-slate-50 relative z-10 flex gap-2">
                   <button 
@@ -554,7 +633,7 @@ export function Dashboard() {
                 <div>
                   <h4 className="font-bold text-slate-900 text-xs">Établissement Agréé & Certifié</h4>
                   <p className="text-slate-500 text-[10px] md:text-xs mt-0.5 leading-relaxed">
-                    Cet établissement a complété avec succès l'audit physique de conformité technique effectué par Medimap Cameroun. Les stocks et conditions de conservation sont validés.
+                    Cet établissement a complété avec succès l'audit physique de conformité technique effectué par Dokta Cameroun. Les stocks et conditions de conservation sont validés.
                   </p>
                 </div>
               </div>

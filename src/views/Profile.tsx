@@ -32,7 +32,7 @@ import { useAuth } from '../components/AuthContext';
 import { useOrders, Order } from '../components/OrderContext';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 export function Profile() {
@@ -79,30 +79,53 @@ export function Profile() {
   const [medsLoading, setMedsLoading] = React.useState(false);
 
   React.useEffect(() => {
-    if (profile?.role === 'pharmacist' && user) {
-      const loadStock = async () => {
-        setMedsLoading(true);
-        try {
-          const q = query(collection(db, 'medication_stock'));
-          const querySnapshot = await getDocs(q);
+    if (profile?.role === 'pharmacist') {
+      setMedsLoading(true);
+      let unsubscribe = () => {};
+
+      if (user) {
+        const q = query(collection(db, 'medication_stock'), where('pharmacistId', '==', user.uid));
+        unsubscribe = onSnapshot(q, (snapshot) => {
           let items: any[] = [];
-          querySnapshot.forEach((docSnap) => {
+          snapshot.forEach((docSnap) => {
             items.push({ id: docSnap.id, ...docSnap.data() });
           });
+
+          // Fallback to localStorage if Firestore is empty
           if (items.length === 0) {
-            const stored = localStorage.getItem('medimap_meds_stock');
-            if (stored) items = JSON.parse(stored);
+            try {
+              const stored = localStorage.getItem('medimap_meds_stock');
+              if (stored) {
+                items = JSON.parse(stored);
+              }
+            } catch (e) {
+              console.warn("Failed to parse local meds stock in Profile live sync:", e);
+            }
           }
           setMedications(items);
-        } catch (err) {
-          console.warn("Error fetching stock in Profile:", err);
-          const stored = localStorage.getItem('medimap_meds_stock');
-          if (stored) setMedications(JSON.parse(stored));
-        } finally {
           setMedsLoading(false);
-        }
-      };
-      loadStock();
+        }, (error) => {
+          console.warn("Error subscribing to stock in Profile:", error);
+          try {
+            const stored = localStorage.getItem('medimap_meds_stock');
+            if (stored) {
+              setMedications(JSON.parse(stored));
+            }
+          } catch (e) {}
+          setMedsLoading(false);
+        });
+      } else {
+        // Unauthenticated guest pharmacist fallback
+        try {
+          const stored = localStorage.getItem('medimap_meds_stock');
+          if (stored) {
+            setMedications(JSON.parse(stored));
+          }
+        } catch (e) {}
+        setMedsLoading(false);
+      }
+
+      return () => unsubscribe();
     }
   }, [profile, user]);
 
@@ -791,7 +814,7 @@ export function Profile() {
                           <div className="flex flex-col items-center p-2 bg-white border border-slate-100 rounded-xl text-center">
                             <Mail size={14} className="text-emerald-600 mb-1" />
                             <span className="text-[10px] font-bold text-slate-700">Email Pro</span>
-                            <span className="text-[9px] text-slate-400">pro-support@medimap.cm</span>
+                            <span className="text-[9px] text-slate-400">pro-support@dokta.cm</span>
                           </div>
                         </div>
 

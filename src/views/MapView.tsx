@@ -43,6 +43,7 @@ interface HealthActor {
   isOpen: boolean;
   rating: number;
   coordinates: [number, number]; // [lat, lng]
+  isDuty?: boolean;
 }
 
 // Relocated coordinates near Akwa, Douala (central point [4.0450, 9.7000]) 
@@ -94,9 +95,11 @@ function ResizeListener() {
 export function MapView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'pharmacy' | 'hospital' | 'lab'>('all');
+  const [onlyDuty, setOnlyDuty] = useState(false);
+  const [showGeolocBanner, setShowGeolocBanner] = useState(false);
   
   // Map style and Google Maps integration state
-  const [mapStyle, setMapStyle] = useState<'google_roadmap' | 'google_altered' | 'google_hybrid' | 'google_terrain' | 'osm'>('google_roadmap');
+  const [mapStyle, setMapStyle] = useState<'google_roadmap' | 'google_hybrid' | 'google_terrain' | 'osm'>('google_roadmap');
   const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "44a563acc4145db94b88e1aafd9b8fca815b61e47a3fb3e1528edebb11308d69";
 
   // Default user location is central Akwa, Douala
@@ -112,20 +115,46 @@ export function MapView() {
   const [isRouting, setIsRouting] = useState<boolean>(false);
   const [travelMode, setTravelMode] = useState<'driving' | 'walking'>('driving');
 
-  // Fetch actual user location if permitted
+  // Fetch actual user location if permitted (R2 Geolocation with fallback & banner)
   useEffect(() => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
+      const onSuccess = (position: any) => {
+        const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
+        setUserLocation(coords);
+        if (!activeActor) {
+          setMapCenter(coords);
+        }
+        setShowGeolocBanner(false);
+      };
+
+      const onError = (error: any) => {
+        console.log("Geolocation error details:", error);
+        if (error.code === error.PERMISSION_DENIED) {
+          // Fallback Douala + banner visible
+          setUserLocation([4.0450, 9.7000]);
+          setMapCenter([4.0450, 9.7000]);
+          setShowGeolocBanner(true);
+        } else if (error.code === error.TIMEOUT) {
+          // Retry without high accuracy
+          navigator.geolocation.getCurrentPosition(
+            onSuccess,
+            () => {
+              setShowGeolocBanner(true);
+            },
+            { enableHighAccuracy: false, timeout: 5000 }
+          );
+        } else {
+          setShowGeolocBanner(true);
+        }
+      };
+
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords: [number, number] = [position.coords.latitude, position.coords.longitude];
-          setUserLocation(coords);
-          // Only change center to user on load if no active actor exists yet
-          if (!activeActor) {
-            setMapCenter(coords);
-          }
-        },
-        (error) => {
-          console.log("Using default Akwa, Douala coordinates", error);
+        onSuccess,
+        onError,
+        {
+          enableHighAccuracy: true,
+          timeout: 8000,
+          maximumAge: 30000
         }
       );
     }
@@ -135,7 +164,8 @@ export function MapView() {
     const matchesFilter = filter === 'all' || a.type === filter;
     const matchesSearch = a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                          a.address.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
+    const matchesDuty = !onlyDuty || a.isDuty === true;
+    return matchesFilter && matchesSearch && matchesDuty;
   });
 
   // Automatically sync active actor on filter/search change
@@ -291,6 +321,39 @@ export function MapView() {
         "w-full md:w-96 flex flex-col gap-4 shrink-0 transition-all duration-500",
         isExpanded && "hidden md:flex md:w-0 md:opacity-0 md:pointer-events-none md:overflow-hidden h-0 md:h-auto opacity-0"
       )}>
+        {/* R2 Geolocation Fallback Banner */}
+        {showGeolocBanner && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-3xl p-4 flex flex-col gap-2 shadow-sm">
+            <div className="flex items-start gap-2.5">
+              <span className="text-lg">📍</span>
+              <div>
+                <p className="font-bold text-xs">Géolocalisation inactive</p>
+                <p className="text-[11px] text-amber-700 leading-normal mt-0.5">
+                  Dokta s'est positionné par défaut sur Douala. Activez le GPS pour voir les pharmacies et hôpitaux proches de vous.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                      setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+                      setMapCenter([pos.coords.latitude, pos.coords.longitude]);
+                      setShowGeolocBanner(false);
+                    },
+                    () => {},
+                    { enableHighAccuracy: true, timeout: 8000 }
+                  );
+                }
+              }}
+              className="text-[10px] font-black uppercase text-amber-950 bg-amber-200/50 hover:bg-amber-200/80 transition-colors py-1.5 px-3 rounded-lg text-center mt-1"
+            >
+              Réessayer la localisation GPS
+            </button>
+          </div>
+        )}
+
         {/* Search & Quick Filters */}
         <div className="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4">
           <div className="relative group">
@@ -310,6 +373,22 @@ export function MapView() {
             <MapFilter label="Hôpitaux" active={filter === 'hospital'} onClick={() => setFilter('hospital')} />
             <MapFilter label="Labos" active={filter === 'lab'} onClick={() => setFilter('lab')} />
           </div>
+          
+          <button
+            onClick={() => setOnlyDuty(!onlyDuty)}
+            className={cn(
+              "w-full py-2.5 px-4 rounded-2xl text-xs font-bold transition-all border flex items-center justify-center gap-2 mt-2",
+              onlyDuty 
+                ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/15" 
+                : "bg-amber-50/50 text-amber-800 border-amber-100/60 hover:bg-amber-100/50 hover:text-amber-950"
+            )}
+          >
+            🌙 Pharmacie de garde ce soir
+            {onlyDuty && <span className="w-2 h-2 rounded-full bg-white animate-pulse" />}
+            <span className="ml-auto bg-amber-600/20 text-amber-950 px-2 py-0.5 rounded-lg text-[10px] font-black">
+              {MOCK_ACTORS.filter(a => a.type === 'pharmacy' && a.isDuty).length} de garde
+            </span>
+          </button>
         </div>
 
         {/* Selected Actor Card on Mobile (Visible directly under filters) */}
@@ -457,7 +536,14 @@ export function MapView() {
                     {actor.type === 'lab' && <Microscope size={18} />}
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-800 text-sm group-hover:text-brand-600 transition-colors">{actor.name}</h4>
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="font-bold text-slate-800 text-sm group-hover:text-brand-600 transition-colors">{actor.name}</h4>
+                      {actor.isDuty && (
+                        <span className="bg-amber-100 text-amber-800 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md shrink-0 flex items-center gap-0.5">
+                          Garde
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[10px] text-slate-400 flex items-center gap-1 font-medium italic">
                       <MapPin size={10} />
                       {actor.address}
@@ -531,10 +617,9 @@ export function MapView() {
               attribution='&copy; Google Maps'
               url={`https://mt{s}.google.com/vt/lyrs=${
                 mapStyle === 'google_roadmap' ? 'm' : 
-                mapStyle === 'google_altered' ? 'r' : 
                 mapStyle === 'google_hybrid' ? 'y' : 'p'
               }&x={x}&y={y}&z={z}&key=${GOOGLE_MAPS_API_KEY}`}
-              subdomains="0123"
+              subdomains={['0', '1', '2', '3']}
               maxZoom={20}
             />
           )}
@@ -632,7 +717,7 @@ export function MapView() {
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-3">
           <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border border-slate-100 shadow-xl">
              <div className="w-2.5 h-2.5 bg-brand-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
-             <span className="text-[11px] font-black text-slate-800 tracking-wider uppercase">Medimap Carte Interactive</span>
+             <span className="text-[11px] font-black text-slate-800 tracking-wider uppercase">Dokta Carte Interactive</span>
           </div>
         </div>
 
@@ -648,17 +733,6 @@ export function MapView() {
             )}
           >
             Google Plan
-          </button>
-          <button
-            onClick={() => setMapStyle('google_altered')}
-            className={cn(
-              "px-3 py-1.5 rounded-xl text-[10px] font-bold tracking-tight transition-all whitespace-nowrap",
-              mapStyle === 'google_altered' 
-                ? "bg-slate-900 text-white shadow-sm" 
-                : "text-slate-600 hover:bg-slate-50"
-            )}
-          >
-            Plan Épuré
           </button>
           <button
             onClick={() => setMapStyle('google_hybrid')}

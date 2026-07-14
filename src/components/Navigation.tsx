@@ -1,7 +1,7 @@
 import React from 'react';
 import { AIAssistant } from './AIAssistant';
 import { useLocation, NavLink } from 'react-router-dom';
-import { Home, Map, Pill, Leaf, User, MessageCircle, AlertCircle, Microscope, BookOpen, Building2, Zap, HeartPulse, Menu, X, ChevronDown, PhoneCall } from 'lucide-react';
+import { Home, Map, Pill, Leaf, User, MessageCircle, AlertCircle, Microscope, BookOpen, Building2, Zap, HeartPulse, Menu, X, ChevronDown, PhoneCall, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useAuth } from './AuthContext';
@@ -36,7 +36,7 @@ export function Navigation() {
               </div>
               <div className="flex flex-col items-start">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-display font-bold text-lg md:text-xl text-slate-900 leading-none">Medimap</span>
+                  <span className="font-display font-bold text-lg md:text-xl text-slate-900 leading-none">Dokta</span>
                   <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform md:hidden", isOpen && "rotate-180")} />
                 </div>
                 <span className="text-[10px] text-brand-600 font-bold uppercase tracking-widest mt-0.5 hidden sm:block">
@@ -64,7 +64,9 @@ export function Navigation() {
                   >
                     <div className="flex flex-col gap-1">
                       <MobileMenuLink to="/" icon={<Home />} label="Accueil" onClick={() => setIsOpen(false)} />
-                      {isPharmacist ? (
+                      {profile?.role === 'admin' ? (
+                        <MobileMenuLink to="/admin" icon={<ShieldCheck />} label="Admin Portal" onClick={() => setIsOpen(false)} />
+                      ) : isPharmacist ? (
                         <>
                           <MobileMenuLink to="/orders" icon={<Zap />} label="Commandes" onClick={() => setIsOpen(false)} />
                           <MobileMenuLink to="/inventory" icon={<Pill />} label="Stock" onClick={() => setIsOpen(false)} />
@@ -88,7 +90,9 @@ export function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1 h-full">
             <NavItem to="/" icon={<Home />} label="Accueil" />
-            {isPharmacist ? (
+            {profile?.role === 'admin' ? (
+              <NavItem to="/admin" icon={<ShieldCheck />} label="Admin Portal" />
+            ) : isPharmacist ? (
               <>
                 <NavItem to="/orders" icon={<Zap />} label="Commandes" />
                 <NavItem to="/inventory" icon={<Pill />} label="Inventaire" />
@@ -124,7 +128,9 @@ export function MobileBottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-[9999] bg-white border-t border-slate-200 md:hidden pb-safe shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.15)]">
       <div className="flex items-center justify-around h-16 w-full px-2">
         <MobileBottomTab to="/" icon={<Home />} label="Accueil" />
-        {isPharmacist ? (
+        {profile?.role === 'admin' ? (
+          <MobileBottomTab to="/admin" icon={<ShieldCheck />} label="Admin" />
+        ) : isPharmacist ? (
           <>
             <MobileBottomTab to="/orders" icon={<Zap />} label="Commandes" />
             <MobileBottomTab to="/inventory" icon={<Pill />} label="Stock" />

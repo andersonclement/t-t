@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../components/AuthContext';
-import { LogIn, Mail, ShieldCheck, HeartPulse, Activity, Lock, ArrowLeft, Sparkles } from 'lucide-react';
+import { LogIn, Mail, ShieldCheck, HeartPulse, Activity, Lock, ArrowLeft, Sparkles, User } from 'lucide-react';
 import { Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
 
 export function Login() {
@@ -98,11 +98,11 @@ export function Login() {
     }
   };
 
-  const handleDemoLogin = async () => {
+  const handleDemoLogin = async (role: 'patient' | 'pharmacist' | 'admin') => {
     setIsSubmitting(true);
     setError(null);
     try {
-      await signInAsDemo();
+      await signInAsDemo(role);
       navigate('/');
     } catch (err: any) {
       console.error("Demo Auth Error:", err);
@@ -141,7 +141,7 @@ export function Login() {
               </motion.div>
             </div>
             <div>
-              <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Medimap</h1>              <p className="text-slate-500 mt-2 font-medium">Santé & Pharmacie Connectée au Cameroun</p>
+              <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Dokta</h1>              <p className="text-slate-500 mt-2 font-medium">Santé & Pharmacie Connectée au Cameroun</p>
             </div>
           </div>
 
@@ -165,39 +165,22 @@ export function Login() {
                   exit={{ opacity: 0, x: 20 }}
                   className="space-y-3 md:space-y-4"
                 >
-                  {isIframe && (
-                    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-xs text-amber-800 space-y-3 mb-2 text-left">
-                      <div className="flex items-start gap-2.5">
-                        <span className="text-base shrink-0 mt-0.5">💡</span>
-                        <div>
-                          <p className="font-bold text-amber-950">Aperçu limité par le navigateur</p>
-                          <p className="mt-1 leading-relaxed text-[11px] text-amber-900/90 font-medium">
-                            Les navigateurs bloquent la connexion Google dans les cadres d'aperçu intégrés (iframes). 
-                            Veuillez ouvrir l'application dans un nouvel onglet pour vous connecter avec Google en toute sécurité.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex justify-end pt-1">
-                        <a 
-                          href={window.location.href} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-3 py-2 rounded-xl text-[10px] uppercase tracking-wider inline-flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
-                        >
-                          Ouvrir dans un nouvel onglet
-                        </a>
-                      </div>
-                    </div>
-                  )}
 
-                  <button 
-                    onClick={handleDemoLogin}
-                    disabled={isSubmitting}
-                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 text-sm md:text-base disabled:opacity-50 border border-slate-900"
-                  >
-                    <Sparkles size={18} className="text-amber-400 animate-pulse" />
-                    Connexion Démo Rapide (Recommandé)
-                  </button>
+
+                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-2 text-left">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center py-0.5">
+                      Connexion Démo Rapide (Patient uniquement)
+                    </p>
+                    <button
+                      onClick={() => handleDemoLogin('patient')}
+                      disabled={isSubmitting}
+                      type="button"
+                      className="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm border border-slate-100 active:scale-95 disabled:opacity-50"
+                    >
+                      <User size={16} className="text-brand-600" />
+                      <span>Se connecter en tant que Patient (Démo)</span>
+                    </button>
+                  </div>
 
                   <div className="relative py-1 flex items-center">
                     <div className="flex-grow border-t border-slate-100"></div>
@@ -338,7 +321,7 @@ export function Login() {
               <div className="flex items-start gap-4 bg-slate-50 p-5 rounded-[1.5rem] border border-slate-100">
                 <ShieldCheck className="text-brand-500 shrink-0 mt-0.5" size={18} />
                 <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                  Vos données médicales sont protégées par chiffrement de bout en bout. Medimap respecte la souveraineté numérique du Cameroun.
+                  Vos données médicales sont protégées par chiffrement de bout en bout. Dokta respecte la souveraineté numérique du Cameroun.
                 </p>
               </div>
             </div>

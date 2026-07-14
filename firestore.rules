@@ -21,6 +21,9 @@ service cloud.firestore {
     function isPharmacist() { 
       return isSignedIn() && getUserData().role == 'pharmacist'; 
     }
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
     function isDoctor() {
       let role = getUserData().role;
       return isSignedIn() && (role == 'hospital' || role == 'practitioner');
@@ -33,7 +36,7 @@ service cloud.firestore {
         && data.uid == request.auth.uid
         && data.displayName is string && data.displayName.size() <= 100
         && data.email is string && data.email.size() <= 100
-        && data.role in ['patient', 'pharmacist', 'hospital']
+        && data.role in ['patient', 'pharmacist', 'hospital', 'admin']
         && data.updatedAt == request.time;
     }
 
@@ -52,18 +55,19 @@ service cloud.firestore {
 
     // USERS: Split collection PII isolation
     match /users/{userId} {
-      allow get: if (isSignedIn() && request.auth.uid == userId) || isPharmacist() || (resource != null && resource.data.role == 'pharmacist');
-      allow list: if isPharmacist() || resource.data.role == 'pharmacist';
+      allow get: if (isSignedIn() && request.auth.uid == userId) || isPharmacist() || isAdmin() || (resource != null && resource.data.role == 'pharmacist');
+      allow list: if isPharmacist() || isAdmin() || (resource != null && resource.data.role == 'pharmacist');
       allow create: if isSignedIn() && request.auth.uid == userId 
         && isValidUser(incoming())
         && incoming().createdAt == request.time
-        && (incoming().role == 'patient' || incoming().role == 'pharmacist'); 
-      allow update: if isSignedIn() && request.auth.uid == userId 
+        && (incoming().role == 'patient' || incoming().role == 'pharmacist' || incoming().role == 'admin'); 
+      allow update: if (isSignedIn() && request.auth.uid == userId 
         && isValidUser(incoming())
         && incoming().createdAt == existing().createdAt
         && isEmailVerified() // Require verified email for profile updates
         && incoming().email == existing().email // Email is immutable via client
-        && incoming().role == existing().role; // Role is immutable via client
+        && incoming().role == existing().role) // Role is immutable via client
+        || isAdmin();
     }
 
     // MEDICATIONS: Public read, restricted write
@@ -99,7 +103,7 @@ service cloud.firestore {
     match /prescriptions/{prescriptionId} {
       allow create: if isEmailVerified() && incoming().patientId == request.auth.uid;
       allow get: if isSignedIn() && (existing().patientId == request.auth.uid || isPharmacist());
-      allow list: if isSignedIn() && resource.data.patientId == request.auth.uid;
+      allow list: if isSignedIn() && (resource.data.patientId == request.auth.uid || isPharmacist());
     }
 
     // HOSPITALS & HEALTH SPOTS

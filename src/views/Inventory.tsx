@@ -31,7 +31,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../components/AuthContext';
 import { db } from '../lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, onSnapshot } from 'firebase/firestore';
 
 interface Medication {
   id: string;
@@ -158,7 +158,21 @@ export function Inventory() {
   const [selectedClass, setSelectedClass] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('name-asc');
-  const [activeTab, setActiveTab] = useState<'all' | 'alerts' | 'replenish' | 'ai'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'alerts' | 'replenish' | 'movements' | 'valuation' | 'ai'>('all');
+
+  // Advanced Stock Movements states
+  const [allMovements, setAllMovements] = useState<any[]>([]);
+  const [loadingMovements, setLoadingMovements] = useState(false);
+  const [selectedMovementType, setSelectedMovementType] = useState<string>('all');
+  const [selectedMovementReason, setSelectedMovementReason] = useState<string>('all');
+  const [movementSearchQuery, setMovementSearchQuery] = useState<string>('');
+
+  // Purchase Orders / Supplier orders states
+  const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
+  const [isCreatePOOpen, setIsCreatePOOpen] = useState(false);
+  const [poSupplier, setPoSupplier] = useState('LABOREX DOUALA');
+  const [poItems, setPoItems] = useState<{ medicationId: string, name: string, dosage: string, qty: number, purchasePrice: number }[]>([]);
+  const [poNote, setPoNote] = useState('');
 
   // Inline stock editing states
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
@@ -195,24 +209,23 @@ export function Inventory() {
     requiresPrescription: false,
   });
 
-  // Load from Firestore or local storage fallback
+  // Load from Firestore or local storage fallback with real-time sync
   useEffect(() => {
-    async function loadStock() {
-      setLoading(true);
-      try {
+    let unsubscribe = () => {};
+    setLoading(true);
+
+    if (user) {
+      const q = query(collection(db, 'medication_stock'), where('pharmacistId', '==', user.uid));
+      unsubscribe = onSnapshot(q, (querySnapshot) => {
         let items: Medication[] = [];
-        if (user) {
-          const q = query(collection(db, 'medication_stock'));
-          const querySnapshot = await getDocs(q);
-          if (!querySnapshot.empty) {
-            querySnapshot.forEach((docSnap) => {
-              items.push({ id: docSnap.id, ...docSnap.data() } as Medication);
-            });
-          }
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((docSnap) => {
+            items.push({ id: docSnap.id, ...docSnap.data() } as Medication);
+          });
         }
         
+        // If Firestore results are empty (not seeded yet or guest conversion), we fallback to local storage
         if (items.length === 0) {
-          // Fallback to localStorage or default seed
           const stored = localStorage.getItem('medimap_meds_stock');
           if (stored) {
             items = JSON.parse(stored);
@@ -220,19 +233,307 @@ export function Inventory() {
             items = DEFAULT_MEDICATIONS;
             localStorage.setItem('medimap_meds_stock', JSON.stringify(items));
           }
+        } else {
+          // Keep local storage copy in sync for seamless offline support or profile view fallbacks
+          localStorage.setItem('medimap_meds_stock', JSON.stringify(items));
         }
         
         setMedications(items);
-      } catch (err) {
-        console.warn("Firestore stock fetch failed, loading fallback local stock:", err);
+        setLoading(false);
+      }, (err) => {
+        console.warn("Firestore stock live subscription failed, loading fallback:", err);
         const stored = localStorage.getItem('medimap_meds_stock');
         setMedications(stored ? JSON.parse(stored) : DEFAULT_MEDICATIONS);
-      } finally {
         setLoading(false);
+      });
+    } else {
+      // Guest local fallback
+      const stored = localStorage.getItem('medimap_meds_stock');
+      let items = stored ? JSON.parse(stored) : DEFAULT_MEDICATIONS;
+      if (!stored) {
+        localStorage.setItem('medimap_meds_stock', JSON.stringify(items));
+      }
+      setMedications(items);
+      setLoading(false);
+    }
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Load and seed purchase orders
+  useEffect(() => {
+    async function loadPurchaseOrders() {
+      try {
+        let orders: any[] = [];
+        if (user) {
+          const q = query(collection(db, 'purchase_orders'), where('pharmacistId', '==', user.uid));
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((docSnap) => {
+            orders.push({ id: docSnap.id, ...docSnap.data() });
+          });
+        }
+        
+        if (orders.length === 0) {
+          const stored = localStorage.getItem('dokta_purchase_orders');
+          if (stored) {
+            orders = JSON.parse(stored);
+          } else {
+            // Seed sample orders
+            orders = [
+              {
+                id: 'PO-2026-001',
+                supplier: 'LABOREX DOUALA',
+                createdAt: '2026-07-10T14:30:00.000Z',
+                status: 'Reçu',
+                items: [
+                  { medicationId: 'med-1', name: 'Coartem 80/480mg', dosage: '80mg/480mg', qty: 20, purchasePrice: 1800 },
+                  { medicationId: 'med-2', name: 'Amoxicilline Clamoxyl', dosage: '1g', qty: 30, purchasePrice: 2500 }
+                ],
+                totalAmount: 111000,
+                note: 'Livraison hebdomadaire standard'
+              },
+              {
+                id: 'PO-2026-002',
+                supplier: 'UBIPHARM CAMEROUN',
+                createdAt: '2026-07-13T09:15:00.000Z',
+                status: 'Envoyé',
+                items: [
+                  { medicationId: 'med-5', name: 'Bétadine Jaune 10%', dosage: '100ml', qty: 15, purchasePrice: 1000 }
+                ],
+                totalAmount: 15000,
+                note: 'Rupture Betadine'
+              }
+            ];
+            localStorage.setItem('dokta_purchase_orders', JSON.stringify(orders));
+          }
+        }
+        orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setPurchaseOrders(orders);
+      } catch (err) {
+        console.warn("Failed to load purchase orders:", err);
       }
     }
-    loadStock();
+    loadPurchaseOrders();
   }, [user]);
+
+  // Load all stock movements
+  useEffect(() => {
+    async function fetchAllMovements() {
+      setLoadingMovements(true);
+      try {
+        let list: any[] = [];
+        if (user) {
+          const q = query(collection(db, 'stock_movements'), where('operatorId', '==', user.uid));
+          const snap = await getDocs(q);
+          snap.forEach((docSnap) => {
+            list.push({ id: docSnap.id, ...docSnap.data() });
+          });
+        }
+        
+        // Load fallback local logs
+        const localList: any[] = [];
+        const baseMeds = medications.length > 0 ? medications : DEFAULT_MEDICATIONS;
+        baseMeds.forEach(m => {
+          const stored = localStorage.getItem(`medimap_movements_${m.id}`);
+          if (stored) {
+            try {
+              localList.push(...JSON.parse(stored));
+            } catch (e) {}
+          }
+        });
+        
+        const merged = [...list];
+        localList.forEach(lm => {
+          if (!merged.some(m => m.timestamp === lm.timestamp && m.medicationId === lm.medicationId)) {
+            merged.push(lm);
+          }
+        });
+        
+        merged.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setAllMovements(merged);
+      } catch (err) {
+        console.warn("Failed to fetch all movements:", err);
+      } finally {
+        setLoadingMovements(false);
+      }
+    }
+    fetchAllMovements();
+  }, [user, medications, activeTab]);
+
+  // Handle PO Receiving (with automatic stock updating)
+  const handleReceiveOrder = async (orderId: string) => {
+    const updatedOrders = purchaseOrders.map(order => {
+      if (order.id === orderId) {
+        return { ...order, status: 'Reçu', receivedAt: new Date().toISOString() };
+      }
+      return order;
+    });
+    setPurchaseOrders(updatedOrders);
+    localStorage.setItem('dokta_purchase_orders', JSON.stringify(updatedOrders));
+
+    const targetOrder = purchaseOrders.find(o => o.id === orderId);
+    if (targetOrder) {
+      if (user && !orderId.startsWith('po-local-')) {
+        try {
+          await updateDoc(doc(db, 'purchase_orders', orderId), {
+            status: 'Reçu',
+            receivedAt: new Date().toISOString()
+          });
+        } catch (e) {
+          console.warn("Firestore PO update failed:", e);
+        }
+      }
+
+      // Update actual stock
+      const updatedMeds = [...medications];
+      for (const item of targetOrder.items) {
+        const medIndex = updatedMeds.findIndex(m => m.id === item.medicationId || m.name === item.name);
+        if (medIndex !== -1) {
+          const prevStock = updatedMeds[medIndex].stock;
+          const newStock = prevStock + item.qty;
+          updatedMeds[medIndex] = {
+            ...updatedMeds[medIndex],
+            stock: newStock,
+            updatedAt: new Date().toISOString()
+          };
+
+          const movementLog = {
+            medicationId: updatedMeds[medIndex].id,
+            medicationName: updatedMeds[medIndex].name,
+            type: 'entrée',
+            delta: item.qty,
+            previousStock: prevStock,
+            newStock: newStock,
+            reason: 'Réapprovisionnement grossiste',
+            note: `Reçu via Bon de commande ${targetOrder.id} - ${targetOrder.supplier}`,
+            timestamp: new Date().toISOString(),
+            operator: profile?.displayName ? `Dr. ${profile.displayName}` : 'Pharmacien Responsable',
+            operatorId: user ? user.uid : 'guest'
+          };
+
+          try {
+            if (user && !updatedMeds[medIndex].id.startsWith('med-local-')) {
+              await updateDoc(doc(db, 'medication_stock', updatedMeds[medIndex].id), {
+                stock: newStock,
+                updatedAt: new Date().toISOString()
+              });
+              await addDoc(collection(db, 'stock_movements'), movementLog);
+            }
+          } catch (err) {
+            console.warn("Firestore movement sync error:", err);
+          }
+
+          const localLogsKey = `medimap_movements_${updatedMeds[medIndex].id}`;
+          const existingLocal = localStorage.getItem(localLogsKey);
+          const localLogs = existingLocal ? JSON.parse(existingLocal) : [];
+          localLogs.unshift(movementLog);
+          localStorage.setItem(localLogsKey, JSON.stringify(localLogs));
+        }
+      }
+      saveMedicationsState(updatedMeds);
+      alert(`Félicitations ! Les produits du bon de commande ${targetOrder.id} ont été réceptionnés et ajoutés à votre inventaire.`);
+    }
+  };
+
+  // Change PO status from Draft to Sent
+  const handleSendOrder = async (orderId: string) => {
+    const updatedOrders = purchaseOrders.map(order => {
+      if (order.id === orderId) {
+        return { ...order, status: 'Envoyé', sentAt: new Date().toISOString() };
+      }
+      return order;
+    });
+    setPurchaseOrders(updatedOrders);
+    localStorage.setItem('dokta_purchase_orders', JSON.stringify(updatedOrders));
+
+    if (user && !orderId.startsWith('po-local-')) {
+      try {
+        await updateDoc(doc(db, 'purchase_orders', orderId), {
+          status: 'Envoyé',
+          sentAt: new Date().toISOString()
+        });
+      } catch (e) {
+        console.warn("Firestore PO update failed:", e);
+      }
+    }
+    alert(`Le bon de commande ${orderId} a été envoyé par e-mail/portail au grossiste.`);
+  };
+
+  // Create a new PO
+  const handleCreatePurchaseOrder = async (supplierName: string, itemsList: any[], notesText: string) => {
+    const poId = 'PO-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
+    const newPO = {
+      id: poId,
+      supplier: supplierName,
+      createdAt: new Date().toISOString(),
+      status: 'Brouillon',
+      items: itemsList,
+      totalAmount: itemsList.reduce((sum, item) => sum + (item.qty * item.purchasePrice), 0),
+      note: notesText || 'Commande générée',
+      pharmacistId: user ? user.uid : 'guest'
+    };
+
+    const updated = [newPO, ...purchaseOrders];
+    setPurchaseOrders(updated);
+    localStorage.setItem('dokta_purchase_orders', JSON.stringify(updated));
+
+    if (user) {
+      try {
+        await addDoc(collection(db, 'purchase_orders'), newPO);
+      } catch (err) {
+        console.warn("Firestore PO save failed:", err);
+      }
+    }
+    alert(`Bon de commande ${poId} créé à l'état Brouillon pour ${supplierName}.`);
+  };
+
+  // Write off / discard expired medication
+  const handleWriteOffExpired = async (med: Medication) => {
+    if (!window.confirm(`Confirmez-vous la mise au rebut technique de ${med.name} (${med.stock} unités) ? Son stock passera à 0 et le coût de perte sera enregistré.`)) return;
+
+    const prevStock = med.stock;
+    const updatedMeds = medications.map(m => {
+      if (m.id === med.id) {
+        return { ...m, stock: 0, updatedAt: new Date().toISOString() };
+      }
+      return m;
+    });
+    saveMedicationsState(updatedMeds);
+
+    const movementLog = {
+      medicationId: med.id,
+      medicationName: med.name,
+      type: 'sortie',
+      delta: -prevStock,
+      previousStock: prevStock,
+      newStock: 0,
+      reason: 'Produit périmé / Rebut',
+      note: 'Mise au rebut technique réglementaire (Périmé)',
+      timestamp: new Date().toISOString(),
+      operator: profile?.displayName ? `Dr. ${profile.displayName}` : 'Pharmacien Responsable',
+      operatorId: user ? user.uid : 'guest'
+    };
+
+    try {
+      if (user && !med.id.startsWith('med-local-')) {
+        await updateDoc(doc(db, 'medication_stock', med.id), {
+          stock: 0,
+          updatedAt: new Date().toISOString()
+        });
+        await addDoc(collection(db, 'stock_movements'), movementLog);
+      }
+    } catch (err) {
+      console.warn("Firestore update on write-off failed:", err);
+    }
+
+    const localLogsKey = `medimap_movements_${med.id}`;
+    const existingLocal = localStorage.getItem(localLogsKey);
+    const localLogs = existingLocal ? JSON.parse(existingLocal) : [];
+    localLogs.unshift(movementLog);
+    localStorage.setItem(localLogsKey, JSON.stringify(localLogs));
+
+    alert(`${med.name} a été retiré du stock d'officine (Quantité: 0). Le mouvement de perte a été tracé.`);
+  };
 
   // Persist stock state
   const saveMedicationsState = async (updatedMeds: Medication[]) => {
@@ -246,7 +547,7 @@ export function Inventory() {
   // Handler for adding medication
   const handleAddMed = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newMed: Omit<Medication, 'id'> = {
+    const newMed: any = {
       ...formData,
       stock: Number(formData.stock),
       minThreshold: Number(formData.minThreshold),
@@ -255,6 +556,10 @@ export function Inventory() {
       requiresPrescription: Boolean(formData.requiresPrescription),
       updatedAt: new Date().toISOString()
     };
+
+    if (user) {
+      newMed.pharmacistId = user.uid;
+    }
 
     try {
       if (user) {
@@ -729,7 +1034,30 @@ export function Inventory() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-slate-200 gap-6">
+      {/* Mobile Sub-Navigation Select (Dropdown Style) */}
+      <div className="block lg:hidden w-full relative mb-4">
+        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-2">Choisir une section :</label>
+        <div className="relative">
+          <select 
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value as any)}
+            className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3.5 text-xs font-black text-slate-700 outline-none appearance-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600"
+          >
+            <option value="all">📁 Inventaire Général ({sortedMeds.length})</option>
+            <option value="alerts">⚠️ Alertes & Péremptions ({outOfStockCount + lowStockCount + expiredCount})</option>
+            <option value="replenish">📦 Commandes & Réception</option>
+            <option value="movements">🔄 Mouvements de Stock</option>
+            <option value="valuation">💰 Analyses & Valorisation</option>
+            <option value="ai">✨ Optimiseur Care IA</option>
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <ChevronDown size={16} />
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Navigation Tabs */}
+      <div className="hidden lg:flex border-b border-slate-200 gap-6 overflow-x-auto no-scrollbar pb-1">
         <TabButton 
           active={activeTab === 'all'} 
           onClick={() => setActiveTab('all')} 
@@ -739,20 +1067,32 @@ export function Inventory() {
         <TabButton 
           active={activeTab === 'alerts'} 
           onClick={() => setActiveTab('alerts')} 
-          label="Alertes Actives" 
+          label="Alertes & Péremptions" 
           count={outOfStockCount + lowStockCount + expiredCount}
           highlight
         />
         <TabButton 
           active={activeTab === 'replenish'} 
           onClick={() => setActiveTab('replenish')} 
-          label="Bons de Commande" 
+          label="Commandes & Réception" 
           icon={<FileText size={14} />}
+        />
+        <TabButton 
+          active={activeTab === 'movements'} 
+          onClick={() => setActiveTab('movements')} 
+          label="Mouvements de Stock" 
+          icon={<RefreshCw size={14} />}
+        />
+        <TabButton 
+          active={activeTab === 'valuation'} 
+          onClick={() => setActiveTab('valuation')} 
+          label="Analyses & Valorisation" 
+          icon={<DollarSign size={14} />}
         />
         <TabButton 
           active={activeTab === 'ai'} 
           onClick={() => setActiveTab('ai')} 
-          label="Optimiseur IA" 
+          label="Optimiseur Care IA" 
           icon={<Sparkles size={14} />}
           ai
         />
@@ -836,8 +1176,8 @@ export function Inventory() {
               </div>
             </div>
 
-            {/* Main Medications Table Card */}
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            {/* Main Medications Table Card (Desktop/Tablet Only) */}
+            <div className="hidden md:block bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -1027,6 +1367,141 @@ export function Inventory() {
                 </table>
               </div>
             </div>
+
+            {/* Medications Cards List (Mobile Only) */}
+            <div className="block md:hidden space-y-4">
+              {sortedMeds.length === 0 ? (
+                <div className="bg-white border rounded-[2rem] p-8 text-center text-slate-400 font-medium shadow-sm">
+                  <div className="flex flex-col items-center gap-3">
+                    <Pill size={36} className="text-slate-300 stroke-1" />
+                    <p>Aucun médicament trouvé avec ces critères.</p>
+                  </div>
+                </div>
+              ) : (
+                sortedMeds.map((med) => {
+                  const status = getMedStatus(med);
+                  return (
+                    <div key={med.id} className="bg-white border border-slate-100 rounded-[2rem] p-5 shadow-sm space-y-4 relative overflow-hidden text-left">
+                      {/* Left color bar for status */}
+                      <div className={cn(
+                        "absolute left-0 top-0 bottom-0 w-1.5",
+                        status === 'expired' ? "bg-rose-500" :
+                        status === 'expiring_soon' ? "bg-purple-500" :
+                        status === 'out' ? "bg-red-500" :
+                        status === 'low' ? "bg-amber-500" :
+                        "bg-emerald-500"
+                      )} />
+                      
+                      {/* Header row with name and dosage */}
+                      <div className="pl-2 space-y-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 
+                            className="font-bold text-slate-900 text-sm hover:text-brand-600 hover:underline cursor-pointer" 
+                            onClick={() => openView(med)}
+                          >
+                            {med.name}
+                          </h4>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase shrink-0">
+                            {med.dosage}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          <p className="text-[11px] text-slate-400 font-medium italic">{med.genericName}</p>
+                          {med.requiresPrescription && (
+                            <span className="bg-purple-100 text-purple-700 text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded">
+                              Ordonnance
+                            </span>
+                          )}
+                          <span className="text-[10px] text-slate-400 font-semibold font-mono bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
+                            {med.batchNumber || 'N/A'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Therapeutic details & Expiry date */}
+                      <div className="pl-2 grid grid-cols-2 gap-3 text-xs border-t border-b border-slate-50 py-3">
+                        <div>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Classe :</span>
+                          <span className="font-bold text-slate-700 leading-tight block">{med.therapeuticClass}</span>
+                          <span className="text-[10px] text-slate-400 font-medium">{med.type}</span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Péremption :</span>
+                          <span className={cn(
+                            "font-bold flex items-center gap-1",
+                            isExpired(med.expiryDate) ? "text-rose-600 line-through" :
+                            isExpiringSoon(med.expiryDate) ? "text-purple-600" : "text-slate-600"
+                          )}>
+                            <Calendar size={10} className="text-slate-400" />
+                            {new Date(med.expiryDate).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Stock & Prices row */}
+                      <div className="pl-2 flex items-center justify-between gap-4">
+                        <div>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">Prix d'officine :</span>
+                          <span className="font-bold text-slate-800 text-xs">{med.sellingPrice.toLocaleString()} FCFA</span>
+                          <span className="text-[9px] text-slate-400 block font-medium italic">Achat: {med.purchasePrice.toLocaleString()} FCFA</span>
+                        </div>
+                        
+                        <div className="flex flex-col items-end gap-1">
+                          <button 
+                            type="button"
+                            onClick={() => setAdjustmentMed(med)}
+                            className="flex items-center gap-1.5 bg-slate-50 hover:bg-brand-50 hover:text-brand-600 px-3 py-1.5 rounded-xl border border-slate-100 transition-all"
+                          >
+                            <span className={cn(
+                              "font-black text-xs",
+                              status === 'expired' || status === 'out' ? "text-rose-600" :
+                              status === 'low' ? "text-amber-500" : "text-slate-800"
+                            )}>
+                              Stock: {med.stock}
+                            </span>
+                            <span className="text-[9px] font-bold text-slate-400 border-l pl-1.5">Ajuster</span>
+                          </button>
+                          
+                          {/* Status Badge */}
+                          {status === 'expired' && <span className="text-[8px] font-black uppercase bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded">Périmé</span>}
+                          {status === 'expiring_soon' && <span className="text-[8px] font-black uppercase bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Périme bientôt</span>}
+                          {status === 'out' && <span className="text-[8px] font-black uppercase bg-red-100 text-red-700 px-1.5 py-0.5 rounded">Rupture stock</span>}
+                          {status === 'low' && <span className="text-[8px] font-black uppercase bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Critique</span>}
+                          {status === 'optimal' && <span className="text-[8px] font-black uppercase bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">Optimal</span>}
+                        </div>
+                      </div>
+
+                      {/* Action buttons footer */}
+                      <div className="pl-2 flex justify-end gap-2 pt-3 border-t border-slate-50">
+                        <button 
+                          type="button"
+                          onClick={() => openView(med)}
+                          className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 font-bold text-xs rounded-xl transition-colors border flex items-center gap-1"
+                        >
+                          <Eye size={12} />
+                          <span>Détails</span>
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => openEdit(med)}
+                          className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold text-xs rounded-xl transition-colors border border-blue-100 flex items-center gap-1"
+                        >
+                          <Edit3 size={12} />
+                          <span>Modifier</span>
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => handleDeleteMed(med.id)}
+                          className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition-colors border border-rose-100"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </motion.div>
         )}
 
@@ -1132,12 +1607,26 @@ export function Inventory() {
 
                             {/* Direct Actions */}
                             <div className="flex gap-1.5">
-                              <button 
-                                onClick={() => openEdit(m)}
-                                className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-md"
-                              >
-                                {status === 'expired' ? 'Remplacer' : 'Commander'}
-                              </button>
+                              {status === 'expired' ? (
+                                <button 
+                                  onClick={() => handleWriteOffExpired(m)}
+                                  className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-md"
+                                >
+                                  Mettre au rebut
+                                </button>
+                              ) : (
+                                <button 
+                                  onClick={() => {
+                                    setPoSupplier(m.therapeuticClass === 'Antipaludique' ? 'UBIPHARM CAMEROUN' : 'LABOREX DOUALA');
+                                    setPoItems([{ medicationId: m.id, name: m.name, dosage: m.dosage, qty: (m.minThreshold * 2) - m.stock, purchasePrice: m.purchasePrice }]);
+                                    setActiveTab('replenish');
+                                    setIsCreatePOOpen(true);
+                                  }}
+                                  className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3.5 py-2.5 rounded-xl shadow-md"
+                                >
+                                  Créer Bon
+                                </button>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -1149,7 +1638,7 @@ export function Inventory() {
           </motion.div>
         )}
 
-        {/* Tab 3: REPLENISHMENT BILL GENERATION */}
+        {/* Tab 3: PURCHASE ORDERS & RECEIPTS */}
         {activeTab === 'replenish' && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -1157,86 +1646,507 @@ export function Inventory() {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-6"
           >
-            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-6 space-y-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4">
-                <div>
-                  <h2 className="font-display font-black text-slate-950 text-xl flex items-center gap-2">
-                    <FileText size={22} className="text-brand-600" />
-                    Réapprovisionnement Intelligent Grossiste
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-1 font-medium">
-                    Nous avons détecté les médicaments nécessitant une commande immédiate d'après vos seuils de stock.
-                  </p>
-                </div>
-                <button 
-                  onClick={() => {
-                    alert("Bon de commande exporté avec succès pour Laborex/Ubipharm ! Un e-mail de confirmation a été envoyé.");
-                  }}
-                  disabled={medications.filter(m => m.stock <= m.minThreshold).length === 0}
-                  className="bg-brand-600 hover:bg-brand-700 text-white font-black text-xs uppercase tracking-widest px-5 py-3 rounded-xl disabled:opacity-50 transition-all flex items-center gap-2"
-                >
-                  <ArrowUpRight size={16} /> Export PDF & Envoi Grossiste
-                </button>
+            {/* Purchase order system header with buttons */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm">
+              <div>
+                <h2 className="text-lg font-display font-black text-slate-900">Commandes Grossistes & Réception</h2>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">
+                  Planifiez vos approvisionnements d'officine auprès des grossistes (Laborex, Ubipharm) et validez la réception physique.
+                </p>
               </div>
+              <button
+                onClick={() => {
+                  const alertItems = medications
+                    .filter(m => m.stock <= m.minThreshold)
+                    .map(m => ({
+                      medicationId: m.id,
+                      name: m.name,
+                      dosage: m.dosage,
+                      qty: (m.minThreshold * 2) - m.stock,
+                      purchasePrice: m.purchasePrice
+                    }));
+                  setPoItems(alertItems);
+                  setPoSupplier('LABOREX DOUALA');
+                  setPoNote('Généré automatiquement d\'après les alertes de stock bas.');
+                  setIsCreatePOOpen(true);
+                }}
+                className="bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-5 py-3 rounded-2xl flex items-center gap-2 transition-all shadow-lg shadow-brand-600/15"
+              >
+                <Plus size={16} /> Nouveau Bon de Commande
+              </button>
+            </div>
 
-              {/* Items under replenishment order */}
-              <div className="space-y-4">
-                {medications.filter(m => m.stock <= m.minThreshold).length === 0 ? (
-                  <div className="py-12 text-center text-slate-400 font-medium flex flex-col items-center gap-2">
-                    <PackageCheck size={36} className="text-emerald-500" />
-                    <p className="font-bold text-slate-800">Aucun produit à commander !</p>
-                    <p className="text-xs">Votre réserve officinale est amplement approvisionnée.</p>
+            {/* Split layout: Active Purchase Orders and recommended orders */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Left 2 Cols: Existing Purchase Orders List */}
+              <div className="lg:col-span-2 space-y-4">
+                <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider px-1">
+                  Suivi des Bons de Commande ({purchaseOrders.length})
+                </h3>
+
+                {purchaseOrders.length === 0 ? (
+                  <div className="bg-white border border-slate-100 rounded-[2rem] p-12 text-center text-slate-400 font-medium">
+                    <FileText size={36} className="mx-auto text-slate-300 stroke-1 mb-2 animate-bounce" />
+                    <p className="font-bold text-slate-800 text-sm">Aucune commande enregistrée</p>
+                    <p className="text-xs mt-1">Créez votre première commande pour suivre vos livraisons.</p>
                   </div>
                 ) : (
-                  <>
-                    <div className="border border-slate-100 rounded-2xl overflow-hidden bg-slate-50/20">
-                      <table className="w-full text-left text-xs font-medium">
-                        <thead>
-                          <tr className="bg-slate-50 border-b border-slate-100">
-                            <th className="px-5 py-3 font-bold text-slate-400 uppercase text-[9px] tracking-wider">Médicament</th>
-                            <th className="px-5 py-3 font-bold text-slate-400 uppercase text-[9px] tracking-wider text-center">Stock actuel</th>
-                            <th className="px-5 py-3 font-bold text-slate-400 uppercase text-[9px] tracking-wider text-center">Quantité Suggérée</th>
-                            <th className="px-5 py-3 font-bold text-slate-400 uppercase text-[9px] tracking-wider">Estimation P.A.</th>
-                            <th className="px-5 py-3 font-bold text-slate-400 uppercase text-[9px] tracking-wider text-right">Fournisseur Cameroun</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {medications.filter(m => m.stock <= m.minThreshold).map(m => {
-                            // Suggest replenishment quantity to hit double the threshold
-                            const suggestedQty = (m.minThreshold * 2) - m.stock;
-                            return (
-                              <tr key={m.id} className="hover:bg-slate-50/40 bg-white">
-                                <td className="px-5 py-4.5">
-                                  <div className="font-bold text-slate-800">{m.name} {m.dosage}</div>
-                                  <div className="text-[10px] text-slate-400">{m.genericName}</div>
-                                </td>
-                                <td className="px-5 py-4.5 text-center font-bold text-rose-500">
-                                  {m.stock}
-                                </td>
-                                <td className="px-5 py-4.5 text-center font-black text-brand-600 bg-brand-50/30">
-                                  {suggestedQty} boîtes
-                                </td>
-                                <td className="px-5 py-4.5 font-bold text-slate-700">
-                                  {(suggestedQty * m.purchasePrice).toLocaleString()} FCFA
-                                </td>
-                                <td className="px-5 py-4.5 text-right font-black text-slate-500 uppercase tracking-tight text-[10px]">
-                                  {m.therapeuticClass === 'Antipaludique' ? 'UBIPHARM CAMEROUN' : 'LABOREX DOUALA'}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
+                  <div className="space-y-4">
+                    {purchaseOrders.map((order) => (
+                      <div key={order.id} className="bg-white rounded-[2rem] border border-slate-100 p-5 shadow-sm space-y-4 hover:shadow-md transition-all">
+                        {/* Order Header row */}
+                        <div className="flex flex-wrap justify-between items-center gap-3 border-b pb-3.5">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-500 font-mono text-xs font-black">
+                              PO
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-slate-900 text-sm">{order.id}</span>
+                                <span className={cn(
+                                  "text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full",
+                                  order.status === 'Reçu' ? "bg-emerald-100 text-emerald-800" :
+                                  order.status === 'Envoyé' ? "bg-blue-100 text-blue-800" :
+                                  "bg-slate-100 text-slate-700"
+                                )}>
+                                  {order.status}
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-slate-400 font-medium">
+                                Créé le {new Date(order.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          </div>
 
-                    <div className="bg-amber-50 rounded-2xl p-4 border border-amber-100 flex gap-3">
-                      <Info size={18} className="text-amber-500 shrink-0 mt-0.5" />
-                      <div className="text-xs text-amber-700 leading-relaxed">
-                        <span className="font-bold">Note d'approvisionnement :</span> Ces estimations sont basées sur vos consommations moyennes à Douala pour garantir une réserve de 30 jours contre le paludisme saisonnier et les infections bactériennes locales.
+                          <div className="text-right">
+                            <span className="text-xs text-slate-400 font-bold block">Grossiste d'approvisionnement</span>
+                            <span className="text-xs font-black text-slate-700 uppercase">{order.supplier}</span>
+                          </div>
+                        </div>
+
+                        {/* Order Items Summary */}
+                        <div className="bg-slate-50/50 rounded-xl p-3 border border-slate-100/50">
+                          <table className="w-full text-left text-xs">
+                            <thead>
+                              <tr className="text-[9px] text-slate-400 uppercase font-black tracking-wider border-b border-slate-100 pb-1 block w-full mb-1">
+                                <th className="w-3/5">Médicament</th>
+                                <th className="w-1/5 text-center">Quantité</th>
+                                <th className="w-1/5 text-right">Tarif HT</th>
+                              </tr>
+                            </thead>
+                            <tbody className="space-y-1 block max-h-24 overflow-y-auto scrollbar-thin">
+                              {order.items.map((item: any, idx: number) => (
+                                <tr key={idx} className="flex justify-between items-center text-slate-700 font-medium">
+                                  <td className="w-3/5 truncate">{item.name} {item.dosage}</td>
+                                  <td className="w-1/5 text-center font-bold text-slate-900">{item.qty} boîtes</td>
+                                  <td className="w-1/5 text-right font-semibold font-mono">{(item.qty * item.purchasePrice).toLocaleString()} FCFA</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* Order notes */}
+                        {order.note && (
+                          <div className="text-[11px] text-slate-500 italic flex gap-1 items-start bg-slate-50 p-2 rounded-xl border border-transparent">
+                            <span className="font-bold shrink-0">Note :</span>
+                            <span className="line-clamp-2">"{order.note}"</span>
+                          </div>
+                        )}
+
+                        {/* Actions Row */}
+                        <div className="flex justify-between items-center pt-2.5 border-t border-slate-50">
+                          <div>
+                            <span className="text-[10px] text-slate-400 font-bold uppercase block">Montant Facture</span>
+                            <span className="font-black font-display text-base text-brand-600">
+                              {order.totalAmount.toLocaleString()} <span className="text-xs font-medium">FCFA</span>
+                            </span>
+                          </div>
+
+                          <div className="flex gap-2">
+                            {order.status === 'Brouillon' && (
+                              <button
+                                onClick={() => handleSendOrder(order.id)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-md"
+                              >
+                                <ArrowUpRight size={14} /> Envoyer au Grossiste
+                              </button>
+                            )}
+                            {order.status === 'Envoyé' && (
+                              <button
+                                onClick={() => handleReceiveOrder(order.id)}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-xl flex items-center gap-1.5 shadow-md"
+                              >
+                                <Check size={14} className="stroke-[3]" /> Confirmer la Réception
+                              </button>
+                            )}
+                            {order.status === 'Reçu' && (
+                              <div className="text-xs text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-100">
+                                <Check size={14} className="stroke-[3]" /> Réceptionné & Stocké
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </>
+                    ))}
+                  </div>
                 )}
+              </div>
+
+              {/* Right 1 Col: Dynamic Alert Suggestions to Order */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider px-1 flex items-center gap-1.5">
+                  <AlertTriangle size={14} className="text-amber-500" />
+                  Seuils critiques & Besoins ({medications.filter(m => m.stock <= m.minThreshold).length})
+                </h3>
+
+                <div className="bg-white rounded-[2rem] border border-slate-100 p-5 shadow-sm space-y-4">
+                  <div className="pb-3 border-b border-slate-100">
+                    <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                      Ces suggestions représentent le volume nécessaire pour remonter vos réserves de sécurité à un niveau de tranquillité de 30 jours d'après la consommation de Douala.
+                    </p>
+                  </div>
+
+                  <div className="space-y-3 max-h-[350px] overflow-y-auto scrollbar-thin">
+                    {medications.filter(m => m.stock <= m.minThreshold).length === 0 ? (
+                      <div className="py-6 text-center text-slate-400 text-xs">
+                        <Check size={24} className="mx-auto text-emerald-500 mb-1" />
+                        Tous vos stocks d'officine sont optimaux.
+                      </div>
+                    ) : (
+                      medications.filter(m => m.stock <= m.minThreshold).map(m => {
+                        const recQty = (m.minThreshold * 2) - m.stock;
+                        return (
+                          <div key={m.id} className="flex justify-between items-center p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div>
+                              <h4 className="text-xs font-bold text-slate-800 line-clamp-1">{m.name}</h4>
+                              <p className="text-[10px] text-slate-400 font-medium font-mono">Stock : {m.stock} / Min : {m.minThreshold}</p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs font-black text-brand-600 block">+{recQty} boîtes</span>
+                              <span className="text-[9px] text-slate-400 font-semibold italic">{(recQty * m.purchasePrice).toLocaleString()} FCFA</span>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {medications.filter(m => m.stock <= m.minThreshold).length > 0 && (
+                    <button
+                      onClick={() => {
+                        const alertItems = medications
+                          .filter(m => m.stock <= m.minThreshold)
+                          .map(m => ({
+                            medicationId: m.id,
+                            name: m.name,
+                            dosage: m.dosage,
+                            qty: (m.minThreshold * 2) - m.stock,
+                            purchasePrice: m.purchasePrice
+                          }));
+                        setPoItems(alertItems);
+                        setPoSupplier('LABOREX DOUALA');
+                        setPoNote('Généré automatiquement d\'après les alertes de stock bas.');
+                        setIsCreatePOOpen(true);
+                      }}
+                      className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors shadow-md"
+                    >
+                      Regrouper tout dans un bon
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Tab 4: DETAILED STOCK MOVEMENTS & AUDIT LEDGER */}
+        {activeTab === 'movements' && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="space-y-6"
+          >
+            {/* KPI Counters */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-slate-400">Total Transactions</span>
+                  <p className="text-2xl font-display font-black text-slate-800 mt-0.5">{allMovements.length}</p>
+                </div>
+                <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl text-slate-500">
+                  <FileText size={18} />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-slate-400">Entrées de Stock</span>
+                  <p className="text-2xl font-display font-black text-emerald-600 mt-0.5">
+                    {allMovements.filter(m => m.type === 'entrée').reduce((sum, m) => sum + Math.abs(m.delta), 0)}
+                  </p>
+                </div>
+                <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-500">
+                  <ArrowUpRight size={18} />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-slate-400">Sorties & Rebuts</span>
+                  <p className="text-2xl font-display font-black text-rose-600 mt-0.5">
+                    {allMovements.filter(m => m.type === 'sortie').reduce((sum, m) => sum + Math.abs(m.delta), 0)}
+                  </p>
+                </div>
+                <div className="p-3 bg-rose-50 border border-rose-100 rounded-2xl text-rose-500">
+                  <ArrowUpRight size={18} className="rotate-90" />
+                </div>
+              </div>
+            </div>
+
+            {/* Filter controls */}
+            <div className="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+              {/* Search */}
+              <div className="relative w-full md:w-80 group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <input 
+                  type="text" 
+                  value={movementSearchQuery}
+                  onChange={(e) => setMovementSearchQuery(e.target.value)}
+                  placeholder="Rechercher médicament..." 
+                  className="w-full bg-slate-50 border-none rounded-xl py-3 pl-12 pr-4 text-sm font-medium focus:ring-2 focus:ring-brand-600/10 outline-none transition-all"
+                />
+              </div>
+
+              {/* Advanced filter dropdowns */}
+              <div className="flex flex-wrap gap-2.5 w-full md:w-auto items-center justify-end">
+                <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
+                  <span className="text-[10px] font-black uppercase text-slate-400">Type :</span>
+                  <select 
+                    value={selectedMovementType}
+                    onChange={(e) => setSelectedMovementType(e.target.value)}
+                    className="bg-transparent text-xs font-bold text-slate-600 outline-none border-none p-0 focus:ring-0 cursor-pointer"
+                  >
+                    <option value="all">Tous types</option>
+                    <option value="entrée">Entrée (+)</option>
+                    <option value="sortie">Sortie (-)</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-xl">
+                  <span className="text-[10px] font-black uppercase text-slate-400">Origine :</span>
+                  <select 
+                    value={selectedMovementReason}
+                    onChange={(e) => setSelectedMovementReason(e.target.value)}
+                    className="bg-transparent text-xs font-bold text-slate-600 outline-none border-none p-0 focus:ring-0 cursor-pointer"
+                  >
+                    <option value="all">Toutes origines</option>
+                    <option value="Réapprovisionnement grossiste">Approvisionnement</option>
+                    <option value="Vente directe d'officine">Vente</option>
+                    <option value="Correction d'inventaire">Correction</option>
+                    <option value="Produit périmé / Rebut">Périmé / Rebut</option>
+                    <option value="Avarie / Perte / Vol">Perte / Vol</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Audit Table */}
+            <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/50 border-b border-slate-100">
+                      <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Date & Heure</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Médicament</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center">Type</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center">Mouvement</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Motif / Commentaire</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Opérateur</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs">
+                    {allMovements
+                      .filter(m => {
+                        const matchSearch = m.medicationName.toLowerCase().includes(movementSearchQuery.toLowerCase());
+                        const matchType = selectedMovementType === 'all' || m.type === selectedMovementType;
+                        const matchReason = selectedMovementReason === 'all' || m.reason === selectedMovementReason;
+                        return matchSearch && matchType && matchReason;
+                      })
+                      .length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-12 text-center text-slate-400 font-medium">
+                          <div className="flex flex-col items-center gap-2">
+                            <Clock size={32} className="text-slate-300" />
+                            <p>Aucun mouvement enregistré avec ces critères.</p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      allMovements
+                        .filter(m => {
+                          const matchSearch = m.medicationName.toLowerCase().includes(movementSearchQuery.toLowerCase());
+                          const matchType = selectedMovementType === 'all' || m.type === selectedMovementType;
+                          const matchReason = selectedMovementReason === 'all' || m.reason === selectedMovementReason;
+                          return matchSearch && matchType && matchReason;
+                        })
+                        .map((movement, idx) => (
+                          <tr key={movement.id || idx} className="hover:bg-slate-50/30 transition-colors">
+                            <td className="px-6 py-4.5 font-medium text-slate-500">
+                              {new Date(movement.timestamp).toLocaleString('fr-FR', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </td>
+                            <td className="px-6 py-4.5 font-bold text-slate-800">
+                              {movement.medicationName}
+                            </td>
+                            <td className="px-6 py-4.5 text-center">
+                              <span className={cn(
+                                "text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full",
+                                movement.type === 'entrée' ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-rose-50 text-rose-700 border border-rose-100"
+                              )}>
+                                {movement.type}
+                              </span>
+                            </td>
+                            <td className={cn(
+                              "px-6 py-4.5 text-center font-black font-mono text-sm",
+                              movement.type === 'entrée' ? "text-emerald-600" : "text-rose-600"
+                            )}>
+                              {movement.delta > 0 ? `+${movement.delta}` : movement.delta}
+                            </td>
+                            <td className="px-6 py-4.5">
+                              <div className="font-bold text-slate-700">{movement.reason}</div>
+                              {movement.note && <div className="text-[10px] text-slate-400 italic mt-0.5">"{movement.note}"</div>}
+                            </td>
+                            <td className="px-6 py-4.5 text-right font-black text-slate-500">
+                              {movement.operator}
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Tab 5: FINANCIAL VALUATION & REPORTS */}
+        {activeTab === 'valuation' && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="space-y-6"
+          >
+            {/* Financial Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm">
+                <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">Valeur Achat Totale</span>
+                <span className="text-xl sm:text-2xl font-display font-black text-slate-800 block mt-2 font-mono">
+                  {medications.reduce((sum, m) => sum + (m.stock * m.purchasePrice), 0).toLocaleString()}
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium block mt-1">FCFA (Capital immobilisé)</span>
+              </div>
+
+              <div className="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm">
+                <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">Valeur Vente Totale</span>
+                <span className="text-xl sm:text-2xl font-display font-black text-emerald-600 block mt-2 font-mono">
+                  {totalValuation.toLocaleString()}
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium block mt-1">FCFA (Prix public cumulé)</span>
+              </div>
+
+              <div className="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm">
+                <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">Marge brute estimée</span>
+                <span className="text-xl sm:text-2xl font-display font-black text-brand-600 block mt-2 font-mono">
+                  {(totalValuation - medications.reduce((sum, m) => sum + (m.stock * m.purchasePrice), 0)).toLocaleString()}
+                </span>
+                <span className="text-[10px] text-slate-400 font-bold block mt-1">
+                  + {totalValuation > 0 ? Math.round(((totalValuation - medications.reduce((sum, m) => sum + (m.stock * m.purchasePrice), 0)) / totalValuation) * 100) : 0}% de marge brute
+                </span>
+              </div>
+
+              <div className="bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm">
+                <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block">Pertes d'Écritures (Périmés)</span>
+                <span className="text-xl sm:text-2xl font-display font-black text-rose-600 block mt-2 font-mono">
+                  {medications.filter(m => isExpired(m.expiryDate)).reduce((sum, m) => sum + (m.stock * m.purchasePrice), 0).toLocaleString()}
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium block mt-1">FCFA (Capital perdu direct)</span>
+              </div>
+            </div>
+
+            {/* High Fidelity Visual Charts Container */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Chart 1: Therapeutic Class Distribution */}
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                  <h3 className="font-display font-black text-slate-900 text-sm sm:text-base">Répartition du Capital par Classe Thérapeutique</h3>
+                  <p className="text-[10px] text-slate-400 font-medium mt-0.5">Valeur d'inventaire totale par domaine médical.</p>
+                </div>
+
+                <div className="space-y-4 mt-6">
+                  {therapeuticClasses.map((c, i) => {
+                    const classVal = medications.filter(m => m.therapeuticClass === c).reduce((sum, m) => sum + (m.stock * m.sellingPrice), 0);
+                    const percent = totalValuation > 0 ? Math.round((classVal / totalValuation) * 100) : 0;
+                    
+                    const barColor = i === 0 ? "bg-brand-500" :
+                                     i === 1 ? "bg-emerald-500" :
+                                     i === 2 ? "bg-blue-500" :
+                                     i === 3 ? "bg-amber-500" :
+                                     i === 4 ? "bg-purple-500" : "bg-slate-400";
+                    
+                    return (
+                      <div key={c} className="space-y-1.5">
+                        <div className="flex justify-between items-center text-xs font-bold text-slate-700">
+                          <span>{c}</span>
+                          <span className="font-mono">{classVal.toLocaleString()} FCFA ({percent}%)</span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                          <div className={cn("h-full rounded-full transition-all duration-1000", barColor)} style={{ width: `${percent}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Chart 2: Inventory Health Donut & Top Capital Items */}
+              <div className="bg-white rounded-[2.5rem] border border-slate-100 p-6 shadow-sm flex flex-col justify-between">
+                <div>
+                  <h3 className="font-display font-black text-slate-900 text-sm sm:text-base">Top 5 Valorisations d'Officine</h3>
+                  <p className="text-[10px] text-slate-400 font-medium mt-0.5">Médicaments mobilisant le plus de trésorerie en rayon.</p>
+                </div>
+
+                <div className="space-y-3.5 mt-6">
+                  {[...medications]
+                    .sort((a, b) => (b.stock * b.sellingPrice) - (a.stock * a.sellingPrice))
+                    .slice(0, 5)
+                    .map((m, idx) => {
+                      const value = m.stock * m.sellingPrice;
+                      return (
+                        <div key={m.id} className="flex justify-between items-center p-3 bg-slate-50 rounded-2xl border border-slate-100/50">
+                          <div className="flex items-center gap-2.5">
+                            <span className="w-5 h-5 bg-slate-200 text-slate-600 rounded-lg flex items-center justify-center font-black text-[10px]">
+                              {idx + 1}
+                            </span>
+                            <div>
+                              <span className="text-xs font-bold text-slate-800 block line-clamp-1">{m.name}</span>
+                              <span className="text-[10px] text-slate-400 font-medium">Stock: {m.stock} boîtes • Étagère: {m.location}</span>
+                            </div>
+                          </div>
+                          <span className="text-xs font-black font-mono text-slate-700">{value.toLocaleString()} FCFA</span>
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -1333,6 +2243,197 @@ export function Inventory() {
               ))}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MODAL: CREATE PURCHASE ORDER */}
+      <AnimatePresence>
+        {isCreatePOOpen && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1100] flex items-center justify-center p-2 sm:p-4">
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] w-full max-w-2xl border border-slate-100 shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh]"
+            >
+              {/* Header */}
+              <div className="px-4 py-3.5 sm:px-6 sm:py-5 border-b flex justify-between items-center bg-slate-50/50 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-brand-50 border border-brand-100 rounded-xl flex items-center justify-center text-brand-600">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-black text-slate-900 text-sm sm:text-base">Nouveau Bon de Commande</h3>
+                    <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium">Préparez une commande d'approvisionnement en officine.</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsCreatePOOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white hover:bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-5 overflow-y-auto space-y-4 flex-1">
+                {/* Supplier selection */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-black uppercase tracking-wide text-slate-400">Fournisseur Grossiste</label>
+                  <select 
+                    value={poSupplier} 
+                    onChange={(e) => setPoSupplier(e.target.value)}
+                    className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-brand-600/10 outline-none"
+                  >
+                    <option value="LABOREX DOUALA">LABOREX DOUALA</option>
+                    <option value="UBIPHARM CAMEROUN">UBIPHARM CAMEROUN</option>
+                  </select>
+                </div>
+
+                {/* Items to order */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-black uppercase tracking-wide text-slate-400">Médicaments à commander</label>
+                    <button 
+                      onClick={() => {
+                        const notInList = medications.find(m => !poItems.some(i => i.medicationId === m.id));
+                        if (notInList) {
+                          setPoItems([...poItems, {
+                            medicationId: notInList.id,
+                            name: notInList.name,
+                            dosage: notInList.dosage,
+                            qty: 10,
+                            purchasePrice: notInList.purchasePrice
+                          }]);
+                        } else {
+                          alert("Tous les médicaments existants sont déjà dans le bon.");
+                        }
+                      }}
+                      className="text-xs font-bold text-brand-600 flex items-center gap-1 hover:underline"
+                    >
+                      <Plus size={14} /> Ajouter produit
+                    </button>
+                  </div>
+
+                  {poItems.length === 0 ? (
+                    <div className="text-center py-6 text-xs text-slate-400 italic bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                      Aucun produit sélectionné. Cliquez sur "Ajouter produit" pour en rajouter un.
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                      {poItems.map((item, index) => (
+                        <div key={index} className="flex gap-2.5 items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
+                          <div className="flex-1">
+                            <select 
+                              value={item.medicationId}
+                              onChange={(e) => {
+                                const selected = medications.find(m => m.id === e.target.value);
+                                if (selected) {
+                                  const updated = [...poItems];
+                                  updated[index] = {
+                                    ...updated[index],
+                                    medicationId: selected.id,
+                                    name: selected.name,
+                                    dosage: selected.dosage,
+                                    purchasePrice: selected.purchasePrice
+                                  };
+                                  setPoItems(updated);
+                                }
+                              }}
+                              className="bg-transparent text-xs font-bold text-slate-800 outline-none border-none p-0 w-full focus:ring-0 cursor-pointer"
+                            >
+                              {medications.map(m => (
+                                <option key={m.id} value={m.id}>{m.name} ({m.dosage})</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <input 
+                              type="number" 
+                              min="1"
+                              value={item.qty}
+                              onChange={(e) => {
+                                const updated = [...poItems];
+                                updated[index].qty = Math.max(1, parseInt(e.target.value) || 1);
+                                setPoItems(updated);
+                              }}
+                              className="w-16 text-center bg-white border border-slate-200 rounded-lg py-1 text-xs font-bold focus:ring-1 focus:ring-brand-500"
+                            />
+                            <span className="text-[10px] text-slate-400 font-bold">boîtes</span>
+                          </div>
+
+                          <div className="text-right w-24">
+                            <span className="text-xs font-mono font-bold text-slate-700">
+                              {(item.qty * item.purchasePrice).toLocaleString()} FCFA
+                            </span>
+                          </div>
+
+                          <button 
+                            onClick={() => {
+                              setPoItems(poItems.filter((_, idx) => idx !== index));
+                            }}
+                            className="p-1.5 hover:bg-rose-100 text-rose-500 rounded-lg"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Purchase Order note */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-black uppercase tracking-wide text-slate-400">Notes / Instructions</label>
+                  <textarea 
+                    value={poNote} 
+                    onChange={(e) => setPoNote(e.target.value)}
+                    placeholder="Saisissez des remarques..." 
+                    className="w-full bg-slate-50 border-none rounded-xl py-2.5 px-4 text-xs font-medium focus:ring-2 focus:ring-brand-600/10 outline-none min-h-[60px]"
+                  />
+                </div>
+
+                {/* Grand Total */}
+                <div className="bg-slate-900 text-white rounded-2xl p-4 flex justify-between items-center shrink-0">
+                  <div>
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black block">Estimation Total HT</span>
+                    <span className="text-lg font-black font-mono">
+                      {poItems.reduce((sum, item) => sum + (item.qty * item.purchasePrice), 0).toLocaleString()} FCFA
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-slate-800 text-slate-400 font-black tracking-wider px-2.5 py-1 rounded-md uppercase">
+                    {poSupplier.split(' ')[0]}
+                  </span>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-4 py-3 sm:px-6 sm:py-4 border-t flex justify-end gap-2.5 bg-slate-50 shrink-0">
+                <button 
+                  type="button" 
+                  onClick={() => setIsCreatePOOpen(false)}
+                  className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 font-bold text-xs rounded-xl"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    if (poItems.length === 0) {
+                      alert("Veuillez ajouter au moins un médicament à la commande.");
+                      return;
+                    }
+                    handleCreatePurchaseOrder(poSupplier, poItems, poNote);
+                    setIsCreatePOOpen(false);
+                  }}
+                  className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-lg shadow-brand-600/15"
+                >
+                  Générer le Bon
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 

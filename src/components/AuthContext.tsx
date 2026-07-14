@@ -19,8 +19,8 @@ interface AuthContextType {
   profile: any | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signInAsDemo: () => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, name: string, role: string) => Promise<void>;
+  signInAsDemo: (role?: 'patient' | 'pharmacist' | 'admin') => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string, role: string, pharmacyName?: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -39,10 +39,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        let cached = null;
+        try {
+          const cachedStr = localStorage.getItem(`dokta_profile_${user.uid}`);
+          if (cachedStr) {
+            cached = JSON.parse(cachedStr);
+            setProfile(cached);
+          }
+        } catch (e) {
+          console.error("Failed to parse cached profile", e);
+        }
+
         try {
           const profileDoc = await getDoc(doc(db, 'users', user.uid));
           if (profileDoc.exists()) {
-            setProfile(profileDoc.data());
+            const data = profileDoc.data();
+            setProfile(data);
+            try {
+              localStorage.setItem(`dokta_profile_${user.uid}`, JSON.stringify(data));
+            } catch (e) {}
           } else {
             // New user registration or missing doc
             // We use a default profile if it's not present yet
@@ -52,20 +67,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: user.email,
               displayName: user.displayName,
               photoURL: user.photoURL,
-              role: 'patient',
+              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : user.email === 'admin@dokta.cm' ? 'admin' : 'patient',
               status: 'activated',
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
             };
-            await setDoc(doc(db, 'users', user.uid), newProfileData);
-            setProfile({
+            try {
+              await setDoc(doc(db, 'users', user.uid), newProfileData);
+            } catch (setErr) {
+              console.warn("Failed to write user profile to Firestore (offline fallback active):", setErr);
+            }
+            const localProfile = {
               ...newProfileData,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
-            });
+            };
+            setProfile(localProfile);
+            try {
+              localStorage.setItem(`dokta_profile_${user.uid}`, JSON.stringify(localProfile));
+            } catch (e) {}
           }
         } catch (err) {
-          console.error("Profile fetch error:", err);
+          console.error("Profile fetch error (using cache/fallback):", err);
+          if (!cached) {
+            const fallbackProfile = {
+              uid: user.uid,
+              email: user.email || 'demo@dokta.cm',
+              displayName: user.displayName || user.email?.split('@')[0] || 'Utilisateur Démo',
+              photoURL: user.photoURL || null,
+              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : user.email === 'admin@dokta.cm' ? 'admin' : 'patient',
+              status: 'activated',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              _offlineFallback: true
+            };
+            setProfile(fallbackProfile);
+            try {
+              localStorage.setItem(`dokta_profile_${user.uid}`, JSON.stringify(fallbackProfile));
+            } catch (e) {}
+          }
         }
       } else {
         setProfile(null);
@@ -82,15 +122,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithPopup(auth, provider);
   };
 
-  const signInAsDemo = async () => {
-    const demoEmail = 'demo@medimap.cm';
-    const demoPass = 'Medimap123!';
+  const signInAsDemo = async (role: 'patient' | 'pharmacist' | 'admin' = 'patient') => {
+    let demoEmail = 'demo@dokta.cm';
+    let demoName = 'Patient Démo';
+    
+    if (role === 'pharmacist') {
+      demoEmail = 'pharmacien@dokta.cm';
+      demoName = 'Dr. Pharmacien';
+    } else if (role === 'admin') {
+      demoEmail = 'admin@dokta.cm';
+      demoName = 'Admin Médical';
+    }
+    
+    const demoPass = 'Dokta123!';
     try {
       await signInWithEmailAndPassword(auth, demoEmail, demoPass);
     } catch (err: any) {
       if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
         // Try to sign up if the demo user does not exist yet
-        await signUpWithEmail(demoEmail, demoPass, 'Patient Démo', 'patient');
+        await signUpWithEmail(demoEmail, demoPass, demoName, role);
       } else {
         throw err;
       }
@@ -117,7 +167,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUpWithEmail = async (email: string, pass: string, name: string, role: string) => {
+  const signUpWithEmail = async (email: string, pass: string, name: string, role: string, pharmacyName?: string) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await updateProfile(userCredential.user, { displayName: name });
@@ -132,7 +182,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       */
       
-      const newProfileData = {
+      const newProfileData: any = {
         uid: userCredential.user.uid,
         email: email,
         displayName: name,
@@ -142,13 +192,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
+
+      if (role === 'pharmacist' && pharmacyName) {
+        newProfileData.pharmacyName = pharmacyName;
+        newProfileData.technicalForm = {
+          pharmacyName: pharmacyName,
+          onpcNumber: '',
+          legalLicenseNumber: '',
+          pharmacistsCount: 1,
+          coldChainEquipment: 'medical_fridge',
+          temperatureMonitor: true,
+          backupGenerator: 'automated',
+          airConditioned: true,
+          narcoticsSafe: true,
+          fireExtinguisher: true,
+          wasteProtocol: true
+        };
+      }
       
-      await setDoc(doc(db, 'users', userCredential.user.uid), newProfileData);
-      setProfile({
+      try {
+        await setDoc(doc(db, 'users', userCredential.user.uid), newProfileData);
+      } catch (err) {
+        console.warn("Failed to write profile during signup (offline fallback active):", err);
+      }
+      const localProfile = {
         ...newProfileData,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-      });
+      };
+      setProfile(localProfile);
+      try {
+        localStorage.setItem(`dokta_profile_${userCredential.user.uid}`, JSON.stringify(localProfile));
+      } catch (e) {}
     } catch (error: any) {
       console.error("Auth Error (Signup):", error.code, error.message);
       if (error.code === 'auth/operation-not-allowed') {
@@ -194,8 +269,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateUserProfile = async (newData: any) => {
     if (!auth.currentUser) throw new Error("Aucun utilisateur connecté.");
     const userRef = doc(db, 'users', auth.currentUser.uid);
-    await setDoc(userRef, { ...newData, updatedAt: serverTimestamp() }, { merge: true });
-    setProfile((prev: any) => ({ ...prev, ...newData, updatedAt: new Date().toISOString() }));
+    try {
+      await setDoc(userRef, { ...newData, updatedAt: serverTimestamp() }, { merge: true });
+    } catch (err) {
+      console.warn("Failed to update user profile in Firestore (offline fallback active):", err);
+    }
+    const updated = { ...profile, ...newData, updatedAt: new Date().toISOString() };
+    setProfile(updated);
+    try {
+      localStorage.setItem(`dokta_profile_${auth.currentUser.uid}`, JSON.stringify(updated));
+    } catch (e) {}
   };
 
   return (
