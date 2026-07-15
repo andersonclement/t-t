@@ -26,13 +26,17 @@ import {
   Lock,
   RefreshCw,
   AlertTriangle,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Truck,
+  Plus,
+  Trash2,
+  Edit
 } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import { useOrders, Order } from '../components/OrderContext';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, getDocs, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, getDocs, where, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 export function Profile() {
@@ -43,7 +47,7 @@ export function Profile() {
   const [expandedOrderId, setExpandedOrderId] = React.useState<string | null>(null);
 
   const [activeModal, setActiveModal] = React.useState<
-    'medical' | 'insurance' | 'allergies' | 'security' | 'license' | 'pharmacy_info' | 'stock_alerts' | 'support' | null
+    'medical' | 'insurance' | 'allergies' | 'security' | 'license' | 'pharmacy_info' | 'stock_alerts' | 'support' | 'suppliers' | null
   >(null);
   const [saving, setSaving] = React.useState(false);
   const [saveSuccess, setSaveSuccess] = React.useState(false);
@@ -128,6 +132,135 @@ export function Profile() {
       return () => unsubscribe();
     }
   }, [profile, user]);
+
+  const [suppliers, setSuppliers] = React.useState<any[]>([]);
+  const [suppliersLoading, setSuppliersLoading] = React.useState(false);
+  const [isEditingSupplier, setIsEditingSupplier] = React.useState(false);
+  const [editingSupplierId, setEditingSupplierId] = React.useState<string | null>(null);
+  const [supplierForm, setSupplierForm] = React.useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: ''
+  });
+
+  // Load suppliers
+  React.useEffect(() => {
+    if (profile?.role === 'pharmacist') {
+      setSuppliersLoading(true);
+      let unsubscribe = () => {};
+
+      if (user) {
+        const q = query(collection(db, 'suppliers'), where('pharmacistId', '==', user.uid));
+        unsubscribe = onSnapshot(q, (snapshot) => {
+          let items: any[] = [];
+          snapshot.forEach((docSnap) => {
+            items.push({ id: docSnap.id, ...docSnap.data() });
+          });
+
+          // Fallback to localStorage if Firestore is empty
+          if (items.length === 0) {
+            try {
+              const stored = localStorage.getItem('medimap_suppliers');
+              if (stored) {
+                items = JSON.parse(stored);
+              } else {
+                items = [
+                  { id: 'sup-1', name: 'LABOREX DOUALA', email: 'douala@laborex.cm', phone: '+237 233 40 40 40', address: 'Zone Industrielle Bassa, Douala' },
+                  { id: 'sup-2', name: 'UBIPHARM CAMEROUN', email: 'cameroun@ubipharm.com', phone: '+237 233 43 43 43', address: 'Quartier Bonanjo, Douala' }
+                ];
+                localStorage.setItem('medimap_suppliers', JSON.stringify(items));
+              }
+            } catch (e) {
+              console.warn("Failed to parse local suppliers:", e);
+            }
+          } else {
+            localStorage.setItem('medimap_suppliers', JSON.stringify(items));
+          }
+          setSuppliers(items);
+          setSuppliersLoading(false);
+        }, (error) => {
+          console.warn("Error subscribing to suppliers in Profile:", error);
+          try {
+            const stored = localStorage.getItem('medimap_suppliers');
+            if (stored) {
+              setSuppliers(JSON.parse(stored));
+            }
+          } catch (e) {}
+          setSuppliersLoading(false);
+        });
+      } else {
+        // Unauthenticated guest pharmacist fallback
+        try {
+          const stored = localStorage.getItem('medimap_suppliers');
+          if (stored) {
+            setSuppliers(JSON.parse(stored));
+          } else {
+            const defaultSups = [
+              { id: 'sup-1', name: 'LABOREX DOUALA', email: 'douala@laborex.cm', phone: '+237 233 40 40 40', address: 'Zone Industrielle Bassa, Douala' },
+              { id: 'sup-2', name: 'UBIPHARM CAMEROUN', email: 'cameroun@ubipharm.com', phone: '+237 233 43 43 43', address: 'Quartier Bonanjo, Douala' }
+            ];
+            setSuppliers(defaultSups);
+            localStorage.setItem('medimap_suppliers', JSON.stringify(defaultSups));
+          }
+        } catch (e) {}
+        setSuppliersLoading(false);
+      }
+
+      return () => unsubscribe();
+    }
+  }, [profile, user]);
+
+  const handleAddSupplier = async (supData: { name: string; email: string; phone: string; address: string }) => {
+    const newId = 'sup-' + Date.now();
+    const newSup = {
+      id: newId,
+      ...supData,
+      pharmacistId: user ? user.uid : 'guest'
+    };
+
+    if (user) {
+      try {
+        await setDoc(doc(db, 'suppliers', newId), newSup);
+      } catch (err) {
+        console.warn("Firestore save supplier failed:", err);
+      }
+    } else {
+      const updated = [...suppliers, newSup];
+      setSuppliers(updated);
+      localStorage.setItem('medimap_suppliers', JSON.stringify(updated));
+    }
+  };
+
+  const handleUpdateSupplier = async (id: string, supData: { name: string; email: string; phone: string; address: string }) => {
+    if (user) {
+      try {
+        await updateDoc(doc(db, 'suppliers', id), supData);
+      } catch (err) {
+        console.warn("Firestore update supplier failed:", err);
+      }
+    } else {
+      const updated = suppliers.map(s => s.id === id ? { ...s, ...supData } : s);
+      setSuppliers(updated);
+      localStorage.setItem('medimap_suppliers', JSON.stringify(updated));
+    }
+  };
+
+  const handleDeleteSupplier = async (id: string) => {
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer ce fournisseur ?")) return;
+
+    if (user) {
+      try {
+        await deleteDoc(doc(db, 'suppliers', id));
+      } catch (err) {
+        console.warn("Firestore delete supplier failed:", err);
+      }
+    } else {
+      const updated = suppliers.filter(s => s.id !== id);
+      setSuppliers(updated);
+      localStorage.setItem('medimap_suppliers', JSON.stringify(updated));
+    }
+  };
 
   const lowStockMeds = medications.filter(med => {
     const min = med.minThreshold !== undefined ? Number(med.minThreshold) : 15;
@@ -330,6 +463,12 @@ export function Profile() {
                     icon={<Shield className="text-slate-400" />} 
                     label="Paramètres de Sécurité" 
                     onClick={() => setActiveModal('security')}
+                  />
+                  <ProfileLink 
+                    icon={<Truck className="text-indigo-500" />} 
+                    label="Gestion des Fournisseurs" 
+                    trailing={suppliersLoading ? "Chargement..." : `${suppliers.length} fournisseurs`}
+                    onClick={() => setActiveModal('suppliers')}
                   />
                 </>
               ) : (
@@ -570,6 +709,7 @@ export function Profile() {
                     {activeModal === 'pharmacy_info' && <Building2 size={20} />}
                     {activeModal === 'stock_alerts' && <Bell size={20} />}
                     {activeModal === 'support' && <HelpCircle size={20} />}
+                    {activeModal === 'suppliers' && <Truck size={20} />}
                   </div>
                   <div>
                     <h4 className="font-display font-bold text-slate-900 text-left">
@@ -581,6 +721,7 @@ export function Profile() {
                       {activeModal === 'pharmacy_info' && "Informations Établissement"}
                       {activeModal === 'stock_alerts' && "Alertes de Stock"}
                       {activeModal === 'support' && "Support Professionnel"}
+                      {activeModal === 'suppliers' && "Gestion des Fournisseurs"}
                     </h4>
                     <p className="text-[11px] text-slate-400 font-medium text-left">
                       {activeModal === 'medical' && "Renseignez vos caractéristiques de santé physiques"}
@@ -591,6 +732,7 @@ export function Profile() {
                       {activeModal === 'pharmacy_info' && "Détails et horaires de votre officine de pharmacie"}
                       {activeModal === 'stock_alerts' && "Médicaments en rupture ou sous le seuil de stock critique"}
                       {activeModal === 'support' && "Service d'assistance technique dédié aux pharmaciens"}
+                      {activeModal === 'suppliers' && "Configurez vos grossistes pour faciliter vos bons de commande"}
                     </p>
                   </div>
                 </div>
@@ -878,6 +1020,163 @@ export function Profile() {
                       </>
                     )}
                   </form>
+                ) : activeModal === 'suppliers' ? (
+                  <div className="space-y-4">
+                    {/* Add/Edit Supplier Form */}
+                    {isEditingSupplier ? (
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-3">
+                        <h5 className="font-bold text-xs text-slate-700 uppercase tracking-wider">
+                          {editingSupplierId ? "Modifier le Fournisseur" : "Nouveau Fournisseur"}
+                        </h5>
+                        <div className="space-y-3 text-left">
+                          <div>
+                            <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Nom du grossiste *</label>
+                            <input 
+                              type="text" 
+                              required
+                              placeholder="Ex: LABOREX DOUALA"
+                              value={supplierForm.name}
+                              onChange={(e) => setSupplierForm({ ...supplierForm, name: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-brand-600/10 outline-none text-slate-800"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Téléphone</label>
+                              <input 
+                                type="text" 
+                                placeholder="+237 6..."
+                                value={supplierForm.phone}
+                                onChange={(e) => setSupplierForm({ ...supplierForm, phone: e.target.value })}
+                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-brand-600/10 outline-none text-slate-800"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Email</label>
+                              <input 
+                                type="email" 
+                                placeholder="contact@..."
+                                value={supplierForm.email}
+                                onChange={(e) => setSupplierForm({ ...supplierForm, email: e.target.value })}
+                                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-brand-600/10 outline-none text-slate-800"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Adresse physique</label>
+                            <input 
+                              type="text" 
+                              placeholder="Ex: Zone Industrielle Bassa, Douala"
+                              value={supplierForm.address}
+                              onChange={(e) => setSupplierForm({ ...supplierForm, address: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:ring-2 focus:ring-brand-600/10 outline-none text-slate-800"
+                            />
+                          </div>
+                          <div className="flex gap-2 justify-end pt-2">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsEditingSupplier(false);
+                                setEditingSupplierId(null);
+                                setSupplierForm({ name: '', email: '', phone: '', address: '' });
+                              }}
+                              className="px-3.5 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all"
+                            >
+                              Annuler
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={async () => {
+                                if (!supplierForm.name.trim()) {
+                                  alert("Le nom du fournisseur est obligatoire.");
+                                  return;
+                                }
+                                if (editingSupplierId) {
+                                  await handleUpdateSupplier(editingSupplierId, supplierForm);
+                                } else {
+                                  await handleAddSupplier(supplierForm);
+                                }
+                                setIsEditingSupplier(false);
+                                setEditingSupplierId(null);
+                                setSupplierForm({ name: '', email: '', phone: '', address: '' });
+                              }}
+                              className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-brand-600/10"
+                            >
+                              Enregistrer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                        <span className="text-xs text-slate-500 font-semibold">{suppliers.length} fournisseur(s) configuré(s)</span>
+                        <button 
+                          type="button" 
+                          onClick={() => {
+                            setSupplierForm({ name: '', email: '', phone: '', address: '' });
+                            setEditingSupplierId(null);
+                            setIsEditingSupplier(true);
+                          }}
+                          className="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-brand-600/10 transition-all"
+                        >
+                          <Plus size={14} /> Ajouter un Fournisseur
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Suppliers list */}
+                    <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+                      {suppliers.map((sup) => (
+                        <div key={sup.id} className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start gap-4 hover:border-slate-200 transition-all">
+                          <div className="space-y-1 text-left">
+                            <h6 className="font-bold text-slate-800 text-xs sm:text-sm">{sup.name}</h6>
+                            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-500 font-semibold">
+                              {sup.phone && <span className="flex items-center gap-1"><Phone size={10} /> {sup.phone}</span>}
+                              {sup.email && <span className="flex items-center gap-1"><Mail size={10} /> {sup.email}</span>}
+                              {sup.address && <span className="flex items-center gap-1"><MapPin size={10} /> {sup.address}</span>}
+                            </div>
+                          </div>
+                          <div className="flex gap-1 shrink-0">
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setSupplierForm({ name: sup.name, email: sup.email || '', phone: sup.phone || '', address: sup.address || '' });
+                                setEditingSupplierId(sup.id);
+                                setIsEditingSupplier(true);
+                              }}
+                              className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-lg transition-colors"
+                              title="Modifier"
+                            >
+                              <Edit size={12} />
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => handleDeleteSupplier(sup.id)}
+                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-lg transition-colors"
+                              title="Supprimer"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                      {suppliers.length === 0 && (
+                        <div className="text-center py-12 text-xs text-slate-400 italic bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                          Aucun fournisseur. Veuillez cliquer sur "Ajouter un Fournisseur".
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/50 -mx-6 -mb-6 p-6">
+                      <button 
+                        type="button" 
+                        onClick={() => setActiveModal(null)}
+                        className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold transition-all text-xs"
+                      >
+                        Fermer
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <form onSubmit={handleSave} className="space-y-4">
                     {activeModal === 'license' && (

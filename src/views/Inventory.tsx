@@ -170,9 +170,12 @@ export function Inventory() {
   // Purchase Orders / Supplier orders states
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [isCreatePOOpen, setIsCreatePOOpen] = useState(false);
-  const [poSupplier, setPoSupplier] = useState('LABOREX DOUALA');
+  const [poSupplier, setPoSupplier] = useState('');
   const [poItems, setPoItems] = useState<{ medicationId: string, name: string, dosage: string, qty: number, purchasePrice: number }[]>([]);
   const [poNote, setPoNote] = useState('');
+  const [suppliers, setSuppliers] = useState<any[]>([]);
+  const [suppliersLoading, setSuppliersLoading] = useState(false);
+  const [autocompleteQuery, setAutocompleteQuery] = useState<{ index: number; query: string } | null>(null);
 
   // Inline stock editing states
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
@@ -314,6 +317,75 @@ export function Inventory() {
       }
     }
     loadPurchaseOrders();
+  }, [user]);
+
+  // Load suppliers for dropdown selection
+  useEffect(() => {
+    setSuppliersLoading(true);
+    let unsubscribe = () => {};
+
+    if (user) {
+      const q = query(collection(db, 'suppliers'), where('pharmacistId', '==', user.uid));
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        let items: any[] = [];
+        snapshot.forEach((docSnap) => {
+          items.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        if (items.length === 0) {
+          try {
+            const stored = localStorage.getItem('medimap_suppliers');
+            if (stored) {
+              items = JSON.parse(stored);
+            } else {
+              items = [
+                { id: 'sup-1', name: 'LABOREX DOUALA', email: 'douala@laborex.cm', phone: '+237 233 40 40 40', address: 'Zone Industrielle Bassa, Douala' },
+                { id: 'sup-2', name: 'UBIPHARM CAMEROUN', email: 'cameroun@ubipharm.com', phone: '+237 233 43 43 43', address: 'Quartier Bonanjo, Douala' }
+              ];
+              localStorage.setItem('medimap_suppliers', JSON.stringify(items));
+            }
+          } catch (e) {}
+        } else {
+          localStorage.setItem('medimap_suppliers', JSON.stringify(items));
+        }
+        setSuppliers(items);
+        if (items.length > 0) {
+          setPoSupplier(items[0].name);
+        }
+        setSuppliersLoading(false);
+      }, (error) => {
+        console.warn("Error subscribing to suppliers in Inventory:", error);
+        try {
+          const stored = localStorage.getItem('medimap_suppliers');
+          if (stored) {
+            const sups = JSON.parse(stored);
+            setSuppliers(sups);
+            if (sups.length > 0) setPoSupplier(sups[0].name);
+          }
+        } catch (e) {}
+        setSuppliersLoading(false);
+      });
+    } else {
+      try {
+        const stored = localStorage.getItem('medimap_suppliers');
+        if (stored) {
+          const sups = JSON.parse(stored);
+          setSuppliers(sups);
+          if (sups.length > 0) setPoSupplier(sups[0].name);
+        } else {
+          const defaultSups = [
+            { id: 'sup-1', name: 'LABOREX DOUALA', email: 'douala@laborex.cm', phone: '+237 233 40 40 40', address: 'Zone Industrielle Bassa, Douala' },
+            { id: 'sup-2', name: 'UBIPHARM CAMEROUN', email: 'cameroun@ubipharm.com', phone: '+237 233 43 43 43', address: 'Quartier Bonanjo, Douala' }
+          ];
+          setSuppliers(defaultSups);
+          setPoSupplier(defaultSups[0].name);
+          localStorage.setItem('medimap_suppliers', JSON.stringify(defaultSups));
+        }
+      } catch (e) {}
+      setSuppliersLoading(false);
+    }
+
+    return () => unsubscribe();
   }, [user]);
 
   // Load all stock movements
@@ -1617,7 +1689,7 @@ export function Inventory() {
                               ) : (
                                 <button 
                                   onClick={() => {
-                                    setPoSupplier(m.therapeuticClass === 'Antipaludique' ? 'UBIPHARM CAMEROUN' : 'LABOREX DOUALA');
+                                    setPoSupplier(suppliers.length > 0 ? suppliers[0].name : 'LABOREX DOUALA');
                                     setPoItems([{ medicationId: m.id, name: m.name, dosage: m.dosage, qty: (m.minThreshold * 2) - m.stock, purchasePrice: m.purchasePrice }]);
                                     setActiveTab('replenish');
                                     setIsCreatePOOpen(true);
@@ -1666,7 +1738,7 @@ export function Inventory() {
                       purchasePrice: m.purchasePrice
                     }));
                   setPoItems(alertItems);
-                  setPoSupplier('LABOREX DOUALA');
+                  setPoSupplier(suppliers.length > 0 ? suppliers[0].name : 'LABOREX DOUALA');
                   setPoNote('Généré automatiquement d\'après les alertes de stock bas.');
                   setIsCreatePOOpen(true);
                 }}
@@ -1846,7 +1918,7 @@ export function Inventory() {
                             purchasePrice: m.purchasePrice
                           }));
                         setPoItems(alertItems);
-                        setPoSupplier('LABOREX DOUALA');
+                        setPoSupplier(suppliers.length > 0 ? suppliers[0].name : 'LABOREX DOUALA');
                         setPoNote('Généré automatiquement d\'après les alertes de stock bas.');
                         setIsCreatePOOpen(true);
                       }}
@@ -2283,11 +2355,18 @@ export function Inventory() {
                   <select 
                     value={poSupplier} 
                     onChange={(e) => setPoSupplier(e.target.value)}
-                    className="w-full bg-slate-50 border-none rounded-xl py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-brand-600/10 outline-none"
+                    className="w-full bg-slate-50 border border-slate-100 rounded-xl py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-brand-600/10 outline-none text-slate-800"
                   >
-                    <option value="LABOREX DOUALA">LABOREX DOUALA</option>
-                    <option value="UBIPHARM CAMEROUN">UBIPHARM CAMEROUN</option>
+                    {suppliers.map(sup => (
+                      <option key={sup.id} value={sup.name}>{sup.name}</option>
+                    ))}
+                    {suppliers.length === 0 && (
+                      <option value="">-- Aucun fournisseur configuré --</option>
+                    )}
                   </select>
+                  {suppliers.length === 0 && (
+                    <p className="text-[10px] text-rose-500 font-bold">Configurez vos grossistes dans Profil &gt; Gestion des Fournisseurs.</p>
+                  )}
                 </div>
 
                 {/* Items to order */}
@@ -2296,18 +2375,13 @@ export function Inventory() {
                     <label className="text-xs font-black uppercase tracking-wide text-slate-400">Médicaments à commander</label>
                     <button 
                       onClick={() => {
-                        const notInList = medications.find(m => !poItems.some(i => i.medicationId === m.id));
-                        if (notInList) {
-                          setPoItems([...poItems, {
-                            medicationId: notInList.id,
-                            name: notInList.name,
-                            dosage: notInList.dosage,
-                            qty: 10,
-                            purchasePrice: notInList.purchasePrice
-                          }]);
-                        } else {
-                          alert("Tous les médicaments existants sont déjà dans le bon.");
-                        }
+                        setPoItems([...poItems, {
+                          medicationId: 'custom',
+                          name: '',
+                          dosage: '',
+                          qty: 10,
+                          purchasePrice: 0
+                        }]);
                       }}
                       className="text-xs font-bold text-brand-600 flex items-center gap-1 hover:underline"
                     >
@@ -2320,63 +2394,136 @@ export function Inventory() {
                       Aucun produit sélectionné. Cliquez sur "Ajouter produit" pour en rajouter un.
                     </div>
                   ) : (
-                    <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                    <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
                       {poItems.map((item, index) => (
-                        <div key={index} className="flex gap-2.5 items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                          <div className="flex-1">
-                            <select 
-                              value={item.medicationId}
-                              onChange={(e) => {
-                                const selected = medications.find(m => m.id === e.target.value);
-                                if (selected) {
+                        <div key={index} className="flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100 relative">
+                          <div className="flex gap-2.5 items-center w-full">
+                            <div className="flex-1 relative">
+                              {/* Medication Name Manual Input with Autocomplete */}
+                              <input 
+                                type="text"
+                                placeholder="Nom du médicament (ex: Paracétamol)"
+                                value={item.name}
+                                onChange={(e) => {
+                                  const val = e.target.value;
                                   const updated = [...poItems];
-                                  updated[index] = {
-                                    ...updated[index],
-                                    medicationId: selected.id,
-                                    name: selected.name,
-                                    dosage: selected.dosage,
-                                    purchasePrice: selected.purchasePrice
-                                  };
+                                  updated[index].name = val;
+                                  updated[index].medicationId = 'custom'; // Custom unless selected from suggestions
                                   setPoItems(updated);
+                                  setAutocompleteQuery({ index, query: val });
+                                }}
+                                className="bg-white border border-slate-200 rounded-lg py-1 px-2.5 text-xs font-bold text-slate-800 outline-none focus:ring-1 focus:ring-brand-500 w-full"
+                              />
+
+                              {/* Autocomplete Suggestions Box */}
+                              {autocompleteQuery && autocompleteQuery.index === index && autocompleteQuery.query.trim().length > 0 && (
+                                <div className="absolute left-0 right-0 z-[1200] bg-white border border-slate-200 rounded-xl shadow-xl mt-1 max-h-48 overflow-y-auto p-1">
+                                  {medications
+                                    .filter(m => m.name.toLowerCase().includes(autocompleteQuery.query.toLowerCase()) || (m.genericName && m.genericName.toLowerCase().includes(autocompleteQuery.query.toLowerCase())))
+                                    .slice(0, 5)
+                                    .map(s => (
+                                      <button
+                                        key={s.id}
+                                        type="button"
+                                        onClick={() => {
+                                          const updated = [...poItems];
+                                          updated[index] = {
+                                            ...updated[index],
+                                            medicationId: s.id,
+                                            name: s.name,
+                                            dosage: s.dosage || '',
+                                            purchasePrice: s.purchasePrice || 0
+                                          };
+                                          setPoItems(updated);
+                                          setAutocompleteQuery(null);
+                                        }}
+                                        className="w-full text-left px-2.5 py-1.5 hover:bg-brand-50 text-xs font-semibold rounded-lg text-slate-700 hover:text-brand-700 transition-colors flex justify-between items-center"
+                                      >
+                                        <div className="text-left">
+                                          <span className="block font-bold">{s.name}</span>
+                                          {s.genericName && <span className="block text-[10px] text-slate-400">{s.genericName}</span>}
+                                        </div>
+                                        <div className="text-right">
+                                          <span className="block text-[10px] font-mono text-slate-400">Stock: {s.stock}</span>
+                                          <span className="block text-[10px] font-mono text-slate-400">{s.dosage}</span>
+                                        </div>
+                                      </button>
+                                    ))}
+                                  {medications.filter(m => m.name.toLowerCase().includes(autocompleteQuery.query.toLowerCase())).length === 0 && (
+                                    <div className="p-2 text-center text-[10px] text-slate-400 italic">
+                                      Nouveau médicament (création manuelle)
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <input 
+                                type="number" 
+                                min="1"
+                                value={item.qty}
+                                onChange={(e) => {
+                                  const updated = [...poItems];
+                                  updated[index].qty = Math.max(1, parseInt(e.target.value) || 1);
+                                  setPoItems(updated);
+                                }}
+                                className="w-16 text-center bg-white border border-slate-200 rounded-lg py-1 text-xs font-bold focus:ring-1 focus:ring-brand-500 text-slate-800"
+                              />
+                              <span className="text-[10px] text-slate-400 font-bold">boîtes</span>
+                            </div>
+
+                            <div className="text-right w-24 shrink-0">
+                              <span className="text-xs font-mono font-bold text-slate-700">
+                                {(item.qty * item.purchasePrice).toLocaleString()} FCFA
+                              </span>
+                            </div>
+
+                            <button 
+                              onClick={() => {
+                                setPoItems(poItems.filter((_, idx) => idx !== index));
+                                if (autocompleteQuery?.index === index) {
+                                  setAutocompleteQuery(null);
                                 }
                               }}
-                              className="bg-transparent text-xs font-bold text-slate-800 outline-none border-none p-0 w-full focus:ring-0 cursor-pointer"
+                              className="p-1.5 hover:bg-rose-100 text-rose-500 rounded-lg"
                             >
-                              {medications.map(m => (
-                                <option key={m.id} value={m.id}>{m.name} ({m.dosage})</option>
-                              ))}
-                            </select>
+                              <Trash2 size={14} />
+                            </button>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <input 
-                              type="number" 
-                              min="1"
-                              value={item.qty}
-                              onChange={(e) => {
-                                const updated = [...poItems];
-                                updated[index].qty = Math.max(1, parseInt(e.target.value) || 1);
-                                setPoItems(updated);
-                              }}
-                              className="w-16 text-center bg-white border border-slate-200 rounded-lg py-1 text-xs font-bold focus:ring-1 focus:ring-brand-500"
-                            />
-                            <span className="text-[10px] text-slate-400 font-bold">boîtes</span>
+                          {/* Editable Dosage and Purchase Price under Name */}
+                          <div className="flex gap-4 items-center pl-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Dosage:</span>
+                              <input 
+                                type="text"
+                                placeholder="ex: 500mg"
+                                value={item.dosage || ''}
+                                onChange={(e) => {
+                                  const updated = [...poItems];
+                                  updated[index].dosage = e.target.value;
+                                  setPoItems(updated);
+                                }}
+                                className="bg-transparent border-b border-dashed border-slate-200 focus:border-brand-500 text-xs font-medium text-slate-600 focus:outline-none pb-0.5 w-24"
+                              />
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">P. d'achat:</span>
+                              <input 
+                                type="number"
+                                placeholder="0"
+                                value={item.purchasePrice || ''}
+                                onChange={(e) => {
+                                  const updated = [...poItems];
+                                  updated[index].purchasePrice = Math.max(0, parseFloat(e.target.value) || 0);
+                                  setPoItems(updated);
+                                }}
+                                className="bg-transparent border-b border-dashed border-slate-200 focus:border-brand-500 text-xs font-mono font-bold text-slate-600 focus:outline-none pb-0.5 w-20"
+                              />
+                              <span className="text-[10px] text-slate-400">FCFA</span>
+                            </div>
                           </div>
-
-                          <div className="text-right w-24">
-                            <span className="text-xs font-mono font-bold text-slate-700">
-                              {(item.qty * item.purchasePrice).toLocaleString()} FCFA
-                            </span>
-                          </div>
-
-                          <button 
-                            onClick={() => {
-                              setPoItems(poItems.filter((_, idx) => idx !== index));
-                            }}
-                            className="p-1.5 hover:bg-rose-100 text-rose-500 rounded-lg"
-                          >
-                            <Trash2 size={14} />
-                          </button>
                         </div>
                       ))}
                     </div>
@@ -2420,8 +2567,17 @@ export function Inventory() {
                 <button 
                   type="button"
                   onClick={() => {
+                    if (!poSupplier) {
+                      alert("Veuillez sélectionner ou configurer un fournisseur d'abord.");
+                      return;
+                    }
                     if (poItems.length === 0) {
                       alert("Veuillez ajouter au moins un médicament à la commande.");
+                      return;
+                    }
+                    const hasEmptyName = poItems.some(item => !item.name.trim());
+                    if (hasEmptyName) {
+                      alert("Veuillez renseigner le nom de tous les médicaments.");
                       return;
                     }
                     handleCreatePurchaseOrder(poSupplier, poItems, poNote);
