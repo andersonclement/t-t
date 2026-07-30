@@ -1,16 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  collection, 
-  query, 
-  where, 
-  onSnapshot, 
-  addDoc, 
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
   serverTimestamp,
-  orderBy,
   Timestamp,
   doc,
   updateDoc,
-  increment
+  increment,
+  runTransaction
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
 import { useAuth } from './AuthContext';
@@ -41,7 +40,7 @@ export interface Order {
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (orderData: Omit<Order, 'id' | 'patientId' | 'status' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addOrder: (orderData: Omit<Order, 'id' | 'patientId' | 'status' | 'createdAt' | 'updatedAt'>) => Promise<string>;
   updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<void>;
   loading: boolean;
 }
@@ -109,36 +108,44 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, [profile]);
 
-  const addOrder = async (orderData: Omit<Order, 'id' | 'patientId' | 'status' | 'createdAt' | 'updatedAt'>) => {
+  const addOrder = async (orderData: Omit<Order, 'id' | 'patientId' | 'status' | 'createdAt' | 'updatedAt'>): Promise<string> => {
     if (!auth.currentUser) throw new Error("User must be logged in to place an order");
 
-    const newOrder = {
-      ...orderData,
-      patientId: auth.currentUser.uid,
-      status: 'pending_validation',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    };
+    const firestoreItems = orderData.items.filter(
+      item => item.id && !item.id.startsWith('med-local-') && !item.id.startsWith('R')
+    );
 
     try {
-      // 1. Add order to firestore
-      await addDoc(collection(db, 'orders'), newOrder);
-
-      // 2. Automatically deduct stock in Firestore medication_stock
-      for (const item of orderData.items) {
-        if (item.id && !item.id.startsWith('med-local-')) {
+      const orderId = await runTransaction(db, async (transaction) => {
+        const stockSnapshots: { ref: ReturnType<typeof doc>; currentStock: number; needed: number }[] = [];
+        for (const item of firestoreItems) {
           const medRef = doc(db, 'medication_stock', item.id);
-          try {
-            await updateDoc(medRef, {
-              stock: increment(-item.count)
-            });
-          } catch (e) {
-            console.warn("Failed to deduct firestore stock for item:", item.id, e);
+          const snap = await transaction.get(medRef);
+          if (snap.exists()) {
+            const currentStock = snap.data().stock || 0;
+            if (currentStock < item.count) {
+              throw new Error(`Stock insuffisant pour "${item.name}" (disponible: ${currentStock}, demandé: ${item.count})`);
+            }
+            stockSnapshots.push({ ref: medRef, currentStock, needed: item.count });
           }
         }
-      }
 
-      // 3. Automatically deduct stock in localStorage fallback
+        const orderRef = doc(collection(db, 'orders'));
+        transaction.set(orderRef, {
+          ...orderData,
+          patientId: auth.currentUser!.uid,
+          status: 'pending_validation',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+
+        for (const { ref, needed } of stockSnapshots) {
+          transaction.update(ref, { stock: increment(-needed) });
+        }
+
+        return orderRef.id;
+      });
+
       try {
         const stored = localStorage.getItem('medimap_meds_stock');
         if (stored) {
@@ -156,6 +163,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         console.warn("Failed to deduct localStorage stock:", localErr);
       }
 
+      return orderId;
     } catch (err) {
       console.error("Failed to add order:", err);
       throw err;

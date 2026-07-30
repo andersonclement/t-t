@@ -634,7 +634,7 @@ export function Profile() {
                     <div className="flex justify-between items-center pt-4 border-t border-slate-50">
                       <div>
                         <p className="text-[10px] text-slate-400 font-bold uppercase">Paiement</p>
-                        <p className="text-xs font-bold text-slate-700">{order.paymentMethod.toUpperCase()}</p>
+                        <p className="text-xs font-bold text-slate-700">{order.paymentMethod?.toUpperCase()}</p>
                       </div>
                       <p className="text-xl font-display font-bold text-brand-600">{order.total.toLocaleString()} FCFA</p>
                     </div>

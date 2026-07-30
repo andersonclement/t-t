@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Building2, 
-  Hospital, 
-  Microscope, 
-  Pill, 
-  Search, 
-  MapPin, 
-  Star as StarIcon, 
-  Clock, 
-  ChevronRight, 
-  PhoneCall, 
-  Plus, 
+import {
+  Building2,
+  Hospital,
+  Microscope,
+  Pill,
+  Search,
+  MapPin,
+  Star as StarIcon,
+  Clock,
+  ChevronRight,
+  PhoneCall,
+  Plus,
   Minus,
   Trash2,
-  ShoppingCart, 
-  Camera, 
-  Upload, 
+  ShoppingCart,
+  Camera,
+  Upload,
   FileText,
   ShieldCheck,
   Calendar,
@@ -31,13 +31,19 @@ import {
   Mail,
   Users,
   Check,
-  X
+  X,
+  AlertTriangle,
+  User,
+  Stethoscope,
+  Truck,
+  Package
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useOrders } from '../components/OrderContext';
 import { useAuth } from '../components/AuthContext';
 import { db } from '../lib/firebase';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 // --- TYPES & MOCK DATA ---
 
@@ -51,6 +57,14 @@ interface Medication {
   available: boolean;
   requiresPrescription?: boolean;
   stock?: number;
+  pharmacistId?: string;
+}
+
+interface Doctor {
+  name: string;
+  specialty: string;
+  days: string;
+  languages?: string[];
 }
 
 interface DirectoryActor {
@@ -65,15 +79,25 @@ interface DirectoryActor {
   services?: MedicalService[];
   meds?: Medication[];
   specialties?: string[];
-  description?: string; // For recipes/natural products
+  description?: string;
   author?: string;
   category?: string;
   ingredients?: string[];
   preparation?: string[];
   posologie?: string;
-  price?: number; // Price for the ingredient pack
-  isDuty?: boolean; // On-duty/Garde field
-  
+  price?: number;
+  isDuty?: boolean;
+
+  // Clinic-specific fields (per spec: Fiche médecin individuel)
+  doctors?: Doctor[];
+  acceptsCNAM?: boolean;
+  acceptedInsurances?: string[];
+  appointmentEnabled?: boolean;
+
+  // Natural medicine fields
+  contraindications?: string[];
+  origin?: string;
+
   // Establishment Details
   onpcNumber?: string;
   legalLicenseNumber?: string;
@@ -105,9 +129,9 @@ const MOCK_MEDS: Medication[] = [
 ];
 
 const MOCK_RECIPES: Partial<DirectoryActor>[] = [
-  { 
-    id: 'R1', 
-    name: 'Infusion de Neem & Artémisia', 
+  {
+    id: 'R1',
+    name: 'Infusion de Neem & Artémisia',
     type: 'natural',
     description: 'Renfort immunitaire traditionnel utilisé pour son action purifiante et protectrice.',
     author: 'Mama Africa',
@@ -115,6 +139,7 @@ const MOCK_RECIPES: Partial<DirectoryActor>[] = [
     rating: 4.9,
     category: 'Immunité',
     address: 'Savoir Ancestral - Cameroun',
+    origin: 'Médecine traditionnelle camerounaise',
     ingredients: ['Feuilles de Neem séchées', 'Tiges d\'Artémisia Annua', 'Écorce de Cannelle', 'Miel de forêt'],
     preparation: [
       'Faire bouillir 1 litre d\'eau de source.',
@@ -123,11 +148,12 @@ const MOCK_RECIPES: Partial<DirectoryActor>[] = [
       'Filtrer et ajouter une cuillère de miel pour adoucir.'
     ],
     posologie: 'Boire une tasse tiède le matin à jeun pendant 7 jours.',
+    contraindications: ['Femmes enceintes', 'Enfants de moins de 6 ans', 'Allergie connue au Neem'],
     price: 5000
   },
-  { 
-    id: 'R2', 
-    name: 'Sirop de Gingembre et Miel', 
+  {
+    id: 'R2',
+    name: 'Sirop de Gingembre et Miel',
     type: 'natural',
     description: 'Remède naturel puissant contre la toux sèche et les irritations de la gorge.',
     author: 'Chef Herboriste',
@@ -135,6 +161,7 @@ const MOCK_RECIPES: Partial<DirectoryActor>[] = [
     rating: 4.7,
     category: 'Respiratoire',
     address: 'Herboristerie Traditionnelle - Douala',
+    origin: 'Pharmacopée naturelle d\'Afrique Centrale',
     ingredients: ['Gingembre frais râpé', 'Miel d\'acacia pur', 'Jus de citron jaune', 'Clous de girofle'],
     preparation: [
       'Extraire le jus du gingembre râpé.',
@@ -143,7 +170,52 @@ const MOCK_RECIPES: Partial<DirectoryActor>[] = [
       'Laisser reposer 24h avant la première utilisation.'
     ],
     posologie: 'Une cuillère à soupe 3 fois par jour jusqu\'à apaisement.',
+    contraindications: ['Diabétiques (teneur en miel)', 'Allergie au gingembre'],
     price: 3500
+  },
+  {
+    id: 'R3',
+    name: 'Décoction d\'Écorce de Quinquina',
+    type: 'natural',
+    description: 'Tonique antipaludéen ancestral à base d\'écorce amère, utilisé pour combattre les accès de fièvre.',
+    author: 'Guérisseur Bamiléké',
+    image: 'https://images.unsplash.com/photo-1515694346937-43c3e8337088?w=400&h=300&fit=crop',
+    rating: 4.6,
+    category: 'Paludisme',
+    address: 'Tradipraticien Certifié - Bafoussam',
+    origin: 'Pharmacopée Bamiléké',
+    ingredients: ['Écorce de Quinquina', 'Feuilles de Papayer', 'Citron vert', 'Eau filtrée'],
+    preparation: [
+      'Laver et découper l\'écorce de Quinquina en petits morceaux.',
+      'Faire bouillir dans 2 litres d\'eau pendant 20 minutes.',
+      'Ajouter les feuilles de papayer 5 minutes avant la fin.',
+      'Filtrer et presser le jus de citron. Boire tiède.'
+    ],
+    posologie: 'Un verre matin et soir pendant 5 jours maximum.',
+    contraindications: ['Femmes enceintes ou allaitantes', 'Insuffisance rénale', 'Enfants de moins de 12 ans'],
+    price: 3000
+  },
+  {
+    id: 'R4',
+    name: 'Baume de Karité Médicinal',
+    type: 'natural',
+    description: 'Soin dermatologique naturel pour irritations cutanées, eczéma léger et cicatrisation.',
+    author: 'Coopérative Femmes du Nord',
+    image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=300&fit=crop',
+    rating: 4.8,
+    category: 'Dermatologie',
+    address: 'Coopérative de Maroua',
+    origin: 'Savoir-faire des femmes du Nord-Cameroun',
+    ingredients: ['Beurre de Karité brut', 'Huile essentielle de Tea Tree', 'Aloe Vera frais', 'Cire d\'abeille'],
+    preparation: [
+      'Faire fondre le beurre de Karité au bain-marie.',
+      'Incorporer le gel d\'Aloe Vera et mélanger vigoureusement.',
+      'Ajouter 5 gouttes d\'huile essentielle de Tea Tree.',
+      'Verser dans un pot propre et laisser solidifier.'
+    ],
+    posologie: 'Appliquer sur la zone concernée 2 fois par jour.',
+    contraindications: ['Allergie au karité ou au Tea Tree', 'Plaies ouvertes profondes'],
+    price: 4500
   },
 ];
 
@@ -241,25 +313,81 @@ const MOCK_ACTORS: DirectoryActor[] = [
     isOpen: true,
     isDuty: false,
     image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&h=300&fit=crop',
-    specialties: ['Esthétique', 'Dermatologie', 'Pédiatrie'],
+    specialties: ['Pédiatrie', 'Dermatologie', 'Médecine Générale', 'Gynécologie'],
     services: [
-      { id: 'c1s1', name: 'Consultation Pédiatrique', price: 7500, category: 'Consultation' },
-      { id: 'c1s2', name: 'Vaccination', price: 5000, category: 'Soin' },
-      { id: 'c1s3', name: 'Massage Thérapeutique', price: 15000, category: 'Bien-être' }
-    ]
+      { id: 'c1s1', name: 'Consultation Générale', price: 5000, category: 'Consultation' },
+      { id: 'c1s2', name: 'Consultation Pédiatrique', price: 7500, category: 'Consultation' },
+      { id: 'c1s3', name: 'Vaccination', price: 5000, category: 'Soin' },
+      { id: 'c1s4', name: 'Échographie', price: 20000, category: 'Imagerie' },
+      { id: 'c1s5', name: 'Bilan Prénatal', price: 15000, category: 'Consultation' }
+    ],
+    phone: '+237 233 42 18 90',
+    hours: 'Lun-Sam 07:00-20:00',
+    acceptsCNAM: true,
+    acceptedInsurances: ['CNAM', 'Activa', 'Saar Assurances'],
+    appointmentEnabled: true,
+    doctors: [
+      { name: 'Dr. Nkoulou Marie', specialty: 'Pédiatrie', days: 'Lun, Mer, Ven', languages: ['Français', 'Anglais'] },
+      { name: 'Dr. Fotso Jean', specialty: 'Dermatologie', days: 'Mar, Jeu, Sam', languages: ['Français'] },
+      { name: 'Dr. Mbarga Alice', specialty: 'Gynécologie', days: 'Lun-Ven', languages: ['Français', 'Anglais', 'Ewondo'] },
+    ],
+  },
+  {
+    id: 'C2',
+    name: 'Polyclinique du Plateau',
+    type: 'clinic',
+    address: 'Avenue Charles de Gaulle, Plateau, Yaoundé',
+    distance: '1.5 km',
+    rating: 4.7,
+    isOpen: true,
+    isDuty: false,
+    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=300&fit=crop',
+    specialties: ['Cardiologie', 'Ophtalmologie', 'ORL', 'Médecine Interne'],
+    services: [
+      { id: 'c2s1', name: 'Consultation Cardiologie', price: 15000, category: 'Consultation' },
+      { id: 'c2s2', name: 'ECG & Holter', price: 25000, category: 'Examen' },
+      { id: 'c2s3', name: 'Fond d\'Œil', price: 10000, category: 'Examen' },
+      { id: 'c2s4', name: 'Audiogramme', price: 12000, category: 'Examen' }
+    ],
+    phone: '+237 222 23 45 67',
+    hours: 'Lun-Ven 08:00-18:00 / Sam 08:00-13:00',
+    acceptsCNAM: true,
+    acceptedInsurances: ['CNAM', 'Allianz', 'Activa'],
+    appointmentEnabled: true,
+    doctors: [
+      { name: 'Dr. Tchinda Paul', specialty: 'Cardiologie', days: 'Lun, Mer, Ven', languages: ['Français', 'Anglais'] },
+      { name: 'Dr. Essomba Ruth', specialty: 'Ophtalmologie', days: 'Mar, Jeu', languages: ['Français'] },
+      { name: 'Dr. Nguemo Samuel', specialty: 'ORL', days: 'Lun-Ven', languages: ['Français', 'Pidgin'] },
+    ],
   }
 ];
 
 export function Directory() {
   const { addOrder } = useOrders();
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState<'all' | 'hospital' | 'clinic' | 'laboratory' | 'pharmacy' | 'natural'>('all');
-  const [view, setView] = useState<'list' | 'pharmacy-catalog' | 'lab-catalog' | 'clinic-catalog' | 'hospital-catalog' | 'natural-catalog' | 'prescriptions' | 'results'>('list');
+  const [view, setView] = useState<'list' | 'pharmacy-catalog' | 'lab-catalog' | 'clinic-catalog' | 'hospital-catalog' | 'natural-catalog' | 'prescriptions' | 'results' | 'order-confirmation'>('list');
   const [selectedActor, setSelectedActor] = useState<DirectoryActor | null>(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [onlyDuty, setOnlyDuty] = useState(false);
   const [activeRouteActor, setActiveRouteActor] = useState<DirectoryActor | null>(null);
+  const [cartPharmacyId, setCartPharmacyId] = useState<string | null>(null);
+  const [cartPharmacyName, setCartPharmacyName] = useState<string>('');
+  const [deliveryMode, setDeliveryMode] = useState<'pickup' | 'delivery'>('pickup');
+  const [lastOrderId, setLastOrderId] = useState<string>('');
+  const [lastOrderTotal, setLastOrderTotal] = useState(0);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q) {
+      setSearch(q);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   // Real-time stock from database
   const [dbMeds, setDbMeds] = useState<Medication[]>([]);
 
@@ -278,7 +406,8 @@ export function Directory() {
           image: data.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop',
           available: (data.stock || 0) > 0,
           requiresPrescription: !!data.requiresPrescription,
-          stock: data.stock || 0
+          stock: data.stock || 0,
+          pharmacistId: data.pharmacistId || ''
         });
       });
       if (items.length > 0) {
@@ -328,7 +457,7 @@ export function Directory() {
             isOpen: true,
             isDuty: !!data.isDuty,
             image: data.pharmacyImage || 'https://images.unsplash.com/photo-1631549916768-4119b2e55916?w=400&h=300&fit=crop',
-            meds: MOCK_MEDS,
+            meds: [],
             services: [
               { id: 'ds1', name: 'Dispensation de médicaments', price: 0, category: 'Service' },
               { id: 'ds2', name: 'Conseil thérapeutique', price: 0, category: 'Conseil' }
@@ -389,10 +518,31 @@ export function Directory() {
 
   const filteredActors = allActors.filter(actor => {
     const matchesCat = activeCategory === 'all' || actor.type === activeCategory;
-    const matchesSearch = actor.name.toLowerCase().includes(search.toLowerCase()) || actor.address.toLowerCase().includes(search.toLowerCase());
+    const s = search.toLowerCase();
+    const matchesSearch = !s ||
+      actor.name.toLowerCase().includes(s) ||
+      actor.address.toLowerCase().includes(s) ||
+      (actor.type === 'pharmacy' && getActorMeds(actor).some(
+        m => m.name.toLowerCase().includes(s) || m.dci.toLowerCase().includes(s)
+      ));
     const matchesDuty = !onlyDuty || actor.isDuty === true;
     return matchesCat && matchesSearch && matchesDuty;
   });
+
+  const medicationSearchResults = search.length >= 2 ? (() => {
+    const s = search.toLowerCase();
+    const results: { med: Medication; pharmacy: DirectoryActor }[] = [];
+    for (const actor of allActors) {
+      if (actor.type !== 'pharmacy') continue;
+      const meds = getActorMeds(actor);
+      for (const med of meds) {
+        if ((med.name.toLowerCase().includes(s) || med.dci.toLowerCase().includes(s)) && med.available) {
+          results.push({ med, pharmacy: actor });
+        }
+      }
+    }
+    return results;
+  })() : [];
 
   const handleUploadOrdonnance = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
@@ -449,7 +599,17 @@ export function Directory() {
     else setView('list');
   };
 
-  const addToCart = (item: {id: string, name: string, price: number, image?: string, requiresPrescription?: boolean}) => {
+  const addToCart = (item: {id: string, name: string, price: number, image?: string, requiresPrescription?: boolean}, pharmacyId?: string, pharmacyName?: string) => {
+    if (pharmacyId && cartPharmacyId && cartPharmacyId !== pharmacyId && cart.length > 0) {
+      if (!window.confirm(`Votre panier contient des articles de "${cartPharmacyName}". Voulez-vous vider le panier et commander chez "${pharmacyName}" ?`)) {
+        return;
+      }
+      setCart([]);
+    }
+    if (pharmacyId) {
+      setCartPharmacyId(pharmacyId);
+      setCartPharmacyName(pharmacyName || '');
+    }
     setCart(prev => {
       const existing = prev.find(i => i.id === item.id);
       if (existing) return prev.map(i => i.id === item.id ? { ...i, count: i.count + 1 } : i);
@@ -471,17 +631,27 @@ export function Directory() {
     }));
   };
 
-  const handleCheckout = (paymentMethod: string) => {
+  const handleCheckout = async (paymentMethod: string) => {
+    setCheckoutError(null);
     const total = cart.reduce((sum, item) => sum + item.price * item.count, 0);
-    addOrder({
-      items: cart,
-      total,
-      paymentMethod,
-      mode: 'pickup',
-      pharmacistId: selectedActor?.id
-    });
-    setCart([]);
-    setIsCartOpen(false);
+    try {
+      const orderId = await addOrder({
+        items: cart,
+        total,
+        paymentMethod,
+        mode: deliveryMode,
+        pharmacistId: cartPharmacyId || selectedActor?.id
+      });
+      setLastOrderId(orderId);
+      setLastOrderTotal(total);
+      setCart([]);
+      setCartPharmacyId(null);
+      setCartPharmacyName('');
+      setIsCartOpen(false);
+      setView('order-confirmation');
+    } catch (err: any) {
+      setCheckoutError(err.message || 'Erreur lors de la commande. Veuillez réessayer.');
+    }
   };
 
   return (
@@ -523,7 +693,7 @@ export function Directory() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
               type="text" 
-              placeholder="Rechercher une pharmacie, un laboratoire, un hôpital..." 
+              placeholder="Rechercher un médicament, une pharmacie, un hôpital..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
@@ -559,17 +729,101 @@ export function Directory() {
       </header>
 
       <AnimatePresence mode="wait">
+        {view === 'order-confirmation' && (
+          <motion.div
+            key="order-confirmation"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-12 space-y-6"
+          >
+            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="text-emerald-600" size={40} />
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-display font-bold text-slate-900">Commande confirmée !</h2>
+              <p className="text-slate-500 text-sm max-w-md">
+                Votre commande <span className="font-bold text-slate-700">#{lastOrderId.slice(0, 8)}</span> de{' '}
+                <span className="font-bold text-emerald-600">{lastOrderTotal.toLocaleString()} FCFA</span> a été envoyée au pharmacien.
+              </p>
+              <p className="text-slate-400 text-xs">
+                {deliveryMode === 'delivery' ? 'Livraison à domicile' : 'Retrait en pharmacie'} — Vous serez notifié dès que votre commande est validée.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setView('list')}
+                className="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Continuer mes achats
+              </button>
+              <button
+                onClick={() => navigate('/orders')}
+                className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              >
+                Voir mes commandes
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {view === 'list' && (
-          <motion.div 
+          <motion.div
             key="list"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="space-y-6"
           >
-            {filteredActors.map(actor => (
-              <ActorCard key={actor.id} actor={actor} onClick={() => handleActorClick(actor)} />
-            ))}
+            {medicationSearchResults.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Pill size={14} className="text-emerald-600" />
+                  Médicaments trouvés dans {new Set(medicationSearchResults.map(r => r.pharmacy.id)).size} pharmacie(s)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {medicationSearchResults.slice(0, 9).map(({ med, pharmacy }) => (
+                    <div key={`${med.id}-${pharmacy.id}`} className="bg-white border border-slate-100 rounded-2xl p-4 flex gap-3 items-center shadow-sm hover:shadow-md transition-shadow">
+                      <div className="w-12 h-12 bg-slate-50 rounded-xl overflow-hidden shrink-0 border border-slate-100">
+                        <img src={med.image} alt={med.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-900 truncate">{med.name}</p>
+                        <p className="text-[10px] text-slate-400">{med.dci} — {pharmacy.name}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs font-bold text-emerald-600">{med.price.toLocaleString()} FCFA</span>
+                          <button
+                            onClick={() => addToCart(med, pharmacy.id, pharmacy.name)}
+                            className="w-7 h-7 bg-emerald-600 text-white rounded-lg flex items-center justify-center hover:bg-emerald-700 transition-colors"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {medicationSearchResults.length > 9 && (
+                  <p className="text-xs text-slate-400 text-center">
+                    et {medicationSearchResults.length - 9} autres résultats...
+                  </p>
+                )}
+                <div className="h-px bg-slate-200" />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredActors.map(actor => (
+                <ActorCard key={actor.id} actor={actor} onClick={() => handleActorClick(actor)} />
+              ))}
+            </div>
+            {filteredActors.length === 0 && medicationSearchResults.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16 text-slate-400 space-y-3">
+                <Search size={32} />
+                <p className="font-medium text-sm">Aucun résultat pour "{search}"</p>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -615,42 +869,107 @@ export function Directory() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-               <div className="lg:col-span-2 space-y-4">
-                  <h3 className="text-sm font-display font-bold text-slate-900 px-1">Services & Prestations</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                     {selectedActor.services?.map(service => (
-                       <div key={service.id} className="bg-white p-4 rounded-xl border border-slate-200 group">
-                          <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest mb-1">{service.category}</p>
-                          <h4 className="text-xs font-bold text-slate-900 mb-3">{service.name}</h4>
-                          <div className="flex items-center justify-between">
-                             <p className="text-sm font-display font-bold text-slate-900">{service.price.toLocaleString()} FCFA</p>
-                             <button 
-                               onClick={() => addToCart(service)}
-                               className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition-colors"
-                             >
-                                <Plus size={16} />
-                             </button>
+               <div className="lg:col-span-2 space-y-6">
+                  {/* Doctors list (clinic-specific per spec: Fiche médecin individuel) */}
+                  {selectedActor.type === 'clinic' && selectedActor.doctors && selectedActor.doctors.length > 0 && (
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-display font-bold text-slate-900 px-1 flex items-center gap-2">
+                        <Stethoscope size={14} className="text-blue-600" /> Équipe Médicale
+                      </h3>
+                      <div className="space-y-2">
+                        {selectedActor.doctors.map((doc, idx) => (
+                          <div key={idx} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                                <User size={16} />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-xs font-bold text-slate-900 truncate">{doc.name}</p>
+                                <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{doc.specialty}</p>
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-[10px] text-slate-400 font-medium">{doc.days}</p>
+                              {doc.languages && (
+                                <p className="text-[9px] text-slate-400 mt-0.5">{doc.languages.join(' · ')}</p>
+                              )}
+                            </div>
                           </div>
-                       </div>
-                     ))}
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Services & Prestations */}
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-display font-bold text-slate-900 px-1">Services & Prestations</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                       {selectedActor.services?.map(service => (
+                         <div key={service.id} className="bg-white p-4 rounded-xl border border-slate-200 group">
+                            <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest mb-1">{service.category}</p>
+                            <h4 className="text-xs font-bold text-slate-900 mb-3">{service.name}</h4>
+                            <div className="flex items-center justify-between">
+                               <p className="text-sm font-display font-bold text-slate-900">{service.price.toLocaleString()} FCFA</p>
+                               <button
+                                 onClick={() => addToCart(service, selectedActor?.id, selectedActor?.name)}
+                                 className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition-colors"
+                               >
+                                  <Plus size={16} />
+                               </button>
+                            </div>
+                         </div>
+                       ))}
+                    </div>
                   </div>
                </div>
-               
+
                <div className="space-y-4">
+                  {/* CNAM & Insurance (per spec: Filtre "accepte ma mutuelle") */}
+                  {selectedActor.acceptsCNAM && (
+                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-3">
+                      <div className="flex items-center gap-2 text-blue-700">
+                        <ShieldCheck size={16} />
+                        <h4 className="text-xs font-bold uppercase tracking-wider">Conventionné CNAM</h4>
+                      </div>
+                      {selectedActor.acceptedInsurances && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedActor.acceptedInsurances.map(ins => (
+                            <span key={ins} className="bg-white text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                              {ins}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <p className="text-[10px] text-blue-600">Prise en charge directe possible selon votre couverture.</p>
+                    </div>
+                  )}
+
+                  {/* Appointment Booking */}
                   <div className="bg-white text-slate-800 p-5 rounded-xl border border-slate-200 space-y-4">
                      <h3 className="text-sm font-display font-bold text-slate-900">Planifiez votre visite</h3>
                      <p className="text-xs text-slate-400">Gagnez du temps en pré-payant vos actes ou en réservant un créneau.</p>
                      <div className="space-y-3">
-                        <div className="flex items-center gap-2.5 bg-white p-3 rounded-lg border border-slate-200">
-                           <Calendar className="text-emerald-600" size={16} />
+                        {selectedActor.hours && (
+                          <div className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <Clock size={16} className="text-emerald-600 shrink-0" />
+                            <div>
+                              <p className="text-[9px] font-bold uppercase text-slate-400">Horaires</p>
+                              <p className="text-xs font-semibold text-slate-700">{selectedActor.hours}</p>
+                            </div>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2.5 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                           <Calendar className="text-emerald-600 shrink-0" size={16} />
                            <div>
-                              <p className="text-[9px] font-bold uppercase text-slate-400">Prochain RDV</p>
-                              <p className="text-xs font-semibold text-slate-855">Demain, 09:30</p>
+                              <p className="text-[9px] font-bold uppercase text-slate-400">Prochain créneau</p>
+                              <p className="text-xs font-semibold text-slate-700">Demain, 09:30</p>
                            </div>
                         </div>
-                        <button className="w-full bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold transition-all hover:bg-emerald-700">
-                           Prendre Rendez-vous
-                        </button>
+                        {selectedActor.appointmentEnabled && (
+                          <button className="w-full bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold transition-all hover:bg-emerald-700">
+                             Prendre Rendez-vous
+                          </button>
+                        )}
                      </div>
                   </div>
 
@@ -665,6 +984,16 @@ export function Directory() {
                             </div>
                           ))}
                        </div>
+                    </div>
+                  )}
+
+                  {/* Contact */}
+                  {selectedActor.phone && (
+                    <div className="bg-white p-4 rounded-xl border border-slate-200">
+                      <div className="flex items-center gap-2.5">
+                        <PhoneCall size={14} className="text-slate-400" />
+                        <span className="text-xs font-mono font-bold text-slate-700">{selectedActor.phone}</span>
+                      </div>
                     </div>
                   )}
                </div>
@@ -740,6 +1069,17 @@ export function Directory() {
                   </div>
 
                   <div className="space-y-4">
+                     {/* Origin badge */}
+                     {selectedActor.origin && (
+                       <div className="bg-amber-50 p-3 rounded-xl border border-amber-100 flex items-start gap-2">
+                         <Leaf size={14} className="text-amber-600 shrink-0 mt-0.5" />
+                         <div>
+                           <p className="text-[9px] font-bold text-amber-600 uppercase tracking-wider">Origine</p>
+                           <p className="text-xs font-medium text-amber-800">{selectedActor.origin}</p>
+                         </div>
+                       </div>
+                     )}
+
                      <div className="bg-white p-4 rounded-xl border border-emerald-500 space-y-4">
                         <div className="flex items-center gap-2 text-emerald-900">
                            <ShieldCheck size={16} className="text-emerald-600" />
@@ -758,6 +1098,23 @@ export function Directory() {
                         </ul>
                      </div>
 
+                     {/* Contraindications */}
+                     {selectedActor.contraindications && selectedActor.contraindications.length > 0 && (
+                       <div className="bg-red-50 p-4 rounded-xl border border-red-100 space-y-3">
+                         <div className="flex items-center gap-2 text-red-700">
+                           <AlertTriangle size={14} />
+                           <h4 className="text-xs font-bold uppercase tracking-wider">Contre-indications</h4>
+                         </div>
+                         <ul className="space-y-1.5">
+                           {selectedActor.contraindications.map(ci => (
+                             <li key={ci} className="flex items-center gap-2 text-xs text-red-600 font-medium">
+                               <X size={10} className="shrink-0" /> {ci}
+                             </li>
+                           ))}
+                         </ul>
+                       </div>
+                     )}
+
                      <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-4">
                         <div className="flex justify-between items-end">
                            <div>
@@ -775,7 +1132,7 @@ export function Directory() {
                               id: selectedActor.id + '_pack',
                               name: 'Pack: ' + selectedActor.name,
                               price: selectedActor.price || 0,
-                            });
+                            }, selectedActor.id, selectedActor.name);
                             setIsCartOpen(true);
                           }}
                           className="w-full bg-emerald-600 text-white font-bold py-2 rounded-lg text-xs transition-all hover:bg-emerald-700 flex items-center justify-center gap-1.5"
@@ -842,7 +1199,7 @@ export function Directory() {
                         <span className="font-bold text-emerald-600 text-xs">{med.price.toLocaleString()} FCFA</span>
                         <button 
                           disabled={med.stock !== undefined && med.stock <= 0}
-                          onClick={() => addToCart(med)}
+                          onClick={() => addToCart(med, selectedActor?.id, selectedActor?.name)}
                           className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center hover:bg-emerald-700 transition-colors disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
                         >
                           <Plus size={16} />
@@ -1141,7 +1498,7 @@ export function Directory() {
                       setView('pharmacy-catalog'); 
                       setIsCartOpen(true);
                       const medsToOrder = pharma.meds?.filter(m => analyzedMeds.some(am => am.name === m.name)) || [];
-                      medsToOrder.forEach(m => addToCart(m));
+                      medsToOrder.forEach(m => addToCart(m, pharma.id, pharma.name));
                     }}
                     className="w-full bg-emerald-600 text-white py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-1 text-xs"
                    >
@@ -1160,10 +1517,10 @@ export function Directory() {
         )}
       </AnimatePresence>
 
-      <CartDrawer 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cart={cart} 
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
         onUpdateCount={updateCartCount}
         onRemove={removeFromCart}
         onCheckout={handleCheckout}
@@ -1171,6 +1528,10 @@ export function Directory() {
           setView('prescriptions');
           setIsCartOpen(false);
         }}
+        deliveryMode={deliveryMode}
+        onDeliveryModeChange={setDeliveryMode}
+        pharmacyName={cartPharmacyName}
+        checkoutError={checkoutError}
       />
 
       <RouteDrawer
@@ -1252,38 +1613,46 @@ function ActorCard({ actor, onClick }: { actor: DirectoryActor, onClick: () => v
   );
 }
 
-function CartDrawer({ 
-  isOpen, 
-  onClose, 
-  cart, 
-  onUpdateCount, 
+function CartDrawer({
+  isOpen,
+  onClose,
+  cart,
+  onUpdateCount,
   onRemove,
   onCheckout,
-  onRequirePrescription
-}: { 
-  isOpen: boolean, 
-  onClose: () => void, 
-  cart: any[],
-  onUpdateCount: (id: string, delta: number) => void,
-  onRemove: (id: string) => void,
-  onCheckout: (method: string) => void,
-  onRequirePrescription: () => void
+  onRequirePrescription,
+  deliveryMode,
+  onDeliveryModeChange,
+  pharmacyName,
+  checkoutError
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  cart: any[];
+  onUpdateCount: (id: string, delta: number) => void;
+  onRemove: (id: string) => void;
+  onCheckout: (method: string) => void;
+  onRequirePrescription: () => void;
+  deliveryMode: 'pickup' | 'delivery';
+  onDeliveryModeChange: (mode: 'pickup' | 'delivery') => void;
+  pharmacyName: string;
+  checkoutError: string | null;
 }) {
   const [step, setStep] = useState<'cart' | 'payment'>('cart');
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  const total = cart.reduce((sum, item) => sum + (item.price * item.count), 0);
 
-  const handleFinish = () => {
+  const total = cart.reduce((sum, item) => sum + (item.price * item.count), 0);
+  const deliveryFee = deliveryMode === 'delivery' ? 1500 : 0;
+  const grandTotal = total + deliveryFee;
+
+  const handleFinish = async () => {
     if (!selectedMethod) return;
     setIsProcessing(true);
-    setTimeout(() => {
-      onCheckout(selectedMethod);
-      setIsProcessing(false);
-      setStep('cart');
-      setSelectedMethod(null);
-    }, 2000);
+    await onCheckout(selectedMethod);
+    setIsProcessing(false);
+    setStep('cart');
+    setSelectedMethod(null);
   };
 
   return (
@@ -1312,8 +1681,44 @@ function CartDrawer({
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {checkoutError && (
+                <div className="bg-red-50 border border-red-200 p-4 rounded-2xl flex gap-3 text-red-800">
+                  <AlertTriangle size={18} className="shrink-0 mt-0.5 text-red-500" />
+                  <p className="text-xs font-semibold">{checkoutError}</p>
+                </div>
+              )}
               {step === 'cart' ? (
                 <>
+                  {pharmacyName && (
+                    <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl flex items-center gap-2">
+                      <Building2 size={14} className="text-emerald-600 shrink-0" />
+                      <span className="text-xs font-bold text-emerald-800 truncate">{pharmacyName}</span>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
+                    <button
+                      onClick={() => onDeliveryModeChange('pickup')}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
+                        deliveryMode === 'pickup' ? "bg-white shadow-sm text-slate-900" : "text-slate-500"
+                      )}
+                    >
+                      <Package size={14} />
+                      Retrait
+                    </button>
+                    <button
+                      onClick={() => onDeliveryModeChange('delivery')}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
+                        deliveryMode === 'delivery' ? "bg-white shadow-sm text-slate-900" : "text-slate-500"
+                      )}
+                    >
+                      <Truck size={14} />
+                      Livraison (+1 500 FCFA)
+                    </button>
+                  </div>
+
                   {cart.some(item => item.requiresPrescription) && (
                     <div className="bg-purple-50/70 border border-purple-100 p-4 rounded-2xl flex gap-3 text-purple-950 animate-pulse">
                       <Camera size={20} className="shrink-0 mt-0.5 text-purple-600" />
@@ -1416,9 +1821,21 @@ function CartDrawer({
             </div>
 
             <div className="p-8 border-t bg-slate-50 space-y-6">
-              <div className="flex justify-between items-end">
-                <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Total</span>
-                <span className="text-3xl font-display font-bold text-slate-900">{total.toLocaleString()} FCFA</span>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-500 font-medium">Sous-total</span>
+                  <span className="text-slate-700 font-bold">{total.toLocaleString()} FCFA</span>
+                </div>
+                {deliveryMode === 'delivery' && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-500 font-medium">Frais de livraison</span>
+                    <span className="text-slate-700 font-bold">1 500 FCFA</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-end pt-2 border-t border-slate-200">
+                  <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Total</span>
+                  <span className="text-3xl font-display font-bold text-slate-900">{grandTotal.toLocaleString()} FCFA</span>
+                </div>
               </div>
               
               {step === 'cart' ? (

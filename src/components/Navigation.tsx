@@ -69,7 +69,9 @@ export function Navigation() {
                       ) : isPharmacist ? (
                         <>
                           <MobileMenuLink to="/orders" icon={<Zap />} label="Commandes" onClick={() => setIsOpen(false)} />
-                          <MobileMenuLink to="/inventory" icon={<Pill />} label="Stock" onClick={() => setIsOpen(false)} />
+                          <MobileMenuLink to="/inventory" icon={<Pill />} label="Inventaire" onClick={() => setIsOpen(false)} />
+                          <MobileMenuLink to="/directory" icon={<Building2 />} label="Répertoire" onClick={() => setIsOpen(false)} />
+                          <MobileMenuLink to="/ai-sante" icon={<Zap />} label="Care IA" onClick={() => setIsOpen(false)} />
                         </>
                       ) : (
                         <>
@@ -96,6 +98,7 @@ export function Navigation() {
               <>
                 <NavItem to="/orders" icon={<Zap />} label="Commandes" />
                 <NavItem to="/inventory" icon={<Pill />} label="Inventaire" />
+                <NavItem to="/directory" icon={<Building2 />} label="Répertoire" />
               </>
             ) : (
               <>
@@ -133,7 +136,8 @@ export function MobileBottomNav() {
         ) : isPharmacist ? (
           <>
             <MobileBottomTab to="/orders" icon={<Zap />} label="Commandes" />
-            <MobileBottomTab to="/inventory" icon={<Pill />} label="Stock" />
+            <MobileBottomTab to="/inventory" icon={<Pill />} label="Inventaire" />
+            <MobileBottomTab to="/directory" icon={<Building2 />} label="Répertoire" />
           </>
         ) : (
           <>

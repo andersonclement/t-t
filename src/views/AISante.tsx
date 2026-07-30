@@ -123,7 +123,7 @@ function DiagnosticAssistant() {
               type="text" 
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Décrivez vos symptômes..."
               className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-4 pr-12 outline-none focus:ring-4 focus:ring-brand-600/10 transition-all text-sm"
             />
