@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './components/AuthContext';
 import { OrderProvider } from './components/OrderContext';
 import { Shell } from './components/Navigation';
+import { isProfessionalRole } from './lib/roles';
 
 // Lazy-loaded routes as per Technical Document R1/R2 optimization
 const Dashboard = lazy(() => import('./views/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -21,7 +22,7 @@ const Landing = lazy(() => import('./views/Landing').then(m => ({ default: m.Lan
 const VerifyEmail = lazy(() => import('./views/VerifyEmail').then(m => ({ default: m.VerifyEmail })));
 const Orders = lazy(() => import('./views/Orders').then(m => ({ default: m.Orders })));
 const Inventory = lazy(() => import('./views/Inventory').then(m => ({ default: m.Inventory })));
-const PharmacistOnboarding = lazy(() => import('./views/PharmacistOnboarding').then(m => ({ default: m.PharmacistOnboarding })));
+const ProfessionalOnboarding = lazy(() => import('./views/ProfessionalOnboarding').then(m => ({ default: m.ProfessionalOnboarding })));
 const AdminDashboard = lazy(() => import('./views/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 
 const PageLoader = () => (
@@ -41,9 +42,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   
   if (!user) return <Navigate to="/welcome" replace />;
   
-  // If the user is a pharmacist and not activated, show the onboarding screen
-  if (profile?.role === 'pharmacist' && profile?.status !== 'activated') {
-    return <PharmacistOnboarding />;
+  // Professionals must clear document review before reaching the app.
+  if (isProfessionalRole(profile?.role) && profile?.status !== 'activated') {
+    return <ProfessionalOnboarding />;
   }
   
   return <>{children}</>;

@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { cn } from '../lib/utils';
 import { Badge, PageContainer, PageHeader, StatCard, StatGrid } from '../components/ui';
+import { ProfessionalDashboard } from './ProfessionalDashboard';
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { Mail, Shield, Users, Check, X } from 'lucide-react';
@@ -111,6 +112,11 @@ export function Dashboard() {
       return () => unsubscribe();
     }
   }, [isPharmacist, user]);
+
+  // Clinics and naturopaths get their own home rather than the patient one.
+  if (profile?.role === 'clinic' || profile?.role === 'naturopath') {
+    return <ProfessionalDashboard />;
+  }
 
   if (isPharmacist) {
     const pendingOrders = orders.filter(o => o.status === 'pending_validation').length;

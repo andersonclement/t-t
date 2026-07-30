@@ -25,21 +25,12 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { Alert, PageContainer, PageHeader, StatCard, StatGrid } from '../components/ui';
+import { Alert, Badge, PageContainer, PageHeader, StatCard, StatGrid } from '../components/ui';
+import { PROFESSIONAL_ROLES, getEstablishmentName, getRole, type ProfessionalRole } from '../lib/roles';
+import { RoleIcon } from '../components/RoleIcon';
 
-interface TechnicalForm {
-  pharmacyName: string;
-  onpcNumber: string;
-  legalLicenseNumber: string;
-  pharmacistsCount: number;
-  coldChainEquipment: string;
-  temperatureMonitor: boolean;
-  backupGenerator: string;
-  airConditioned: boolean;
-  narcoticsSafe: boolean;
-  fireExtinguisher: boolean;
-  wasteProtocol: boolean;
-}
+/** Shape varies per role — the registry drives which fields exist. */
+type TechnicalForm = Record<string, unknown>;
 
 interface Appointment {
   type: string;
@@ -54,7 +45,7 @@ interface PharmacistUser {
   uid: string;
   displayName: string;
   email: string;
-  role: 'pharmacist';
+  role: ProfessionalRole;
   status: 'pending_technical_file' | 'pending_appointment' | 'pending_admin_approval' | 'activated' | 'rejected';
   createdAt?: any;
   updatedAt?: any;
@@ -75,7 +66,7 @@ export function AdminDashboard() {
 
   // Fetch all pharmacists from firestore
   useEffect(() => {
-    const q = query(collection(db, 'users'), where('role', '==', 'pharmacist'));
+    const q = query(collection(db, 'users'), where('role', 'in', PROFESSIONAL_ROLES));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list: PharmacistUser[] = [];
       snapshot.forEach((docSnap) => {
@@ -83,9 +74,9 @@ export function AdminDashboard() {
         list.push({
           id: docSnap.id,
           uid: data.uid || docSnap.id,
-          displayName: data.displayName || 'Pharmacien Sans Nom',
+          displayName: data.displayName || 'Professionnel sans nom',
           email: data.email || '',
-          role: 'pharmacist',
+          role: data.role || 'pharmacist',
           status: data.status || 'pending_technical_file',
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
@@ -110,7 +101,7 @@ export function AdminDashboard() {
     const matchesSearch = 
       pharma.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pharma.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (pharma.technicalForm?.pharmacyName || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (getEstablishmentName(pharma) || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     if (statusFilter === 'all') return matchesSearch;
     if (statusFilter === 'pending') {
@@ -348,7 +339,7 @@ export function AdminDashboard() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
                           <h3 className="font-bold text-slate-800 text-sm truncate">
-                            {pharma.technicalForm?.pharmacyName || pharma.displayName}
+                            {getEstablishmentName(pharma) || pharma.displayName}
                           </h3>
                           {getStatusBadge(pharma.status)}
                         </div>
@@ -364,11 +355,15 @@ export function AdminDashboard() {
                               {pharma.phoneNumber}
                             </span>
                           )}
-                          {pharma.technicalForm?.onpcNumber && (
-                            <span className="font-mono text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                              ONPC: {pharma.technicalForm.onpcNumber}
-                            </span>
-                          )}
+                          <span
+                            className={cn(
+                              'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold',
+                              getRole(pharma.role).accent.soft
+                            )}
+                          >
+                            <RoleIcon role={pharma.role} size={10} />
+                            {getRole(pharma.role).label}
+                          </span>
                         </div>
                       </div>
 
@@ -443,62 +438,53 @@ export function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Technical File (Fiche Technique) Details */}
+              {/* Technical file, rendered from the role's own schema */}
               {selectedPharma.technicalForm ? (
                 <div className="space-y-3">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-1.5 flex items-center gap-1.5">
                     <Building2 size={12} />
-                    Fiche Technique Officielle
+                    Dossier {getRole(selectedPharma.role).label.toLowerCase()}
                   </p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                    <div>
-                      <span className="text-slate-400">Nom Officiel</span>
-                      <p className="font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.pharmacyName}</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Ordre des Pharmaciens (ONPC)</span>
-                      <p className="font-mono font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.onpcNumber}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <span className="text-slate-400">Licence d'Exploitation</span>
-                      <p className="font-mono font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.legalLicenseNumber}</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Pharmaciens Adjoints</span>
-                      <p className="font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.pharmacistsCount} diplômés</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Équipement Froid</span>
-                      <p className="font-semibold text-slate-700 mt-0.5">
-                        {selectedPharma.technicalForm.coldChainEquipment === 'medical_fridge' ? 'Réfrigérateur médicalisé' : 'Réfrigérateur domestique'}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Yes/No Checklists */}
-                  <div className="grid grid-cols-2 gap-2 mt-2 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100 text-[11px] text-slate-600">
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.temperatureMonitor ? "bg-emerald-500" : "bg-slate-300")} />
-                      Suivi Température continu
+                  {getRole(selectedPharma.role).onboarding.map((section) => (
+                    <div key={section.title} className="space-y-2">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        {section.title}
+                      </p>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                        {section.fields.map((field) => {
+                          const raw = (selectedPharma.technicalForm as any)?.[field.name];
+                          const value =
+                            field.type === 'toggle'
+                              ? raw ? 'Oui' : 'Non'
+                              : field.type === 'select'
+                                ? field.options?.find((o) => o.value === String(raw))?.label ?? '—'
+                                : raw === undefined || raw === '' || raw === null
+                                  ? '—'
+                                  : String(raw);
+
+                          return (
+                            <div key={field.name} className={cn(field.type === 'textarea' && 'col-span-2')}>
+                              <span className="text-slate-400">{field.label}</span>
+                              <p
+                                className={cn(
+                                  'font-semibold text-slate-700 mt-0.5 break-words',
+                                  field.type === 'toggle' && (raw ? 'text-emerald-600' : 'text-slate-400')
+                                )}
+                              >
+                                {value}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.backupGenerator !== 'none' ? "bg-emerald-500" : "bg-slate-300")} />
-                      Générateur électrique
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.airConditioned ? "bg-emerald-500" : "bg-slate-300")} />
-                      Climatisation intégrale
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.narcoticsSafe ? "bg-emerald-500" : "bg-slate-300")} />
-                      Coffre fort stupéfiants
-                    </div>
-                  </div>
+                  ))}
                 </div>
               ) : (
                 <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-400">
                   <FileText className="mx-auto mb-1.5 text-slate-300" size={18} />
-                  Fiche technique non complétée par le pharmacien.
+                  Dossier technique non complété.
                 </div>
               )}
 

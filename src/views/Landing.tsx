@@ -1,18 +1,55 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { 
-  ShieldCheck, 
-  Search, 
-  MapPin, 
-  Smartphone, 
-  Sparkles, 
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import {
   ArrowRight,
+  Building2,
+  Compass,
   HeartPulse,
   Leaf,
-  Stethoscope
+  MapPin,
+  Pill,
+  ShieldCheck,
+  Sparkles,
+  Truck,
 } from 'lucide-react';
-import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
+import { RoleIcon } from '../components/RoleIcon';
+import { PROFESSIONAL_ROLES, ROLES } from '../lib/roles';
+import { cn } from '../lib/utils';
+
+const FEATURES = [
+  {
+    icon: <Pill size={20} />,
+    tone: 'bg-emerald-50 text-emerald-600',
+    title: 'Vos médicaments, livrés',
+    body: "Commandez auprès d'une officine agréée près de chez vous et suivez la livraison en temps réel.",
+  },
+  {
+    icon: <Sparkles size={20} />,
+    tone: 'bg-amber-50 text-amber-600',
+    title: 'Care IA',
+    body: 'Une orientation santé immédiate qui tient compte de vos allergies, antécédents et traitements en cours.',
+  },
+  {
+    icon: <MapPin size={20} />,
+    tone: 'bg-blue-50 text-blue-600',
+    title: 'Carte de santé',
+    body: 'Pharmacies de garde, hôpitaux et laboratoires géolocalisés, avec itinéraire calculé.',
+  },
+  {
+    icon: <ShieldCheck size={20} />,
+    tone: 'bg-violet-50 text-violet-600',
+    title: 'Professionnels vérifiés',
+    body: 'Chaque établissement fournit un dossier technique validé par un administrateur avant publication.',
+  },
+];
+
+const STEPS = [
+  { n: '01', title: 'Décrivez votre besoin', body: 'Un symptôme, une ordonnance à renouveler, un médicament précis.' },
+  { n: '02', title: 'Choisissez un établissement', body: 'Comparez distance, disponibilité et horaires de garde.' },
+  { n: '03', title: 'Recevez ou retirez', body: 'Livraison à domicile ou retrait au comptoir, selon votre préférence.' },
+];
 
 export function Landing() {
   const navigate = useNavigate();
@@ -23,191 +60,300 @@ export function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFDFF] text-slate-900 font-sans selection:bg-brand-100 selection:text-brand-700">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-brand-600 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg shadow-brand-600/20">
-              <HeartPulse className="text-white" size={20} />
-            </div>
-            <span className="text-lg md:text-xl font-display font-bold tracking-tight">Dokta</span>
+    <div className="min-h-screen bg-white">
+      {/* ── Navbar ────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-600/20">
+              <HeartPulse size={20} />
+            </span>
+            <span className="font-display font-bold text-lg md:text-xl text-slate-900">Dokta</span>
           </div>
-          <div className="flex items-center gap-4 md:gap-8">
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-sm font-semibold text-slate-500 hover:text-brand-600 transition-colors">Services</a>
-              <a href="#" className="text-sm font-semibold text-slate-500 hover:text-brand-600 transition-colors">À propos</a>
-            </div>
-            <button 
-              onClick={() => navigate('/login')}
-              className="bg-slate-900 text-white px-4 md:px-6 py-2 md:py-2.5 rounded-lg md:rounded-xl text-xs md:text-sm font-bold shadow-xl shadow-slate-900/10 hover:scale-105 active:scale-95 transition-all"
-            >
-              Se Connecter
-            </button>
-          </div>
-        </div>
-      </nav>
 
-      {/* Hero Section */}
-      <section className="pt-28 md:pt-40 pb-12 md:pb-20 px-4 md:px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6 md:space-y-8 text-center lg:text-left"
+          <nav className="flex items-center gap-2 md:gap-3">
+            <Link
+              to="/login"
+              className="px-3 md:px-4 py-2 rounded-xl text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+            >
+              Connexion
+            </Link>
+            <Link
+              to="/signup"
+              className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl bg-slate-900 text-white text-xs md:text-sm font-bold hover:bg-slate-800 transition-colors"
+            >
+              Créer un compte
+            </Link>
+          </nav>
+        </div>
+      </header>
+
+      {/* ── Hero ──────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute top-0 right-0 w-[36rem] h-[36rem] bg-brand-100/40 blur-3xl rounded-full -translate-y-1/3 translate-x-1/4"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100/30 blur-3xl rounded-full translate-y-1/3"
+        />
+
+        <div className="relative max-w-7xl mx-auto px-4 md:px-8 pt-14 pb-16 md:pt-24 md:pb-24 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6 text-center lg:text-left"
           >
-            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-100">
-               <Sparkles size={14} />
-               Propulsé par Care IA
-            </div>
-            <h1 className="text-4xl md:text-7xl font-display font-bold leading-tight tracking-tight text-slate-900">
-              Votre santé au <br className="hidden md:block" />
-              <span className="text-brand-600">Cameroun</span>, simplifiée.
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 text-brand-700 text-[11px] font-bold uppercase tracking-widest border border-brand-100">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-600 animate-pulse" />
+              Douala · Yaoundé · Cameroun
+            </span>
+
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-slate-900 leading-[1.1]">
+              Toute la santé du Cameroun,{' '}
+              <span className="text-brand-600">à portée de main.</span>
             </h1>
-            <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Dokta centralise pharmacies, hôpitaux et laboratoires. Analysez vos ordonnances par IA et trouvez vos médicaments instantanément au meilleur prix.
+
+            <p className="text-sm md:text-base text-slate-500 leading-relaxed max-w-lg mx-auto lg:mx-0">
+              Trouvez une pharmacie de garde, commandez vos médicaments, consultez une clinique ou
+              un naturopathe — et gardez Care IA à vos côtés pour vous orienter.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 px-4 sm:px-0">
-              <button 
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <button
                 onClick={() => navigate('/signup')}
-                className="bg-brand-600 text-white px-8 md:px-10 py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-base md:text-lg shadow-2xl shadow-brand-600/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 transition-colors shadow-lg shadow-brand-600/20"
               >
                 Commencer gratuitement
-                <ArrowRight size={20} />
+                <ArrowRight size={18} />
               </button>
-              <button 
+              <button
                 onClick={() => navigate('/login')}
-                className="bg-white border border-slate-200 text-slate-900 px-8 md:px-10 py-4 md:py-5 rounded-xl md:rounded-2xl font-bold text-base md:text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-3"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-50 transition-colors"
               >
-                Explorer l'App
+                J'ai déjà un compte
               </button>
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 pt-4">
-              <div className="flex -space-x-3">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
-                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs md:text-sm font-medium text-slate-500">
-                Rejoint par <span className="text-slate-900 font-bold">+2,000</span> utilisateurs à Douala & Yaoundé.
-              </p>
-            </div>
+
+            <dl className="flex items-center gap-6 md:gap-8 justify-center lg:justify-start pt-2">
+              {[
+                { value: '24h/24', label: 'Pharmacies de garde' },
+                { value: '3', label: 'Types de professionnels' },
+                { value: '100%', label: 'Établissements vérifiés' },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <dt className="text-xl md:text-2xl font-display font-black text-slate-900">{stat.value}</dt>
+                  <dd className="text-[10px] md:text-[11px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
+                    {stat.label}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </motion.div>
 
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
+          {/* Product preview */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="relative px-4 md:px-0"
+            transition={{ delay: 0.1 }}
+            className="relative"
           >
-            <div className="relative z-10 bg-white rounded-[2rem] md:rounded-[3rem] p-3 md:p-4 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100">
-              <img 
-                src="https://images.unsplash.com/photo-1576091160550-217359f4ecf8?w=800&h=1000&fit=crop" 
-                className="rounded-[1.5rem] md:rounded-[2.5rem] w-full" 
-                alt="Health App" 
-              />
-              <div className="absolute -bottom-6 md:-bottom-10 -left-2 md:-left-10 bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-2xl border border-slate-50 space-y-2 md:space-y-4 max-w-[160px] md:max-w-xs animate-bounce-slow">
-                 <div className="flex items-center gap-2 md:gap-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-emerald-500 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
-                       <ShieldCheck className="text-white" size={16} />
-                    </div>
-                    <div>
-                       <p className="text-[10px] font-bold text-slate-400 uppercase">Ordonnance</p>
-                       <p className="text-xs md:text-sm font-bold text-slate-900 leading-tight">Analyse Care IA</p>
-                       <p className="text-[10px] text-slate-500 font-medium leading-none mt-1">En attente de validation médicale</p>
-                    </div>
-                 </div>
+            <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60 p-5 md:p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Autour de vous</p>
+                  <p className="font-display font-bold text-slate-900">Akwa, Douala</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
+                  5 ouverts
+                </span>
+              </div>
+
+              {[
+                { name: 'Pharmacie de la Paix', meta: '450 m · De garde', icon: <Pill size={16} />, tone: 'bg-emerald-500' },
+                { name: 'Hôpital Général', meta: '1.2 km · Ouvert', icon: <Building2 size={16} />, tone: 'bg-blue-600' },
+                { name: 'Cabinet Bien-Être', meta: '900 m · Sur rendez-vous', icon: <Leaf size={16} />, tone: 'bg-amber-600' },
+              ].map((row, i) => (
+                <motion.div
+                  key={row.name}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.25 + i * 0.1 }}
+                  className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100"
+                >
+                  <span className={cn('w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0', row.tone)}>
+                    {row.icon}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900 truncate">{row.name}</p>
+                    <p className="text-[11px] text-slate-400 font-medium">{row.meta}</p>
+                  </div>
+                  <ArrowRight size={15} className="ml-auto text-slate-300 shrink-0" />
+                </motion.div>
+              ))}
+
+              <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-900 text-white">
+                <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0 text-brand-400">
+                  <Sparkles size={15} />
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-300">
+                  <span className="font-bold text-white">Care IA · </span>
+                  Vous avez un traitement pour l'asthme en cours. Pensez à anticiper son
+                  renouvellement avant la fin du mois.
+                </p>
               </div>
             </div>
-            <div className="absolute -top-10 -right-10 bg-brand-600 p-8 rounded-full blur-[100px] opacity-20 w-40 h-40 md:w-80 md:h-80" />
-            <div className="absolute -bottom-10 -left-10 bg-emerald-500 p-8 rounded-full blur-[100px] opacity-20 w-40 h-40 md:w-80 md:h-80" />
           </motion.div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-slate-900 py-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
-          <div>
-            <p className="text-4xl font-display font-bold text-white mb-2">150+</p>
-            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Pharmacies</p>
-          </div>
-          <div>
-            <p className="text-4xl font-display font-bold text-white mb-2">24/7</p>
-            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Urgence 15</p>
-          </div>
-          <div>
-            <p className="text-4xl font-display font-bold text-white mb-2">99%</p>
-            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">IA Précision</p>
-          </div>
-          <div>
-            <p className="text-4xl font-display font-bold text-white mb-2">FCFA</p>
-            <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Paiement Mobile</p>
-          </div>
+      {/* ── Features ──────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
+        <div className="text-center max-w-2xl mx-auto space-y-3 mb-10 md:mb-14">
+          <p className="text-xs text-brand-600 font-bold uppercase tracking-widest">Ce que fait Dokta</p>
+          <h2 className="text-2xl md:text-4xl font-display font-bold text-slate-900">
+            Un parcours de soin sans friction
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-5">
+          {FEATURES.map((feature, i) => (
+            <motion.article
+              key={feature.title}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 space-y-3 hover:shadow-lg transition-shadow"
+            >
+              <span className={cn('w-12 h-12 rounded-2xl flex items-center justify-center', feature.tone)}>
+                {feature.icon}
+              </span>
+              <h3 className="font-display font-bold text-slate-900">{feature.title}</h3>
+              <p className="text-xs md:text-sm text-slate-500 leading-relaxed">{feature.body}</p>
+            </motion.article>
+          ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-32 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
-            <h2 className="text-brand-600 font-bold uppercase tracking-widest text-sm">Nos Services</h2>
-            <p className="text-4xl font-display font-bold text-slate-900 leading-tight">
-              Tout ce dont vous avez besoin pour gérer votre santé sereinement.
+      {/* ── How it works ──────────────────────────────────────── */}
+      <section className="bg-slate-50 border-y border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24 grid lg:grid-cols-3 gap-8 md:gap-10">
+          {STEPS.map((step, i) => (
+            <motion.div
+              key={step.n}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              className="space-y-3"
+            >
+              <span className="text-4xl md:text-5xl font-display font-black text-brand-600/20">{step.n}</span>
+              <h3 className="font-display font-bold text-lg text-slate-900">{step.title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{step.body}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── For professionals ─────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
+        <div className="text-center max-w-2xl mx-auto space-y-3 mb-10 md:mb-14">
+          <p className="text-xs text-brand-600 font-bold uppercase tracking-widest">Pour les professionnels</p>
+          <h2 className="text-2xl md:text-4xl font-display font-bold text-slate-900">
+            Rejoignez le réseau Dokta
+          </h2>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            Votre dossier est vérifié par un administrateur avant publication — une garantie pour
+            vos patients comme pour votre établissement.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+          {PROFESSIONAL_ROLES.map((id, i) => {
+            const role = ROLES[id];
+            return (
+              <motion.button
+                key={id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                onClick={() => navigate('/signup')}
+                className="group text-left bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 space-y-3 hover:shadow-lg hover:border-slate-200 transition-all"
+              >
+                <span
+                  className={cn(
+                    'w-12 h-12 rounded-2xl flex items-center justify-center text-white',
+                    role.accent.solid
+                  )}
+                >
+                  <RoleIcon role={id} size={20} />
+                </span>
+                <h3 className="font-display font-bold text-slate-900">{role.label}</h3>
+                <p className="text-xs md:text-sm text-slate-500 leading-relaxed">{role.tagline}</p>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 pt-1">
+                  Créer un compte
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── Final call to action ──────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 md:px-8 pb-16 md:pb-24">
+        <div className="relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] bg-slate-900 text-white p-8 md:p-14 text-center">
+          <div
+            aria-hidden="true"
+            className="absolute -top-20 -right-10 w-72 h-72 bg-brand-600/25 blur-3xl rounded-full"
+          />
+          <div className="relative space-y-5 max-w-xl mx-auto">
+            <span className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto text-brand-400">
+              <Compass size={26} />
+            </span>
+            <h2 className="text-2xl md:text-3xl font-display font-bold">Prêt à prendre soin de vous ?</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Créez votre compte en moins d'une minute. Aucun engagement, aucune carte bancaire.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard 
-              icon={<Smartphone className="text-brand-600" size={32} />}
-              title="Numérisation IA"
-              description="Prenez une photo de votre ordonnance. Notre IA extrait les molécules et vérifie la disponibilité instantanément."
-            />
-            <FeatureCard 
-              icon={<MapPin className="text-emerald-500" size={32} />}
-              title="Géolocalisation"
-              description="Trouvez l'hôpital ou la pharmacie de garde la plus proche de vous au Cameroun avec les tarifs en temps réel."
-            />
-            <FeatureCard 
-              icon={<Leaf className="text-orange-500" size={32} />}
-              title="Remèdes Naturels"
-              description="Accédez à un catalogue de recettes ancestrales validées scientifiquement pour les soins courants."
-            />
+            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-1">
+              <button
+                onClick={() => navigate('/signup')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-500 transition-colors"
+              >
+                Créer mon compte
+                <ArrowRight size={18} />
+              </button>
+              <button
+                onClick={() => navigate('/login')}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm hover:bg-white/20 transition-colors"
+              >
+                Voir une démonstration
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-slate-50 py-20 px-6 border-t border-slate-100">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
-              <HeartPulse className="text-white" size={18} />
-            </div>
-            <span className="text-lg font-display font-bold">Dokta</span>
+      {/* ── Footer ────────────────────────────────────────────── */}
+      <footer className="border-t border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white">
+              <HeartPulse size={17} />
+            </span>
+            <span className="font-display font-bold text-slate-900">Dokta</span>
           </div>
-          <p className="text-slate-500 text-sm">© 2026 Dokta Cameroun. Tous droits réservés.</p>
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors">Politique de confidentialité</a>
-            <a href="#" className="text-slate-400 hover:text-slate-900 transition-colors">Mentions légales</a>
+
+          <p className="text-[11px] text-slate-400 text-center">
+            © {new Date().getFullYear()} Dokta — Plateforme de santé digitale, Cameroun.
+          </p>
+
+          <div className="flex items-center gap-2 text-[11px] text-slate-400">
+            <Truck size={14} />
+            <span>Livraison Douala &amp; Yaoundé</span>
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
-  return (
-    <div className="bg-[#FDFDFF] p-10 rounded-[2.5rem] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/50 transition-all group">
-      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-slate-100 mb-8 group-hover:scale-110 transition-transform">
-        {icon}
-      </div>
-      <h3 className="text-xl font-display font-bold text-slate-900 mb-4">{title}</h3>
-      <p className="text-slate-500 leading-relaxed text-sm font-medium">{description}</p>
     </div>
   );
 }

@@ -1,30 +1,34 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useAuth } from '../components/AuthContext';
-import { LogIn, Mail, ShieldCheck, HeartPulse, Activity, Lock, ArrowLeft, Sparkles, User } from 'lucide-react';
 import { Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Lock, Mail, TriangleAlert } from 'lucide-react';
+import { useAuth } from '../components/AuthContext';
+import { AuthLayout } from '../components/AuthLayout';
+import { RoleIcon } from '../components/RoleIcon';
+import { Alert, Button, Card, Field, Input } from '../components/ui';
+import { DEMO_ACCOUNTS, DEMO_ENABLED, DEMO_PASSWORD, ROLES, type Role } from '../lib/roles';
+import { cn } from '../lib/utils';
+
+type Screen = 'options' | 'email' | 'forgot-password' | 'demo';
 
 export function Login() {
   const { user, signInWithGoogle, signInAsDemo, signInWithEmail, resetPassword, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [method, setMethod] = React.useState<'options' | 'email' | 'forgot-password'>(location.state?.email ? 'email' : 'options');
+
+  const [screen, setScreen] = React.useState<Screen>(location.state?.email ? 'email' : 'options');
   const [email, setEmail] = React.useState(location.state?.email || '');
   const [password, setPassword] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [pendingRole, setPendingRole] = React.useState<Role | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState<string | null>(null);
-  const [isIframe, setIsIframe] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsIframe(window.self !== window.top);
-  }, []);
 
   if (loading) return null;
   if (user) return <Navigate to="/" replace />;
 
-  const handleBack = () => {
-    setMethod('options');
+  const back = () => {
+    setScreen('options');
     setError(null);
     setSuccess(null);
   };
@@ -46,7 +50,7 @@ export function Login() {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
-      setError("Veuillez entrer votre adresse email.");
+      setError('Veuillez entrer votre adresse email.');
       return;
     }
     setIsSubmitting(true);
@@ -54,12 +58,12 @@ export function Login() {
     setSuccess(null);
     try {
       await resetPassword(email);
-      setSuccess("Un email de récupération a été envoyé. Pensez à vérifier vos courriers indésirables (spam).");
-      console.log("Password reset email sent to:", email);
+      setSuccess(
+        'Un email de récupération a été envoyé. Pensez à vérifier vos courriers indésirables.'
+      );
     } catch (err: any) {
-      console.error("Password Reset Error:", err);
       if (err.code === 'auth/too-many-requests') {
-        setError("Trop de tentatives. Veuillez réessayer plus tard.");
+        setError('Trop de tentatives. Veuillez réessayer plus tard.');
       } else if (err.code === 'auth/invalid-email') {
         setError("Format d'email invalide.");
       } else {
@@ -75,265 +79,332 @@ export function Login() {
     setError(null);
     try {
       await signInWithGoogle();
-      // Le Navigate s'activera automatiquement via l'état user
     } catch (err: any) {
-      console.error("Google Auth Error:", err);
-      if (err.code === 'auth/popup-blocked') {
-        setError("Le popup de connexion a été bloqué par votre navigateur. Astuce: Ouvrez l'application dans un nouvel onglet (icône en haut à droite) ou autorisez les popups.");
-      } else if (err.code === 'auth/popup-closed-by-user') {
-        setError("La fenêtre de connexion Google a été fermée. Astuce: Les navigateurs bloquent souvent la connexion Google dans les cadres d'aperçu (iframes). Ouvrez l'application dans un nouvel onglet (bouton en haut à droite) ou utilisez la connexion par e-mail.");
-      } else if (err.code === 'auth/operation-not-allowed') {
-        setError("La connexion Google n'est pas activée dans votre console Firebase. Activez-la dans Authentication > Sign-in method.");
-      } else if (err.code === 'auth/unauthorized-domain') {
-        setError("Ce domaine n'est pas autorisé dans votre console Firebase. Ajoutez-le dans Authentication > Settings > Authorized domains.");
-      } else if (err.code === 'auth/cancelled-popup-request') {
-        // Ignorer si une autre requête est déjà en cours
-      } else if (err.code === 'auth/network-request-failed') {
-        setError("Erreur réseau. Vérifiez votre connexion internet.");
-      } else {
-        setError(`Erreur lors de la connexion Google (${err.code || 'Inconnue'}). Veuillez réessayer. Astuce: Essayez d'ouvrir l'application dans un nouvel onglet.`);
-      }
+      setError(googleErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDemoLogin = async (role: 'patient' | 'pharmacist' | 'admin') => {
-    setIsSubmitting(true);
+  const handleDemoLogin = async (role: Role) => {
+    setPendingRole(role);
     setError(null);
     try {
       await signInAsDemo(role);
-      navigate('/');
+      navigate(ROLES[role].home);
     } catch (err: any) {
-      console.error("Demo Auth Error:", err);
-      setError("Une erreur est survenue lors de la connexion démo. Veuillez réessayer.");
+      setError(
+        err?.message ||
+          'Impossible de se connecter au compte de démonstration. Veuillez réessayer.'
+      );
     } finally {
-      setIsSubmitting(false);
+      setPendingRole(null);
     }
   };
 
+  const busy = isSubmitting || pendingRole !== null;
+
   return (
-    <div className="min-h-screen bg-[#FDFDFF] flex items-center justify-center p-4 md:p-6 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-brand-50/50 via-transparent to-transparent">
-      <button 
-        onClick={() => navigate('/welcome')}
-        className="fixed top-4 md:top-8 left-4 md:left-8 p-3 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all text-slate-500 hover:text-brand-600 flex items-center gap-2 font-bold text-sm z-50"
-      >
-        <ArrowLeft size={18} />
-        <span className="hidden sm:inline">Retour à l'accueil</span>
-      </button>
-
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md pt-12 md:pt-0"
-      >
-        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden">
-          {/* Header */}
-          <div className="p-6 md:p-10 text-center space-y-4 md:space-y-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-brand-50 rounded-[1.5rem] md:rounded-[2rem] text-brand-600 relative group transition-transform hover:scale-110">
-              <HeartPulse size={32} className="md:w-10 md:h-10" />
-              <motion.div 
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="absolute -top-1 -right-1 w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center text-white text-[10px]"
-              >
-                <Activity size={12} />
-              </motion.div>
-            </div>
-            <div>
-              <h1 className="text-3xl font-display font-bold text-slate-900 tracking-tight">Dokta</h1>              <p className="text-slate-500 mt-2 font-medium">Santé & Pharmacie Connectée au Cameroun</p>
-            </div>
-          </div>
-
-          <div className="px-6 md:px-10 pb-8 md:pb-10 space-y-4">
-            {error && (
-              <div className="bg-red-50 text-red-600 p-4 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-bold border border-red-100 mb-4 animate-shake text-center">
-                {error}
-              </div>
-            )}
-            {success && (
-              <div className="bg-emerald-50 text-emerald-600 p-4 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-bold border border-emerald-100 mb-4 text-center">
-                {success}
-              </div>
-            )}
-            <AnimatePresence mode="wait">
-              {method === 'options' ? (
-                <motion.div 
-                  key="options"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="space-y-3 md:space-y-4"
-                >
-
-
-                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-2 text-left">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center py-0.5">
-                      Connexion Démo Rapide (Patient uniquement)
-                    </p>
-                    <button
-                      onClick={() => handleDemoLogin('patient')}
-                      disabled={isSubmitting}
-                      type="button"
-                      className="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm border border-slate-100 active:scale-95 disabled:opacity-50"
-                    >
-                      <User size={16} className="text-brand-600" />
-                      <span>Se connecter en tant que Patient (Démo)</span>
-                    </button>
-                  </div>
-
-                  <div className="relative py-1 flex items-center">
-                    <div className="flex-grow border-t border-slate-100"></div>
-                    <span className="flex-shrink mx-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">ou</span>
-                    <div className="flex-grow border-t border-slate-100"></div>
-                  </div>
-
-                  <button 
-                    onClick={handleGoogleLogin}
-                    disabled={isSubmitting}
-                    className="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3.5 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 transition-all shadow-sm active:scale-95 text-sm md:text-base disabled:opacity-50"
-                  >
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
-                    Continuer avec Google
-                  </button>
-
-                  <div className="flex flex-col gap-3 md:gap-4">
-                    <button 
-                      onClick={() => setMethod('email')}
-                      className="bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-3.5 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-3 transition-all group"
-                    >
-                      <Mail size={18} className="text-brand-600 group-hover:scale-110 transition-transform md:w-5 md:h-5" />
-                      <span className="text-xs">Continuer avec Email</span>
-                    </button>
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  key="form"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  {method === 'email' ? (
-                    <form onSubmit={handleEmailLogin} className="space-y-4">
-                       <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Adresse Email</label>
-                        <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                          <input 
-                            type="email" 
-                            required
-                            placeholder="votre@email.com"
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Mot de passe</label>
-                        <div className="relative">
-                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                          <input 
-                            type="password" 
-                            required
-                            placeholder="••••••••"
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                          />
-                        </div>
-                        <div className="flex justify-end px-1">
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              setMethod('forgot-password');
-                              setError(null);
-                              setSuccess(null);
-                            }}
-                            className="text-[10px] md:text-xs font-bold text-brand-600 hover:underline"
-                          >
-                            Mot de passe oublié ?
-                          </button>
-                        </div>
-                      </div>
-                      <div className="flex gap-3">
-                        <button 
-                          type="button"
-                          onClick={handleBack}
-                          className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all"
-                        >
-                          <LogIn className="rotate-180" size={20} />
-                        </button>
-                        <button 
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="flex-1 bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-900/10 hover:bg-brand-600 transition-all disabled:opacity-50"
-                        >
-                          {isSubmitting ? 'Connexion...' : 'Se connecter'}
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <form onSubmit={handleForgotPassword} className="space-y-6">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest px-1">Adresse Email</label>
-                        <p className="text-[10px] text-slate-400 leading-tight px-1 pb-1">
-                          Entrez votre adresse email pour recevoir un lien de réinitialisation.
-                        </p>
-                        <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                          <input 
-                            type="email" 
-                            required
-                            placeholder="votre@email.com"
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <button 
-                          type="button"
-                          onClick={() => setMethod('email')}
-                          className="w-14 h-14 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-all"
-                        >
-                          <LogIn className="rotate-180" size={20} />
-                        </button>
-                        <button 
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="flex-1 bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-900/10 hover:bg-brand-600 transition-all disabled:opacity-50"
-                        >
-                          {isSubmitting ? 'Envoi...' : 'Envoyer le lien'}
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </motion.div>
+    <AuthLayout
+      eyebrow={
+        screen === 'demo' ? 'Découverte' : screen === 'forgot-password' ? 'Récupération' : 'Bon retour'
+      }
+      title={
+        screen === 'forgot-password'
+          ? 'Mot de passe oublié'
+          : screen === 'demo'
+            ? 'Comptes de démonstration'
+            : 'Connexion'
+      }
+      subtitle={
+        screen === 'forgot-password'
+          ? 'Nous vous enverrons un lien pour en choisir un nouveau.'
+          : screen === 'demo'
+            ? 'Explorez chaque interface sans créer de compte.'
+            : 'Accédez à votre espace Dokta.'
+      }
+      wide={screen === 'demo'}
+    >
+      <Card className="space-y-5">
+        <AnimatePresence mode="wait">
+          {/* ── Method picker ─────────────────────────────────────── */}
+          {screen === 'options' && (
+            <motion.div
+              key="options"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="space-y-3"
+            >
+              {error && (
+                <Alert tone="danger" icon={<TriangleAlert size={16} />}>
+                  {error}
+                </Alert>
               )}
-            </AnimatePresence>
 
-            <div className="pt-8 border-t border-slate-50">
-              <div className="flex items-start gap-4 bg-slate-50 p-5 rounded-[1.5rem] border border-slate-100">
-                <ShieldCheck className="text-brand-500 shrink-0 mt-0.5" size={18} />
-                <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-                  Vos données médicales sont protégées par chiffrement de bout en bout. Dokta respecte la souveraineté numérique du Cameroun.
-                </p>
+              <Button
+                variant="outline"
+                size="lg"
+                fullWidth
+                loading={isSubmitting}
+                onClick={handleGoogleLogin}
+                icon={<GoogleMark />}
+              >
+                Continuer avec Google
+              </Button>
+
+              <div className="flex items-center gap-3 py-1">
+                <span className="flex-1 h-px bg-slate-100" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">ou</span>
+                <span className="flex-1 h-px bg-slate-100" />
               </div>
-            </div>
-          </div>
 
-          <div className="p-8 bg-slate-900 text-center">
-            <p className="text-white/60 text-sm">
-              Pas encore de compte ? <Link to="/signup" className="text-brand-400 font-bold hover:underline">S'inscrire gratuitement</Link>
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+              <Button
+                variant="dark"
+                size="lg"
+                fullWidth
+                onClick={() => setScreen('email')}
+                icon={<Mail size={18} />}
+              >
+                Continuer avec un email
+              </Button>
+
+              {DEMO_ENABLED && (
+                <button
+                  onClick={() => setScreen('demo')}
+                  className="w-full flex items-center justify-between gap-3 p-3.5 rounded-xl md:rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-200 hover:bg-white transition-colors text-left group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-brand-600 shrink-0">
+                      <RoleIcon role="pharmacist" size={16} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs md:text-sm font-bold text-slate-900">Comptes de test</p>
+                      <p className="text-[11px] text-slate-400">Voir chaque interface en un clic</p>
+                    </div>
+                  </div>
+                  <ArrowRight
+                    size={16}
+                    className="text-slate-300 group-hover:text-brand-600 group-hover:translate-x-0.5 transition-all shrink-0"
+                  />
+                </button>
+              )}
+
+              <p className="text-xs text-center text-slate-500 pt-1">
+                Pas encore de compte ?{' '}
+                <Link to="/signup" className="font-bold text-brand-600 hover:underline">
+                  Créer un compte
+                </Link>
+              </p>
+            </motion.div>
+          )}
+
+          {/* ── Email + password ──────────────────────────────────── */}
+          {screen === 'email' && (
+            <motion.form
+              key="email"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              onSubmit={handleEmailLogin}
+              className="space-y-4"
+            >
+              {error && (
+                <Alert tone="danger" icon={<TriangleAlert size={16} />}>
+                  {error}
+                </Alert>
+              )}
+
+              <Field label="Adresse email" required>
+                <Input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="vous@exemple.cm"
+                />
+              </Field>
+
+              <Field label="Mot de passe" required>
+                <Input
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </Field>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setScreen('forgot-password');
+                  setError(null);
+                }}
+                className="text-xs font-bold text-brand-600 hover:underline"
+              >
+                Mot de passe oublié ?
+              </button>
+
+              <Button type="submit" size="lg" fullWidth loading={isSubmitting} icon={<Lock size={18} />}>
+                Se connecter
+              </Button>
+
+              <Button type="button" variant="ghost" fullWidth onClick={back} icon={<ArrowLeft size={16} />}>
+                Autres méthodes
+              </Button>
+            </motion.form>
+          )}
+
+          {/* ── Password reset ────────────────────────────────────── */}
+          {screen === 'forgot-password' && (
+            <motion.form
+              key="forgot"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              onSubmit={handleForgotPassword}
+              className="space-y-4"
+            >
+              {error && (
+                <Alert tone="danger" icon={<TriangleAlert size={16} />}>
+                  {error}
+                </Alert>
+              )}
+              {success && <Alert tone="success">{success}</Alert>}
+
+              <Field label="Adresse email" required>
+                <Input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="vous@exemple.cm"
+                />
+              </Field>
+
+              <Button type="submit" size="lg" fullWidth loading={isSubmitting} icon={<Mail size={18} />}>
+                Envoyer le lien
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                fullWidth
+                onClick={() => setScreen('email')}
+                icon={<ArrowLeft size={16} />}
+              >
+                Retour
+              </Button>
+            </motion.form>
+          )}
+
+          {/* ── Demo accounts ─────────────────────────────────────── */}
+          {screen === 'demo' && (
+            <motion.div
+              key="demo"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="space-y-3"
+            >
+              {error && (
+                <Alert tone="danger" icon={<TriangleAlert size={16} />}>
+                  {error}
+                </Alert>
+              )}
+
+              <Alert tone="warning" icon={<TriangleAlert size={16} />}>
+                Comptes partagés à but de démonstration. Ne saisissez aucune donnée réelle et
+                désactivez-les en production via <code className="font-mono">VITE_ENABLE_DEMO=false</code>.
+              </Alert>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {DEMO_ACCOUNTS.map((account) => {
+                  const definition = ROLES[account.role];
+                  const isPending = pendingRole === account.role;
+
+                  return (
+                    <button
+                      key={account.role}
+                      onClick={() => handleDemoLogin(account.role)}
+                      disabled={busy}
+                      className={cn(
+                        'flex flex-col gap-2 p-4 rounded-2xl border text-left transition-all disabled:opacity-60',
+                        isPending
+                          ? 'border-brand-600 ring-2 ring-brand-600/10 bg-white'
+                          : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-slate-200'
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className={cn(
+                            'w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0',
+                            definition.accent.solid
+                          )}
+                        >
+                          <RoleIcon role={account.role} size={16} />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-900 truncate">{definition.label}</p>
+                          <p className="text-[10px] text-slate-400 font-mono truncate">{account.email}</p>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-slate-500 leading-snug">{account.blurb}</p>
+                      {isPending && (
+                        <span className="text-[10px] font-bold text-brand-600 uppercase tracking-widest">
+                          Connexion…
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="text-[11px] text-slate-400 text-center">
+                Mot de passe commun : <code className="font-mono text-slate-600">{DEMO_PASSWORD}</code>
+              </p>
+
+              <Button variant="ghost" fullWidth onClick={back} icon={<ArrowLeft size={16} />}>
+                Retour
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Card>
+    </AuthLayout>
   );
+}
+
+function GoogleMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1Z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z" />
+      <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1a11 11 0 0 0-9.82 6.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38Z" />
+    </svg>
+  );
+}
+
+function googleErrorMessage(err: any): string {
+  switch (err?.code) {
+    case 'auth/popup-blocked':
+      return "Le popup de connexion a été bloqué. Ouvrez l'application dans un nouvel onglet ou autorisez les popups.";
+    case 'auth/popup-closed-by-user':
+      return "Fenêtre de connexion fermée. Les navigateurs bloquent souvent Google dans les aperçus intégrés — ouvrez l'application dans un nouvel onglet.";
+    case 'auth/operation-not-allowed':
+      return "La connexion Google n'est pas activée dans la console Firebase (Authentication > Sign-in method).";
+    case 'auth/unauthorized-domain':
+      return "Ce domaine n'est pas autorisé dans la console Firebase (Authentication > Settings > Authorized domains).";
+    case 'auth/cancelled-popup-request':
+      return '';
+    case 'auth/network-request-failed':
+      return 'Erreur réseau. Vérifiez votre connexion internet.';
+    default:
+      return `Erreur lors de la connexion Google (${err?.code || 'inconnue'}). Veuillez réessayer.`;
+  }
 }
