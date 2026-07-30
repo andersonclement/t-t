@@ -18,6 +18,14 @@ import { chatWithMedicalCoach } from '../services/geminiService';
 import { useAuth } from '../components/AuthContext';
 import { useOrders } from '../components/OrderContext';
 import { cn } from '../lib/utils';
+import {
+  Badge,
+  CardSection,
+  PageContainer,
+  PageHeader,
+  SectionHeader,
+  SplitLayout,
+} from '../components/ui';
 
 // Diagnostic Tool component
 function DiagnosticAssistant() {
@@ -142,48 +150,49 @@ function DiagnosticAssistant() {
 
 export function AISante() {
   return (
-    <div className="space-y-6 md:space-y-8">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-slate-900 tracking-tight">IA Santé</h1>
-          <p className="text-slate-500 text-sm md:text-base font-medium">Votre partenaire intelligent pour une santé connectée.</p>
-        </div>
-        <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest border border-emerald-100">
-           <ShieldCheck size={14} className="md:w-4 md:h-4" />
-           Données Cryptées
-        </div>
-      </header>
+    <PageContainer>
+      <PageHeader
+        eyebrow="Care IA"
+        title="IA Santé"
+        subtitle="Votre partenaire intelligent pour une santé connectée."
+        actions={
+          <Badge tone="success" icon={<ShieldCheck size={14} />} className="px-3 md:px-4 py-1.5 md:py-2 rounded-xl">
+            Données cryptées
+          </Badge>
+        }
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-        <div className="lg:col-span-2 space-y-6 md:space-y-8">
-           <DiagnosticAssistant />
-        </div>
-
-        <div className="space-y-4 md:space-y-6">
-           <div className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4 md:space-y-6">
-              <h3 className="text-lg md:text-xl font-display font-bold text-slate-900 tracking-tight">Outils Intelligents</h3>
+      <SplitLayout
+        main={<DiagnosticAssistant />}
+        aside={
+          <>
+            <CardSection>
+              <SectionHeader title="Outils intelligents" />
               <div className="space-y-3 md:space-y-4">
-                 <ToolButton icon={<Zap size={18} className="text-orange-500" />} title="Vérificateur d'Interactions" description="Vérifiez si vos médicaments sont compatibles." />
-                 <ToolButton icon={<Activity size={18} className="text-emerald-500" />} title="Score de Santé AI" description="Calculez votre indice de forme actuel." />
-                 <ToolButton icon={<Search size={18} className="text-blue-500" />} title="Dictionnaire Médical AI" description="Définitions claires et vulgarisées." />
+                <ToolButton icon={<Zap size={18} className="text-orange-500" />} title="Vérificateur d'Interactions" description="Vérifiez si vos médicaments sont compatibles." />
+                <ToolButton icon={<Activity size={18} className="text-emerald-500" />} title="Score de Santé AI" description="Calculez votre indice de forme actuel." />
+                <ToolButton icon={<Search size={18} className="text-blue-500" />} title="Dictionnaire Médical AI" description="Définitions claires et vulgarisées." />
               </div>
-           </div>
+            </CardSection>
 
-           <div className="bg-slate-900 text-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl space-y-4 md:space-y-6">
+            <div className="bg-slate-900 text-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-xl space-y-4 md:space-y-6">
               <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-lg md:rounded-xl flex items-center justify-center"><ShieldCheck size={18} className="text-brand-500" /></div>
-                 <h3 className="font-display font-bold text-base md:text-lg">Confidentialité AI</h3>
+                <div className="w-9 h-9 md:w-10 md:h-10 bg-white/10 rounded-lg md:rounded-xl flex items-center justify-center">
+                  <ShieldCheck size={18} className="text-brand-500" />
+                </div>
+                <h3 className="font-display font-bold text-base md:text-lg">Confidentialité AI</h3>
               </div>
               <p className="text-xs md:text-sm text-slate-400 leading-relaxed">
-                 Toutes vos conversations avec Care IA sont anonymisées et sécurisées au Cameroun.
+                Toutes vos conversations avec Care IA sont anonymisées et sécurisées au Cameroun.
               </p>
               <button className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 md:py-4 rounded-xl md:rounded-2xl transition-all text-[10px] md:text-xs uppercase tracking-widest">
-                 Règles de sécurité
+                Règles de sécurité
               </button>
-           </div>
-        </div>
-      </div>
-    </div>
+            </div>
+          </>
+        }
+      />
+    </PageContainer>
   );
 }
 

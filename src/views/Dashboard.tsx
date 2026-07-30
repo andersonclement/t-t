@@ -26,26 +26,10 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { cn } from '../lib/utils';
+import { Badge, PageContainer, PageHeader, StatCard, StatGrid } from '../components/ui';
 import { db } from '../lib/firebase';
 import { collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { Mail, Shield, Users, Check, X } from 'lucide-react';
-
-function PharmacistStatCard({ label, value, unit, icon, color }: { label: string; value: string; unit?: string; icon: React.ReactNode; color: string }) {
-  return (
-    <div className={cn("p-4 md:p-5 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm flex flex-col gap-3 bg-white")}>
-      <div className={cn("w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center", color)}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">{label}</p>
-        <div className="flex items-baseline gap-1 mt-0.5">
-          <span className="text-xl md:text-2xl font-display font-black text-slate-900">{value}</span>
-          {unit && <span className="text-[9px] md:text-[10px] font-bold text-slate-400">{unit}</span>}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 import { useOrders } from '../components/OrderContext';
 
@@ -168,35 +152,36 @@ export function Dashboard() {
     ];
 
     return (
-      <div className="space-y-6 md:space-y-8 pb-16">
-        {/* Header with guard status */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 p-6 md:p-8 bg-white rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 -z-10" />
-          <div className="space-y-1">
-            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Tableau de Bord</p>
-            <h1 className="text-xl md:text-3xl font-display font-bold text-slate-900">
-              Bonjour, Dr. <span className="text-emerald-600">{profile?.displayName?.split(' ')[0] || 'Pharmacien'}</span>
-            </h1>
-            <p className="text-xs md:text-sm text-slate-500 font-medium">{profile?.pharmacyName || 'Votre officine'} — {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 md:gap-3">
-             <div className="bg-emerald-100 text-emerald-700 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                <ShieldCheck size={14} className="md:w-4 md:h-4" /> Certifié Dokta
-             </div>
-             <div className="bg-blue-100 text-blue-700 px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-[10px] md:text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                <Activity size={14} className="md:w-4 md:h-4" /> {totalMeds} Références
-             </div>
-          </div>
-        </header>
+      <PageContainer>
+        <PageHeader
+          eyebrow="Tableau de Bord"
+          title={
+            <>
+              Bonjour, Dr.{' '}
+              <span className="text-emerald-600">{profile?.displayName?.split(' ')[0] || 'Pharmacien'}</span>
+            </>
+          }
+          subtitle={`${profile?.pharmacyName || 'Votre officine'} — ${new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`}
+          actions={
+            <>
+              <Badge tone="success" icon={<ShieldCheck size={14} />} className="px-3 md:px-4 py-1.5 md:py-2 rounded-xl">
+                Certifié Dokta
+              </Badge>
+              <Badge tone="info" icon={<Activity size={14} />} className="px-3 md:px-4 py-1.5 md:py-2 rounded-xl">
+                {totalMeds} Références
+              </Badge>
+            </>
+          }
+        />
 
         {/* KPI Grid - 5 cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-          <PharmacistStatCard label="En Attente" value={pendingOrders.toString()} icon={<Clock className="text-amber-500" size={18} />} color="bg-amber-50" />
-          <PharmacistStatCard label="En Préparation" value={preparingOrders.toString()} icon={<Zap className="text-blue-500" size={18} />} color="bg-blue-50" />
-          <PharmacistStatCard label="Livrées Aujourd'hui" value={deliveredToday.toString()} icon={<ThumbsUp className="text-emerald-500" size={18} />} color="bg-emerald-50" />
-          <PharmacistStatCard label="Ordonnances" value={pendingPrescriptionsCount.toString()} icon={<ShieldCheck className="text-violet-500" size={18} />} color="bg-violet-50" />
-          <PharmacistStatCard label="Recette du Jour" value={todaySales.toLocaleString()} unit="FCFA" icon={<TrendingUp className="text-emerald-500" size={18} />} color="bg-emerald-50" />
-        </div>
+        <StatGrid columns={5}>
+          <StatCard label="En Attente" value={pendingOrders.toString()} icon={<Clock className="text-amber-500" size={18} />} tone="bg-amber-50" />
+          <StatCard label="En Préparation" value={preparingOrders.toString()} icon={<Zap className="text-blue-500" size={18} />} tone="bg-blue-50" />
+          <StatCard label="Livrées Aujourd'hui" value={deliveredToday.toString()} icon={<ThumbsUp className="text-emerald-500" size={18} />} tone="bg-emerald-50" />
+          <StatCard label="Ordonnances" value={pendingPrescriptionsCount.toString()} icon={<ShieldCheck className="text-violet-500" size={18} />} tone="bg-violet-50" />
+          <StatCard label="Recette du Jour" value={todaySales.toLocaleString()} unit="FCFA" icon={<TrendingUp className="text-emerald-500" size={18} />} tone="bg-emerald-50" />
+        </StatGrid>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Left Column: Orders + Quick Actions */}
@@ -391,7 +376,7 @@ export function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -424,7 +409,7 @@ export function Dashboard() {
   ];
 
   return (
-    <div className="space-y-10 pb-16">
+    <PageContainer>
       {/* Search Hero Section */}
       <section className="-mx-4 md:-mx-8 px-4 md:px-8 pt-4 md:pt-8 pb-12 bg-gradient-to-b from-brand-50/40 to-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-200/20 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />
@@ -493,7 +478,7 @@ export function Dashboard() {
 
       {/* Emergency pharmacies banner */}
       <section>
-        <div className="bg-brand-900 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-xl shadow-brand-900/20">
+        <div className="bg-brand-900 rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-xl shadow-brand-900/20">
           <div className="flex flex-col gap-1 relative z-10 text-center md:text-left">
             <div className="inline-flex items-center gap-2 bg-brand-600/20 text-brand-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-2 w-fit mx-auto md:mx-0">
               <Clock size={12} /> Pharmacie de Garde
@@ -635,7 +620,7 @@ export function Dashboard() {
               className="flex flex-col items-center gap-4 group cursor-pointer bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all"
             >
               <div className={cn(
-                "w-16 h-16 rounded-3xl flex items-center justify-center transition-all group-hover:scale-110 group-active:scale-95 ring-4 ring-transparent group-hover:ring-brand-50",
+                "w-16 h-16 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 group-active:scale-95 ring-4 ring-transparent group-hover:ring-brand-50",
                 cat.color
               )}>
                 {React.cloneElement(cat.icon as React.ReactElement, { size: 28 } as any)}
@@ -663,7 +648,7 @@ export function Dashboard() {
               <motion.div 
                 key={i}
                 className={cn(
-                  "relative overflow-hidden bg-white rounded-3xl p-6 border border-slate-100 shadow-sm",
+                  "relative overflow-hidden bg-white rounded-2xl md:rounded-[2rem] p-6 border border-slate-100 shadow-sm",
                   `bg-gradient-to-br ${stat.color}`
                 )}
               >
@@ -912,6 +897,6 @@ export function Dashboard() {
           </motion.div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

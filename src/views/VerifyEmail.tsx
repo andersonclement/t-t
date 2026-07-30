@@ -70,9 +70,9 @@ export function VerifyEmail() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200 border border-slate-100 text-center space-y-8"
+        className="max-w-md w-full bg-white rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-slate-200 border border-slate-100 text-center space-y-8"
       >
-        <div className="w-20 h-20 bg-brand-50 rounded-3xl flex items-center justify-center mx-auto text-brand-600">
+        <div className="w-20 h-20 bg-brand-50 rounded-[1.5rem] flex items-center justify-center mx-auto text-brand-600">
           <Mail size={40} />
         </div>
 

@@ -323,7 +323,7 @@ export function MapView() {
       )}>
         {/* R2 Geolocation Fallback Banner */}
         {showGeolocBanner && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-3xl p-4 flex flex-col gap-2 shadow-sm">
+          <div className="bg-amber-50 border border-amber-100 text-amber-900 rounded-[2rem] p-4 flex flex-col gap-2 shadow-sm">
             <div className="flex items-start gap-2.5">
               <span className="text-lg">📍</span>
               <div>
@@ -355,18 +355,19 @@ export function MapView() {
         )}
 
         {/* Search & Quick Filters */}
-        <div className="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm space-y-4">
+        <div className="bg-white rounded-[2rem] p-4 border border-slate-100 shadow-sm space-y-4">
           <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors" size={20} />
-            <input 
-              type="text" 
-              placeholder="Chercher pharmacie, hôpital..." 
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors" size={18} />
+            <input
+              type="text"
+              aria-label="Chercher un établissement sur la carte"
+              placeholder="Chercher pharmacie, hôpital..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-50 border-none rounded-xl py-3 pl-10 pr-4 focus:ring-2 focus:ring-brand-600/10 outline-none transition-all text-sm font-medium"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-3 pl-11 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-brand-600 focus:bg-white focus:ring-2 focus:ring-brand-600/10"
             />
           </div>
-          
+
           <div className="flex flex-wrap gap-2 pb-1">
             <MapFilter label="Tous" active={filter === 'all'} onClick={() => setFilter('all')} />
             <MapFilter label="Pharmacies" active={filter === 'pharmacy'} onClick={() => setFilter('pharmacy')} />

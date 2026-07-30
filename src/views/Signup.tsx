@@ -174,7 +174,7 @@ export function Signup() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden flex flex-col md:flex-row mt-12 md:mt-0"
+        className="w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden flex flex-col md:flex-row mt-12 md:mt-0"
       >
         <div className="md:w-2/5 bg-[#0A0B0E] p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
           {/* Background effects */}
@@ -306,7 +306,7 @@ export function Signup() {
                     type="text" 
                     required
                     placeholder="Marc Embolo"
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                   />
@@ -321,7 +321,7 @@ export function Signup() {
                     type="email" 
                     required
                     placeholder="marc@dokta.cm"
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                   />
@@ -403,7 +403,7 @@ export function Signup() {
                       type="text" 
                       required={formData.role === 'pharmacist'}
                       placeholder="Ex: Pharmacie du Centre, Pharmacie de l'Avenue"
-                      className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 transition-all font-medium text-slate-900 placeholder:text-slate-300"
+                      className="w-full bg-white border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-emerald-600/10 focus:border-emerald-600 transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                       value={formData.pharmacyName}
                       onChange={(e) => setFormData({...formData, pharmacyName: e.target.value})}
                     />
@@ -418,7 +418,7 @@ export function Signup() {
                       type="text" 
                       required={formData.role === 'pharmacist'}
                       placeholder="Saisissez le code d'autorisation pro"
-                      className="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 transition-all font-mono font-bold text-slate-900 placeholder:text-slate-300"
+                      className="w-full bg-white border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-emerald-600/10 focus:border-emerald-600 transition-colors font-mono font-bold text-slate-900 placeholder:text-slate-400"
                       value={formData.inviteCode}
                       onChange={(e) => setFormData({...formData, inviteCode: e.target.value})}
                     />
@@ -439,7 +439,7 @@ export function Signup() {
                     type="password" 
                     required
                     placeholder="••••••••"
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                     value={formData.password}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -458,7 +458,7 @@ export function Signup() {
                     type="password" 
                     required
                     placeholder="••••••••"
-                    className="w-full bg-slate-50/50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                   />

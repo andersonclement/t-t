@@ -28,7 +28,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-          <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-10 max-w-md w-full text-center space-y-6">
+          <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-100 p-8 md:p-10 max-w-md w-full text-center space-y-6">
             <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto">
               <HeartPulse className="text-rose-500" size={32} />
             </div>

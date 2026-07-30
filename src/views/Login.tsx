@@ -127,7 +127,7 @@ export function Login() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md pt-12 md:pt-0"
       >
-        <div className="bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden">
+        <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden">
           {/* Header */}
           <div className="p-6 md:p-10 text-center space-y-4 md:space-y-6">
             <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-brand-50 rounded-[1.5rem] md:rounded-[2rem] text-brand-600 relative group transition-transform hover:scale-110">
@@ -225,7 +225,7 @@ export function Login() {
                             type="email" 
                             required
                             placeholder="votre@email.com"
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600 transition-all font-medium"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                           />
@@ -239,7 +239,7 @@ export function Login() {
                             type="password" 
                             required
                             placeholder="••••••••"
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600 transition-all font-medium"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                           />
@@ -288,7 +288,7 @@ export function Login() {
                             type="email" 
                             required
                             placeholder="votre@email.com"
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-4 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-600/20 focus:border-brand-600 transition-all font-medium"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-4 pl-12 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 focus:bg-white transition-colors font-medium text-slate-900 placeholder:text-slate-400"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                           />

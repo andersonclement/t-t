@@ -44,6 +44,7 @@ import {
 import { useAuth } from '../components/AuthContext';
 import { useOrders } from '../components/OrderContext';
 import { cn } from '../lib/utils';
+import { inputCls, labelCls, PageContainer, StatCard } from '../components/ui';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, onSnapshot, doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -96,23 +97,6 @@ function generateDeterministicQR(seed: string): boolean[] {
 }
 
 // ─── Reusable stat card (matches Dashboard's PharmacistStatCard) ─────
-
-function ProfileStatCard({ label, value, unit, icon, color }: { label: string; value: string; unit?: string; icon: React.ReactNode; color: string }) {
-  return (
-    <div className="p-4 md:p-5 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm flex flex-col gap-3 bg-white">
-      <div className={cn("w-9 h-9 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center", color)}>
-        {icon}
-      </div>
-      <div>
-        <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">{label}</p>
-        <div className="flex items-baseline gap-1 mt-0.5">
-          <span className="text-xl md:text-2xl font-display font-black text-slate-900">{value}</span>
-          {unit && <span className="text-[9px] md:text-[10px] font-bold text-slate-400">{unit}</span>}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Main Component ─────────────────────────────────────────
 
@@ -345,7 +329,7 @@ export function Profile() {
 
   // ─── Logged in ──────────────────────────────────────────────
   return (
-    <div className="space-y-6 md:space-y-8 pb-16">
+    <PageContainer>
       {/* ──── Header (matches Dashboard pattern) ──── */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 p-6 md:p-8 bg-white rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-50 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 -z-10" />
@@ -392,10 +376,10 @@ export function Profile() {
 
       {/* ──── KPI Grid (matches Dashboard pattern) ──── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <ProfileStatCard label={isPharmacist ? 'Ventes' : 'Commandes'} value={orders.length.toString()} icon={<Package className="text-purple-500" size={18} />} color="bg-purple-50" />
-        <ProfileStatCard label="En Cours" value={activeOrdersCount.toString()} icon={<Clock className="text-amber-500" size={18} />} color="bg-amber-50" />
-        <ProfileStatCard label="Livrées" value={deliveredOrdersCount.toString()} icon={<ThumbsUp className="text-emerald-500" size={18} />} color="bg-emerald-50" />
-        <ProfileStatCard label="Profil" value={`${completionPercent}%`} icon={<UserCheck className="text-brand-500" size={18} />} color="bg-brand-50" />
+        <StatCard label={isPharmacist ? 'Ventes' : 'Commandes'} value={orders.length.toString()} icon={<Package className="text-purple-500" size={18} />} tone="bg-purple-50" />
+        <StatCard label="En Cours" value={activeOrdersCount.toString()} icon={<Clock className="text-amber-500" size={18} />} tone="bg-amber-50" />
+        <StatCard label="Livrées" value={deliveredOrdersCount.toString()} icon={<ThumbsUp className="text-emerald-500" size={18} />} tone="bg-emerald-50" />
+        <StatCard label="Profil" value={`${completionPercent}%`} icon={<UserCheck className="text-brand-500" size={18} />} tone="bg-brand-50" />
       </div>
 
       {/* ──── Completion bar ──── */}
@@ -574,9 +558,9 @@ export function Profile() {
 
           {/* Orders summary KPI */}
           <div className="grid grid-cols-3 gap-3 md:gap-4">
-            <ProfileStatCard label="Total" value={orders.length.toString()} icon={<Package className="text-purple-500" size={18} />} color="bg-purple-50" />
-            <ProfileStatCard label="En Cours" value={activeOrdersCount.toString()} icon={<Clock className="text-amber-500" size={18} />} color="bg-amber-50" />
-            <ProfileStatCard label="Livrées" value={deliveredOrdersCount.toString()} icon={<CheckCircle2 className="text-emerald-500" size={18} />} color="bg-emerald-50" />
+            <StatCard label="Total" value={orders.length.toString()} icon={<Package className="text-purple-500" size={18} />} tone="bg-purple-50" />
+            <StatCard label="En Cours" value={activeOrdersCount.toString()} icon={<Clock className="text-amber-500" size={18} />} tone="bg-amber-50" />
+            <StatCard label="Livrées" value={deliveredOrdersCount.toString()} icon={<CheckCircle2 className="text-emerald-500" size={18} />} tone="bg-emerald-50" />
           </div>
 
           <div className="space-y-4">
@@ -706,7 +690,7 @@ export function Profile() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </PageContainer>
   );
 }
 
@@ -746,8 +730,6 @@ function OrderStatusBadge({ status }: { status: string }) {
 
 // ─── Modal sub-components ────────────────────────────────────
 
-const inputCls = "w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-4 focus:ring-brand-600/10 transition-all bg-slate-50/50 text-slate-800";
-const labelCls = "text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider";
 
 function ModalFooter({ saving, saveSuccess, onClose, onSave }: { saving: boolean; saveSuccess: boolean; onClose: () => void; onSave?: (e: React.FormEvent) => void }) {
   return (

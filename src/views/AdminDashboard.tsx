@@ -22,10 +22,10 @@ import {
   X,
   ExternalLink,
   Info,
-  ChevronRight,
-  UserCheck
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Alert, PageContainer, PageHeader, StatCard, StatGrid } from '../components/ui';
 
 interface TechnicalForm {
   pharmacyName: string;
@@ -215,97 +215,70 @@ export function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="admin-dashboard-container">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <UserCheck className="text-brand-600" size={28} />
-            Portail d'Administration Médical
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Gérez et validez l'accès des pharmaciens certifiés à la plateforme.
-          </p>
-        </div>
-      </div>
+    <PageContainer id="admin-dashboard-container">
+      <PageHeader
+        eyebrow="Administration"
+        title="Portail d'Administration Médical"
+        subtitle="Gérez et validez l'accès des pharmaciens certifiés à la plateforme."
+      />
 
       {/* Notifications */}
       <AnimatePresence>
         {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-2xl flex items-start gap-3 shadow-sm"
-          >
-            <CheckCircle2 className="text-emerald-500 shrink-0 mt-0.5" size={18} />
-            <div className="text-sm font-medium flex-1">{successMessage}</div>
-            <button onClick={() => setSuccessMessage(null)} className="text-emerald-500 hover:text-emerald-700">
-              <X size={16} />
-            </button>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            <Alert tone="success" icon={<CheckCircle2 size={18} className="text-emerald-500" />}>
+              <div className="flex items-start gap-3">
+                <span className="flex-1">{successMessage}</span>
+                <button onClick={() => setSuccessMessage(null)} aria-label="Fermer" className="text-emerald-500 hover:text-emerald-700">
+                  <X size={16} />
+                </button>
+              </div>
+            </Alert>
           </motion.div>
         )}
         {errorMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-800 rounded-2xl flex items-start gap-3 shadow-sm"
-          >
-            <AlertTriangle className="text-rose-500 shrink-0 mt-0.5" size={18} />
-            <div className="text-sm font-medium flex-1">{errorMessage}</div>
-            <button onClick={() => setErrorMessage(null)} className="text-rose-500 hover:text-rose-700">
-              <X size={16} />
-            </button>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            <Alert tone="danger" icon={<AlertTriangle size={18} className="text-rose-500" />}>
+              <div className="flex items-start gap-3">
+                <span className="flex-1">{errorMessage}</span>
+                <button onClick={() => setErrorMessage(null)} aria-label="Fermer" className="text-rose-500 hover:text-rose-700">
+                  <X size={16} />
+                </button>
+              </div>
+            </Alert>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-slate-50 rounded-xl text-slate-600">
-            <Users size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Pharmaciens</p>
-            <p className="text-xl font-bold text-slate-800 mt-0.5">{stats.total}</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-            <Clock size={22} className="animate-pulse" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">En Attente</p>
-            <p className="text-xl font-bold text-amber-600 mt-0.5">{stats.pending}</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600">
-            <ShieldCheck size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Activés / Validés</p>
-            <p className="text-xl font-bold text-emerald-600 mt-0.5">{stats.activated}</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-rose-50 rounded-xl text-rose-600">
-            <XCircle size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inscriptions Rejetées</p>
-            <p className="text-xl font-bold text-rose-600 mt-0.5">{stats.rejected}</p>
-          </div>
-        </div>
-      </div>
+      <StatGrid columns={4}>
+        <StatCard
+          label="Total pharmaciens"
+          value={stats.total}
+          icon={<Users size={18} className="text-slate-600" />}
+          tone="bg-slate-100"
+        />
+        <StatCard
+          label="En attente"
+          value={stats.pending}
+          icon={<Clock size={18} className={cn('text-amber-600', stats.pending > 0 && 'animate-pulse')} />}
+          tone="bg-amber-50"
+        />
+        <StatCard
+          label="Activés / validés"
+          value={stats.activated}
+          icon={<ShieldCheck size={18} className="text-emerald-600" />}
+          tone="bg-emerald-50"
+        />
+        <StatCard
+          label="Inscriptions rejetées"
+          value={stats.rejected}
+          icon={<XCircle size={18} className="text-rose-600" />}
+          tone="bg-rose-50"
+        />
+      </StatGrid>
 
       {/* Main Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
         {/* Left: Search, Filter, List */}
         <div className="lg:col-span-2 space-y-4">
           {/* Controls Bar */}
@@ -606,6 +579,6 @@ export function AdminDashboard() {
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

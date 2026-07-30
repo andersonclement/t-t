@@ -276,7 +276,7 @@ export function PharmacistOnboarding() {
                           type="text" 
                           required
                           placeholder="Ex: Pharmacie de l'Avenue"
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-colors font-medium text-slate-900 placeholder:text-slate-400 text-sm"
                           value={techForm.pharmacyName}
                           onChange={(e) => setTechForm({...techForm, pharmacyName: e.target.value})}
                         />
@@ -291,7 +291,7 @@ export function PharmacistOnboarding() {
                           type="text" 
                           required
                           placeholder="Ex: ONPC-4389-CM"
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-mono font-bold text-slate-900 placeholder:text-slate-300 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-all font-mono font-bold text-slate-900 placeholder:text-slate-400 text-sm"
                           value={techForm.onpcNumber}
                           onChange={(e) => setTechForm({...techForm, onpcNumber: e.target.value.toUpperCase()})}
                         />
@@ -308,7 +308,7 @@ export function PharmacistOnboarding() {
                           type="text" 
                           required
                           placeholder="Ex: ARR-0021-MINSANTE"
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-mono text-slate-900 placeholder:text-slate-300 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-all font-mono text-slate-900 placeholder:text-slate-400 text-sm"
                           value={techForm.legalLicenseNumber}
                           onChange={(e) => setTechForm({...techForm, legalLicenseNumber: e.target.value.toUpperCase()})}
                         />
@@ -323,7 +323,7 @@ export function PharmacistOnboarding() {
                           type="number" 
                           required
                           min={1}
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-colors font-medium text-slate-900 placeholder:text-slate-400 text-sm"
                           value={techForm.pharmacistsCount}
                           onChange={(e) => setTechForm({...techForm, pharmacistsCount: parseInt(e.target.value) || 1})}
                         />
@@ -346,7 +346,7 @@ export function PharmacistOnboarding() {
                         <p className="text-[10px] text-slate-400 mt-0.5">Quel type de réfrigérateur possédez-vous pour la conservation des vaccins et produits thermosensibles ?</p>
                       </div>
                       <select 
-                        className="rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-4 focus:ring-brand-600/5 transition-all bg-white text-slate-800 font-medium"
+                        className="rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-brand-600/10 transition-all bg-white text-slate-800 font-medium"
                         value={techForm.coldChainEquipment}
                         onChange={(e) => setTechForm({...techForm, coldChainEquipment: e.target.value})}
                       >
@@ -366,7 +366,7 @@ export function PharmacistOnboarding() {
                         <p className="text-[10px] text-slate-400 mt-0.5">Disposez-vous d'un système de secours automatique contre les coupures d'électricité (délestages) ?</p>
                       </div>
                       <select 
-                        className="rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-4 focus:ring-brand-600/5 transition-all bg-white text-slate-800 font-medium"
+                        className="rounded-xl border border-slate-200 px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-brand-600/10 transition-all bg-white text-slate-800 font-medium"
                         value={techForm.backupGenerator}
                         onChange={(e) => setTechForm({...techForm, backupGenerator: e.target.value})}
                       >
@@ -486,7 +486,7 @@ export function PharmacistOnboarding() {
                           required
                           value={appointment.date}
                           onChange={(e) => setAppointment({...appointment, date: e.target.value})}
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-bold text-slate-800 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-all font-bold text-slate-800 text-sm"
                         >
                           <option value="">-- Choisir une date --</option>
                           {getAvailableDates().map((d) => (
@@ -501,7 +501,7 @@ export function PharmacistOnboarding() {
                           required
                           value={appointment.time}
                           onChange={(e) => setAppointment({...appointment, time: e.target.value})}
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-bold text-slate-800 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-all font-bold text-slate-800 text-sm"
                         >
                           <option value="">-- Choisir un créneau --</option>
                           <option value="09:00">09:00 - Matin</option>
@@ -523,7 +523,7 @@ export function PharmacistOnboarding() {
                           type="tel" 
                           required
                           placeholder="Ex: +237 677 000 000"
-                          className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300 text-sm"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-colors font-medium text-slate-900 placeholder:text-slate-400 text-sm"
                           value={appointment.phoneNumber}
                           onChange={(e) => setAppointment({...appointment, phoneNumber: e.target.value})}
                         />
@@ -535,7 +535,7 @@ export function PharmacistOnboarding() {
                       <input 
                         type="text" 
                         placeholder="Instructions de livraison, contraintes..."
-                        className="w-full bg-slate-50/50 border border-slate-100 rounded-xl py-3 px-4 focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all font-medium text-slate-900 placeholder:text-slate-300 text-sm"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 outline-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 transition-colors font-medium text-slate-900 placeholder:text-slate-400 text-sm"
                         value={appointment.notes}
                         onChange={(e) => setAppointment({...appointment, notes: e.target.value})}
                       />
