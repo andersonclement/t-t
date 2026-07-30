@@ -51,17 +51,33 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   const { profile, loading } = useAuth();
-  
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="w-12 h-12 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
-  
+
   if (profile?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
-  
+
+  return <>{children}</>;
+}
+
+function PharmacistRoute({ children }: { children: React.ReactNode }) {
+  const { profile, loading } = useAuth();
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="w-12 h-12 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (profile?.role !== 'pharmacist') {
+    return <Navigate to="/" replace />;
+  }
+
   return <>{children}</>;
 }
 
@@ -86,7 +102,7 @@ export default function App() {
                     <Route path="/ai-sante" element={<AISante />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/orders" element={<Orders />} />
-                    <Route path="/inventory" element={<Inventory />} />
+                    <Route path="/inventory" element={<PharmacistRoute><Inventory /></PharmacistRoute>} />
                     <Route path="/admin" element={
                       <AdminRoute>
                         <AdminDashboard />

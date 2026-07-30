@@ -2,28 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
 import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/firestore';
-import { 
-  Users, 
-  ShieldCheck, 
-  Clock, 
-  AlertTriangle, 
-  Search, 
-  Filter, 
-  FileText, 
-  Calendar, 
-  CheckCircle2, 
-  XCircle, 
-  Phone, 
-  Mail, 
-  Building2, 
-  ArrowUpDown,
-  MapPin,
+import {
+  Users,
+  ShieldCheck,
+  Clock,
+  AlertTriangle,
+  Search,
+  FileText,
+  Calendar,
+  CheckCircle2,
+  XCircle,
+  Phone,
+  Mail,
+  Building2,
   Check,
   X,
-  ExternalLink,
   Info,
   ChevronRight,
-  UserCheck
+  UserCheck,
+  ShoppingCart,
+  TrendingUp,
+  Package,
+  Activity
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -63,6 +63,18 @@ interface PharmacistUser {
   phoneNumber?: string;
 }
 
+interface PlatformOrder {
+  id: string;
+  patientId: string;
+  pharmacistId?: string;
+  total: number;
+  status: string;
+  mode: string;
+  paymentMethod?: string;
+  createdAt: any;
+  items: { name: string; count: number; price: number }[];
+}
+
 export function AdminDashboard() {
   const [pharmacists, setPharmacists] = useState<PharmacistUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,6 +84,10 @@ export function AdminDashboard() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<'pharmacists' | 'orders' | 'overview'>('overview');
+  const [platformOrders, setPlatformOrders] = useState<PlatformOrder[]>([]);
+  const [patientCount, setPatientCount] = useState(0);
+  const [ordersLoading, setOrdersLoading] = useState(true);
 
   // Fetch all pharmacists from firestore
   useEffect(() => {
@@ -103,6 +119,35 @@ export function AdminDashboard() {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const unsubOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
+      const list: PlatformOrder[] = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        list.push({
+          id: docSnap.id,
+          patientId: data.patientId || '',
+          pharmacistId: data.pharmacistId,
+          total: data.total || 0,
+          status: data.status || 'pending_validation',
+          mode: data.mode || 'pickup',
+          paymentMethod: data.paymentMethod,
+          createdAt: data.createdAt,
+          items: data.items || [],
+        });
+      });
+      list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      setPlatformOrders(list);
+      setOrdersLoading(false);
+    }, () => setOrdersLoading(false));
+
+    const unsubPatients = onSnapshot(query(collection(db, 'users'), where('role', '==', 'patient')), (snapshot) => {
+      setPatientCount(snapshot.size);
+    });
+
+    return () => { unsubOrders(); unsubPatients(); };
   }, []);
 
   // Filter & Search Logic
@@ -214,19 +259,49 @@ export function AdminDashboard() {
     }
   };
 
+  const orderStats = {
+    total: platformOrders.length,
+    pending: platformOrders.filter(o => ['pending_validation', 'en_cours'].includes(o.status)).length,
+    delivered: platformOrders.filter(o => ['delivered', 'livre'].includes(o.status)).length,
+    revenue: platformOrders.filter(o => ['delivered', 'livre'].includes(o.status)).reduce((sum, o) => sum + o.total, 0),
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="admin-dashboard-container">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             <UserCheck className="text-brand-600" size={28} />
             Portail d'Administration Médical
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Gérez et validez l'accès des pharmaciens certifiés à la plateforme.
+            Supervision globale de la plateforme Dokta.
           </p>
         </div>
+      </div>
+
+      {/* Section Tabs */}
+      <div className="flex gap-2 mb-6 bg-white p-1.5 rounded-xl border border-slate-200 w-fit">
+        {[
+          { id: 'overview' as const, label: 'Vue d\'ensemble', icon: <Activity size={14} /> },
+          { id: 'pharmacists' as const, label: 'Pharmaciens', icon: <ShieldCheck size={14} /> },
+          { id: 'orders' as const, label: 'Commandes', icon: <ShoppingCart size={14} /> },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveSection(tab.id)}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all",
+              activeSection === tab.id
+                ? "bg-brand-600 text-white shadow-sm"
+                : "text-slate-600 hover:bg-slate-50"
+            )}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Notifications */}
@@ -261,6 +336,156 @@ export function AdminDashboard() {
         )}
       </AnimatePresence>
 
+      {/* Overview Section */}
+      {activeSection === 'overview' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+              <div className="p-3 bg-blue-50 rounded-xl text-blue-600"><Users size={22} /></div>
+              <div>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Patients</p>
+                <p className="text-xl font-bold text-slate-800 mt-0.5">{patientCount}</p>
+              </div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+              <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600"><ShieldCheck size={22} /></div>
+              <div>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pharmaciens actifs</p>
+                <p className="text-xl font-bold text-emerald-600 mt-0.5">{stats.activated}</p>
+              </div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+              <div className="p-3 bg-brand-50 rounded-xl text-brand-600"><ShoppingCart size={22} /></div>
+              <div>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Commandes totales</p>
+                <p className="text-xl font-bold text-slate-800 mt-0.5">{orderStats.total}</p>
+              </div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+              <div className="p-3 bg-amber-50 rounded-xl text-amber-600"><TrendingUp size={22} /></div>
+              <div>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Chiffre d'affaires</p>
+                <p className="text-xl font-bold text-amber-600 mt-0.5">{orderStats.revenue.toLocaleString()} <span className="text-xs text-slate-400">FCFA</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <Clock size={16} className="text-amber-500" />
+                Commandes en attente ({orderStats.pending})
+              </h3>
+              {ordersLoading ? (
+                <div className="flex justify-center py-8"><div className="w-8 h-8 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" /></div>
+              ) : platformOrders.filter(o => ['pending_validation', 'en_cours'].includes(o.status)).length === 0 ? (
+                <p className="text-sm text-slate-400 text-center py-8">Aucune commande en attente</p>
+              ) : (
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {platformOrders.filter(o => ['pending_validation', 'en_cours'].includes(o.status)).slice(0, 10).map(order => (
+                    <div key={order.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-bold text-slate-700">#{order.id.slice(0, 8)}</p>
+                        <p className="text-[10px] text-slate-400">{order.items.length} article(s) — {order.mode === 'delivery' ? 'Livraison' : 'Retrait'}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-brand-600">{order.total.toLocaleString()} FCFA</p>
+                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-100">En attente</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <AlertTriangle size={16} className="text-amber-500" />
+                Pharmaciens en attente ({stats.pending})
+              </h3>
+              {pharmacists.filter(p => ['pending_technical_file', 'pending_appointment', 'pending_admin_approval'].includes(p.status)).length === 0 ? (
+                <p className="text-sm text-slate-400 text-center py-8">Aucun pharmacien en attente</p>
+              ) : (
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {pharmacists.filter(p => ['pending_technical_file', 'pending_appointment', 'pending_admin_approval'].includes(p.status)).map(pharma => (
+                    <div key={pharma.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-bold text-slate-700">{pharma.technicalForm?.pharmacyName || pharma.displayName}</p>
+                        <p className="text-[10px] text-slate-400">{pharma.email}</p>
+                      </div>
+                      {pharma.status === 'pending_admin_approval' && (
+                        <div className="flex gap-1.5">
+                          <button onClick={() => handleApprove(pharma.id)} disabled={actionLoading !== null} className="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors border border-emerald-100 disabled:opacity-50"><Check size={12} /></button>
+                          <button onClick={() => handleReject(pharma.id)} disabled={actionLoading !== null} className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-colors border border-rose-100 disabled:opacity-50"><X size={12} /></button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Orders Section */}
+      {activeSection === 'orders' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
+              <p className="text-2xl font-bold text-slate-800">{orderStats.total}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total</p>
+            </div>
+            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
+              <p className="text-2xl font-bold text-amber-600">{orderStats.pending}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">En attente</p>
+            </div>
+            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
+              <p className="text-2xl font-bold text-emerald-600">{orderStats.delivered}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Livrées</p>
+            </div>
+            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm text-center">
+              <p className="text-2xl font-bold text-brand-600">{orderStats.revenue.toLocaleString()}</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Revenus (FCFA)</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            {ordersLoading ? (
+              <div className="p-12 text-center"><div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto" /></div>
+            ) : platformOrders.length === 0 ? (
+              <div className="p-12 text-center">
+                <Package className="text-slate-300 mx-auto mb-3" size={32} />
+                <p className="text-base font-semibold text-slate-600">Aucune commande</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                <div className="grid grid-cols-6 gap-4 px-5 py-3 bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <span>ID</span><span>Articles</span><span>Total</span><span>Mode</span><span>Paiement</span><span>Statut</span>
+                </div>
+                {platformOrders.slice(0, 50).map(order => (
+                  <div key={order.id} className="grid grid-cols-6 gap-4 px-5 py-4 text-xs items-center hover:bg-slate-50/50 transition-colors">
+                    <span className="font-mono font-bold text-slate-600 truncate">#{order.id.slice(0, 8)}</span>
+                    <span className="text-slate-600">{order.items.length} article(s)</span>
+                    <span className="font-bold text-slate-800">{order.total.toLocaleString()} FCFA</span>
+                    <span className="text-slate-500">{order.mode === 'delivery' ? 'Livraison' : 'Retrait'}</span>
+                    <span className="text-slate-500 capitalize">{order.paymentMethod || '—'}</span>
+                    <span className={cn(
+                      "px-2 py-1 rounded-full text-[9px] font-bold text-center w-fit",
+                      order.status === 'delivered' || order.status === 'livre' ? "bg-emerald-50 text-emerald-700" :
+                      order.status === 'rejected' || order.status === 'annule' ? "bg-rose-50 text-rose-700" :
+                      "bg-amber-50 text-amber-700"
+                    )}>{order.status.replace(/_/g, ' ')}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Pharmacists Section */}
+      {activeSection === 'pharmacists' && (<>
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -606,6 +831,7 @@ export function AdminDashboard() {
           )}
         </div>
       </div>
+      </>)}
     </div>
   );
 }

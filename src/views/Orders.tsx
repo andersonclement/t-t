@@ -30,7 +30,7 @@ import {
 import { useOrders, Order, OrderStatus } from '../components/OrderContext';
 import { cn } from '../lib/utils';
 import { useAuth } from '../components/AuthContext';
-import { collection, query, where, getDocs, doc, updateDoc, increment, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, increment, addDoc, serverTimestamp, runTransaction } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 interface MedicationStock {
@@ -190,24 +190,33 @@ export function Orders() {
         updatedAt: serverTimestamp(),
       };
 
-      // 1. Add order to firestore
-      const docRef = await addDoc(collection(db, 'orders'), orderData);
+      const firestoreItems = walkInCart.filter(c => !c.medicationId.startsWith('med-local-'));
 
-      // 2. Decrement Firestore stocks
-      for (const cartItem of walkInCart) {
-        if (!cartItem.medicationId.startsWith('med-local-')) {
+      const docRef = await runTransaction(db, async (transaction) => {
+        const stockChecks: { ref: ReturnType<typeof doc>; needed: number }[] = [];
+        for (const cartItem of firestoreItems) {
           const medRef = doc(db, 'medication_stock', cartItem.medicationId);
-          try {
-            await updateDoc(medRef, {
-              stock: increment(-cartItem.count)
-            });
-          } catch (e) {
-            console.warn("Failed to update firestore stock for:", cartItem.medicationId, e);
+          const snap = await transaction.get(medRef);
+          if (snap.exists()) {
+            const currentStock = snap.data().stock || 0;
+            if (currentStock < cartItem.count) {
+              const med = medications.find(m => m.id === cartItem.medicationId);
+              throw new Error(`Stock insuffisant pour "${med?.name || cartItem.medicationId}" (disponible: ${currentStock}, demandé: ${cartItem.count})`);
+            }
+            stockChecks.push({ ref: medRef, needed: cartItem.count });
           }
         }
-      }
 
-      // 3. Decrement localStorage stock fallback if needed
+        const orderRef = doc(collection(db, 'orders'));
+        transaction.set(orderRef, orderData);
+
+        for (const { ref, needed } of stockChecks) {
+          transaction.update(ref, { stock: increment(-needed) });
+        }
+
+        return orderRef;
+      });
+
       try {
         const stored = localStorage.getItem('medimap_meds_stock');
         if (stored) {

@@ -31,6 +31,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ADMIN_EMAILS = ['admin@dokta.cm', 'chuitcheuanderson65@gmail.com'];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
@@ -67,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: user.email,
               displayName: user.displayName,
               photoURL: user.photoURL,
-              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : user.email === 'admin@dokta.cm' ? 'admin' : 'patient',
+              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : ADMIN_EMAILS.includes(user.email || '') ? 'admin' : 'patient',
               status: 'activated',
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
@@ -95,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: user.email || 'demo@dokta.cm',
               displayName: user.displayName || user.email?.split('@')[0] || 'Utilisateur Démo',
               photoURL: user.photoURL || null,
-              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : user.email === 'admin@dokta.cm' ? 'admin' : 'patient',
+              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : ADMIN_EMAILS.includes(user.email || '') ? 'admin' : 'patient',
               status: 'activated',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
@@ -125,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInAsDemo = async (role: 'patient' | 'pharmacist' | 'admin' = 'patient') => {
     let demoEmail = 'demo@dokta.cm';
     let demoName = 'Patient Démo';
-    
+
     if (role === 'pharmacist') {
       demoEmail = 'pharmacien@dokta.cm';
       demoName = 'Dr. Pharmacien';
@@ -133,13 +135,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       demoEmail = 'admin@dokta.cm';
       demoName = 'Admin Médical';
     }
-    
+
     const demoPass = 'Dokta123!';
     try {
       await signInWithEmailAndPassword(auth, demoEmail, demoPass);
     } catch (err: any) {
       if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        // Try to sign up if the demo user does not exist yet
         await signUpWithEmail(demoEmail, demoPass, demoName, role);
       } else {
         throw err;

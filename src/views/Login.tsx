@@ -169,17 +169,28 @@ export function Login() {
 
                   <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-2 text-left">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center py-0.5">
-                      Connexion Démo Rapide (Patient uniquement)
+                      Connexion Démo Rapide
                     </p>
-                    <button
-                      onClick={() => handleDemoLogin('patient')}
-                      disabled={isSubmitting}
-                      type="button"
-                      className="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm border border-slate-100 active:scale-95 disabled:opacity-50"
-                    >
-                      <User size={16} className="text-brand-600" />
-                      <span>Se connecter en tant que Patient (Démo)</span>
-                    </button>
+                    <div className="space-y-1.5">
+                      <button
+                        onClick={() => handleDemoLogin('patient')}
+                        disabled={isSubmitting}
+                        type="button"
+                        className="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm border border-slate-100 active:scale-95 disabled:opacity-50"
+                      >
+                        <User size={16} className="text-brand-600" />
+                        <span>Patient (Démo)</span>
+                      </button>
+                      <button
+                        onClick={() => handleDemoLogin('admin')}
+                        disabled={isSubmitting}
+                        type="button"
+                        className="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-all shadow-sm border border-slate-100 active:scale-95 disabled:opacity-50"
+                      >
+                        <ShieldCheck size={16} className="text-amber-600" />
+                        <span>Administrateur (Démo)</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="relative py-1 flex items-center">
