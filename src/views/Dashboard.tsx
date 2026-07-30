@@ -23,6 +23,7 @@ import {
   Pill,
   Sparkles
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { cn } from '../lib/utils';
 import { db } from '../lib/firebase';
@@ -49,6 +50,7 @@ function PharmacistStatCard({ label, value, unit, icon, color }: { label: string
 import { useOrders } from '../components/OrderContext';
 
 export function Dashboard() {
+  const navigate = useNavigate();
   const { profile, user } = useAuth();
   const { orders } = useOrders();
   const isPharmacist = profile?.role === 'pharmacist';
@@ -170,7 +172,7 @@ export function Dashboard() {
         <section className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-display font-bold text-slate-900">Commandes Récentes</h3>
-            <button className="text-sm font-bold text-brand-600 hover:underline" onClick={() => window.location.href='/orders'}>Voir tout</button>
+            <button className="text-sm font-bold text-brand-600 hover:underline" onClick={() => navigate('/orders')}>Voir tout</button>
           </div>
           <div className="space-y-4">
             {orders.slice(0, 3).map((order) => (
@@ -342,7 +344,7 @@ export function Dashboard() {
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.location.href = '/map'}
+            onClick={() => navigate('/map')}
             className="bg-white text-brand-900 px-8 py-3 rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all whitespace-nowrap relative z-10"
           >
             Voir la carte
@@ -436,7 +438,7 @@ export function Dashboard() {
                   </button>
                   <button 
                     onClick={() => {
-                      window.location.href = `/map?search=${encodeURIComponent(pharmaName)}`;
+                      navigate(`/map?search=${encodeURIComponent(pharmaName)}`);
                     }}
                     className="flex-1 justify-center bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-xl font-bold text-[10px] flex items-center gap-2 transition-all active:scale-95 hover:bg-emerald-100"
                   >
@@ -542,7 +544,7 @@ export function Dashboard() {
               Plus besoin de deviner. Notre IA explique les médicaments prescrits et leurs posologies en termes simples.
             </p>
             <button 
-              onClick={() => window.location.href = '/ai-sante'}
+              onClick={() => navigate('/ai-sante')}
               className="bg-brand-600 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-brand-900/40 hover:bg-brand-500 transition-all w-fit"
             >
               Démarrer l'analyse
@@ -559,7 +561,7 @@ export function Dashboard() {
             <motion.div 
               key={i}
               whileHover={{ y: -5 }}
-              onClick={() => window.location.href = action.to}
+              onClick={() => navigate(action.to)}
               className="group cursor-pointer bg-white rounded-[2rem] border border-slate-100 p-6 flex flex-col gap-4 shadow-sm hover:shadow-xl transition-all"
             >
               <div className={cn("p-4 rounded-2xl w-fit transition-transform group-hover:scale-110", action.color)}>

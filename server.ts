@@ -93,7 +93,7 @@ CONSIGNES DE SÉCURITÉ DE PERSONNALISATION LIÉES AU PROFIL :
         patientOrders.forEach((o, i) => {
           dynamicInstruction += `\n- Commande #${o.id || i} (Date: ${o.date || 'Inconnue'}) - Statut: ${o.status || 'En cours'} - Total: ${o.total || 0} FCFA`;
           if (o.items && Array.isArray(o.items)) {
-            o.items.forEach(item => {
+            o.items.forEach((item: { count?: number; name?: string; price?: number }) => {
               dynamicInstruction += `\n  * ${item.count || 1}x ${item.name} (Prix: ${item.price || 0} FCFA)`;
             });
           }
