@@ -452,17 +452,30 @@ export function Dashboard() {
               <span className="text-brand-600">simplifiée & connectée.</span>
             </h2>
             
-            <div className="relative group max-w-2xl mx-auto drop-shadow-2xl">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.target as HTMLFormElement;
+                const input = form.querySelector('input') as HTMLInputElement;
+                if (input.value.trim()) {
+                  navigate(`/directory?search=${encodeURIComponent(input.value.trim())}`);
+                }
+              }}
+              className="relative group max-w-2xl mx-auto drop-shadow-2xl"
+            >
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-600 transition-colors" size={20} />
-              <input 
-                type="text" 
-                placeholder="Chercher une pharmacie, un médicament, un conseil..." 
+              <input
+                type="text"
+                placeholder="Chercher une pharmacie, un médicament, un conseil..."
                 className="w-full bg-white border-2 border-slate-100 rounded-2xl py-4.5 pl-14 pr-6 text-sm md:text-lg focus:outline-none focus:ring-4 focus:ring-brand-600/5 focus:border-brand-600 transition-all placeholder:text-slate-400 font-medium"
               />
-              <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors hidden sm:block">
+              <button
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors hidden sm:block"
+              >
                 Rechercher
               </button>
-            </div>
+            </form>
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 md:gap-8 pt-4">

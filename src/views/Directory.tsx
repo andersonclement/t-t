@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Building2, 
-  Hospital, 
-  Microscope, 
-  Pill, 
-  Search, 
-  MapPin, 
-  Star as StarIcon, 
-  Clock, 
-  ChevronRight, 
-  PhoneCall, 
-  Plus, 
+import {
+  Building2,
+  Hospital,
+  Microscope,
+  Pill,
+  Search,
+  MapPin,
+  Star as StarIcon,
+  Clock,
+  ChevronRight,
+  PhoneCall,
+  Plus,
   Minus,
   Trash2,
-  ShoppingCart, 
-  Camera, 
-  Upload, 
+  ShoppingCart,
+  Camera,
+  Upload,
   FileText,
   ShieldCheck,
   Calendar,
@@ -34,13 +34,16 @@ import {
   X,
   AlertTriangle,
   User,
-  Stethoscope
+  Stethoscope,
+  Truck,
+  Package
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useOrders } from '../components/OrderContext';
 import { useAuth } from '../components/AuthContext';
 import { db } from '../lib/firebase';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 // --- TYPES & MOCK DATA ---
 
@@ -54,6 +57,7 @@ interface Medication {
   available: boolean;
   requiresPrescription?: boolean;
   stock?: number;
+  pharmacistId?: string;
 }
 
 interface Doctor {
@@ -361,13 +365,29 @@ const MOCK_ACTORS: DirectoryActor[] = [
 export function Directory() {
   const { addOrder } = useOrders();
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState<'all' | 'hospital' | 'clinic' | 'laboratory' | 'pharmacy' | 'natural'>('all');
-  const [view, setView] = useState<'list' | 'pharmacy-catalog' | 'lab-catalog' | 'clinic-catalog' | 'hospital-catalog' | 'natural-catalog' | 'prescriptions' | 'results'>('list');
+  const [view, setView] = useState<'list' | 'pharmacy-catalog' | 'lab-catalog' | 'clinic-catalog' | 'hospital-catalog' | 'natural-catalog' | 'prescriptions' | 'results' | 'order-confirmation'>('list');
   const [selectedActor, setSelectedActor] = useState<DirectoryActor | null>(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
   const [onlyDuty, setOnlyDuty] = useState(false);
   const [activeRouteActor, setActiveRouteActor] = useState<DirectoryActor | null>(null);
+  const [cartPharmacyId, setCartPharmacyId] = useState<string | null>(null);
+  const [cartPharmacyName, setCartPharmacyName] = useState<string>('');
+  const [deliveryMode, setDeliveryMode] = useState<'pickup' | 'delivery'>('pickup');
+  const [lastOrderId, setLastOrderId] = useState<string>('');
+  const [lastOrderTotal, setLastOrderTotal] = useState(0);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q) {
+      setSearch(q);
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
+
   // Real-time stock from database
   const [dbMeds, setDbMeds] = useState<Medication[]>([]);
 
@@ -386,7 +406,8 @@ export function Directory() {
           image: data.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop',
           available: (data.stock || 0) > 0,
           requiresPrescription: !!data.requiresPrescription,
-          stock: data.stock || 0
+          stock: data.stock || 0,
+          pharmacistId: data.pharmacistId || ''
         });
       });
       if (items.length > 0) {
@@ -436,7 +457,7 @@ export function Directory() {
             isOpen: true,
             isDuty: !!data.isDuty,
             image: data.pharmacyImage || 'https://images.unsplash.com/photo-1631549916768-4119b2e55916?w=400&h=300&fit=crop',
-            meds: MOCK_MEDS,
+            meds: [],
             services: [
               { id: 'ds1', name: 'Dispensation de médicaments', price: 0, category: 'Service' },
               { id: 'ds2', name: 'Conseil thérapeutique', price: 0, category: 'Conseil' }
@@ -497,10 +518,31 @@ export function Directory() {
 
   const filteredActors = allActors.filter(actor => {
     const matchesCat = activeCategory === 'all' || actor.type === activeCategory;
-    const matchesSearch = actor.name.toLowerCase().includes(search.toLowerCase()) || actor.address.toLowerCase().includes(search.toLowerCase());
+    const s = search.toLowerCase();
+    const matchesSearch = !s ||
+      actor.name.toLowerCase().includes(s) ||
+      actor.address.toLowerCase().includes(s) ||
+      (actor.type === 'pharmacy' && getActorMeds(actor).some(
+        m => m.name.toLowerCase().includes(s) || m.dci.toLowerCase().includes(s)
+      ));
     const matchesDuty = !onlyDuty || actor.isDuty === true;
     return matchesCat && matchesSearch && matchesDuty;
   });
+
+  const medicationSearchResults = search.length >= 2 ? (() => {
+    const s = search.toLowerCase();
+    const results: { med: Medication; pharmacy: DirectoryActor }[] = [];
+    for (const actor of allActors) {
+      if (actor.type !== 'pharmacy') continue;
+      const meds = getActorMeds(actor);
+      for (const med of meds) {
+        if ((med.name.toLowerCase().includes(s) || med.dci.toLowerCase().includes(s)) && med.available) {
+          results.push({ med, pharmacy: actor });
+        }
+      }
+    }
+    return results;
+  })() : [];
 
   const handleUploadOrdonnance = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
@@ -557,7 +599,17 @@ export function Directory() {
     else setView('list');
   };
 
-  const addToCart = (item: {id: string, name: string, price: number, image?: string, requiresPrescription?: boolean}) => {
+  const addToCart = (item: {id: string, name: string, price: number, image?: string, requiresPrescription?: boolean}, pharmacyId?: string, pharmacyName?: string) => {
+    if (pharmacyId && cartPharmacyId && cartPharmacyId !== pharmacyId && cart.length > 0) {
+      if (!window.confirm(`Votre panier contient des articles de "${cartPharmacyName}". Voulez-vous vider le panier et commander chez "${pharmacyName}" ?`)) {
+        return;
+      }
+      setCart([]);
+    }
+    if (pharmacyId) {
+      setCartPharmacyId(pharmacyId);
+      setCartPharmacyName(pharmacyName || '');
+    }
     setCart(prev => {
       const existing = prev.find(i => i.id === item.id);
       if (existing) return prev.map(i => i.id === item.id ? { ...i, count: i.count + 1 } : i);
@@ -579,17 +631,27 @@ export function Directory() {
     }));
   };
 
-  const handleCheckout = (paymentMethod: string) => {
+  const handleCheckout = async (paymentMethod: string) => {
+    setCheckoutError(null);
     const total = cart.reduce((sum, item) => sum + item.price * item.count, 0);
-    addOrder({
-      items: cart,
-      total,
-      paymentMethod,
-      mode: 'pickup',
-      pharmacistId: selectedActor?.id
-    });
-    setCart([]);
-    setIsCartOpen(false);
+    try {
+      const orderId = await addOrder({
+        items: cart,
+        total,
+        paymentMethod,
+        mode: deliveryMode,
+        pharmacistId: cartPharmacyId || selectedActor?.id
+      });
+      setLastOrderId(orderId);
+      setLastOrderTotal(total);
+      setCart([]);
+      setCartPharmacyId(null);
+      setCartPharmacyName('');
+      setIsCartOpen(false);
+      setView('order-confirmation');
+    } catch (err: any) {
+      setCheckoutError(err.message || 'Erreur lors de la commande. Veuillez réessayer.');
+    }
   };
 
   return (
@@ -631,7 +693,7 @@ export function Directory() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
               type="text" 
-              placeholder="Rechercher une pharmacie, un laboratoire, un hôpital..." 
+              placeholder="Rechercher un médicament, une pharmacie, un hôpital..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-white border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
@@ -667,17 +729,101 @@ export function Directory() {
       </header>
 
       <AnimatePresence mode="wait">
+        {view === 'order-confirmation' && (
+          <motion.div
+            key="order-confirmation"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center py-12 space-y-6"
+          >
+            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="text-emerald-600" size={40} />
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-display font-bold text-slate-900">Commande confirmée !</h2>
+              <p className="text-slate-500 text-sm max-w-md">
+                Votre commande <span className="font-bold text-slate-700">#{lastOrderId.slice(0, 8)}</span> de{' '}
+                <span className="font-bold text-emerald-600">{lastOrderTotal.toLocaleString()} FCFA</span> a été envoyée au pharmacien.
+              </p>
+              <p className="text-slate-400 text-xs">
+                {deliveryMode === 'delivery' ? 'Livraison à domicile' : 'Retrait en pharmacie'} — Vous serez notifié dès que votre commande est validée.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setView('list')}
+                className="px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors"
+              >
+                Continuer mes achats
+              </button>
+              <button
+                onClick={() => navigate('/orders')}
+                className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              >
+                Voir mes commandes
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {view === 'list' && (
-          <motion.div 
+          <motion.div
             key="list"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="space-y-6"
           >
-            {filteredActors.map(actor => (
-              <ActorCard key={actor.id} actor={actor} onClick={() => handleActorClick(actor)} />
-            ))}
+            {medicationSearchResults.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Pill size={14} className="text-emerald-600" />
+                  Médicaments trouvés dans {new Set(medicationSearchResults.map(r => r.pharmacy.id)).size} pharmacie(s)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {medicationSearchResults.slice(0, 9).map(({ med, pharmacy }) => (
+                    <div key={`${med.id}-${pharmacy.id}`} className="bg-white border border-slate-100 rounded-2xl p-4 flex gap-3 items-center shadow-sm hover:shadow-md transition-shadow">
+                      <div className="w-12 h-12 bg-slate-50 rounded-xl overflow-hidden shrink-0 border border-slate-100">
+                        <img src={med.image} alt={med.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-900 truncate">{med.name}</p>
+                        <p className="text-[10px] text-slate-400">{med.dci} — {pharmacy.name}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs font-bold text-emerald-600">{med.price.toLocaleString()} FCFA</span>
+                          <button
+                            onClick={() => addToCart(med, pharmacy.id, pharmacy.name)}
+                            className="w-7 h-7 bg-emerald-600 text-white rounded-lg flex items-center justify-center hover:bg-emerald-700 transition-colors"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {medicationSearchResults.length > 9 && (
+                  <p className="text-xs text-slate-400 text-center">
+                    et {medicationSearchResults.length - 9} autres résultats...
+                  </p>
+                )}
+                <div className="h-px bg-slate-200" />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredActors.map(actor => (
+                <ActorCard key={actor.id} actor={actor} onClick={() => handleActorClick(actor)} />
+              ))}
+            </div>
+            {filteredActors.length === 0 && medicationSearchResults.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-16 text-slate-400 space-y-3">
+                <Search size={32} />
+                <p className="font-medium text-sm">Aucun résultat pour "{search}"</p>
+              </div>
+            )}
           </motion.div>
         )}
 
@@ -765,7 +911,7 @@ export function Directory() {
                             <div className="flex items-center justify-between">
                                <p className="text-sm font-display font-bold text-slate-900">{service.price.toLocaleString()} FCFA</p>
                                <button
-                                 onClick={() => addToCart(service)}
+                                 onClick={() => addToCart(service, selectedActor?.id, selectedActor?.name)}
                                  className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition-colors"
                                >
                                   <Plus size={16} />
@@ -986,7 +1132,7 @@ export function Directory() {
                               id: selectedActor.id + '_pack',
                               name: 'Pack: ' + selectedActor.name,
                               price: selectedActor.price || 0,
-                            });
+                            }, selectedActor.id, selectedActor.name);
                             setIsCartOpen(true);
                           }}
                           className="w-full bg-emerald-600 text-white font-bold py-2 rounded-lg text-xs transition-all hover:bg-emerald-700 flex items-center justify-center gap-1.5"
@@ -1053,7 +1199,7 @@ export function Directory() {
                         <span className="font-bold text-emerald-600 text-xs">{med.price.toLocaleString()} FCFA</span>
                         <button 
                           disabled={med.stock !== undefined && med.stock <= 0}
-                          onClick={() => addToCart(med)}
+                          onClick={() => addToCart(med, selectedActor?.id, selectedActor?.name)}
                           className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center hover:bg-emerald-700 transition-colors disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
                         >
                           <Plus size={16} />
@@ -1352,7 +1498,7 @@ export function Directory() {
                       setView('pharmacy-catalog'); 
                       setIsCartOpen(true);
                       const medsToOrder = pharma.meds?.filter(m => analyzedMeds.some(am => am.name === m.name)) || [];
-                      medsToOrder.forEach(m => addToCart(m));
+                      medsToOrder.forEach(m => addToCart(m, pharma.id, pharma.name));
                     }}
                     className="w-full bg-emerald-600 text-white py-2 rounded-lg font-bold hover:bg-emerald-700 transition-all flex items-center justify-center gap-1 text-xs"
                    >
@@ -1371,10 +1517,10 @@ export function Directory() {
         )}
       </AnimatePresence>
 
-      <CartDrawer 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cart={cart} 
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
         onUpdateCount={updateCartCount}
         onRemove={removeFromCart}
         onCheckout={handleCheckout}
@@ -1382,6 +1528,10 @@ export function Directory() {
           setView('prescriptions');
           setIsCartOpen(false);
         }}
+        deliveryMode={deliveryMode}
+        onDeliveryModeChange={setDeliveryMode}
+        pharmacyName={cartPharmacyName}
+        checkoutError={checkoutError}
       />
 
       <RouteDrawer
@@ -1463,38 +1613,46 @@ function ActorCard({ actor, onClick }: { actor: DirectoryActor, onClick: () => v
   );
 }
 
-function CartDrawer({ 
-  isOpen, 
-  onClose, 
-  cart, 
-  onUpdateCount, 
+function CartDrawer({
+  isOpen,
+  onClose,
+  cart,
+  onUpdateCount,
   onRemove,
   onCheckout,
-  onRequirePrescription
-}: { 
-  isOpen: boolean, 
-  onClose: () => void, 
-  cart: any[],
-  onUpdateCount: (id: string, delta: number) => void,
-  onRemove: (id: string) => void,
-  onCheckout: (method: string) => void,
-  onRequirePrescription: () => void
+  onRequirePrescription,
+  deliveryMode,
+  onDeliveryModeChange,
+  pharmacyName,
+  checkoutError
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  cart: any[];
+  onUpdateCount: (id: string, delta: number) => void;
+  onRemove: (id: string) => void;
+  onCheckout: (method: string) => void;
+  onRequirePrescription: () => void;
+  deliveryMode: 'pickup' | 'delivery';
+  onDeliveryModeChange: (mode: 'pickup' | 'delivery') => void;
+  pharmacyName: string;
+  checkoutError: string | null;
 }) {
   const [step, setStep] = useState<'cart' | 'payment'>('cart');
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  const total = cart.reduce((sum, item) => sum + (item.price * item.count), 0);
 
-  const handleFinish = () => {
+  const total = cart.reduce((sum, item) => sum + (item.price * item.count), 0);
+  const deliveryFee = deliveryMode === 'delivery' ? 1500 : 0;
+  const grandTotal = total + deliveryFee;
+
+  const handleFinish = async () => {
     if (!selectedMethod) return;
     setIsProcessing(true);
-    setTimeout(() => {
-      onCheckout(selectedMethod);
-      setIsProcessing(false);
-      setStep('cart');
-      setSelectedMethod(null);
-    }, 2000);
+    await onCheckout(selectedMethod);
+    setIsProcessing(false);
+    setStep('cart');
+    setSelectedMethod(null);
   };
 
   return (
@@ -1523,8 +1681,44 @@ function CartDrawer({
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {checkoutError && (
+                <div className="bg-red-50 border border-red-200 p-4 rounded-2xl flex gap-3 text-red-800">
+                  <AlertTriangle size={18} className="shrink-0 mt-0.5 text-red-500" />
+                  <p className="text-xs font-semibold">{checkoutError}</p>
+                </div>
+              )}
               {step === 'cart' ? (
                 <>
+                  {pharmacyName && (
+                    <div className="bg-emerald-50 border border-emerald-100 p-3 rounded-xl flex items-center gap-2">
+                      <Building2 size={14} className="text-emerald-600 shrink-0" />
+                      <span className="text-xs font-bold text-emerald-800 truncate">{pharmacyName}</span>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
+                    <button
+                      onClick={() => onDeliveryModeChange('pickup')}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
+                        deliveryMode === 'pickup' ? "bg-white shadow-sm text-slate-900" : "text-slate-500"
+                      )}
+                    >
+                      <Package size={14} />
+                      Retrait
+                    </button>
+                    <button
+                      onClick={() => onDeliveryModeChange('delivery')}
+                      className={cn(
+                        "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
+                        deliveryMode === 'delivery' ? "bg-white shadow-sm text-slate-900" : "text-slate-500"
+                      )}
+                    >
+                      <Truck size={14} />
+                      Livraison (+1 500 FCFA)
+                    </button>
+                  </div>
+
                   {cart.some(item => item.requiresPrescription) && (
                     <div className="bg-purple-50/70 border border-purple-100 p-4 rounded-2xl flex gap-3 text-purple-950 animate-pulse">
                       <Camera size={20} className="shrink-0 mt-0.5 text-purple-600" />
@@ -1627,9 +1821,21 @@ function CartDrawer({
             </div>
 
             <div className="p-8 border-t bg-slate-50 space-y-6">
-              <div className="flex justify-between items-end">
-                <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Total</span>
-                <span className="text-3xl font-display font-bold text-slate-900">{total.toLocaleString()} FCFA</span>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-500 font-medium">Sous-total</span>
+                  <span className="text-slate-700 font-bold">{total.toLocaleString()} FCFA</span>
+                </div>
+                {deliveryMode === 'delivery' && (
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-slate-500 font-medium">Frais de livraison</span>
+                    <span className="text-slate-700 font-bold">1 500 FCFA</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-end pt-2 border-t border-slate-200">
+                  <span className="text-slate-500 text-sm font-bold uppercase tracking-widest">Total</span>
+                  <span className="text-3xl font-display font-bold text-slate-900">{grandTotal.toLocaleString()} FCFA</span>
+                </div>
               </div>
               
               {step === 'cart' ? (
