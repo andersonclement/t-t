@@ -13,14 +13,35 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  DEMO_ACCOUNTS,
+  DEMO_ENABLED,
+  DEMO_PASSWORD,
+  getRole,
+  isProfessionalRole,
+  type Role,
+} from '../lib/roles';
+
+/** Demo emails map to their role so a demo login lands on the right interface. */
+const DEMO_ROLE_BY_EMAIL = new Map<string, Role>(DEMO_ACCOUNTS.map((a) => [a.email, a.role]));
+
+function roleForEmail(email: string | null | undefined): Role {
+  return (email && DEMO_ROLE_BY_EMAIL.get(email)) || 'patient';
+}
 
 interface AuthContextType {
   user: User | null;
   profile: any | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signInAsDemo: (role?: 'patient' | 'pharmacist' | 'admin') => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, name: string, role: string, pharmacyName?: string) => Promise<void>;
+  signInAsDemo: (role?: Role) => Promise<void>;
+  signUpWithEmail: (
+    email: string,
+    pass: string,
+    name: string,
+    role: string,
+    establishmentName?: string
+  ) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -67,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: user.email,
               displayName: user.displayName,
               photoURL: user.photoURL,
-              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : user.email === 'admin@dokta.cm' ? 'admin' : 'patient',
+              role: roleForEmail(user.email),
               status: 'activated',
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
@@ -95,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: user.email || 'demo@dokta.cm',
               displayName: user.displayName || user.email?.split('@')[0] || 'Utilisateur Démo',
               photoURL: user.photoURL || null,
-              role: user.email === 'pharmacien@dokta.cm' ? 'pharmacist' : user.email === 'admin@dokta.cm' ? 'admin' : 'patient',
+              role: roleForEmail(user.email),
               status: 'activated',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
@@ -122,28 +143,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithPopup(auth, provider);
   };
 
-  const signInAsDemo = async (role: 'patient' | 'pharmacist' | 'admin' = 'patient') => {
-    let demoEmail = 'demo@dokta.cm';
-    let demoName = 'Patient Démo';
-    
-    if (role === 'pharmacist') {
-      demoEmail = 'pharmacien@dokta.cm';
-      demoName = 'Dr. Pharmacien';
-    } else if (role === 'admin') {
-      demoEmail = 'admin@dokta.cm';
-      demoName = 'Admin Médical';
+  /**
+   * Signs into the shared demo account for a role, provisioning it on first
+   * use. Demo accounts are activated immediately — they skip the document
+   * review a real professional goes through, so the interface is browsable.
+   */
+  const signInAsDemo = async (role: Role = 'patient') => {
+    if (!DEMO_ENABLED) {
+      throw new Error("Les comptes de démonstration sont désactivés sur cet environnement.");
     }
-    
-    const demoPass = 'Dokta123!';
+
+    const account = DEMO_ACCOUNTS.find((a) => a.role === role);
+    if (!account) throw new Error(`Aucun compte de démonstration pour le rôle « ${role} ».`);
+
     try {
-      await signInWithEmailAndPassword(auth, demoEmail, demoPass);
+      await signInWithEmailAndPassword(auth, account.email, DEMO_PASSWORD);
     } catch (err: any) {
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        // Try to sign up if the demo user does not exist yet
-        await signUpWithEmail(demoEmail, demoPass, demoName, role);
-      } else {
-        throw err;
-      }
+      const missing =
+        err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential';
+      if (!missing) throw err;
+
+      await signUpWithEmail(
+        account.email,
+        DEMO_PASSWORD,
+        account.displayName,
+        role,
+        account.establishmentName,
+        { activated: true }
+      );
     }
   };
 
@@ -167,7 +194,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUpWithEmail = async (email: string, pass: string, name: string, role: string, pharmacyName?: string) => {
+  const signUpWithEmail = async (
+    email: string,
+    pass: string,
+    name: string,
+    role: string,
+    establishmentName?: string,
+    options?: { activated?: boolean }
+  ) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await updateProfile(userCredential.user, { displayName: name });
@@ -182,34 +216,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       */
       
+      const effectiveRole = (role || 'patient') as Role;
+      const definition = getRole(effectiveRole);
+      // Professionals must clear document review before they can operate; the
+      // demo accounts opt out so their interface is immediately browsable.
+      const needsReview = definition.isProfessional && !options?.activated;
+
       const newProfileData: any = {
         uid: userCredential.user.uid,
         email: email,
         displayName: name,
         photoURL: null,
-        role: role || 'patient',
-        status: (role || 'patient') === 'pharmacist' ? 'pending_technical_file' : 'activated',
+        role: effectiveRole,
+        status: needsReview ? 'pending_technical_file' : 'activated',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
 
-      if (role === 'pharmacist' && pharmacyName) {
-        newProfileData.pharmacyName = pharmacyName;
-        newProfileData.technicalForm = {
-          pharmacyName: pharmacyName,
-          onpcNumber: '',
-          legalLicenseNumber: '',
-          pharmacistsCount: 1,
-          coldChainEquipment: 'medical_fridge',
-          temperatureMonitor: true,
-          backupGenerator: 'automated',
-          airConditioned: true,
-          narcoticsSafe: true,
-          fireExtinguisher: true,
-          wasteProtocol: true
-        };
+      if (isProfessionalRole(effectiveRole) && establishmentName) {
+        if (definition.establishmentField) {
+          newProfileData[definition.establishmentField] = establishmentName;
+        }
+        newProfileData.technicalForm = { establishmentName };
       }
-      
+
+
       try {
         await setDoc(doc(db, 'users', userCredential.user.uid), newProfileData);
       } catch (err) {

@@ -41,6 +41,7 @@ import {
 import { cn } from '../lib/utils';
 import { useOrders } from '../components/OrderContext';
 import { useAuth } from '../components/AuthContext';
+import { Button, Card, PageContainer, PageHeader } from '../components/ui';
 import { db } from '../lib/firebase';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -655,78 +656,73 @@ export function Directory() {
   };
 
   return (
-    <div className="space-y-4">
-      <header className="space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="space-y-0.5">
-            <h1 className="text-xl md:text-2xl font-display font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <div className="w-1.5 h-6 bg-emerald-600 rounded-full" />
-              Répertoire Santé
-            </h1>
-            <p className="text-slate-400 text-xs font-medium">Accédez aux meilleurs établissements du Cameroun.</p>
-          </div>
-          <div className="flex items-center gap-2 w-full md:w-auto">
-            <button 
-              onClick={() => setView('prescriptions')}
-              className="flex-1 md:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
-            >
-              <Camera size={14} />
-              <span>Ordonnance</span>
-            </button>
-            <button 
+    <PageContainer>
+      <PageHeader
+        eyebrow="Cameroun"
+        title="Répertoire Santé"
+        subtitle="Pharmacies, hôpitaux, cliniques et laboratoires près de chez vous."
+        actions={
+          <>
+            <Button icon={<Camera size={14} />} onClick={() => setView('prescriptions')}>
+              Ordonnance
+            </Button>
+            <button
               onClick={() => setIsCartOpen(true)}
-              className="relative bg-white p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-90"
+              aria-label={`Ouvrir le panier (${cart.length} article${cart.length > 1 ? 's' : ''})`}
+              className="relative bg-white p-3 rounded-xl md:rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm transition-all active:scale-95"
             >
               <ShoppingCart size={18} />
               {cart.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] w-4.5 h-4.5 flex items-center justify-center rounded-full font-bold ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] min-w-4.5 h-4.5 px-1 flex items-center justify-center rounded-full font-bold ring-2 ring-white">
                   {cart.length}
                 </span>
               )}
             </button>
-          </div>
+          </>
+        }
+      />
+
+      {/* Search & category filters */}
+      <Card size="sm" className="space-y-3">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+          <input
+            type="text"
+            aria-label="Rechercher un établissement ou un médicament"
+            placeholder="Rechercher un médicament, une pharmacie, un hôpital..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl py-2.5 pl-11 pr-4 text-xs md:text-sm font-medium text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-brand-600 focus:bg-white focus:ring-2 focus:ring-brand-600/10"
+          />
         </div>
 
-        {/* Search & Categories Bar combined for cleaner look */}
-        <div className="bg-white p-2 rounded-2xl border border-slate-200 space-y-2">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input 
-              type="text" 
-              placeholder="Rechercher un médicament, une pharmacie, un hôpital..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white border border-slate-200 rounded-xl py-2 pl-10 pr-4 text-xs focus:ring-1 focus:ring-emerald-500 outline-none transition-all font-medium text-slate-900 placeholder:text-slate-400"
-            />
-          </div>
-          
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-1 pb-1">
-            <CategoryTab active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} icon={<Building2 size={12} />} label="Tous" />
-            <div className="w-px h-6 bg-slate-200 mx-1 shrink-0" />
-            
-            {/* Garde / On-Duty toggle button */}
-            <button 
-              onClick={() => setOnlyDuty(!onlyDuty)}
-              className={cn(
-                "flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap border",
-                onlyDuty 
-                  ? "bg-white text-red-600 border-red-500 font-extrabold" 
-                  : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
-              )}
-            >
-              <Clock size={12} className={cn(onlyDuty && "animate-pulse")} />
-              <span>Garde 24h/24</span>
-            </button>
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          <CategoryTab active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} icon={<Building2 size={12} />} label="Tous" />
+          <div className="w-px h-6 bg-slate-200 mx-1 shrink-0" />
 
-            <div className="w-px h-6 bg-slate-200 mx-1 shrink-0" />
-            <CategoryTab active={activeCategory === 'pharmacy'} onClick={() => setActiveCategory('pharmacy')} icon={<Pill size={12} />} label="Pharmacies" />
-            <CategoryTab active={activeCategory === 'hospital'} onClick={() => setActiveCategory('hospital')} icon={<Hospital size={12} />} label="Hôpitaux" />
-            <CategoryTab active={activeCategory === 'clinic'} onClick={() => setActiveCategory('clinic')} icon={<Building2 size={12} />} label="Cliniques" />
-            <CategoryTab active={activeCategory === 'laboratory'} onClick={() => setActiveCategory('laboratory')} icon={<Microscope size={12} />} label="Labs" />
-            <CategoryTab active={activeCategory === 'natural'} onClick={() => setActiveCategory('natural')} icon={<Leaf size={12} />} label="Médecine Bio" />
-          </div>
+          {/* Garde / On-Duty toggle button */}
+          <button
+            onClick={() => setOnlyDuty(!onlyDuty)}
+            aria-pressed={onlyDuty}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap border shrink-0",
+              onlyDuty
+                ? "bg-white text-red-600 border-red-500 font-extrabold"
+                : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+            )}
+          >
+            <Clock size={12} className={cn(onlyDuty && "animate-pulse")} />
+            <span>Garde 24h/24</span>
+          </button>
+
+          <div className="w-px h-6 bg-slate-200 mx-1 shrink-0" />
+          <CategoryTab active={activeCategory === 'pharmacy'} onClick={() => setActiveCategory('pharmacy')} icon={<Pill size={12} />} label="Pharmacies" />
+          <CategoryTab active={activeCategory === 'hospital'} onClick={() => setActiveCategory('hospital')} icon={<Hospital size={12} />} label="Hôpitaux" />
+          <CategoryTab active={activeCategory === 'clinic'} onClick={() => setActiveCategory('clinic')} icon={<Building2 size={12} />} label="Cliniques" />
+          <CategoryTab active={activeCategory === 'laboratory'} onClick={() => setActiveCategory('laboratory')} icon={<Microscope size={12} />} label="Labs" />
+          <CategoryTab active={activeCategory === 'natural'} onClick={() => setActiveCategory('natural')} icon={<Leaf size={12} />} label="Médecine Bio" />
         </div>
-      </header>
+      </Card>
 
       <AnimatePresence mode="wait">
         {view === 'order-confirmation' && (
@@ -1539,7 +1535,7 @@ export function Directory() {
         onClose={() => setActiveRouteActor(null)}
         actor={activeRouteActor}
       />
-    </div>
+    </PageContainer>
   );
 }
 
@@ -1548,8 +1544,8 @@ function CategoryTab({ active, onClick, icon, label }: { active: boolean, onClic
     <button 
       onClick={onClick}
       className={cn(
-        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap",
-        active ? "bg-emerald-600 text-white shadow-sm" : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
+        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap shrink-0 border",
+        active ? "bg-emerald-600 text-white border-emerald-600 shadow-sm" : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
       )}
     >
       {icon}
@@ -1730,7 +1726,7 @@ function CartDrawer({
                   )}
 
                   {cart.map((item) => (
-                    <div key={item.id} className="flex gap-4 items-center bg-white p-4 rounded-3xl border border-slate-100 shadow-sm animate-in slide-in-from-right-4 duration-300">
+                    <div key={item.id} className="flex gap-4 items-center bg-white p-4 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm animate-in slide-in-from-right-4 duration-300">
                       <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-100 shrink-0">
                         {item.image ? (
                           <img src={item.image} className="w-full h-full object-cover" />
@@ -2001,7 +1997,7 @@ function RouteDrawer({
               </div>
 
               {/* SIMULATED MAP CANVAS */}
-              <div className="relative bg-slate-100 h-60 rounded-3xl overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center">
+              <div className="relative bg-slate-100 h-60 rounded-2xl md:rounded-[2rem] overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center">
                 {/* SVG simulated street pattern */}
                 <svg className="absolute inset-0 w-full h-full text-slate-300 opacity-40" xmlns="http://www.w3.org/2000/svg">
                   <defs>

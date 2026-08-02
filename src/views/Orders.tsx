@@ -30,6 +30,16 @@ import {
 import { useOrders, Order, OrderStatus } from '../components/OrderContext';
 import { cn } from '../lib/utils';
 import { useAuth } from '../components/AuthContext';
+import {
+  Button,
+  LoadingState,
+  PageContainer,
+  PageHeader,
+  StatCard,
+  StatGrid,
+  Tabs,
+  type TabItem,
+} from '../components/ui';
 import { collection, query, where, getDocs, doc, updateDoc, increment, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
@@ -503,165 +513,100 @@ export function Orders() {
   const maxProductCount = topProducts.length > 0 ? Math.max(...topProducts.map(p => p.count)) : 1;
 
   if (loading) {
-    return (
-      <div className="h-96 flex flex-col items-center justify-center text-slate-400 gap-4">
-        <Loader2 className="animate-spin text-brand-600" size={48} />
-        <p className="font-bold uppercase tracking-widest text-[10px] text-slate-500">Chargement du flux des commandes...</p>
-      </div>
-    );
+    return <LoadingState label="Chargement du flux des commandes…" />;
   }
 
+  const orderTabs: TabItem<'active' | 'history' | 'analytics'>[] = [
+    {
+      id: 'active',
+      label: 'En cours',
+      icon: <Clock size={14} />,
+      count: orders.filter(o => activeStatuses.includes(o.status)).length,
+    },
+    {
+      id: 'history',
+      label: 'Archivées',
+      icon: <CheckCircle2 size={14} />,
+      count: orders.filter(o => historyStatuses.includes(o.status)).length,
+    },
+    { id: 'analytics', label: 'Insights IA', icon: <BarChart3 size={14} /> },
+  ];
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Header Banner */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h1 className="text-3xl font-display font-black text-slate-900 tracking-tight flex items-center gap-3">
-            <div className="w-2.5 h-10 bg-brand-600 rounded-full" />
-            Suivi des Commandes
-          </h1>
-          <p className="text-slate-500 font-medium">Flux intelligent de validation, préparation et livraison de l'officine.</p>
-        </div>
-        
-        {/* Point of Sale Direct walk-in billing button */}
-        <button 
-          onClick={() => setIsNewWalkInOpen(true)}
-          className="flex items-center gap-2 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-700 hover:to-indigo-700 text-white font-extrabold text-xs uppercase tracking-wider px-5 py-3 rounded-2xl shadow-lg shadow-brand-600/20 active:scale-95 transition-all shrink-0"
-        >
-          <Plus size={14} />
-          Nouvelle Vente Comptoir (Facture)
-        </button>
-      </header>
+    <PageContainer>
+      <PageHeader
+        eyebrow="Officine"
+        title="Suivi des Commandes"
+        subtitle="Validation, préparation et livraison en flux continu."
+        actions={
+          <Button icon={<Plus size={14} />} onClick={() => setIsNewWalkInOpen(true)}>
+            Vente comptoir
+          </Button>
+        }
+      />
 
-      {/* Interactive KPI Dashboard Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Chiffre d'Affaires */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-brand-50 rounded-full blur-2xl opacity-50 group-hover:opacity-80 transition-all" />
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Revenu Réalisé</span>
-              <p className="text-2xl font-display font-black text-slate-900">{totalRevenue.toLocaleString()} <span className="text-xs">FCFA</span></p>
-            </div>
-            <div className="w-10 h-10 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center border border-brand-100">
-              <TrendingUp size={18} />
-            </div>
-          </div>
-          <p className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-4">
-            <span>●</span> {deliveredOrders.length} commandes livrées avec succès
-          </p>
-        </div>
-
-        {/* Card 2: Active Queue */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-full blur-2xl opacity-50 transition-all" />
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">File d'Attente Active</span>
-              <p className="text-2xl font-display font-black text-slate-900">{activeOrdersCount} <span className="text-xs">en cours</span></p>
-            </div>
-            <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center border border-amber-100">
-              <Clock size={18} className={cn(activeOrdersCount > 0 && "animate-pulse")} />
-            </div>
-          </div>
-          <p className="text-[10px] text-slate-500 font-bold flex items-center gap-1 mt-4">
-            <span>⌛</span> {orders.filter(o => o.status === 'pending_validation').length} en attente de validation
-          </p>
-        </div>
-
-        {/* Card 3: Average Ticket */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-50 rounded-full blur-2xl opacity-50 transition-all" />
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Panier Moyen</span>
-              <p className="text-2xl font-display font-black text-slate-900">{averageBasketValue.toLocaleString()} <span className="text-xs">FCFA</span></p>
-            </div>
-            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center border border-indigo-100">
-              <FileText size={18} />
-            </div>
-          </div>
-          <p className="text-[10px] text-slate-500 font-bold mt-4">
-            Basé sur les ventes de l'officine
-          </p>
-        </div>
-
-        {/* Card 4: Service Level */}
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-full blur-2xl opacity-50 transition-all" />
-          <div className="flex justify-between items-start">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Taux de Service</span>
-              <p className="text-2xl font-display font-black text-slate-900">{serviceLevel}%</p>
-            </div>
-            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100">
-              <CheckCircle2 size={18} />
-            </div>
-          </div>
-          <p className="text-[10px] text-slate-500 font-bold mt-4 flex items-center gap-1">
-            Acceptation et traitement réussi
-          </p>
-        </div>
-      </div>
+      <StatGrid columns={4}>
+        <StatCard
+          label="Revenu réalisé"
+          value={totalRevenue.toLocaleString()}
+          unit="FCFA"
+          icon={<TrendingUp className="text-brand-600" size={18} />}
+          tone="bg-brand-50"
+          hint={`${deliveredOrders.length} commande(s) livrée(s)`}
+        />
+        <StatCard
+          label="File d'attente"
+          value={activeOrdersCount}
+          unit="en cours"
+          icon={<Clock className={cn('text-amber-600', activeOrdersCount > 0 && 'animate-pulse')} size={18} />}
+          tone="bg-amber-50"
+          hint={`${orders.filter(o => o.status === 'pending_validation').length} à valider`}
+        />
+        <StatCard
+          label="Panier moyen"
+          value={averageBasketValue.toLocaleString()}
+          unit="FCFA"
+          icon={<FileText className="text-indigo-600" size={18} />}
+          tone="bg-indigo-50"
+          hint="Basé sur les ventes de l'officine"
+        />
+        <StatCard
+          label="Taux de service"
+          value={`${serviceLevel}%`}
+          icon={<CheckCircle2 className="text-emerald-600" size={18} />}
+          tone="bg-emerald-50"
+          hint="Acceptation et traitement réussi"
+        />
+      </StatGrid>
 
       {/* Main Container Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start">
         {/* Left Column: List with Filters or Analytics */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
-            {/* Nav Switcher */}
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl w-full sm:w-auto shrink-0">
-              <button 
-                onClick={() => {
-                  setActiveTab('active');
-                  setSelectedOrder(null);
-                }}
-                className={cn(
-                  "flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2",
-                  activeTab === 'active' ? "bg-white text-slate-900 shadow-md" : "text-slate-500 hover:text-slate-900"
-                )}
-              >
-                <Clock size={14} />
-                En Cours ({orders.filter(o => activeStatuses.includes(o.status)).length})
-              </button>
-              <button 
-                onClick={() => {
-                  setActiveTab('history');
-                  setSelectedOrder(null);
-                }}
-                className={cn(
-                  "flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2",
-                  activeTab === 'history' ? "bg-white text-slate-900 shadow-md" : "text-slate-500 hover:text-slate-900"
-                )}
-              >
-                <CheckCircle2 size={14} />
-                Archivées ({orders.filter(o => historyStatuses.includes(o.status)).length})
-              </button>
-              <button 
-                onClick={() => {
-                  setActiveTab('analytics');
-                  setSelectedOrder(null);
-                }}
-                className={cn(
-                  "flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2",
-                  activeTab === 'analytics' ? "bg-white text-slate-900 shadow-md" : "text-slate-500 hover:text-slate-900"
-                )}
-              >
-                <BarChart3 size={14} />
-                Insights IA
-              </button>
-            </div>
+          <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-sm p-4 flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+            <Tabs
+              aria-label="Vues des commandes"
+              variant="segmented"
+              tabs={orderTabs}
+              value={activeTab}
+              onChange={(id) => {
+                setActiveTab(id);
+                setSelectedOrder(null);
+              }}
+              className="w-full sm:w-auto shrink-0"
+            />
 
             {/* Search (only if not on analytics) */}
             {activeTab !== 'analytics' && (
               <div className="relative w-full sm:max-w-xs">
-                <Search className="absolute left-4 top-3 text-slate-400" size={16} />
-                <input 
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <input
                   type="text"
+                  aria-label="Rechercher une commande"
                   placeholder="Patient, produit, mode..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 outline-none transition-all"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl pl-11 pr-4 py-2.5 text-xs font-bold focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600 outline-none transition-all"
                 />
               </div>
             )}
@@ -780,7 +725,7 @@ export function Orders() {
                 </div>
 
                 {/* AI Recommendation Alert */}
-                <div className="bg-brand-50/50 border border-brand-100 rounded-3xl p-5 text-left space-y-3 mt-4">
+                <div className="bg-brand-50/50 border border-brand-100 rounded-2xl md:rounded-[2rem] p-5 text-left space-y-3 mt-4">
                   <div className="flex items-start gap-3">
                     <span className="text-xl shrink-0 mt-0.5">💡</span>
                     <div>
@@ -1201,7 +1146,7 @@ export function Orders() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl shadow-2xl border max-w-md w-full overflow-hidden flex flex-col relative print:fixed print:inset-0 print:m-0 print:rounded-none print:shadow-none"
+              className="bg-white rounded-[2rem] shadow-2xl border max-w-md w-full overflow-hidden flex flex-col relative print:fixed print:inset-0 print:m-0 print:rounded-none print:shadow-none"
             >
               {/* Close Button */}
               <button 
@@ -1810,6 +1755,6 @@ export function Orders() {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </PageContainer>
   );
 }

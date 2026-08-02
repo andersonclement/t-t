@@ -13,10 +13,8 @@ import {
   Check, 
   X, 
   TrendingUp, 
-  Clock, 
-  PackageCheck, 
-  ChevronDown, 
-  Calendar, 
+  Clock,
+  Calendar,
   FileText, 
   Sparkles, 
   DollarSign, 
@@ -30,6 +28,15 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../components/AuthContext';
+import {
+  Button,
+  PageContainer,
+  PageHeader,
+  StatCard,
+  StatGrid,
+  Tabs,
+  type TabItem,
+} from '../components/ui';
 import { db } from '../lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, onSnapshot } from 'firebase/firestore';
 
@@ -1023,152 +1030,98 @@ export function Inventory() {
     return recs;
   };
 
+  const inventoryTabs: TabItem<typeof activeTab>[] = [
+    { id: 'all', label: 'Inventaire général', icon: <Layers size={14} />, count: sortedMeds.length },
+    {
+      id: 'alerts',
+      label: 'Alertes & péremptions',
+      icon: <AlertTriangle size={14} />,
+      count: outOfStockCount + lowStockCount + expiredCount,
+      alert: true,
+    },
+    { id: 'replenish', label: 'Commandes & réception', icon: <FileText size={14} /> },
+    { id: 'movements', label: 'Mouvements de stock', icon: <RefreshCw size={14} /> },
+    { id: 'valuation', label: 'Analyses & valorisation', icon: <DollarSign size={14} /> },
+    { id: 'ai', label: 'Optimiseur Care IA', icon: <Sparkles size={14} />, accent: 'indigo' },
+  ];
+
   return (
-    <div className="space-y-8 pb-12">
-      {/* Page Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="bg-brand-50 text-brand-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border border-brand-100">
-              Cabinet & Pharmacie
-            </span>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-display font-black text-slate-900 tracking-tight">
-            Gestion du Stock Officine
-          </h1>
-          <p className="text-slate-500 font-medium text-sm md:text-base">
-            Optimisez vos stocks de médicaments, suivez les péremptions et gérez les alertes d'approvisionnement en temps réel.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button 
-            onClick={() => {
-              // Trigger sync reload
-              setLoading(true);
-              setTimeout(() => setLoading(false), 600);
-            }}
-            className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-500 hover:text-brand-600 transition-colors shadow-sm"
-            title="Rafraîchir"
-          >
-            <RefreshCw size={18} className={cn(loading && "animate-spin")} />
-          </button>
-          <button 
-            onClick={() => {
-              resetForm();
-              setIsAddOpen(true);
-            }}
-            className="bg-slate-900 text-white px-5 py-3.5 rounded-2xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 text-sm"
-          >
-            <Plus size={18} />
-            Nouveau Médicament
-          </button>
-        </div>
-      </header>
+    <PageContainer>
+      <PageHeader
+        eyebrow="Cabinet & Pharmacie"
+        title="Gestion du Stock Officine"
+        subtitle="Suivez les péremptions et les alertes d'approvisionnement en temps réel."
+        actions={
+          <>
+            <Button
+              variant="outline"
+              aria-label="Rafraîchir l'inventaire"
+              title="Rafraîchir"
+              onClick={() => {
+                setLoading(true);
+                setTimeout(() => setLoading(false), 600);
+              }}
+              icon={<RefreshCw size={16} className={cn(loading && 'animate-spin')} />}
+            />
+            <Button
+              variant="dark"
+              icon={<Plus size={16} />}
+              onClick={() => {
+                resetForm();
+                setIsAddOpen(true);
+              }}
+            >
+              Nouveau médicament
+            </Button>
+          </>
+        }
+      />
 
-      {/* KPI Stats Panel */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard 
-          label="Total Médicaments" 
-          value={totalProducts.toString()} 
-          sub="Références uniques"
+      <StatGrid columns={5}>
+        <StatCard
+          label="Total médicaments"
+          value={totalProducts}
+          hint="Références uniques"
           icon={<Pill size={18} className="text-blue-500" />}
-          color="border-blue-100 bg-blue-50/20"
+          tone="bg-blue-50"
         />
-        <StatCard 
-          label="En Rupture" 
-          value={outOfStockCount.toString()} 
-          sub="Urgence de commande"
+        <StatCard
+          label="En rupture"
+          value={outOfStockCount}
+          hint="Urgence de commande"
           icon={<AlertCircle size={18} className="text-rose-500" />}
-          color={outOfStockCount > 0 ? "border-rose-100 bg-rose-50/30 text-rose-700" : "border-slate-100"}
+          tone="bg-rose-50"
         />
-        <StatCard 
-          label="Alerte Stock Bas" 
-          value={lowStockCount.toString()} 
-          sub="Sous le seuil critique"
+        <StatCard
+          label="Alerte stock bas"
+          value={lowStockCount}
+          hint="Sous le seuil critique"
           icon={<AlertTriangle size={18} className="text-amber-500" />}
-          color={lowStockCount > 0 ? "border-amber-100 bg-amber-50/30 text-amber-700" : "border-slate-100"}
+          tone="bg-amber-50"
         />
-        <StatCard 
-          label="Périmés" 
-          value={expiredCount.toString()} 
-          sub={`+ ${expiringSoonCount} sous 90 j.`}
+        <StatCard
+          label="Périmés"
+          value={expiredCount}
+          hint={`+ ${expiringSoonCount} sous 90 j.`}
           icon={<Clock size={18} className="text-purple-500" />}
-          color={expiredCount > 0 ? "border-purple-100 bg-purple-50/30 text-purple-700" : "border-slate-100"}
+          tone="bg-purple-50"
         />
-        <StatCard 
-          label="Valeur du Stock" 
-          value={`${(totalValuation).toLocaleString()}`} 
-          sub="Prix de vente total"
+        <StatCard
+          label="Valeur du stock"
+          value={totalValuation.toLocaleString()}
           unit="FCFA"
+          hint="Prix de vente total"
           icon={<DollarSign size={18} className="text-emerald-500" />}
-          color="border-emerald-100 bg-emerald-50/20"
+          tone="bg-emerald-50"
         />
-      </div>
+      </StatGrid>
 
-      {/* Navigation Tabs */}
-      {/* Mobile Sub-Navigation Select (Dropdown Style) */}
-      <div className="block lg:hidden w-full relative mb-4">
-        <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-2">Choisir une section :</label>
-        <div className="relative">
-          <select 
-            value={activeTab}
-            onChange={(e) => setActiveTab(e.target.value as any)}
-            className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3.5 text-xs font-black text-slate-700 outline-none appearance-none focus:ring-2 focus:ring-brand-600/10 focus:border-brand-600"
-          >
-            <option value="all">📁 Inventaire Général ({sortedMeds.length})</option>
-            <option value="alerts">⚠️ Alertes & Péremptions ({outOfStockCount + lowStockCount + expiredCount})</option>
-            <option value="replenish">📦 Commandes & Réception</option>
-            <option value="movements">🔄 Mouvements de Stock</option>
-            <option value="valuation">💰 Analyses & Valorisation</option>
-            <option value="ai">✨ Optimiseur Care IA</option>
-          </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-            <ChevronDown size={16} />
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Navigation Tabs */}
-      <div className="hidden lg:flex border-b border-slate-200 gap-6 overflow-x-auto no-scrollbar pb-1">
-        <TabButton 
-          active={activeTab === 'all'} 
-          onClick={() => setActiveTab('all')} 
-          label="Inventaire Général" 
-          count={sortedMeds.length}
-        />
-        <TabButton 
-          active={activeTab === 'alerts'} 
-          onClick={() => setActiveTab('alerts')} 
-          label="Alertes & Péremptions" 
-          count={outOfStockCount + lowStockCount + expiredCount}
-          highlight
-        />
-        <TabButton 
-          active={activeTab === 'replenish'} 
-          onClick={() => setActiveTab('replenish')} 
-          label="Commandes & Réception" 
-          icon={<FileText size={14} />}
-        />
-        <TabButton 
-          active={activeTab === 'movements'} 
-          onClick={() => setActiveTab('movements')} 
-          label="Mouvements de Stock" 
-          icon={<RefreshCw size={14} />}
-        />
-        <TabButton 
-          active={activeTab === 'valuation'} 
-          onClick={() => setActiveTab('valuation')} 
-          label="Analyses & Valorisation" 
-          icon={<DollarSign size={14} />}
-        />
-        <TabButton 
-          active={activeTab === 'ai'} 
-          onClick={() => setActiveTab('ai')} 
-          label="Optimiseur Care IA" 
-          icon={<Sparkles size={14} />}
-          ai
-        />
-      </div>
+      <Tabs
+        aria-label="Sections de l'inventaire"
+        tabs={inventoryTabs}
+        value={activeTab}
+        onChange={setActiveTab}
+      />
 
       {/* Tab Contents */}
       <AnimatePresence mode="wait">
@@ -1587,7 +1540,7 @@ export function Inventory() {
           >
             {/* Alert Category Breakdown Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-3xl p-5 border border-red-100 shadow-sm flex items-start gap-4">
+              <div className="bg-white rounded-2xl md:rounded-[2rem] p-5 border border-red-100 shadow-sm flex items-start gap-4">
                 <div className="p-3.5 bg-rose-50 text-rose-500 rounded-2xl border border-rose-100">
                   <AlertCircle size={22} />
                 </div>
@@ -1598,7 +1551,7 @@ export function Inventory() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-5 border border-amber-100 shadow-sm flex items-start gap-4">
+              <div className="bg-white rounded-2xl md:rounded-[2rem] p-5 border border-amber-100 shadow-sm flex items-start gap-4">
                 <div className="p-3.5 bg-amber-50 text-amber-500 rounded-2xl border border-amber-100">
                   <AlertTriangle size={22} />
                 </div>
@@ -1609,7 +1562,7 @@ export function Inventory() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-5 border border-purple-100 shadow-sm flex items-start gap-4">
+              <div className="bg-white rounded-2xl md:rounded-[2rem] p-5 border border-purple-100 shadow-sm flex items-start gap-4">
                 <div className="p-3.5 bg-purple-50 text-purple-500 rounded-2xl border border-purple-100">
                   <Clock size={22} />
                 </div>
@@ -1943,7 +1896,7 @@ export function Inventory() {
           >
             {/* KPI Counters */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+              <div className="bg-white rounded-2xl md:rounded-[2rem] p-5 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-black uppercase text-slate-400">Total Transactions</span>
                   <p className="text-2xl font-display font-black text-slate-800 mt-0.5">{allMovements.length}</p>
@@ -1953,7 +1906,7 @@ export function Inventory() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+              <div className="bg-white rounded-2xl md:rounded-[2rem] p-5 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-black uppercase text-slate-400">Entrées de Stock</span>
                   <p className="text-2xl font-display font-black text-emerald-600 mt-0.5">
@@ -1965,7 +1918,7 @@ export function Inventory() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center justify-between">
+              <div className="bg-white rounded-2xl md:rounded-[2rem] p-5 border border-slate-100 shadow-sm flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-black uppercase text-slate-400">Sorties & Rebuts</span>
                   <p className="text-2xl font-display font-black text-rose-600 mt-0.5">
@@ -2263,7 +2216,7 @@ export function Inventory() {
                 <div 
                   key={i} 
                   className={cn(
-                    "bg-white rounded-3xl p-5 border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4",
+                    "bg-white rounded-2xl md:rounded-[2rem] p-5 border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4",
                     rec.type === 'danger' ? "border-rose-100 bg-rose-50/5" :
                     rec.type === 'warning' ? "border-amber-100 bg-amber-50/5" :
                     "border-blue-100 bg-blue-50/5"
@@ -3367,81 +3320,6 @@ export function Inventory() {
           </div>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-interface StatCardProps {
-  label: string;
-  value: string;
-  sub: string;
-  unit?: string;
-  icon: React.ReactNode;
-  color?: string;
-}
-
-function StatCard({ label, value, sub, unit, icon, color }: StatCardProps) {
-  return (
-    <div className={cn(
-      "bg-white rounded-[2rem] p-5 border border-slate-100 shadow-sm flex flex-col justify-between min-h-[120px] transition-all hover:shadow-md",
-      color
-    )}>
-      <div className="flex justify-between items-start gap-2">
-        <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 leading-tight">
-          {label}
-        </span>
-        <div className="shrink-0 bg-slate-50 border border-slate-100/50 p-1.5 rounded-lg">
-          {icon}
-        </div>
-      </div>
-      <div className="mt-2.5">
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl md:text-3xl font-display font-black leading-none tracking-tight">
-            {value}
-          </span>
-          {unit && <span className="text-xs font-bold text-slate-400">{unit}</span>}
-        </div>
-        <p className="text-[10px] text-slate-400 font-medium mt-1">
-          {sub}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-interface TabButtonProps {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count?: number;
-  highlight?: boolean;
-  ai?: boolean;
-  icon?: React.ReactNode;
-}
-
-function TabButton({ active, onClick, label, count, highlight, ai, icon }: TabButtonProps) {
-  return (
-    <button 
-      onClick={onClick}
-      className={cn(
-        "py-3.5 px-1.5 border-b-2 font-bold text-xs transition-all relative flex items-center gap-2 whitespace-nowrap",
-        active 
-          ? ai ? "border-indigo-600 text-indigo-700 font-black" : "border-brand-600 text-brand-600 font-black"
-          : "border-transparent text-slate-400 hover:text-slate-800"
-      )}
-    >
-      {icon && <span className={cn(active && ai && "text-amber-500 fill-amber-400 animate-pulse")}>{icon}</span>}
-      <span>{label}</span>
-      {count !== undefined && (
-        <span className={cn(
-          "px-1.5 py-0.5 rounded-md text-[9px] font-black border",
-          active 
-            ? highlight ? "bg-rose-500 text-white border-rose-500" : "bg-brand-50 text-brand-600 border-brand-100"
-            : highlight ? "bg-rose-50 text-rose-500 border-rose-100" : "bg-slate-50 text-slate-400 border-slate-100"
-        )}>
-          {count}
-        </span>
-      )}
-    </button>
+    </PageContainer>
   );
 }

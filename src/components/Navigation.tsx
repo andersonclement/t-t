@@ -4,6 +4,7 @@ import { useLocation, NavLink } from 'react-router-dom';
 import { Home, Map, Pill, Leaf, User, MessageCircle, AlertCircle, Microscope, BookOpen, Building2, Zap, HeartPulse, Menu, X, ChevronDown, PhoneCall, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { getRole } from '../lib/roles';
 import { useAuth } from './AuthContext';
 
 export function ScrollToTop() {
@@ -40,7 +41,11 @@ export function Navigation() {
                   <ChevronDown className={cn("w-4 h-4 text-slate-400 transition-transform md:hidden", isOpen && "rotate-180")} />
                 </div>
                 <span className="text-[10px] text-brand-600 font-bold uppercase tracking-widest mt-0.5 hidden sm:block">
-                  {isPharmacist ? 'Espace Pharmacien' : 'Santé Connectée'}
+                  {getRole(profile?.role).isProfessional
+                    ? `Espace ${getRole(profile?.role).label}`
+                    : profile?.role === 'admin'
+                      ? 'Administration'
+                      : 'Santé Connectée'}
                 </span>
               </div>
             </button>

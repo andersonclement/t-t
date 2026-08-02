@@ -22,24 +22,15 @@ import {
   X,
   ExternalLink,
   Info,
-  ChevronRight,
-  UserCheck
+  ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Alert, Badge, PageContainer, PageHeader, StatCard, StatGrid } from '../components/ui';
+import { PROFESSIONAL_ROLES, getEstablishmentName, getRole, type ProfessionalRole } from '../lib/roles';
+import { RoleIcon } from '../components/RoleIcon';
 
-interface TechnicalForm {
-  pharmacyName: string;
-  onpcNumber: string;
-  legalLicenseNumber: string;
-  pharmacistsCount: number;
-  coldChainEquipment: string;
-  temperatureMonitor: boolean;
-  backupGenerator: string;
-  airConditioned: boolean;
-  narcoticsSafe: boolean;
-  fireExtinguisher: boolean;
-  wasteProtocol: boolean;
-}
+/** Shape varies per role — the registry drives which fields exist. */
+type TechnicalForm = Record<string, unknown>;
 
 interface Appointment {
   type: string;
@@ -54,7 +45,7 @@ interface PharmacistUser {
   uid: string;
   displayName: string;
   email: string;
-  role: 'pharmacist';
+  role: ProfessionalRole;
   status: 'pending_technical_file' | 'pending_appointment' | 'pending_admin_approval' | 'activated' | 'rejected';
   createdAt?: any;
   updatedAt?: any;
@@ -75,7 +66,7 @@ export function AdminDashboard() {
 
   // Fetch all pharmacists from firestore
   useEffect(() => {
-    const q = query(collection(db, 'users'), where('role', '==', 'pharmacist'));
+    const q = query(collection(db, 'users'), where('role', 'in', PROFESSIONAL_ROLES));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list: PharmacistUser[] = [];
       snapshot.forEach((docSnap) => {
@@ -83,9 +74,9 @@ export function AdminDashboard() {
         list.push({
           id: docSnap.id,
           uid: data.uid || docSnap.id,
-          displayName: data.displayName || 'Pharmacien Sans Nom',
+          displayName: data.displayName || 'Professionnel sans nom',
           email: data.email || '',
-          role: 'pharmacist',
+          role: data.role || 'pharmacist',
           status: data.status || 'pending_technical_file',
           createdAt: data.createdAt,
           updatedAt: data.updatedAt,
@@ -110,7 +101,7 @@ export function AdminDashboard() {
     const matchesSearch = 
       pharma.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pharma.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (pharma.technicalForm?.pharmacyName || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (getEstablishmentName(pharma) || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     if (statusFilter === 'all') return matchesSearch;
     if (statusFilter === 'pending') {
@@ -215,97 +206,70 @@ export function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="admin-dashboard-container">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <UserCheck className="text-brand-600" size={28} />
-            Portail d'Administration Médical
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Gérez et validez l'accès des pharmaciens certifiés à la plateforme.
-          </p>
-        </div>
-      </div>
+    <PageContainer id="admin-dashboard-container">
+      <PageHeader
+        eyebrow="Administration"
+        title="Portail d'Administration Médical"
+        subtitle="Gérez et validez l'accès des pharmaciens certifiés à la plateforme."
+      />
 
       {/* Notifications */}
       <AnimatePresence>
         {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-800 rounded-2xl flex items-start gap-3 shadow-sm"
-          >
-            <CheckCircle2 className="text-emerald-500 shrink-0 mt-0.5" size={18} />
-            <div className="text-sm font-medium flex-1">{successMessage}</div>
-            <button onClick={() => setSuccessMessage(null)} className="text-emerald-500 hover:text-emerald-700">
-              <X size={16} />
-            </button>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            <Alert tone="success" icon={<CheckCircle2 size={18} className="text-emerald-500" />}>
+              <div className="flex items-start gap-3">
+                <span className="flex-1">{successMessage}</span>
+                <button onClick={() => setSuccessMessage(null)} aria-label="Fermer" className="text-emerald-500 hover:text-emerald-700">
+                  <X size={16} />
+                </button>
+              </div>
+            </Alert>
           </motion.div>
         )}
         {errorMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-800 rounded-2xl flex items-start gap-3 shadow-sm"
-          >
-            <AlertTriangle className="text-rose-500 shrink-0 mt-0.5" size={18} />
-            <div className="text-sm font-medium flex-1">{errorMessage}</div>
-            <button onClick={() => setErrorMessage(null)} className="text-rose-500 hover:text-rose-700">
-              <X size={16} />
-            </button>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+            <Alert tone="danger" icon={<AlertTriangle size={18} className="text-rose-500" />}>
+              <div className="flex items-start gap-3">
+                <span className="flex-1">{errorMessage}</span>
+                <button onClick={() => setErrorMessage(null)} aria-label="Fermer" className="text-rose-500 hover:text-rose-700">
+                  <X size={16} />
+                </button>
+              </div>
+            </Alert>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-slate-50 rounded-xl text-slate-600">
-            <Users size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Pharmaciens</p>
-            <p className="text-xl font-bold text-slate-800 mt-0.5">{stats.total}</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
-            <Clock size={22} className="animate-pulse" />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">En Attente</p>
-            <p className="text-xl font-bold text-amber-600 mt-0.5">{stats.pending}</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600">
-            <ShieldCheck size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Activés / Validés</p>
-            <p className="text-xl font-bold text-emerald-600 mt-0.5">{stats.activated}</p>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-rose-50 rounded-xl text-rose-600">
-            <XCircle size={22} />
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Inscriptions Rejetées</p>
-            <p className="text-xl font-bold text-rose-600 mt-0.5">{stats.rejected}</p>
-          </div>
-        </div>
-      </div>
+      <StatGrid columns={4}>
+        <StatCard
+          label="Total pharmaciens"
+          value={stats.total}
+          icon={<Users size={18} className="text-slate-600" />}
+          tone="bg-slate-100"
+        />
+        <StatCard
+          label="En attente"
+          value={stats.pending}
+          icon={<Clock size={18} className={cn('text-amber-600', stats.pending > 0 && 'animate-pulse')} />}
+          tone="bg-amber-50"
+        />
+        <StatCard
+          label="Activés / validés"
+          value={stats.activated}
+          icon={<ShieldCheck size={18} className="text-emerald-600" />}
+          tone="bg-emerald-50"
+        />
+        <StatCard
+          label="Inscriptions rejetées"
+          value={stats.rejected}
+          icon={<XCircle size={18} className="text-rose-600" />}
+          tone="bg-rose-50"
+        />
+      </StatGrid>
 
       {/* Main Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
         {/* Left: Search, Filter, List */}
         <div className="lg:col-span-2 space-y-4">
           {/* Controls Bar */}
@@ -375,7 +339,7 @@ export function AdminDashboard() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
                           <h3 className="font-bold text-slate-800 text-sm truncate">
-                            {pharma.technicalForm?.pharmacyName || pharma.displayName}
+                            {getEstablishmentName(pharma) || pharma.displayName}
                           </h3>
                           {getStatusBadge(pharma.status)}
                         </div>
@@ -391,11 +355,15 @@ export function AdminDashboard() {
                               {pharma.phoneNumber}
                             </span>
                           )}
-                          {pharma.technicalForm?.onpcNumber && (
-                            <span className="font-mono text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                              ONPC: {pharma.technicalForm.onpcNumber}
-                            </span>
-                          )}
+                          <span
+                            className={cn(
+                              'inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold',
+                              getRole(pharma.role).accent.soft
+                            )}
+                          >
+                            <RoleIcon role={pharma.role} size={10} />
+                            {getRole(pharma.role).label}
+                          </span>
                         </div>
                       </div>
 
@@ -470,62 +438,53 @@ export function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Technical File (Fiche Technique) Details */}
+              {/* Technical file, rendered from the role's own schema */}
               {selectedPharma.technicalForm ? (
                 <div className="space-y-3">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-1.5 flex items-center gap-1.5">
                     <Building2 size={12} />
-                    Fiche Technique Officielle
+                    Dossier {getRole(selectedPharma.role).label.toLowerCase()}
                   </p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                    <div>
-                      <span className="text-slate-400">Nom Officiel</span>
-                      <p className="font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.pharmacyName}</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Ordre des Pharmaciens (ONPC)</span>
-                      <p className="font-mono font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.onpcNumber}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <span className="text-slate-400">Licence d'Exploitation</span>
-                      <p className="font-mono font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.legalLicenseNumber}</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Pharmaciens Adjoints</span>
-                      <p className="font-semibold text-slate-700 mt-0.5">{selectedPharma.technicalForm.pharmacistsCount} diplômés</p>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Équipement Froid</span>
-                      <p className="font-semibold text-slate-700 mt-0.5">
-                        {selectedPharma.technicalForm.coldChainEquipment === 'medical_fridge' ? 'Réfrigérateur médicalisé' : 'Réfrigérateur domestique'}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Yes/No Checklists */}
-                  <div className="grid grid-cols-2 gap-2 mt-2 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100 text-[11px] text-slate-600">
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.temperatureMonitor ? "bg-emerald-500" : "bg-slate-300")} />
-                      Suivi Température continu
+                  {getRole(selectedPharma.role).onboarding.map((section) => (
+                    <div key={section.title} className="space-y-2">
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        {section.title}
+                      </p>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                        {section.fields.map((field) => {
+                          const raw = (selectedPharma.technicalForm as any)?.[field.name];
+                          const value =
+                            field.type === 'toggle'
+                              ? raw ? 'Oui' : 'Non'
+                              : field.type === 'select'
+                                ? field.options?.find((o) => o.value === String(raw))?.label ?? '—'
+                                : raw === undefined || raw === '' || raw === null
+                                  ? '—'
+                                  : String(raw);
+
+                          return (
+                            <div key={field.name} className={cn(field.type === 'textarea' && 'col-span-2')}>
+                              <span className="text-slate-400">{field.label}</span>
+                              <p
+                                className={cn(
+                                  'font-semibold text-slate-700 mt-0.5 break-words',
+                                  field.type === 'toggle' && (raw ? 'text-emerald-600' : 'text-slate-400')
+                                )}
+                              >
+                                {value}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.backupGenerator !== 'none' ? "bg-emerald-500" : "bg-slate-300")} />
-                      Générateur électrique
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.airConditioned ? "bg-emerald-500" : "bg-slate-300")} />
-                      Climatisation intégrale
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className={cn("w-2 h-2 rounded-full", selectedPharma.technicalForm.narcoticsSafe ? "bg-emerald-500" : "bg-slate-300")} />
-                      Coffre fort stupéfiants
-                    </div>
-                  </div>
+                  ))}
                 </div>
               ) : (
                 <div className="bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-400">
                   <FileText className="mx-auto mb-1.5 text-slate-300" size={18} />
-                  Fiche technique non complétée par le pharmacien.
+                  Dossier technique non complété.
                 </div>
               )}
 
@@ -606,6 +565,6 @@ export function AdminDashboard() {
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

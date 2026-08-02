@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageCircle, X, Send, User, Bot, Sparkles } from 'lucide-react';
-import { chatWithMedicalCoach } from '../services/geminiService';
+import { chatWithMedicalCoach } from '../services/aiService';
 import { useAuth } from './AuthContext';
 import { useOrders } from './OrderContext';
 import ReactMarkdown from 'react-markdown';
@@ -11,27 +11,39 @@ export function AIAssistant() {
   const { profile } = useAuth();
   const { orders } = useOrders();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([
-    { role: 'model', text: 'Bonjour ! Je suis Care IA. Comment puis-je vous aider aujourd\'hui ?' }
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; text: string }[]>([
+    { role: 'assistant', text: 'Bonjour ! Je suis Care IA. Comment puis-je vous aider aujourd\'hui ?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
-    
+    if (!input.trim() || isTyping) return;
+
     const userMessage = input;
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
     setIsTyping(true);
 
-    const history = messages.map(m => ({ 
-      role: m.role, 
-      parts: [{ text: m.text }] 
-    }));
+    const history = messages.map(m => ({ role: m.role, content: m.text }));
 
-    const response = await chatWithMedicalCoach(userMessage, history, profile, orders);
-    setMessages(prev => [...prev, { role: 'model', text: response || '' }]);
+    // Append the user turn plus an empty assistant turn that the stream fills in.
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }, { role: 'assistant', text: '' }]);
+
+    await chatWithMedicalCoach(userMessage, history, {
+      patientProfile: profile,
+      patientOrders: orders,
+      onDelta: (chunk) => {
+        setMessages(prev => {
+          const next = [...prev];
+          next[next.length - 1] = {
+            ...next[next.length - 1],
+            text: next[next.length - 1].text + chunk,
+          };
+          return next;
+        });
+      },
+    });
+
     setIsTyping(false);
   };
 
@@ -69,6 +81,8 @@ export function AIAssistant() {
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 medical-gradient">
               {messages.map((msg, i) => (
+                // The placeholder assistant turn stays hidden until its first token.
+                msg.text === '' ? null : (
                 <div key={i} className={cn("flex", msg.role === 'user' ? "justify-end" : "justify-start")}>
                   <div className={cn(
                     "max-w-[85%] p-3 rounded-2xl shadow-sm border",
@@ -81,8 +95,9 @@ export function AIAssistant() {
                     </div>
                   </div>
                 </div>
+                )
               ))}
-              {isTyping && (
+              {isTyping && messages[messages.length - 1]?.text === '' && (
                 <div className="flex justify-start">
                   <div className="bg-white p-3 rounded-2xl border border-slate-100 rounded-tl-none flex gap-1">
                     <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" />
