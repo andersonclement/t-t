@@ -54,7 +54,7 @@ python3 pipeline/generate.py          # toutes les leçons (ou: L03 L07)
 python3 pipeline/build.py             # .tex + .pdf pour Tle C, D, E
 ```
 
-Modèles par défaut : rédaction `moonshotai/kimi-k3`, relecture `z-ai/glm-5.3`
+Modèles par défaut : rédaction `moonshotai/kimi-k3`, relecture et corrections LaTeX `nvidia/nemotron-3-ultra-550b-a55b`
 (modifiables via `WRITER_MODELS` / `REVIEW_MODELS`).
 
 Pour recompiler un cours à la main : `cd cours/Tle-C/L01-… && tectonic L01-….tex`.

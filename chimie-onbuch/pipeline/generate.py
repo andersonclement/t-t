@@ -40,8 +40,8 @@ TECTONIC = os.environ.get("TECTONIC", "tectonic")
 API = "https://integrate.api.nvidia.com/v1/chat/completions"
 
 KEYS = [k.strip() for k in os.environ.get("NVIDIA_API_KEYS", "").split(",") if k.strip()]
-WRITER_MODELS = os.environ.get("WRITER_MODELS", "moonshotai/kimi-k3,z-ai/glm-5.3").split(",")
-REVIEW_MODELS = os.environ.get("REVIEW_MODELS", "z-ai/glm-5.3,moonshotai/kimi-k3").split(",")
+WRITER_MODELS = os.environ.get("WRITER_MODELS", "moonshotai/kimi-k3,nvidia/nemotron-3-ultra-550b-a55b").split(",")
+REVIEW_MODELS = os.environ.get("REVIEW_MODELS", "nvidia/nemotron-3-ultra-550b-a55b,moonshotai/kimi-k3").split(",")
 _key_cycle = itertools.cycle(range(max(1, len(KEYS))))
 _lock = threading.Lock()
 _slots = threading.BoundedSemaphore(int(os.environ.get("MAX_CONCURRENT", "20")))
@@ -119,6 +119,8 @@ def llm(messages, models, max_tokens=16000, temperature=0.6, tries=6):
         except RateLimited:
             # Quota momentanément dépassé : on attend sans consommer d'essai.
             waits += 1
+            if waits % 10 == 1:
+                log(f"    … 429 sur {model} (attente n°{waits})")
             if waits > 300:
                 raise RuntimeError("429 persistants")
             time.sleep(random.uniform(10, 30))
@@ -172,6 +174,13 @@ def strip_fences(t):
 
 
 def sanitize(t):
+    # Réponse du type « Voici ... ```latex ... ``` » : on garde le plus long bloc de code.
+    blocks = re.findall(r"```[a-zA-Z]*\s*\n(.*?)```", t, flags=re.S)
+    if blocks:
+        t = max(blocks, key=len)
+    m = re.search(r"\\begin\{document\}(.*?)(\\end\{document\}|$)", t, flags=re.S)
+    if m:
+        t = m.group(1)
     t = strip_fences(t)
     for pat in [r"\\documentclass.*?\n", r"\\usepackage.*?\n", r"\\begin\{document\}", r"\\end\{document\}"]:
         t = re.sub(pat, "", t)
@@ -227,7 +236,7 @@ def compile_fix(body, what, tries=4):
             {"role": "user", "content": f"Ce code LaTeX ne compile pas avec XeLaTeX. Erreurs :\n{err}\n\nCode (numéroté pour référence) :\n{numbered}\n\n"
              "Renvoie le code COMPLET corrigé (sans les numéros de ligne), en conservant intégralement le contenu pédagogique. "
              "Corrige la cause de l'erreur ; si une figure TikZ/chemfig est trop complexe, simplifie-la en gardant son intention. Réponds uniquement avec le LaTeX."}],
-            WRITER_MODELS, temperature=0.2))
+            REVIEW_MODELS, max_tokens=24000, temperature=0.2))
     ok, _ = compile_check(body)
     return body, ok
 
