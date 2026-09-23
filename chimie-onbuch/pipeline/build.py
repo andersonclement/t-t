@@ -56,10 +56,10 @@ def assemble(L, serie):
     niveau = f"Tle {serie}"
     num = L["id"][1:]
     objectifs_cover = esc(plan["description"]) + "\n\\vspace{4pt}\n" + \
-        "\\begin{multicols}{2}\\small\n" + items(plan["objectifs"][:8]) + "\\end{multicols}"
+        "\\begin{multicols}{2}\\small\n" + items(plan["objectifs"][:6]) + "\\end{multicols}"
     sommaire = "\\begin{enumerate}\n" + "\n".join(
         f"\\item {esc(s['titre'])}" for s in plan["sections"]) + "\n" + "\n".join(
-        f"\\item {t}" for _, t in extras) + "\n\\end{enumerate}"
+        f"\\item {t}" for t, _ in extras) + "\n\\end{enumerate}"
     body = [
         f"\\pagegarde{{{esc(L['titre'])}}}{{Chimie}}{{{niveau}}}{{{esc(L['module'])}}}{{{num}}}{{{esc(L['duree'])}}}{{{objectifs_cover}}}",
         "\\begin{sommaire}\n\\begin{multicols}{2}\n" + sommaire + "\n\\end{multicols}\n\\end{sommaire}",

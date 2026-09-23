@@ -156,6 +156,7 @@ CONTRAT LaTeX (obligatoire) :
   \begin{corrige}[Exercice n]...\end{corrige}
   Ne jamais imbriquer une boîte dans une autre boîte.
 - Mot-clé mis en valeur : \cle{mot}. Gras : \textbf{}. Italique : \emph{}.
+- Pour une formule brute générale avec indice littéral (ex. CnH2n+1OH), écris-la en mode mathématique standard $$ ($C_nH_{2n+1}OH$), PAS avec \ce{} (mhchem interprète mal le _ suivi de lettres). \ce{} est réservé aux formules et équations avec des nombres explicites (\ce{C2H5OH}, \ce{CH3COOH + C2H5OH <=> CH3COOC2H5 + H2O}).
 - Chimie : formules et équations avec mhchem : \ce{CH3-CH2-OH}, \ce{CH3COOH + C2H5OH <=> CH3COOC2H5 + H2O}, \ce{H3O+}, \ce{Cr2O7^2-}, flèches \ce{->}, \ce{<=>}. Pour une équation centrée : \[ \ce{...} \]. Couples : \ce{CH3COOH}/\ce{CH3COO-}.
 - Formules développées / semi-développées : chemfig, simples et robustes, ex. \chemfig{CH_3-CH_2-C(=[1]O)-[7]OH}, \chemfig{H_3C-CH(-[2]OH)-CH_3}. Pour les représentations de Cram : \chemfig{C(-[2]H)(<[5]CH_3)(<:[7]OH)-COOH} etc. Pas de \chemname, pas de \schemestart.
 - Grandeurs et unités : \SI{0,10}{mol.L^{-1}}, \SI{25}{\celsius}, \SI{20,0}{mL} ; nombres décimaux avec virgule ; maths en $...$ et \[...\] ; alignements avec \begin{align*}.
@@ -198,7 +199,7 @@ HEADER = r"""\newcommand{\DOCMATIERE}{Chimie}\newcommand{\DOCNIVEAU}{Tle C}\newc
 
 
 def compile_check(body):
-    """Compile le bloc seul. Renvoie (ok, extrait_du_log)."""
+    """Compile le bloc seul. Renvoie (ok, extrait_du_log, ligne_fautive_ou_None)."""
     with tempfile.TemporaryDirectory() as d:
         d = Path(d)
         (d / "preamble.tex").write_text(PREAMBLE.read_text())
@@ -208,36 +209,96 @@ def compile_check(body):
             p = subprocess.run([TECTONIC, "--keep-logs", "-c", "minimal", "t.tex"], cwd=d,
                                capture_output=True, text=True, timeout=400)
         except subprocess.TimeoutExpired:
-            return False, "Compilation interrompue (délai dépassé) : boucle infinie probable dans le code TikZ/pgfplots."
+            return False, "Compilation interrompue (délai dépassé) : boucle infinie probable dans le code TikZ/pgfplots.", None
         ok = p.returncode == 0 and (d / "t.pdf").exists()
         out = p.stdout + p.stderr
         logf = d / "t.log"
+        line = None
         if not ok and logf.exists():
             lines = logf.read_text(errors="ignore").splitlines()
             errs = []
             for i, l in enumerate(lines):
                 if l.startswith("!"):
                     errs.append("\n".join(lines[i:i + 6]))
-            out = "\n---\n".join(errs[:6]) or out
-        # numéro de ligne relatif au corps
+                    if line is None:
+                        for l2 in lines[i:i + 40]:
+                            m = re.match(r"l\.(\d+)", l2)
+                            if m:
+                                line = int(m.group(1)) - HEADER.count("\n")
+                                break
+            out = "\n---\n".join(errs[:4]) or out
         out = re.sub(r"t\.tex:(\d+)", lambda m: f"ligne {int(m.group(1)) - HEADER.count(chr(10))}", out)
-        return ok, out[-3500:]
+        if line is not None and not (1 <= line <= len(body.splitlines())):
+            line = None
+        return ok, out[-3000:], line
 
 
-def compile_fix(body, what, tries=4):
-    for i in range(tries):
-        ok, err = compile_check(body)
+BLOCK_ENVS = ("popfigure", "tikzpicture", "tabularx", "tabular", "align*", "align", "center", "itemize", "enumerate",
+              "definition", "propriete", "aretenir", "exemplebox", "methode", "attention", "experience", "savaistu",
+              "exoresolu", "exercice", "corrige", "objectifs", "prerequis", "bilan")
+
+
+def fault_span(lines, n):
+    """Plage [a, b) du fragment à corriger autour de la ligne n (1-indexée) :
+    le plus petit environnement « bloc » qui la contient (une figure entière de
+    préférence), sinon le paragraphe."""
+    i = n - 1
+    best = None
+    for a in range(i, -1, -1):
+        m = re.search(r"\\begin\{([^}]+)\}", lines[a])
+        if not m or m.group(1) not in BLOCK_ENVS:
+            continue
+        env = m.group(1)
+        depth = 0
+        for b in range(a, len(lines)):
+            depth += lines[b].count("\\begin{" + env + "}") - lines[b].count("\\end{" + env + "}")
+            if depth <= 0:
+                break
+        if b >= i:
+            best = (a, b + 1)
+            if env in ("popfigure",) or b - a > 25:
+                break
+            # une tikzpicture est presque toujours dans une popfigure : on remonte
+            if env != "tikzpicture":
+                break
+    if best and best[1] - best[0] <= 220:
+        return best
+    a = i
+    while a > 0 and lines[a - 1].strip() and i - a < 15:
+        a -= 1
+    b = i + 1
+    while b < len(lines) and lines[b].strip() and b - i < 15:
+        b += 1
+    return a, b
+
+
+def compile_fix(body, what, tries=6):
+    for k in range(tries):
+        ok, err, line = compile_check(body)
         if ok:
             return body, True
-        log(f"  ✗ compilation {what} (essai {i+1}) : {err.strip().splitlines()[0] if err.strip() else '?'}")
-        numbered = "\n".join(f"{n+1:4d}| {l}" for n, l in enumerate(body.splitlines()))
+        log(f"  ✗ compilation {what} (essai {k+1}) : {err.strip().splitlines()[0] if err.strip() else '?'}")
+        lines = body.splitlines()
+        if line is not None and k < tries - 1:
+            a, b = fault_span(lines, line)
+            frag = "\n".join(lines[a:b])
+            fixed = sanitize(llm([
+                {"role": "system", "content": SYSTEM},
+                {"role": "user", "content": f"Le fragment LaTeX ci-dessous (extrait d'un cours plus long) provoque cette erreur de compilation XeLaTeX (l'erreur est signalée vers sa ligne {line - a}) :\n{err}\n\nFRAGMENT :\n{frag}\n\n"
+                 "Renvoie UNIQUEMENT le fragment corrigé, complet, prêt à remplacer l'original (même début, même fin, mêmes environnements ouverts/fermés), en conservant tout le contenu. "
+                 "Corrige la cause réelle de l'erreur (syntaxe mhchem, chemfig, TikZ/pgfplots, tableau, math). Si une figure est trop complexe, simplifie-la en gardant son intention."}],
+                REVIEW_MODELS, max_tokens=12000, temperature=0.2))
+            if fixed.strip():
+                body = "\n".join(lines[:a] + fixed.splitlines() + lines[b:])
+            continue
+        numbered = "\n".join(f"{n+1:4d}| {l}" for n, l in enumerate(lines))
         body = sanitize(llm([
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": f"Ce code LaTeX ne compile pas avec XeLaTeX. Erreurs :\n{err}\n\nCode (numéroté pour référence) :\n{numbered}\n\n"
              "Renvoie le code COMPLET corrigé (sans les numéros de ligne), en conservant intégralement le contenu pédagogique. "
              "Corrige la cause de l'erreur ; si une figure TikZ/chemfig est trop complexe, simplifie-la en gardant son intention. Réponds uniquement avec le LaTeX."}],
             REVIEW_MODELS, max_tokens=24000, temperature=0.2))
-    ok, _ = compile_check(body)
+    ok, _, _ = compile_check(body)
     return body, ok
 
 
