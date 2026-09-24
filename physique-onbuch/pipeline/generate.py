@@ -275,6 +275,8 @@ def autofix(body):
     body = re.sub(r"([_^])\\(math[a-z]+|text|operatorname)\{([^{}]*)\}", r"\1{\\\2{\3}}", body)
     body = _align_close(body)
     body = _fill_const(body)
+    # \SI{6,67e-11} sans unité (1 seul argument) : \SI avale l'argument suivant -> \num
+    body = re.sub(r"\\SI\{([^{}]*)\}(?!\{)", r"\\num{\1}", body)
     body = _safe_sqrt(body)
     body = _close_lists(body)
     # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
