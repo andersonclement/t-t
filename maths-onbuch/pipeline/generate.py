@@ -285,6 +285,16 @@ def autofix(body):
     # calc TikZ : ($(2)*(U)$) -> ($2*(U)$) (un nombre entre parenthèses est pris pour un nœud)
     body = re.sub(r"\(\$\s*\((-?[\d.]+)\)\s*\*", r"($\1*", body)
     body = body.replace("\\not\\implies", "\\nRightarrow").replace("\\not\\iff", "\\nLeftrightarrow").replace("\\not\\Longrightarrow", "\\nRightarrow")
+    # popfigure : \begin{center} non refermé -> \end{center} avant la légende
+    def _fig(m):
+        t = m.group(0)
+        k = t.count("\\begin{center}") - t.count("\\end{center}")
+        if k > 0:
+            i = t.rfind("\\legende")
+            i = i if i >= 0 else t.rfind("\\end{popfigure}")
+            t = t[:i] + "\\end{center}\n" * k + t[i:]
+        return t
+    body = re.sub(r"\\begin\{popfigure\}.*?\\end\{popfigure\}", _fig, body, flags=re.S)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
