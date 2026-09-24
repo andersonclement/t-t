@@ -65,6 +65,10 @@ def assemble(cat, L, serie):
     n = len(plan["sections"])
     sections = [autofix((d / f"s{i+1:02d}.ok.tex").read_text()) for i in range(n)]
     extras = [(title, autofix((d / f"{k}.ok.tex").read_text())) for k, title in EXTRAS]
+    # Certains modèles corrigent les exercices directement dans la partie
+    # « Exercices » : la partie « Corrigés » existe déjà, on retire ce doublon.
+    extras = [(t, re.sub(r"\\begin\{corrige\}.*?\\end\{corrige\}\s*", "", c, flags=re.S) if t == "Exercices" else c)
+              for t, c in extras]
     # Compléments propres à cette série (champ "extra" de lessons.json) :
     # insérés comme sections de cours supplémentaires, juste avant l'activité
     # d'intégration, uniquement pour les séries concernées.
@@ -103,6 +107,9 @@ def assemble(cat, L, serie):
         f"\\newcommand{{\\DOCMODULE}}{{{esc(L['module'])}}}\n\\newcommand{{\\DOCLECON}}{{{num}}}\n"
         f"\\newcommand{{\\DOCTITRE}}{{{esc(L['titre'])}}}\n"
         + preamble + "\n\\begin{document}\n\n" + "\n\n".join(body) + "\n\n\\end{document}\n")
+    # Garde-fou : caractères d'un autre alphabet laissés par un modèle (ex. « 保持 »)
+    for m in re.finditer(r"[\u0400-\u04FF\u0590-\u06FF\u3000-\u9FFF\uAC00-\uD7AF\uFF00-\uFFEF]", tex):
+        print(f"⚠ {L['id']} {serie} : caractère suspect « {tex[max(0, m.start()-30):m.end()+10]} »")
     out = OUT / f"Tle-{serie}" / f"{L['id']}-{L['slug']}"
     out.mkdir(parents=True, exist_ok=True)
     f = out / f"{L['id']}-{L['slug']}.tex"
