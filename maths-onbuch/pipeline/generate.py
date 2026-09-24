@@ -508,6 +508,10 @@ def _box_as_command(body):
     for env in _BOX.split("|"):
         if body.count("\\end{" + env + "}") > body.count("\\begin{" + env + "}"):
             body = re.sub(r"^\\" + env + r"(\[[^\n]*\])?[ \t]*$", lambda m: "\\begin{" + env + "}" + (m.group(1) or ""), body, flags=re.M)
+        else:
+            # \\savaistu[Titre] seul sur sa ligne, jamais fermé : la boîte couvre le paragraphe qui suit
+            body = re.sub(r"^\\" + env + r"(\[[^\n]*\])[ \t]*\n((?:[^\n]+\n)*?[^\n]+)(?=\n\s*\n|\n?\Z)",
+                          lambda m: "\\begin{" + env + "}" + m.group(1) + "\n" + m.group(2) + "\n\\end{" + env + "}", body, flags=re.M)
     return body
 
 
