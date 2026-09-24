@@ -262,6 +262,8 @@ def autofix(body):
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
     body = _cases_math(body)
+    # Markdown oublié : **gras** -> \textbf{gras}
+    body = re.sub(r"\*\*([^*\n$]+?)\*\*", r"\\textbf{\1}", body)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
