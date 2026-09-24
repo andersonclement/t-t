@@ -264,12 +264,23 @@ def autofix(body):
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
+    body = _align_close(body)
     body = _safe_sqrt(body)
     body = _close_lists(body)
     # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
     body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
                   lambda m: m.group(1) + re.sub(r"\$(-?\d+),(\d+)\$", r"$\1{,}\2$", m.group(2)) + m.group(3), body)
     return body
+
+
+def _align_close(body):
+    """\\begin{align*} refermé par \\] au lieu de \\end{align*} (erreur fréquente)."""
+    def fix(m):
+        inner = m.group(2)
+        if "\\end{" + m.group(1) + "}" in inner or "\\[" in inner:
+            return m.group(0)
+        return "\\begin{" + m.group(1) + "}" + inner + "\\end{" + m.group(1) + "}"
+    return re.sub(r"\\begin\{(align\*?)\}(.*?)\\\]", fix, body, flags=re.S)
 
 
 def _safe_sqrt(body):
