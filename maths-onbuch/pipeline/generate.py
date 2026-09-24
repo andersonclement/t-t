@@ -54,7 +54,22 @@ WRITER_MODELS = os.environ.get("WRITER_MODELS", "moonshotai/kimi-k3,nvidia/nemot
 REVIEW_MODELS = os.environ.get("REVIEW_MODELS", "nvidia/nemotron-3-ultra-550b-a55b,moonshotai/kimi-k3").split(",")
 _key_cycle = itertools.cycle(range(max(1, len(KEYS))))
 _lock = threading.Lock()
-_slots = threading.BoundedSemaphore(int(os.environ.get("MAX_CONCURRENT", "20")))
+# Une file par modèle : les longues rédactions Kimi ne bloquent plus les
+# relectures (et inversement).
+_slots_per_model = {}
+
+
+def _slots(model):
+    with _lock:
+        if model not in _slots_per_model:
+            n = int(os.environ.get("MAX_CONCURRENT", "12"))
+            _slots_per_model[model] = threading.BoundedSemaphore(n)
+        return _slots_per_model[model]
+
+
+def _busy(model):
+    sem = _slots(model)
+    return sem._value == 0  # noqa: SLF001
 
 
 def log(*a):
@@ -111,18 +126,22 @@ def llm(messages, models, max_tokens=16000, temperature=0.6, tries=6):
         idx = attempt if attempt >= 2 else 0
         idx += waits // 3
         model = models[idx % len(models)]
+        # Si le modèle principal est saturé, on bascule sur le suivant plutôt
+        # que d'attendre (les deux modèles rédigent et relisent bien).
+        if attempt == 0 and _busy(model) and len(models) > 1 and not _busy(models[(idx + 1) % len(models)]):
+            model = models[(idx + 1) % len(models)]
         with _lock:
             key = KEYS[next(_key_cycle)]
         try:
             t0 = time.time()
-            with _slots:
+            with _slots(model):
                 text, finish = _call(model, key, messages, max_tokens, temperature)
             log(f"    ↳ {model} {len(text)} car. en {time.time()-t0:.0f}s ({finish})")
             if finish == "length":
                 # Sortie tronquée : on demande la suite une fois.
                 cont = messages + [{"role": "assistant", "content": text},
                                    {"role": "user", "content": "Continue EXACTEMENT là où tu t'es arrêté, sans rien répéter, sans commentaire."}]
-                with _slots:
+                with _slots(model):
                     more, _ = _call(model, key, cont, max_tokens, temperature)
                 text += more
             return text
