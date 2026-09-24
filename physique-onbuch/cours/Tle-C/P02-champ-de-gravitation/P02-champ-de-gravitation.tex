@@ -28,12 +28,12 @@
 \usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
 \usepackage{pagecolor}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
 \usepackage{pgfplots}
 \usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
 \usepackage[european,siunitx]{circuitikz} % schémas électriques
 \pgfplotsset{compat=1.18}
-\usepgfplotslibrary{fillbetween} % aires entre courbes (calcul intégral)
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
 \usepackage{enumitem}
 \usepackage{fancyhdr}
 % [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
@@ -54,6 +54,7 @@
 \usepackage{siunitx}
 % parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
 \sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
 \DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
 \usepackage{qrcode}
 % \degree : commande fréquemment utilisée par les modèles pour un angle ou une
@@ -209,6 +210,7 @@
 % Même style disponible dans un \draw TikZ simple (hors pgfplots)
 \tikzset{popcurve/.style={poporange,line width=1.8pt}}
 \tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
 
 % ============================================================
 % Pill / squiggle
@@ -277,6 +279,7 @@
 % Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
 \newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
 \providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
 \newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
 
 \newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
@@ -415,6 +418,18 @@
   \par\vfill\nopagebreak
   \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
   \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
 }
 
 \begin{document}
