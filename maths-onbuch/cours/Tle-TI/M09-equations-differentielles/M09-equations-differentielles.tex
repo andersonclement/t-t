@@ -1,0 +1,2855 @@
+% Équations différentielles — Mathématiques Tle TI — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic M09-equations-differentielles.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle TI}
+\newcommand{\DOCMODULE}{Relations et opérations fondamentales dans l'ensemble des nombres réels}
+\newcommand{\DOCLECON}{09}
+\newcommand{\DOCTITRE}{Équations différentielles}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+
+\begin{document}
+
+\pagegarde{Équations différentielles}{Mathématiques}{Tle TI}{Relations et opérations fondamentales dans l'ensemble des nombres réels}{09}{4 h}{Cette leçon introduit les équations différentielles, outil fondamental de modélisation des phénomènes évolutifs (physique, biologie, économie). On y apprend à résoudre l'équation y' = ay, puis les équations linéaires du second ordre à coefficients constants, avec ou sans second membre, et à déterminer l'unique solution vérifiant des conditions initiales.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais donner le vocabulaire des équations différentielles (ordre, degré, solution).
+\item À la fin de cette leçon, je sais vérifier qu'une fonction donnée est solution d'une équation différentielle.
+\item À la fin de cette leçon, je sais résoudre l'équation y' = ay et donner l'ensemble de ses solutions y = Ce\^{}(ax).
+\item À la fin de cette leçon, je sais déterminer l'unique solution de y' = ay vérifiant une condition initiale.
+\item À la fin de cette leçon, je sais écrire l'équation caractéristique de ay'' + by' + cy = 0 et discuter selon le signe du discriminant.
+\item À la fin de cette leçon, je sais résoudre ay'' + by' + cy = d (d constante) à l'aide d'une solution particulière constante.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Vocabulaire et notion de solution
+\item L'équation y' = ay
+\item Équation homogène du second ordre : ay'' + by' + cy = 0
+\item Équation avec second membre constant : ay'' + by' + cy = d
+\item Conditions initiales et unicité de la solution
+\item Modélisation par des équations différentielles
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais donner le vocabulaire des équations différentielles (ordre, degré, solution).
+\item À la fin de cette leçon, je sais vérifier qu'une fonction donnée est solution d'une équation différentielle.
+\item À la fin de cette leçon, je sais résoudre l'équation y' = ay et donner l'ensemble de ses solutions y = Ce\^{}(ax).
+\item À la fin de cette leçon, je sais déterminer l'unique solution de y' = ay vérifiant une condition initiale.
+\item À la fin de cette leçon, je sais écrire l'équation caractéristique de ay'' + by' + cy = 0 et discuter selon le signe du discriminant.
+\item À la fin de cette leçon, je sais résoudre ay'' + by' + cy = d (d constante) à l'aide d'une solution particulière constante.
+\item À la fin de cette leçon, je sais déterminer l'unique solution d'une équation du second ordre vérifiant deux conditions initiales.
+\item À la fin de cette leçon, je sais modéliser un phénomène simple (décharge d'un condensateur, croissance, refroidissement) par une équation différentielle et l'exploiter.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Dérivation des fonctions usuelles, en particulier la fonction exponentielle (Première et début de Terminale)
+\item Fonction exponentielle : propriétés algébriques, limites, courbe représentative
+\item Résolution des équations du second degré dans ℝ et dans ℂ (discriminant, racines complexes conjuguées)
+\item Résolution de systèmes linéaires de deux équations à deux inconnues
+\item Notion de fonction solution d'une équation et vérification par substitution
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Vocabulaire et notion de solution}
+
+\textbf{Situation d'accroche.} À Yaoundé, un technicien de la SONEL observe la charge d'un condensateur dans un circuit RC : plus le condensateur est chargé, plus il se charge \emph{lentement}. La vitesse de charge dépend de la charge elle-même ! À Foumban, un pisciculteur remarque le même phénomène : la croissance de sa population de tilapias ralentit à mesure que la nourriture de l'étang se raréfie. Dans les deux cas, on connaît une relation entre une quantité inconnue (la charge, la population) et \emph{sa vitesse de variation}. Comment prévoir la charge du condensateur ou le nombre de poissons à un instant donné ? Il faut résoudre une équation dont l'inconnue n'est pas un nombre, mais une \textbf{fonction} : c'est une \cle{équation différentielle}. Cette première section pose le vocabulaire et apprend à reconnaître et vérifier une solution.
+
+\courssub{Qu'est-ce qu'une équation différentielle ?}
+
+Jusqu'ici, tu as résolu des équations comme $x^2 - 5x + 6 = 0$ : l'inconnue $x$ est un \emph{nombre}. Une équation différentielle change de nature : l'inconnue est une \emph{fonction} $y$ de la variable $x$ (souvent le temps $t$ en physique), et l'équation mélange cette fonction avec ses dérivées.
+
+\begin{definition}[Équation différentielle]
+Une \cle{équation différentielle} est une équation dont l'inconnue est une fonction $y$, définie et dérivable sur un intervalle $I$ de $\mathbb{R}$, et qui relie la variable $x$, la fonction $y$ et certaines de ses dérivées $y'$, $y''$, \dots
+
+On la note symboliquement :
+\[ F\bigl(x,\, y,\, y',\, y'',\, \dots\bigr) = 0. \]
+\end{definition}
+
+\begin{exemplebox}[Premières équations différentielles]
+\begin{itemize}
+\item $y' = 2y$ : la vitesse de variation est proportionnelle à la quantité (croissance d'une population, charge d'un condensateur) ;
+\item $y'' + 4y = 0$ : modélise les oscillations d'un ressort ou d'un pendule ;
+\item $y' = y + x$ : mélange la fonction, sa dérivée et la variable.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[L'inconnue est une fonction, pas un nombre]
+Dire « résoudre $y' = 2y$ » ne signifie pas trouver un nombre, mais trouver \emph{toutes les fonctions} $f$ telles que pour tout réel $x$ : $f'(x) = 2f(x)$. Une réponse comme « $y = 3$ » n'a aucun sens ici.
+\end{attention}
+
+\courssub{Ordre et degré d'une équation différentielle}
+
+Pour classer les équations différentielles, on utilise deux indicateurs simples.
+
+\begin{definition}[Ordre]
+L'\cle{ordre} d'une équation différentielle est l'ordre de la dérivée la plus élevée qui y apparaît.
+\begin{itemize}
+\item $y' = 2y$ est d'\textbf{ordre 1} (seule $y'$ intervient) ;
+\item $y'' + 3y' - y = 0$ est d'\textbf{ordre 2} ($y''$ est la dérivée la plus élevée).
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Degré]
+Lorsque l'équation est \emph{polynomiale} par rapport aux dérivées, le \cle{degré} est l'exposant de la dérivée de plus haut ordre, une fois l'équation débarrassée des racines et des dénominateurs.
+\begin{itemize}
+\item $(y'')^3 + y' = 0$ est d'ordre 2 et de degré 3 ;
+\item $y'' = \sqrt{y'}$ n'a pas de degré tant qu'on n'élève pas au carré ; après élévation, $(y'')^2 = y'$ : ordre 2, degré 2.
+\end{itemize}
+\end{definition}
+
+Au programme de Terminale, on ne rencontrera que des équations \textbf{d'ordre 1 ou 2, de degré 1} (on dit aussi \emph{linéaires à coefficients constants}) : ce sont les plus utiles et les seules que l'on sait résoudre complètement à ce niveau.
+
+\courssub{Solution d'une équation différentielle}
+
+\begin{definition}[Solution sur un intervalle]
+Soit une équation différentielle d'ordre $n$. Une \cle{solution} de cette équation sur un intervalle $I$ est une fonction $f$, dérivable $n$ fois sur $I$, telle que l'égalité de l'équation soit vérifiée \textbf{pour tout} $x$ de $I$ lorsqu'on remplace $y$ par $f(x)$, $y'$ par $f'(x)$, etc.
+
+L'ensemble de toutes les solutions s'appelle la \cle{solution générale} de l'équation ; chaque fonction obtenue en fixant les constantes est une \cle{solution particulière}.
+\end{definition}
+
+\begin{methode}[Vérifier qu'une fonction $f$ est solution d'une équation différentielle]
+\begin{enumerate}
+\item Calculer les dérivées nécessaires : $f'(x)$, et $f''(x)$ si l'équation est d'ordre 2.
+\item \textbf{Substituer} : remplacer $y$, $y'$, $y''$ dans l'équation par $f(x)$, $f'(x)$, $f''(x)$.
+\item Simplifier et \textbf{conclure} : si l'égalité est vraie pour tout $x$ de l'intervalle, $f$ est solution ; si elle est fausse (même pour un seul $x$), $f$ n'est pas solution.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Vérification chiffrée]
+\textbf{1.} Montrons que $f(x) = 3e^{2x}$ est solution de $y' = 2y$ sur $\mathbb{R}$.
+
+$f$ est dérivable sur $\mathbb{R}$ et $f'(x) = 3 \times 2e^{2x} = 6e^{2x}$. Or $2f(x) = 2 \times 3e^{2x} = 6e^{2x}$. Donc pour tout réel $x$ : $f'(x) = 2f(x)$. \textbf{$f$ est bien solution.}
+
+\textbf{2.} La fonction $g(x) = e^{2x} + x$ est-elle solution de $y' = 2y$ ?
+
+$g'(x) = 2e^{2x} + 1$ et $2g(x) = 2e^{2x} + 2x$. L'égalité $g'(x) = 2g(x)$ exigerait $1 = 2x$ pour tout $x$, ce qui est faux (par exemple en $x = 0$ : $g'(0) = 3 \neq 2 = 2g(0)$). \textbf{$g$ n'est pas solution.}
+\end{exemplebox}
+
+\begin{exoresolu}[Vérifier une solution d'une équation d'ordre 2]
+Montrer que la fonction $f(x) = \cos(2x)$ est solution sur $\mathbb{R}$ de l'équation différentielle $y'' + 4y = 0$.
+\tcblower
+$f$ est deux fois dérivable sur $\mathbb{R}$ et :
+\begin{align*}
+f'(x) &= -2\sin(2x) \\
+f''(x) &= -4\cos(2x).
+\end{align*}
+Substituons dans le premier membre :
+\[ f''(x) + 4f(x) = -4\cos(2x) + 4\cos(2x) = 0. \]
+L'égalité est vraie pour tout réel $x$ : $f$ est bien solution de $y'' + 4y = 0$ sur $\mathbb{R}$. (On vérifierait de même que $g(x) = \sin(2x)$ est aussi solution : cette équation possède donc \emph{au moins} deux solutions distinctes.)
+\end{exoresolu}
+
+\courssub{Solution générale et solutions particulières}
+
+Reprenons l'équation la plus simple : $y' = y$. On vérifie facilement que $e^x$ est solution, mais aussi $2e^x$, $-5e^x$, et plus généralement toute fonction $x \mapsto Ce^x$ où $C$ est une constante réelle quelconque. Nous démontrerons dans la section suivante qu'il n'y en a \textbf{pas d'autres} : la solution générale de $y' = y$ est
+\[ y = Ce^x, \quad C \in \mathbb{R}. \]
+Chaque valeur de $C$ donne une solution particulière, dont la courbe est une exponentielle « dilatée ». La figure ci-dessous montre cette \emph{famille de courbes} : par chaque point du plan passe exactement une courbe solution.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=6.5cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-3.2, xmax=2.2, ymin=-4, ymax=8,
+    xtick={-3,-2,-1,0,1,2}, ytick={-2,2,4,6},
+    tick label style={font=\small},
+    clip=false
+]
+\addplot[popcurve, popmuted, domain=-3:1.8, samples=100]{-1.5*exp(x)};
+\addplot[popcurve, popblue, domain=-3:1.6, samples=100]{0.5*exp(x)};
+\addplot[popcurve, popgreen, domain=-3:1.5, samples=100]{1*exp(x)};
+\addplot[popcurve, poporange, very thick, domain=-3:1.4, samples=100]{2*exp(x)};
+\addplot[popcurve, poppurple, domain=-3:1.1, samples=100]{4*exp(x)};
+\addplot[only marks, mark=*, mark size=2.5pt, popink] coordinates {(0,2)};
+\node[popink, anchor=west, font=\small] at (axis cs:0.1,2.6) {$(0\,;\,2)$};
+\node[popmuted, font=\small, anchor=east] at (axis cs:-3.1,-2.6) {$C=-1{,}5$};
+\node[popblue, font=\small, anchor=east] at (axis cs:-3.1,1.1) {$C=0{,}5$};
+\node[popgreen, font=\small, anchor=east] at (axis cs:-3.1,2.6) {$C=1$};
+\node[poporange, font=\small, anchor=east] at (axis cs:-3.1,4.6) {$C=2$};
+\node[poppurple, font=\small, anchor=east] at (axis cs:-3.1,7) {$C=4$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Famille de courbes solutions de $y' = y$ : $y = Ce^x$ pour plusieurs valeurs de $C$. Une seule courbe (en orange, $C = 2$) passe par le point $(0\,;\,2)$ : c'est la solution vérifiant la condition initiale $y(0) = 2$.}
+\end{popfigure}
+
+\begin{attention}[Une infinité de solutions : ne pas confondre]
+Une équation différentielle admet en général une \textbf{infinité de solutions}, décrites par la solution générale qui dépend de constantes ($C$ pour une équation d'ordre 1, deux constantes pour une équation d'ordre 2). Écris « \emph{une} solution » quand tu exhibes une fonction qui convient, et « \emph{la} solution générale » quand tu donnes toute la famille. Dire « la solution de $y' = y$ est $e^x$ » est une erreur : $e^x$ n'est qu'\emph{une} solution particulière.
+\end{attention}
+
+\courssub{Conditions initiales (ou conditions de Cauchy)}
+
+Comment le technicien de la SONEL peut-il prévoir \emph{la} charge de \emph{son} condensateur, parmi l'infinité de solutions possibles ? En ajoutant une information mesurée à un instant donné : par exemple « à l'instant $t = 0$, la charge vaut 2 volts ». C'est une \textbf{condition initiale}.
+
+\begin{definition}[Condition initiale]
+Une \cle{condition initiale} (ou condition de Cauchy) pour une équation différentielle est la donnée de la valeur de la solution (et éventuellement de ses dérivées) en un point $x_0$ fixé :
+\begin{itemize}
+\item pour une équation d'\textbf{ordre 1} : une condition $y(x_0) = y_0$ ;
+\item pour une équation d'\textbf{ordre 2} : deux conditions $y(x_0) = y_0$ et $y'(x_0) = y_1$.
+\end{itemize}
+Le problème formé par l'équation différentielle et ses conditions initiales s'appelle un \cle{problème de Cauchy}.
+\end{definition}
+
+\begin{exemplebox}[Choisir la bonne courbe]
+Cherchons la solution de $y' = y$ vérifiant $y(0) = 2$. La solution générale est $y = Ce^x$. La condition s'écrit :
+\[ y(0) = Ce^0 = C = 2. \]
+L'unique solution du problème de Cauchy est donc $y = 2e^x$ : c'est exactement la courbe orange de la figure, la seule de la famille qui passe par le point $(0\,;\,2)$.
+\end{exemplebox}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Une équation différentielle a pour inconnue une \textbf{fonction} ; son \textbf{ordre} est celui de la dérivée la plus élevée.
+\item Une \textbf{solution} sur $I$ est une fonction qui, substituée avec ses dérivées, rend l'égalité vraie pour tout $x \in I$.
+\item La \textbf{solution générale} dépend de constantes arbitraires ; une \textbf{condition initiale} permet de sélectionner une unique solution particulière.
+\end{itemize}
+\end{aretenir}
+
+\begin{savaistu}[Newton, Leibniz et la naissance des équations différentielles]
+Les équations différentielles sont nées à la fin du XVII$^{\text{ème}}$ siècle avec Isaac \textbf{Newton} et Gottfried Wilhelm \textbf{Leibniz}, qui cherchaient à décrire le mouvement des planètes : la loi de la gravitation s'écrit naturellement comme une relation entre la position d'un astre et son accélération, c'est-à-dire la dérivée seconde de la position. Résoudre cette équation différentielle a permis de retrouver les orbites elliptiques observées par Kepler ! Depuis, les équations différentielles gouvernent la météorologie, l'épidémiologie (propagation d'une épidémie), l'économie et les réseaux électriques — comme ceux que la SONEL gère à Yaoundé.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+On considère l'équation différentielle $(E) : y'' - y = 0$.
+\begin{enumerate}
+\item Quel est l'ordre de $(E)$ ?
+\item Vérifier que $f(x) = e^x$ et $g(x) = e^{-x}$ sont solutions de $(E)$ sur $\mathbb{R}$.
+\item La fonction $h(x) = 3e^x - 2e^{-x}$ est-elle solution de $(E)$ ?
+\item Déterminer les réels $A$ et $B$ tels que la solution $y = Ae^x + Be^{-x}$ vérifie les conditions initiales $y(0) = 5$ et $y'(0) = 1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item $(E)$ est d'\textbf{ordre 2} car $y''$ est la dérivée la plus élevée.
+\item $f'(x) = e^x$ et $f''(x) = e^x$, donc $f''(x) - f(x) = e^x - e^x = 0$ : $f$ est solution. De même $g'(x) = -e^{-x}$, $g''(x) = e^{-x}$, donc $g''(x) - g(x) = 0$ : $g$ est solution.
+\item $h'(x) = 3e^x + 2e^{-x}$ et $h''(x) = 3e^x - 2e^{-x} = h(x)$, donc $h''(x) - h(x) = 0$ pour tout $x$ : $h$ est solution. (C'est un fait général : toute combinaison linéaire de solutions d'une équation linéaire homogène est encore solution.)
+\item La solution générale de $(E)$ est $y = Ae^x + Be^{-x}$.
+      Les conditions initiales donnent le système :
+      \[ \begin{cases} y(0) = A + B = 5 \\ y'(0) = A - B = 1 \end{cases} \]
+      En ajoutant les deux équations : $2A = 6 \Rightarrow A = 3$.
+      Alors $B = 5 - A = 2$.
+      L'unique solution du problème de Cauchy est $y = 3e^x + 2e^{-x}$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{L'équation $y' = ay$}
+
+Dans la section précédente, nous avons appris à reconnaître une équation différentielle, à préciser son ordre, et surtout à \emph{vérifier} qu'une fonction donnée est solution. Mais vérifier une solution qu'on vous tend sur un plateau ne suffit pas : le vrai travail du mathématicien, c'est de \cle{trouver toutes les solutions}. Nous commençons cette chasse aux solutions par l'équation différentielle la plus simple et la plus importante de toutes : celle où le taux de variation d'une quantité est proportionnel à la quantité elle-même.
+
+\courssub{Pourquoi cette équation est-elle si naturelle ?}
+
+Imagine un placement de \num{1000000} FCFA dans une caisse de microfinance à Yaoundé. Plus ton capital est gros, plus les intérêts produits chaque année sont gros : la \emph{vitesse de croissance} du capital est proportionnelle au capital lui-même. De même, dans un échantillon de matière radioactive, plus il reste d'atomes, plus il se désintègre d'atomes par seconde : la vitesse de désintégration est proportionnelle au nombre d'atomes restants.
+
+Dans les deux cas, si l'on note $y(x)$ la quantité présente à l'instant $x$, la situation se traduit par une relation du type :
+\[ y'(x) = a\, y(x), \]
+où $a$ est un réel fixé, appelé \cle{coefficient de proportionnalité} (ou taux). C'est l'équation différentielle que nous allons résoudre complètement dans cette section.
+
+\begin{definition}[Équation différentielle $y' = ay$]
+Soit $a$ un nombre réel donné. On appelle \cle{équation différentielle linéaire du premier ordre à coefficient constant} l'équation
+\[ (E) : \quad y' = ay, \]
+d'inconnue une fonction $y$ dérivable sur $\mathbb{R}$. Une \cle{solution} de $(E)$ est une fonction $f$ dérivable sur $\mathbb{R}$ telle que, pour tout réel $x$ : $f'(x) = a\,f(x)$.
+\end{definition}
+
+\begin{exemplebox}[Le cas trivial $a = 0$]
+Lorsque $a = 0$, l'équation devient $y' = 0$. Or nous savons depuis la Première qu'une fonction dérivable sur un intervalle a une dérivée nulle si et seulement si elle est \cle{constante} sur cet intervalle. Les solutions de $y' = 0$ sont donc les fonctions constantes $x \mapsto C$, où $C$ est un réel quelconque. Ce cas particulier est un bon point de départ : il suggère que l'ensemble des solutions dépendra d'\emph{une constante arbitraire}.
+\end{exemplebox}
+
+\courssub{Recherche intuitive d'une solution}
+
+Cherchons une fonction dont la dérivée est proportionnelle à elle-même. Tu connais déjà une fonction extraordinaire : la fonction exponentielle, qui vérifie $(e^x)' = e^x$. La fonction $x \mapsto e^x$ est donc solution de $y' = y$ (cas $a = 1$).
+
+Pour le cas général, essayons $f(x) = e^{ax}$. En dérivant une composée : $f'(x) = a e^{ax} = a f(x)$. Bingo ! La fonction $x \mapsto e^{ax}$ est solution de $y' = ay$. Et si l'on multiplie par une constante $C$, c'est-à-dire $f(x) = C e^{ax}$, alors $f'(x) = C \cdot a e^{ax} = a f(x)$ : c'est encore une solution. Nous venons de découvrir toute une famille de solutions. Reste la question décisive : \emph{y en a-t-il d'autres ?} Le théorème suivant répond : non.
+
+\begin{propriete}[Théorème fondamental — solutions de $y' = ay$ (démonstration exigible)]
+Soit $a$ un réel. L'ensemble des solutions de l'équation différentielle $y' = ay$ est l'ensemble des fonctions définies sur $\mathbb{R}$ par
+\[ x \longmapsto C e^{ax}, \quad \text{où } C \text{ est une constante réelle quelconque.} \]
+Autrement dit : les solutions sont exactement les fonctions proportionnelles à $x \mapsto e^{ax}$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée du théorème (à savoir refaire)]
+Soit $a$ un réel fixé. Procédons en deux temps.
+
+\textbf{Étape 1 : les fonctions $x \mapsto Ce^{ax}$ sont bien des solutions.}
+
+Soit $C$ un réel quelconque et $f$ définie sur $\mathbb{R}$ par $f(x) = Ce^{ax}$. La fonction $f$ est dérivable sur $\mathbb{R}$ comme composée et produit de fonctions dérivables, et pour tout réel $x$ :
+\[ f'(x) = C \times a e^{ax} = a \times \left(C e^{ax}\right) = a f(x). \]
+Donc $f$ est solution de $y' = ay$. En particulier, pour $C = 0$, on retrouve la \cle{fonction nulle}, qui est bien solution (sa dérivée est nulle, et $a \times 0 = 0$).
+
+\textbf{Étape 2 : il n'y a pas d'autre solution.}
+
+C'est ici que réside l'astuce, à connaître absolument. Soit $y$ une solution \emph{quelconque} de $y' = ay$. Introduisons la fonction auxiliaire $g$ définie sur $\mathbb{R}$ par :
+\[ g(x) = y(x)\, e^{-ax}. \]
+L'idée : « neutraliser » la croissance exponentielle pour voir ce qui reste. La fonction $g$ est dérivable sur $\mathbb{R}$ comme produit de fonctions dérivables. Dérivons avec la formule $(uv)' = u'v + uv'$ :
+\begin{align*}
+g'(x) &= y'(x)\, e^{-ax} + y(x) \times \left(-a e^{-ax}\right) \\
+&= e^{-ax} \left[ y'(x) - a\, y(x) \right].
+\end{align*}
+Or $y$ est solution de $y' = ay$, donc pour tout réel $x$ : $y'(x) - a y(x) = 0$. Par conséquent :
+\[ g'(x) = e^{-ax} \times 0 = 0 \quad \text{pour tout } x \in \mathbb{R}. \]
+La fonction $g$ a une dérivée nulle sur l'intervalle $\mathbb{R}$ : elle est donc \cle{constante}. Il existe un réel $C$ tel que, pour tout $x$ :
+\[ y(x)\, e^{-ax} = C, \quad \text{c'est-à-dire} \quad y(x) = C e^{ax}. \]
+Toute solution est donc bien de la forme annoncée. $\blacksquare$
+\end{experience}
+
+\begin{aretenir}[À retenir absolument]
+Résoudre $y' = ay$ ne demande aucun calcul : on écrit directement
+\[ y(x) = C e^{ax}, \quad C \in \mathbb{R}. \]
+La constante $C$ reste indéterminée tant qu'aucune information supplémentaire n'est donnée : il y a \emph{une infinité} de solutions, toutes proportionnelles entre elles.
+\end{aretenir}
+
+\begin{attention}[La constante est multiplicative, pas additive]
+L'erreur classique du baccalauréat : écrire que les solutions de $y' = ay$ sont les fonctions $y(x) = e^{ax} + C$, par analogie avec la recherche de primitives. C'est \textbf{faux} ! Vérifie-le toi-même : si $f(x) = e^{ax} + C$ avec $C \neq 0$, alors $f'(x) = a e^{ax}$, mais $a f(x) = a e^{ax} + aC \neq f'(x)$. La fonction $f$ n'est \emph{pas} solution. Dans une équation différentielle, la constante d'intégration apparaît en \cle{facteur} : $y(x) = C e^{ax}$, et non en terme ajouté.
+\end{attention}
+
+\courssub{Condition initiale et unicité de la solution}
+
+Parmi l'infinité de solutions $x \mapsto Ce^{ax}$, comment en choisir une ? Il suffit de connaître la valeur de la quantité à un instant donné : c'est ce qu'on appelle une \cle{condition initiale}.
+
+\begin{propriete}[Existence et unicité (existence admise, unicité démontrée)]
+Soient $a$, $x_0$ et $y_0$ trois réels. Il existe une \cle{unique} fonction $f$, solution de $y' = ay$ sur $\mathbb{R}$, vérifiant la condition initiale $f(x_0) = y_0$. C'est la fonction :
+\[ f(x) = y_0\, e^{a(x - x_0)}. \]
+\end{propriete}
+
+\begin{experience}[Démonstration de l'unicité]
+D'après le théorème fondamental, toute solution s'écrit $f(x) = Ce^{ax}$ pour un certain réel $C$. Imposons la condition initiale :
+\[ f(x_0) = y_0 \iff C e^{a x_0} = y_0 \iff C = y_0\, e^{-a x_0} \quad (\text{car } e^{ax_0} \neq 0). \]
+La constante $C$ est donc \emph{entièrement déterminée} : il n'y a qu'un seul choix possible. En reportant :
+\[ f(x) = y_0\, e^{-a x_0} \times e^{ax} = y_0\, e^{a(x - x_0)}. \]
+Il existe donc une solution vérifiant la condition initiale, et une seule. $\blacksquare$
+\end{experience}
+
+\begin{methode}[Déterminer la solution vérifiant une condition initiale]
+Pour résoudre $y' = ay$ avec $y(x_0) = y_0$ :
+\begin{enumerate}
+\item Écrire la solution générale : $y(x) = C e^{ax}$.
+\item Traduire la condition initiale : $C e^{a x_0} = y_0$.
+\item En tirer $C = y_0 e^{-a x_0}$ (l'exponentielle ne s'annule jamais, on peut diviser).
+\item Conclure en écrivant la solution unique : $y(x) = y_0 e^{a(x-x_0)}$.
+\end{enumerate}
+Cas très fréquent au Bac : la condition est donnée en $x_0 = 0$. Alors $C = y_0$ tout simplement, et la solution est $y(x) = y_0 e^{ax}$.
+\end{methode}
+
+\begin{exoresolu}[Résoudre $y' = -3y$ avec $y(0) = 5$]
+Déterminer l'unique fonction $f$ définie et dérivable sur $\mathbb{R}$, solution de l'équation différentielle $y' = -3y$, telle que $f(0) = 5$.
+\tcblower
+\textbf{Étape 1 — Solution générale.} L'équation est de la forme $y' = ay$ avec $a = -3$. D'après le théorème fondamental, ses solutions sont les fonctions
+\[ f(x) = C e^{-3x}, \quad C \in \mathbb{R}. \]
+\textbf{Étape 2 — Condition initiale.} On impose $f(0) = 5$ :
+\[ f(0) = C e^{-3 \times 0} = C e^{0} = C. \]
+Donc $C = 5$.
+\textbf{Étape 3 — Conclusion.} L'unique solution cherchée est :
+\[ f(x) = 5e^{-3x}. \]
+\textbf{Vérification (toujours profitable) :} $f'(x) = 5 \times (-3) e^{-3x} = -3 f(x)$ et $f(0) = 5e^0 = 5$. La fonction convient. $\blacksquare$
+\end{exoresolu}
+
+\begin{exoresolu}[Une condition initiale en un point quelconque]
+Résoudre l'équation $2y' = y$ sachant que la solution $f$ vérifie $f(2) = e$.
+\tcblower
+\textbf{Étape 1 — Se ramener à la forme $y' = ay$.} On divise par $2$ : $y' = \dfrac{1}{2} y$. Ici $a = \dfrac{1}{2}$, donc $f(x) = C e^{x/2}$.
+\textbf{Étape 2 — Condition initiale.} $f(2) = e$ s'écrit :
+\[ C e^{2/2} = e \iff C e = e \iff C = 1. \]
+\textbf{Étape 3 — Conclusion.} $f(x) = e^{x/2}$. Vérification : $f'(x) = \dfrac{1}{2} e^{x/2} = \dfrac{1}{2} f(x)$, donc $2f'(x) = f(x)$, et $f(2) = e^1 = e$. $\blacksquare$
+\end{exoresolu}
+
+\courssub{Signe de $a$ et comportement des solutions}
+
+Le signe du coefficient $a$ commande toute la dynamique des solutions. Puisque $y'(x) = a\, y(x)$, la dérivée a le signe de $a \times y(x)$. Pour une solution avec $C > 0$ (donc $y(x) > 0$ partout) :
+
+\begin{itemize}
+\item si $a > 0$, alors $y' > 0$ : la solution est strictement \cle{croissante} et explose vers $+\infty$ quand $x \to +\infty$ (croissance exponentielle) ;
+\item si $a < 0$, alors $y' < 0$ : la solution est strictement \cle{décroissante} et tend vers $0$ quand $x \to +\infty$ (décroissance exponentielle) ;
+\item si $a = 0$, la solution est constante.
+\end{itemize}
+
+Les solutions avec $C < 0$ sont les symétriques des précédentes par rapport à l'axe des abscisses, et $C = 0$ donne la fonction nulle. Remarque essentielle : deux courbes solutions distinctes ne se rencontrent jamais (sinon, par unicité, les solutions seraient égales partout).
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.92\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-3.2, xmax=3.2, ymin=-4.5, ymax=6.5,
+    xtick={-3,-2,-1,1,2,3}, ytick={-4,-2,2,4,6},
+    tick label style={font=\small},
+    legend style={font=\small, at={(0.02,0.98)}, anchor=north west, draw=popline},
+    samples=100
+]
+\addplot[popcurve, domain=-3:2.6, popblue] {exp(0.5*x)};
+\addlegendentry{$y = e^{0,5x}$ ($C=1$, $a>0$)}
+\addplot[popcurve, domain=-3:1.9, popblue!60] {2*exp(0.5*x)};
+\addlegendentry{$y = 2e^{0,5x}$ ($C=2$)}
+\addplot[popcurve, domain=-1.9:3, poporange] {exp(-0.5*x)};
+\addlegendentry{$y = e^{-0,5x}$ ($C=1$, $a<0$)}
+\addplot[popcurve, domain=-2.6:3, poporange!60] {2*exp(-0.5*x)};
+\addlegendentry{$y = 2e^{-0,5x}$ ($C=2$)}
+\addplot[popcurve, domain=-3:3, popmuted, dashed] {-exp(0.5*x)};
+\addlegendentry{$y = -e^{0,5x}$ ($C=-1$)}
+\addplot[only marks, mark=*, mark size=2pt, popink] coordinates {(0,1) (0,2) (0,-1)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Familles de courbes solutions de $y' = 0,5\,y$ (croissance, en bleu) et $y' = -0,5\,y$ (décroissance, en orange). Toutes les courbes avec $C = 1$ passent par le point $(0\,;\,1)$ : c'est la condition initiale $y(0) = 1$ qui sélectionne une unique courbe dans chaque famille.}
+\end{popfigure}
+
+\courssub{Premières modélisations}
+
+L'équation $y' = ay$ est le modèle mathématique de tous les phénomènes où « la variation est proportionnelle à la quantité présente ». En voici trois, que tu retrouveras au baccalauréat.
+
+\textbf{Désintégration radioactive.} Le nombre $N(t)$ de noyaux radioactifs présents à l'instant $t$ vérifie $N'(t) = -\lambda N(t)$, où $\lambda > 0$ est la constante de désintégration. Avec $N(0) = N_0$, on obtient $N(t) = N_0 e^{-\lambda t}$ : décroissance exponentielle. Le \cle{temps de demi-vie} $T$, tel que $N(T) = \dfrac{N_0}{2}$, vérifie $e^{-\lambda T} = \dfrac{1}{2}$, soit $T = \dfrac{\ln 2}{\lambda}$.
+
+\textbf{Intérêts composés en continu.} Un capital $K(t)$ placé au taux annuel $r$, capitalisé « en continu », vérifie $K'(t) = rK(t)$, d'où $K(t) = K_0 e^{rt}$. Un capital de \num{500000} FCFA placé à $5\,\%$ en continu devient, après 10 ans : $K(10) = \num{500000}\, e^{0,5} \approx \num{824361}$ FCFA.
+
+\textbf{Refroidissement simplifié.} Si un corps à la température $y(t)$ est plongé dans un milieu à température constante $\theta$, la loi de Newton s'écrit $y' = a(y - \theta)$. En posant $z = y - \theta$, on obtient $z' = az$ : on est ramené à notre équation ! D'où $y(t) = \theta + (y_0 - \theta)e^{at}$ avec $a < 0$.
+
+\begin{savaistu}[La loi de refroidissement de Newton et la médecine légale]
+Isaac Newton a énoncé vers 1701 que la vitesse de refroidissement d'un corps est proportionnelle à l'écart entre sa température et celle du milieu ambiant : $y' = a(y - \theta)$ avec $a < 0$. Trois siècles plus tard, cette équation est utilisée chaque jour par les médecins légistes du monde entier : en mesurant la température d'un corps découvert et en connaissant la température ambiante $\theta$, ils résolvent l'équation différentielle à l'envers pour estimer l'heure du décès. La température du corps humain ($37~^\circ$C environ) décroît exponentiellement vers la température ambiante : chaque mesure horaire permet de resserrer l'estimation. Les équations différentielles font ainsi parler les mathématiques jusque dans les enquêtes criminelles !
+\end{savaistu}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Résoudre $y' = 4y$ avec $y(0) = -2$.
+\item Déterminer la fonction $f$ solution de $3y' + y = 0$ telle que $f(\ln 8) = 1$.
+\item Un capital $K(t)$ (en milliers de FCFA) vérifie $K'(t) = 0,07\, K(t)$ et $K(0) = 200$. Calculer le capital au bout de 10 ans (on donnera une valeur approchée avec $e^{0,7} \approx 2,014$).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Solution générale : $y(x) = Ce^{4x}$. Condition : $y(0) = C = -2$. Donc $y(x) = -2e^{4x}$.
+\item L'équation s'écrit $y' = -\dfrac{1}{3}y$, donc $f(x) = Ce^{-x/3}$. La condition $f(\ln 8) = 1$ donne $C e^{-(\ln 8)/3} = 1$. Or $e^{-(\ln 8)/3} = 8^{-1/3} = \dfrac{1}{2}$, donc $\dfrac{C}{2} = 1$, soit $C = 2$. Ainsi $f(x) = 2e^{-x/3}$.
+\item $K(t) = 200\, e^{0,07t}$. Au bout de 10 ans : $K(10) = 200\, e^{0,7} \approx 200 \times 2,014 = 402,8$ milliers de FCFA, soit environ \num{402800} FCFA.
+\end{enumerate}
+\end{corrige}
+
+Nous savons désormais résoudre entièrement les équations du premier ordre de la forme $y' = ay$, avec ou sans condition initiale. Mais de nombreux phénomènes — oscillations d'un ressort, circuits électriques, suspensions d'un véhicule sur les pistes du Cameroun — font intervenir la dérivée seconde. C'est l'objet de la section suivante : l'équation $ay'' + by' + cy = 0$.
+
+\coursec{Équation homogène du second ordre : $ay'' + by' + cy = 0$}
+
+Dans la section précédente, tu as appris à résoudre l'équation différentielle du premier ordre $y' = ay$, dont les solutions sont les fonctions exponentielles $y = Ce^{ax}$. Cette équation modélise déjà de nombreux phénomènes : croissance d'une population, décroissance radioactive, charge d'un condensateur. Mais beaucoup de situations réelles font intervenir non seulement une quantité et sa vitesse de variation, mais aussi son \emph{accélération} : pense à la suspension d'un véhicule qui absorbe les chocs sur une piste dégradée, ou au courant dans un circuit électrique. Ces phénomènes sont gouvernés par des équations différentielles du \cle{second ordre}, c'est-à-dire faisant intervenir la dérivée seconde $y''$. C'est l'objet de cette section : résoudre complètement l'équation homogène à coefficients constants $ay'' + by' + cy = 0$.
+
+\courssub{Position du problème et intuition}
+
+\begin{definition}[Équation différentielle linéaire homogène du second ordre à coefficients constants]
+Soient $a$, $b$, $c$ trois réels avec $a \neq 0$. On appelle \cle{équation différentielle linéaire homogène du second ordre à coefficients constants} toute équation de la forme
+\[ (E) : \quad ay'' + by' + cy = 0 \]
+où $y$ est une fonction inconnue, deux fois dérivable sur $\mathbb{R}$. Une \cle{solution} de $(E)$ est une fonction $f$ deux fois dérivable sur $\mathbb{R}$ telle que, pour tout réel $x$ : $af''(x) + bf'(x) + cf(x) = 0$.
+\end{definition}
+
+L'adjectif \emph{homogène} signifie que le second membre est nul ; l'expression \emph{à coefficients constants} signifie que $a$, $b$, $c$ sont des nombres fixés, indépendants de $x$. Le \cle{degré} de cette équation différentielle est $1$ (la plus haute dérivée, $y''$, apparaît à la puissance $1$).
+
+\textbf{Intuition.} Pour l'équation du premier ordre $y' = ay$, les solutions étaient des exponentielles. L'idée naturelle, due à Euler, est de chercher si l'équation du second ordre admet, elle aussi, des solutions \cle{exponentielles} de la forme $y = e^{rx}$, où $r$ est un nombre à déterminer. Pourquoi ce choix ? Parce que l'exponentielle a une propriété miraculeuse : dériver $e^{rx}$ revient simplement à la multiplier par $r$. Ainsi $y$, $y'$ et $y''$ seront toutes proportionnelles à $e^{rx}$, et l'équation se transformera en une simple équation algébrique en $r$.
+
+\courssub{Recherche de solutions exponentielles et équation caractéristique}
+
+\begin{experience}[Pourquoi chercher des solutions de la forme $e^{rx}$ ?]
+Cherchons une solution de $(E) : ay'' + by' + cy = 0$ sous la forme $y(x) = e^{rx}$, où $r$ est un réel (ou un complexe) inconnu.
+
+\begin{enumerate}
+\item \textbf{Calculons les dérivées.} On a :
+\[ y(x) = e^{rx}, \qquad y'(x) = r\,e^{rx}, \qquad y''(x) = r^2 e^{rx}. \]
+\item \textbf{Injectons dans l'équation.} La fonction $y$ est solution de $(E)$ si et seulement si, pour tout réel $x$ :
+\[ a\,r^2 e^{rx} + b\,r\,e^{rx} + c\,e^{rx} = 0. \]
+\item \textbf{Factorisons.} En mettant $e^{rx}$ en facteur :
+\[ e^{rx}\left(ar^2 + br + c\right) = 0. \]
+\item \textbf{Concluons.} Comme $e^{rx} \neq 0$ pour tout $x$, l'égalité précédente équivaut à
+\[ ar^2 + br + c = 0. \]
+\end{enumerate}
+
+Ainsi, $y = e^{rx}$ est solution de $(E)$ \textbf{si et seulement si} $r$ est racine du trinôme $ar^2 + br + c$. Tout le problème différentiel se ramène donc à la résolution d'une équation du second degré, que tu maîtrises depuis la classe de Première !
+\end{experience}
+
+\begin{definition}[Équation caractéristique]
+On appelle \cle{équation caractéristique} associée à l'équation différentielle $(E) : ay'' + by' + cy = 0$ l'équation du second degré d'inconnue $r$ :
+\[ ar^2 + br + c = 0. \]
+Son discriminant est $\Delta = b^2 - 4ac$.
+\end{definition}
+
+\begin{attention}[Bien respecter l'ordre des coefficients]
+Dans l'équation caractéristique, le coefficient de $r^2$ est celui de $y''$, le coefficient de $r$ est celui de $y'$, et le terme constant est celui de $y$. Par exemple, pour $2y'' - 3y' + y = 0$, l'équation caractéristique est $2r^2 - 3r + 1 = 0$, et non $r^2 - 3r + 2 = 0$. Une erreur d'ordre fausse toute la résolution.
+\end{attention}
+
+\courssub{Le théorème fondamental : discussion selon le signe de $\Delta$}
+
+L'équation caractéristique étant du second degré, trois cas se présentent selon le signe de son discriminant $\Delta = b^2 - 4ac$. Le théorème suivant, \textbf{admis au programme}, donne l'ensemble complet des solutions dans chacun des trois cas.
+
+\begin{propriete}[Solutions de $ay'' + by' + cy = 0$ (théorème admis)]
+Soit $(E) : ay'' + by' + cy = 0$ avec $a \neq 0$, d'équation caractéristique $ar^2 + br + c = 0$ de discriminant $\Delta = b^2 - 4ac$. L'ensemble des solutions de $(E)$, définies sur $\mathbb{R}$, est :
+
+\begin{itemize}
+\item \textbf{Cas $\Delta > 0$ :} l'équation caractéristique admet deux racines réelles distinctes
+\[ r_1 = \frac{-b - \sqrt{\Delta}}{2a} \quad \text{et} \quad r_2 = \frac{-b + \sqrt{\Delta}}{2a}, \]
+et les solutions de $(E)$ sont les fonctions
+\[ y(x) = A\,e^{r_1 x} + B\,e^{r_2 x}, \qquad (A, B) \in \mathbb{R}^2. \]
+
+\item \textbf{Cas $\Delta = 0$ :} l'équation caractéristique admet une racine double $r_0 = -\dfrac{b}{2a}$, et les solutions de $(E)$ sont les fonctions
+\[ y(x) = (Ax + B)\,e^{r_0 x}, \qquad (A, B) \in \mathbb{R}^2. \]
+
+\item \textbf{Cas $\Delta < 0$ :} l'équation caractéristique admet deux racines complexes conjuguées $r_1 = \alpha - i\beta$ et $r_2 = \alpha + i\beta$ (avec $\beta > 0$), et les solutions réelles de $(E)$ sont les fonctions
+\[ y(x) = e^{\alpha x}\left(A\cos(\beta x) + B\sin(\beta x)\right), \qquad (A, B) \in \mathbb{R}^2. \]
+\end{itemize}
+
+Dans les trois cas, les solutions forment un ensemble à \textbf{deux paramètres réels} $A$ et $B$ : on dit que la solution générale dépend de deux constantes arbitraires.
+\end{propriete}
+
+\begin{attention}[Théorème admis, mais démarche démontrée]
+Au Baccalauréat, on \textbf{admet} que ces familles de fonctions donnent \emph{toutes} les solutions de $(E)$ : il n'y en a pas d'autres. En revanche, la recherche des solutions exponentielles (le fait que $y = e^{rx}$ est solution si et seulement si $ar^2 + br + c = 0$) a été démontrée plus haut et peut t'être demandée. Retiens aussi pourquoi le cas $\Delta = 0$ fait apparaître un facteur $x$ : lorsque la racine est double, la seule exponentielle $e^{r_0 x}$ ne suffit plus à engendrer toutes les solutions ; on vérifie (exercice classique) que $x \mapsto x\,e^{r_0 x}$ est alors une seconde solution, indépendante de la première.
+\end{attention}
+
+\begin{methode}[Résoudre $ay'' + by' + cy = 0$ en quatre étapes]
+\begin{enumerate}
+\item \textbf{Écrire l'équation caractéristique} $ar^2 + br + c = 0$, en veillant à l'ordre des coefficients.
+\item \textbf{Calculer le discriminant} $\Delta = b^2 - 4ac$ et déterminer son signe.
+\item \textbf{Trouver les racines} selon le cas : deux racines réelles $r_1, r_2$ si $\Delta > 0$ ; une racine double $r_0$ si $\Delta = 0$ ; deux racines complexes $\alpha \pm i\beta$ si $\Delta < 0$.
+\item \textbf{Écrire la solution générale} avec la formule correspondant au cas, en introduisant deux constantes réelles $A$ et $B$.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.55cm and 0.9cm,
+  box/.style={draw=popblue, thick, rounded corners, fill=popblueL, text width=4.6cm, align=center, inner sep=6pt, font=\small},
+  res/.style={draw=popdark, thick, rounded corners, fill=popcream, text width=3.6cm, align=center, inner sep=6pt, font=\small},
+  fleche/.style={-{Stealth[length=3mm]}, thick, popdark}
+]
+\node[box] (eq) {\textbf{Équation} $ay''+by'+cy=0$};
+\node[box, below=of eq, align=center] (car) {\textbf{Équation caractéristique}\\ $ar^2+br+c=0$};
+\node[box, below=of car, align=center] (delta) {\textbf{Discriminant}\\ $\Delta = b^2-4ac$};
+\node[res, below left=1.1cm and 2.2cm of delta, align=center] (pos) {$\Delta > 0$\\[2pt] $r_1, r_2 \in \mathbb{R}$\\[3pt] $y = Ae^{r_1 x}+Be^{r_2 x}$};
+\node[res, below=1.1cm of delta, align=center] (nul) {$\Delta = 0$\\[2pt] racine double $r_0$\\[3pt] $y=(Ax+B)e^{r_0 x}$};
+\node[res, below right=1.1cm and 2.2cm of delta, align=center] (neg) {$\Delta < 0$\\[2pt] $r = \alpha \pm i\beta$\\[3pt] $y=e^{\alpha x}(A\cos\beta x + B\sin\beta x)$};
+\draw[fleche] (eq) -- (car);
+\draw[fleche] (car) -- (delta);
+\draw[fleche] (delta.south) -- (pos.north);
+\draw[fleche] (delta.south) -- (nul.north);
+\draw[fleche] (delta.south) -- (neg.north);
+\end{tikzpicture}
+\end{center}
+\legende{Arbre de décision : la résolution de $ay''+by'+cy=0$ selon le signe du discriminant.}
+\end{popfigure}
+
+\courssub{Exemples chiffrés : un exemple par cas}
+
+\begin{exemplebox}[Cas $\Delta > 0$ : résoudre $y'' - 5y' + 6y = 0$]
+\textbf{Étape 1.} Équation caractéristique : $r^2 - 5r + 6 = 0$.
+
+\textbf{Étape 2.} Discriminant : $\Delta = (-5)^2 - 4 \times 1 \times 6 = 25 - 24 = 1 > 0$.
+
+\textbf{Étape 3.} Deux racines réelles distinctes :
+\[ r_1 = \frac{5 - 1}{2} = 2 \qquad \text{et} \qquad r_2 = \frac{5 + 1}{2} = 3. \]
+
+\textbf{Étape 4.} Solution générale :
+\[ y(x) = A\,e^{2x} + B\,e^{3x}, \qquad (A,B) \in \mathbb{R}^2. \]
+
+\textbf{Vérification} (pour $A = B = 1$, par exemple) : si $y = e^{2x} + e^{3x}$, alors $y' = 2e^{2x} + 3e^{3x}$ et $y'' = 4e^{2x} + 9e^{3x}$, d'où
+\[ y'' - 5y' + 6y = (4 - 10 + 6)e^{2x} + (9 - 15 + 6)e^{3x} = 0. \]
+\end{exemplebox}
+
+\begin{exemplebox}[Cas $\Delta = 0$ : résoudre $y'' + 4y' + 4y = 0$]
+\textbf{Étape 1.} Équation caractéristique : $r^2 + 4r + 4 = 0$.
+
+\textbf{Étape 2.} Discriminant : $\Delta = 16 - 16 = 0$.
+
+\textbf{Étape 3.} Racine double : $r_0 = -\dfrac{4}{2} = -2$. (On reconnaît l'identité remarquable $r^2 + 4r + 4 = (r+2)^2$.)
+
+\textbf{Étape 4.} Solution générale :
+\[ y(x) = (Ax + B)\,e^{-2x}, \qquad (A,B) \in \mathbb{R}^2. \]
+\end{exemplebox}
+
+\begin{exemplebox}[Cas $\Delta < 0$ : résoudre $y'' + 2y' + 5y = 0$]
+\textbf{Étape 1.} Équation caractéristique : $r^2 + 2r + 5 = 0$.
+
+\textbf{Étape 2.} Discriminant : $\Delta = 4 - 20 = -16 < 0$.
+
+\textbf{Étape 3.} Deux racines complexes conjuguées :
+\[ r = \frac{-2 \pm \sqrt{-16}}{2} = \frac{-2 \pm 4i}{2} = -1 \pm 2i. \]
+On identifie $\alpha = -1$ (partie réelle) et $\beta = 2$ (partie imaginaire positive).
+
+\textbf{Étape 4.} Solution générale réelle :
+\[ y(x) = e^{-x}\left(A\cos(2x) + B\sin(2x)\right), \qquad (A,B) \in \mathbb{R}^2. \]
+\end{exemplebox}
+
+\begin{attention}[Les deux pièges du cas $\Delta < 0$]
+\begin{itemize}
+\item \textbf{$\beta$ est la partie imaginaire \emph{positive} de la racine}, et non la racine elle-même. Pour $r = -1 \pm 2i$, on prend $\beta = 2$ (et non $-2$, ni $2i$). Dans la solution, on écrit $\cos(2x)$ et $\sin(2x)$, jamais $\cos(2ix)$.
+\item \textbf{N'oublie pas le facteur $e^{\alpha x}$.} Une erreur fréquente consiste à écrire $y = A\cos(\beta x) + B\sin(\beta x)$ en oubliant l'exponentielle. Cette exponentielle traduit l'\emph{amortissement} (si $\alpha < 0$) ou l'amplification (si $\alpha > 0$) des oscillations : elle est indispensable.
+\end{itemize}
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.95\linewidth, height=6.2cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-0.3, xmax=6.5, ymin=-1.4, ymax=2.2,
+  grid=both, grid style={popline!40},
+  tick label style={font=\small},
+  legend style={font=\small, at={(0.98,0.97)}, anchor=north east, draw=popline}
+]
+\addplot[popcurve, domain=0:6.3, samples=300] {exp(-x)*(cos(deg(2*x)) + sin(deg(2*x)))};
+\addlegendentry{$y = e^{-x}(\cos 2x + \sin 2x)$}
+\addplot[poporange, dashed, thick, domain=0:6.3, samples=200] {1.4142*exp(-x)};
+\addlegendentry{enveloppe $y = \sqrt{2}\,e^{-x}$}
+\addplot[poporange, dashed, thick, domain=0:6.3, samples=200] {-1.4142*exp(-x)};
+\addlegendentry{enveloppe $y = -\sqrt{2}\,e^{-x}$}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Solution oscillante amortie du cas $\Delta < 0$ : la courbe de $y = e^{-x}(\cos 2x + \sin 2x)$ oscille entre les deux enveloppes exponentielles $\pm\sqrt{2}\,e^{-x}$ et tend vers $0$.}
+\end{popfigure}
+
+\begin{savaistu}[Les oscillations amorties : des pistes du Cameroun aux circuits électriques]
+Le cas $\Delta < 0$ n'est pas qu'une curiosité mathématique : il décrit les \cle{oscillations amorties}. Quand un véhicule roule sur une piste déformée entre Douala et Yaoundé, sa suspension (ressort + amortisseur) obéit précisément à une équation du type $my'' + \lambda y' + ky = 0$, où $m$ est la masse, $k$ la raideur du ressort et $\lambda$ le coefficient de frottement de l'amortisseur. Si l'amortissement est faible ($\Delta < 0$), la caisse oscille en s'apaisant progressivement : c'est la courbe de la figure ci-dessus. Si l'amortissement est fort ($\Delta \geq 0$), le véhicule revient à sa position d'équilibre sans osciller. Le même modèle gouverne les circuits électriques RLC utilisés dans les installations de CAMTEL : les mathématiques que tu apprends ici sont celles des ingénieurs en télécommunications et en mécanique !
+\end{savaistu}
+
+\courssub{Exercice résolu de synthèse}
+
+\begin{exoresolu}[Résolution complète avec les trois cas]
+Pour chacune des équations différentielles suivantes, donner l'ensemble des solutions sur $\mathbb{R}$ :
+\[ (E_1) : y'' - y' - 2y = 0 \qquad (E_2) : 4y'' - 4y' + y = 0 \qquad (E_3) : y'' + 4y = 0. \]
+\tcblower
+\textbf{Équation $(E_1) : y'' - y' - 2y = 0$.}
+
+Équation caractéristique : $r^2 - r - 2 = 0$. Discriminant : $\Delta = 1 + 8 = 9 > 0$. Racines :
+\[ r_1 = \frac{1 - 3}{2} = -1, \qquad r_2 = \frac{1 + 3}{2} = 2. \]
+Solutions : $y(x) = A\,e^{-x} + B\,e^{2x}$, $(A,B) \in \mathbb{R}^2$.
+
+\textbf{Équation $(E_2) : 4y'' - 4y' + y = 0$.}
+
+Équation caractéristique : $4r^2 - 4r + 1 = 0$. Discriminant : $\Delta = 16 - 16 = 0$. Racine double :
+\[ r_0 = \frac{4}{8} = \frac{1}{2}. \]
+Solutions : $y(x) = (Ax + B)\,e^{x/2}$, $(A,B) \in \mathbb{R}^2$.
+
+\textbf{Équation $(E_3) : y'' + 4y = 0$.}
+
+Attention : ici $b = 0$ (il n'y a pas de terme en $y'$). Équation caractéristique : $r^2 + 4 = 0$. Discriminant : $\Delta = -16 < 0$. Racines : $r = \pm 2i$, donc $\alpha = 0$ et $\beta = 2$. Comme $\alpha = 0$, le facteur exponentiel vaut $e^{0 \cdot x} = 1$ :
+\[ y(x) = A\cos(2x) + B\sin(2x), \qquad (A,B) \in \mathbb{R}^2. \]
+C'est le cas des oscillations \emph{non amorties} (oscillateur harmonique), comme un pendule idéal sans frottements.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Résoudre sur $\mathbb{R}$ les équations différentielles suivantes :
+\begin{enumerate}
+\item $y'' + 3y' - 4y = 0$ ;
+\item $y'' - 6y' + 9y = 0$ ;
+\item $y'' + y' + y = 0$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de jouer]
+\textbf{1.} Équation caractéristique : $r^2 + 3r - 4 = 0$ ; $\Delta = 9 + 16 = 25 > 0$ ; racines $r_1 = -4$ et $r_2 = 1$. Solutions : $y(x) = A\,e^{-4x} + B\,e^{x}$, $(A,B) \in \mathbb{R}^2$.
+
+\textbf{2.} Équation caractéristique : $r^2 - 6r + 9 = 0$, c'est-à-dire $(r-3)^2 = 0$ ; $\Delta = 0$ ; racine double $r_0 = 3$. Solutions : $y(x) = (Ax + B)\,e^{3x}$, $(A,B) \in \mathbb{R}^2$.
+
+\textbf{3.} Équation caractéristique : $r^2 + r + 1 = 0$ ; $\Delta = 1 - 4 = -3 < 0$ ; racines $r = \dfrac{-1 \pm i\sqrt{3}}{2}$, donc $\alpha = -\dfrac{1}{2}$ et $\beta = \dfrac{\sqrt{3}}{2}$. Solutions :
+\[ y(x) = e^{-x/2}\left(A\cos\left(\frac{\sqrt{3}}{2}x\right) + B\sin\left(\frac{\sqrt{3}}{2}x\right)\right), \qquad (A,B) \in \mathbb{R}^2. \]
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+Pour résoudre $ay'' + by' + cy = 0$ ($a \neq 0$) :
+\begin{itemize}
+\item on écrit l'\cle{équation caractéristique} $ar^2 + br + c = 0$ et on calcule $\Delta = b^2 - 4ac$ ;
+\item si $\Delta > 0$ : $y = A\,e^{r_1 x} + B\,e^{r_2 x}$ ;
+\item si $\Delta = 0$ : $y = (Ax + B)\,e^{r_0 x}$ ;
+\item si $\Delta < 0$ : $y = e^{\alpha x}\bigl(A\cos(\beta x) + B\sin(\beta x)\bigr)$, où $\alpha \pm i\beta$ sont les racines complexes.
+\end{itemize}
+Dans tous les cas, la solution générale dépend de \textbf{deux constantes réelles} $A$ et $B$, qui seront déterminées par des conditions initiales (section suivante).
+\end{aretenir}
+
+\coursec{Équation avec second membre constant : $ay'' + by' + cy = d$}
+
+Dans la section précédente, nous avons appris à résoudre complètement l'équation homogène $ay'' + by' + cy = 0$ grâce à son équation caractéristique $ar^2 + br + c = 0$. Mais dans la réalité, les phénomènes ne sont jamais « livrés à eux-mêmes » : un circuit électrique reçoit une tension imposée par la centrale d'ÉNEO, un mobile en chute subit son poids, une population reçoit un apport constant de migrants. Mathématiquement, cela se traduit par un \cle{second membre} non nul. Toute cette section est consacrée au cas le plus simple et le plus utile au Baccalauréat : celui où le second membre est une \emph{constante} $d$.
+
+\courssub{Position du problème et équation homogène associée}
+
+\begin{definition}[Équation différentielle du second ordre avec second membre constant]
+Soient $a$, $b$, $c$, $d$ quatre réels avec $a \neq 0$ et $d \neq 0$. On appelle \cle{équation différentielle linéaire du second ordre à coefficients constants avec second membre constant} toute équation de la forme
+\[
+(E) : \quad ay'' + by' + cy = d,
+\]
+d'inconnue la fonction $y$ deux fois dérivable sur $\mathbb{R}$. On appelle \cle{équation homogène associée} à $(E)$ l'équation
+\[
+(E_0) : \quad ay'' + by' + cy = 0,
+\]
+obtenue en remplaçant le second membre $d$ par $0$.
+\end{definition}
+
+L'idée directrice est toute simple, et tu l'as déjà rencontrée en algèbre : pour résoudre un système $AX = B$, on trouve \emph{une} solution particulière, puis on ajoute toutes les solutions du système homogène $AX = 0$. Nous allons faire exactement la même chose ici, en deux étapes :
+
+\begin{enumerate}
+\item trouver \textbf{une} solution de $(E)$, la plus simple possible : une fonction constante ;
+\item lui ajouter \textbf{toutes} les solutions de $(E_0)$, que nous savons déjà déterminer.
+\end{enumerate}
+
+\courssub{Recherche d'une solution particulière constante}
+
+Cherchons une solution particulière de $(E)$ sous la forme d'une fonction \cle{constante} : $y_p(x) = k$ pour tout réel $x$, où $k$ est un réel à déterminer. Une fonction constante a des dérivées nulles :
+\[
+y_p'(x) = 0 \quad \text{et} \quad y_p''(x) = 0.
+\]
+En injectant dans $(E)$ :
+\[
+a \times 0 + b \times 0 + c \times k = d \quad \Longleftrightarrow \quad ck = d.
+\]
+
+\begin{propriete}[Solution particulière constante, cas $c \neq 0$]
+Si $c \neq 0$, l'équation $(E) : ay'' + by' + cy = d$ admet pour solution particulière la fonction constante
+\[
+y_p(x) = \dfrac{d}{c} \quad \text{pour tout réel } x.
+\]
+\end{propriete}
+
+\begin{methode}[Trouver une solution particulière constante ($c \neq 0$)]
+Pour déterminer une solution particulière de $ay'' + by' + cy = d$ lorsque $c \neq 0$ :
+\begin{enumerate}
+\item repérer les coefficients $c$ (coefficient de $y$) et $d$ (second membre) ;
+\item poser $y_p = k$, constante, donc $y_p' = y_p'' = 0$ ;
+\item résoudre $ck = d$, c'est-à-dire $k = \dfrac{d}{c}$ ;
+\item vérifier mentalement : $a \times 0 + b \times 0 + c \times \dfrac{d}{c} = d$. C'est bon.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Une solution particulière en dix secondes]
+Considérons l'équation $2y'' - 5y' + 3y = 6$. Ici $c = 3 \neq 0$ et $d = 6$. Une solution particulière constante est
+\[
+y_p = \dfrac{d}{c} = \dfrac{6}{3} = 2.
+\]
+Vérification : si $y = 2$, alors $y' = y'' = 0$, et $2 \times 0 - 5 \times 0 + 3 \times 2 = 6$. La fonction constante $x \mapsto 2$ est bien solution.
+\end{exemplebox}
+
+\courssub{Le théorème de structure : $y = y_h + y_p$}
+
+Voici le résultat central de cette section. Il affirme que l'on obtient \emph{toutes} les solutions de $(E)$ en ajoutant une solution particulière à la solution générale de l'équation homogène.
+
+\begin{propriete}[Théorème de structure des solutions]
+Soit $(E) : ay'' + by' + cy = d$ et $(E_0) : ay'' + by' + cy = 0$ son équation homogène associée. Soit $y_p$ une solution particulière de $(E)$. Alors une fonction $y$ est solution de $(E)$ si et seulement si elle s'écrit
+\[
+y = y_h + y_p,
+\]
+où $y_h$ est une solution de $(E_0)$. Autrement dit :
+\[
+\boxed{\ \text{solution générale de } (E) \ =\ \text{solution générale de } (E_0)\ +\ \text{solution particulière de } (E).\ }
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée du théorème de structure]
+Cette démonstration est formatrice et sa rédaction est exigible. Elle repose sur un fait unique : la dérivation est \cle{linéaire}, c'est-à-dire $(u - v)' = u' - v'$ et $(u-v)'' = u'' - v''$.
+
+\textbf{Étape 1 : la différence de deux solutions de $(E)$ est solution de $(E_0)$.}
+
+Soient $y_1$ et $y_2$ deux solutions de $(E)$. Cela signifie :
+\[
+ay_1'' + by_1' + cy_1 = d \qquad \text{et} \qquad ay_2'' + by_2' + cy_2 = d.
+\]
+Posons $z = y_1 - y_2$. Par linéarité de la dérivation, $z' = y_1' - y_2'$ et $z'' = y_1'' - y_2''$. Calculons :
+\begin{align*}
+az'' + bz' + cz &= a(y_1'' - y_2'') + b(y_1' - y_2') + c(y_1 - y_2) \\
+&= \underbrace{(ay_1'' + by_1' + cy_1)}_{=\, d} - \underbrace{(ay_2'' + by_2' + cy_2)}_{=\, d} \\
+&= d - d = 0.
+\end{align*}
+Donc $z = y_1 - y_2$ est solution de $(E_0)$. \hfill \textbf{CQFD}
+
+\textbf{Étape 2 : conclusion.}
+
+Soit $y_p$ une solution particulière fixée de $(E)$.
+\begin{itemize}
+\item Si $y$ est solution de $(E)$, alors par l'étape 1, $y - y_p$ est solution de $(E_0)$ : on l'appelle $y_h$, et $y = y_h + y_p$.
+\item Réciproquement, si $y = y_h + y_p$ avec $y_h$ solution de $(E_0)$, alors
+\[
+ay'' + by' + cy = \underbrace{(ay_h'' + by_h' + cy_h)}_{=\,0} + \underbrace{(ay_p'' + by_p' + cy_p)}_{=\,d} = d,
+\]
+donc $y$ est solution de $(E)$. \hfill \textbf{CQFD}
+\end{itemize}
+Le théorème est démontré.
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw=popblue, thick, rounded corners=4pt, fill=popblueL, text=popdark, align=center, minimum height=1.1cm, font=\small},
+  hbox/.style={draw=poporange, thick, rounded corners=4pt, fill=poporangeL, text=popdark, align=center, minimum height=1.1cm, font=\small},
+  rbox/.style={draw=popgreen, thick, rounded corners=4pt, fill=popgreenL, text=popdark, align=center, minimum height=1.1cm, font=\small},
+  arr/.style={-{Stealth[length=3mm]}, thick, popdark},
+  lbl/.style={font=\footnotesize\itshape, popmuted}
+]
+\node[box, text width=3.4cm] (E) at (0,0) {Équation $(E)$\\ $ay''+by'+cy=d$};
+\node[hbox, text width=3.4cm] (yp) at (5.4,1.6) {Solution particulière\\ $y_p = \dfrac{d}{c}$ (si $c\neq 0$)};
+\node[hbox, text width=3.4cm] (E0) at (5.4,-1.6) {Équation homogène $(E_0)$\\ $ay''+by'+cy=0$};
+\node[box, text width=3.6cm] (yh) at (10.8,-1.6) {Solution générale $y_h$\\ (équation caractéristique)};
+\node[rbox, text width=4.2cm] (sol) at (10.8,1.6) {Solution générale de $(E)$\\ $y = y_h + y_p$};
+\draw[arr] (E) -- (yp) node[midway, above, lbl]{étape 1};
+\draw[arr] (E) -- (E0) node[midway, below, lbl]{étape 2};
+\draw[arr] (E0) -- (yh) node[midway, below, lbl]{$ar^2+br+c=0$};
+\draw[arr] (yp) -- (sol);
+\draw[arr] (yh) -- (sol) node[midway, right, lbl]{somme};
+\end{tikzpicture}
+\end{center}
+\legende{Stratégie de résolution de $(E)$ : on résout séparément la recherche d'une solution particulière et l'équation homogène, puis on additionne les résultats.}
+\end{popfigure}
+
+\courssub{Exemple chiffré complet}
+
+\begin{exoresolu}[Résolution complète de $y'' - 3y' + 2y = 4$]
+Résoudre sur $\mathbb{R}$ l'équation différentielle $(E) : y'' - 3y' + 2y = 4$.
+\tcblower
+\textbf{Étape 1 : solution générale de l'équation homogène associée.}
+
+L'équation homogène associée est $(E_0) : y'' - 3y' + 2y = 0$. Son équation caractéristique est
+\[
+r^2 - 3r + 2 = 0.
+\]
+Discriminant : $\Delta = (-3)^2 - 4 \times 1 \times 2 = 9 - 8 = 1 > 0$. Deux racines réelles distinctes :
+\[
+r_1 = \dfrac{3 - 1}{2} = 1 \qquad \text{et} \qquad r_2 = \dfrac{3 + 1}{2} = 2.
+\]
+La solution générale de $(E_0)$ est donc
+\[
+y_h(x) = A e^{x} + B e^{2x}, \qquad (A, B) \in \mathbb{R}^2.
+\]
+
+\textbf{Étape 2 : solution particulière de $(E)$.}
+
+Ici $c = 2 \neq 0$ et $d = 4$. On cherche $y_p = k$ constante : alors $y_p' = y_p'' = 0$ et l'équation donne $2k = 4$, soit $k = 2$. Donc
+\[
+y_p(x) = 2.
+\]
+
+\textbf{Étape 3 : solution générale de $(E)$.}
+
+Par le théorème de structure :
+\[
+\boxed{\,y(x) = A e^{x} + B e^{2x} + 2, \qquad (A, B) \in \mathbb{R}^2.\,}
+\]
+
+\textbf{Vérification.} Pour $y = Ae^x + Be^{2x} + 2$ : $y' = Ae^x + 2Be^{2x}$ et $y'' = Ae^x + 4Be^{2x}$. Alors
+\begin{align*}
+y'' - 3y' + 2y &= (Ae^x + 4Be^{2x}) - 3(Ae^x + 2Be^{2x}) + 2(Ae^x + Be^{2x} + 2) \\
+&= (1 - 3 + 2)Ae^x + (4 - 6 + 2)Be^{2x} + 4 = 0 + 0 + 4 = 4.
+\end{align*}
+Toutes ces fonctions sont bien solutions de $(E)$.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6cm,
+  axis lines=middle, xlabel=$x$, ylabel=$y$,
+  xmin=-2.2, xmax=1.6, ymin=-1, ymax=9,
+  xtick={-2,-1,0,1}, ytick={2,4,6,8},
+  grid=both, grid style={popline!40},
+  legend style={font=\footnotesize, at={(0.02,0.98)}, anchor=north west, draw=popline}
+]
+\addplot[popcurve, domain=-2.2:1.5, samples=200]{2};
+\addlegendentry{$y_p = 2$ (solution particulière)}
+\addplot[popcurve, poporange, domain=-2.2:1.5, samples=200]{exp(x) + 2};
+\addlegendentry{$y = e^{x} + 2$ ($A=1$, $B=0$)}
+\addplot[popcurve, popgreen!70!black, domain=-2.2:1.3, samples=200]{-exp(x) + 0.5*exp(2*x) + 2};
+\addlegendentry{$y = -e^{x} + \tfrac{1}{2}e^{2x} + 2$}
+\addplot[popcurve, poppurple, domain=-2.2:1.5, samples=200]{-2*exp(x) + 2};
+\addlegendentry{$y = -2e^{x} + 2$ ($A=-2$, $B=0$)}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Quelques solutions de $y'' - 3y' + 2y = 4$. Toutes les courbes sont obtenues par translation verticale de $+2$ à partir des solutions de l'équation homogène : la solution particulière constante $y_p = 2$ agit comme une « asymptote de référence ».}
+\end{popfigure}
+
+\courssub{Pièges fréquents et complément : le cas $c = 0$}
+
+\begin{attention}[Ne jamais déterminer les constantes avant d'ajouter $y_p$]
+Une erreur classique au Baccalauréat : on résout $(E_0)$, on trouve $y_h = Ae^x + Be^{2x}$, et l'on utilise \emph{immédiatement} les conditions initiales pour calculer $A$ et $B$... en oubliant la solution particulière ! C'est faux : les conditions initiales portent sur la solution de $(E)$, pas de $(E_0)$.
+
+La bonne démarche est toujours :
+\begin{enumerate}
+\item écrire la solution générale \textbf{complète} $y = y_h + y_p$ ;
+\item \textbf{ensuite seulement}, traduire les conditions initiales $y(x_0) = \alpha$ et $y'(x_0) = \beta$ pour obtenir un système de deux équations en $A$ et $B$.
+\end{enumerate}
+Par exemple, pour $(E) : y'' - 3y' + 2y = 4$ avec $y(0) = 3$ et $y'(0) = 0$, on impose ces conditions à $y = Ae^x + Be^{2x} + 2$ :
+\[
+\begin{cases} A + B + 2 = 3 \\ A + 2B = 0 \end{cases} \Longleftrightarrow \begin{cases} A + B = 1 \\ A + 2B = 0 \end{cases} \Longleftrightarrow A = 2,\ B = -1,
+\]
+d'où l'unique solution $y(x) = 2e^x - e^{2x} + 2$. Celui qui oublie le $+2$ trouve $A = 3$, $B = 0$... et perd tous ses points.
+\end{attention}
+
+\begin{attention}[Si $c = 0$, le quotient $\dfrac{d}{c}$ n'existe pas !]
+La solution particulière constante $y_p = \dfrac{d}{c}$ suppose $c \neq 0$. Si $c = 0$, l'équation s'écrit $ay'' + by' = d$ : une fonction constante $k$ donne $0 = d$, ce qui est absurde puisque $d \neq 0$. Il faut \textbf{changer de forme} de solution particulière.
+
+\textit{Complément utile au Bac (hors strict programme).} Lorsque $c = 0$ et $b \neq 0$, on cherche une solution particulière de la forme $y_p(x) = kx$ (fonction affine sans terme constant). Alors $y_p' = k$ et $y_p'' = 0$, donc
+\[
+a \times 0 + b \times k = d \quad \Longleftrightarrow \quad k = \dfrac{d}{b}, \qquad \text{soit } y_p(x) = \dfrac{d}{b}\,x.
+\]
+Exemple : pour $y'' + y' = 6$, on prend $y_p = 6x$. Vérification : $y_p' = 6$, $y_p'' = 0$, et $0 + 6 = 6$. L'équation homogène $r^2 + r = 0$ donne $r = 0$ ou $r = -1$, donc la solution générale est $y(x) = A + Be^{-x} + 6x$.
+\end{attention}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Pour $(E) : ay'' + by' + cy = d$ avec $d \neq 0$, on associe l'équation homogène $(E_0) : ay'' + by' + cy = 0$.
+\item Si $c \neq 0$, une solution particulière constante est $y_p = \dfrac{d}{c}$.
+\item \textbf{Théorème de structure} : la solution générale de $(E)$ est $y = y_h + y_p$, somme de la solution générale de $(E_0)$ et d'une solution particulière de $(E)$. Justification clé : la différence de deux solutions de $(E)$ est solution de $(E_0)$, par linéarité de la dérivation.
+\item Les constantes $A$ et $B$ se déterminent \emph{après} avoir écrit la solution complète $y_h + y_p$, jamais avant.
+\item Si $c = 0$ (complément), on cherche $y_p = kx$ avec $k = \dfrac{d}{b}$.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Résoudre l'équation $(E) : y'' + y' - 2y = -6$.
+\item Déterminer la solution de $(E)$ vérifiant $y(0) = 4$ et $y'(0) = 0$.
+\item (Complément) Résoudre $y'' - 2y' = 8$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Équation caractéristique de $(E_0)$ : $r^2 + r - 2 = 0$, $\Delta = 1 + 8 = 9$, racines $r_1 = 1$ et $r_2 = -2$. Donc $y_h = Ae^x + Be^{-2x}$. Solution particulière : $c = -2$, $d = -6$, donc $y_p = \dfrac{-6}{-2} = 3$. Solution générale : $y(x) = Ae^x + Be^{-2x} + 3$.
+\item $y(0) = A + B + 3 = 4$ et $y'(0) = A - 2B = 0$. D'où $A = 2B$, puis $2B + B = 1$, soit $B = \dfrac{1}{3}$ et $A = \dfrac{2}{3}$. L'unique solution est $y(x) = \dfrac{2}{3}e^x + \dfrac{1}{3}e^{-2x} + 3$.
+\item Ici $c = 0$ : on cherche $y_p = kx$, alors $-2k = 8$, soit $k = -4$ et $y_p = -4x$. Équation caractéristique : $r^2 - 2r = 0$, racines $0$ et $2$. Solution générale : $y(x) = A + Be^{2x} - 4x$.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Pourquoi les ingénieurs adorent ce théorème]
+En électricité, la charge d'un condensateur alimenté par une tension constante (par exemple le régulateur d'un onduleur protégeant les serveurs de CAMTEL) obéit à une équation du type $y'' + by' + cy = d$. La solution $y = y_h + y_p$ se lit physiquement : $y_h$ est le \emph{régime transitoire} (il s'éteint avec le temps car les exponentielles décroissent) et $y_p = \dfrac{d}{c}$ est le \emph{régime permanent}, l'état d'équilibre vers lequel le système se stabilise. C'est exactement ce que traduit la figure ci-dessus : toutes les courbes de solutions se rapprochent de la droite $y = 2$.
+\end{savaistu}
+
+\coursec{Conditions initiales et unicité de la solution}
+
+\courssub{Pourquoi les conditions initiales ?}
+
+Dans la section précédente, nous avons appris à résoudre complètement l'équation $ay'' + by' + cy = d$ : sa \cle{solution générale} s'écrit comme la somme de la solution générale de l'équation homogène associée et d'une solution particulière constante. Mais cette solution générale contient toujours \textbf{deux constantes arbitraires} $A$ et $B$ (ou $C_1$ et $C_2$). Autrement dit, une équation différentielle du second ordre possède une \emph{infinité} de solutions, formant une famille à deux paramètres.
+
+Or, dans une situation concrète, on ne s'intéresse jamais à « toutes les évolutions possibles » : on veut \emph{la} trajectoire réelle du phénomène étudié. Imagine un technicien d'ENEO qui étudie les oscillations du courant dans un circuit après la fermeture d'un interrupteur : l'équation différentielle décrit toutes les oscillations possibles, mais le circuit réel n'en suit qu'une seule — celle qui part de l'état exact du circuit à l'instant où l'on ferme l'interrupteur. Cet « état de départ », ce sont les \cle{conditions initiales}.
+
+Pour une équation du \textbf{premier ordre} $y' = ay$, une seule condition (la valeur $y(x_0)$) suffit à choisir la constante $C$ dans $y = Ce^{ax}$. Pour une équation du \textbf{second ordre}, il y a deux constantes : il faut donc \textbf{deux} conditions. Naturellement, on impose la position de départ $y(x_0)$ et la « vitesse » de départ $y'(x_0)$.
+
+\begin{definition}[Problème de Cauchy du second ordre]
+Soient $a$, $b$, $c$, $d$ des réels avec $a \neq 0$, $x_0$ un réel et $y_0$, $y_1$ deux réels donnés. On appelle \cle{problème de Cauchy} (ou problème aux conditions initiales) la recherche d'une fonction $y$ deux fois dérivable sur $\mathbb{R}$ vérifiant :
+\[
+\begin{cases}
+a\,y'' + b\,y' + c\,y = d \\
+y(x_0) = y_0 \\
+y'(x_0) = y_1
+\end{cases}
+\]
+Les égalités $y(x_0) = y_0$ et $y'(x_0) = y_1$ sont appelées les \cle{conditions initiales} du problème.
+\end{definition}
+
+\begin{attention}[Il faut DEUX conditions pour une équation d'ordre 2]
+Une erreur de raisonnement fréquente consiste à croire qu'une seule condition initiale suffit. C'est faux : la solution générale d'une équation du second ordre dépend de \textbf{deux} constantes indépendantes $A$ et $B$. Une seule condition ne fournit qu'\textbf{une} équation pour deux inconnues : il reste une infinité de couples $(A, B)$ possibles, donc une infinité de solutions. Règle à retenir : \emph{autant de conditions initiales que l'ordre de l'équation} — une condition pour l'ordre 1, deux conditions pour l'ordre 2.
+\end{attention}
+
+\courssub{Théorème d'existence et d'unicité}
+
+La bonne nouvelle, c'est que le problème de Cauchy ne souffre d'aucune ambiguïté : dès que les deux conditions initiales sont fixées, la solution existe et elle est \textbf{unique}.
+
+\begin{propriete}[Théorème de Cauchy--Lipschitz (admis)]
+Soient $a$, $b$, $c$, $d$ des réels avec $a \neq 0$. Pour tous réels $x_0$, $y_0$ et $y_1$, le problème de Cauchy
+\[
+\begin{cases}
+a\,y'' + b\,y' + c\,y = d \\
+y(x_0) = y_0, \quad y'(x_0) = y_1
+\end{cases}
+\]
+admet une \textbf{unique} solution, définie sur $\mathbb{R}$ tout entier.
+\end{propriete}
+
+\begin{aretenir}[Ce qu'il faut retenir]
+\begin{itemize}
+\item Ce théorème est \textbf{admis} au programme de Terminale : aucune démonstration n'est exigible au Baccalauréat.
+\item Il garantit deux choses : une solution \emph{existe} toujours, et il n'y en a \emph{qu'une seule}.
+\item Conséquence pratique : dès que tu as trouvé \emph{une} fonction qui vérifie à la fois l'équation différentielle et les deux conditions initiales, tu peux affirmer sans hésiter que c'est \textbf{la} solution du problème.
+\end{itemize}
+\end{aretenir}
+
+\begin{savaistu}[Augustin-Louis Cauchy]
+Le mathématicien français Augustin-Louis Cauchy (1789--1857) est l'un des fondateurs de l'analyse moderne. Son théorème d'existence et d'unicité, complété plus tard par Rudolf Lipschitz, est le socle de toute la modélisation scientifique : c'est lui qui permet d'affirmer qu'un lancer de ballon, la charge d'un condensateur ou la croissance d'une population suivent une évolution parfaitement déterminée dès lors qu'on connaît l'état initial. Sans ce théorème, la physique mathématique serait un château de cartes !
+\end{savaistu}
+
+\courssub{Méthode de résolution d'un problème de Cauchy}
+
+\begin{methode}[Déterminer l'unique solution vérifiant des conditions initiales]
+Pour résoudre le problème de Cauchy $ay'' + by' + cy = d$ avec $y(x_0) = y_0$ et $y'(x_0) = y_1$ :
+\begin{enumerate}
+\item \textbf{Écrire la solution générale} de l'équation : résoudre l'équation caractéristique $ar^2 + br + c = 0$, en déduire la solution générale de l'équation homogène, puis ajouter la solution particulière constante $\dfrac{d}{c}$ (si $c \neq 0$). On obtient $y(x)$ en fonction de $x$ et de deux constantes $A$ et $B$.
+\item \textbf{Dériver la solution générale} pour obtenir l'expression de $y'(x)$, \emph{en gardant les constantes $A$ et $B$}.
+\item \textbf{Traduire les conditions initiales} : remplacer $x$ par $x_0$ dans $y(x)$ et dans $y'(x)$. On obtient un \textbf{système de deux équations à deux inconnues} $A$ et $B$.
+\item \textbf{Résoudre le système} (substitution ou combinaison) pour trouver $A$ et $B$.
+\item \textbf{Conclure} en écrivant la solution complète, puis \textbf{vérifier} qu'elle satisfait bien l'équation différentielle et les deux conditions initiales.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Erreur fréquente : substituer avant de dériver]
+Le piège classique consiste à remplacer $x$ par $x_0$ dans $y(x)$ \emph{avant} d'avoir calculé $y'(x)$. Par exemple, si $y(x) = A\cos x + B\sin x + 2$, alors $y(0) = A + 2$ est une \emph{constante} : la dériver donnerait $0$, ce qui est absurde ! Il faut \textbf{toujours dériver d'abord} la solution générale (avec ses constantes $A$ et $B$), \textbf{puis seulement} substituer $x = x_0$ dans $y$ et dans $y'$. Ordre impératif : dériver $\rightarrow$ substituer $\rightarrow$ résoudre le système.
+\end{attention}
+
+\courssub{Exemple chiffré détaillé}
+
+\begin{exemplebox}[Résolution complète d'un problème de Cauchy]
+Résoudre le problème de Cauchy :
+\[
+\begin{cases}
+y'' + y = 2 \\
+y(0) = 3, \quad y'(0) = 1
+\end{cases}
+\]
+\textbf{Étape 1 : solution générale.} L'équation caractéristique est $r^2 + 1 = 0$, de discriminant $\Delta = -4 < 0$, de racines $r = \pm i$ (donc $\alpha = 0$, $\beta = 1$). La solution générale de l'équation homogène est $y_h(x) = A\cos x + B\sin x$. Une solution particulière constante de $y'' + y = 2$ est $y_p = 2$. D'où :
+\[
+y(x) = A\cos x + B\sin x + 2.
+\]
+\textbf{Étape 2 : dérivation.} On dérive \emph{avec les constantes} :
+\[
+y'(x) = -A\sin x + B\cos x.
+\]
+\textbf{Étape 3 : traduction des conditions initiales.}
+\[
+y(0) = A\cos 0 + B\sin 0 + 2 = A + 2 = 3 \quad\text{et}\quad y'(0) = -A\sin 0 + B\cos 0 = B = 1.
+\]
+\textbf{Étape 4 : résolution du système.} Le système $\begin{cases} A + 2 = 3 \\ B = 1 \end{cases}$ donne immédiatement $A = 1$ et $B = 1$.
+\textbf{Étape 5 : conclusion et vérification.} L'unique solution est :
+\[
+\boxed{y(x) = \cos x + \sin x + 2}
+\]
+Vérifions : $y'(x) = -\sin x + \cos x$, $y''(x) = -\cos x - \sin x$, donc $y'' + y = -\cos x - \sin x + \cos x + \sin x + 2 = 2$ ; de plus $y(0) = 1 + 0 + 2 = 3$ et $y'(0) = 0 + 1 = 1$. Tout est conforme.
+\end{exemplebox}
+
+\courssub{Interprétation graphique}
+
+Géométriquement, la solution générale d'une équation du second ordre se représente par une \textbf{famille de courbes} à deux paramètres. Imposer $y(x_0) = y_0$ revient à exiger que la courbe passe par le point $(x_0\,;\,y_0)$ ; imposer $y'(x_0) = y_1$ revient à exiger que la tangente à la courbe en ce point ait pour coefficient directeur $y_1$. Le théorème d'unicité affirme alors qu'\textbf{une seule courbe} de la famille satisfait ces deux exigences à la fois.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.92\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-0.5, xmax=6.5, ymin=-1, ymax=5,
+    xtick={0,1,2,3,4,5,6}, ytick={1,2,3,4},
+    tick label style={font=\small},
+    legend style={font=\small, at={(0.98,0.02)}, anchor=south east}
+]
+% Famille de solutions y = A cos x + B sin x + 2
+\addplot[popmuted, domain=0:6.2, samples=150, thin] {2*cos(deg(x)) + 2};
+\addplot[popmuted, domain=0:6.2, samples=150, thin] {-cos(deg(x)) + 2};
+\addplot[popmuted, domain=0:6.2, samples=150, thin] {3*cos(deg(x)) - 2*sin(deg(x)) + 2};
+\addplot[popmuted, domain=0:6.2, samples=150, thin] {0.5*cos(deg(x)) + 1.5*sin(deg(x)) + 2};
+% Unique solution : cos x + sin x + 2
+\addplot[popcurve, domain=0:6.2, samples=200, very thick] {cos(deg(x)) + sin(deg(x)) + 2};
+\addlegendentry{$y = \cos x + \sin x + 2$}
+% Point initial (0,3)
+\addplot[only marks, mark=*, mark size=2.5pt, poporange] coordinates {(0,3)};
+\node[poporange, anchor=west, font=\small] at (axis cs:0.15,3.35) {$(0\,;\,3)$};
+% Tangente en 0 : pente 1
+\addplot[poporange, dashed, thick, domain=0:1.6, samples=2] {x + 3};
+\node[poporange, anchor=south west, font=\small, rotate=40] at (axis cs:0.9,3.95) {tangente de pente $1$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Famille de solutions de $y'' + y = 2$ (en gris). Une seule courbe (en couleur) passe par le point $(0\,;\,3)$ avec une tangente de pente $1$ : c'est la solution du problème de Cauchy $y(0) = 3$, $y'(0) = 1$.}
+\end{popfigure}
+
+Observe bien la figure : toutes les courbes grises sont des solutions de l'équation $y'' + y = 2$, et beaucoup passent par le point $(0\,;\,3)$. Mais parmi elles, une seule possède en ce point une tangente de pente exactement égale à $1$. C'est le contenu géométrique du théorème d'unicité : \emph{un point plus une direction déterminent une unique trajectoire}.
+
+\begin{exoresolu}[Un problème de Cauchy complet]
+\textbf{Énoncé.} On considère l'équation différentielle $(E)$ : $y'' - 3y' + 2y = 4$.
+\begin{enumerate}
+\item Résoudre l'équation homogène associée, puis donner la solution générale de $(E)$.
+\item Déterminer l'unique solution $f$ de $(E)$ vérifiant $f(0) = 3$ et $f'(0) = 2$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\textbf{1.} L'équation caractéristique est $r^2 - 3r + 2 = 0$, de discriminant $\Delta = 9 - 8 = 1 > 0$, de racines $r_1 = 1$ et $r_2 = 2$. La solution générale de l'équation homogène est donc :
+\[ y_h(x) = A e^{x} + B e^{2x}. \]
+Comme $c = 2 \neq 0$, une solution particulière constante est $y_p = \dfrac{d}{c} = \dfrac{4}{2} = 2$. La solution générale de $(E)$ est :
+\[ y(x) = A e^{x} + B e^{2x} + 2. \]
+\textbf{2.} On dérive d'abord : $y'(x) = A e^{x} + 2B e^{2x}$. Les conditions initiales donnent :
+\[
+\begin{cases}
+f(0) = A + B + 2 = 3 \\
+f'(0) = A + 2B = 2
+\end{cases}
+\iff
+\begin{cases}
+A + B = 1 \\
+A + 2B = 2
+\end{cases}
+\]
+Par soustraction membre à membre : $B = 1$, puis $A = 1 - B = 0$. L'unique solution est donc :
+\[ f(x) = e^{2x} + 2. \]
+\textbf{Vérification :} $f'(x) = 2e^{2x}$, $f''(x) = 4e^{2x}$, donc $f'' - 3f' + 2f = 4e^{2x} - 6e^{2x} + 2e^{2x} + 4 = 4$ ; et $f(0) = 1 + 2 = 3$, $f'(0) = 2$. La solution est correcte.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Déterminer l'unique solution de $y'' + y = 2$ vérifiant $y(0) = 3$ et $y'(0) = 0$.
+\item Déterminer l'unique solution de $y'' + 2y' + y = 0$ vérifiant $y(0) = 1$ et $y'(0) = 0$. (L'équation caractéristique admet une racine double.)
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\textbf{1.} Solution générale : $y(x) = A\cos x + B\sin x + 2$, d'où $y'(x) = -A\sin x + B\cos x$. Les conditions donnent $A + 2 = 3$ et $B = 0$, donc $A = 1$, $B = 0$. L'unique solution est $y(x) = \cos x + 2$. Vérification : $y'' + y = -\cos x + \cos x + 2 = 2$, $y(0) = 3$, $y'(0) = 0$.
+
+\textbf{2.} Équation caractéristique : $r^2 + 2r + 1 = (r+1)^2 = 0$, racine double $r = -1$. Solution générale : $y(x) = (A + Bx)e^{-x}$. Dérivée : $y'(x) = (B - A - Bx)e^{-x}$. Conditions : $y(0) = A = 1$ et $y'(0) = B - A = 0$, donc $B = 1$. L'unique solution est $y(x) = (1 + x)e^{-x}$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Un \cle{problème de Cauchy} du second ordre, c'est une équation $ay'' + by' + cy = d$ accompagnée de \textbf{deux} conditions initiales $y(x_0) = y_0$ et $y'(x_0) = y_1$.
+\item Le théorème de Cauchy--Lipschitz (admis) garantit l'\textbf{existence} et l'\textbf{unicité} de la solution.
+\item La méthode : solution générale $\rightarrow$ dérivation avec les constantes $\rightarrow$ système $2 \times 2$ en $A$ et $B$ $\rightarrow$ résolution $\rightarrow$ vérification.
+\item Graphiquement : parmi toutes les courbes solutions, une seule passe par le point imposé avec la tangente imposée.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Modélisation par des équations différentielles}
+
+Dans la section précédente, tu as appris à déterminer \emph{l'unique} solution d'une équation différentielle vérifiant des conditions initiales données. Cette unicité est précisément ce qui rend les équations différentielles si puissantes : si un phénomène réel est régi par une équation différentielle et si l'on connaît son état à l'instant initial, alors \textbf{toute son évolution future est déterminée}. C'est le fondement de la \cle{modélisation} : traduire une situation concrète (physique, biologique, économique) en langage mathématique, résoudre, puis revenir à la réalité pour interpréter les résultats. C'est cette démarche complète que nous allons maintenant étudier à travers les grands modèles classiques du programme.
+
+\courssub{La démarche de modélisation}
+
+\textbf{Intuition.} Un épidémiologiste qui suit une épidémie à Douala, un ingénieur de CAMTEL qui étudie la charge d'un condensateur, un agronome qui suit la croissance d'une culture : tous posent la même question. \emph{Comment la quantité qui m'intéresse varie-t-elle au cours du temps ?} Or, dans la nature, ce que l'on connaît le plus souvent, ce n'est pas la quantité elle-même, mais \textbf{sa loi de variation} : « la population croît proportionnellement à son effectif », « le corps se refroidit d'autant plus vite qu'il est plus chaud que l'ambiance ». Une telle phrase relie la grandeur inconnue $y(t)$ à sa dérivée $y'(t)$ : c'est exactement une équation différentielle.
+
+\begin{methode}[Les 4 étapes d'une modélisation]
+\begin{enumerate}
+\item \textbf{Traduire.} Identifier la grandeur inconnue $y(t)$ (avec son unité et la variable $t$, avec son unité), puis traduire la loi d'évolution en une équation différentielle et préciser la condition initiale $y(t_0) = y_0$.
+\item \textbf{Résoudre.} Déterminer la solution générale de l'équation (forme $y' = ay$, ou $ay''+by'+cy=0$, ou avec second membre constant).
+\item \textbf{Déterminer les constantes.} Utiliser la condition initiale pour trouver l'unique solution du problème.
+\item \textbf{Exploiter et critiquer.} Répondre aux questions concrètes (valeur à un instant donné, instant où un seuil est atteint, valeur limite), puis discuter la pertinence et les limites du modèle.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Cohérence des unités]
+Avant tout calcul, vérifie l'\textbf{unité de temps} : si $t$ est en heures, la constante $k$ de $y' = ky$ s'exprime en $\mathrm{h}^{-1}$ ; si les données sont en minutes, il faut convertir. Dans une équation comme $RC \cdot u' + u = E$, chaque terme doit être homogène : $RC$ a la dimension d'un temps, donc $RC \cdot u'$ est homogène à une tension, comme $u$ et $E$. Une équation non homogène en unités est forcément fausse : c'est un excellent réflexe de vérification.
+\end{attention}
+
+\courssub{Charge et décharge d'un condensateur : le circuit RC}
+
+\textbf{Situation.} Un circuit électrique comprend un générateur de force électromotrice $E$ (constante, en volts), un résistor de résistance $R$ (en ohms) et un condensateur de capacité $C$ (en farads), montés en série. On note $u(t)$ la tension aux bornes du condensateur (en volts) à l'instant $t$ (en secondes). La loi des mailles et la loi d'Ohm conduisent à l'équation :
+\[ RC\,u'(t) + u(t) = E, \qquad \text{soit} \qquad u'(t) = \frac{E - u(t)}{RC}. \]
+C'est une équation du type $y' = ay + b$ avec $a = -\dfrac{1}{RC} < 0$. Lorsque le générateur est débranché ($E = 0$), on obtient l'équation de \textbf{décharge} : $u' = -\dfrac{u}{RC}$, du type $y' = ay$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0, >=Stealth]
+% Fil du haut avec résistance
+\draw[thick, popdark] (0,2) -- (1.5,2);
+\draw[thick, popdark, decorate, decoration={zigzag, segment length=4pt, amplitude=2.5pt}] (1.5,2) -- (3.5,2);
+\draw[thick, popdark] (3.5,2) -- (5,2);
+\node[above, popblue] at (2.5,2.15) {$R$};
+% Condensateur à droite
+\draw[thick, popdark] (5,2) -- (5,1.35);
+\draw[very thick, poporange] (4.6,1.35) -- (5.4,1.35);
+\draw[very thick, poporange] (4.6,1.05) -- (5.4,1.05);
+\draw[thick, popdark] (5,1.05) -- (5,0);
+\node[right, poporange] at (5.5,1.2) {$C$};
+% Fil du bas
+\draw[thick, popdark] (5,0) -- (0,0);
+% Générateur à gauche
+\draw[thick, popdark] (0,0) -- (0,0.8);
+\draw[very thick, popgreen] (-0.3,0.8) -- (0.3,0.8);
+\draw[thick, popgreen] (-0.15,1.2) -- (0.15,1.2);
+\draw[thick, popdark] (0,1.2) -- (0,2);
+\node[left, popgreen] at (-0.4,1) {$E$};
+% Courant
+\draw[->, thick, poppink] (0.6,2) -- (1.2,2);
+\node[above, poppink] at (0.9,2.05) {$i$};
+% Équation associée
+\node[align=center, popdark] at (2.5,-0.9) {$RC\,u' + u = E$};
+\end{tikzpicture}
+\end{center}
+\legende{Circuit RC série : générateur $E$, résistor $R$, condensateur $C$. La tension $u(t)$ aux bornes du condensateur vérifie $RC\,u' + u = E$.}
+\end{popfigure}
+
+\begin{propriete}[Charge d'un condensateur]
+La solution de $RC\,u' + u = E$ vérifiant $u(0) = 0$ (condensateur initialement déchargé) est :
+\[ u(t) = E\left(1 - e^{-t/(RC)}\right). \]
+Le nombre $\tau = RC$ est appelé \cle{temps caractéristique} du circuit. La tension tend vers la valeur limite $E$ quand $t \to +\infty$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée]
+\begin{enumerate}
+\item L'équation s'écrit $u' = -\dfrac{1}{RC}\,u + \dfrac{E}{RC}$. Cherche une solution particulière constante $u_p$ : alors $u_p' = 0$, donc $\dfrac{E - u_p}{RC} = 0$, d'où $u_p = E$.
+\item La différence $z = u - E$ vérifie $z' = u' = -\dfrac{1}{RC}(u - E) = -\dfrac{1}{RC}z$ : c'est une équation du type $y' = ay$, donc $z(t) = K e^{-t/(RC)}$.
+\item La solution générale est $u(t) = E + K e^{-t/(RC)}$. La condition $u(0) = 0$ donne $K = -E$, d'où $u(t) = E\left(1 - e^{-t/(RC)}\right)$.
+\item Vérifie la limite : $e^{-t/(RC)} \to 0$ quand $t \to +\infty$, donc $u(t) \to E$. De plus $u(\tau) = E(1 - e^{-1}) \approx 0{,}63\,E$ : au bout d'un temps $\tau$, le condensateur est chargé à environ $63\,\%$ de sa tension finale.
+\end{enumerate}
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6cm,
+  xlabel={$t$ (en unités de $\tau = RC$)},
+  ylabel={$u(t)$},
+  xmin=0, xmax=5, ymin=0, ymax=1.25,
+  xtick={0,1,2,3,4,5},
+  ytick={0.632,1},
+  yticklabels={$0{,}63\,E$,$E$},
+  grid=both, grid style={popline!40},
+  axis lines=left,
+]
+\addplot[popcurve, domain=0:5, samples=200] {1 - exp(-x)};
+\addplot[dashed, poporange, thick, domain=0:5] {1};
+\addplot[dashed, popgreen, thick] coordinates {(1,0) (1,0.632) (0,0.632)};
+\node[poporange, anchor=south west] at (axis cs:3.1,1.01) {asymptote $u = E$};
+\node[popgreen, anchor=south] at (axis cs:1,0.05) {$\tau$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de charge $u(t) = E\left(1 - e^{-t/\tau}\right)$ : croissance rapide puis stabilisation vers la valeur limite $E$. Au temps $\tau = RC$, la tension atteint environ $63\,\%$ de sa valeur finale.}
+\end{popfigure}
+
+\begin{aretenir}[Lecture physique du temps caractéristique]
+Pour tout phénomène régi par $y' = ay + b$ avec $a < 0$, la solution tend vers une valeur limite $\ell = -\dfrac{b}{a}$, et $\tau = \dfrac{1}{|a|}$ mesure la \textbf{rapidité de convergence} : après un temps $\tau$, l'écart à la limite est divisé par $e \approx 2{,}72$ ; après $3\tau$, il est divisé par environ $20$ (le régime est dit \emph{permanent}).
+\end{aretenir}
+
+\courssub{Croissance d'une population : le modèle de Malthus}
+
+\textbf{Intuition.} Une population de bactéries dans une culture se reproduit à un rythme proportionnel à son effectif : plus il y a d'individus, plus il naît d'individus par unité de temps. Si $P(t)$ désigne l'effectif à l'instant $t$, on traduit : « le taux d'accroissement instantané est proportionnel à l'effectif », soit
+\[ P'(t) = k\,P(t), \]
+où $k > 0$ est le \cle{taux de croissance} (différence entre taux de natalité et taux de mortalité). C'est le modèle dit de \emph{Malthus} (1798).
+
+\begin{propriete}[Modèle de Malthus]
+La solution de $P' = kP$ vérifiant $P(0) = P_0$ est $P(t) = P_0\, e^{kt}$.
+\begin{itemize}
+\item Si $k > 0$ : croissance exponentielle, la population \textbf{double} au bout du temps $t_d = \dfrac{\ln 2}{k}$, indépendant de $P_0$.
+\item Si $k < 0$ : décroissance exponentielle, la population est \textbf{divisée par deux} au bout de la \cle{demi-vie} $t_{1/2} = \dfrac{\ln 2}{|k|}$.
+\end{itemize}
+\end{propriete}
+
+\begin{experience}[Démonstration du temps de doublement]
+On cherche $t_d$ tel que $P(t_d) = 2P_0$. Comme $P(t) = P_0 e^{kt}$ :
+\[ P_0\, e^{k t_d} = 2P_0 \iff e^{k t_d} = 2 \iff k\,t_d = \ln 2 \iff t_d = \frac{\ln 2}{k}. \]
+Le résultat ne dépend que de $k$ : c'est une propriété remarquable de la fonction exponentielle (accroissements en \emph{progression géométrique} sur des intervalles de temps égaux).
+\end{experience}
+
+\begin{exoresolu}[Culture de bactéries]
+Une population de bactéries vérifie $P' = 0{,}3\,P$ (le temps $t$ est exprimé en heures) avec $P(0) = 1000$. Déterminer $P(t)$, l'effectif au bout de $10$ heures, et le temps de doublement.
+\tcblower
+\textbf{Solution.} L'équation est du type $y' = ay$ avec $a = 0{,}3$ : la solution générale est $P(t) = C e^{0{,}3t}$. La condition $P(0) = 1000$ donne $C = 1000$, d'où
+\[ P(t) = 1000\, e^{0{,}3t}. \]
+Au bout de $10$ heures : $P(10) = 1000\, e^{3} \approx 1000 \times 20{,}09 \approx \num{20086}$ bactéries. Le temps de doublement est
+\[ t_d = \frac{\ln 2}{0{,}3} \approx \frac{0{,}693}{0{,}3} \approx 2{,}31 \ \text{h}, \]
+soit environ $2$ h $19$ min. Vérification : $P(2{,}31) = 1000\,e^{0{,}693} \approx 2000$.
+\end{exoresolu}
+
+\begin{attention}[Limites du modèle de Malthus]
+Le modèle $P' = kP$ prédit une croissance \emph{illimitée} : $P(t) \to +\infty$. C'est irréaliste sur le long terme (épuisement des ressources, manque d'espace, épidémies). Le modèle n'est donc valable que sur une \textbf{durée limitée}, tant que les ressources sont abondantes. Des modèles plus raffinés (comme le modèle logistique, hors programme) corrigent ce défaut. Critiquer un modèle fait partie de la démarche : ne jamais extrapoler sans précaution.
+\end{attention}
+
+\begin{savaistu}[La datation au carbone 14]
+Le carbone 14 est un isotope radioactif présent dans tout organisme vivant, en proportion constante. À la mort de l'organisme, il n'est plus renouvelé et se désintègre : la quantité $y(t)$ vérifie $y' = -\lambda y$, donc $y(t) = y_0 e^{-\lambda t}$. Sa demi-vie est de $5730$ ans, ce qui donne $\lambda = \dfrac{\ln 2}{5730} \approx 1,21 \times 10^{-4}\ \text{an}^{-1}$. En mesurant la proportion de carbone 14 restant dans un ossement ou un charbon de bois archéologique, on résout $e^{-\lambda t} = \dfrac{y(t)}{y_0}$ pour trouver l'âge $t$ de l'échantillon. Cette méthode, due à Willard Libby (prix Nobel de chimie 1960), permet de dater des objets jusqu'à environ $50\,000$ ans.
+\end{savaistu}
+
+\courssub{Refroidissement de Newton : se ramener à $y' = ay$}
+
+\textbf{Situation.} Une marmite d'eau chaude, un corps humain, une pièce de métal sortant d'une forge de quartier : Isaac Newton a énoncé que la vitesse de refroidissement d'un corps est proportionnelle à l'écart entre sa température et celle du milieu ambiant. Si $T(t)$ est la température du corps et $T_{\text{ext}}$ la température extérieure (constante) :
+\[ T'(t) = -k\bigl(T(t) - T_{\text{ext}}\bigr), \qquad k > 0. \]
+Ce n'est pas directement une équation du type $y' = ay$ à cause du terme $T_{\text{ext}}$, mais un \textbf{changement de fonction} règle le problème : posons $y(t) = T(t) - T_{\text{ext}}$ (l'écart de température). Alors $y' = T'$ et l'équation devient $y' = -ky$, dont la solution est $y(t) = y_0 e^{-kt}$. On en déduit :
+\[ \boxed{\,T(t) = T_{\text{ext}} + \bigl(T_0 - T_{\text{ext}}\bigr) e^{-kt}\,} \]
+où $T_0 = T(0)$. La température tend vers $T_{\text{ext}}$ quand $t \to +\infty$ : le corps finit toujours par se mettre à la température ambiante, ce qui est conforme à l'expérience.
+
+\begin{exoresolu}[Un corps qui refroidit]
+Un corps à $80\,°\mathrm{C}$ est placé dans une pièce à $20\,°\mathrm{C}$. Sa température vérifie $T' = -0{,}1\,(T - 20)$, où $t$ est en minutes. Déterminer $T(t)$, puis l'instant où la température atteint $30\,°\mathrm{C}$.
+\tcblower
+\textbf{Solution.} Posons $y(t) = T(t) - 20$. Alors $y' = -0{,}1\,y$, donc $y(t) = y_0\, e^{-0{,}1t}$. Comme $y_0 = T(0) - 20 = 80 - 20 = 60$ :
+\[ T(t) = 20 + 60\, e^{-0{,}1t}. \]
+On cherche $t$ tel que $T(t) = 30$ :
+\begin{align*}
+20 + 60\, e^{-0{,}1t} &= 30 \\
+60\, e^{-0{,}1t} &= 10 \\
+e^{-0{,}1t} &= \frac{1}{6} \\
+-0{,}1\,t &= \ln\frac{1}{6} = -\ln 6 \\
+t &= \frac{\ln 6}{0{,}1} = 10\ln 6 \approx 17{,}9 \ \text{min}.
+\end{align*}
+Le corps atteint $30\,°\mathrm{C}$ au bout d'environ $18$ minutes. On vérifie la cohérence : $T(0) = 20 + 60 = 80$ et $T(t) \to 20$ quand $t \to +\infty$.
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents sur ce modèle]
+\begin{itemize}
+\item Ne pas oublier de \textbf{soustraire $T_{\text{ext}}$} : la solution n'est pas $T(t) = 80\,e^{-0{,}1t}$ (qui tendrait vers $0\,°\mathrm{C}$, absurde dans une pièce à $20\,°\mathrm{C}$).
+\item Pour isoler $t$, on utilise le logarithme népérien : $e^{at} = b \iff t = \dfrac{\ln b}{a}$ (avec $b > 0$). Attention aux signes quand $a < 0$.
+\item Vérifie toujours ta solution finale en calculant $T(0)$ et la limite en $+\infty$.
+\end{itemize}
+\end{attention}
+
+\courssub{Modèles mécaniques : oscillations libres et amorties}
+
+\textbf{Intuition.} Une masse accrochée à un ressort, un pendule écarté de sa position d'équilibre, la suspension d'une moto-taxi sur une piste déformée : tous ces systèmes \emph{oscillent}. Notons $x(t)$ l'écart à la position d'équilibre à l'instant $t$.
+
+\textbf{Oscillateur harmonique (sans frottement).} La relation fondamentale de la dynamique, avec la force de rappel du ressort $F = -kx$, conduit à l'équation
+\[ x'' + \omega^2 x = 0, \qquad \omega = \sqrt{\frac{k}{m}} > 0. \]
+C'est une équation $ay'' + by' + cy = 0$ avec $a = 1$, $b = 0$, $c = \omega^2$. L'équation caractéristique $r^2 + \omega^2 = 0$ a pour discriminant $\Delta = -4\omega^2 < 0$ : on est dans le cas des racines complexes conjuguées $r = \pm i\omega$ (partie réelle $\alpha = 0$, partie imaginaire $\beta = \omega$). La solution générale est donc
+\[ x(t) = A\cos(\omega t) + B\sin(\omega t), \]
+que l'on peut écrire sous la forme $x(t) = X_m \cos(\omega t + \varphi)$ : des \textbf{oscillations sinusoïdales} d'amplitude $X_m$ et de période $T = \dfrac{2\pi}{\omega}$. Les constantes $A$ et $B$ se déterminent grâce aux conditions initiales $x(0)$ (position de départ) et $x'(0)$ (vitesse initiale).
+
+\textbf{Oscillations amorties (avec frottements).} Si l'on ajoute une force de frottement proportionnelle à la vitesse, l'équation devient
+\[ m x'' + f x' + kx = 0, \qquad f > 0. \]
+Le discriminant de l'équation caractéristique $mr^2 + fr + k = 0$ est $\Delta = f^2 - 4mk$ :
+\begin{itemize}
+\item si $\Delta < 0$ (frottements faibles) : racines complexes $\alpha \pm i\beta$ avec $\alpha = -\dfrac{f}{2m} < 0$, d'où $x(t) = e^{\alpha t}\bigl(A\cos\beta t + B\sin\beta t\bigr)$ : des oscillations dont l'amplitude \textbf{décroît exponentiellement} (régime pseudo-périodique) ;
+\item si $\Delta \geq 0$ (frottements forts) : la solution est une somme d'exponentielles décroissantes, le système revient vers l'équilibre \textbf{sans osciller} (régime apériodique).
+\end{itemize}
+Dans tous les cas, $x(t) \to 0$ quand $t \to +\infty$ : les frottements finissent toujours par amortir le mouvement.
+
+\begin{exoresolu}[Masse accrochée à un ressort]
+Une masse en oscillation libre vérifie $x'' + 9x = 0$, avec $x(0) = 2$ (cm) et $x'(0) = 0$ (lâchée sans vitesse initiale). Déterminer $x(t)$ et la période des oscillations.
+\tcblower
+\textbf{Solution.} L'équation caractéristique $r^2 + 9 = 0$ donne $r = \pm 3i$ (cas $\Delta = -36 < 0$, $\alpha = 0$, $\beta = 3$). La solution générale est
+\[ x(t) = A\cos(3t) + B\sin(3t). \]
+Conditions initiales : $x(0) = A = 2$. De plus $x'(t) = -3A\sin(3t) + 3B\cos(3t)$, donc $x'(0) = 3B = 0$, soit $B = 0$. Finalement :
+\[ x(t) = 2\cos(3t) \quad (\text{en cm}). \]
+La période est $T = \dfrac{2\pi}{3} \approx 2{,}09$ s : la masse effectue environ une oscillation complète toutes les deux secondes, avec une amplitude constante de $2$ cm.
+\end{exoresolu}
+
+\courssub{Exploitation d'un modèle : les grandeurs à savoir calculer}
+
+Face à un problème de modélisation au Baccalauréat, trois types de questions reviennent systématiquement.
+
+\begin{methode}[Exploiter la solution d'un modèle]
+\begin{enumerate}
+\item \textbf{Valeur à un instant donné} : remplacer $t$ dans la solution et calculer (penser au mode radian/degré de la calculatrice selon le contexte).
+\item \textbf{Instant où un seuil est atteint} : résoudre l'équation $y(t) = y_1$. Pour les exponentielles, on aboutit à $e^{at} = b$, d'où $t = \dfrac{\ln b}{a}$.
+\item \textbf{Valeur limite} : calculer $\lim_{t \to +\infty} y(t)$. Si $a < 0$, alors $e^{at} \to 0$ et la limite est le terme constant (température ambiante, tension maximale, position d'équilibre).
+\end{enumerate}
+Grandeurs caractéristiques à connaître : \textbf{temps de doublement} $t_d = \dfrac{\ln 2}{k}$ (croissance), \textbf{demi-vie} $t_{1/2} = \dfrac{\ln 2}{|k|}$ (décroissance), \textbf{temps caractéristique} $\tau = \dfrac{1}{|a|}$ (convergence vers la limite : à $t = \tau$, l'écart à la limite est divisé par $e$).
+\end{methode}
+
+\begin{exercice}[Fièvre et médicament]
+Après l'injection d'un antipyrétique, la température d'un patient vérifie $T' = -0{,}05\,(T - 37)$, où $T$ est en degrés Celsius et $t$ en heures. À l'instant de l'injection, $T(0) = 39{,}5\,°\mathrm{C}$.
+\begin{enumerate}
+\item Déterminer $T(t)$.
+\item Au bout de combien de temps la température passe-t-elle sous $38\,°\mathrm{C}$ ?
+\item Quelle est la température limite ? Commenter.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Fièvre et médicament]
+\begin{enumerate}
+\item On pose $y = T - 37$ : alors $y' = -0{,}05\,y$, donc $y(t) = y_0 e^{-0{,}05t}$ avec $y_0 = 39{,}5 - 37 = 2{,}5$. D'où $T(t) = 37 + 2{,}5\,e^{-0{,}05t}$.
+\item On résout $37 + 2{,}5\,e^{-0{,}05t} = 38$, soit $e^{-0{,}05t} = \dfrac{1}{2{,}5} = 0{,}4$, d'où $t = \dfrac{-\ln 0{,}4}{0{,}05} = \dfrac{\ln 2{,}5}{0{,}05} \approx 18{,}3$ h. La température passe sous $38\,°\mathrm{C}$ au bout d'environ $18$ heures $20$ minutes.
+\item Quand $t \to +\infty$, $e^{-0{,}05t} \to 0$, donc $T(t) \to 37\,°\mathrm{C}$ : le modèle prévoit un retour complet à la température normale, ce qui est cohérent avec l'effet attendu du médicament.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[Ce qu'il faut retenir de la modélisation]
+\begin{itemize}
+\item Une loi d'évolution du type « la variation est proportionnelle à... » se traduit par une équation différentielle ; la condition initiale détermine alors \textbf{une unique} évolution.
+\item $y' = ky$ modélise croissance et décroissance exponentielles (populations, radioactivité) ; $y' = -k(y - \ell)$ modélise la convergence vers une valeur limite (Newton, circuit RC) ; $x'' + \omega^2 x = 0$ modélise les oscillations.
+\item Les grandeurs clés : $t_d = t_{1/2} = \dfrac{\ln 2}{|k|}$, $\tau = \dfrac{1}{|a|}$, valeur limite $\ell$.
+\item Un modèle a toujours un \textbf{domaine de validité} : savoir le critiquer est une compétence exigée.
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+Cette activité d'intégration te place dans une situation authentique de la filière caféière camerounaise : la conservation d'un lot de café dans une chambre froide. À travers elle, tu vas mobiliser l'ensemble des savoir-faire de la leçon :
+
+\begin{itemize}
+\item \cle{modéliser} un phénomène réel (évolution d'une température) par une équation différentielle du premier ordre ;
+\item effectuer un \cle{changement de fonction} pour se ramener à l'équation de référence $y' = ay$ ;
+\item \cle{résoudre} $y' = ay$ et utiliser une \cle{condition initiale} pour déterminer l'unique solution du problème ;
+\item \cle{exploiter} la solution : résoudre une équation comportant une exponentielle, calculer une durée, raisonner « à l'envers » (reconstituer l'heure d'un événement passé) ;
+\item \cle{critiquer} le modèle en étudiant le comportement de la solution quand $t \to +\infty$ et en discutant ses limites de validité.
+\end{itemize}
+
+Compétences transversales travaillées : communication mathématique (rédaction d'une restitution en groupe), esprit critique, travail collaboratif.
+
+\courssub{Situation}
+
+L'Office National du Cacao et du Café (ONCC) contrôle la qualité du café destiné à l'exportation dans ses magasins de Douala. Pour préserver les arômes d'un lot de café arabica de la région de l'Ouest, les sacs doivent être conservés dans une chambre froide à la température constante de $5~^\circ\mathrm{C}$. Si un sac reste trop longtemps à une température supérieure à $15~^\circ\mathrm{C}$ (le \emph{seuil critique}), l'humidité ambiante risque d'altérer la qualité du grain et le lot peut être déclassé.
+
+Un matin, un sac de café est sorti de la chambre froide : sa température est alors exactement $5~^\circ\mathrm{C}$. Il est laissé dans le magasin, où la température ambiante est maintenue à $25~^\circ\mathrm{C}$.
+
+On note $t$ le temps écoulé (en heures) depuis la sortie du sac de la chambre froide, et $T(t)$ la température du café (en degrés Celsius) à l'instant $t$. On admet, d'après la loi de refroidissement de Newton, que la température évolue selon l'équation différentielle :
+\[ T'(t) = -0{,}08\,\big(T(t) - 25\big). \]
+
+Autrement dit, la vitesse de variation de la température du café est proportionnelle à l'écart entre sa température et celle du magasin, avec un coefficient de proportionnalité $-0{,}08$ (en $\mathrm{h}^{-1}$), le signe négatif traduisant le fait que le café se réchauffe vers la température ambiante.
+
+\textbf{Deux questions préoccupent le responsable qualité :}
+\begin{enumerate}
+\item Au bout de combien de temps le café atteindra-t-il le seuil critique de $15~^\circ\mathrm{C}$ ?
+\item Un contrôle à $14$~h a relevé la température d'un sac à $18~^\circ\mathrm{C}$. À quelle heure ce sac est-il sorti de la chambre froide ?
+\end{enumerate}
+
+\courssub{Consignes}
+
+Travail en groupes de 3 ou 4 élèves. Durée : 1 h 30, suivie d'une restitution orale de 10 minutes par groupe. Toutes les réponses seront rédigées soigneusement, avec les justifications mathématiques complètes.
+
+\begin{enumerate}
+\item \textbf{Mise en équation.} On pose, pour tout $t \geq 0$, $y(t) = T(t) - 25$.
+\begin{enumerate}
+\item Justifier que $y$ est dérivable sur $[0\,; +\infty[$ et exprimer $y'(t)$ en fonction de $T'(t)$.
+\item Montrer que $y$ est solution de l'équation différentielle $(E) : y' = -0{,}08\,y$.
+\item Quelle est la valeur de $y(0)$ ? Justifier.
+\end{enumerate}
+\item \textbf{Résolution.}
+\begin{enumerate}
+\item Donner l'ensemble des solutions de $(E)$.
+\item En utilisant la condition initiale trouvée en 1.c), déterminer l'unique fonction $y$ solution du problème.
+\item En déduire que, pour tout $t \geq 0$ : $T(t) = 25 - 20\,e^{-0{,}08t}$.
+\item Vérifier que la fonction $T$ obtenue est bien solution de l'équation différentielle de départ et que $T(0) = 5$.
+\end{enumerate}
+\item \textbf{Seuil critique.}
+\begin{enumerate}
+\item Traduire par une équation l'affirmation « le café atteint la température de $15~^\circ\mathrm{C}$ ».
+\item Résoudre cette équation (on donnera la valeur exacte, puis une valeur approchée à la minute près).
+\item Le responsable qualité affirme : « un sac ne doit jamais rester plus de 8 heures hors de la chambre froide ». Cette consigne est-elle suffisante ? Justifier.
+\end{enumerate}
+\item \textbf{L'enquête : à quelle heure le sac est-il sorti ?} Un sac est retrouvé à $18~^\circ\mathrm{C}$ lors du contrôle de $14$~h. Déterminer depuis combien de temps il est sorti de la chambre froide, puis l'heure de sa sortie (arrondir à la minute près).
+\item \textbf{Critique du modèle.}
+\begin{enumerate}
+\item Déterminer la limite de $T(t)$ quand $t$ tend vers $+\infty$. Interpréter ce résultat dans le contexte : est-il cohérent avec la réalité ?
+\item Le café peut-il, selon ce modèle, dépasser $25~^\circ\mathrm{C}$ ? Atteindre exactement $25~^\circ\mathrm{C}$ en un temps fini ? Justifier.
+\item Citer au moins une hypothèse simplificatrice du modèle et proposer une piste pour l'améliorer.
+\end{enumerate}
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item \textbf{Équation de référence.} L'ensemble des solutions de l'équation différentielle $y' = ay$ (où $a$ est un réel fixé) est l'ensemble des fonctions définies sur $\mathbb{R}$ par
+\[ y(x) = C\,e^{ax}, \quad C \in \mathbb{R}. \]
+\item \textbf{Condition initiale.} Il existe une \emph{unique} solution de $y' = ay$ vérifiant $y(x_0) = y_0$ : c'est $y(x) = y_0\,e^{a(x - x_0)}$.
+\item \textbf{Changement de fonction.} Pour résoudre $T' = a(T - b)$, on pose $y = T - b$ ; alors $y' = T'$ et l'équation devient $y' = ay$.
+\item \textbf{Équations avec exponentielle.} Pour $A > 0$ : $e^{u} = A \iff u = \ln A$. Rappel : $\ln\!\left(\dfrac{1}{A}\right) = -\ln A$.
+\item \textbf{Limite de référence.} Si $a < 0$, alors $\lim\limits_{t \to +\infty} e^{at} = 0$.
+\item \textbf{Vérification.} Une fonction est solution d'une équation différentielle si, en la dérivant et en substituant, l'égalité est vraie pour tout $t$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé complet de l'activité]
+\textbf{Énoncé rappelé.} $T'(t) = -0{,}08\,(T(t) - 25)$, $T(0) = 5$. On pose $y = T - 25$. Questions : résoudre, trouver l'instant où $T = 15$, l'heure de sortie d'un sac à $18~^\circ\mathrm{C}$ à $14$~h, et critiquer le modèle.
+\tcblower
+\textbf{Question 1 — Mise en équation.}
+
+\textbf{a)} $T$ est dérivable sur $[0\,; +\infty[$ (sa dérivée est donnée par l'équation différentielle elle-même) et $y = T - 25$ est la somme de $T$ et d'une fonction constante, donc $y$ est dérivable et :
+\[ y'(t) = T'(t) - 0 = T'(t). \]
+\emph{Commentaire : dériver une constante donne $0$ ; c'est tout l'intérêt du changement de fonction.}
+
+\textbf{b)} D'après l'équation vérifiée par $T$ :
+\[ y'(t) = T'(t) = -0{,}08\,\big(T(t) - 25\big) = -0{,}08\,y(t). \]
+Donc $y$ est bien solution de $(E) : y' = -0{,}08\,y$.
+
+\textbf{c)} $y(0) = T(0) - 25 = 5 - 25 = -20$, car le sac sort de la chambre froide à $5~^\circ\mathrm{C}$.
+
+\textbf{Question 2 — Résolution.}
+
+\textbf{a)} $(E)$ est de la forme $y' = ay$ avec $a = -0{,}08$. D'après le théorème du cours, l'ensemble des solutions est :
+\[ y(t) = C\,e^{-0{,}08t}, \quad C \in \mathbb{R}. \]
+
+\textbf{b)} La condition initiale $y(0) = -20$ donne $C\,e^{0} = C = -20$. L'unique solution du problème est donc :
+\[ y(t) = -20\,e^{-0{,}08t}. \]
+
+\textbf{c)} Comme $T(t) = y(t) + 25$, on obtient :
+\[ \boxed{T(t) = 25 - 20\,e^{-0{,}08t}}. \]
+
+\textbf{d)} Vérification : $T'(t) = -20 \times (-0{,}08)\,e^{-0{,}08t} = 1{,}6\,e^{-0{,}08t}$, et
+\[ -0{,}08\,\big(T(t) - 25\big) = -0{,}08 \times \big(-20\,e^{-0{,}08t}\big) = 1{,}6\,e^{-0{,}08t} = T'(t). \]
+De plus $T(0) = 25 - 20 \times 1 = 5$. La fonction trouvée est bien la solution du problème.
+
+\textbf{Question 3 — Seuil critique.}
+
+\textbf{a)} « Le café atteint $15~^\circ\mathrm{C}$ » se traduit par $T(t) = 15$.
+
+\textbf{b)} Résolvons :
+\begin{align*}
+25 - 20\,e^{-0{,}08t} &= 15 \\
+-20\,e^{-0{,}08t} &= -10 \\
+e^{-0{,}08t} &= \frac{1}{2} \\
+-0{,}08\,t &= \ln\frac{1}{2} = -\ln 2 \\
+t &= \frac{\ln 2}{0{,}08} = 12{,}5\,\ln 2.
+\end{align*}
+Valeur exacte : $t = 12{,}5\ln 2$ heures. Numériquement : $t \approx 8{,}664$~h, soit environ $8$~h $40$~min (car $0{,}664 \times 60 \approx 40$).
+
+\textbf{c)} La consigne des 8 heures \emph{est suffisante} : le seuil critique n'est atteint qu'au bout d'environ $8$~h $40$~min. Un sac resté moins de 8 heures dehors reste sous les $15~^\circ\mathrm{C}$ (la fonction $T$ est strictement croissante, donc $t < 8{,}664 \Rightarrow T(t) < 15$). La marge de sécurité est toutefois faible : environ 40 minutes.
+
+\textbf{Question 4 — L'enquête.}
+
+On cherche la durée $t$ écoulée entre la sortie et le contrôle, telle que $T(t) = 18$ :
+\begin{align*}
+25 - 20\,e^{-0{,}08t} &= 18 \\
+e^{-0{,}08t} &= \frac{7}{20} = 0{,}35 \\
+-0{,}08\,t &= \ln 0{,}35 \\
+t &= \frac{-\ln 0{,}35}{0{,}08} = \frac{\ln\!\left(\frac{20}{7}\right)}{0{,}08} \approx \frac{1{,}0498}{0{,}08} \approx 13{,}12~\mathrm{h}.
+\end{align*}
+Soit environ $13$~h $07$~min. Le contrôle ayant eu lieu à $14$~h, le sac est sorti de la chambre froide vers $14\mathrm{h} - 13\mathrm{h}07 \approx 0\mathrm{h}53$, c'est-à-dire \textbf{vers 1 heure du matin}. Le responsable peut ainsi remonter la chaîne de responsabilité : le sac est resté dehors toute la nuit !
+
+\textbf{Question 5 — Critique du modèle.}
+
+\textbf{a)} Comme $-0{,}08 < 0$, $\lim\limits_{t \to +\infty} e^{-0{,}08t} = 0$, donc :
+\[ \lim_{t \to +\infty} T(t) = 25. \]
+Interprétation : à long terme, le café se met en équilibre thermique avec le magasin. C'est physiquement cohérent.
+
+\textbf{b)} Pour tout $t \geq 0$, $e^{-0{,}08t} > 0$, donc $T(t) = 25 - 20\,e^{-0{,}08t} < 25$ : le café ne dépasse jamais $25~^\circ\mathrm{C}$. De plus $T(t) = 25$ exigerait $e^{-0{,}08t} = 0$, impossible : la température $25~^\circ\mathrm{C}$ n'est atteinte qu'en limite, jamais en un temps fini. La droite d'équation $T = 25$ est asymptote à la courbe.
+
+\textbf{c)} Hypothèses simplificatrices possibles : la température du magasin est supposée parfaitement constante (en réalité elle varie entre le jour et la nuit) ; le coefficient $-0{,}08$ est supposé identique pour tous les sacs (il dépend en fait de l'épaisseur du sac, de l'humidité, de la ventilation) ; le café est traité comme un corps homogène. Piste d'amélioration : mesurer expérimentalement la température à deux instants pour ajuster le coefficient, ou faire dépendre la température ambiante du temps.
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents dans cette activité]
+\begin{itemize}
+\item Oublier que $y(0) = T(0) - 25 = -20$ et non $5$ : la condition initiale doit être \emph{traduite} dans la nouvelle fonction.
+\item Écrire $\ln\!\left(\tfrac{1}{2}\right) = \ln 2$ au lieu de $-\ln 2$ : le temps trouvé serait alors négatif, ce qui doit immédiatement alerter.
+\item Arrondir trop tôt : garde la valeur exacte $12{,}5\ln 2$ jusqu'au bout, puis arrondis.
+\item Conclure « le sac est sorti à $13$~h $07$ » au lieu de soustraire la durée à l'heure du contrôle : lis bien la question posée.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence les points essentiels de la leçon :
+
+\begin{itemize}
+\item \textbf{La puissance du changement de fonction.} L'équation $T' = -0{,}08(T - 25)$ n'est pas directement de la forme du cours, mais le changement $y = T - 25$ la ramène à $y' = -0{,}08y$, que l'on sait résoudre. Cette technique sera réutilisable dans de nombreuses situations (circuits électriques, cinétique chimique, désintégration radioactive).
+\item \textbf{Le rôle décisif de la condition initiale.} Parmi l'infinité de solutions $Ce^{-0{,}08t}$, une seule correspond à la réalité du problème : celle qui vaut $-20$ en $t = 0$. C'est elle qui permet de faire des prévisions concrètes.
+\item \textbf{L'exploitation de la solution.} Une fois $T(t)$ connue, on peut répondre à des questions directes (quand le seuil est-il atteint ?) mais aussi \emph{inverses} (reconstituer l'heure d'un événement passé), comme le font les experts en thermométrie forensique.
+\item \textbf{L'attitude critique.} L'étude de la limite en $+\infty$ a montré que le modèle est cohérent (équilibre à $25~^\circ\mathrm{C}$, jamais dépassé), tout en ayant des limites : coefficient constant, température ambiante fixe. Un bon mathématicien sait à la fois utiliser un modèle et en discuter la validité.
+\end{itemize}
+
+Tu as ainsi vécu la démarche complète du scientifique : \cle{modéliser} $\to$ \cle{résoudre} $\to$ \cle{exploiter} $\to$ \cle{critiquer}. C'est exactement cette chaîne de compétences qui est évaluée au Baccalauréat dans les problèmes faisant intervenir les équations différentielles.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Vocabulaire et notion de solution}
+
+\begin{definition}[Vocabulaire des équations différentielles]
+Une \textbf{équation différentielle} est une équation qui lie une fonction inconnue $y$, ses dérivées successives ($y', y'', \dots$) et la variable indépendante $x$ (souvent le temps $t$).
+\begin{itemize}
+\item L'\textbf{ordre} est l'ordre de la dérivée la plus élevée qui apparaît (1 pour $y' = ay$, 2 pour $ay''+by'+cy=d$).
+\item Le \textbf{degré} est la plus grande puissance de la dérivée d'ordre le plus élevé (toujours 1 dans le programme de Terminale).
+\item Une \textbf{solution} sur un intervalle $I$ est une fonction $y$, dérivable suffisamment de fois sur $I$, qui vérifie l'équation pour tout $x \in I$.
+\item La \textbf{solution générale} est l'ensemble de toutes les solutions ; elle dépend de constantes arbitraires (autant que l'ordre de l'équation).
+\item Une \textbf{solution particulière} est une solution obtenue en fixant les constantes (souvent via des conditions initiales).
+\item L'\textbf{équation homogène associée} à $ay''+by'+cy=d$ est $ay''+by'+cy=0$.
+\end{itemize}
+\end{definition}
+
+\courssub{Vérifier qu'une fonction donnée est solution d'une équation différentielle}
+
+\begin{methode}[Vérifier qu'une fonction est solution]
+Pour vérifier qu'une fonction $f$ est solution d'une équation différentielle sur un intervalle $I$ :
+\begin{enumerate}
+\item \textbf{Calculer} les dérivées nécessaires ($f'$, éventuellement $f''$) avec soin, en justifiant la dérivabilité de $f$ sur $I$.
+\item \textbf{Substituer} : remplacer $y$, $y'$, $y''$ par $f(x)$, $f'(x)$, $f''(x)$ dans le membre de gauche de l'équation.
+\item \textbf{Simplifier} l'expression obtenue et \textbf{comparer} au membre de droite.
+\item \textbf{Conclure par une phrase} : « Pour tout réel $x$ de l'intervalle $I$, $f$ vérifie l'équation, donc $f$ est solution de $(E)$ sur $I$. »
+\end{enumerate}
+\textbf{Réflexe} : ne jamais manipuler l'équation en supposant que $f$ est solution ; on part toujours d'un seul membre et on aboutit à l'autre par une chaîne d'égalité.
+\end{methode}
+
+\begin{exoresolu}[Vérification d'une solution (type Bac)]
+On considère l'équation différentielle $(E) : y'' - 3y' + 2y = 4$.
+\begin{enumerate}
+\item Vérifier que la fonction $g$ définie sur $\mathbb{R}$ par $g(x) = 2\mathrm{e}^{x} + 2$ est solution de $(E)$.
+\item La fonction $h$ définie par $h(x) = \mathrm{e}^{2x} + 1$ est-elle solution de $(E)$ ?
+\end{enumerate}
+\tcblower
+\textbf{1.} La fonction $g$ est définie et deux fois dérivable sur $\mathbb{R}$ comme somme de fonctions dérivables. Pour tout réel $x$ :
+\[ g'(x) = 2\mathrm{e}^{x} \qquad \text{et} \qquad g''(x) = 2\mathrm{e}^{x}. \]
+Substituons dans le membre de gauche de $(E)$ :
+\begin{align*}
+g''(x) - 3g'(x) + 2g(x) &= 2\mathrm{e}^{x} - 3\left(2\mathrm{e}^{x}\right) + 2\left(2\mathrm{e}^{x} + 2\right) \\
+&= 2\mathrm{e}^{x} - 6\mathrm{e}^{x} + 4\mathrm{e}^{x} + 4 \\
+&= (2 - 6 + 4)\mathrm{e}^{x} + 4 = 4.
+\end{align*}
+Pour tout réel $x$, $g''(x) - 3g'(x) + 2g(x) = 4$ : \textbf{$g$ est bien solution de $(E)$ sur $\mathbb{R}$}.
+
+\textbf{2.} $h$ est deux fois dérivable sur $\mathbb{R}$ et $h'(x) = 2\mathrm{e}^{2x}$, $h''(x) = 4\mathrm{e}^{2x}$. Alors :
+\[ h''(x) - 3h'(x) + 2h(x) = 4\mathrm{e}^{2x} - 6\mathrm{e}^{2x} + 2\mathrm{e}^{2x} + 2 = 2 \neq 4. \]
+\textbf{$h$ n'est pas solution de $(E)$.}
+\end{exoresolu}
+
+\coursec{L'équation $y' = ay$}
+
+\courssub{Résolution et solution générale}
+
+\begin{methode}[Résolution de $y' = ay$]
+\begin{enumerate}
+\item \textbf{Identifier} le coefficient $a$ (attention au signe et à la forme : $y' = ay$ peut se cacher sous $y' - ay = 0$).
+\item \textbf{Écrire directement} l'ensemble des solutions : ce sont les fonctions
+\[ x \longmapsto C\mathrm{e}^{ax}, \quad C \in \mathbb{R}. \]
+\item Si une \textbf{condition initiale} $y(x_0) = y_0$ est donnée, remplacer : $C\mathrm{e}^{ax_0} = y_0$, d'où $C = y_0\,\mathrm{e}^{-ax_0}$.
+\item \textbf{Conclure} en donnant l'unique solution explicitement.
+\end{enumerate}
+\end{methode}
+
+\begin{aretenir}[Solution générale de $y' = ay$]
+L'ensemble des solutions de l'équation différentielle $y' = ay$ sur $\mathbb{R}$ est
+\[ \left\{ x \longmapsto C\mathrm{e}^{ax} \mid C \in \mathbb{R} \right\}. \]
+La constante $C$ est déterminée de manière unique par une condition initiale $y(x_0)=y_0$.
+\end{aretenir}
+
+\begin{exoresolu}[Équation du premier ordre avec condition initiale (type Bac)]
+On considère l'équation différentielle $(E) : y' = -2y$.
+\begin{enumerate}
+\item Déterminer l'ensemble des solutions de $(E)$ sur $\mathbb{R}$.
+\item Déterminer la solution $f$ de $(E)$ vérifiant $f(0) = 3$.
+\end{enumerate}
+\tcblower
+\textbf{1.} L'équation $(E)$ est de la forme $y' = ay$ avec $a = -2$. D'après le théorème du cours, l'ensemble des solutions de $(E)$ sur $\mathbb{R}$ est l'ensemble des fonctions
+\[ x \longmapsto C\mathrm{e}^{-2x}, \quad \text{où } C \text{ est une constante réelle quelconque.} \]
+
+\textbf{2.} On cherche la constante $C$ telle que $f(0) = 3$. Or
+\[ f(0) = C\mathrm{e}^{-2 \times 0} = C\mathrm{e}^{0} = C. \]
+La condition $f(0) = 3$ donne donc $C = 3$. L'unique solution de $(E)$ vérifiant $f(0) = 3$ est la fonction
+\[ f : x \longmapsto 3\mathrm{e}^{-2x}. \]
+\textbf{Vérification} : $f'(x) = -6\mathrm{e}^{-2x} = -2 \times 3\mathrm{e}^{-2x} = -2f(x)$ et $f(0) = 3$. La réponse est cohérente.
+\end{exoresolu}
+
+\coursec{Équation homogène du second ordre : $ay'' + by' + cy = 0$}
+
+\courssub{Résolution par l'équation caractéristique}
+
+\begin{methode}[Équation homogène du second ordre]
+Pour résoudre $(E) : ay'' + by' + cy = 0$ (avec $a \neq 0$) :
+\begin{enumerate}
+\item \textbf{Écrire l'équation caractéristique} : $ar^2 + br + c = 0$, d'inconnue $r$.
+\item \textbf{Calculer le discriminant} $\Delta = b^2 - 4ac$.
+\item \textbf{Discuter selon le signe de $\Delta$} :
+\begin{itemize}
+\item Si $\Delta > 0$ : deux racines réelles distinctes $r_1$ et $r_2$, solutions $y(x) = C_1\mathrm{e}^{r_1 x} + C_2\mathrm{e}^{r_2 x}$ ;
+\item Si $\Delta = 0$ : racine double $r_0 = -\dfrac{b}{2a}$, solutions $y(x) = (C_1 x + C_2)\mathrm{e}^{r_0 x}$ ;
+\item Si $\Delta < 0$ : racines complexes conjuguées $\alpha \pm \mathrm{i}\beta$ avec $\alpha = -\dfrac{b}{2a}$ et $\beta = \dfrac{\sqrt{-\Delta}}{2a}$, solutions
+\[ y(x) = \mathrm{e}^{\alpha x}\left(C_1\cos(\beta x) + C_2\sin(\beta x)\right). \]
+\end{itemize}
+\item \textbf{Conclure} : $C_1$ et $C_2$ sont des constantes réelles arbitraires.
+\end{enumerate}
+\textbf{Réflexe de contrôle} : vérifier que les racines trouvées satisfont $r_1 + r_2 = -\dfrac{b}{a}$ et $r_1 r_2 = \dfrac{c}{a}$ (relations de Viète).
+\end{methode}
+
+\begin{exoresolu}[Trois équations, trois cas de figure (type Bac)]
+Résoudre sur $\mathbb{R}$ chacune des équations différentielles suivantes :
+\[ (E_1) : y'' - 5y' + 6y = 0 \qquad (E_2) : y'' - 4y' + 4y = 0 \qquad (E_3) : y'' + 2y' + 5y = 0. \]
+\tcblower
+\textbf{Équation $(E_1)$.} Équation caractéristique : $r^2 - 5r + 6 = 0$.
+\[ \Delta = (-5)^2 - 4 \times 1 \times 6 = 25 - 24 = 1 > 0. \]
+Deux racines réelles : $r_1 = \dfrac{5 - 1}{2} = 2$ et $r_2 = \dfrac{5 + 1}{2} = 3$. (Contrôle : $2 + 3 = 5$ et $2 \times 3 = 6$.)
+Les solutions de $(E_1)$ sont les fonctions
+\[ y(x) = C_1\mathrm{e}^{2x} + C_2\mathrm{e}^{3x}, \quad (C_1, C_2) \in \mathbb{R}^2. \]
+
+\textbf{Équation $(E_2)$.} Équation caractéristique : $r^2 - 4r + 4 = 0$.
+\[ \Delta = (-4)^2 - 4 \times 1 \times 4 = 16 - 16 = 0. \]
+Racine double : $r_0 = \dfrac{4}{2} = 2$. Les solutions de $(E_2)$ sont les fonctions
+\[ y(x) = (C_1 x + C_2)\mathrm{e}^{2x}, \quad (C_1, C_2) \in \mathbb{R}^2. \]
+
+\textbf{Équation $(E_3)$.} Équation caractéristique : $r^2 + 2r + 5 = 0$.
+\[ \Delta = 2^2 - 4 \times 1 \times 5 = 4 - 20 = -16 < 0. \]
+Racines complexes : $r = \dfrac{-2 \pm \mathrm{i}\sqrt{16}}{2} = -1 \pm 2\mathrm{i}$, donc $\alpha = -1$ et $\beta = 2$. Les solutions de $(E_3)$ sont les fonctions
+\[ y(x) = \mathrm{e}^{-x}\left(C_1\cos(2x) + C_2\sin(2x)\right), \quad (C_1, C_2) \in \mathbb{R}^2. \]
+\end{exoresolu}
+
+\coursec{Équation avec second membre constant : $ay'' + by' + cy = d$}
+
+\courssub{Méthode de la solution particulière constante}
+
+\begin{methode}[Second membre constant]
+Pour résoudre $(E) : ay'' + by' + cy = d$ où $d$ est une constante réelle :
+\begin{enumerate}
+\item \textbf{Résoudre l'équation homogène associée} $(E_0) : ay'' + by' + cy = 0$ (équation caractéristique, discussion sur $\Delta$). On obtient la solution générale $y_h$.
+\item \textbf{Chercher une solution particulière constante} $y_p(x) = k$. Alors $y_p' = y_p'' = 0$, et en substituant : $ck = d$.
+\begin{itemize}
+\item Si $c \neq 0$ : $k = \dfrac{d}{c}$.
+\item Si $c = 0$ : l'équation se ramène au premier ordre en $z = y'$ : $az'' + bz' = d$ (cas non au programme de Terminale, mais bon à savoir).
+\end{itemize}
+\item \textbf{Additionner} : la solution générale de $(E)$ est $y = y_h + y_p$.
+\item \textbf{Justifier} : la somme d'une solution de $(E_0)$ et d'une solution de $(E)$ est solution de $(E)$, et toute solution de $(E)$ s'obtient ainsi.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Équation complète avec second membre constant (type Bac)]
+On considère l'équation différentielle $(E) : y'' - 3y' + 2y = 4$.
+\begin{enumerate}
+\item Résoudre l'équation homogène associée $(E_0) : y'' - 3y' + 2y = 0$.
+\item Déterminer une solution particulière constante de $(E)$.
+\item En déduire l'ensemble des solutions de $(E)$.
+\end{enumerate}
+\tcblower
+\textbf{1.} Équation caractéristique de $(E_0)$ : $r^2 - 3r + 2 = 0$.
+\[ \Delta = (-3)^2 - 4 \times 2 = 9 - 8 = 1 > 0, \quad r_1 = \frac{3 - 1}{2} = 1, \quad r_2 = \frac{3 + 1}{2} = 2. \]
+La solution générale de $(E_0)$ est
+\[ y_h(x) = C_1\mathrm{e}^{x} + C_2\mathrm{e}^{2x}, \quad (C_1, C_2) \in \mathbb{R}^2. \]
+
+\textbf{2.} Cherchons une solution particulière constante $y_p(x) = k$. On a $y_p'(x) = 0$ et $y_p''(x) = 0$. En substituant dans $(E)$ :
+\[ 0 - 3 \times 0 + 2k = 4 \quad \Longleftrightarrow \quad k = 2. \]
+Donc $y_p(x) = 2$ est une solution particulière de $(E)$.
+
+\textbf{3.} L'ensemble des solutions de $(E)$ est l'ensemble des fonctions
+\[ y(x) = C_1\mathrm{e}^{x} + C_2\mathrm{e}^{2x} + 2, \quad (C_1, C_2) \in \mathbb{R}^2. \]
+\textbf{Vérification rapide} : pour $y(x) = C_1\mathrm{e}^{x} + C_2\mathrm{e}^{2x} + 2$, on a $y' = C_1\mathrm{e}^{x} + 2C_2\mathrm{e}^{2x}$ et $y'' = C_1\mathrm{e}^{x} + 4C_2\mathrm{e}^{2x}$, d'où $y'' - 3y' + 2y = (1 - 3 + 2)C_1\mathrm{e}^{x} + (4 - 6 + 2)C_2\mathrm{e}^{2x} + 4 = 4$. Correct.
+\end{exoresolu}
+
+\coursec{Conditions initiales et unicité de la solution}
+
+\courssub{Exploitation des conditions initiales}
+
+\begin{methode}[Exploitation des conditions initiales]
+Une équation du second ordre exige \textbf{deux} conditions initiales (souvent $y(x_0)$ et $y'(x_0)$) pour déterminer une solution unique.
+\begin{enumerate}
+\item \textbf{Écrire la solution générale} $y(x)$ avec ses deux constantes $C_1$ et $C_2$.
+\item \textbf{Calculer $y'(x)$} en dérivant la solution générale (attention à la dérivation d'un produit dans le cas $\Delta = 0$).
+\item \textbf{Traduire les conditions initiales} : on obtient un système de deux équations à deux inconnues $C_1$ et $C_2$.
+\item \textbf{Résoudre le système} (substitution ou combinaison), puis \textbf{écrire la solution finale} et vérifier qu'elle satisfait les conditions.
+\end{enumerate}
+\textbf{Réflexe} : au Bac, la vérification finale (recalculer $y(x_0)$ et $y'(x_0)$) prend 30 secondes et sécurise tous les points.
+\end{methode}
+
+\begin{exoresolu}[Solution unique sous conditions initiales (type Bac)]
+Soit $(E) : y'' - 3y' + 2y = 4$. On admet que la solution générale de $(E)$ est
+\[ y(x) = C_1\mathrm{e}^{x} + C_2\mathrm{e}^{2x} + 2, \quad (C_1, C_2) \in \mathbb{R}^2. \]
+Déterminer l'unique solution $f$ de $(E)$ vérifiant $f(0) = 2$ et $f'(0) = 1$.
+\tcblower
+\textbf{Étape 1 : dérivation.} Pour tout réel $x$ :
+\[ f'(x) = C_1\mathrm{e}^{x} + 2C_2\mathrm{e}^{2x}. \]
+
+\textbf{Étape 2 : traduction des conditions initiales.}
+\[ f(0) = C_1 + C_2 + 2 = 2 \quad \Longleftrightarrow \quad C_1 + C_2 = 0, \]
+\[ f'(0) = C_1 + 2C_2 = 1. \]
+On obtient le système
+\[ \begin{cases} C_1 + C_2 = 0 \\ C_1 + 2C_2 = 1 \end{cases} \]
+
+\textbf{Étape 3 : résolution.} En retranchant la première équation de la deuxième : $C_2 = 1$. Puis la première équation donne $C_1 = -C_2 = -1$.
+
+\textbf{Étape 4 : conclusion.} L'unique solution cherchée est
+\[ f(x) = -\mathrm{e}^{x} + \mathrm{e}^{2x} + 2. \]
+\textbf{Vérification} : $f(0) = -1 + 1 + 2 = 2$ et $f'(x) = -\mathrm{e}^{x} + 2\mathrm{e}^{2x}$ donne $f'(0) = -1 + 2 = 1$. Les deux conditions sont satisfaites.
+\end{exoresolu}
+
+\coursec{Modélisation par des équations différentielles}
+
+\courssub{De la situation concrète à l'équation différentielle}
+
+\begin{methode}[De la situation concrète à l'équation différentielle]
+\begin{enumerate}
+\item \textbf{Identifier la grandeur inconnue} (population, température, charge, capital...) et la variable (souvent le temps $t$).
+\item \textbf{Traduire la loi d'évolution} énoncée :
+\begin{itemize}
+\item « Taux de variation proportionnel à la quantité » $\rightarrow$ $y' = ky$ (croissance/décroissance exponentielle).
+\item « Vitesse proportionnelle à l'écart avec une valeur d'équilibre $L$ » $\rightarrow$ $y' = k(L - y)$, que l'on ramène à $u' = -ku$ en posant $u = y - L$ (loi de Newton pour le refroidissement, charge/décharge d'un condensateur en série TI).
+\end{itemize}
+\item \textbf{Préciser la condition initiale} lue dans l'énoncé (valeur à l'instant $t = 0$).
+\item \textbf{Résoudre} avec les méthodes du cours, puis \textbf{répondre à la question concrète} (calculer une valeur, résoudre une équation ou inéquation en $t$, souvent avec le logarithme népérien).
+\item \textbf{Interpréter} le résultat dans le contexte, avec l'unité.
+\end{enumerate}
+\textbf{Formule clé} : résoudre $\mathrm{e}^{kt} = A$ ($A>0$) revient à écrire $t = \dfrac{\ln A}{k}$.
+\end{methode}
+
+\begin{exoresolu}[Refroidissement d'une boisson (type Bac)]
+Une bouteille de jus de foléré sortie d'un réfrigérateur à la température de $5\,^\circ\mathrm{C}$ est posée dans une salle à Douala où la température ambiante est $30\,^\circ\mathrm{C}$. On note $\theta(t)$ la température de la boisson (en $^\circ\mathrm{C}$) à l'instant $t$ (en minutes). On admet que la vitesse de variation de la température est proportionnelle à l'écart entre la température ambiante et celle de la boisson : il existe $k > 0$ tel que
+\[ \theta'(t) = k\bigl(30 - \theta(t)\bigr). \]
+On donne $k = 0{,}05$.
+\begin{enumerate}
+\item On pose $u(t) = \theta(t) - 30$. Montrer que $u$ est solution de $u' = -0{,}05\,u$.
+\item En déduire l'expression de $\theta(t)$ sachant que $\theta(0) = 5$.
+\item Au bout de combien de minutes la boisson atteint-elle $20\,^\circ\mathrm{C}$ ? Arrondir à la minute.
+\end{enumerate}
+\tcblower
+\textbf{1.} La fonction $u$ est dérivable sur $[0 ; +\infty[$ et $u'(t) = \theta'(t)$. D'après la loi donnée :
+\[ u'(t) = \theta'(t) = 0{,}05\bigl(30 - \theta(t)\bigr) = -0{,}05\bigl(\theta(t) - 30\bigr) = -0{,}05\,u(t). \]
+Donc $u$ est bien solution de l'équation différentielle $u' = -0{,}05\,u$.
+
+\textbf{2.} L'équation $u' = -0{,}05\,u$ est de la forme $y' = ay$ avec $a = -0{,}05$ : ses solutions sont les fonctions $u(t) = C\mathrm{e}^{-0{,}05t}$, $C \in \mathbb{R}$.
+Condition initiale : $u(0) = \theta(0) - 30 = 5 - 30 = -25$, donc $C\mathrm{e}^{0} = -25$, c'est-à-dire $C = -25$.
+Ainsi $u(t) = -25\mathrm{e}^{-0{,}05t}$, et comme $\theta(t) = u(t) + 30$ :
+\[ \theta(t) = 30 - 25\mathrm{e}^{-0{,}05t}. \]
+
+\textbf{3.} On résout $\theta(t) = 20$ :
+\begin{align*}
+30 - 25\mathrm{e}^{-0{,}05t} = 20 &\Longleftrightarrow 25\mathrm{e}^{-0{,}05t} = 10 \\
+&\Longleftrightarrow \mathrm{e}^{-0{,}05t} = \frac{10}{25} = 0{,}4 \\
+&\Longleftrightarrow -0{,}05t = \ln(0{,}4) \\
+&\Longleftrightarrow t = \frac{\ln(0{,}4)}{-0{,}05} = 20\ln(2{,}5).
+\end{align*}
+Or $\ln(2{,}5) \approx 0{,}916$, donc $t \approx 18{,}3$ minutes.
+\textbf{Conclusion} : la boisson atteint $20\,^\circ\mathrm{C}$ au bout d'environ \textbf{19 minutes} (arrondi à la minute supérieure, car à 18 minutes elle n'a pas encore atteint $20\,^\circ\mathrm{C}$).
+\end{exoresolu}
+
+\begin{savaistu}[Applications au Cameroun et en série TI]
+\begin{itemize}
+\item \textbf{Démographie :} La croissance de la population d'une ville comme Yaoundé ou Douala peut être modélisée par $P' = kP$ (modèle de Malthus) ou, plus réalistement, par un modèle logistique $P' = kP(1 - P/K)$ (non au programme mais culture G).
+\item \textbf{Épidémiologie :} La propagation d'une maladie (choléra, COVID-19) suit souvent une équation différentielle du type $I' = kI(N-I)$ où $I$ est le nombre d'infectés et $N$ la population totale.
+\item \textbf{Électrotechnique (Série TI) :} La charge d'un condensateur dans un circuit RC série alimenté par une tension continue $E$ vérifie $u_c' = \frac{E - u_c}{RC}$, soit $u_c' + \frac{1}{RC}u_c = \frac{E}{RC}$, une équation du premier ordre à coefficients constants. La décharge donne $u_c' + \frac{1}{RC}u_c = 0$.
+\item \textbf{Finance :} Un capital placé à un taux d'intérêt continu $t$ évolue selon $C' = tC$, d'où $C(t) = C_0\mathrm{e}^{tt}$.
+\end{itemize}
+\end{savaistu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Bac]
+\begin{enumerate}
+\item \textbf{Oublier la constante d'intégration.} Écrire « la solution de $y' = ay$ est $y = \mathrm{e}^{ax}$ » est faux : la solution \emph{générale} est $y = C\mathrm{e}^{ax}$, $C \in \mathbb{R}$. Sans condition initiale, on ne peut pas fixer $C$.
+\item \textbf{Se tromper dans l'équation caractéristique.} Pour $ay'' + by' + cy = 0$, c'est $ar^2 + br + c = 0$ : le coefficient de $y''$ va avec $r^2$, celui de $y$ est le terme constant. Une inversion fréquente : écrire $cr^2 + br + a = 0$. Vérifie toujours avec $r_1 + r_2 = -\dfrac{b}{a}$.
+\item \textbf{Mal gérer le cas $\Delta < 0$.} Les solutions sont $\mathrm{e}^{\alpha x}\bigl(C_1\cos(\beta x) + C_2\sin(\beta x)\bigr)$ avec $\alpha = -\dfrac{b}{2a}$ et $\beta = \dfrac{\sqrt{-\Delta}}{2a}$ : n'oublie pas le facteur $\mathrm{e}^{\alpha x}$, et $\beta$ s'obtient avec $\sqrt{-\Delta}$ (et non $\sqrt{\Delta}$, qui n'existe pas dans $\mathbb{R}$).
+\item \textbf{Oublier la solution particulière.} Pour $ay'' + by' + cy = d$, la solution générale est $y_h + y_p$ : une réponse sans le terme constant $\dfrac{d}{c}$ est incomplète, et les conditions initiales doivent être appliquées à la solution \emph{complète}, pas à $y_h$ seule.
+\item \textbf{Dériver incorrectement avant d'appliquer les conditions initiales.} Dans le cas $\Delta = 0$, $y(x) = (C_1 x + C_2)\mathrm{e}^{r_0 x}$ se dérive comme un \emph{produit} : $y'(x) = C_1\mathrm{e}^{r_0 x} + r_0(C_1 x + C_2)\mathrm{e}^{r_0 x}$. Oublier un morceau fausse tout le système. Termine toujours par la vérification des conditions initiales.
+\end{enumerate}
+\end{attention}
+
+\begin{exercice}[Entraînement Bac — Équations différentielles]
+\begin{enumerate}
+\item Résoudre sur $\mathbb{R}$ l'équation différentielle $(E) : y'' + 4y' + 4y = 0$.
+\item On considère $(E') : y'' - 2y' - 3y = 6$.
+\begin{enumerate}
+\item Résoudre l'équation homogène associée.
+\item Trouver une solution particulière constante de $(E')$.
+\item Déterminer la solution $f$ de $(E')$ telle que $f(0) = 1$ et $f'(0) = 0$.
+\end{enumerate}
+\item \textbf{Modélisation (Série TI / Spé Physique) :} Un circuit RL série est alimenté par une tension continue $E = 12\,\mathrm{V}$. La résistance est $R = 4\,\Omega$ et l'inductance $L = 0{,}5\,\mathrm{H}$. L'intensité $i(t)$ vérifie $L i'(t) + R i(t) = E$. On suppose $i(0) = 0$.
+\begin{enumerate}
+\item Mettre l'équation sous la forme $i' + ai = b$ et identifier $a, b$.
+\item Résoudre l'équation et donner $i(t)$.
+\item Quelle est la valeur limite de l'intensité quand $t \to +\infty$ ?
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\textbf{1.} Équation caractéristique : $r^2 + 4r + 4 = 0 \iff (r+2)^2 = 0$. Racine double $r_0 = -2$.
+Solutions : $y(x) = (C_1 x + C_2)\mathrm{e}^{-2x}$, $(C_1, C_2) \in \mathbb{R}^2$.
+
+\textbf{2.} \textit{a)} Homogène : $r^2 - 2r - 3 = 0$, $\Delta = 16$, $r_1 = -1$, $r_2 = 3$.
+$y_h(x) = C_1\mathrm{e}^{-x} + C_2\mathrm{e}^{3x}$.
+\textit{b)} Particulière constante $k$ : $-3k = 6 \implies k = -2$. $y_p(x) = -2$.
+\textit{c)} Générale : $f(x) = C_1\mathrm{e}^{-x} + C_2\mathrm{e}^{3x} - 2$.
+$f'(x) = -C_1\mathrm{e}^{-x} + 3C_2\mathrm{e}^{3x}$.
+Conditions : $\begin{cases} C_1 + C_2 - 2 = 1 \\ -C_1 + 3C_2 = 0 \end{cases} \iff \begin{cases} C_1 + C_2 = 3 \\ C_1 = 3C_2 \end{cases} \implies 4C_2 = 3 \implies C_2 = 0{,}75,\; C_1 = 2{,}25$.
+$f(x) = 2{,}25\mathrm{e}^{-x} + 0{,}75\mathrm{e}^{3x} - 2$.
+
+\textbf{3.} \textit{a)} $0{,}5 i' + 4i = 12 \iff i' + 8i = 24$. Donc $a=8, b=24$.
+\textit{b)} Homogène : $i_h' + 8i_h = 0 \implies i_h(t) = C\mathrm{e}^{-8t}$.
+Particulière constante : $8k = 24 \implies k = 3$. $i_p(t) = 3$.
+Générale : $i(t) = C\mathrm{e}^{-8t} + 3$.
+$i(0) = 0 \implies C + 3 = 0 \implies C = -3$.
+$i(t) = 3(1 - \mathrm{e}^{-8t})$.
+\textit{c)} $\lim_{t\to+\infty} i(t) = 3\,\mathrm{A}$ (régime permanent, $L$ se comporte comme un fil).
+\end{corrige}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Équations différentielles : Entraînement et préparation au Bac}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exoresolu}[QCM : une seule bonne réponse]
+Pour chaque question, choisir la bonne réponse (aucune justification demandée).
+
+\textbf{1.} L'ensemble des solutions de l'équation différentielle $y' = -3y$ est :
+\begin{itemize}
+\item[a)] les fonctions $x \mapsto Ce^{-3x}$, $C \in \mathbb{R}$ ;
+\item[b)] les fonctions $x \mapsto Ce^{3x}$, $C \in \mathbb{R}$ ;
+\item[c)] les fonctions $x \mapsto -3x + C$, $C \in \mathbb{R}$.
+\end{itemize}
+\tcblower
+\textbf{Réponse : a)} L'équation $y' = ay$ a pour solutions $y = Ce^{ax}$. Ici $a = -3$, donc $y = Ce^{-3x}$.
+\end{exoresolu}
+
+\begin{exoresolu}[QCM : une seule bonne réponse]
+\textbf{2.} L'équation caractéristique associée à $y'' - 5y' + 6y = 0$ est :
+\begin{itemize}
+\item[a)] $r^2 + 5r + 6 = 0$ ;
+\item[b)] $r^2 - 5r + 6 = 0$ ;
+\item[c)] $r^2 - 5r - 6 = 0$.
+\end{itemize}
+\tcblower
+\textbf{Réponse : b)} On remplace $y^{(k)}$ par $r^k$ : $r^2 - 5r + 6 = 0$.
+\end{exoresolu}
+
+\begin{exoresolu}[QCM : une seule bonne réponse]
+\textbf{3.} Si l'équation caractéristique de $ay'' + by' + cy = 0$ admet un discriminant strictement négatif, alors les solutions s'écrivent :
+\begin{itemize}
+\item[a)] $y = Ae^{r_1 x} + Be^{r_2 x}$ ;
+\item[b)] $y = (Ax + B)e^{r_0 x}$ ;
+\item[c)] $y = e^{\alpha x}\bigl(A\cos(\beta x) + B\sin(\beta x)\bigr)$.
+\end{itemize}
+\tcblower
+\textbf{Réponse : c)} Racines complexes conjuguées $r = \alpha \pm i\beta$ ($\beta > 0$) $\implies$ solutions réelles $e^{\alpha x}(A\cos\beta x + B\sin\beta x)$.
+\end{exoresolu}
+
+\begin{exoresolu}[QCM : une seule bonne réponse]
+\textbf{4.} Une solution particulière constante de $2y'' + 3y' + y = 5$ est :
+\begin{itemize}
+\item[a)] $y = 5$ ;
+\item[b)] $y = \dfrac{5}{2}$ ;
+\item[c)] $y = 1$.
+\end{itemize}
+\tcblower
+\textbf{Réponse : a)} On cherche $y_p = k$ (constante). $y_p' = 0$, $y_p'' = 0$. L'équation donne $0 + 0 + k = 5 \implies k = 5$.
+\end{exoresolu}
+
+\begin{exoresolu}[Vrai ou Faux, en justifiant]
+Dire si chacune des affirmations suivantes est vraie ou fausse, en justifiant soigneusement la réponse.
+
+\textbf{1.} « Toute solution de l'équation $y'' + y = 0$ est une fonction bornée sur $\mathbb{R}$. »
+
+\textbf{2.} « L'équation différentielle $y' = 2y$ admet une unique solution. »
+
+\textbf{3.} « Si $c = 0$, l'équation $ay'' + by' = d$ (avec $a \neq 0$, $b \neq 0$) admet une solution constante. »
+
+\textbf{4.} « La fonction $x \mapsto e^{2x}$ est solution de $y'' - 4y = 0$. »
+\tcblower
+\textbf{1. Vrai.} Solutions : $y = A\cos x + B\sin x$. Comme $|\cos x| \le 1$ et $|\sin x| \le 1$, $|y(x)| \le |A| + |B|$ pour tout $x \in \mathbb{R}$.
+
+\textbf{2. Faux.} L'équation $y' = 2y$ admet une infinité de solutions : $y = Ce^{2x}$ ($C \in \mathbb{R}$). L'unicité n'est obtenue qu'avec une condition initiale (ex: $y(0)=y_0$).
+
+\textbf{3. Faux.} Si $y = k$ (constante), alors $y' = 0$ et $y'' = 0$. L'équation devient $0 = d$. Il n'y a de solution constante que si $d = 0$ (alors toute constante convient). Si $d \neq 0$, il n'y en a aucune.
+
+\textbf{4. Vrai.} $y = e^{2x} \implies y' = 2e^{2x},\ y'' = 4e^{2x}$. Alors $y'' - 4y = 4e^{2x} - 4e^{2x} = 0$.
+\end{exoresolu}
+
+\begin{exoresolu}[Vérification de solutions]
+Dans chaque cas, vérifier si la fonction proposée est solution de l'équation différentielle indiquée.
+
+\textbf{1.} $f(x) = e^{2x} + e^{-x}$ pour l'équation $y'' - y' - 2y = 0$.
+
+\textbf{2.} $g(x) = x^2 + 1$ pour l'équation $y' = 2x$.
+
+\textbf{3.} $h(x) = \cos x + 2$ pour l'équation $y'' + y = 2$.
+\tcblower
+\textbf{1.} $f'(x) = 2e^{2x} - e^{-x}$, $f''(x) = 4e^{2x} + e^{-x}$.
+$f'' - f' - 2f = (4e^{2x}+e^{-x}) - (2e^{2x}-e^{-x}) - 2(e^{2x}+e^{-x}) = 0$. \textbf{Oui, $f$ est solution.}
+
+\textbf{2.} $g'(x) = 2x$. L'équation est $y' = 2x$. \textbf{Oui, $g$ est solution.}
+
+\textbf{3.} $h'(x) = -\sin x$, $h''(x) = -\cos x$.
+$h'' + h = -\cos x + (\cos x + 2) = 2$. \textbf{Oui, $h$ est solution.}
+\end{exoresolu}
+
+\begin{exoresolu}[Calculs directs]
+\textbf{1.} Résoudre l'équation différentielle $y' = 5y$, puis déterminer la solution vérifiant $y(0) = 2$.
+
+\textbf{2.} Résoudre l'équation caractéristique de $y'' + y' - 6y = 0$ et en déduire l'ensemble des solutions de cette équation.
+
+\textbf{3.} Déterminer une équation différentielle du second ordre à coefficients constants dont les solutions sont les fonctions $y = Ae^{2x} + Be^{-3x}$, $(A, B) \in \mathbb{R}^2$.
+\tcblower
+\textbf{1.} Solutions générales : $y = Ce^{5x},\ C \in \mathbb{R}$.
+Condition $y(0)=2 \implies C = 2$. Solution cherchée : $\boxed{y = 2e^{5x}}$.
+
+\textbf{2.} Équation caractéristique : $r^2 + r - 6 = 0 \iff (r+3)(r-2)=0$. Racines : $r_1 = 2,\ r_2 = -3$.
+Ensemble des solutions : $\boxed{y = Ae^{2x} + Be^{-3x},\ (A,B) \in \mathbb{R}^2}$.
+
+\textbf{3.} Les racines de l'équation caractéristique sont $2$ et $-3$.
+Équation caractéristique : $(r-2)(r+3) = r^2 + r - 6 = 0$.
+Équation différentielle : $\boxed{y'' + y' - 6y = 0}$.
+\end{exoresolu}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Racine double]
+On considère l'équation différentielle $(E) : y'' + 2y' + y = 0$.
+
+\textbf{1.} Vérifier que la fonction $f$ définie par $f(x) = (2x + 1)e^{-x}$ est solution de $(E)$.
+
+\textbf{2.} Résoudre l'équation caractéristique de $(E)$ et en déduire l'ensemble des solutions de $(E)$.
+
+\textbf{3.} Déterminer la solution de $(E)$ vérifiant les conditions initiales $y(0) = 1$ et $y'(0) = 0$.
+\end{exercice}
+
+\begin{exercice}[Discriminant négatif]
+On considère l'équation différentielle $(E) : y'' - 4y' + 13y = 0$.
+
+\textbf{1.} Résoudre dans $\mathbb{C}$ l'équation caractéristique associée à $(E)$.
+
+\textbf{2.} En déduire l'ensemble des solutions réelles de $(E)$.
+
+\textbf{3.} Déterminer la solution $f$ de $(E)$ vérifiant $f(0) = 1$ et $f'(0) = 5$.
+\end{exercice}
+
+\begin{exercice}[Avec second membre constant]
+On considère l'équation différentielle $(E) : y'' + 3y' + 2y = 6$.
+
+\textbf{1.} Déterminer une solution particulière constante de $(E)$.
+
+\textbf{2.} Résoudre l'équation homogène associée $(E_0) : y'' + 3y' + 2y = 0$.
+
+\textbf{3.} En déduire l'ensemble des solutions de $(E)$.
+
+\textbf{4.} Déterminer la solution $f$ de $(E)$ vérifiant $f(0) = 4$ et $f'(0) = -1$.
+
+\textbf{5.} Étudier la limite de $f(x)$ lorsque $x$ tend vers $+\infty$.
+\end{exercice}
+
+\begin{exercice}[Croissance d'une population]
+Une population de poissons dans un lac du Cameroun évolue selon le modèle de Malthus : si $P(t)$ désigne l'effectif au bout de $t$ années, alors $P'(t) = 0{,}2\,P(t)$ avec $P(0) = 500$.
+
+\textbf{1.} Déterminer l'expression de $P(t)$.
+
+\textbf{2.} Calculer le temps de doublement de la population, c'est-à-dire le temps $t$ tel que $P(t) = 1000$ (on donnera la valeur exacte puis une valeur approchée à $0{,}1$ près).
+
+\textbf{3.} Calculer la population au bout de $10$ ans (valeur approchée à l'unité près).
+
+\textbf{4.} Critiquer ce modèle : que prévoit-il à très long terme, et pourquoi cela est-il irréaliste pour un lac ?
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Problème : charge d'un condensateur]
+Un circuit électrique comportant une résistance et un condensateur (circuit RC) est alimenté par un générateur. On désigne par $q(t)$ la charge du condensateur (en coulombs) à l'instant $t$ (en secondes). On admet que $q$ est solution de l'équation différentielle
+\[ (E) : \quad 10q' + q = 20 \qquad \text{avec} \quad q(0) = 0. \]
+
+\textbf{Partie A : résolution de l'équation}
+
+\textbf{1.} Montrer que $(E)$ équivaut à $q' = -0{,}1\,q + 2$.
+
+\textbf{2.} On pose $z(t) = q(t) - 20$. Montrer que $z$ est solution de l'équation $z' = -0{,}1\,z$.
+
+\textbf{3.} Résoudre l'équation $z' = -0{,}1\,z$, puis en déduire l'expression générale de $q(t)$.
+
+\textbf{4.} En utilisant la condition initiale $q(0) = 0$, montrer que $q(t) = 20\bigl(1 - e^{-0{,}1 t}\bigr)$.
+
+\textbf{Partie B : étude de la charge}
+
+\textbf{5.} Étudier le sens de variation de $q$ sur $[0 ; +\infty[$.
+
+\textbf{6.} Déterminer la charge limite $q_{\ell} = \lim\limits_{t \to +\infty} q(t)$. Interpréter ce résultat physiquement.
+
+\textbf{7.} Déterminer le temps $t_0$ nécessaire pour que la charge atteigne $90\,\%$ de sa charge limite (valeur exacte, puis valeur approchée à $0{,}1$ seconde près).
+
+\textbf{8.} Tracer l'allure de la courbe représentative de $q$ sur $[0 ; 50]$ dans un repère orthogonal (unités : $\SI{5}{s}$ en abscisse, $5$ coulombs en ordonnée).
+\end{exercice}
+
+\begin{exercice}[Problème : oscillations d'une masse suspendue]
+Une masse est suspendue à un ressort. On note $x(t)$ son écart (en centimètres) par rapport à sa position d'équilibre à l'instant $t$ (en secondes). En l'absence de frottements, la physique montre que $x$ vérifie l'équation différentielle
+\[ (E) : \quad x'' + 9x = 0. \]
+
+\textbf{Partie A : résolution}
+
+\textbf{1.} Résoudre dans $\mathbb{C}$ l'équation caractéristique de $(E)$.
+
+\textbf{2.} En déduire que les solutions de $(E)$ sont les fonctions
+\[ x(t) = A\cos(3t) + B\sin(3t), \quad (A, B) \in \mathbb{R}^2. \]
+
+\textbf{3.} À l'instant initial, on écarte la masse de $\SI{2}{cm}$ de sa position d'équilibre et on la lâche sans vitesse initiale : $x(0) = 2$ et $x'(0) = 0$. Déterminer $A$ et $B$, puis l'expression de $x(t)$.
+
+\textbf{Partie B : étude du mouvement}
+
+\textbf{4.} Montrer que pour tout réel $t$, on a $-2 \leq x(t) \leq 2$. Que représente la valeur $2$ pour le mouvement ?
+
+\textbf{5.} Déterminer la période $T$ du mouvement, c'est-à-dire le plus petit réel strictement positif tel que $x(t + T) = x(t)$ pour tout $t$.
+
+\textbf{6.} En réalité, les frottements de l'air ne sont pas négligeables et l'équation devient $(E') : x'' + 2x' + 10x = 0$. Résoudre $(E')$ et déterminer la limite de $x(t)$ lorsque $t$ tend vers $+\infty$. Interpréter physiquement ce résultat.
+\end{exercice}
+
+\begin{exercice}[Problème : refroidissement et modèle économique]
+\textbf{Partie A : une équation du premier ordre}
+
+Une entreprise de Yaoundé modélise l'évolution du nombre de ses abonnés (en milliers) par une fonction $f$ définie sur $[0 ; +\infty[$, solution de l'équation différentielle
+\[ (E) : \quad y' = -0{,}5\,y + 10 \qquad \text{avec} \quad f(0) = 5. \]
+
+\textbf{1.} Déterminer une solution particulière constante de $(E)$.
+
+\textbf{2.} Résoudre l'équation homogène $y' = -0{,}5\,y$.
+
+\textbf{3.} En déduire l'ensemble des solutions de $(E)$, puis montrer que $f(t) = 20 - 15e^{-0{,}5 t}$.
+
+\textbf{4.} Étudier les variations de $f$ sur $[0 ; +\infty[$ et déterminer sa limite en $+\infty$. Interpréter cette limite pour l'entreprise.
+
+\textbf{5.} Déterminer au bout de combien de temps le nombre d'abonnés dépassera $19$ milliers (valeur approchée à $0{,}1$ près).
+
+\textbf{Partie B : une équation du second ordre}
+
+On considère l'équation différentielle $(F) : y'' - 3y' + 2y = 4$.
+
+\textbf{6.} Résoudre l'équation homogène associée à $(F)$.
+
+\textbf{7.} Déterminer une solution particulière constante de $(F)$, puis l'ensemble des solutions de $(F)$.
+
+\textbf{8.} Déterminer la solution $g$ de $(F)$ vérifiant $g(0) = 3$ et $g'(0) = 1$.
+
+\textbf{9.} Étudier la limite de $g(t)$ lorsque $t$ tend vers $+\infty$. Ce modèle du second ordre est-il adapté pour décrire un phénomène qui se stabilise ? Justifier.
+\end{exercice}
+
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Exercices corrigés — Équations différentielles}
+
+\begin{corrige}[Exercice 1 — Racine double]
+\textbf{1.} On calcule les dérivées de $f(x) = (2x+1)e^{-x}$ (produit $uv$ avec $u = 2x+1$, $v = e^{-x}$) :
+\begin{align*}
+f'(x) &= 2e^{-x} - (2x+1)e^{-x} = (1-2x)e^{-x},\\
+f''(x) &= -2e^{-x} - (1-2x)e^{-x} = (2x-3)e^{-x}.
+\end{align*}
+Alors :
+\[ f'' + 2f' + f = e^{-x}\bigl[(2x-3) + 2(1-2x) + (2x+1)\bigr] = e^{-x}(2x - 3 + 2 - 4x + 2x + 1) = 0. \]
+Donc $f$ \textbf{est bien solution} de $(E)$.
+
+\textbf{2.} Équation caractéristique : $r^2 + 2r + 1 = 0$, soit $(r+1)^2 = 0$. Discriminant $\Delta = 4 - 4 = 0$ : racine double $r_0 = -1$.
+L'ensemble des solutions de $(E)$ est :
+\[ \boxed{y = (Ax + B)e^{-x},\quad (A, B) \in \mathbb{R}^2.} \]
+
+\textbf{3.} Condition $y(0) = 1$ : $(A \times 0 + B)e^{0} = B = 1$, donc $B = 1$.
+On dérive : $y'(x) = Ae^{-x} - (Ax + B)e^{-x} = (A - B - Ax)e^{-x}$.
+Condition $y'(0) = 0$ : $A - B = 0$, donc $A = B = 1$.
+La solution cherchée est :
+\[ \boxed{y = (x + 1)e^{-x}.} \]
+\textbf{Remarque :} La fonction $f$ de la question 1 vérifie $f(0)=1$ et $f'(0)=1$ ; elle correspond donc à la solution de $(E)$ avec les conditions initiales $y(0)=1,\ y'(0)=1$. La solution trouvée ici ($y'(0)=0$) est différente : c'est bien $(x+1)e^{-x}$.
+
+\begin{attention}[Points de vigilance]
+\begin{itemize}
+\item Ne pas oublier le facteur $x$ dans $(Ax+B)e^{r_0 x}$ lorsque la racine est double : écrire $Ae^{-x} + Be^{-x}$ serait une erreur grave (cela ne donne qu'une seule constante libre).
+\item Pour dériver $(Ax+B)e^{-x}$, penser à la dérivée d'un produit ; une erreur de signe sur le terme $-(Ax+B)e^{-x}$ fausse la condition sur $y'(0)$.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Discriminant négatif]
+\textbf{1.} L'équation caractéristique de $(E) : y'' - 4y' + 13y = 0$ est $r^2 - 4r + 13 = 0$.
+Discriminant : $\Delta = (-4)^2 - 4 \times 1 \times 13 = 16 - 52 = -36 = (6i)^2 < 0$.
+Les racines complexes conjuguées sont :
+\[ r_1 = \frac{4 - 6i}{2} = 2 - 3i, \qquad r_2 = \frac{4 + 6i}{2} = 2 + 3i. \]
+
+\textbf{2.} Les racines sont de la forme $\alpha \pm i\beta$ avec $\alpha = 2$ et $\beta = 3$. L'ensemble des solutions réelles de $(E)$ est :
+\[ \boxed{y = e^{2x}\bigl(A\cos(3x) + B\sin(3x)\bigr),\quad (A, B) \in \mathbb{R}^2.} \]
+
+\textbf{3.} Condition $f(0) = 1$ : $e^{0}(A\cos 0 + B\sin 0) = A = 1$, donc $A = 1$.
+Dérivons (produit de $e^{2x}$ par $A\cos 3x + B\sin 3x$) :
+\[ f'(x) = 2e^{2x}\bigl(A\cos 3x + B\sin 3x\bigr) + e^{2x}\bigl(-3A\sin 3x + 3B\cos 3x\bigr). \]
+Condition $f'(0) = 5$ : $f'(0) = 2A + 3B = 5$, d'où $3B = 5 - 2 = 3$, soit $B = 1$.
+La solution cherchée est :
+\[ \boxed{f(x) = e^{2x}\bigl(\cos(3x) + \sin(3x)\bigr).} \]
+
+\begin{attention}[Points de vigilance]
+\begin{itemize}
+\item Le discriminant négatif donne des racines \textbf{complexes conjuguées} : écrire $\Delta = -36 = (6i)^2$ et non « pas de solution ».
+\item Dans la formule $e^{\alpha x}(A\cos\beta x + B\sin\beta x)$, $\alpha$ est la partie réelle et $\beta$ la partie imaginaire \textbf{positive} : ici $\alpha = 2$, $\beta = 3$ (et non $\pm 3$).
+\item Pour $f'(0)$, ne pas oublier de dériver aussi le facteur exponentiel : $f'(0) = 2A + 3B$, et non $3B$.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Avec second membre constant]
+\textbf{1.} On cherche une solution constante $y_p = k$. Alors $y_p' = y_p'' = 0$, et $(E)$ donne $2k = 6$, soit $k = 3$. Une solution particulière est $\boxed{y_p = 3}$.
+
+\textbf{2.} Équation caractéristique de $(E_0)$ : $r^2 + 3r + 2 = 0$. Discriminant $\Delta = 9 - 8 = 1 > 0$ ; racines $r_1 = \dfrac{-3-1}{2} = -2$ et $r_2 = \dfrac{-3+1}{2} = -1$. Les solutions de $(E_0)$ sont :
+\[ y_h = Ae^{-x} + Be^{-2x},\quad (A,B) \in \mathbb{R}^2. \]
+
+\textbf{3.} Par le théorème de structure (solution générale = solution homogène + solution particulière), l'ensemble des solutions de $(E)$ est :
+\[ \boxed{y = 3 + Ae^{-x} + Be^{-2x},\quad (A,B) \in \mathbb{R}^2.} \]
+
+\textbf{4.} Condition $f(0) = 4$ : $3 + A + B = 4$, soit $A + B = 1$.
+On dérive : $f'(x) = -Ae^{-x} - 2Be^{-2x}$. Condition $f'(0) = -1$ : $-A - 2B = -1$, soit $A + 2B = 1$.
+On résout le système :
+\[ \begin{cases} A + B = 1 \\ A + 2B = 1 \end{cases} \implies B = 0 \text{ (par soustraction)}, \quad A = 1. \]
+La solution cherchée est $\boxed{f(x) = 3 + e^{-x}}$.
+
+\textbf{5.} Comme $\lim\limits_{x \to +\infty} e^{-x} = 0$, on obtient $\boxed{\lim\limits_{x \to +\infty} f(x) = 3}$ : la solution se stabilise vers la solution particulière constante.
+
+\begin{attention}[Points de vigilance]
+\begin{itemize}
+\item La solution particulière constante existe parce que le coefficient de $y$ est non nul ($c = 2 \neq 0$) : citer cette condition.
+\item Ne pas oublier le terme constant $3$ dans l'écriture de la solution générale avant d'appliquer les conditions initiales : appliquer $f(0) = 4$ à $Ae^{-x} + Be^{-2x}$ seul donnerait un système faux.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Croissance d'une population]
+\textbf{1.} L'équation $P'(t) = 0{,}2\,P(t)$ est du type $y' = ay$ avec $a = 0{,}2$ : ses solutions sont $P(t) = Ce^{0{,}2t}$. La condition $P(0) = 500$ donne $C = 500$. D'où :
+\[ \boxed{P(t) = 500\,e^{0{,}2t}.} \]
+
+\textbf{2.} On résout $P(t) = 1000$ :
+\[ 500e^{0{,}2t} = 1000 \iff e^{0{,}2t} = 2 \iff 0{,}2t = \ln 2 \iff t = \frac{\ln 2}{0{,}2} = 5\ln 2. \]
+Valeur exacte : $\boxed{t = 5\ln 2 \text{ ans}}$ ; valeur approchée : $5 \times 0{,}693 \approx \boxed{3{,}5 \text{ ans}}$.
+
+\textbf{3.} $P(10) = 500e^{0{,}2 \times 10} = 500e^{2} \approx 500 \times 7{,}389 \approx \boxed{3695 \text{ poissons}}$ (à l'unité près).
+
+\textbf{4.} Le modèle de Malthus prévoit $\lim\limits_{t \to +\infty} P(t) = +\infty$ : une croissance exponentielle \textbf{illimitée}. C'est irréaliste pour un lac (par exemple le lac de Barombi ou un lac de retenue de pêche) car les ressources — nourriture, oxygène dissous, espace — sont finies : la population ne peut dépasser la \cle{capacité de charge} du milieu. Un modèle plus réaliste (modèle logistique de Verhulst) ferait tendre $P$ vers une limite finie.
+
+\begin{attention}[Points de vigilance]
+\begin{itemize}
+\item Le passage de $e^{0{,}2t} = 2$ à $t = 5\ln 2$ exige le logarithme népérien : ne pas écrire $t = \frac{2}{0{,}2}$.
+\item Dans la critique du modèle, la justification attendue porte sur la limite infinie et les ressources finies, pas seulement sur un vague « c'est trop grand ».
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Charge d'un condensateur]
+\textbf{Partie A : résolution de l'équation}
+
+\textbf{1.} $10q' + q = 20 \iff 10q' = 20 - q \iff q' = 2 - 0{,}1\,q$, c'est-à-dire $q' = -0{,}1\,q + 2$. \hfill$\square$
+
+\textbf{2.} Posons $z(t) = q(t) - 20$. Alors $z$ est dérivable et $z' = q'$. En reportant :
+\[ z' = q' = -0{,}1\,q + 2 = -0{,}1(z + 20) + 2 = -0{,}1z - 2 + 2 = -0{,}1z. \]
+Donc $z$ est solution de $z' = -0{,}1\,z$. \hfill$\square$
+
+\textbf{3.} L'équation $z' = -0{,}1z$ est du type $y' = ay$ : $z(t) = Ce^{-0{,}1t}$, $C \in \mathbb{R}$. Comme $q = z + 20$ :
+\[ q(t) = 20 + Ce^{-0{,}1t},\quad C \in \mathbb{R}. \]
+
+\textbf{4.} $q(0) = 0 \iff 20 + C = 0 \iff C = -20$. D'où :
+\[ \boxed{q(t) = 20\bigl(1 - e^{-0{,}1t}\bigr).} \]
+
+\textbf{Partie B : étude de la charge}
+
+\textbf{5.} $q'(t) = 20 \times 0{,}1\,e^{-0{,}1t} = 2e^{-0{,}1t}$. Comme $e^{-0{,}1t} > 0$ pour tout $t$, on a $q'(t) > 0$ sur $[0 ; +\infty[$ : $q$ est \textbf{strictement croissante} sur $[0 ; +\infty[$.
+
+\textbf{6.} $\lim\limits_{t \to +\infty} e^{-0{,}1t} = 0$, donc $\boxed{q_\ell = 20 \text{ C}}$. Interprétation : le condensateur se charge de plus en plus lentement et sa charge se stabilise à $20$ coulombs ; le courant dans le circuit tend vers zéro (régime permanent).
+
+\textbf{7.} $90\,\%$ de la charge limite vaut $0{,}9 \times 20 = 18$ C. On résout :
+\[ 20\bigl(1 - e^{-0{,}1t_0}\bigr) = 18 \iff e^{-0{,}1t_0} = 0{,}1 \iff -0{,}1t_0 = \ln(0{,}1) = -\ln 10 \iff t_0 = 10\ln 10. \]
+Valeur exacte : $\boxed{t_0 = 10\ln 10 \text{ s}}$ ; valeur approchée : $10 \times 2{,}3026 \approx \boxed{23{,}0 \text{ s}}$.
+
+\textbf{8.} Courbe : part de l'origine, croissante, concave vers le bas ($q'' < 0$), asymptote horizontale $q = 20$.
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=0.5\linewidth,
+    axis lines=middle,
+    xlabel={$t\ (\text{s})$}, ylabel={$q\ (\text{C})$},
+    xmin=0, xmax=52, ymin=0, ymax=23,
+    xtick={0,10,20,30,40,50}, ytick={0,5,10,15,20},
+    grid=major, grid style={popline},
+    domain=0:50, samples=200,
+    clip=false
+]
+\addplot[popcurve, thick] {20*(1-exp(-0.1*x))};
+\addplot[dashed, popmuted, thick] coordinates {(0,20) (50,20)} node[right, pos=0.85] {$q_\ell = 20$};
+\addplot[dashed, popmuted] coordinates {(23.03,0) (23.03,18) (0,18)};
+\node[popdark, anchor=south west] at (axis cs:23.03,0.5) {$t_0 \approx 23$};
+\end{axis}
+\end{tikzpicture}
+\legende{Charge du condensateur : $q(t) = 20(1 - e^{-0{,}1t})$, asymptote $q = 20$.}
+\end{popfigure}
+
+\textbf{Barème indicatif (sur 5 points)} : Q1 : 0,25 ; Q2 : 0,5 ; Q3 : 0,5 ; Q4 : 0,5 ; Q5 : 0,5 ; Q6 : 0,75 (dont 0,25 pour l'interprétation) ; Q7 : 1 ; Q8 : 1.
+
+\begin{attention}[Points de vigilance — type Bac]
+\begin{itemize}
+\item Question 2 : la justification attendue est le calcul complet $z' = q' = -0{,}1(z+20) + 2 = -0{,}1z$ ; écrire directement « $z' = -0{,}1z$ » sans calcul ne vaut pas la totalité des points.
+\item Question 5 : le signe de $q'$ doit être justifié par la stricte positivité de l'exponentielle.
+\item Question 7 : attention, $\ln(0{,}1) = -\ln 10$ ; une erreur de signe donne $t_0 < 0$, absurde physiquement — toujours vérifier la cohérence du résultat.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Oscillations d'une masse suspendue]
+\textbf{Partie A : résolution}
+
+\textbf{1.} Équation caractéristique : $r^2 + 9 = 0 \iff r^2 = -9 \iff r = 3i$ ou $r = -3i$ (car $\Delta = -36 = (6i)^2$, racines $\frac{\pm 6i}{2} = \pm 3i$).
+
+\textbf{2.} Les racines sont imaginaires pures : $\alpha = 0$, $\beta = 3$. Les solutions réelles sont donc :
+\[ x(t) = e^{0 \cdot t}\bigl(A\cos(3t) + B\sin(3t)\bigr) = A\cos(3t) + B\sin(3t),\quad (A,B) \in \mathbb{R}^2. \]
+
+\textbf{3.} $x(0) = 2 \implies A\cos 0 + B\sin 0 = A = 2$.
+$x'(t) = -3A\sin(3t) + 3B\cos(3t)$, donc $x'(0) = 3B = 0 \implies B = 0$.
+\[ \boxed{x(t) = 2\cos(3t).} \]
+
+\textbf{Partie B : étude du mouvement}
+
+\textbf{4.} Pour tout réel $t$, $-1 \leq \cos(3t) \leq 1$, donc en multipliant par $2 > 0$ : $-2 \leq x(t) \leq 2$. La valeur $2$ (en cm) est l'\cle{amplitude} du mouvement : l'élongation maximale de la masse par rapport à sa position d'équilibre.
+
+\textbf{5.} La fonction $t \mapsto \cos(3t)$ a pour période $\dfrac{2\pi}{3}$ (car $\cos$ est $2\pi$-périodique et $3(t + T) = 3t + 2\pi \iff T = \frac{2\pi}{3}$). Donc :
+\[ \boxed{T = \frac{2\pi}{3}\ \text{s} \approx 2{,}1\ \text{s}.} \]
+
+\textbf{6.} $(E') : x'' + 2x' + 10x = 0$. Équation caractéristique : $r^2 + 2r + 10 = 0$ ; $\Delta = 4 - 40 = -36 = (6i)^2$ ; racines $r = \dfrac{-2 \pm 6i}{2} = -1 \pm 3i$.
+Les solutions sont :
+\[ \boxed{x(t) = e^{-t}\bigl(A\cos(3t) + B\sin(3t)\bigr),\quad (A,B) \in \mathbb{R}^2.} \]
+Pour tout $t$ : $|x(t)| \leq e^{-t}\bigl(|A| + |B|\bigr)$. Or $\lim\limits_{t \to +\infty} e^{-t} = 0$, donc par le théorème des gendarmes :
+\[ \boxed{\lim\limits_{t \to +\infty} x(t) = 0.} \]
+Interprétation physique : les frottements dissipent l'énergie mécanique du système ; les oscillations sont \textbf{amorties} (leur amplitude $e^{-t}\sqrt{A^2+B^2}$ décroît exponentiellement) et la masse finit par se stabiliser à sa position d'équilibre.
+
+\textbf{Barème indicatif (sur 5 points)} : Q1 : 0,5 ; Q2 : 0,5 ; Q3 : 0,75 ; Q4 : 0,5 ; Q5 : 0,75 ; Q6 : 2 (résolution 1, limite justifiée 0,5, interprétation 0,5).
+
+\begin{attention}[Points de vigilance — type Bac]
+\begin{itemize}
+\item Question 5 : la période de $\cos(\omega t)$ est $\frac{2\pi}{\omega}$, ici $\frac{2\pi}{3}$ et non $2\pi$ ni $6\pi$.
+\item Question 6 : la limite ne peut pas être obtenue directement (forme indéterminée $0 \times$ borné n'en est pas une, mais il faut encadrer) : la justification rigoureuse attendue est l'encadrement $|x(t)| \leq e^{-t}(|A|+|B|)$ puis le théorème des gendarmes.
+\item Bien distinguer les deux régimes : sans frottement (oscillations permanentes sinusoïdales) et avec frottement (oscillations amorties, retour à l'équilibre).
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Modèle économique et équation du second ordre]
+\textbf{Partie A : une équation du premier ordre}
+
+\textbf{1.} On cherche $y_p = k$ constante : $y_p' = 0$, donc $0 = -0{,}5k + 10 \iff k = 20$. Solution particulière : $\boxed{y_p = 20}$.
+
+\textbf{2.} L'équation homogène $y' = -0{,}5y$ a pour solutions $y_h = Ce^{-0{,}5t}$, $C \in \mathbb{R}$.
+
+\textbf{3.} L'ensemble des solutions de $(E)$ est $y = 20 + Ce^{-0{,}5t}$, $C \in \mathbb{R}$.
+La condition $f(0) = 5$ donne $20 + C = 5 \iff C = -15$. D'où :
+\[ \boxed{f(t) = 20 - 15e^{-0{,}5t}.} \]
+
+\textbf{4.} $f'(t) = -15 \times (-0{,}5)e^{-0{,}5t} = 7{,}5e^{-0{,}5t} > 0$ pour tout $t \geq 0$ (l'exponentielle est strictement positive). Donc $f$ est \textbf{strictement croissante} sur $[0 ; +\infty[$.
+Comme $\lim\limits_{t \to +\infty} e^{-0{,}5t} = 0$, on a $\boxed{\lim\limits_{t \to +\infty} f(t) = 20}$.
+Interprétation : le nombre d'abonnés de l'entreprise augmente continûment mais se stabilise à long terme autour de $\num{20000}$ abonnés — c'est le \textbf{seuil de saturation} du marché (l'entreprise capte progressivement sa clientèle potentielle maximale).
+
+\textbf{5.} On résout $f(t) > 19$ :
+\begin{align*}
+20 - 15e^{-0{,}5t} > 19 &\iff 15e^{-0{,}5t} < 1 \iff e^{-0{,}5t} < \frac{1}{15}\\
+&\iff -0{,}5t < -\ln 15 \iff t > \frac{\ln 15}{0{,}5} = 2\ln 15.
+\end{align*}
+Or $2\ln 15 \approx 2 \times 2{,}708 \approx 5{,}4$. Le nombre d'abonnés dépassera $\num{19000}$ au bout d'environ $\boxed{5{,}4 \text{ ans}}$.
+
+\textbf{Partie B : une équation du second ordre}
+
+\textbf{6.} Équation caractéristique de $(F_0) : y'' - 3y' + 2y = 0$ : $r^2 - 3r + 2 = 0 \iff (r-1)(r-2) = 0$. Racines : $r_1 = 1$, $r_2 = 2$ (discriminant $\Delta = 9 - 8 = 1 > 0$). Solutions de $(F_0)$ :
+\[ y_h = Ae^{t} + Be^{2t},\quad (A,B) \in \mathbb{R}^2. \]
+
+\textbf{7.} Solution particulière constante $y_p = k$ : $2k = 4 \iff k = 2$. L'ensemble des solutions de $(F)$ est :
+\[ \boxed{y = 2 + Ae^{t} + Be^{2t},\quad (A,B) \in \mathbb{R}^2.} \]
+
+\textbf{8.} $g(0) = 3 \implies 2 + A + B = 3 \iff A + B = 1$.
+$g'(t) = Ae^{t} + 2Be^{2t}$, donc $g'(0) = 1 \implies A + 2B = 1$.
+Par soustraction : $B = 0$, puis $A = 1$. D'où :
+\[ \boxed{g(t) = 2 + e^{t}.} \]
+
+\textbf{9.} Comme $\lim\limits_{t \to +\infty} e^{t} = +\infty$, on a $\boxed{\lim\limits_{t \to +\infty} g(t) = +\infty}$.
+Ce modèle n'est \textbf{pas adapté} à un phénomène qui se stabilise : la solution « s'emballe » et diverge vers $+\infty$ au lieu de tendre vers une valeur limite finie. La raison structurelle est que l'équation caractéristique possède des racines \textbf{strictement positives} ($1$ et $2$) : les exponentielles $e^{t}$ et $e^{2t}$ explosent. Pour obtenir une stabilisation, il faudrait des racines de partie réelle strictement négative (comme dans la partie A, où le coefficient $-0{,}5 < 0$ assurait la convergence vers $20$).
+
+\textbf{Barème indicatif (sur 6 points)} : Partie A : Q1 : 0,25 ; Q2 : 0,25 ; Q3 : 0,5 ; Q4 : 1 (variations 0,5, limite + interprétation 0,5) ; Q5 : 1. Partie B : Q6 : 0,5 ; Q7 : 0,5 ; Q8 : 1 ; Q9 : 1 (limite 0,5, discussion argumentée 0,5).
+
+\begin{attention}[Points de vigilance — type Bac]
+\begin{itemize}
+\item Question 5 : dans une inéquation, le passage au logarithme puis la division par $-0{,}5 < 0$ \textbf{changent le sens de l'inégalité} ; rédiger soigneusement chaque équivalence.
+\item Question 9 : la réponse attendue n'est pas seulement « la limite est infinie » mais une \textbf{argumentation} : relier le signe des racines de l'équation caractéristique au comportement asymptotique. C'est un réflexe précieux pour les questions ouvertes du Bac.
+\item Comparer les deux parties : coefficient $-0{,}5 < 0$ (stabilisation) contre racines $1, 2 > 0$ (emballement). Ce contraste est le cœur de l'exercice.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, font=\small},
+  root concept/.append style={concept color=popblue, font=\bfseries\small, minimum size=3.2cm},
+  level 1/.append style={level distance=3.6cm, sibling angle=51.4},
+  level 1 concept/.append style={font=\scriptsize, minimum size=2.1cm}]
+\node[root concept]{Équations différentielles}
+  child[concept color=poporange]{ node {Vocabulaire : ordre, degré, solution} }
+  child[concept color=popgreen]{ node {$y'=ay$ : solutions $y=Ce^{ax}$} }
+  child[concept color=poppurple]{ node {$ay''+by'+cy=0$ : équation caractéristique} }
+  child[concept color=poppink]{ node {$\Delta>0$ : $C_1e^{r_1x}+C_2e^{r_2x}$} }
+  child[concept color=popgold]{ node {$\Delta=0$ : $(C_1x+C_2)e^{r_0x}$ ; $\Delta<0$ : $e^{\alpha x}(C_1\cos\beta x+C_2\sin\beta x)$} }
+  child[concept color=popblue!70]{ node {Second membre $d$ : solution particulière $\dfrac{d}{c}$} }
+  child[concept color=poporange!70]{ node {Conditions initiales $\Rightarrow$ unicité ; modélisation} };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : les sept idées forces des équations différentielles.}
+\end{popfigure}
+
+\begin{definition}[Vocabulaire des équations différentielles]
+Une \cle{équation différentielle} est une relation liant une fonction inconnue $y$ de la variable $x$, la variable $x$ elle-même, et une ou plusieurs dérivées de $y$ ($y'$, $y''$, \dots).
+\begin{itemize}
+  \item L'\cle{ordre} de l'équation est l'ordre de la dérivée la plus élevée qui y figure.
+  \item Le \cle{degré} est l'exposant de la dérivée d'ordre le plus élevé, lorsque l'équation est mise sous forme polynomiale par rapport aux dérivées.
+  \item Une fonction $f$, dérivable convenablement sur un intervalle $I$, est \cle{solution} de l'équation sur $I$ si, en remplaçant $y$ par $f(x)$ (et $y'$, $y''$, \dots par $f'(x)$, $f''(x)$, \dots), l'égalité est vérifiée pour \emph{tout} $x \in I$.
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Solutions générales des équations linéaires à coefficients constants]
+Les formules suivantes sont à connaître parfaitement pour le Baccalauréat.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Équation différentielle} & \textbf{Solution générale} \\
+\hline
+$y' = a y$ \quad ($a \in \mathbb{R}$) & $y(x) = C e^{a x}$, \quad $C \in \mathbb{R}$ \\
+\hline
+$ay'' + by' + cy = 0$ \quad ($a \neq 0$) & \textbf{Équation caractéristique :} $ar^2 + br + c = 0$, $\Delta = b^2 - 4ac$ \\
+\hline
+$\Delta > 0$, racines réelles distinctes $r_1 \neq r_2$ & $y(x) = C_1 e^{r_1 x} + C_2 e^{r_2 x}$, \quad $(C_1, C_2) \in \mathbb{R}^2$ \\
+\hline
+$\Delta = 0$, racine double $r_0 = -\dfrac{b}{2a}$ & $y(x) = (C_1 x + C_2) e^{r_0 x}$, \quad $(C_1, C_2) \in \mathbb{R}^2$ \\
+\hline
+$\Delta < 0$, racines complexes $\alpha \pm i \beta$ \quad ($\beta > 0$) & $y(x) = e^{\alpha x} \bigl( C_1 \cos(\beta x) + C_2 \sin(\beta x) \bigr)$, \quad $(C_1, C_2) \in \mathbb{R}^2$ \\
+\hline
+$ay'' + by' + cy = d$ \quad ($a \neq 0$, $c \neq 0$, $d \in \mathbb{R}$) & $y(x) = y_H(x) + \dfrac{d}{c}$, où $y_H$ est la solution générale de l'équation homogène associée \\
+\hline
+\end{tabularx}
+\end{center}
+\emph{Remarque :} Si $c = 0$ dans l'équation $ay''+by'+cy=d$, la solution particulière n'est pas une constante (on cherche alors un polynôme de degré 1), mais ce cas n'est pas au programme de Terminale.
+\end{propriete}
+
+\begin{methode}[Résolution pas à pas des équations au programme]
+\begin{enumerate}
+  \item \textbf{Vérifier qu'une fonction $f$ est solution} : Calculer $f'$ (et $f''$ si nécessaire), substituer $y, y', y''$ par $f, f', f''$ dans l'équation, simplifier et constater que l'égalité $0=0$ (ou identité) est vraie pour tout $x$ de l'intervalle considéré.
+  \item \textbf{Résoudre $y' = ay$} : Écrire directement $y(x) = C e^{ax}$ ($C \in \mathbb{R}$). Si une condition initiale $y(x_0)=y_0$ est donnée, calculer $C = y_0 e^{-ax_0}$.
+  \item \textbf{Résoudre $ay'' + by' + cy = 0$} ($a \neq 0$) :
+        \begin{enumerate}
+          \item Écrire l'équation caractéristique $ar^2 + br + c = 0$.
+          \item Calculer le discriminant $\Delta = b^2 - 4ac$.
+          \item Selon le signe de $\Delta$, écrire la solution générale en utilisant le tableau ci-dessus (attention aux signes de $r_1, r_2$ ou $\alpha, \beta$).
+        \end{enumerate}
+  \item \textbf{Résoudre $ay'' + by' + cy = d$} ($c \neq 0$) :
+        \begin{enumerate}
+          \item Résoudre l'équation homogène $ay''+by'+cy=0$ pour obtenir $y_H$.
+          \item Ajouter la solution particulière constante $y_p = \dfrac{d}{c}$.
+          \item La solution générale est $y = y_H + \dfrac{d}{c}$.
+        \end{enumerate}
+  \item \textbf{Appliquer des conditions initiales} (problème de Cauchy) :
+        \begin{enumerate}
+          \item Écrire la solution générale (avec $C$ ou $C_1, C_2$).
+          \item Traduire les conditions : $y(x_0) = y_0$ (et $y'(x_0) = y_1$ si ordre 2).
+          \item Dériver la solution générale si une condition porte sur $y'$.
+          \item Résoudre le système linéaire obtenu pour déterminer les constantes.
+          \item Écrire la solution \cle{unique} trouvée.
+        \end{enumerate}
+  \item \textbf{Modéliser un phénomène réel} :
+        \begin{enumerate}
+          \item Identifier la grandeur inconnue $y$ (population, capital, charge, température, \dots) et la variable $x$ (souvent le temps $t$).
+          \item Traduire l'hypothèse physique : « la variation est proportionnelle à la grandeur » $\Rightarrow y' = ay$ (croissance/décroissance exponentielle) ; « retour à l'équilibre avec frottements/oscillations » $\Rightarrow$ équation du second ordre.
+          \item Résoudre l'équation différentielle.
+          \item Exploiter la solution (valeur à un instant, temps de doublement/demi-vie, allure de la courbe, \dots).
+        \end{enumerate}
+\end{enumerate}
+\end{methode}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+  \item[$\square$] Je sais donner l'ordre et le degré d'une équation différentielle.
+  \item[$\square$] Je sais vérifier qu'une fonction donnée est solution : calculer les dérivées, substituer, conclure « l'égalité est vérifiée pour tout $x \in I$ ».
+  \item[$\square$] Je connais par cœur la solution de $y'=ay$ : $y=Ce^{ax}$ ($C\in\mathbb{R}$).
+  \item[$\square$] J'écris sans erreur l'équation caractéristique $ar^2+br+c=0$ (attention aux signes de $b$ et $c$).
+  \item[$\square$] Je discute systématiquement le signe de $\Delta=b^2-4ac$ et j'écris la forme adaptée :
+        \begin{itemize}
+          \item $\Delta>0$ : $C_1e^{r_1x}+C_2e^{r_2x}$
+          \item $\Delta=0$ : $(C_1x+C_2)e^{r_0x}$
+          \item $\Delta<0$ : $e^{\alpha x}(C_1\cos\beta x+C_2\sin\beta x)$ avec $\alpha=-\frac{b}{2a}$, $\beta=\frac{\sqrt{-\Delta}}{2a}$
+        \end{itemize}
+  \item[$\square$] Pour $ay''+by'+cy=d$ ($c\neq0$), j'ajoute la solution particulière constante $\frac{d}{c}$ à la solution de l'homogène.
+  \item[$\square$] Je détermine les constantes $C_1, C_2$ grâce aux conditions initiales : je dérive la solution générale si $y'(x_0)$ est donné, je résous le système $2\times2$.
+  \item[$\square$] Je n'oublie \textbf{jamais} les constantes d'intégration dans la solution générale ($C\in\mathbb{R}$ ou $(C_1,C_2)\in\mathbb{R}^2$).
+  \item[$\square$] Je sais modéliser une croissance exponentielle (population, capital, radioactivité) par $y'=ay$ ($a>0$ croissance, $a<0$ décroissance).
+  \item[$\square$] Je vérifie toujours ma solution finale en la reportant dans l'équation et dans les conditions initiales.
+  \item[$\square$] Ma rédaction est soignée : « L'ensemble des solutions est $\{x \mapsto Ce^{ax} \mid C\in\mathbb{R}\}$ » ou « La solution unique est $x \mapsto \dots$ ».
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

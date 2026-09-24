@@ -1,0 +1,3062 @@
+% Fonction exponentielle — Mathématiques Tle A — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic MA07-exponentielle-a.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle A}
+\newcommand{\DOCMODULE}{Relations et opérations fondamentales dans l'ensemble des nombres réels}
+\newcommand{\DOCLECON}{A07}
+\newcommand{\DOCTITRE}{Fonction exponentielle}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+
+\begin{document}
+
+\pagegarde{Fonction exponentielle}{Mathématiques}{Tle A}{Relations et opérations fondamentales dans l'ensemble des nombres réels}{A07}{6 h}{Cette leçon introduit la fonction exponentielle, réciproque du logarithme népérien, et ses propriétés algébriques et analytiques. Elle permet de résoudre des équations et inéquations d'inconnue eˣ, de calculer limites, dérivées et primitives, et d'étudier des fonctions du type e\^{}(ax+b), compétences essentielles pour le baccalauréat et la modélisation des phénomènes de croissance.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir la fonction exponentielle comme réciproque du logarithme népérien et utiliser la relation ln x = y ⇔ x = eʸ
+\item À la fin de cette leçon, je sais utiliser les propriétés algébriques de l'exponentielle (e\^{}(a+b), e\^{}(a-b), (e\^{}a)\^{}n) pour simplifier des expressions
+\item À la fin de cette leçon, je sais résoudre une équation d'inconnue eˣ par changement de variable X = eˣ
+\item À la fin de cette leçon, je sais résoudre une inéquation d'inconnue eˣ en tenant compte de la stricte positivité et de la croissance de l'exponentielle
+\item À la fin de cette leçon, je sais résoudre un système d'équations faisant intervenir eˣ et eʸ
+\item À la fin de cette leçon, je sais calculer les limites de e\^{}(ax+b) aux bornes de son ensemble de définition
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Définition et premières propriétés de la fonction exponentielle
+\item Propriétés algébriques de l'exponentielle
+\item Équations, inéquations et systèmes d'inconnue eˣ
+\item Limites de la fonction exponentielle
+\item Dérivation et primitivation
+\item Étude complète et représentation graphique de fonctions du type e\^{}(ax+b)
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir la fonction exponentielle comme réciproque du logarithme népérien et utiliser la relation ln x = y ⇔ x = eʸ
+\item À la fin de cette leçon, je sais utiliser les propriétés algébriques de l'exponentielle (e\^{}(a+b), e\^{}(a-b), (e\^{}a)\^{}n) pour simplifier des expressions
+\item À la fin de cette leçon, je sais résoudre une équation d'inconnue eˣ par changement de variable X = eˣ
+\item À la fin de cette leçon, je sais résoudre une inéquation d'inconnue eˣ en tenant compte de la stricte positivité et de la croissance de l'exponentielle
+\item À la fin de cette leçon, je sais résoudre un système d'équations faisant intervenir eˣ et eʸ
+\item À la fin de cette leçon, je sais calculer les limites de e\^{}(ax+b) aux bornes de son ensemble de définition
+\item À la fin de cette leçon, je sais dériver et primitiver une fonction du type e\^{}(ax+b)
+\item À la fin de cette leçon, je sais dresser le tableau de variations complet d'une fonction du type e\^{}(ax+b) et tracer sa courbe représentative
+\item À la fin de cette leçon, je sais modéliser une situation de croissance continue à l'aide de la fonction exponentielle
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item La fonction logarithme népérien : définition, propriétés algébriques, variations (leçon précédente)
+\item La notion de bijection et de fonction réciproque (Première)
+\item Les limites usuelles et les opérations sur les limites (début d'année de Terminale)
+\item La dérivation : dérivées usuelles, dérivée d'une fonction composée (Première et début d'année)
+\item La résolution d'équations et d'inéquations du second degré (Seconde et Première)
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Définition et premières propriétés de la fonction exponentielle}
+
+Une coopérative de cacao de la région du Centre place un capital de \num{500000} FCFA à la banque, à intérêts composés en continu. Le directeur affirme, confiant : « À un taux annuel de 7 \%, notre capital doublera en moins de 10 ans ! » Pour vérifier cette affirmation, il faut savoir manipuler une fonction qui transforme les sommes en produits : la \cle{fonction exponentielle}. Comment modéliser cette croissance ? Comment déterminer le temps nécessaire pour atteindre un objectif financier ? Toutes ces questions reviennent à « remonter » un calcul effectué par le logarithme népérien : il nous faut une fonction qui fasse exactement le chemin inverse de $\ln$. C'est précisément l'objet de cette section.
+
+\courssub{Point de départ : la fonction ln est une bijection}
+
+\begin{aretenir}[Rappel sur le logarithme népérien]
+La fonction \cle{logarithme népérien}, notée $\ln$, est :
+\begin{itemize}
+\item définie, continue et strictement croissante sur $]0\,;+\infty[$ ;
+\item telle que $\displaystyle\lim_{x\to 0^+}\ln x=-\infty$ et $\displaystyle\lim_{x\to+\infty}\ln x=+\infty$.
+\end{itemize}
+Par conséquent, d'après le théorème des valeurs intermédiaires (version « bijection »), $\ln$ réalise une \cle{bijection} de $]0\,;+\infty[$ sur $\mathbb{R}$ : pour tout réel $y$, l'équation $\ln x = y$ possède une \textbf{unique} solution dans $]0\,;+\infty[$.
+\end{aretenir}
+
+Faisons une analogie. La fonction $\ln$ est comme une machine qui, à chaque nombre strictement positif, associe un nombre réel bien déterminé, et qui ne « rate » aucun réel : chaque réel $y$ est atteint une fois et une seule. Une telle machine peut être « inversée » : il existe une machine réciproque qui, partant du réel $y$, retrouve l'unique nombre positif $x$ dont le logarithme vaut $y$. Cette machine réciproque porte un nom : c'est la \cle{fonction exponentielle}.
+
+\courssub{Définition de la fonction exponentielle}
+
+\begin{definition}[Fonction exponentielle]
+La fonction \cle{exponentielle} (népérienne), notée $\exp$, est la \textbf{bijection réciproque} de la fonction logarithme népérien. Elle est donc :
+\begin{itemize}
+\item définie sur $\mathbb{R}$ tout entier ;
+\item à valeurs dans $]0\,;+\infty[$.
+\end{itemize}
+Pour tout réel $x$, on note $\exp(x)=e^{x}$ (lire « exponentielle de $x$ » ou « $e$ puissance $x$ »).
+\end{definition}
+
+\begin{attention}[Une image toujours strictement positive]
+Comme l'ensemble des valeurs de $\exp$ est $]0\,;+\infty[$, on retient une conséquence capitale :
+\[ \text{Pour tout réel } x,\quad e^{x}>0. \]
+Une exponentielle n'est \textbf{jamais} nulle, \textbf{jamais} négative. Dire « $e^{x}=-3$ » n'a aucun sens : cette équation n'a pas de solution.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05,>=Stealth]
+% Ensembles
+\draw[thick,popblue] (-3.2,0) ellipse (1.5 and 1.1);
+\node[popblue,font=\bfseries] at (-3.2,1.45) {$\mathbb{R}$};
+\draw[thick,poporange] (3.2,0) ellipse (1.5 and 1.1);
+\node[poporange,font=\bfseries] at (3.2,1.45) {$]0\,;+\infty[$};
+% Points
+\fill[popblue] (-3.2,0.35) circle (1.6pt) node[left=2pt,popdark]{$x$};
+\fill[poporange] (3.2,0.35) circle (1.6pt) node[right=2pt,popdark]{$e^{x}$};
+\fill[poporange] (3.2,-0.45) circle (1.6pt) node[right=2pt,popdark]{$x'$};
+\fill[popblue] (-3.2,-0.45) circle (1.6pt) node[left=2pt,popdark]{$\ln x'$};
+% Flèches
+\draw[->,very thick,popblue] (-1.75,0.35) to[bend left=18] node[above,popdark]{$\exp$} (1.75,0.35);
+\draw[->,very thick,poporange] (1.75,-0.45) to[bend left=18] node[below,popdark]{$\ln$} (-1.75,-0.45);
+\end{tikzpicture}
+\end{center}
+\legende{La fonction exponentielle est la bijection réciproque de $\ln$ : $\exp$ envoie $\mathbb{R}$ sur $]0\,;+\infty[$, et $\ln$ effectue le trajet retour.}
+\end{popfigure}
+
+\courssub{L'équivalence fondamentale et les relations de réciprocité}
+
+Le fait que $\exp$ et $\ln$ soient réciproques l'une de l'autre se traduit par des égalités qu'il faut connaître par cœur, car elles sont la clé de toutes les résolutions d'équations de cette leçon.
+
+\begin{propriete}[Équivalence fondamentale et relations de réciprocité]
+\begin{itemize}
+\item Pour tout $x>0$ et tout réel $y$ : \quad $\ln x = y \iff x = e^{y}$.
+\item Pour tout $x>0$ : \quad $e^{\ln x}=x$.
+\item Pour tout réel $x$ : \quad $\ln\!\left(e^{x}\right)=x$.
+\end{itemize}
+Ces propriétés sont des conséquences directes de la définition de bijection réciproque : composer une bijection et sa réciproque, dans un sens ou dans l'autre, redonne le nombre de départ.
+\end{propriete}
+
+\begin{experience}[Pourquoi ces égalités sont-elles vraies ?]
+Raisonnons pas à pas.
+\begin{enumerate}
+\item Dire que $\exp$ est la réciproque de $\ln$ signifie : $\exp$ part de $\mathbb{R}$ et atteint $]0\,;+\infty[$, et $\ln$ « défait » exactement ce que $\exp$ a fait.
+\item Prenons un réel $x$ quelconque. Posons $X=e^{x}$ : c'est un nombre strictement positif. Appliquons $\ln$ : par définition de la réciproque, $\ln X=\ln(e^{x})$ redonne le point de départ, donc $\ln(e^{x})=x$.
+\item Prenons maintenant $x>0$. Posons $y=\ln x$ : c'est un réel. Appliquons $\exp$ : $e^{y}=e^{\ln x}$ redonne le point de départ, donc $e^{\ln x}=x$.
+\item Enfin, l'équivalence $\ln x = y \iff x=e^{y}$ n'est qu'une reformulation : « $y$ est le logarithme de $x$ » signifie exactement « $x$ est l'exponentielle de $y$ ».
+\end{enumerate}
+\end{experience}
+
+\begin{attention}[Le piège du domaine de définition]
+L'égalité $\ln(e^{x})=x$ est valable pour \textbf{tout} réel $x$, car $e^{x}$ est toujours strictement positif, donc toujours dans le domaine de $\ln$. En revanche, $e^{\ln x}$ n'a de sens que si $\ln x$ existe, c'est-à-dire pour $x>0$. Écrire « $e^{\ln(-2)}=-2$ » est une erreur grave : $\ln(-2)$ n'existe pas ! Avant de simplifier $e^{\ln x}$ en $x$, vérifie toujours que $x>0$.
+\end{attention}
+
+\courssub{Valeurs remarquables}
+
+\begin{propriete}[Valeurs remarquables]
+\[ e^{0}=1 \qquad\text{et}\qquad e^{1}=e\approx \num{2,718}. \]
+\end{propriete}
+
+En effet : $\ln 1 = 0$, donc par réciprocité $e^{0}=1$. De même, le nombre $e$ est \emph{par définition} l'unique nombre dont le logarithme vaut 1 : $\ln e = 1$, donc $e^{1}=e$. Ces deux valeurs, associées à $\ln 1 = 0$ et $\ln e = 1$, forment les quatre « points d'ancrage » à connaître sans hésitation le jour du Baccalauréat.
+
+\begin{savaistu}[Le nombre $e$, une célébrité des mathématiques]
+Le nombre $e\approx \num{2,71828}$ est, comme $\pi$, un nombre \cle{irrationnel} : son écriture décimale est infinie et non périodique. Il a été étudié en profondeur par le mathématicien suisse Leonhard Euler au XVIII\textsuperscript{e} siècle — la lettre $e$ lui rend hommage. Ce nombre apparaît naturellement dès qu'une grandeur croît « en continu » : intérêts composés, croissance d'une population, désintégration radioactive. C'est exactement la situation de notre coopérative de cacao !
+\end{savaistu}
+
+\courssub{Sens de variation : l'exponentielle est strictement croissante}
+
+\begin{propriete}[Stricte croissance de l'exponentielle]
+La fonction exponentielle est \textbf{strictement croissante} sur $\mathbb{R}$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : la réciproque d'une bijection strictement croissante est strictement croissante]
+Soient $a$ et $b$ deux réels tels que $a<b$. Nous voulons comparer $e^{a}$ et $e^{b}$.
+\begin{enumerate}
+\item Posons $u=e^{a}$ et $v=e^{b}$. Ce sont deux nombres strictement positifs.
+\item Appliquons $\ln$, qui est \textbf{strictement croissante} sur $]0\,;+\infty[$ : l'ordre entre $u$ et $v$ est donc le même que l'ordre entre $\ln u$ et $\ln v$.
+\item Or $\ln u = \ln(e^{a})=a$ et $\ln v = \ln(e^{b})=b$, et l'on sait que $a<b$, c'est-à-dire $\ln u < \ln v$.
+\item Puisque $\ln$ est strictement croissante, $\ln u < \ln v$ impose $u<v$ (sinon, si l'on avait $u\geq v$, on aurait $\ln u \geq \ln v$, ce qui contredit l'étape 3).
+\item Conclusion : $a<b \Rightarrow e^{a}<e^{b}$. La fonction $\exp$ est strictement croissante sur $\mathbb{R}$.
+\end{enumerate}
+\end{experience}
+
+\begin{propriete}[Conséquences pour la comparaison]
+Pour tous réels $a$ et $b$ :
+\[ e^{a}=e^{b}\iff a=b \qquad\text{et}\qquad e^{a}<e^{b}\iff a<b. \]
+Autrement dit, l'exponentielle \textbf{conserve l'ordre} : on peut « supprimer » l'exponentielle d'une égalité ou d'une inégalité sans jamais changer le sens de l'inégalité.
+\end{propriete}
+
+\begin{attention}[Contrairement au carré, l'exponentielle ne mélange jamais les antécédents]
+On sait que $x^{2}=y^{2}$ n'implique pas $x=y$ (par exemple $(-3)^{2}=3^{2}$). Avec l'exponentielle, aucun piège de ce type : deux exponentielles égales proviennent forcément d'exposants égaux, car $\exp$ est une bijection.
+\end{attention}
+
+\courssub{Représentation graphique : la symétrie avec la courbe de ln}
+
+Une propriété géométrique magnifique découle de la réciprocité : dans un repère orthonormé, les courbes de deux fonctions réciproques sont \textbf{symétriques par rapport à la droite d'équation $y=x$} (la première bissectrice). En effet, le point $(a\,;b)$ appartient à la courbe de $\exp$ si et seulement si $b=e^{a}$, c'est-à-dire $a=\ln b$, c'est-à-dire que le point $(b\,;a)$ — le symétrique de $(a\,;b)$ par rapport à $y=x$ — appartient à la courbe de $\ln$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.86\linewidth,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-3.2, xmax=4.2, ymin=-3.2, ymax=4.2,
+  xtick={-2,-1,1,2,3}, ytick={-2,-1,1,2,3},
+  grid=both, grid style={popline!40},
+  legend style={at={(0.03,0.97)},anchor=north west,draw=none,fill=none},
+  samples=200
+]
+\addplot[popcurve,domain=-3:1.45]{exp(x)};
+\addlegendentry{$y=e^{x}$}
+\addplot[poporange,very thick,domain=0.04:4.1]{ln(x)};
+\addlegendentry{$y=\ln x$}
+\addplot[popmuted,dashed,domain=-3:4.1]{x};
+\addlegendentry{$y=x$}
+\addplot[only marks,mark=*,popdark] coordinates {(0,1) (1,2.71828) (1,0) (2.71828,1)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Dans un repère orthonormé, les courbes de $\exp$ (bleu) et de $\ln$ (orange) sont symétriques par rapport à la première bissectrice $y=x$. Les points $(0;1)$ et $(1;e)$ de la courbe de $\exp$ correspondent aux points $(1;0)$ et $(e;1)$ de la courbe de $\ln$.}
+\end{popfigure}
+
+On observe sur la figure les faits essentiels : la courbe de $\exp$ passe par $(0\,;1)$, reste entièrement au-dessus de l'axe des abscisses (car $e^{x}>0$), et monte de plus en plus vite — c'est la fameuse « croissance exponentielle » qui fait doubler les capitaux.
+
+\courssub{Premières applications : résolutions immédiates}
+
+L'équivalence fondamentale $\ln x = y \iff x = e^{y}$ permet déjà de résoudre deux familles d'équations élémentaires.
+
+\begin{exemplebox}[Deux équations de base]
+\textbf{1. Résoudre $\ln x = 3$.}
+
+Condition d'existence : $x>0$. Par l'équivalence fondamentale :
+\[ \ln x = 3 \iff x = e^{3}\approx \num{20,09}. \]
+La solution est $x=e^{3}$ (valeur exacte), soit environ $\num{20,09}$ (valeur approchée).
+
+\textbf{2. Résoudre $e^{x}=5$.}
+
+Comme $5>0$, on applique $\ln$ aux deux membres (ou l'équivalence fondamentale lue de droite à gauche) :
+\[ e^{x}=5 \iff x=\ln 5 \approx \num{1,609}. \]
+La solution est $x=\ln 5$.
+\end{exemplebox}
+
+\begin{attention}[Toujours vérifier le signe du second membre]
+L'équation $e^{x}=k$ n'a de solution que si $k>0$ : dans ce cas, l'unique solution est $x=\ln k$. Si $k\leq 0$, l'équation n'a \textbf{aucune} solution, car une exponentielle est strictement positive. De même, $\ln x = y$ exige de vérifier que la solution trouvée $e^{y}$ est bien strictement positive — ce qui est toujours le cas, donc il n'y a jamais de solution parasite à rejeter de ce côté-là.
+\end{attention}
+
+\begin{exoresolu}[Retour à la coopérative de cacao]
+\textbf{Énoncé.} Avec des intérêts composés en continu au taux annuel de 7 \%, un capital de \num{500000} FCFA devient, après $t$ années, $C(t)=\num{500000}\,e^{0{,}07t}$ FCFA. Au bout de combien d'années le capital aura-t-il doublé ? Le directeur a-t-il raison d'annoncer un doublement en moins de 10 ans ?
+\tcblower
+\textbf{Solution détaillée.} Le capital double lorsque $C(t)=\num{1000000}$, c'est-à-dire :
+\[ \num{500000}\,e^{0{,}07t}=\num{1000000} \iff e^{0{,}07t}=2. \]
+Comme $2>0$, l'équivalence fondamentale donne :
+\[ 0{,}07\,t=\ln 2 \iff t=\frac{\ln 2}{0{,}07}\approx \frac{\num{0,693}}{\num{0,07}}\approx \num{9,9} \text{ ans}. \]
+Le capital double au bout d'environ $\num{9,9}$ années, soit un peu moins de 10 ans : \textbf{le directeur a raison} (de justesse !). Remarquons que le résultat ne dépend pas du capital initial : à taux de 7 \% en continu, \emph{tout} capital double en $\dfrac{\ln 2}{0{,}07}\approx 9{,}9$ ans.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Résoudre dans $\mathbb{R}$ les équations : a) $e^{x}=7$ ; b) $e^{x}=-1$ ; c) $\ln x = -2$.
+\item Simplifier : $e^{\ln 12}$ ; $\ln(e^{-5})$ ; $e^{\ln 3}+\ln(e^{3})$.
+\item Comparer sans calculatrice $e^{2{,}5}$ et $e^{2{,}6}$, puis $e^{-1}$ et $e^{0}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice « À toi de jouer »]
+\begin{enumerate}
+\item a) $7>0$, donc $x=\ln 7\approx \num{1,946}$. b) $-1<0$ : aucune solution, car $e^{x}>0$ pour tout réel $x$. c) $x=e^{-2}\approx \num{0,135}$, qui est bien strictement positif.
+\item $e^{\ln 12}=12$ (car $12>0$) ; $\ln(e^{-5})=-5$ ; $e^{\ln 3}+\ln(e^{3})=3+3=6$.
+\item L'exponentielle est strictement croissante : $2{,}5<2{,}6$ donc $e^{2{,}5}<e^{2{,}6}$ ; $-1<0$ donc $e^{-1}<e^{0}=1$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item L'exponentielle est la \textbf{bijection réciproque} de $\ln$ : définie sur $\mathbb{R}$, à valeurs dans $]0\,;+\infty[$, avec $e^{x}>0$ pour tout $x$.
+\item Équivalence fondamentale : $\ln x = y \iff x=e^{y}$ (pour $x>0$).
+\item Réciprocité : $e^{\ln x}=x$ (si $x>0$) et $\ln(e^{x})=x$ (pour tout $x$ réel).
+\item Valeurs : $e^{0}=1$, $e^{1}=e\approx\num{2,718}$.
+\item $\exp$ est \textbf{strictement croissante} sur $\mathbb{R}$ : $e^{a}=e^{b}\iff a=b$ et $e^{a}<e^{b}\iff a<b$.
+\item Les courbes de $\exp$ et $\ln$ sont symétriques par rapport à la droite $y=x$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Propriétés algébriques de l'exponentielle}
+
+Dans la section précédente, nous avons défini la fonction exponentielle comme la \cle{réciproque} du logarithme népérien : pour tout réel $x$, $e^x$ est l'unique nombre réel strictement positif dont le logarithme vaut $x$. Nous avons aussi retenu l'équivalence fondamentale
+\[
+\ln x = y \iff x = e^y \qquad (x > 0).
+\]
+Cette définition, toute seule, ne dit pas encore pourquoi l'exponentielle est si précieuse. Son vrai pouvoir apparaît dans ses \cle{propriétés algébriques} : l'exponentielle \emph{transforme les additions en multiplications}. C'est exactement le comportement inverse du logarithme, qui transforme les produits en sommes. Cette section établit rigoureusement ces règles de calcul, que tu utiliseras dans toutes les équations, inéquations, études de fonctions et calculs de limites de ce chapitre.
+
+\courssub{La relation fonctionnelle fondamentale}
+
+\textbf{Intuition : pourquoi une somme devient-elle un produit ?}\par
+
+Rappelle-toi la propriété fondamentale du logarithme : pour tous réels strictement positifs $A$ et $B$,
+\[
+\ln(AB) = \ln A + \ln B.
+\]
+Le logarithme « casse » les produits en sommes. Or l'exponentielle est l'opération \emph{inverse} du logarithme : elle doit donc faire le trajet en sens contraire, c'est-à-dire « reconstruire » un produit à partir d'une somme. On s'attend donc à ce que $e^{a+b}$ soit le \emph{produit} de $e^a$ et de $e^b$. C'est exactement ce que dit le théorème suivant, qui est la pierre angulaire de tout le chapitre.
+
+\begin{propriete}[Relation fonctionnelle fondamentale (théorème)]
+Pour tous réels $a$ et $b$ :
+\[
+\boxed{\;e^{a+b} = e^a \times e^b\;}
+\]
+\emph{Cette démonstration est exigible au Baccalauréat : elle repose uniquement sur la propriété $\ln(AB) = \ln A + \ln B$ et sur l'équivalence fondamentale $\ln x = y \iff x = e^y$.}
+\end{propriete}
+
+\begin{experience}[Démonstration guidée du théorème]
+Soient $a$ et $b$ deux réels quelconques. Suivons la démarche pas à pas.
+
+\textbf{Étape 1 — On pose les bons objets.} Posons $A = e^a$ et $B = e^b$. Par définition de l'exponentielle, $A$ et $B$ sont des réels \emph{strictement positifs}.
+
+\textbf{Étape 2 — On traduit par l'équivalence fondamentale.} Dire que $A = e^a$ signifie exactement, d'après $\ln x = y \iff x = e^y$, que $\ln A = a$. De même, $B = e^b$ signifie que $\ln B = b$.
+
+\textbf{Étape 3 — On applique la propriété du logarithme.} Comme $A > 0$ et $B > 0$, on peut écrire :
+\[
+\ln(AB) = \ln A + \ln B = a + b.
+\]
+
+\textbf{Étape 4 — On repasse à l'exponentielle.} L'égalité $\ln(AB) = a+b$ signifie, toujours par l'équivalence fondamentale, que :
+\[
+AB = e^{a+b}.
+\]
+
+\textbf{Étape 5 — Conclusion.} En remplaçant $A$ et $B$ par leurs valeurs :
+\[
+e^a \times e^b = e^{a+b}.
+\]
+La relation est démontrée pour tous réels $a$ et $b$. \hfill $\blacksquare$
+\end{experience}
+
+\begin{aretenir}[L'idée à retenir]
+L'exponentielle et le logarithme sont réciproques : le logarithme transforme les \cle{produits en sommes}, l'exponentielle transforme les \cle{sommes en produits}. Toutes les formules de cette section ne sont que des conséquences de cette unique idée.
+\end{aretenir}
+
+\begin{attention}[Le piège numéro 1 : $e^{a+b} \neq e^a + e^b$]
+L'erreur la plus fréquente au Baccalauréat est d'écrire $e^{a+b} = e^a + e^b$. C'est \textbf{faux} ! L'exponentielle ne transforme pas les sommes en sommes, mais en \emph{produits}. Vérifie avec des nombres : $e^{1+1} = e^2 \approx 7{,}39$, alors que $e^1 + e^1 = 2e \approx 5{,}44$. Les deux résultats sont différents. Retiens : \textbf{somme en exposant $\Rightarrow$ produit d'exponentielles}.
+\end{attention}
+
+\courssub{Conséquences immédiates : opposé et quotient}
+
+De la relation fondamentale découlent deux formules essentielles.
+
+\begin{propriete}[Exponentielle d'un opposé et d'une différence]
+Pour tous réels $a$ et $b$ :
+\[
+e^{-a} = \frac{1}{e^a} \qquad \text{et} \qquad e^{a-b} = \frac{e^a}{e^b}.
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée]
+\textbf{Pour l'opposé.} Appliquons la relation fondamentale avec $b = -a$ :
+\[
+e^a \times e^{-a} = e^{a + (-a)} = e^0 = 1.
+\]
+Donc $e^a \times e^{-a} = 1$, ce qui signifie que $e^{-a}$ est l'inverse de $e^a$ : $e^{-a} = \dfrac{1}{e^a}$. (On retrouve au passage que $e^a \neq 0$ pour tout réel $a$, ce qui conforte le fait que l'exponentielle ne s'annule jamais.)
+
+\textbf{Pour la différence.} On écrit $a - b = a + (-b)$ et on applique la relation fondamentale puis le résultat précédent :
+\[
+e^{a-b} = e^{a + (-b)} = e^a \times e^{-b} = e^a \times \frac{1}{e^b} = \frac{e^a}{e^b}.
+\]
+\hfill $\blacksquare$
+\end{experience}
+
+\begin{exemplebox}[Premiers calculs]
+\begin{itemize}
+\item $e^{2} \times e^{3} = e^{2+3} = e^{5}$ ;
+\item $\dfrac{e^{5}}{e^{2}} = e^{5-2} = e^{3}$ ;
+\item $e^{-4} = \dfrac{1}{e^{4}}$ ;
+\item $e^{x} \times e^{-x} = e^{0} = 1$ pour tout réel $x$.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Puissances et racines de l'exponentielle}
+
+\textbf{Puissances entières}\par
+
+Que vaut $(e^a)^2$ ? Par définition d'un carré, $(e^a)^2 = e^a \times e^a = e^{a+a} = e^{2a}$. En répétant le raisonnement, on obtient $(e^a)^n = e^{na}$ pour tout entier naturel $n$. Pour les entiers négatifs, on utilise l'inverse : $(e^a)^{-1} = \dfrac{1}{e^a} = e^{-a}$. D'où la propriété générale.
+
+\begin{propriete}[Puissance entière d'une exponentielle]
+Pour tout réel $a$ et tout entier relatif $n \in \mathbb{Z}$ :
+\[
+\boxed{\;\left(e^{a}\right)^{n} = e^{na}\;}
+\]
+\end{propriete}
+
+\begin{exemplebox}[Calculs avec des puissances]
+\begin{itemize}
+\item $\left(e^{2}\right)^{3} = e^{2 \times 3} = e^{6}$ ;
+\item $\left(e^{x}\right)^{2} = e^{2x}$ (attention : ce n'est \emph{pas} $e^{x^2}$ !) ;
+\item $\left(e^{3}\right)^{-2} = e^{-6} = \dfrac{1}{e^{6}}$.
+\end{itemize}
+\end{exemplebox}
+
+\textbf{Racines de l'exponentielle}\par
+
+Cherchons un nombre dont le carré vaut $e^a$. D'après la propriété des puissances, $\left(e^{a/2}\right)^{2} = e^{2 \times \frac{a}{2}} = e^{a}$. Comme $e^{a/2} > 0$, c'est exactement la définition de la racine carrée de $e^a$. Le même raisonnement fonctionne avec un exposant $\dfrac{1}{n}$.
+
+\begin{propriete}[Racines de l'exponentielle]
+Pour tout réel $a$ et tout entier $n \geq 2$ :
+\[
+e^{a/2} = \sqrt{e^{a}} \qquad \text{et plus généralement} \qquad e^{a/n} = \sqrt[n]{e^{a}}.
+\]
+En particulier : $\sqrt{e} = e^{1/2}$.
+\end{propriete}
+
+\begin{exemplebox}[Avec la racine carrée]
+$\sqrt{e^{6}} = e^{6/2} = e^{3}$, et $\left(\sqrt{e}\right)^{4} = \left(e^{1/2}\right)^{4} = e^{2}$.
+\end{exemplebox}
+
+\courssub{Le tableau des correspondances exp / ln}
+
+Le tableau suivant met en regard chaque formule de l'exponentielle avec la formule « miroir » du logarithme. Médite-le : il résume toute l'algèbre de ce chapitre.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Fonction exponentielle} & \textbf{Fonction logarithme népérien} \\
+\hline
+$e^{a+b} = e^{a} \times e^{b}$ & $\ln(AB) = \ln A + \ln B$ \\
+\hline
+$e^{a-b} = \dfrac{e^{a}}{e^{b}}$ & $\ln\left(\dfrac{A}{B}\right) = \ln A - \ln B$ \\
+\hline
+$e^{-a} = \dfrac{1}{e^{a}}$ & $\ln\left(\dfrac{1}{A}\right) = -\ln A$ \\
+\hline
+$\left(e^{a}\right)^{n} = e^{na}$ & $\ln\left(A^{n}\right) = n \ln A$ \\
+\hline
+$e^{a/2} = \sqrt{e^{a}}$ & $\ln \sqrt{A} = \dfrac{1}{2} \ln A$ \\
+\hline
+$e^{0} = 1$ & $\ln 1 = 0$ \\
+\hline
+$e^{1} = e$ & $\ln e = 1$ \\
+\hline
+$e^{\ln A} = A$ \quad ($A > 0$) & $\ln\left(e^{x}\right) = x$ \quad ($x \in \mathbb{R}$) \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05]
+% Bloc somme
+\node[draw=popblue, fill=popblueL, rounded corners, minimum width=3.2cm, minimum height=1cm, font=\bfseries] (somme) at (0,2) {Somme $a+b$};
+\node[draw=poporange, fill=poporangeL, rounded corners, minimum width=3.2cm, minimum height=1cm, font=\bfseries] (produit) at (7,2) {Produit $e^a \times e^b$};
+\draw[-{Stealth}, very thick, popink] (somme) -- (produit) node[midway, above, font=\small] {$\exp$ : somme $\to$ produit};
+\draw[-{Stealth}, very thick, popgreen] (produit.south) .. controls (3.5,0.2) .. (somme.south) node[midway, below, font=\small] {$\ln$ : produit $\to$ somme};
+\end{tikzpicture}
+\end{center}
+\legende{L'exponentielle transforme les sommes en produits ; le logarithme fait le chemin inverse.}
+\end{popfigure}
+
+\courssub{Simplifier des expressions mêlant ln et exp}
+
+\textbf{Les deux identités de composition}\par
+
+Puisque $\exp$ et $\ln$ sont réciproques, elles s'« annulent » mutuellement, à condition de respecter les domaines de définition :
+\[
+\ln\left(e^{x}\right) = x \quad \text{pour tout réel } x \;; \qquad e^{\ln A} = A \quad \text{pour tout } A > 0.
+\]
+
+\begin{attention}[Domaines de validité]
+$\ln(e^x) = x$ est valable pour \emph{tout} réel $x$, car $e^x > 0$ toujours. En revanche, $e^{\ln A} = A$ n'a de sens que si $A > 0$ : écrire $e^{\ln(-3)} = -3$ est une absurdité, car $\ln(-3)$ n'existe pas. Vérifie toujours le signe de la quantité sous le logarithme.
+\end{attention}
+
+\textbf{Écrire un nombre positif sous forme exponentielle}\par
+
+La deuxième identité a une conséquence spectaculaire : \emph{tout} nombre strictement positif peut s'écrire comme une exponentielle.
+
+\begin{propriete}[Écriture exponentielle d'un nombre positif]
+Pour tout réel $A > 0$ :
+\[
+\boxed{\;A = e^{\ln A}\;}
+\]
+\end{propriete}
+
+Cette écriture est un outil formidable : elle permet de manipuler n'importe quel nombre positif avec les règles de l'exponentielle. Par exemple, pour comparer ou simplifier des puissances, on écrira $2^{x} = e^{x \ln 2}$, ce qui ramène tout à la fonction exponentielle de référence.
+
+\begin{methode}[Simplifier une expression avec des exponentielles]
+Pour simplifier une expression contenant des produits, quotients ou puissances d'exponentielles :
+\begin{enumerate}
+\item Repérer chaque facteur et noter son exposant.
+\item Appliquer les règles : un produit \emph{additionne} les exposants, un quotient les \emph{soustrait}, une puissance les \emph{multiplie}.
+\item Tout regrouper en une \textbf{seule} exponentielle $e^{E}$, où $E$ est l'exposant total simplifié.
+\item Si l'expression mêle $\ln$ et $\exp$, utiliser $\ln(e^x) = x$, $e^{\ln A} = A$ ($A>0$) et $A = e^{\ln A}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Simplifications guidées]
+\textbf{1.} Simplifier $\dfrac{e^{2} \times e^{3}}{e^{4}}$.
+\textbf{2.} Écrire le nombre $7$ sous forme exponentielle.
+\textbf{3.} Simplifier $f(x) = \dfrac{e^{2x} \times e^{-x}}{e^{x}}$ pour $x \in \mathbb{R}$.
+\tcblower
+\textbf{1.} On regroupe les exposants : le produit additionne, le quotient soustrait :
+\[
+\frac{e^{2} \times e^{3}}{e^{4}} = e^{2+3-4} = e^{1} = e.
+\]
+\textbf{2.} Comme $7 > 0$, on applique $A = e^{\ln A}$ :
+\[
+7 = e^{\ln 7}.
+\]
+\textbf{3.} Pour tout réel $x$ :
+\[
+f(x) = \frac{e^{2x} \times e^{-x}}{e^{x}} = e^{2x + (-x) - x} = e^{0} = 1.
+\]
+La fonction $f$ est donc constante, égale à $1$ sur $\mathbb{R}$.
+\end{exoresolu}
+
+\begin{exoresolu}[Expression mêlant ln et exp]
+Simplifier $E = e^{\ln 5} + \ln\left(e^{3}\right) - e^{2\ln 3}$, puis montrer que $F = \dfrac{e^{\ln 2 + 1}}{2}$ est un nombre très simple.
+\tcblower
+Pour $E$ : on utilise $e^{\ln 5} = 5$ (car $5 > 0$), $\ln(e^3) = 3$, et $e^{2\ln 3} = e^{\ln(3^2)} = e^{\ln 9} = 9$. Donc :
+\[
+E = 5 + 3 - 9 = -1.
+\]
+Pour $F$ : on transforme le numérateur grâce à la relation fondamentale :
+\[
+e^{\ln 2 + 1} = e^{\ln 2} \times e^{1} = 2e.
+\]
+Par conséquent :
+\[
+F = \frac{2e}{2} = e.
+\]
+\end{exoresolu}
+
+\begin{savaistu}[L'exponentielle au service des télécommunications]
+Quand un ingénieur de MTN ou d'Orange Cameroun calcule l'affaiblissement d'un signal le long d'un câble, il utilise des lois exponentielles : la puissance reçue s'écrit $P = P_0 \, e^{-\alpha d}$, où $d$ est la distance. Grâce aux règles de cette section, doubler la distance revient à \emph{élever au carré} le facteur d'affaiblissement : $e^{-\alpha (2d)} = \left(e^{-\alpha d}\right)^{2}$. Les formules que tu viens d'apprendre sont celles qui font fonctionner le réseau !
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Simplifier : $A = \dfrac{e^{5} \times e^{-2}}{e^{7}}$ ; \quad $B = \left(e^{3}\right)^{2} \times e^{-5}$ ; \quad $C = \sqrt{e^{8}} \times e^{-2}$.
+\item Écrire sous forme exponentielle : $3$ ; \quad $0{,}5$ ; \quad $\sqrt{2}$.
+\item Simplifier pour tout réel $x$ : $g(x) = \dfrac{\left(e^{x}\right)^{3}}{e^{2x} \times e^{-x}}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice « À toi de jouer »]
+\textbf{1.} $A = e^{5-2-7} = e^{-4} = \dfrac{1}{e^{4}}$ ; \quad $B = e^{6} \times e^{-5} = e^{1} = e$ ; \quad $C = e^{4} \times e^{-2} = e^{2}$.
+
+\textbf{2.} $3 = e^{\ln 3}$ ; \quad $0{,}5 = e^{\ln 0{,}5} = e^{-\ln 2}$ ; \quad $\sqrt{2} = 2^{1/2} = e^{\frac{1}{2}\ln 2}$.
+
+\textbf{3.} $g(x) = \dfrac{e^{3x}}{e^{2x - x}} = \dfrac{e^{3x}}{e^{x}} = e^{3x - x} = e^{2x}$.
+\end{corrige}
+
+\begin{aretenir}[Bilan de la section]
+\begin{itemize}
+\item Relation fondamentale : $e^{a+b} = e^a \times e^b$ (démonstration exigible, à partir de $\ln(AB) = \ln A + \ln B$).
+\item Conséquences : $e^{-a} = \dfrac{1}{e^a}$, \; $e^{a-b} = \dfrac{e^a}{e^b}$, \; $\left(e^a\right)^n = e^{na}$, \; $e^{a/2} = \sqrt{e^a}$.
+\item Identités de composition : $\ln(e^x) = x$ pour tout $x$ ; $e^{\ln A} = A$ pour $A > 0$.
+\item Tout nombre $A > 0$ s'écrit $A = e^{\ln A}$.
+\item Piège mortel : $e^{a+b} \neq e^a + e^b$.
+\end{itemize}
+Ces règles algébriques sont maintenant ta boîte à outils : dans la prochaine section, nous les utiliserons pour résoudre des équations, des inéquations et des systèmes d'inconnue $e^x$.
+\end{aretenir}
+
+\coursec{Équations, inéquations et systèmes d'inconnue $e^x$}
+
+Dans la section précédente, nous avons découvert les \cle{propriétés algébriques} de l'exponentielle : $e^{a+b} = e^a \times e^b$, $e^{a-b} = \dfrac{e^a}{e^b}$, $(e^a)^n = e^{na}$, et surtout la relation fondamentale $e^x = k \Leftrightarrow x = \ln k$ (pour $k > 0$). Ces outils ne sont pas de simples curiosités : ils sont précisément les clés qui vont nous permettre de \cle{résoudre} des équations, des inéquations et même des systèmes où l'inconnue se cache dans l'exposant. C'est exactement le genre de situations que l'on rencontre en pratique : après combien de temps un capital placé à intérêts composés aura-t-il doublé ? À partir de quelle date la population d'une ville comme Douala dépassera-t-elle un seuil donné ? Autant de questions qui se traduisent par une équation ou une inéquation d'inconnue $e^x$. Cette section te donne une méthode systématique, infaillible, pour les traiter toutes.
+
+\courssub{Équations de base : $e^x = k$}
+
+Commençons par le cas le plus simple. On cherche les réels $x$ tels que $e^x = k$, où $k$ est un nombre réel donné. Deux observations immédiates, héritées des sections précédentes, vont tout décider :
+
+\begin{itemize}
+\item la fonction exponentielle est \cle{strictement positive} : pour tout réel $x$, $e^x > 0$ ;
+\item la fonction exponentielle est \cle{strictement croissante} sur $\mathbb{R}$, et elle prend toutes les valeurs de $]0\,; +\infty[$ (c'est une bijection de $\mathbb{R}$ vers $]0\,; +\infty[$).
+\end{itemize}
+
+\begin{propriete}[Équation $e^x = k$]
+Soit $k$ un nombre réel.
+\begin{itemize}
+\item Si $k > 0$, l'équation $e^x = k$ admet une \textbf{unique solution} : $x = \ln k$.
+\item Si $k \leq 0$, l'équation $e^x = k$ \textbf{n'admet aucune solution} dans $\mathbb{R}$.
+\end{itemize}
+\end{propriete}
+
+\begin{experience}[Pourquoi c'est vrai]
+Raisonnons proprement. Si $k \leq 0$ : comme $e^x > 0$ pour tout réel $x$, l'égalité $e^x = k$ est impossible ; l'ensemble des solutions est vide. Si $k > 0$ : supposons $e^x = k$. En appliquant le logarithme népérien (défini sur $]0\,; +\infty[$) aux deux membres, on obtient $\ln(e^x) = \ln k$, c'est-à-dire $x = \ln k$. Réciproquement, si $x = \ln k$, alors $e^x = e^{\ln k} = k$. L'équivalence est établie, et l'unicité vient de la stricte croissance de l'exponentielle : une fonction strictement monotone ne peut pas prendre deux fois la même valeur.
+\end{experience}
+
+\begin{propriete}[Égalité de deux exponentielles]
+Pour tous réels $a$ et $b$ :
+\[ e^a = e^b \Leftrightarrow a = b. \]
+C'est une conséquence directe de la stricte croissance (l'injectivité) de la fonction exponentielle. En particulier, $e^{u(x)} = e^{v(x)} \Leftrightarrow u(x) = v(x)$.
+\end{propriete}
+
+\begin{exemplebox}[Équations immédiates]
+\begin{itemize}
+\item $e^x = 5 \Leftrightarrow x = \ln 5 \approx 1,609$. Ensemble des solutions : $S = \{\ln 5\}$.
+\item $e^x = 1 \Leftrightarrow x = \ln 1 = 0$. Ensemble des solutions : $S = \{0\}$.
+\item $e^x = -3$ : aucune solution, car $-3 < 0$. $S = \emptyset$.
+\item $e^{2x} = 7 \Leftrightarrow 2x = \ln 7 \Leftrightarrow x = \dfrac{\ln 7}{2}$.
+\item $e^{x+1} = e^{3x-2} \Leftrightarrow x + 1 = 3x - 2 \Leftrightarrow x = \dfrac{3}{2}$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Le piège du signe]
+Avant de sortir le logarithme, \textbf{regarde toujours le signe du second membre}. Écrire « $e^x = -4$ donc $x = \ln(-4)$ » est une erreur grave : le logarithme n'est défini que sur $]0\,; +\infty[$. La bonne réponse est : $S = \emptyset$, car une exponentielle est toujours strictement positive. De même, $e^x = 0$ n'a aucune solution.
+\end{attention}
+
+\courssub{La technique du changement de variable $X = e^x$}
+
+Beaucoup d'équations du baccalauréat ne se présentent pas sous la forme simple $e^x = k$, mais contiennent à la fois $e^x$ et $e^{2x}$. L'idée géniale — et tu dois la rendre automatique — consiste à remarquer que $e^{2x} = (e^x)^2$. En posant $X = e^x$, l'équation devient une banale \cle{équation polynomiale} en $X$, que l'on sait résoudre depuis la classe de Première.
+
+\begin{methode}[Résoudre une équation d'inconnue $e^x$]
+Pour résoudre une équation du type $a\,e^{2x} + b\,e^x + c = 0$ (avec $a \neq 0$) :
+\begin{enumerate}
+\item \textbf{Poser} $X = e^x$, en précisant la condition $X > 0$.
+\item \textbf{Résoudre} l'équation polynomiale $aX^2 + bX + c = 0$ (discriminant $\Delta = b^2 - 4ac$).
+\item \textbf{Filtrer} : ne retenir que les racines \textbf{strictement positives} ; écarter toute racine négative ou nulle, car $X = e^x > 0$.
+\item \textbf{Conclure} : pour chaque racine $X$ retenue, revenir à $x$ par $x = \ln X$.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  node distance=0.55cm and 1.1cm,
+  every node/.style={font=\small},
+  etape/.style={draw=popblue, fill=popblueL, rounded corners=3pt, align=center, text width=4.6cm, minimum height=1cm, inner sep=4pt},
+  filtre/.style={draw=poporange, fill=poporangeL, rounded corners=3pt, align=center, text width=4.6cm, minimum height=1cm, inner sep=4pt},
+  final/.style={draw=popgreen, fill=popgreenL, rounded corners=3pt, align=center, text width=4.6cm, minimum height=1cm, inner sep=4pt},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}
+]
+\node[etape, align=center] (e1) {\textbf{Équation en $e^x$}\\ $a\,e^{2x}+b\,e^x+c=0$};
+\node[etape, below=of e1, align=center] (e2) {\textbf{Changement de variable}\\ $X = e^x$ \; ($X>0$)};
+\node[etape, below=of e2, align=center] (e3) {\textbf{Équation polynomiale}\\ $aX^2+bX+c=0$};
+\node[filtre, below=of e3, align=center] (e4) {\textbf{Filtre de positivité}\\ ne garder que $X>0$};
+\node[final, below=of e4, align=center] (e5) {\textbf{Retour à $x$}\\ $x=\ln X$};
+\draw[fleche] (e1) -- (e2);
+\draw[fleche] (e2) -- (e3);
+\draw[fleche] (e3) -- (e4);
+\draw[fleche] (e4) -- (e5);
+\node[right=0.35cm of e3, text width=3.4cm, align=left, popmuted, font=\footnotesize] {discriminant $\Delta$,\\ racines $X_1$, $X_2$};
+\node[right=0.35cm of e4, text width=3.4cm, align=left, popmuted, font=\footnotesize] {racines $\leq 0$ :\\ \textbf{rejetées}};
+\end{tikzpicture}
+\legende{Arbre de résolution d'une équation d'inconnue $e^x$ : le filtre $X>0$ est l'étape que les candidats oublient le plus souvent.}
+\end{popfigure}
+
+\begin{exoresolu}[Résoudre $e^{2x} - 3e^x + 2 = 0$]
+Résoudre dans $\mathbb{R}$ l'équation $e^{2x} - 3e^x + 2 = 0$.
+\tcblower
+\textbf{Étape 1 : changement de variable.} Posons $X = e^x$, avec $X > 0$. Comme $e^{2x} = (e^x)^2 = X^2$, l'équation devient :
+\[ X^2 - 3X + 2 = 0. \]
+\textbf{Étape 2 : résolution en $X$.} Le discriminant est $\Delta = (-3)^2 - 4 \times 1 \times 2 = 9 - 8 = 1 > 0$. Il y a deux racines :
+\[ X_1 = \frac{3 - 1}{2} = 1 \quad \text{et} \quad X_2 = \frac{3 + 1}{2} = 2. \]
+\textbf{Étape 3 : filtre de positivité.} $X_1 = 1 > 0$ : acceptée. $X_2 = 2 > 0$ : acceptée. Les deux racines conviennent.
+\textbf{Étape 4 : retour à $x$.}
+\[ e^x = 1 \Leftrightarrow x = \ln 1 = 0 \quad ; \quad e^x = 2 \Leftrightarrow x = \ln 2. \]
+\textbf{Conclusion :} $S = \{0 \,; \ln 2\}$. Vérification mentale : pour $x = 0$, $e^0 - 3e^0 + 2 = 1 - 3 + 2 = 0$ ; pour $x = \ln 2$, $e^{2\ln 2} - 3e^{\ln 2} + 2 = 4 - 6 + 2 = 0$. Parfait.
+\end{exoresolu}
+
+\begin{attention}[Erreur fréquente : la racine négative acceptée]
+L'erreur classique du baccalauréat : après avoir posé $X = e^x$ et trouvé, par exemple, $X_1 = -2$ et $X_2 = 3$, un candidat pressé écrit « $x = \ln(-2)$ ou $x = \ln 3$ ». Or $\ln(-2)$ \textbf{n'existe pas} ! Souviens-toi : $X = e^x$ est \textbf{toujours strictement positif}. Toute racine négative ou nulle du trinôme doit être \textbf{écartée sans discussion}. Si toutes les racines sont négatives ou nulles, l'équation n'a tout simplement aucune solution : $S = \emptyset$.
+\end{attention}
+
+\begin{exoresolu}[Un cas où le filtre joue vraiment]
+Résoudre dans $\mathbb{R}$ l'équation $e^{2x} + e^x - 2 = 0$.
+\tcblower
+Posons $X = e^x$ ($X > 0$). L'équation devient $X^2 + X - 2 = 0$. Discriminant : $\Delta = 1 + 8 = 9$. Racines :
+\[ X_1 = \frac{-1 - 3}{2} = -2 \quad \text{et} \quad X_2 = \frac{-1 + 3}{2} = 1. \]
+Filtre : $X_1 = -2 < 0$ est \textbf{rejetée} (une exponentielle ne vaut jamais $-2$). Seule $X_2 = 1$ convient, d'où $e^x = 1$, soit $x = 0$.
+\textbf{Conclusion :} $S = \{0\}$. Sans le filtre de positivité, on aurait faussement ajouté une « solution » inexistante.
+\end{exoresolu}
+
+\courssub{Inéquations d'inconnue $e^x$}
+
+Passons aux inéquations. L'outil décisif est ici la \cle{stricte croissance} de la fonction exponentielle : elle conserve l'ordre, et même l'ordre strict. Autrement dit :
+\[ e^a < e^b \Leftrightarrow a < b \qquad \text{et} \qquad e^a > e^b \Leftrightarrow a > b. \]
+
+\begin{propriete}[Inéquations de base]
+Soit $k$ un réel strictement positif. Alors :
+\[ e^x < k \Leftrightarrow x < \ln k \qquad \text{et} \qquad e^x > k \Leftrightarrow x > \ln k. \]
+Si $k \leq 0$ : l'inéquation $e^x < k$ n'a aucune solution ($S = \emptyset$), et l'inéquation $e^x > k$ est vraie pour tout réel $x$ ($S = \mathbb{R}$), car $e^x > 0 \geq k$.
+\end{propriete}
+
+\begin{exemplebox}[Inéquations immédiates]
+\begin{itemize}
+\item $e^x < 3 \Leftrightarrow x < \ln 3$. Solutions : $S = \left]-\infty \,; \ln 3\right[$.
+\item $e^x \geq 1 \Leftrightarrow x \geq 0$. Solutions : $S = [0\,; +\infty[$.
+\item $e^x > -1$ : vrai pour tout $x$ réel, car $e^x > 0 > -1$. $S = \mathbb{R}$.
+\item $e^{2x} \leq 5 \Leftrightarrow 2x \leq \ln 5 \Leftrightarrow x \leq \dfrac{\ln 5}{2}$.
+\end{itemize}
+\end{exemplebox}
+
+Pour les inéquations du second degré en $e^x$, on combine le changement de variable avec le \cle{signe du trinôme}, vu en Première : un trinôme $aX^2 + bX + c$ (avec $a > 0$ et deux racines réelles) est strictement positif à l'extérieur des racines, et strictement négatif entre les racines.
+
+\begin{methode}[Résoudre une inéquation d'inconnue $e^x$]
+\begin{enumerate}
+\item Poser $X = e^x$ avec la condition $X > 0$.
+\item Résoudre l'inéquation polynomiale en $X$ (tableau de signes du trinôme).
+\item \textbf{Intersecter} l'ensemble des solutions obtenu avec la condition $X > 0$.
+\item Revenir à $x$ grâce à la stricte croissance : $X > k \Leftrightarrow x > \ln k$ (pour $k > 0$).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Résoudre $e^{2x} - e^x - 2 > 0$]
+Résoudre dans $\mathbb{R}$ l'inéquation $e^{2x} - e^x - 2 > 0$.
+\tcblower
+\textbf{Étape 1.} Posons $X = e^x$ ($X > 0$). L'inéquation devient $X^2 - X - 2 > 0$.
+\textbf{Étape 2.} Racines du trinôme : $\Delta = (-1)^2 - 4 \times 1 \times (-2) = 1 + 8 = 9$, d'où $X_1 = \dfrac{1-3}{2} = -1$ et $X_2 = \dfrac{1+3}{2} = 2$. Le coefficient de $X^2$ est positif, donc le trinôme est strictement positif \textbf{à l'extérieur des racines} :
+\[ X^2 - X - 2 > 0 \Leftrightarrow X < -1 \ \text{ou}\ X > 2. \]
+\textbf{Étape 3 : filtre.} On impose $X > 0$. La zone $X < -1$ est entièrement rejetée ; il ne reste que $X > 2$.
+\textbf{Étape 4 : retour à $x$.}
+\[ e^x > 2 \Leftrightarrow x > \ln 2. \]
+\textbf{Conclusion :} $S = \left]\ln 2 \,; +\infty\right[$.
+\end{exoresolu}
+
+\begin{attention}[Ne pas oublier l'intersection avec $X > 0$]
+Dans l'exemple précédent, l'inéquation en $X$ donnait deux zones : $X < -1$ ou $X > 2$. Un candidat étourdi conclurait « $x < \ln(-1)$ ou $x > \ln 2$ » : double catastrophe, car $\ln(-1)$ n'existe pas et la zone $X < -1$ ne correspond à aucun réel $x$. La condition $X > 0$ n'est pas une formalité : elle \textbf{modifie l'ensemble final des solutions}. Intersecte toujours !
+\end{attention}
+
+\courssub{Systèmes d'équations en $e^x$ et $e^y$}
+
+Terminons par les systèmes. Lorsqu'un système mélange $e^x$ et $e^y$ (par exemple des produits $e^x \times e^y$ ou des quotients $\dfrac{e^x}{e^y}$), la stratégie est identique : on pose $X = e^x$ et $Y = e^y$, avec les \textbf{deux conditions} $X > 0$ et $Y > 0$, on résout le système en $(X\,; Y)$, puis on revient à $(x\,; y)$ par le logarithme.
+
+\begin{methode}[Résoudre un système en $e^x$ et $e^y$]
+\begin{enumerate}
+\item Poser $X = e^x$ et $Y = e^y$, avec $X > 0$ et $Y > 0$.
+\item Résoudre le système obtenu en $(X\,; Y)$ (substitution, combinaison, produit-quotient...).
+\item Écarter tout couple dont une composante est négative ou nulle.
+\item Conclure par $x = \ln X$ et $y = \ln Y$ pour chaque couple retenu.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Résoudre le système $e^x \times e^y = e^3$ et $\dfrac{e^x}{e^y} = e$]
+Résoudre dans $\mathbb{R}^2$ le système :
+\[ \begin{cases} e^x \times e^y = e^3 \\[2pt] \dfrac{e^x}{e^y} = e \end{cases} \]
+\tcblower
+\textbf{Étape 1.} Posons $X = e^x$ ($X > 0$) et $Y = e^y$ ($Y > 0$). Le système devient :
+\[ \begin{cases} XY = e^3 \\[2pt] \dfrac{X}{Y} = e \end{cases} \]
+\textbf{Étape 2.} De la deuxième équation, $X = eY$. En reportant dans la première : $eY \times Y = e^3$, soit $Y^2 = e^2$. Comme $Y > 0$, on obtient $Y = e$ (la valeur $Y = -e$ est rejetée). Puis $X = e \times e = e^2$.
+\textbf{Étape 3 : filtre.} $X = e^2 > 0$ et $Y = e > 0$ : le couple convient.
+\textbf{Étape 4 : retour à $(x\,; y)$.}
+\[ x = \ln(e^2) = 2 \quad \text{et} \quad y = \ln(e) = 1. \]
+\textbf{Conclusion :} $S = \{(2\,; 1)\}$. Vérification : $e^2 \times e^1 = e^3$ et $\dfrac{e^2}{e^1} = e$. Correct.
+\end{exoresolu}
+
+\begin{exemplebox}[Une autre voie : les propriétés algébriques]
+On pouvait aussi exploiter directement les propriétés de la section précédente : $e^x \times e^y = e^{x+y}$ et $\dfrac{e^x}{e^y} = e^{x-y}$. Le système équivaut alors à
+\[ \begin{cases} x + y = 3 \\ x - y = 1 \end{cases} \]
+qui donne immédiatement, par addition puis soustraction des deux lignes, $x = 2$ et $y = 1$. Les deux méthodes — changement de variable ou propriétés algébriques — se rejoignent toujours ; choisis celle qui rend le calcul le plus simple.
+\end{exemplebox}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Résoudre dans $\mathbb{R}$ : $e^{2x} - 4e^x + 3 = 0$.
+\item Résoudre dans $\mathbb{R}$ : $e^{2x} - 3e^x + 2 \leq 0$.
+\item Résoudre dans $\mathbb{R}^2$ : $\begin{cases} e^x \times e^y = e^5 \\ e^x \times e^{-y} = e^{-1} \end{cases}$
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Posons $X = e^x$ ($X > 0$) : $X^2 - 4X + 3 = 0$, $\Delta = 16 - 12 = 4$, $X_1 = 1$, $X_2 = 3$, toutes deux positives. D'où $x = 0$ ou $x = \ln 3$. $S = \{0\,; \ln 3\}$.
+\item Avec $X = e^x$ : $X^2 - 3X + 2 \leq 0$. Racines $1$ et $2$ ; le trinôme est négatif entre les racines : $1 \leq X \leq 2$. Cette zone est incluse dans $X > 0$. Retour : $0 \leq x \leq \ln 2$. $S = [0\,; \ln 2]$.
+\item Le système s'écrit $e^{x+y} = e^5$ et $e^{x-y} = e^{-1}$, soit $x + y = 5$ et $x - y = -1$. D'où $x = 2$, $y = 3$. $S = \{(2\,; 3)\}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $e^x = k$ avec $k > 0$ : unique solution $x = \ln k$ ; avec $k \leq 0$ : aucune solution.
+\item $e^a = e^b \Leftrightarrow a = b$ : on peut « supprimer » l'exponentielle des deux côtés d'une égalité.
+\item Changement de variable : poser $X = e^x$ transforme $a\,e^{2x} + b\,e^x + c = 0$ en trinôme $aX^2 + bX + c = 0$.
+\item \textbf{Filtre obligatoire} : $X = e^x > 0$ ; toute racine négative ou nulle est rejetée.
+\item Inéquations : la stricte croissance de $\exp$ conserve le sens des inégalités ; on intersecte toujours avec $X > 0$.
+\item Systèmes : poser $X = e^x$, $Y = e^y$, résoudre, vérifier $X > 0$ et $Y > 0$, conclure par $x = \ln X$, $y = \ln Y$.
+\end{itemize}
+\end{aretenir}
+
+Tu maîtrises désormais la résolution algébrique des équations et inéquations exponentielles. Dans la prochaine section, nous étudierons le comportement de $e^x$ aux bornes de son ensemble de définition : les \cle{limites} de la fonction exponentielle, qui complèteront ta boîte à outils pour l'étude complète des fonctions.
+
+\coursec{Limites de la fonction exponentielle}
+
+Dans la section précédente, nous avons appris à résoudre des équations, des inéquations et des systèmes dont l'inconnue se cache dans une exponentielle : tout reposait sur la bijectivité de la fonction exponentielle et sur l'équivalence fondamentale $e^x = e^y \iff x = y$. Mais une question naturelle demeure : que devient $e^x$ lorsque $x$ devient infiniment grand, ou infiniment petit ? Autrement dit, quel est le \emph{comportement asymptotique} de la fonction exponentielle ?
+
+Cette question n'est pas anodine. Lorsqu'une banque de Yaoundé calcule l'évolution d'un capital placé à intérêts composés, ou lorsqu'un épidémiologiste modélise la propagation d'une maladie, c'est bien le comportement \emph{à long terme} du modèle exponentiel qui intéresse tout le monde : la quantité étudiée explose-t-elle ? Se stabilise-t-elle ? S'éteint-elle ? Répondre à ces questions, c'est étudier les \cle{limites} de la fonction exponentielle.
+
+\courssub{Les deux limites de référence}
+
+\textbf{Intuition.} Reprenons la définition : pour tout réel $x$, $e^x$ est l'unique nombre dont le logarithme népérien vaut $x$. Dire que $x$ devient très grand, c'est dire que l'on cherche un nombre dont le logarithme est immense : or $\ln y$ n'est immense que si $y$ lui-même est immense. On devine donc que $e^x$ « explose » quand $x$ explose. À l'inverse, si $x$ devient très négatif, on cherche un nombre dont le logarithme est très négatif : or $\ln y \to -\infty$ lorsque $y \to 0^+$. On devine donc que $e^x$ s'écrase vers $0$. Formalisons cela.
+
+\begin{propriete}[Limites de référence de la fonction exponentielle (admises)]
+On admet les deux résultats suivants :
+\[ \lim_{x \to +\infty} e^x = +\infty \qquad \text{et} \qquad \lim_{x \to -\infty} e^x = 0. \]
+\end{propriete}
+
+\begin{attention}[Ce que signifie « admis »]
+Ces deux limites sont \textbf{admises} au programme de Terminale A : tu n'as pas à les démontrer, mais tu dois les \textbf{connaître par cœur} et savoir les \textbf{citer explicitement} dans tes rédactions. Toute limite d'exponentielle que tu calculeras au Bac se ramènera, par composition, à l'une de ces deux limites de référence.
+\end{attention}
+
+\textbf{Interprétation graphique.} La seconde limite possède une traduction géométrique fondamentale : dire que $e^x \to 0$ quand $x \to -\infty$, c'est dire que la courbe de la fonction exponentielle se rapproche indéfiniment de la droite d'équation $y = 0$ (l'axe des abscisses) sans jamais la toucher — puisque $e^x > 0$ pour tout réel $x$.
+
+\begin{aretenir}[Asymptote horizontale]
+La droite d'équation $y = 0$ (l'axe des abscisses) est \cle{asymptote horizontale} à la courbe représentative de la fonction exponentielle en $-\infty$. En $+\infty$, la courbe monte indéfiniment : il n'y a ni asymptote, ni plafond.
+\end{aretenir}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=6.5cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-4.5, xmax=2.5, ymin=-0.5, ymax=7.5,
+    xtick={-4,-3,-2,-1,1,2}, ytick={1,2,3,4,5,6,7},
+    grid=both, grid style={popline!40},
+    legend style={at={(0.03,0.97)}, anchor=north west, draw=popline}
+]
+\addplot[popcurve,domain=-4.5:2,samples=200]{exp(x)};
+\addlegendentry{$y = e^x$}
+\addplot[poporange, dashed, thick, domain=-4.5:2.4]{0};
+\addlegendentry{asymptote $y = 0$}
+\draw[popink, thick, ->] (axis cs:-3.5,0.6) -- (axis cs:-3.5,0.08);
+\node[popink, font=\small] at (axis cs:-3.5,1.1) {$e^x \to 0$};
+\draw[popink, thick, ->] (axis cs:1.6,4.2) -- (axis cs:1.95,6.4);
+\node[popink, font=\small] at (axis cs:1.35,4.6) {$e^x \to +\infty$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La courbe de la fonction exponentielle : asymptote horizontale $y = 0$ en $-\infty$, divergence vers $+\infty$ en $+\infty$.}
+\end{popfigure}
+
+\courssub{Limites de $e^{ax+b}$ : la technique de composition}
+
+Dans la pratique — et au Baccalauréat — on rencontre rarement $e^x$ « nu ». On rencontre plutôt des expressions du type $e^{3x-1}$, $e^{-2x+5}$, $e^{x/2}$, etc. La bonne nouvelle : tout se ramène aux deux limites de référence grâce à un changement de variable élémentaire.
+
+\begin{methode}[Calculer la limite de $e^{ax+b}$]
+Pour déterminer la limite de $e^{ax+b}$ en $+\infty$ ou en $-\infty$ :
+\begin{enumerate}
+\item \textbf{Poser} $X = ax + b$ (l'exposant).
+\item \textbf{Calculer la limite de l'exposant} : déterminer la limite de $X$ en la borne considérée. C'est une simple limite de fonction affine : tout dépend du \cle{signe de} $a$.
+\item \textbf{Appliquer la limite de référence} par composition :
+\begin{itemize}
+\item si $X \to +\infty$, alors $e^X \to +\infty$ ;
+\item si $X \to -\infty$, alors $e^X \to 0$.
+\end{itemize}
+\item \textbf{Conclure} en rédigeant proprement : « par composition des limites, ... ».
+\end{enumerate}
+\end{methode}
+
+\begin{propriete}[Limites de $e^{ax+b}$ selon le signe de $a$]
+Soit $a$ un réel non nul et $b$ un réel quelconque.
+\begin{itemize}
+\item Si $a > 0$ : $\displaystyle\lim_{x \to +\infty} e^{ax+b} = +\infty$ \quad et \quad $\displaystyle\lim_{x \to -\infty} e^{ax+b} = 0$.
+\item Si $a < 0$ : $\displaystyle\lim_{x \to +\infty} e^{ax+b} = 0$ \quad et \quad $\displaystyle\lim_{x \to -\infty} e^{ax+b} = +\infty$.
+\end{itemize}
+Autrement dit, quand $a > 0$ la fonction $x \mapsto e^{ax+b}$ se comporte comme $e^x$ ; quand $a < 0$, le comportement est \textbf{inversé}. (Si $a = 0$, la fonction est constante : $e^{b}$ pour tout $x$.)
+\end{propriete}
+
+\begin{exemplebox}[Deux limites chiffrées, pas à pas]
+\textbf{Premier cas.} Calculons $\displaystyle\lim_{x \to +\infty} e^{3x-1}$.
+
+Posons $X = 3x - 1$. Comme $3 > 0$, on a $\displaystyle\lim_{x \to +\infty} (3x - 1) = +\infty$. Or $\displaystyle\lim_{X \to +\infty} e^X = +\infty$. Par composition :
+\[ \lim_{x \to +\infty} e^{3x-1} = +\infty. \]
+
+\textbf{Second cas.} Calculons $\displaystyle\lim_{x \to +\infty} e^{-2x+5}$.
+
+Posons $X = -2x + 5$. Comme $-2 < 0$, on a $\displaystyle\lim_{x \to +\infty} (-2x + 5) = -\infty$. Or $\displaystyle\lim_{X \to -\infty} e^X = 0$. Par composition :
+\[ \lim_{x \to +\infty} e^{-2x+5} = 0. \]
+Remarque que le $+5$ ne change \emph{rien} au résultat : seul le signe du coefficient de $x$ pilote la limite.
+\end{exemplebox}
+
+\begin{attention}[L'erreur classique : « l'exponentielle tend toujours vers $+\infty$ »]
+Beaucoup d'élèves écrivent mécaniquement $\lim_{x \to +\infty} e^{\text{(n'importe quoi)}} = +\infty$. C'est \textbf{faux} ! Tout dépend du \cle{signe de} $a$ dans l'exposant $ax + b$ :
+\begin{itemize}
+\item $e^{-2x+5} \to 0$ en $+\infty$ (et non $+\infty$) ;
+\item $e^{-x} \to +\infty$ en $-\infty$ (et non $0$).
+\end{itemize}
+Deuxième piège : ne pas confondre la \textbf{valeur} de la limite avec le \textbf{sens de variation}. La fonction $x \mapsto e^{-x}$ est décroissante et elle tend vers $0$ en $+\infty$ : les deux informations sont cohérentes, mais ce sont deux propriétés distinctes qu'il faut justifier séparément.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-3.2, xmax=3.2, ymin=-0.5, ymax=8,
+    xtick={-3,-2,-1,1,2,3}, ytick={1,2,3,4,5,6,7},
+    grid=both, grid style={popline!40},
+    legend style={at={(0.03,0.97)}, anchor=north west, draw=popline}
+]
+\addplot[popcurve,domain=-3.2:2.05,samples=200]{exp(x)};
+\addlegendentry{$y = e^x$}
+\addplot[poporange, thick, domain=-3.2:1.55,samples=200]{exp(2*x)};
+\addlegendentry{$y = e^{2x}$}
+\addplot[poppurple, thick, domain=-2.05:3.2,samples=200]{exp(-x)};
+\addlegendentry{$y = e^{-x}$}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Comparaison : $e^{2x}$ ($a = 2 > 0$) monte plus vite que $e^x$, tandis que $e^{-x}$ ($a = -1 < 0$) a un comportement inversé : elle tend vers $0$ en $+\infty$ et vers $+\infty$ en $-\infty$.}
+\end{popfigure}
+
+\courssub{Opérations sur les limites : sommes, produits, quotients}
+
+Une fois la limite de $e^{ax+b}$ connue, on la combine avec d'autres fonctions grâce aux règles usuelles sur les opérations de limites (vues en classe de Première). Rappelons les points sensibles dans le contexte de l'exponentielle.
+
+\textbf{Sommes.} La somme de deux quantités qui tendent vers $+\infty$ tend vers $+\infty$ ; de même, $0 + 0 = 0$ et tout réel $+ 0$ donne ce réel. La seule \cle{forme indéterminée} est le cas « $+\infty - \infty$ ».
+
+\textbf{Produits.} Le produit suit la règle des signes pour les limites infinies : $(+\infty) \times (+\infty) = +\infty$, $(+\infty) \times (-\infty) = -\infty$, et $0 \times \ell = 0$ si $\ell$ est un réel. La forme indéterminée est « $0 \times \infty$ ».
+
+\textbf{Quotients.} Si le numérateur tend vers un réel $\ell$ et le dénominateur vers $+\infty$, le quotient tend vers $0$. Si le dénominateur tend vers $0^+$ et le numérateur vers un réel non nul, le quotient est infini (avec la règle des signes). Les formes indéterminées sont « $\dfrac{\infty}{\infty}$ » et « $\dfrac{0}{0}$ ».
+
+\begin{aretenir}[Les quatre formes indéterminées à reconnaître]
+Face à une limite, quatre situations exigent un travail supplémentaire (factorisation, changement de variable, croissance comparée) :
+\[ « +\infty - \infty », \qquad « 0 \times \infty », \qquad « \frac{\infty}{\infty} », \qquad « \frac{0}{0} ». \]
+Écrire directement un résultat pour l'une de ces formes est une \textbf{erreur de rédaction} sanctionnée au Bac : il faut d'abord \emph{lever} l'indétermination.
+\end{aretenir}
+
+\begin{exoresolu}[Une somme et un quotient avec exponentielle]
+\textbf{Énoncé.} Déterminer les limites suivantes :
+\begin{enumerate}
+\item $\displaystyle\lim_{x \to +\infty} \left( e^{-x} + 3 \right)$ ;
+\item $\displaystyle\lim_{x \to +\infty} \frac{2}{1 + e^{-x}}$ ;
+\item $\displaystyle\lim_{x \to +\infty} \left( x - e^{x} \right)$ en admettant que l'exponentielle l'emporte (voir le complément ci-dessous).
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Posons $X = -x$. Quand $x \to +\infty$, $X \to -\infty$, donc $e^{-x} \to 0$. Par somme de limites :
+\[ \lim_{x \to +\infty} \left( e^{-x} + 3 \right) = 0 + 3 = 3. \]
+Interprétation graphique : la droite $y = 3$ est asymptote horizontale en $+\infty$ à la courbe de $x \mapsto e^{-x} + 3$.
+
+\item D'après la question 1, le dénominateur $1 + e^{-x} \to 1 + 0 = 1$. Le numérateur est constant égal à $2$. Par quotient de limites (dénominateur de limite non nulle, aucune indétermination) :
+\[ \lim_{x \to +\infty} \frac{2}{1 + e^{-x}} = \frac{2}{1} = 2. \]
+
+\item On a $x \to +\infty$ et $e^x \to +\infty$ : c'est la forme indéterminée « $+\infty - \infty$ ». On lève l'indétermination en factorisant par le terme dominant :
+\[ x - e^x = e^x \left( \frac{x}{e^x} - 1 \right). \]
+Or, par croissance comparée (admise, voir encadré), $\dfrac{x}{e^x} \to 0$ en $+\infty$, donc la parenthèse tend vers $0 - 1 = -1$. Par produit :
+\[ \lim_{x \to +\infty} \left( x - e^x \right) = (+\infty) \times (-1) = -\infty. \]
+Conclusion : aussi surprenant que cela paraisse, $x - e^x$ plonge vers $-\infty$ : l'exponentielle « écrase » $x$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Complément Bac : la croissance comparée (hors strict programme)}
+
+\begin{propriete}[Croissance comparée (admise — complément)]
+On admet le résultat suivant, très utile pour lever des indéterminations :
+\[ \lim_{x \to +\infty} \frac{e^x}{x} = +\infty \qquad \text{et, de manière équivalente,} \qquad \lim_{x \to +\infty} \frac{x}{e^x} = 0. \]
+On dit que l'exponentielle \emph{l'emporte} sur toute puissance de $x$ : plus généralement, pour tout entier $n \geq 1$, $\dfrac{e^x}{x^n} \to +\infty$ en $+\infty$.
+\end{propriete}
+
+Ce résultat est \textbf{hors du strict programme} de Terminale A : il ne sera jamais exigé tel quel, mais il peut être fourni dans un énoncé (« on admet que... ») pour lever une forme indéterminée « $\dfrac{\infty}{\infty}$ » ou « $0 \times \infty$ », comme dans l'exercice résolu précédent. Retiens l'idée maîtresse : \textbf{dans une course entre $e^x$ et n'importe quelle puissance de $x$, c'est toujours l'exponentielle qui gagne}.
+
+\begin{savaistu}[La croissance exponentielle, reine des phénomènes explosifs]
+Pourquoi dit-on qu'une épidémie « s'emballe », qu'une dette « explose » ? Parce que ces phénomènes suivent, au moins au début, une loi exponentielle. La fable du jeu d'échecs l'illustre magnifiquement : un sage demande au roi un grain de riz sur la première case, deux sur la deuxième, quatre sur la troisième, et ainsi de suite en doublant. Sur la 64\textsuperscript{e} case, il faudrait $2^{63} \approx 9 \times 10^{18}$ grains — des siècles de récolte mondiale ! C'est exactement le même mécanisme que les intérêts composés dans une banque de Douala : un capital placé à $5\,\%$ l'an double environ tous les 14 ans, puis quadruple, puis octuple... La limite $\lim_{x \to +\infty} \frac{e^x}{x} = +\infty$ est la traduction mathématique de cette violence de croissance : aucune croissance « raisonnable » (linéaire, polynomiale) ne peut rivaliser à long terme avec une exponentielle.
+\end{savaistu}
+
+\begin{methode}[Bilan : la stratégie complète face à une limite d'exponentielle]
+\begin{enumerate}
+\item \textbf{Repérer l'exposant} $ax + b$ et déterminer sa limite à la borne demandée (signe de $a$ !).
+\item \textbf{Appliquer la limite de référence} : $e^X \to +\infty$ si $X \to +\infty$ ; $e^X \to 0$ si $X \to -\infty$.
+\item \textbf{Combiner} avec les autres termes par les règles sur les sommes, produits et quotients.
+\item \textbf{Si forme indéterminée} : factoriser par le terme dominant (souvent $e^{ax}$) et, si l'énoncé le permet, utiliser la croissance comparée.
+\item \textbf{Conclure géométriquement} si la limite est finie : une limite finie $\ell$ en $+\infty$ ou $-\infty$ signifie que la droite $y = \ell$ est asymptote horizontale.
+\end{enumerate}
+\end{methode}
+
+Tu maîtrises désormais le comportement asymptotique de l'exponentielle. Il nous reste à doter cette fonction de ses outils d'analyse les plus puissants : la \emph{dérivation} et la \emph{primitivation}, qui feront l'objet de la section suivante — et qui te permettront, dans la dernière section, de mener l'étude complète de fonctions du type $e^{ax+b}$.
+
+\coursec{Dérivation et primitivation}
+
+Dans la section précédente, nous avons étudié le comportement de la fonction exponentielle aux bornes de son ensemble de définition : nous savons désormais que $e^x$ « explose » vers $+\infty$ quand $x$ tend vers $+\infty$, et s'écrase vers $0$ quand $x$ tend vers $-\infty$. Mais entre ces deux extrêmes, comment la courbe monte-t-elle exactement ? À quelle vitesse ? Pour répondre à ces questions, il nous faut un outil que tu connais bien depuis la Première : la \cle{dérivation}. Et tu vas découvrir une merveille : la fonction exponentielle possède la propriété de dérivation la plus simple et la plus élégante de toutes les fonctions que tu as rencontrées. C'est d'ailleurs cette propriété qui explique pourquoi elle apparaît partout : en biologie (croissance des populations), en économie (intérêts composés), en physique (désintégration radioactive), et jusque dans les modèles de recharge de crédit téléphonique !
+
+\courssub{Dérivabilité de la fonction exponentielle sur $\mathbb{R}$}
+
+\courssub{Une intuition pour commencer}
+
+Observe la courbe de la fonction exponentielle. En tout point, elle admet une tangente bien lisse, sans angle ni rupture. Mieux : fais glisser mentalement un point le long de la courbe. Quand l'ordonnée du point est petite (courbe presque horizontale, à gauche), la tangente est presque horizontale : la pente est petite. Quand l'ordonnée est grande (courbe qui grimpe fort, à droite), la tangente est très inclinée : la pente est grande. Tout se passe comme si \emph{la pente de la tangente en un point était exactement égale à l'ordonnée du point}. C'est précisément ce qu'affirme le théorème fondamental de cette section.
+
+\begin{propriete}[Théorème fondamental (admis) : dérivée de l'exponentielle]
+La fonction exponentielle $x \longmapsto e^x$ est \cle{dérivable} sur $\mathbb{R}$, et elle est \textbf{égale à sa propre dérivée} :
+\[ \text{pour tout réel } x, \qquad \left(e^x\right)' = e^x. \]
+En particulier, le nombre dérivé en $0$ vaut $e^0 = 1$ : la tangente à la courbe au point $(0\,;\,1)$ a pour coefficient directeur $1$, donc pour équation $y = x + 1$.
+\end{propriete}
+
+\begin{experience}[Pourquoi ce résultat est-il naturel ? (justification non exigible)]
+Rappelons que l'exponentielle est la \emph{fonction réciproque} du logarithme népérien : $y = e^x \iff x = \ln y$, avec $y > 0$. Admettons que l'exponentielle soit dérivable sur $\mathbb{R}$ et appliquons la formule de dérivation des fonctions réciproques :
+\[ \left(f^{-1}\right)'(x) = \frac{1}{f'\left(f^{-1}(x)\right)}. \]
+Ici $f = \ln$, donc $f'(y) = \dfrac{1}{y}$ et $f^{-1} = \exp$. Ainsi :
+\[ \left(e^x\right)' = \frac{1}{\dfrac{1}{e^x}} = e^x. \]
+La formule $(e^x)' = e^x$ est donc une conséquence directe de la dérivée du logarithme. La démonstration complète de la dérivabilité sera vue en classe préparatoire ; au Baccalauréat, ce théorème est \textbf{admis} et tu peux l'utiliser librement.
+\end{experience}
+
+\begin{aretenir}[L'unique fonction égale à sa dérivée]
+La fonction exponentielle est, \emph{à un coefficient multiplicatif près}, la \textbf{seule} fonction définie sur $\mathbb{R}$ égale à sa dérivée. Autrement dit, les seules fonctions $f$ vérifiant $f' = f$ sont les fonctions $f(x) = k\,e^x$ où $k$ est une constante réelle. C'est cette unicité qui rend l'exponentielle irremplaçable dans tous les phénomènes où « la vitesse de croissance est proportionnelle à la quantité présente » : une population de bactéries, un capital placé à intérêts composés, la propagation d'une rumeur dans un quartier de Yaoundé...
+\end{aretenir}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=6.5cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-2.5, xmax=2.5, ymin=-0.5, ymax=5,
+    xtick={-2,-1,0,1,2}, ytick={1,2,3,4},
+    grid=both, grid style={popline!40},
+    legend style={at={(0.02,0.98)}, anchor=north west, font=\small}
+]
+\addplot[popcurve, domain=-2.5:1.6, samples=200]{exp(x)};
+\addlegendentry{$y = e^x$}
+\addplot[poporange, very thick, domain=-1.5:2.2, samples=2]{x+1};
+\addlegendentry{tangente $y = x+1$}
+\addplot[only marks, mark=*, popdark, mark size=2pt] coordinates {(0,1)};
+\node[popdark, anchor=south west, font=\small] at (axis cs:0.05,1.05) {$(0\,;\,1)$};
+\draw[popmuted, dashed] (axis cs:0,0) -- (axis cs:0,1);
+\draw[popmuted, dashed] (axis cs:1,0) -- (axis cs:1,2) -- (axis cs:0,2);
+\node[popmuted, font=\small, anchor=north] at (axis cs:1,0) {$1$};
+\node[popmuted, font=\small, anchor=east] at (axis cs:0,2) {$2$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La courbe de $x \mapsto e^x$ et sa tangente au point $(0\,;\,1)$. Comme $(e^x)' = e^x$, la pente en $0$ vaut $e^0 = 1$ : la tangente « monte de 1 quand on avance de 1 ».}
+\end{popfigure}
+
+\courssub{Généralisation : dérivée de $e^{ax+b}$ et de $e^u$}
+
+En pratique, l'exponentielle se présente rarement « nue ». On rencontre plutôt des expressions comme $e^{3x-2}$ (croissance accélérée) ou $e^{-0{,}5x}$ (décroissance). Il suffit alors d'appliquer la formule de dérivation des fonctions composées, que tu connais : $(v \circ u)' = u' \times (v' \circ u)$.
+
+\begin{propriete}[Dérivée de $e^u$]
+Soit $u$ une fonction dérivable sur un intervalle $I$. Alors la fonction $x \longmapsto e^{u(x)}$ est dérivable sur $I$ et :
+\[ \left(e^{u}\right)' = u' \times e^{u}, \qquad \text{c'est-à-dire} \qquad \left(e^{u(x)}\right)' = u'(x)\,e^{u(x)}. \]
+En particulier, pour $u(x) = ax + b$ (avec $a$ et $b$ réels), on a $u'(x) = a$, donc :
+\[ \boxed{\;\left(e^{ax+b}\right)' = a\,e^{ax+b}\;} \]
+\end{propriete}
+
+\begin{exemplebox}[Dérivées calculées pas à pas]
+\textbf{1.} Dérivons $f(x) = e^{3x-2}$. Ici $u(x) = 3x - 2$, donc $u'(x) = 3$. On « fait descendre » le coefficient $3$ :
+\[ f'(x) = 3\,e^{3x-2}. \]
+\textbf{2.} Dérivons $g(x) = e^{-2x+1}$. Ici $u(x) = -2x + 1$, donc $u'(x) = -2$ :
+\[ g'(x) = -2\,e^{-2x+1}. \]
+Le signe moins traduit le fait que $g$ est \emph{décroissante} : c'est cohérent, car $e^{-2x+1} > 0$ et $-2 < 0$, donc $g'(x) < 0$ partout.
+\textbf{3.} Dérivons $h(x) = e^{x^2}$. Ici $u(x) = x^2$, donc $u'(x) = 2x$ :
+\[ h'(x) = 2x\,e^{x^2}. \]
+\end{exemplebox}
+
+\begin{attention}[L'erreur classique : oublier le facteur $a$]
+L'erreur la plus fréquente au Baccalauréat est d'écrire $\left(e^{3x-2}\right)' = e^{3x-2}$ en oubliant de multiplier par la dérivée de l'exposant. C'est \textbf{faux} ! Retiens le réflexe suivant : dès que l'exposant n'est pas simplement $x$, il y a un facteur à faire descendre. \emph{Astuce de vérification} : la dérivée doit « ressembler » à la fonction de départ, multipliée par quelque chose. Si tu obtiens exactement la fonction de départ alors que l'exposant contenait un coefficient, méfie-toi.
+\end{attention}
+
+\courssub{Primitives de $e^{ax+b}$}
+
+Chercher une \cle{primitive}, c'est remonter le chemin de la dérivation : on cherche une fonction $F$ dont la dérivée est la fonction donnée. Puisque dériver $e^{ax+b}$ fait apparaître le facteur $a$, il suffit, pour « annuler » ce facteur, de diviser par $a$.
+
+\begin{propriete}[Primitive de $e^{ax+b}$]
+Soient $a$ et $b$ deux réels avec $a \neq 0$. Une primitive sur $\mathbb{R}$ de la fonction $x \longmapsto e^{ax+b}$ est :
+\[ F(x) = \frac{1}{a}\,e^{ax+b}. \]
+L'ensemble de toutes les primitives est donné par $F(x) = \dfrac{1}{a}\,e^{ax+b} + C$, où $C$ est une constante réelle quelconque.
+\end{propriete}
+
+\begin{experience}[Vérification par dérivation (réflexe à acquérir absolument)]
+Vérifions que la fonction proposée convient. Dérivons $F(x) = \dfrac{1}{a}\,e^{ax+b}$ :
+\[ F'(x) = \frac{1}{a} \times \left(e^{ax+b}\right)' = \frac{1}{a} \times a\,e^{ax+b} = e^{ax+b}. \]
+Le facteur $a$ apporté par la dérivation se simplifie avec le $\dfrac{1}{a}$ : on retombe bien sur la fonction de départ. \textbf{Prends l'habitude, dans chaque exercice, de redériver mentalement la primitive que tu proposes} : cela prend cinq secondes et élimine toutes les erreurs de coefficient.
+\end{experience}
+
+\begin{methode}[Dériver ou primitiver $e^{ax+b}$ : le réflexe du coefficient]
+\begin{enumerate}
+\item \textbf{Pour dériver} $e^{ax+b}$ : on \emph{multiplie} par le coefficient de $x$ : $\left(e^{ax+b}\right)' = a\,e^{ax+b}$.
+\item \textbf{Pour primitiver} $e^{ax+b}$ : on \emph{divise} par le coefficient de $x$ : une primitive est $\dfrac{1}{a}\,e^{ax+b}$ (avec $a \neq 0$).
+\item \textbf{Dans les deux cas} : l'exponentielle elle-même ne change pas, seul le coefficient devant elle change.
+\item \textbf{Toujours vérifier} en redérivant le résultat obtenu.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Primitives calculées pas à pas]
+\textbf{1.} Une primitive de $f(x) = e^{-2x+1}$ : le coefficient de $x$ est $-2$, on divise par $-2$ :
+\[ F(x) = -\frac{1}{2}\,e^{-2x+1}. \]
+\emph{Vérification} : $F'(x) = -\dfrac{1}{2} \times (-2)\,e^{-2x+1} = e^{-2x+1}$. Correct !
+\textbf{2.} Une primitive de $g(x) = e^{5x}$ : $G(x) = \dfrac{1}{5}\,e^{5x}$.
+\textbf{3.} Une primitive de $h(x) = 3e^{x}$ : comme $a = 1$, $H(x) = 3e^{x}$ (la constante multiplicative $3$ se promène tranquillement).
+\textbf{4.} Cas particulier $a = 0$ : la fonction $x \mapsto e^{b}$ est une \emph{constante}, sa primitive est $x \mapsto e^{b}\,x$. La formule en $\dfrac{1}{a}$ ne s'applique pas, d'où la condition $a \neq 0$.
+\end{exemplebox}
+
+\begin{attention}[Le facteur $\frac{1}{a}$ : l'autre erreur classique]
+Symétriquement à l'erreur sur la dérivée, beaucoup d'élèves écrivent qu'une primitive de $e^{-2x+1}$ est $e^{-2x+1}$, ou pire, $2e^{-2x+1}$ (ils multiplient au lieu de diviser !). Retiens : \textbf{dériver fait descendre le coefficient, primitiver le fait remonter au dénominateur}. Et la vérification par redérivation reste ton meilleur filet de sécurité.
+\end{attention}
+
+\courssub{Application au calcul d'intégrales et d'aires}
+
+Rappelons le lien fondamental : si $f$ est continue et positive sur $[p\,;\,q]$, alors l'aire du domaine délimité par la courbe de $f$, l'axe des abscisses et les droites $x = p$ et $x = q$ vaut, en unités d'aire :
+\[ \mathcal{A} = \int_{p}^{q} f(x)\,\mathrm{d}x = F(q) - F(p), \]
+où $F$ est une primitive quelconque de $f$. Comme $e^x > 0$ pour tout réel $x$, toute intégrale d'une exponentielle sur un intervalle s'interprète directement comme une aire.
+
+\begin{exoresolu}[Aire sous la courbe de l'exponentielle entre $0$ et $1$]
+\textbf{Énoncé.} Calculer $\displaystyle I = \int_{0}^{1} e^x\,\mathrm{d}x$ et interpréter géométriquement le résultat. En donner une valeur approchée à $10^{-3}$ près.
+\tcblower
+\textbf{Solution détaillée.} Une primitive de $x \mapsto e^x$ est $x \mapsto e^x$ (puisque $(e^x)' = e^x$). Donc :
+\begin{align*}
+I &= \left[ e^x \right]_{0}^{1} \\
+  &= e^{1} - e^{0} \\
+  &= e - 1.
+\end{align*}
+Comme $e \approx 2{,}718$, on obtient $I \approx 1{,}718$ unités d'aire.
+\emph{Interprétation} : l'aire du domaine situé sous la courbe de l'exponentielle, au-dessus de l'axe des abscisses, entre les droites $x = 0$ et $x = 1$, vaut exactement $e - 1$ unités d'aire. Remarque l'élégance du résultat : une aire qui s'exprime avec le nombre $e$ lui-même !
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=6.5cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-0.6, xmax=1.6, ymin=-0.3, ymax=3.2,
+    xtick={0,1}, ytick={1,2,3},
+    grid=both, grid style={popline!40}
+]
+\addplot[draw=none, fill=popblueL, domain=0:1, samples=100]{exp(x)} \closedcycle;
+\addplot[popcurve, domain=-0.5:1.15, samples=200]{exp(x)};
+\node[popdark, font=\small] at (axis cs:0.5,0.9) {$\mathcal{A} = e - 1$};
+\node[popdark, font=\small, anchor=north] at (axis cs:0.5,0.55) {$\approx 1{,}718$ u.a.};
+\draw[popmuted, dashed] (axis cs:1,0) -- (axis cs:1,2.718);
+\node[popmuted, font=\small, anchor=west] at (axis cs:1,2.718) {$e$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{L'aire du domaine colorié sous la courbe de $x \mapsto e^x$ entre $x = 0$ et $x = 1$ vaut exactement $e - 1 \approx 1{,}718$ unités d'aire.}
+\end{popfigure}
+
+\begin{exoresolu}[Une intégrale avec $e^{ax+b}$]
+\textbf{Énoncé.} Une entreprise de distribution d'eau à Douala modélise le débit de remplissage d'un château d'eau (en m$^3$/h) par $d(t) = 4e^{0{,}5t}$ pendant les deux premières heures. Calculer le volume total d'eau écoulé entre $t = 0$ et $t = 2$, c'est-à-dire $\displaystyle V = \int_{0}^{2} 4e^{0{,}5t}\,\mathrm{d}t$.
+\tcblower
+\textbf{Solution détaillée.} Cherchons une primitive de $t \mapsto 4e^{0{,}5t}$. Le coefficient de $t$ est $0{,}5 = \dfrac{1}{2}$ ; diviser par $\dfrac{1}{2}$ revient à multiplier par $2$. Une primitive est donc :
+\[ F(t) = 4 \times \frac{1}{0{,}5}\,e^{0{,}5t} = 8\,e^{0{,}5t}. \]
+\emph{Vérification} : $F'(t) = 8 \times 0{,}5\,e^{0{,}5t} = 4e^{0{,}5t}$. Correct. Alors :
+\begin{align*}
+V &= \left[ 8e^{0{,}5t} \right]_{0}^{2} \\
+  &= 8e^{1} - 8e^{0} \\
+  &= 8(e - 1) \\
+  &\approx 8 \times 1{,}718 \approx 13{,}75 \text{ m}^3.
+\end{align*}
+Le château d'eau a reçu environ $13{,}75$ m$^3$ pendant ces deux heures.
+\end{exoresolu}
+
+\courssub{Complément Bac : le lien avec les équations différentielles $y' = ay$}
+
+Ce point dépasse légèrement le cœur du programme de Terminale A, mais il est de plus en plus présent dans les sujets sous forme de question ouverte ou de problème. Le voici, signalé comme \textbf{complément}.
+
+\begin{propriete}[Équation différentielle $y' = ay$ (complément)]
+Soit $a$ un réel. Les fonctions dérivables sur $\mathbb{R}$ vérifiant l'\cle{équation différentielle} $y' = ay$ sont exactement les fonctions :
+\[ f(x) = k\,e^{ax}, \qquad k \in \mathbb{R}. \]
+Si de plus on impose une \emph{condition initiale} $f(x_0) = y_0$, alors la solution est unique et $k = y_0\,e^{-ax_0}$.
+\end{propriete}
+
+\begin{exemplebox}[Une population de bactéries]
+Une culture contient $1\,000$ bactéries à l'instant $t = 0$, et sa population $N(t)$ vérifie $N'(t) = 0{,}3\,N(t)$ (la croissance est proportionnelle à l'effectif). D'après la propriété, $N(t) = k\,e^{0{,}3t}$. La condition $N(0) = 1\,000$ donne $k = 1\,000$, donc $N(t) = 1\,000\,e^{0{,}3t}$. Après 10 heures : $N(10) = 1\,000\,e^{3} \approx 20\,086$ bactéries. Tout le modèle repose sur la formule $(e^{ax})' = a\,e^{ax}$ que tu viens d'apprendre !
+\end{exemplebox}
+
+\begin{savaistu}[Pourquoi l'exponentielle gouverne le monde ?]
+Le mathématicien suisse Leonhard Euler (1707--1783), dont le nombre $e$ porte l'initiale, a montré que l'équation $y' = ay$ décrit une quantité étonnante de phénomènes : intérêts composés en banque, refroidissement d'un plat de ndolé sorti du feu, charge d'un téléphone, désintégration du carbone 14 utilisée pour dater les objets archéologiques... À chaque fois que « plus il y en a, plus ça augmente vite » (ou « moins il en reste, plus ça diminue lentement »), l'exponentielle est derrière. Maîtriser sa dérivée et sa primitive, c'est donc maîtriser la clé de voûte de la modélisation.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+\textbf{1.} Dériver les fonctions suivantes : $f(x) = e^{4x+1}$ ; $g(x) = e^{-x}$ ; $h(x) = 5e^{2x} - 3x$.
+\textbf{2.} Déterminer une primitive de chacune des fonctions : $p(x) = e^{6x-3}$ ; $q(x) = e^{-4x}$ ; $r(x) = 2e^{x} + 1$.
+\textbf{3.} Calculer $\displaystyle J = \int_{0}^{1} e^{2x}\,\mathrm{d}x$, puis vérifier que $J = \dfrac{e^2 - 1}{2}$.
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de jouer]
+\textbf{1.} $f'(x) = 4e^{4x+1}$ (coefficient $4$ qui descend). $g'(x) = -e^{-x}$ (coefficient $-1$). $h'(x) = 5 \times 2e^{2x} - 3 = 10e^{2x} - 3$.
+\textbf{2.} $P(x) = \dfrac{1}{6}\,e^{6x-3}$ ; $Q(x) = -\dfrac{1}{4}\,e^{-4x}$ ; $R(x) = 2e^{x} + x$ (une primitive de la constante $1$ est $x$). Vérifie chaque résultat en redérivant !
+\textbf{3.} Une primitive de $e^{2x}$ est $\dfrac{1}{2}e^{2x}$, donc :
+\[ J = \left[\frac{1}{2}e^{2x}\right]_{0}^{1} = \frac{1}{2}e^{2} - \frac{1}{2}e^{0} = \frac{e^2 - 1}{2} \approx \frac{7{,}389 - 1}{2} \approx 3{,}19. \]
+\end{corrige}
+
+Tu maîtrises désormais les deux gestes fondamentaux : \emph{dériver} une exponentielle (le coefficient descend) et la \emph{primitiver} (le coefficient passe au dénominateur), avec le réflexe salvateur de la vérification par redérivation. Dans la prochaine et dernière section, nous assemblerons tout ce que tu as appris — domaine, limites, dérivée, tableau de variations — pour mener l'\textbf{étude complète} de fonctions du type $e^{ax+b}$ et tracer leur courbe, exactement comme on te le demandera au Baccalauréat.
+
+\coursec{Étude complète et représentation graphique de fonctions du type $e^{ax+b}$}
+
+Dans la section précédente, tu as appris à dériver et à primitiver les fonctions du type $x \longmapsto e^{ax+b}$ : tu sais désormais que la dérivée de $e^{ax+b}$ est $a\,e^{ax+b}$. Cet outil est précieux, car dériver une fonction, c'est détenir la clé de son \cle{sens de variation}. Nous allons maintenant assembler toutes les pièces du puzzle — ensemble de définition, limites, dérivée, tableau de variations, points remarquables, tangentes — pour réaliser l'\cle{étude complète} d'une fonction exponentielle et tracer sa courbe avec précision. C'est exactement le type de question qui t'attend au Baccalauréat : « Étudier les variations de $f$ et tracer sa courbe représentative ».
+
+\courssub{Le plan type d'étude : une méthode en sept étapes}
+
+Avant de plonger dans les calculs, prenons de la hauteur. Étudier une fonction, c'est répondre méthodiquement à une série de questions toujours dans le même ordre : où est-elle définie ? que fait-elle aux bords de son domaine ? dans quel sens varie-t-elle ? par quels points remarquables passe-t-elle ? Voici la feuille de route complète, à apprendre par cœur.
+
+\begin{methode}[Plan d'étude d'une fonction du type $f(x) = e^{ax+b}$]
+Pour étudier complètement $f(x) = e^{ax+b}$ (avec $a \neq 0$), suivre dans l'ordre :
+\begin{enumerate}
+\item \textbf{Ensemble de définition} : l'exposant $ax+b$ est défini pour tout réel, donc $D_f = \mathbb{R}$.
+\item \textbf{Limites aux bornes} : on étudie la limite de l'\emph{exposant} $ax+b$ en $-\infty$ et en $+\infty$, puis on conclut par composition avec l'exponentielle.
+\item \textbf{Dérivée} : $f'(x) = a\,e^{ax+b}$.
+\item \textbf{Signe de la dérivée} : comme $e^{ax+b} > 0$ pour tout $x$, le signe de $f'(x)$ est exactement le \cle{signe de} $a$.
+\item \textbf{Tableau de variations} : on y reporte les limites et le sens de variation.
+\item \textbf{Points remarquables et tangentes} : intersection avec l'axe des ordonnées $(0\,;\,e^b)$, équation de tangente en un point choisi.
+\item \textbf{Tracé de la courbe} : tableau de valeurs, placement des points, de la tangente, de l'asymptote, puis tracé soigné.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[La dérivée ne change jamais de signe]
+Beaucoup d'élèves cherchent laborieusement à résoudre $f'(x) = 0$ ou à faire un tableau de signes pour $f'(x) = a\,e^{ax+b}$. C'est inutile ! Une exponentielle est \textbf{toujours strictement positive} : $e^{ax+b} > 0$ pour tout réel $x$. Donc $f'(x)$ a le signe constant de $a$ sur tout $\mathbb{R}$. La fonction est soit strictement croissante partout (si $a > 0$), soit strictement décroissante partout (si $a < 0$). Il n'y a \emph{jamais} d'extremum.
+\end{attention}
+
+\courssub{Sens de variation et asymptote horizontale}
+
+Résumons la situation dans les deux cas possibles. Soit $f(x) = e^{ax+b}$ avec $a \neq 0$.
+
+\textbf{Cas où $a > 0$.} L'exposant $ax+b$ tend vers $-\infty$ quand $x$ tend vers $-\infty$, et vers $+\infty$ quand $x$ tend vers $+\infty$. Par composition :
+\[ \lim_{x \to -\infty} e^{ax+b} = 0 \qquad \text{et} \qquad \lim_{x \to +\infty} e^{ax+b} = +\infty. \]
+Comme $f'(x) = a\,e^{ax+b} > 0$, la fonction est \textbf{strictement croissante} sur $\mathbb{R}$, de $0$ vers $+\infty$.
+
+\textbf{Cas où $a < 0$.} Cette fois l'exposant tend vers $+\infty$ en $-\infty$ et vers $-\infty$ en $+\infty$, donc :
+\[ \lim_{x \to -\infty} e^{ax+b} = +\infty \qquad \text{et} \qquad \lim_{x \to +\infty} e^{ax+b} = 0. \]
+Comme $f'(x) = a\,e^{ax+b} < 0$, la fonction est \textbf{strictement décroissante} sur $\mathbb{R}$, de $+\infty$ vers $0$.
+
+Dans les deux cas, l'une des deux limites vaut $0$. Or, dire qu'une fonction tend vers $0$ à l'infini, c'est dire géométriquement que sa courbe se rapproche indéfiniment de la droite d'équation $y = 0$ (l'axe des abscisses) sans jamais la toucher.
+
+\begin{propriete}[Asymptote horizontale]
+La courbe représentative de toute fonction $x \longmapsto e^{ax+b}$ ($a \neq 0$) admet une \cle{asymptote horizontale} d'équation $y = 0$ :
+\begin{itemize}
+\item en $+\infty$ si $a < 0$ (car alors $\lim_{x \to +\infty} e^{ax+b} = 0$) ;
+\item en $-\infty$ si $a > 0$ (car alors $\lim_{x \to -\infty} e^{ax+b} = 0$).
+\end{itemize}
+La courbe se situe toujours \emph{au-dessus} de cette asymptote, puisque $e^{ax+b} > 0$.
+\end{propriete}
+
+\begin{attention}[Pas d'intersection avec l'axe des abscisses]
+Erreur fréquente au Bac : chercher à résoudre $e^{ax+b} = 0$ pour trouver l'intersection de la courbe avec l'axe des abscisses. Cette équation \textbf{n'a aucune solution} : une exponentielle ne s'annule jamais. La courbe de $x \longmapsto e^{ax+b}$ ne coupe \emph{jamais} l'axe des $x$ ; elle s'en approche seulement à l'infini (c'est précisément le rôle de l'asymptote). En revanche, l'intersection avec l'axe des ordonnées existe toujours : c'est le point $(0\,;\,e^b)$, obtenu en calculant $f(0)$.
+\end{attention}
+
+\courssub{Exemple guidé : étude complète de $f(x) = e^{2x-1}$}
+
+Suivons pas à pas le plan de la méthode.
+
+\textbf{Étape 1 — Ensemble de définition.} L'exposant $2x-1$ est défini pour tout réel : $D_f = \mathbb{R}$.
+
+\textbf{Étape 2 — Limites.} On a $\lim_{x \to -\infty} (2x-1) = -\infty$ et $\lim_{X \to -\infty} e^X = 0$, donc par composition :
+\[ \lim_{x \to -\infty} f(x) = 0. \]
+De même, $\lim_{x \to +\infty} (2x-1) = +\infty$ et $\lim_{X \to +\infty} e^X = +\infty$, donc :
+\[ \lim_{x \to +\infty} f(x) = +\infty. \]
+
+\textbf{Étape 3 — Dérivée.} Avec $a = 2$ et $b = -1$ :
+\[ f'(x) = 2\,e^{2x-1}. \]
+
+\textbf{Étape 4 — Signe.} Comme $e^{2x-1} > 0$ pour tout $x$ et que $2 > 0$, on a $f'(x) > 0$ sur $\mathbb{R}$ : $f$ est strictement croissante.
+
+\textbf{Étape 5 — Tableau de variations.}
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}
+\hline
+\rowcolor{popblueL} $x$ & $-\infty$ & & & & $+\infty$ \\
+\hline
+$f'(x) = 2e^{2x-1}$ & & & $+$ & & \\
+\hline
+$f(x)$ & $0$ & & $\nearrow$ & & $+\infty$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{Étape 6 — Points remarquables et tangente.} Intersection avec l'axe des ordonnées : $f(0) = e^{-1} \approx 0{,}37$. Autre point agréable : $f\left(\tfrac{1}{2}\right) = e^{0} = 1$. La tangente en $x = \tfrac{1}{2}$ a pour équation $y = f'\left(\tfrac{1}{2}\right)\left(x - \tfrac{1}{2}\right) + f\left(\tfrac{1}{2}\right)$, soit, puisque $f'\left(\tfrac{1}{2}\right) = 2e^0 = 2$ :
+\[ y = 2\left(x - \tfrac{1}{2}\right) + 1 = 2x. \]
+Jolie surprise : cette tangente passe par l'origine !
+
+\textbf{Étape 7 — Tracé.} Un petit tableau de valeurs pour placer quelques points :
+
+\begin{center}
+\begin{tabular}{|l|*{5}{>{\centering\arraybackslash}p{1.6cm}|}}
+\hline
+\rowcolor{popblueL} $x$ & $-1$ & $-0{,}5$ & $0$ & $0{,}5$ & $1$ \\
+\hline
+$f(x)$ & $e^{-3} \approx 0{,}05$ & $e^{-2} \approx 0{,}14$ & $e^{-1} \approx 0{,}37$ & $1$ & $e \approx 2{,}72$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-2.2, xmax=2.4, ymin=-0.6, ymax=5.2,
+  xtick={-2,-1,0.5,1,2}, ytick={1,2,3,4},
+  grid=both, grid style={popline!40},
+  legend style={at={(0.02,0.98)}, anchor=north west, font=\small}
+]
+\addplot[popcurve,domain=-2.1:1.75,samples=200]{exp(2*x-1)};
+\addlegendentry{$y = e^{2x-1}$}
+\addplot[poporange, thick, domain=-2.1:2.3, samples=2]{0};
+\addlegendentry{asymptote $y=0$}
+\addplot[poppurple, thick, dashed, domain=-0.4:2.3, samples=2]{2*x};
+\addlegendentry{tangente $y=2x$ en $x=\tfrac12$}
+\addplot[only marks, mark=*, popink, mark size=2pt] coordinates {(0,0.3679) (0.5,1)};
+\node[popink, anchor=west, font=\small] at (axis cs:0.05,0.25) {$(0\,;\,e^{-1})$};
+\node[popink, anchor=south west, font=\small] at (axis cs:0.55,1.02) {$\left(\tfrac12\,;\,1\right)$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x) = e^{2x-1}$, son asymptote horizontale $y=0$ en $-\infty$, le point $(0\,;\,e^{-1})$ et la tangente $y = 2x$ au point d'abscisse $\tfrac{1}{2}$.}
+\end{popfigure}
+
+Observe bien la figure : la courbe « colle » à l'axe des abscisses du côté des $x$ négatifs, passe par $(0\,;\,e^{-1})$, puis s'envole de plus en plus vite — c'est la fameuse \emph{croissance exponentielle}.
+
+\courssub{Un complément Bac : fonction avec terme constant, $g(x) = 2 - e^{-x}$}
+
+Au Baccalauréat, on rencontre souvent des fonctions de la forme $g(x) = k - e^{ax+b}$ ou $k + e^{ax+b}$, où un terme constant vient « décaler » la courbe verticalement. L'asymptote n'est alors plus $y = 0$ mais $y = k$. Étudions $g(x) = 2 - e^{-x}$.
+
+\textbf{Ensemble de définition} : $D_g = \mathbb{R}$.
+
+\textbf{Limites.} Quand $x \to +\infty$, $-x \to -\infty$ donc $e^{-x} \to 0$, d'où :
+\[ \lim_{x \to +\infty} g(x) = 2 - 0 = 2. \]
+La droite d'équation $y = 2$ est asymptote horizontale en $+\infty$. Quand $x \to -\infty$, $e^{-x} \to +\infty$, donc :
+\[ \lim_{x \to -\infty} g(x) = -\infty. \]
+
+\textbf{Dérivée et variations.} $g'(x) = -\left(-e^{-x}\right) = e^{-x} > 0$ pour tout $x$ : $g$ est strictement croissante sur $\mathbb{R}$, de $-\infty$ vers $2$.
+
+\textbf{Points remarquables.} $g(0) = 2 - 1 = 1$ : la courbe coupe l'axe des ordonnées en $(0\,;\,1)$. Cette fois, il existe bien une intersection avec l'axe des abscisses : $g(x) = 0 \iff e^{-x} = 2 \iff -x = \ln 2 \iff x = -\ln 2 \approx -0{,}69$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-3.2, xmax=3.4, ymin=-3.4, ymax=3.4,
+  xtick={-3,-2,-1,1,2,3}, ytick={-3,-2,-1,1,2,3},
+  grid=both, grid style={popline!40},
+  legend style={at={(0.98,0.02)}, anchor=south east, font=\small}
+]
+\addplot[popcurve,domain=-3.1:3.3,samples=200]{2-exp(-x)};
+\addlegendentry{$y = 2 - e^{-x}$}
+\addplot[poporange, thick, dashed, domain=-3.1:3.3, samples=2]{2};
+\addlegendentry{asymptote $y=2$}
+\addplot[only marks, mark=*, popink, mark size=2pt] coordinates {(0,1) (-0.693,0)};
+\node[popink, anchor=south west, font=\small] at (axis cs:0.05,1.05) {$(0\,;\,1)$};
+\node[popink, anchor=north, font=\small] at (axis cs:-0.693,-0.15) {$(-\ln 2\,;\,0)$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $g(x) = 2 - e^{-x}$ : strictement croissante, asymptote horizontale $y = 2$ en $+\infty$, passage par $(0\,;\,1)$ et par $(-\ln 2\,;\,0)$.}
+\end{popfigure}
+
+\begin{exoresolu}[Étude complète de $h(x) = 3e^{-2x+4}$]
+On considère la fonction $h$ définie sur $\mathbb{R}$ par $h(x) = 3e^{-2x+4}$.
+\begin{enumerate}
+\item Déterminer les limites de $h$ aux bornes de son ensemble de définition et interpréter graphiquement.
+\item Étudier les variations de $h$ et dresser son tableau de variations.
+\item Déterminer l'équation de la tangente à la courbe au point d'abscisse $2$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Quand $x \to -\infty$, l'exposant $-2x+4 \to +\infty$, donc $\lim_{x \to -\infty} h(x) = +\infty$. Quand $x \to +\infty$, $-2x+4 \to -\infty$, donc $e^{-2x+4} \to 0$ et $\lim_{x \to +\infty} h(x) = 0$. Interprétation : la droite $y = 0$ est asymptote horizontale à la courbe en $+\infty$.
+\item $h'(x) = 3 \times (-2)\,e^{-2x+4} = -6\,e^{-2x+4}$. Comme $e^{-2x+4} > 0$, on a $h'(x) < 0$ sur $\mathbb{R}$ : $h$ est strictement décroissante de $+\infty$ vers $0$.
+\begin{center}
+\begin{tabular}{|c|ccccc|}
+\hline
+\rowcolor{popblueL} $x$ & $-\infty$ & & & & $+\infty$ \\
+\hline
+$h'(x)$ & & & $-$ & & \\
+\hline
+$h(x)$ & $+\infty$ & & $\searrow$ & & $0$ \\
+\hline
+\end{tabular}
+\end{center}
+\item $h(2) = 3e^{0} = 3$ et $h'(2) = -6e^{0} = -6$. La tangente a pour équation :
+\[ y = -6(x-2) + 3 = -6x + 15. \]
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Application à la modélisation : les intérêts composés en continu}
+
+Pourquoi les banquiers, les biologistes et les démographes aiment-ils tant l'exponentielle ? Parce qu'elle modélise toutes les situations où \emph{la vitesse de croissance d'une quantité est proportionnelle à la quantité elle-même} : plus tu as d'argent placé, plus il rapporte vite ; plus une population est nombreuse, plus elle croît vite.
+
+\begin{propriete}[Croissance exponentielle continue]
+Si un capital $C_0$ (en francs CFA) est placé à intérêts composés en continu au taux annuel $r$ (exprimé en décimal), alors sa valeur au bout de $t$ années est :
+\[ C(t) = C_0\,e^{rt}. \]
+C'est une fonction du type $e^{ax+b}$ avec $a = r > 0$ et $b = \ln C_0$ (en effet $C_0\,e^{rt} = e^{\ln C_0}\,e^{rt} = e^{rt + \ln C_0}$) : elle est strictement croissante, de limite $+\infty$ en $+\infty$.
+\end{propriete}
+
+\begin{exemplebox}[Le placement de la coopérative de Njombé]
+Une coopérative agricole de Njombé place un capital de $C_0 = \num{1000000}$ FCFA au taux continu de $7\,\%$ par an, soit $r = 0{,}07$. Alors $C(t) = \num{1000000}\,e^{0{,}07t}$.
+\begin{itemize}
+\item Au bout de $5$ ans : $C(5) = \num{1000000}\,e^{0{,}35} \approx \num{1000000} \times 1{,}419 \approx \num{1419068}$ FCFA.
+\item Combien de temps pour doubler ? On résout $C(t) = 2C_0$, c'est-à-dire $e^{0{,}07t} = 2$, donc $0{,}07t = \ln 2$ et :
+\[ t = \frac{\ln 2}{0{,}07} \approx \frac{0{,}693}{0{,}07} \approx 9{,}9 \text{ ans}. \]
+\end{itemize}
+\end{exemplebox}
+
+\begin{savaistu}[La « règle des 70 » des banquiers]
+Les banques utilisent la formule $C(t) = C_0\,e^{rt}$ pour les intérêts composés en continu. Le temps de doublement d'un capital est $t = \dfrac{\ln 2}{r} \approx \dfrac{0{,}70}{r}$ : c'est la fameuse \emph{règle des 70} des financiers — au taux $r$ (en pourcentage), un capital double en environ $\frac{70}{r}$ années. À $7\,\%$ par an, un capital double donc en $\ln 2 / 0{,}07 \approx 9{,}9$ ans : le directeur de la coopérative avait raison ! La même mathématique gouverne la croissance démographique du Cameroun, la propagation d'une épidémie ou la charge d'un condensateur.
+\end{savaistu}
+
+\begin{exercice}[Pour t'entraîner]
+Soit $f$ la fonction définie par $f(x) = 5 - e^{3x}$.
+\begin{enumerate}
+\item Déterminer les limites de $f$ en $-\infty$ et en $+\infty$. En déduire une asymptote.
+\item Étudier les variations de $f$ et dresser son tableau de variations.
+\item Résoudre $f(x) = 0$ et placer ce point sur la courbe.
+\item Tracer la courbe de $f$ dans un repère orthonormé.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : $f(x) = 5 - e^{3x}$]
+\begin{enumerate}
+\item En $-\infty$ : $3x \to -\infty$ donc $e^{3x} \to 0$ et $\lim_{x \to -\infty} f(x) = 5$. La droite $y = 5$ est asymptote horizontale en $-\infty$. En $+\infty$ : $e^{3x} \to +\infty$ donc $\lim_{x \to +\infty} f(x) = -\infty$.
+\item $f'(x) = -3e^{3x} < 0$ pour tout $x$ : $f$ est strictement décroissante de $5$ vers $-\infty$.
+\item $f(x) = 0 \iff e^{3x} = 5 \iff 3x = \ln 5 \iff x = \dfrac{\ln 5}{3} \approx 0{,}54$. La courbe coupe l'axe des abscisses en $\left(\tfrac{\ln 5}{3}\,;\,0\right)$. De plus $f(0) = 4$ : intersection avec l'axe des ordonnées en $(0\,;\,4)$.
+\item On place l'asymptote $y = 5$ (la courbe reste en dessous), les points $(0\,;\,4)$ et $\left(\tfrac{\ln 5}{3}\,;\,0\right)$, puis on trace une courbe décroissante qui plonge vers $-\infty$ à droite.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Pour $f(x) = e^{ax+b}$ : $f'(x) = a\,e^{ax+b}$ a le \textbf{signe constant de $a$} ; la fonction est monotone sur $\mathbb{R}$, sans extremum.
+\item Si $a > 0$ : croissante de $0$ vers $+\infty$, asymptote $y = 0$ en $-\infty$. Si $a < 0$ : décroissante de $+\infty$ vers $0$, asymptote $y = 0$ en $+\infty$.
+\item La courbe de $e^{ax+b}$ ne coupe \textbf{jamais} l'axe des abscisses ; elle coupe l'axe des ordonnées en $(0\,;\,e^b)$.
+\item Pour $k \pm e^{ax+b}$, l'asymptote devient $y = k$ et une intersection avec l'axe des $x$ peut exister (résoudre par le logarithme).
+\item Modèle de croissance continue : $C(t) = C_0\,e^{rt}$ ; temps de doublement $t = \dfrac{\ln 2}{r}$.
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À travers une situation financière authentique — le placement des fonds d'une coopérative de producteurs de cacao — cette activité te conduit à mobiliser \textbf{l'ensemble des savoir-faire} de la leçon sur la fonction exponentielle :
+
+\begin{itemize}
+\item modéliser une évolution continue par une fonction du type $t \mapsto K\,e^{at}$ ;
+\item justifier le sens de variation d'une fonction du type $e^{ax+b}$ à l'aide de la dérivée ;
+\item déterminer les limites d'une fonction exponentielle et dresser un tableau de variations complet ;
+\item résoudre des équations du type $e^{ax} = b$ en utilisant l'équivalence $e^{x} = b \iff x = \ln b$ (pour $b > 0$) ;
+\item résoudre une inéquation d'inconnue $e^{t}$ et interpréter concrètement le résultat ;
+\item tracer une courbe représentative et en faire une lecture graphique ;
+\item comparer deux placements et argumenter une décision économique.
+\end{itemize}
+
+\courssub{Situation}
+
+La coopérative des producteurs de cacao de la commune d'Obala (région du Centre) a réalisé, à l'issue de la campagne cacaoyère, un bénéfice net de $500\,000$ FCFA. Lors de l'assemblée générale, le trésorier propose de placer cette somme dans un fonds d'épargne rémunéré à \textbf{intérêts composés continus} au taux annuel de $7\,\%$.
+
+On admet que le capital disponible au bout de $t$ années (exprimé en FCFA) est donné par :
+\[ C(t) = 500\,000\,e^{0,07\,t}. \]
+
+Le conseil de la coopérative se pose plusieurs questions avant de valider le placement :
+
+\begin{itemize}
+\item le capital augmente-t-il réellement au fil des années, et sans limite ?
+\item au bout de combien d'années le capital initial aura-t-il \textbf{doublé} ?
+\item un autre établissement financier de Yaoundé propose un taux annuel $r$ (à déterminer) qui permettrait d'atteindre $1\,000\,000$ FCFA en exactement $8$ ans : quel est ce taux ?
+\item enfin, une troisième offre à taux continu de $5\,\%$ est assortie d'une condition : le placement ne devient intéressant que lorsque le capital dépasse $800\,000$ FCFA. À partir de quelle année cette condition est-elle remplie ?
+\end{itemize}
+
+Par groupes, vous êtes les experts-comptables de la coopérative : à vous de répondre rigoureusement à toutes ces questions et de conseiller l'assemblée générale.
+
+\courssub{Consignes}
+
+\textbf{Partie A — Étude de la fonction $C$}
+
+\begin{enumerate}
+\item Justifier que la fonction $C$ est dérivable sur $[0\,;\,+\infty[$ et calculer $C'(t)$.
+\item En déduire le sens de variation de $C$ sur $[0\,;\,+\infty[$. Ce résultat est-il cohérent avec la réalité financière ?
+\item Calculer $C(0)$ et $\displaystyle\lim_{t \to +\infty} C(t)$. Interpréter chaque résultat.
+\item Dresser le tableau de variations complet de $C$ sur $[0\,;\,+\infty[$.
+\item Compléter le tableau de valeurs suivant (arrondir à l'unité) puis tracer la courbe représentative de $C$ sur $[0\,;\,20]$ (unités : 1 cm pour 2 ans en abscisse, 1 cm pour $200\,000$ FCFA en ordonnée).
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} $t$ (années) & 0 & 5 & 10 & 15 & 20 & 25 \\
+\hline
+$C(t)$ (FCFA) & & & & & & \\
+\hline
+\end{tabularx}
+\end{center}
+\end{enumerate}
+
+\textbf{Partie B — Temps de doublement}
+
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item Traduire par une équation la question : « au bout de combien d'années le capital a-t-il doublé ? »
+\item Résoudre cette équation algébriquement (on donne $\ln 2 \approx 0,693$). Arrondir le résultat au dixième d'année, puis vérifier graphiquement sur la courbe tracée à la question 5.
+\end{enumerate}
+
+\textbf{Partie C — Le taux de l'offre concurrente}
+
+\begin{enumerate}
+\setcounter{enumi}{7}
+\item On note $r$ le taux annuel continu de la deuxième offre. Le capital au bout de $t$ années est alors $D(t) = 500\,000\,e^{rt}$. Écrire l'équation traduisant « le capital atteint $1\,000\,000$ FCFA en $8$ ans ».
+\item Résoudre cette équation et donner la valeur de $r$ en pourcentage, arrondie à $0,01\,\%$ près. Comparer avec le taux de $7\,\%$.
+\end{enumerate}
+
+\textbf{Partie D — Comparaison avec le placement à $5\,\%$}
+
+\begin{enumerate}
+\setcounter{enumi}{9}
+\item Le capital placé à $5\,\%$ continu est $E(t) = 500\,000\,e^{0,05\,t}$. Résoudre dans $[0\,;\,+\infty[$ l'inéquation $E(t) > 800\,000$ (on donne $\ln 1,6 \approx 0,470$).
+\item Interpréter le résultat : à partir de quelle année entière l'offre à $5\,\%$ satisfait-elle sa condition ?
+\item \textbf{Synthèse :} rédiger en quelques lignes un avis argumenté à destination de l'assemblée générale de la coopérative.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item \cle{Dérivée} : si $u$ est dérivable sur un intervalle $I$, alors $e^{u}$ est dérivable sur $I$ et $\left(e^{u}\right)' = u'\,e^{u}$. En particulier, $\left(e^{at+b}\right)' = a\,e^{at+b}$.
+\item \cle{Signe de l'exponentielle} : pour tout réel $x$, $e^{x} > 0$.
+\item \cle{Limites} : $\displaystyle\lim_{t \to +\infty} e^{at} = +\infty$ si $a > 0$ ; $\displaystyle\lim_{t \to +\infty} e^{at} = 0$ si $a < 0$.
+\item \cle{Équivalence fondamentale} : pour tout réel $b > 0$, $e^{x} = b \iff x = \ln b$ (ce qui équivaut à $\ln x = y \iff x = e^{y}$).
+\item \cle{Inéquations} : la fonction exponentielle étant strictement croissante sur $\mathbb{R}$, $e^{u} > e^{v} \iff u > v$ ; de même, pour $b > 0$, $e^{x} > b \iff x > \ln b$.
+\item \cle{Primitive} : une primitive de $t \mapsto e^{at+b}$ (avec $a \neq 0$) est $t \mapsto \dfrac{1}{a}\,e^{at+b}$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Le placement de la coopérative de cacao — corrigé complet]
+\textbf{Partie A.} 1) Justifier la dérivabilité de $C$ et calculer $C'(t)$. 2) Sens de variation. 3) $C(0)$ et limite en $+\infty$. 4) Tableau de variations. 5) Tableau de valeurs et courbe. \textbf{Partie B.} 6)--7) Temps de doublement. \textbf{Partie C.} 8)--9) Taux de l'offre concurrente. \textbf{Partie D.} 10)--12) Placement à $5\,\%$ et synthèse.
+\tcblower
+\textbf{Partie A — Étude de la fonction $C$}
+
+\textbf{1)} La fonction $u : t \mapsto 0,07\,t$ est une fonction affine, donc dérivable sur $\mathbb{R}$, avec $u'(t) = 0,07$. La fonction $C$ est de la forme $K\,e^{u}$ avec $K = 500\,000$ : elle est donc dérivable sur $\mathbb{R}$, et en particulier sur $[0\,;\,+\infty[$. D'après la formule $\left(e^{u}\right)' = u'\,e^{u}$ :
+\[ C'(t) = 500\,000 \times 0,07\,e^{0,07\,t} = 35\,000\,e^{0,07\,t}. \]
+
+\textbf{2)} Pour tout réel $t$, $e^{0,07\,t} > 0$, donc $C'(t) = 35\,000\,e^{0,07\,t} > 0$. La fonction $C$ est donc \textbf{strictement croissante} sur $[0\,;\,+\infty[$. C'est cohérent avec la réalité financière : un placement à intérêts composés ne peut que croître, puisque les intérêts produisent eux-mêmes des intérêts.
+
+\textbf{3)} $C(0) = 500\,000\,e^{0} = 500\,000 \times 1 = 500\,000$ : on retrouve bien le capital initial déposé. Comme $0,07 > 0$, $\displaystyle\lim_{t \to +\infty} 0,07\,t = +\infty$ ; en posant $X = 0,07\,t$, on obtient par composition :
+\[ \lim_{t \to +\infty} C(t) = 500\,000 \times \lim_{X \to +\infty} e^{X} = +\infty. \]
+Interprétation : sans retrait, le capital croît au-delà de toute borne (il s'agit d'un modèle théorique, valable tant que le taux reste fixe).
+
+\textbf{4)} Tableau de variations :
+\begin{center}
+\begin{tabular}{|c|ccc|}
+\hline
+\rowcolor{popblueL} $t$ & $0$ & & $+\infty$ \\
+\hline
+$C'(t)$ & & $+$ & \\
+\hline
+$C(t)$ & $500\,000$ & $\nearrow$ & $+\infty$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{5)} Tableau de valeurs (arrondis à l'unité) :
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} $t$ & 0 & 5 & 10 & 15 & 20 & 25 \\
+\hline
+$C(t)$ & $500\,000$ & $709\,508$ & $1\,006\,877$ & $1\,428\,792$ & $2\,027\,602$ & $2\,877\,301$ \\
+\hline
+\end{tabularx}
+\end{center}
+Par exemple : $C(5) = 500\,000\,e^{0,35} \approx 500\,000 \times 1,4191 \approx 709\,508$ FCFA, et $C(25) = 500\,000\,e^{1,75} \approx 500\,000 \times 5,7546 \approx 2\,877\,301$ FCFA. On remarque déjà que le doublement ($1\,000\,000$ FCFA) se produit peu avant $t = 10$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+width=0.95\linewidth, height=7cm,
+xlabel={$t$ (années)}, ylabel={$C(t)$ (FCFA)},
+xmin=0, xmax=20, ymin=0, ymax=2200000,
+grid=both, grid style={popline!40},
+legend pos=north west,
+]
+\addplot[popcurve, domain=0:20, samples=100]{500000*exp(0.07*x)};
+\addlegendentry{$C(t) = 500\,000\,e^{0,07t}$}
+\addplot[dashed, poporange, domain=0:20]{1000000};
+\addlegendentry{$y = 1\,000\,000$}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $C$ sur $[0\,;\,20]$ et droite d'équation $y = 1\,000\,000$ : l'abscisse du point d'intersection donne le temps de doublement.}
+\end{popfigure}
+
+\textbf{Partie B — Temps de doublement}
+
+\textbf{6)} Le capital a doublé lorsque $C(t) = 2 \times 500\,000 = 1\,000\,000$, c'est-à-dire :
+\[ 500\,000\,e^{0,07\,t} = 1\,000\,000 \iff e^{0,07\,t} = 2. \]
+
+\textbf{7)} On applique l'équivalence fondamentale $e^{x} = b \iff x = \ln b$ (licite car $2 > 0$) :
+\begin{align*}
+e^{0,07\,t} = 2 &\iff 0,07\,t = \ln 2 \\
+&\iff t = \frac{\ln 2}{0,07} \approx \frac{0,693}{0,07} \approx 9,9.
+\end{align*}
+Le capital double au bout d'environ \textbf{9,9 années} (soit environ 9 ans et 11 mois). Vérification graphique : la courbe coupe la droite $y = 1\,000\,000$ pour une abscisse $t$ légèrement inférieure à $10$, ce qui confirme le calcul.
+
+\textbf{Partie C — Le taux de l'offre concurrente}
+
+\textbf{8)} Atteindre $1\,000\,000$ FCFA en $8$ ans se traduit par $D(8) = 1\,000\,000$, soit :
+\[ 500\,000\,e^{8r} = 1\,000\,000 \iff e^{8r} = 2. \]
+
+\textbf{9)} Résolution :
+\begin{align*}
+e^{8r} = 2 &\iff 8r = \ln 2 \\
+&\iff r = \frac{\ln 2}{8} \approx \frac{0,693}{8} \approx 0,0866.
+\end{align*}
+Le taux proposé est donc $r \approx 8,66\,\%$, \textbf{supérieur} au taux de $7\,\%$ : en effet, à $7\,\%$ il faut environ $9,9$ ans pour doubler le capital, alors que cette offre promet le doublement en seulement $8$ ans.
+
+\textbf{Partie D — Comparaison avec le placement à $5\,\%$}
+
+\textbf{10)} On résout dans $[0\,;\,+\infty[$ :
+\begin{align*}
+500\,000\,e^{0,05\,t} > 800\,000 &\iff e^{0,05\,t} > \frac{800\,000}{500\,000} = 1,6 \\
+&\iff 0,05\,t > \ln 1,6 \quad \text{(stricte croissance de } \ln \text{ sur } ]0\,;\,+\infty[\text{)} \\
+&\iff t > \frac{\ln 1,6}{0,05} \approx \frac{0,470}{0,05} \approx 9,4.
+\end{align*}
+L'ensemble des solutions est $S = \left]\dfrac{\ln 1,6}{0,05}\,;\,+\infty\right[$, soit environ $]9,4\,;\,+\infty[$.
+
+\textbf{11)} La condition « capital strictement supérieur à $800\,000$ FCFA » n'est remplie qu'à partir de la \textbf{dixième année} ($t = 10$) pour l'offre à $5\,\%$. À titre de comparaison, avec l'offre à $7\,\%$, on résoudrait $e^{0,07\,t} > 1,6 \iff t > \dfrac{\ln 1,6}{0,07} \approx 6,7$ : le seuil serait franchi dès la septième année.
+
+\textbf{12) Synthèse (exemple de rédaction).} « L'offre à $7\,\%$ garantit un capital strictement croissant, qui double en environ $9,9$ ans. L'offre concurrente à $8,66\,\%$ est plus performante si la coopérative peut bloquer les fonds pendant $8$ ans. L'offre à $5\,\%$ est nettement moins intéressante : il faut attendre $10$ ans pour dépasser $800\,000$ FCFA, contre $7$ ans à $7\,\%$. Sauf contrainte de disponibilité des fonds, nous recommandons de retenir l'offre au meilleur taux, après avoir vérifié la fiabilité de l'établissement qui la propose. »
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence plusieurs idées essentielles de la leçon :
+
+\begin{itemize}
+\item \textbf{La modélisation} : une évolution à taux constant en continu se traduit naturellement par une fonction du type $t \mapsto K\,e^{at}$, où $K$ est la valeur initiale et $a$ le taux. Le signe de $a$ commande toute la dynamique : croissance si $a > 0$, décroissance si $a < 0$.
+\item \textbf{La puissance de l'équivalence $e^{x} = b \iff x = \ln b$} : toutes les questions de seuil (doublement, objectif à atteindre, taux recherché) se ramènent à une équation exponentielle résolue grâce au logarithme népérien.
+\item \textbf{La cohérence entre calcul et graphique} : le temps de doublement lu sur la courbe ($t \approx 10$) confirme le résultat algébrique ($t \approx 9,9$). Vérifier un résultat par lecture graphique est un réflexe précieux au Baccalauréat.
+\item \textbf{La comparaison de placements} : à taux plus faible, tous les seuils sont atteints plus tardivement ; les inéquations exponentielles permettent de dater précisément ces franchissements.
+\item \textbf{Un résultat remarquable} : le temps de doublement $t = \dfrac{\ln 2}{a}$ ne dépend \emph{que du taux}, pas du capital initial : que la coopérative place $500\,000$ ou $5\,000\,000$ FCFA à $7\,\%$, le doublement demande toujours environ $9,9$ ans.
+\end{itemize}
+
+\begin{attention}[Pièges rencontrés dans l'activité]
+\begin{itemize}
+\item Ne pas oublier de \textbf{diviser par le coefficient de $t$} : $e^{0,07t} = 2$ donne $t = \dfrac{\ln 2}{0,07}$ et non $t = \ln 2$.
+\item L'équivalence $e^{x} = b \iff x = \ln b$ n'est valable que pour $b > 0$ : une équation du type $e^{x} = -3$ n'a \textbf{aucune solution}, car l'exponentielle est strictement positive.
+\item Dans une inéquation, on ne change pas le sens de l'inégalité en appliquant $\ln$, car $\ln$ est \textbf{strictement croissante} ; attention en revanche si l'on divise ensuite par un nombre négatif.
+\item Le taux $r \approx 0,0866$ est un nombre décimal : il faut le convertir en pourcentage ($8,66\,\%$) pour l'interpréter.
+\item Dans le tableau de valeurs, chaque image doit être recalculée avec l'exposant exact : $C(25) = 500\,000\,e^{1,75} \approx 2\,877\,301$ et non une valeur approchée par extrapolation.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[La règle de 70]
+Les économistes utilisent une approximation célèbre : le temps de doublement d'un placement au taux annuel $p\,\%$ est environ $\dfrac{70}{p}$ années. En effet, avec $a = \dfrac{p}{100}$, on obtient $\dfrac{\ln 2}{a} = \dfrac{100\ln 2}{p} \approx \dfrac{69,3}{p} \approx \dfrac{70}{p}$. À $7\,\%$, on retrouve $\frac{70}{7} = 10$ ans, très proche de notre résultat exact de $9,9$ ans. Cette règle permet à un épargnant de Douala ou de Bafoussam d'estimer mentalement la performance d'un placement !
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Résoudre une équation d'inconnue $e^x$}
+
+\begin{methode}[Résoudre une équation d'inconnue $e^x$]
+Pour résoudre une équation où l'inconnue $x$ apparaît dans une exponentielle :
+\begin{enumerate}
+\item \cle{Isoler} le terme en $e^x$ (ou poser le changement de variable $X = e^x$ si l'équation est du type $a e^{2x} + b e^x + c = 0$).
+\item Utiliser l'équivalence fondamentale : pour $y \in \mathbb{R}$ et $x > 0$, $\ln x = y \iff x = e^y$, et sa conséquence $e^x = k \iff x = \ln k$ \textbf{à condition que $k > 0$}.
+\item Si l'équation est de la forme $e^{u(x)} = e^{v(x)}$, utiliser l'injectivité : $e^{u(x)} = e^{v(x)} \iff u(x) = v(x)$.
+\item Pour une équation du second degré en $e^x$ : poser $X = e^x$ (avec $X > 0$), résoudre en $X$, \textbf{rejeter les solutions négatives ou nulles}, puis conclure par $x = \ln X$.
+\item Conclure par l'ensemble des solutions $\mathcal{S}$, en vérifiant que chaque solution existe bien.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Équation du second degré en $e^x$]
+Résoudre dans $\mathbb{R}$ l'équation $(E)$ : $e^{2x} - 3e^x + 2 = 0$.
+\tcblower
+\textbf{Étape 1 : changement de variable.} On remarque que $e^{2x} = \left(e^x\right)^2$. Posons $X = e^x$. Comme pour tout réel $x$, $e^x > 0$, on a la contrainte $X > 0$.
+
+L'équation devient : $X^2 - 3X + 2 = 0$.
+
+\textbf{Étape 2 : résolution en $X$.} Le discriminant vaut :
+\[ \Delta = (-3)^2 - 4 \times 1 \times 2 = 9 - 8 = 1 > 0. \]
+L'équation admet deux racines réelles distinctes :
+\[ X_1 = \dfrac{3 - \sqrt{1}}{2} = \dfrac{3-1}{2} = 1 \qquad \text{et} \qquad X_2 = \dfrac{3 + \sqrt{1}}{2} = \dfrac{3+1}{2} = 2. \]
+
+\textbf{Étape 3 : retour à $x$.} Les deux racines sont strictement positives, donc toutes deux sont acceptables (rappel : on aurait rejeté toute racine $X \leq 0$, car $X = e^x > 0$).
+\begin{align*}
+e^x = 1 &\iff x = \ln 1 = 0 ;\\
+e^x = 2 &\iff x = \ln 2.
+\end{align*}
+
+\textbf{Conclusion.} L'équation $(E)$ admet deux solutions : $\mathcal{S} = \{0 \,;\, \ln 2\}$.
+\end{exoresolu}
+
+\courssub{Résoudre une inéquation d'inconnue $e^x$}
+
+\begin{methode}[Résoudre une inéquation d'inconnue $e^x$]
+\begin{enumerate}
+\item Se ramener, par les propriétés algébriques de l'exponentielle, à une comparaison du type $e^{u(x)} < e^{v(x)}$ ou $e^x < k$.
+\item Utiliser la \cle{stricte croissance} de la fonction exponentielle sur $\mathbb{R}$ :
+\[ e^{u(x)} < e^{v(x)} \iff u(x) < v(x) \qquad \text{(le sens de l'inégalité est conservé).} \]
+\item Pour $e^x < k$ : si $k \leq 0$, l'inéquation n'a \textbf{aucune solution} (car $e^x > 0$ pour tout $x$) ; si $k > 0$, alors $x < \ln k$.
+\item Résoudre l'inéquation obtenue, puis écrire l'ensemble des solutions sous forme d'\textbf{intervalle}.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Piège fréquent]
+On ne « passe pas au logarithme » sur un nombre négatif ou nul : $e^x < -2$ n'a pas de solution (car $e^x > 0 > -2$ est impossible... attention, c'est l'inverse : $e^x > 0$ donc $e^x$ ne peut pas être inférieur à $-2$), et $e^x > -2$ est vraie pour tout $x \in \mathbb{R}$. Le logarithme n'intervient que sur des nombres \textbf{strictement positifs}.
+\end{attention}
+
+\begin{exoresolu}[Inéquation avec exponentielle]
+Résoudre dans $\mathbb{R}$ l'inéquation $(I)$ : $e^{2x-1} \geq e^{x+3}$.
+\tcblower
+\textbf{Étape 1 : forme adaptée.} L'inéquation est déjà de la forme $e^{u(x)} \geq e^{v(x)}$ avec $u(x) = 2x - 1$ et $v(x) = x + 3$.
+
+\textbf{Étape 2 : utilisation de la croissance.} La fonction exponentielle est strictement croissante sur $\mathbb{R}$, donc elle conserve l'ordre :
+\[ e^{2x-1} \geq e^{x+3} \iff 2x - 1 \geq x + 3. \]
+
+\textbf{Étape 3 : résolution de l'inéquation du premier degré.}
+\begin{align*}
+2x - 1 \geq x + 3 &\iff 2x - x \geq 3 + 1 \\
+&\iff x \geq 4.
+\end{align*}
+
+\textbf{Conclusion.} L'ensemble des solutions de $(I)$ est $\mathcal{S} = [4 \,;\, +\infty[$.
+\end{exoresolu}
+
+\courssub{Résoudre un système d'équations à exponentielles}
+
+\begin{methode}[Résoudre un système d'inconnues liées à $e^x$]
+Pour un système du type $\begin{cases} e^x \cdot e^y = a \\ e^x + e^y = b \end{cases}$ ou mélangeant exponentielles et logarithmes :
+\begin{enumerate}
+\item Utiliser les \cle{relations fonctionnelles} : $e^x \cdot e^y = e^{x+y}$, $\dfrac{e^x}{e^y} = e^{x-y}$, et pour le logarithme $\ln(xy) = \ln x + \ln y$ (sous conditions d'existence : $x > 0$ et $y > 0$).
+\item Se ramener à un système linéaire en $x$ et $y$, ou poser $X = e^x$ et $Y = e^y$ pour obtenir un système algébrique classique.
+\item Résoudre le système obtenu (substitution ou combinaison linéaire).
+\item \textbf{Vérifier les conditions} : $X > 0$, $Y > 0$, arguments des logarithmes strictement positifs.
+\item Conclure en donnant le ou les couples solutions.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Système à deux inconnues]
+Résoudre dans $\mathbb{R}^2$ le système : $\begin{cases} e^x \times e^y = e^5 \\[2pt] \dfrac{e^x}{e^y} = e \end{cases}$
+\tcblower
+\textbf{Étape 1 : simplification à l'aide des relations fonctionnelles.} Pour tous réels $x$ et $y$ :
+\[ e^x \times e^y = e^{x+y} \qquad \text{et} \qquad \dfrac{e^x}{e^y} = e^{x-y}. \]
+Le système équivaut donc à :
+\[ \begin{cases} e^{x+y} = e^5 \\ e^{x-y} = e^1 \end{cases} \]
+
+\textbf{Étape 2 : utilisation de l'injectivité de l'exponentielle.} Comme $e^a = e^b \iff a = b$ :
+\[ \begin{cases} x + y = 5 \\ x - y = 1 \end{cases} \]
+
+\textbf{Étape 3 : résolution du système linéaire.} Par addition membre à membre des deux lignes : $2x = 6$, donc $x = 3$. En reportant dans la première ligne : $y = 5 - x = 2$.
+
+\textbf{Étape 4 : vérification.} $e^3 \times e^2 = e^{3+2} = e^5$ (exact) et $\dfrac{e^3}{e^2} = e^{3-2} = e$ (exact).
+
+\textbf{Conclusion.} Le système admet un unique couple solution : $\mathcal{S} = \{(3 \,;\, 2)\}$.
+\end{exoresolu}
+
+\courssub{Calculer la dérivée et une primitive de $e^{ax+b}$}
+
+\begin{methode}[Dériver et primitiver $e^{ax+b}$]
+Soient $a$ et $b$ deux réels, avec $a \neq 0$.
+\begin{enumerate}
+\item \cle{Dérivation} : la fonction $x \mapsto e^{ax+b}$ est dérivable sur $\mathbb{R}$ et
+\[ \left(e^{ax+b}\right)' = a\, e^{ax+b} \qquad \text{(on multiplie par le coefficient de $x$).} \]
+Plus généralement, pour $u$ dérivable sur un intervalle $I$ : $\left(e^{u}\right)' = u' \times e^{u}$.
+\item \cle{Primitivation} : une primitive de $x \mapsto e^{ax+b}$ sur $\mathbb{R}$ est
+\[ x \mapsto \dfrac{1}{a}\, e^{ax+b} \qquad \text{(on divise par le coefficient de $x$).} \]
+\item Toujours \textbf{vérifier mentalement} en redérivant le résultat obtenu : la dérivée de $\dfrac{1}{a}e^{ax+b}$ est $\dfrac{1}{a} \times a\, e^{ax+b} = e^{ax+b}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Dérivée et primitive]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x) = e^{-2x+3}$.
+\begin{enumerate}
+\item Calculer $f'(x)$.
+\item Déterminer la primitive $F$ de $f$ qui s'annule en $x = \dfrac{3}{2}$.
+\end{enumerate}
+\tcblower
+\textbf{1. Calcul de la dérivée.} La fonction $f$ est de la forme $e^{u}$ avec $u(x) = -2x + 3$, dérivable sur $\mathbb{R}$, et $u'(x) = -2$. Donc $f$ est dérivable sur $\mathbb{R}$ et :
+\[ f'(x) = u'(x) \times e^{u(x)} = -2\, e^{-2x+3}. \]
+
+\textbf{2. Recherche de la primitive.} Les primitives de $f$ sur $\mathbb{R}$ sont les fonctions de la forme :
+\[ F(x) = \dfrac{1}{-2}\, e^{-2x+3} + C = -\dfrac{1}{2}\, e^{-2x+3} + C, \quad C \in \mathbb{R}. \]
+(Vérification : $F'(x) = -\dfrac{1}{2} \times (-2)\, e^{-2x+3} = e^{-2x+3} = f(x)$ : c'est correct.)
+
+Déterminons $C$ pour que $F\left(\dfrac{3}{2}\right) = 0$ :
+\[ F\left(\dfrac{3}{2}\right) = -\dfrac{1}{2}\, e^{-2 \times \frac{3}{2} + 3} + C = -\dfrac{1}{2}\, e^{0} + C = -\dfrac{1}{2} + C. \]
+La condition $F\left(\dfrac{3}{2}\right) = 0$ donne $C = \dfrac{1}{2}$.
+
+\textbf{Conclusion.} $f'(x) = -2e^{-2x+3}$ et la primitive cherchée est $F(x) = -\dfrac{1}{2}e^{-2x+3} + \dfrac{1}{2}$.
+\end{exoresolu}
+
+\courssub{Calculer une limite de $e^{ax+b}$}
+
+\begin{methode}[Lever les limites de $e^{ax+b}$]
+\begin{enumerate}
+\item Connaître par cœur les \cle{limites de référence} :
+\[ \lim_{x \to +\infty} e^x = +\infty \qquad \text{et} \qquad \lim_{x \to -\infty} e^x = 0. \]
+\item Pour $e^{ax+b}$ : déterminer d'abord la limite de l'\cle{exposant} $ax + b$, puis appliquer le théorème de composition des limites en posant $X = ax + b$.
+\item Signe décisif : si $a > 0$, alors $ax + b \to +\infty$ quand $x \to +\infty$ ; si $a < 0$, alors $ax + b \to -\infty$ quand $x \to +\infty$.
+\item Pour les formes indéterminées du type « polynôme $-$ exponentielle », utiliser les \cle{croissances comparées} :
+\[ \lim_{x \to +\infty} \dfrac{e^x}{x} = +\infty \qquad \text{et} \qquad \lim_{x \to -\infty} x\, e^x = 0. \]
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Limites avec exponentielle]
+Calculer les limites suivantes :
+\[ \text{a) } \lim_{x \to +\infty} e^{-3x+1} \qquad ; \qquad \text{b) } \lim_{x \to -\infty} \left( e^{2x} + x + 1 \right). \]
+\tcblower
+\textbf{a) Limite de $e^{-3x+1}$ en $+\infty$.}
+
+Posons $X = -3x + 1$. Comme le coefficient de $x$ est $-3 < 0$ :
+\[ \lim_{x \to +\infty} (-3x + 1) = -\infty. \]
+Or $\displaystyle\lim_{X \to -\infty} e^X = 0$. Par composition des limites :
+\[ \lim_{x \to +\infty} e^{-3x+1} = 0. \]
+
+\textbf{b) Limite de $e^{2x} + x + 1$ en $-\infty$.}
+
+D'une part, $\displaystyle\lim_{x \to -\infty} 2x = -\infty$, donc par composition $\displaystyle\lim_{x \to -\infty} e^{2x} = 0$.
+
+D'autre part, $\displaystyle\lim_{x \to -\infty} (x + 1) = -\infty$.
+
+Par somme de limites (il n'y a pas de forme indéterminée ici) :
+\[ \lim_{x \to -\infty} \left( e^{2x} + x + 1 \right) = 0 + (-\infty) = -\infty. \]
+
+\textbf{Conclusion.} $\displaystyle\lim_{x \to +\infty} e^{-3x+1} = 0$ (l'axe des abscisses est asymptote horizontale en $+\infty$ à la courbe de $x \mapsto e^{-3x+1}$) et $\displaystyle\lim_{x \to -\infty} \left(e^{2x} + x + 1\right) = -\infty$.
+\end{exoresolu}
+
+\courssub{Étudier une fonction du type $e^{ax+b}$ et tracer sa courbe}
+
+\begin{methode}[Étude complète de $f(x) = e^{ax+b}$]
+\begin{enumerate}
+\item \cle{Ensemble de définition} : $f$ est définie sur $\mathbb{R}$ tout entier.
+\item \cle{Limites aux bornes} : calculer les limites en $-\infty$ et en $+\infty$ (composition des limites) et en déduire les éventuelles asymptotes horizontales.
+\item \cle{Dérivée} : $f'(x) = a\, e^{ax+b}$. Comme $e^{ax+b} > 0$ pour tout réel $x$, le signe de $f'$ est celui de $a$.
+\item \cle{Sens de variation} : si $a > 0$, $f$ est strictement croissante sur $\mathbb{R}$ ; si $a < 0$, strictement décroissante. Dresser le tableau de variations complet (avec les limites).
+\item \cle{Points remarquables} : calculer $f(0) = e^b$, et éventuellement le point où l'exposant s'annule : $f\left(-\dfrac{b}{a}\right) = e^0 = 1$.
+\item \cle{Tracé} : placer les points, respecter les variations et les asymptotes. La courbe est toujours située \textbf{au-dessus} de l'axe des abscisses, car $f(x) > 0$ pour tout $x$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Étude complète d'une fonction exponentielle]
+On considère la fonction $f$ définie sur $\mathbb{R}$ par $f(x) = e^{2x-2}$ et on note $(\mathcal{C}_f)$ sa courbe représentative dans un repère orthonormé.
+\begin{enumerate}
+\item Calculer les limites de $f$ en $-\infty$ et en $+\infty$. Interpréter graphiquement.
+\item Étudier les variations de $f$ et dresser son tableau de variations.
+\item Déterminer une équation de la tangente $(T)$ à $(\mathcal{C}_f)$ au point d'abscisse $1$.
+\item Tracer $(\mathcal{C}_f)$ et $(T)$.
+\end{enumerate}
+\tcblower
+\textbf{1. Limites.}
+
+En $-\infty$ : $\displaystyle\lim_{x \to -\infty} (2x - 2) = -\infty$ et $\displaystyle\lim_{X \to -\infty} e^X = 0$, donc par composition :
+\[ \lim_{x \to -\infty} f(x) = 0. \]
+\textbf{Interprétation} : la droite d'équation $y = 0$ (l'axe des abscisses) est \textbf{asymptote horizontale} à $(\mathcal{C}_f)$ en $-\infty$.
+
+En $+\infty$ : $\displaystyle\lim_{x \to +\infty} (2x - 2) = +\infty$ et $\displaystyle\lim_{X \to +\infty} e^X = +\infty$, donc par composition :
+\[ \lim_{x \to +\infty} f(x) = +\infty. \]
+
+\textbf{2. Variations.} $f$ est dérivable sur $\mathbb{R}$ et $f'(x) = 2\, e^{2x-2}$.
+
+Pour tout réel $x$, $e^{2x-2} > 0$, donc $f'(x) = 2e^{2x-2} > 0$ : $f$ est \textbf{strictement croissante} sur $\mathbb{R}$.
+
+\begin{center}
+\begin{tabular}{|c|ccc|}
+\hline
+$x$ & $-\infty$ & & $+\infty$ \\
+\hline
+$f'(x)$ & & $+$ & \\
+\hline
+$f(x)$ & $0$ & $\nearrow$ & $+\infty$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{3. Tangente en $x = 1$.} On calcule :
+\[ f(1) = e^{2 \times 1 - 2} = e^0 = 1 \qquad \text{et} \qquad f'(1) = 2 e^{0} = 2. \]
+L'équation de la tangente au point d'abscisse $1$ est $y = f'(1)(x - 1) + f(1)$, soit :
+\[ y = 2(x - 1) + 1 = 2x - 1. \]
+
+\textbf{4. Tracé.} On place le point $A(1\,;\,1)$, la tangente $(T) : y = 2x - 1$, le point $\left(0\,;\, e^{-2}\right)$ avec $e^{-2} \approx 0,14$, et on respecte l'asymptote horizontale en $-\infty$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6cm,
+  axis lines=middle, xlabel=$x$, ylabel=$y$,
+  xmin=-1.5, xmax=2.5, ymin=-1, ymax=6,
+  grid=both, grid style={popline!40},
+  tick label style={font=\small}
+]
+\addplot[popcurve,domain=-1.5:2.05,samples=200]{exp(2*x-2)};
+\addplot[poporange,thick,domain=-0.2:2.4,samples=2]{2*x-1};
+\node[popblue] at (axis cs:-0.6,2.5) {$(\mathcal{C}_f)$};
+\node[poporange] at (axis cs:2.1,2.6) {$(T)$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x) = e^{2x-2}$ et sa tangente au point $A(1\,;\,1)$. L'axe des abscisses est asymptote en $-\infty$.}
+\end{popfigure}
+
+\textbf{Conclusion.} $f$ est strictement croissante sur $\mathbb{R}$, de $0$ (valeur limite, asymptote) vers $+\infty$, et sa tangente en $A(1\,;\,1)$ a pour équation $y = 2x - 1$.
+\end{exoresolu}
+
+\courssub{Exploiter l'équivalence $\ln x = y \iff x = e^y$}
+
+\begin{methode}[Passer du logarithme à l'exponentielle]
+\begin{enumerate}
+\item Avant tout calcul, vérifier les \cle{conditions d'existence} : $\ln x$ n'est défini que pour $x > 0$.
+\item Pour résoudre $\ln(u(x)) = k$ : écrire $u(x) = e^k$, résoudre, puis \textbf{vérifier} que la solution satisfait $u(x) > 0$.
+\item Pour comparer ou isoler : $x = e^{\ln x}$ pour tout $x > 0$, et $\ln(e^x) = x$ pour tout réel $x$.
+\item Pour résoudre $\ln(u(x)) < k$ : la fonction $\ln$ étant strictement croissante sur $]0\,;\,+\infty[$, on obtient $0 < u(x) < e^k$ (ne pas oublier la borne $0$, qui traduit la condition d'existence !).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Équation et inéquation logarithmiques]
+\begin{enumerate}
+\item Résoudre dans $\mathbb{R}$ : $\ln(2x + 1) = 3$.
+\item Résoudre dans $\mathbb{R}$ : $\ln(2x + 1) < 3$.
+\end{enumerate}
+\tcblower
+\textbf{Condition d'existence commune.} $\ln(2x+1)$ est défini si et seulement si $2x + 1 > 0$, c'est-à-dire $x > -\dfrac{1}{2}$. On travaille donc sur l'intervalle $\left]-\dfrac{1}{2}\,;\, +\infty\right[$.
+
+\textbf{1. Résolution de l'équation.} Par l'équivalence fondamentale $\ln X = y \iff X = e^y$ (avec $X > 0$) :
+\[ \ln(2x + 1) = 3 \iff 2x + 1 = e^3 \iff x = \dfrac{e^3 - 1}{2}. \]
+Vérification : $\dfrac{e^3 - 1}{2} \approx \dfrac{20,09 - 1}{2} \approx 9,54 > -\dfrac{1}{2}$, la solution est bien dans le domaine.
+
+\textbf{Conclusion} : $\mathcal{S} = \left\{ \dfrac{e^3 - 1}{2} \right\}$.
+
+\textbf{2. Résolution de l'inéquation.} La fonction $\ln$ est strictement croissante sur $]0\,;\,+\infty[$, donc elle conserve l'ordre :
+\[ \ln(2x+1) < 3 \iff 0 < 2x + 1 < e^3 \iff -\dfrac{1}{2} < x < \dfrac{e^3 - 1}{2}. \]
+(La borne de gauche $2x+1 > 0$ est exactement la condition d'existence : elle doit toujours apparaître.)
+
+\textbf{Conclusion} : $\mathcal{S} = \left] -\dfrac{1}{2} \,;\, \dfrac{e^3 - 1}{2} \right[$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Bac]
+\begin{enumerate}
+\item \textbf{Écrire $e^x = k$ avec $k \leq 0$ et conclure $x = \ln k$.} C'est faux : $e^x$ est toujours strictement positif. Si $k \leq 0$, l'équation n'a \textbf{aucune solution} ; $\ln k$ n'existe tout simplement pas.
+\item \textbf{Oublier de rejeter les racines négatives après le changement de variable $X = e^x$.} Dans une équation du type $e^{2x} + b\,e^x + c = 0$, toute racine $X \leq 0$ de l'équation du second degré doit être écartée, avec la justification écrite « car $X = e^x > 0$ ».
+\item \textbf{Dériver $e^{ax+b}$ en oubliant le coefficient $a$.} La dérivée de $e^{-2x+3}$ est $-2e^{-2x+3}$, pas $e^{-2x+3}$. De même, une primitive de $e^{3x}$ est $\dfrac{1}{3}e^{3x}$, pas $3e^{3x}$. Réflexe : toujours redériver pour vérifier.
+\item \textbf{Inverser le sens d'une inégalité en passant au logarithme ou à l'exponentielle.} Les fonctions $\ln$ et $\exp$ sont strictement \textbf{croissantes} : elles \emph{conservent} le sens des inégalités. Ne jamais changer le sens comme on le ferait en multipliant par un nombre négatif.
+\item \textbf{Négliger les conditions d'existence dans les équations avec $\ln$.} Avant de résoudre $\ln(2x+1) = 3$, il faut imposer $2x + 1 > 0$ et vérifier à la fin que la solution trouvée appartient au domaine. Une solution hors domaine doit être rejetée explicitement dans la rédaction.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Fonction exponentielle}
+
+\courssub{Définition et premières propriétés}
+
+\begin{definition}[Fonction exponentielle]
+On appelle \textbf{fonction exponentielle} (ou exponentielle de base $e$), la fonction notée $\exp$ ou $x \mapsto \mathrm{e}^{x}$, définie sur $\mathbb{R}$ par :
+\[
+\forall x \in \mathbb{R},\quad \exp(x) = \mathrm{e}^{x} = \sum_{n=0}^{+\infty} \frac{x^{n}}{n!}.
+\]
+Le nombre $\mathrm{e}$ (constante d'Euler) est la valeur de cette fonction en $1$ : $\mathrm{e} = \exp(1) \approx 2,718\,28$.
+\end{definition}
+
+\begin{propriete}[Propriétés fondamentales de $\exp$]
+\begin{enumerate}
+\item \textbf{Domaine de définition :} $D_{\exp} = \mathbb{R}$.
+\item \textbf{Ensemble image :} $\exp(\mathbb{R}) = ]0\,;+\infty[$.
+\item \textbf{Variations :} $\exp$ est \textbf{strictement croissante} sur $\mathbb{R}$.
+\item \textbf{Limites :} $\displaystyle\lim_{x\to -\infty}\mathrm{e}^{x}=0$ et $\displaystyle\lim_{x\to +\infty}\mathrm{e}^{x}=+\infty$.
+\item \textbf{Dérivée :} $\exp$ est dérivable sur $\mathbb{R}$ et $\exp' = \exp$, c'est-à-dire $\dfrac{\mathrm{d}}{\mathrm{d}x}(\mathrm{e}^{x}) = \mathrm{e}^{x}$.
+\item \textbf{Primitive :} Une primitive de $\exp$ sur $\mathbb{R}$ est $\exp$ elle-même : $\displaystyle\int \mathrm{e}^{x}\,\mathrm{d}x = \mathrm{e}^{x} + C$.
+\item \textbf{Fonction réciproque :} La fonction réciproque de $\exp$ est le \textbf{logarithme népérien} $\ln$, définie sur $]0\,;+\infty[$.
+\end{enumerate}
+\end{propriete}
+
+\begin{experience}[Découverte de la dérivée de $\exp$]
+On souhaite conjecturer la dérivée de $f(x)=\mathrm{e}^{x}$.
+\begin{enumerate}
+\item Tracer la courbe $\mathcal{C}_f$ de $f(x)=\mathrm{e}^{x}$ dans un repère (unité $2\,\text{cm}$).
+\item En $x=0$, la tangente passe par $(0,1)$. Estimer sa pente graphiquement.
+\item En $x=1$, la tangente passe par $(1,\mathrm{e})$. Estimer sa pente.
+\item En $x=-1$, la tangente passe par $(-1,1/\mathrm{e})$. Estimer sa pente.
+\item Conjecturer l'expression de $f'(x)$. Vérifier par le calcul du taux d'accroissement $\frac{\mathrm{e}^{x+h}-\mathrm{e}^{x}}{h} = \mathrm{e}^{x}\frac{\mathrm{e}^{h}-1}{h}$ et la limite remarquable $\lim_{h\to 0}\frac{\mathrm{e}^{h}-1}{h}=1$.
+\end{enumerate}
+\end{experience}
+
+\begin{aretenir}[À retenir --- Définition et base]
+\begin{itemize}
+\item $\mathrm{e}^{x} > 0$ pour tout réel $x$ (jamais nul, jamais négatif).
+\item $\mathrm{e}^{0} = 1$.
+\item $\exp$ est la seule fonction dérivable sur $\mathbb{R}$ telle que $f'=f$ et $f(0)=1$.
+\item L'équivalence fondamentale : $\forall x>0,\ \forall y\in\mathbb{R},\quad \ln x = y \iff x = \mathrm{e}^{y}$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Propriétés algébriques de l'exponentielle}
+
+\begin{propriete}[Lois des puissances pour $\mathrm{e}^{x}$]
+Pour tous réels $a$, $b$ et $x$ :
+\begin{align*}
+\mathrm{e}^{a+b} &= \mathrm{e}^{a} \times \mathrm{e}^{b} & \mathrm{e}^{a-b} &= \frac{\mathrm{e}^{a}}{\mathrm{e}^{b}} \\
+\mathrm{e}^{-a} &= \frac{1}{\mathrm{e}^{a}} & (\mathrm{e}^{a})^{b} &= \mathrm{e}^{ab} \\
+\ln(\mathrm{e}^{x}) &= x \quad (\forall x\in\mathbb{R}) & \mathrm{e}^{\ln x} &= x \quad (\forall x>0)
+\end{align*}
+\end{propriete}
+
+\begin{exemplebox}[Calculs simples]
+Simplifier les expressions suivantes :
+\begin{enumerate}
+\item $\mathrm{e}^{3}\times \mathrm{e}^{5} = \mathrm{e}^{8}$.
+\item $\dfrac{\mathrm{e}^{7}}{\mathrm{e}^{2}} = \mathrm{e}^{5}$.
+\item $(\mathrm{e}^{x})^{4} = \mathrm{e}^{4x}$.
+\item $\mathrm{e}^{-x} = \dfrac{1}{\mathrm{e}^{x}}$.
+\item $\mathrm{e}^{0} = 1$.
+\item $\ln(\mathrm{e}^{x}) = x$ (pour tout réel $x$).
+\end{enumerate}
+\end{exemplebox}
+
+\begin{attention}[Pièges classiques --- Ne pas confondre !]
+\begin{itemize}
+\item $\mathrm{e}^{a+b} = \mathrm{e}^{a}\mathrm{e}^{b}$ \quad mais \quad $\mathrm{e}^{a}+\mathrm{e}^{b} \neq \mathrm{e}^{a+b}$.
+\item $\mathrm{e}^{ab} = (\mathrm{e}^{a})^{b}$ \quad mais \quad $\mathrm{e}^{a^{b}} \neq (\mathrm{e}^{a})^{b}$ (ex: $\mathrm{e}^{2^{3}}=\mathrm{e}^{8}$ alors que $(\mathrm{e}^{2})^{3}=\mathrm{e}^{6}$).
+\item $\ln(x+y) \neq \ln x + \ln y$ ; en revanche $\ln(xy) = \ln x + \ln y$ (pour $x,y>0$).
+\item L'équivalence $\ln x = y \iff x = \mathrm{e}^{y}$ n'est valable que pour \textbf{$x>0$} (et $y\in\mathbb{R}$).
+\end{itemize}
+\end{attention}
+
+\courssub{Équations, inéquations et systèmes d'inconnue $\mathrm{e}^{x}$}
+
+\begin{methode}[Résolution d'une équation $\mathrm{e}^{u(x)} = k$]
+\begin{enumerate}
+\item Si $k \leq 0$ : \textbf{aucune solution} (car $\mathrm{e}^{u(x)} > 0$).
+\item Si $k > 0$ : l'équation est équivalente à $u(x) = \ln k$.
+\item Résoudre l'équation obtenue en $x$.
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Résolution d'une inéquation $\mathrm{e}^{u(x)} \lesseqqgtr k$]
+\begin{enumerate}
+\item Si $k \leq 0$ :
+   \begin{itemize}
+   \item $\mathrm{e}^{u(x)} > k$ ou $\geq k$ : \textbf{toujours vraie} (solution $\mathbb{R}$).
+   \item $\mathrm{e}^{u(x)} < k$ ou $\leq k$ : \textbf{aucune solution}.
+   \end{itemize}
+\item Si $k > 0$ : comme $\exp$ est strictement croissante, l'inéquation est équivalente à $u(x) \lesseqqgtr \ln k$.
+\item Résoudre l'inéquation obtenue en $x$.
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Équations/Inéquations quadratiques en $\mathrm{e}^{x}$]
+Poser $X = \mathrm{e}^{x}$ (donc $X > 0$).
+\begin{enumerate}
+\item Réécrire l'équation/inéquation en $X$.
+\item Résoudre en $X$ (équation du 2nd degré, signe de trinôme...).
+\item Ne conserver que les solutions $X > 0$.
+\item Revenir à $x$ par $x = \ln X$.
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Système d'inconnues $\mathrm{e}^{x}$ et $\mathrm{e}^{y}$]
+Poser $X = \mathrm{e}^{x} > 0$, $Y = \mathrm{e}^{y} > 0$.
+\begin{enumerate}
+\item Obtenir un système linéaire (ou simple) en $X, Y$.
+\item Résoudre le système $(X,Y)$.
+\item Vérifier $X>0, Y>0$.
+\item En déduire $x = \ln X$, $y = \ln Y$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Équation du type $\mathrm{e}^{2x} + a\mathrm{e}^{x} + b = 0$]
+Résoudre $\mathrm{e}^{2x} - 5\mathrm{e}^{x} + 6 = 0$.
+Posons $X = \mathrm{e}^{x} > 0$. L'équation devient $X^{2} - 5X + 6 = 0 \iff (X-2)(X-3)=0$.
+Solutions : $X=2$ ou $X=3$ (toutes deux $>0$).
+Donc $x = \ln 2$ ou $x = \ln 3$.
+\end{exemplebox}
+
+\begin{exemplebox}[Système symétrique]
+Résoudre $\begin{cases} \mathrm{e}^{x}\mathrm{e}^{y} = \mathrm{e}^{5} \\ \mathrm{e}^{x}/\mathrm{e}^{y} = \mathrm{e}^{3} \end{cases}$.
+Posons $X=\mathrm{e}^{x}, Y=\mathrm{e}^{y}$. Système : $\begin{cases} XY = \mathrm{e}^{5} \\ X/Y = \mathrm{e}^{3} \end{cases} \iff \begin{cases} X = Y\mathrm{e}^{3} \\ Y^{2}\mathrm{e}^{3} = \mathrm{e}^{5} \end{cases} \iff Y^{2} = \mathrm{e}^{2} \iff Y = \mathrm{e}$ (car $Y>0$).
+Alors $X = \mathrm{e}^{4}$. Donc $x = \ln(\mathrm{e}^{4}) = 4$, $y = \ln(\mathrm{e}) = 1$.
+Solution : $(4\,;\,1)$.
+\end{exemplebox}
+
+\courssub{Limites de la fonction exponentielle}
+
+\begin{propriete}[Limites de $\mathrm{e}^{ax+b}$]
+Soient $a,b \in \mathbb{R}$, $a \neq 0$.
+\begin{itemize}
+\item Si $a > 0$ : $\lim\limits_{x\to -\infty}\mathrm{e}^{ax+b} = 0$ et $\lim\limits_{x\to +\infty}\mathrm{e}^{ax+b} = +\infty$.
+\item Si $a < 0$ : $\lim\limits_{x\to -\infty}\mathrm{e}^{ax+b} = +\infty$ et $\lim\limits_{x\to +\infty}\mathrm{e}^{ax+b} = 0$.
+\end{itemize}
+L'axe $y=0$ est une \textbf{asymptote horizontale} (en $-\infty$ si $a>0$, en $+\infty$ si $a<0$).
+\end{propriete}
+
+\begin{propriete}[Croissance comparée --- Exigible au Bac]
+Pour tout entier $n \in \mathbb{N}$ :
+\[
+\lim_{x\to +\infty} \frac{x^{n}}{\mathrm{e}^{x}} = 0 \quad \text{et} \quad \lim_{x\to +\infty} \frac{\mathrm{e}^{x}}{x^{n}} = +\infty.
+\]
+L'exponentielle « gagne » contre toute puissance de $x$ en $+\infty$.
+En $-\infty$, poser $X=-x$ : $\lim\limits_{x\to -\infty} x^{n}\mathrm{e}^{x} = \lim\limits_{X\to +\infty} \frac{(-1)^{n}X^{n}}{\mathrm{e}^{X}} = 0$.
+\end{propriete}
+
+\begin{exemplebox}[Limites de formes indéterminées]
+Calculer $\lim\limits_{x\to +\infty} \dfrac{\mathrm{e}^{x}-1}{\mathrm{e}^{x}+1}$ et $\lim\limits_{x\to -\infty} \dfrac{\mathrm{e}^{x}-1}{\mathrm{e}^{x}+1}$.
+Factorisons par $\mathrm{e}^{x}$ (terme dominant) :
+\[
+\frac{\mathrm{e}^{x}-1}{\mathrm{e}^{x}+1} = \frac{\mathrm{e}^{x}(1-\mathrm{e}^{-x})}{\mathrm{e}^{x}(1+\mathrm{e}^{-x})} = \frac{1-\mathrm{e}^{-x}}{1+\mathrm{e}^{-x}}.
+\]
+En $+\infty$ : $\mathrm{e}^{-x}\to 0$, donc limite $= \frac{1-0}{1+0} = 1$.
+En $-\infty$ : $\mathrm{e}^{-x}\to +\infty$, on factorise par $\mathrm{e}^{-x}$ : $\frac{\mathrm{e}^{-x}(-1+\mathrm{e}^{x})}{\mathrm{e}^{-x}(1+\mathrm{e}^{x})} \to \frac{-1}{1} = -1$.
+\end{exemplebox}
+
+\courssub{Dérivation et primitivation}
+
+\begin{propriete}[Dérivée et primitives de $\mathrm{e}^{u(x)}$]
+Soit $u$ une fonction dérivable sur un intervalle $I$.
+\begin{enumerate}
+\item \textbf{Dérivée :} $\dfrac{\mathrm{d}}{\mathrm{d}x}\bigl(\mathrm{e}^{u(x)}\bigr) = u'(x)\,\mathrm{e}^{u(x)}$.
+\item \textbf{Primitive :} Si $u'(x) = a$ (constant non nul), une primitive de $\mathrm{e}^{ax+b}$ sur $\mathbb{R}$ est $\dfrac{1}{a}\mathrm{e}^{ax+b}$.
+\end{enumerate}
+\end{propriete}
+
+\begin{methode}[Calcul de dérivées et primitives]
+\begin{enumerate}
+\item \textbf{Dérivée :} Identifier $u(x)$, calculer $u'(x)$, écrire $u'(x)\mathrm{e}^{u(x)}$.
+\item \textbf{Primitive de $\mathrm{e}^{ax+b}$ :} Vérifier $a \neq 0$, écrire $\frac{1}{a}\mathrm{e}^{ax+b} + C$.
+\item \textbf{Produit/Quotient :} Utiliser les règles usuelles $(uv)' = u'v+uv'$, $\left(\frac{u}{v}\right)' = \frac{u'v-uv'}{v^{2}}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Dérivées et primitives]
+\begin{enumerate}
+\item $f(x) = \mathrm{e}^{4x-3} \implies f'(x) = 4\mathrm{e}^{4x-3}$. Primitive : $F(x) = \frac{1}{4}\mathrm{e}^{4x-3}$.
+\item $g(x) = x\mathrm{e}^{x} \implies g'(x) = 1\cdot\mathrm{e}^{x} + x\mathrm{e}^{x} = (x+1)\mathrm{e}^{x}$.
+\item $h(x) = \mathrm{e}^{-x+2} \implies h'(x) = -1\cdot\mathrm{e}^{-x+2} = -\mathrm{e}^{-x+2}$. Primitive : $H(x) = -\mathrm{e}^{-x+2}$.
+\item $k(x) = \mathrm{e}^{2x+1} \implies$ Primitive $K(x) = \frac{1}{2}\mathrm{e}^{2x+1}$.
+\end{enumerate}
+\end{exemplebox}
+
+\courssub{Étude complète et représentation graphique}
+
+\begin{methode}[Étude complète de $f(x) = \mathrm{e}^{ax+b}$ ($a\neq 0$)]
+\begin{enumerate}
+\item \textbf{Domaine :} $\mathbb{R}$.
+\item \textbf{Limites :} Calculer aux bornes ($-\infty$ et $+\infty$). Déduire les asymptotes horizontales.
+\item \textbf{Dérivée :} $f'(x) = a\mathrm{e}^{ax+b}$. Étudier le signe (signe de $a$ car $\mathrm{e}^{ax+b}>0$).
+\item \textbf{Tableau de variations :} Croissante si $a>0$, décroissante si $a<0$.
+\item \textbf{Tangente (si demandée) :} En $x_0$, équation $y = f'(x_0)(x-x_0) + f(x_0)$.
+\item \textbf{Tableau de valeurs :} Choisir des abscisses pertinentes (ex: $0$, abscisse de la tangente, valeurs donnant des images simples comme $1, \mathrm{e}, \mathrm{e}^{2}$).
+\item \textbf{Tracé :} Repère orthogonal, unité adaptée, courbe lisse, asymptote en pointillés.
+\end{enumerate}
+\end{methode}
+
+\begin{savaistu}[Le nombre $\mathrm{e}$ et le Cameroun]
+Le nombre $\mathrm{e}$ apparaît naturellement dans la modélisation de la croissance continue : démographie (population du Cameroun $\approx 28$ millions en 2023, taux de croissance $\approx 2,6\%$), finance (intérêts composés continus chez les banques comme Afriland First Bank ou UBA), physique (décharge d'un condensateur, radioactivité), informatique (complexité algorithmique). La formule $P(t) = P_0 \mathrm{e}^{kt}$ modélise une quantité dont le taux de variation instantané est proportionnel à la quantité elle-même.
+\end{savaistu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, domain=-2.5:1.5]
+\draw[->, thick] (-3,0) -- (2,0) node[right] {$x$};
+\draw[->, thick] (0,-0.5) -- (0,5) node[above] {$y$};
+\foreach \x in {-2,-1,1} \draw (\x,2pt) -- (\x,-2pt) node[below] {\small $\x$};
+\foreach \y in {1,2,3,4} \draw (2pt,\y) -- (-2pt,\y) node[left] {\small $\y$};
+\draw[popcurve, thick, domain=-2.5:1.4] plot (\x, {exp(\x)});
+\node[popdark, right] at (1.4, 4.05) {$y=\mathrm{e}^{x}$};
+\draw[poporange, dashed] (-2.5,1) -- (1.5,1) node[right] {$y=1$};
+\draw[poporange, dashed] (0,-0.5) -- (0,5);
+\draw[popgreen, dashed] (-2.5,0) -- (1.5,0) node[right] {$y=0$ (asymptote)};
+\fill[popink] (0,1) circle (2pt) node[above left] {$(0,1)$};
+\end{tikzpicture}
+\legende{Courbe représentative de $y=\mathrm{e}^{x}$ : asymptote $y=0$ en $-\infty$, passage par $(0,1)$, croissance rapide.}
+\end{popfigure}
+
+% ============================================================
+% EXERCICES
+% ============================================================
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM]
+Pour chaque question, une seule réponse est exacte. Recopie la bonne réponse sur ta copie.
+\begin{enumerate}
+\item Pour tout réel $x$, $\mathrm{e}^{2x}\times \mathrm{e}^{-x}$ est égal à :
+\begin{enumerate}
+\item[$\square$] $\mathrm{e}^{x}$ \qquad $\square$ $\mathrm{e}^{-2x^{2}}$ \qquad $\square$ $\mathrm{e}^{-x}$
+\end{enumerate}
+\item L'équation $\mathrm{e}^{x}=1$ admet pour solution :
+\begin{enumerate}
+\item[$\square$] $x=1$ \qquad $\square$ $x=0$ \qquad $\square$ $x=\mathrm{e}$
+\end{enumerate}
+\item La dérivée de la fonction $f(x)=\mathrm{e}^{3x-2}$ est :
+\begin{enumerate}
+\item[$\square$] $f'(x)=\mathrm{e}^{3x-2}$ \qquad $\square$ $f'(x)=3\mathrm{e}^{3x-2}$ \qquad $\square$ $f'(x)=(3x-2)\mathrm{e}^{3x-2}$
+\end{enumerate}
+\item $\displaystyle\lim_{x\to -\infty}\mathrm{e}^{x}$ est égale à :
+\begin{enumerate}
+\item[$\square$] $+\infty$ \qquad $\square$ $1$ \qquad $\square$ $0$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux]
+Réponds par \textbf{Vrai} ou \textbf{Faux} en justifiant chaque réponse.
+\begin{enumerate}
+\item Pour tous réels $a$ et $b$, $\mathrm{e}^{a+b}=\mathrm{e}^{a}\times \mathrm{e}^{b}$.
+\item Il existe un réel $x$ tel que $\mathrm{e}^{x}=-3$.
+\item L'équivalence $\ln x = y \iff x = \mathrm{e}^{y}$ est valable pour tout réel $x$.
+\item Une primitive de $g(x)=\mathrm{e}^{-2x+1}$ est $G(x)=-\dfrac{1}{2}\mathrm{e}^{-2x+1}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Complète les égalités]
+Recopie et complète chaque égalité en utilisant les propriétés algébriques de l'exponentielle.
+\begin{enumerate}
+\item $\mathrm{e}^{3}\times \mathrm{e}^{5}=\mathrm{e}^{\ldots}$ ;
+\item $\dfrac{\mathrm{e}^{7}}{\mathrm{e}^{2}}=\mathrm{e}^{\ldots}$ ;
+\item $\left(\mathrm{e}^{x}\right)^{4}=\mathrm{e}^{\ldots}$ ;
+\item $\mathrm{e}^{-x}=\dfrac{1}{\ldots}$ ;
+\item $\mathrm{e}^{0}=\ldots$ ;
+\item $\ln\left(\mathrm{e}^{x}\right)=\ldots$ pour tout réel $x$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+\begin{enumerate}
+\item Résoudre dans $\mathbb{R}$ les équations suivantes :
+\begin{enumerate}
+\item $\mathrm{e}^{x}=\mathrm{e}^{5}$ ;
+\item $\mathrm{e}^{x}=7$ ;
+\item $\mathrm{e}^{2x-1}=1$.
+\end{enumerate}
+\item Calculer la dérivée de chacune des fonctions suivantes :
+\begin{enumerate}
+\item $f(x)=\mathrm{e}^{4x-3}$ ;
+\item $g(x)=x\,\mathrm{e}^{x}$ ;
+\item $h(x)=\mathrm{e}^{-x+2}$.
+\end{enumerate}
+\item Déterminer une primitive de $k(x)=\mathrm{e}^{2x+1}$ sur $\mathbb{R}$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Équations avec changement de variable]
+Résoudre dans $\mathbb{R}$ les équations suivantes (on pourra poser $X=\mathrm{e}^{x}$) :
+\begin{enumerate}
+\item $\mathrm{e}^{2x}-5\mathrm{e}^{x}+6=0$ ;
+\item $\mathrm{e}^{2x+1}=3\mathrm{e}^{x}$ ;
+\item $\mathrm{e}^{2x}+\mathrm{e}^{x}-2=0$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Inéquations exponentielles]
+Résoudre dans $\mathbb{R}$ les inéquations suivantes :
+\begin{enumerate}
+\item $\mathrm{e}^{3x-1}>\mathrm{e}^{x+5}$ ;
+\item $\mathrm{e}^{2x}-2\mathrm{e}^{x}-3\leq 0$ (on pourra poser $X=\mathrm{e}^{x}$) ;
+\item $\mathrm{e}^{-x+4}\geq 1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Système d'inconnues $\mathrm{e}^{x}$ et $\mathrm{e}^{y}$]
+On considère le système d'inconnues $(x\,;y)\in\mathbb{R}^{2}$ :
+\[
+\begin{cases}
+\mathrm{e}^{x}\times \mathrm{e}^{y}=\mathrm{e}^{5}\\
+\dfrac{\mathrm{e}^{x}}{\mathrm{e}^{y}}=\mathrm{e}^{3}
+\end{cases}
+\]
+\begin{enumerate}
+\item En posant $X=\mathrm{e}^{x}$ et $Y=\mathrm{e}^{y}$, écrire un système vérifié par $X$ et $Y$.
+\item Résoudre ce système, puis en déduire le couple solution $(x\,;y)$.
+\item Vérifier la solution obtenue.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Limites, dérivée et primitive]
+\begin{enumerate}
+\item Calculer les limites de $f(x)=\mathrm{e}^{-3x+2}$ en $+\infty$ et en $-\infty$.
+\item Calculer les limites de $g(x)=\dfrac{\mathrm{e}^{x}-1}{\mathrm{e}^{x}+1}$ en $+\infty$ et en $-\infty$ (on pourra factoriser par $\mathrm{e}^{x}$).
+\item Déterminer la dérivée et une primitive de $h(x)=\mathrm{e}^{4x-3}$.
+\item En déduire la valeur exacte de l'intégrale $\displaystyle I=\int_{0}^{1}\mathrm{e}^{4x-3}\,\mathrm{d}x$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Étude complète d'une fonction exponentielle]
+On considère la fonction $f$ définie sur $\mathbb{R}$ par $f(x)=\mathrm{e}^{2x-4}$ et on note $(\mathcal{C}_{f})$ sa courbe représentative dans un repère orthogonal $(O\,;\vec{\imath},\vec{\jmath})$ (unités : $\SI{2}{cm}$ sur l'axe des abscisses, $\SI{1}{cm}$ sur l'axe des ordonnées).
+\begin{enumerate}
+\item Calculer les limites de $f$ en $-\infty$ et en $+\infty$. Interpréter graphiquement la limite en $-\infty$.
+\item Calculer $f'(x)$ et étudier son signe sur $\mathbb{R}$.
+\item Dresser le tableau de variations complet de $f$.
+\item Déterminer une équation de la tangente $(T)$ à $(\mathcal{C}_{f})$ au point d'abscisse $x=2$.
+\item Résoudre dans $\mathbb{R}$ l'équation $f(x)=\mathrm{e}^{2}$.
+\item Compléter le tableau de valeurs suivant (arrondir à $10^{-1}$ près) puis tracer $(\mathcal{C}_{f})$ et $(T)$ :
+\begin{center}
+\begin{tabular}{|c|*{5}{>{\centering\arraybackslash}p{1.6cm}|}}
+\hline
+$x$ & $0$ & $1$ & $2$ & $2{,}5$ & $3$ \\
+\hline
+$f(x)$ & & & & & \\
+\hline
+\end{tabular}
+\end{center}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Croissance d'une population de bactéries]
+Dans un laboratoire de l'Université de Yaoundé I, on étudie une culture de bactéries. Le nombre de bactéries, en milliers, après $t$ heures d'observation, est modélisé par :
+\[
+N(t)=1000\,\mathrm{e}^{0{,}3t}, \qquad t\geq 0.
+\]
+On donne : $\ln 10 \approx 2{,}30$ ; $\mathrm{e}^{0{,}3}\approx 1{,}35$ ; $\mathrm{e}^{3}\approx 20{,}1$.
+\begin{enumerate}
+\item Quel est le nombre de bactéries au début de l'observation ($t=0$) ?
+\item Calculer $N'(t)$ et en déduire le sens de variation de $N$ sur $[0\,;+\infty[$. Interpréter ce résultat dans le contexte de l'expérience.
+\item Calculer $\displaystyle\lim_{t\to +\infty}N(t)$. Que peut-on en conclure sur l'évolution de la population ?
+\item Déterminer, par le calcul, l'instant $t_{0}$ à partir duquel la population dépasse $\num{10000}$ milliers de bactéries (soit 10 millions). Donner une valeur approchée de $t_{0}$ à $0{,}1$ heure près.
+\item Un technicien affirme : « La population double toutes les $2{,}3$ heures environ. » Vérifier cette affirmation en résolvant l'équation $N(t+\tau)=2N(t)$ d'inconnue $\tau$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Une inégalité fondamentale : $\mathrm{e}^{x}\geq x+1$]
+Le but de cet exercice est de démontrer que pour tout réel $x$, $\mathrm{e}^{x}\geq x+1$, inégalité très utilisée dans les problèmes de majoration. On considère la fonction $h$ définie sur $\mathbb{R}$ par :
+\[
+h(x)=\mathrm{e}^{x}-x-1.
+\]
+\begin{enumerate}
+\item Calculer $h'(x)$ pour tout réel $x$.
+\item Étudier le signe de $h'(x)$ sur $\mathbb{R}$ (on pourra résoudre l'inéquation $\mathrm{e}^{x}>1$).
+\item Dresser le tableau de variations complet de $h$ (avec les limites en $-\infty$ et en $+\infty$).
+\item En déduire que $h$ admet un minimum sur $\mathbb{R}$, atteint en une valeur de $x$ que l'on précisera, et calculer ce minimum.
+\item Conclure que pour tout réel $x$, $\mathrm{e}^{x}\geq x+1$. Dans quel cas y a-t-il égalité ?
+\item \textbf{Application.} Un commerçant de Douala place un capital $C$ à intérêts composés. Son banquier lui affirme que $(1+t)^{n}\leq \mathrm{e}^{nt}$ pour tout $t>0$ et tout entier $n\geq 1$. En utilisant le résultat de la question 5 avec $x=nt$, justifier cette inégalité.
+\end{enumerate}
+\end{exercice}
+
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Exercices corrigés et problèmes types Bac}
+
+\begin{corrige}[Exercice 1 --- QCM]
+\begin{enumerate}
+\item $\mathrm{e}^{2x}\times \mathrm{e}^{-x} = \mathrm{e}^{2x+(-x)} = \mathrm{e}^{x}$ (propriété $\mathrm{e}^{a}\mathrm{e}^{b}=\mathrm{e}^{a+b}$).
+\textbf{Bonne réponse : $\mathrm{e}^{x}$.}
+\item $\mathrm{e}^{x}=1=\mathrm{e}^{0}$. Comme $\exp$ est strictement croissante (donc injective), $x=0$. Autre rédaction : $x=\ln 1 = 0$.
+\textbf{Bonne réponse : $x=0$.}
+\item $f(x)=\mathrm{e}^{u(x)}$ avec $u(x)=3x-2$, donc $u'(x)=3$ et $f'(x)=u'(x)\mathrm{e}^{u(x)}=3\mathrm{e}^{3x-2}$.
+\textbf{Bonne réponse : $f'(x)=3\mathrm{e}^{3x-2}$.}
+\item D'après le cours, $\displaystyle\lim_{x\to -\infty}\mathrm{e}^{x}=0$ (l'axe des abscisses est asymptote horizontale en $-\infty$).
+\textbf{Bonne réponse : $0$.}
+\end{enumerate}
+\textbf{Point de vigilance :} à la question 3, ne pas oublier de multiplier par la dérivée de l'exposant : la dérivée de $\mathrm{e}^{u}$ n'est \emph{pas} $\mathrm{e}^{u}$ mais $u'\mathrm{e}^{u}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 --- Vrai ou faux]
+\begin{enumerate}
+\item \textbf{Vrai.} C'est la relation fonctionnelle fondamentale de l'exponentielle : pour tous réels $a$ et $b$, $\mathrm{e}^{a+b}=\mathrm{e}^{a}\times \mathrm{e}^{b}$.
+\item \textbf{Faux.} Pour tout réel $x$, $\mathrm{e}^{x}>0$ : l'ensemble image de $\exp$ est $]0\,;+\infty[$. Comme $-3\notin\,]0\,;+\infty[$, l'équation $\mathrm{e}^{x}=-3$ n'a aucune solution.
+\item \textbf{Faux.} L'équivalence $\ln x = y \iff x=\mathrm{e}^{y}$ n'est valable que pour $x>0$ (car $\ln$ n'est définie que sur $]0\,;+\infty[$) et $y\in\mathbb{R}$. Par exemple, écrire $\ln(-2)=y$ n'a aucun sens.
+\item \textbf{Vrai.} Vérifions en dérivant : $G'(x)=-\dfrac{1}{2}\times(-2)\mathrm{e}^{-2x+1}=\mathrm{e}^{-2x+1}=g(x)$. Donc $G$ est bien une primitive de $g$ sur $\mathbb{R}$.
+\end{enumerate}
+\textbf{Point de vigilance :} pour justifier qu'une fonction $G$ est une primitive de $g$, la seule méthode attendue est de \cle{dériver} $G$ et de vérifier que $G'=g$.
+\end{corrige}
+
+\begin{corrige}[Exercice 3 --- Complète les égalités]
+\begin{enumerate}
+\item $\mathrm{e}^{3}\times\mathrm{e}^{5}=\mathrm{e}^{3+5}=\mathrm{e}^{8}$ ;
+\item $\dfrac{\mathrm{e}^{7}}{\mathrm{e}^{2}}=\mathrm{e}^{7-2}=\mathrm{e}^{5}$ ;
+\item $\left(\mathrm{e}^{x}\right)^{4}=\mathrm{e}^{4x}$ ;
+\item $\mathrm{e}^{-x}=\dfrac{1}{\mathrm{e}^{x}}$ ;
+\item $\mathrm{e}^{0}=1$ ;
+\item $\ln\left(\mathrm{e}^{x}\right)=x$ pour tout réel $x$ (car $\ln$ et $\exp$ sont réciproques l'une de l'autre).
+\end{enumerate}
+\textbf{Point de vigilance :} à la question 3, on \emph{multiplie} les exposants : $(\mathrm{e}^{x})^{4}=\mathrm{e}^{4x}$, et non $\mathrm{e}^{x^{4}}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 4 --- Calculs directs]
+\begin{enumerate}
+\item Résolution des équations :
+\begin{enumerate}
+\item $\mathrm{e}^{x}=\mathrm{e}^{5}\iff x=5$ (injectivité de $\exp$). \quad $S=\{5\}$.
+\item $\mathrm{e}^{x}=7$ avec $7>0$, donc $x=\ln 7$. \quad $S=\{\ln 7\}$.
+\item $\mathrm{e}^{2x-1}=1=\mathrm{e}^{0}\iff 2x-1=0\iff x=\dfrac{1}{2}$. \quad $S=\left\{\dfrac{1}{2}\right\}$.
+\end{enumerate}
+\item Calcul des dérivées :
+\begin{enumerate}
+\item $f(x)=\mathrm{e}^{4x-3}$ : $u(x)=4x-3$, $u'(x)=4$, donc $f'(x)=4\mathrm{e}^{4x-3}$.
+\item $g(x)=x\,\mathrm{e}^{x}$ : produit avec $u=x$, $v=\mathrm{e}^{x}$. $g'(x)=u'v+uv'=1\times\mathrm{e}^{x}+x\mathrm{e}^{x}=(x+1)\mathrm{e}^{x}$.
+\item $h(x)=\mathrm{e}^{-x+2}$ : $u(x)=-x+2$, $u'(x)=-1$, donc $h'(x)=-\mathrm{e}^{-x+2}$.
+\end{enumerate}
+\item Une primitive de $k(x)=\mathrm{e}^{2x+1}$ est $K(x)=\dfrac{1}{2}\mathrm{e}^{2x+1}$.
+Vérification : $K'(x)=\dfrac{1}{2}\times 2\,\mathrm{e}^{2x+1}=\mathrm{e}^{2x+1}=k(x)$. \checkmark
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 --- Équations avec changement de variable]
+\begin{enumerate}
+\item Posons $X=\mathrm{e}^{x}$ (donc $X>0$). Comme $\mathrm{e}^{2x}=(\mathrm{e}^{x})^{2}=X^{2}$, l'équation devient :
+\[X^{2}-5X+6=0.\]
+Discriminant : $\Delta=25-24=1>0$, d'où $X_{1}=\dfrac{5-1}{2}=2$ et $X_{2}=\dfrac{5+1}{2}=3$.
+Les deux racines sont strictement positives, on les conserve toutes les deux :
+$\mathrm{e}^{x}=2\iff x=\ln 2$ ; $\mathrm{e}^{x}=3\iff x=\ln 3$.
+\[S=\{\ln 2\,;\,\ln 3\}.\]
+\item $\mathrm{e}^{2x+1}=\mathrm{e}^{2x}\times\mathrm{e}^{1}=\mathrm{e}\,X^{2}$. L'équation s'écrit :
+\[\mathrm{e}\,X^{2}=3X\iff X(\mathrm{e}\,X-3)=0\iff X=0\ \text{ou}\ X=\frac{3}{\mathrm{e}}.\]
+$X=0$ est impossible car $X=\mathrm{e}^{x}>0$. Il reste $\mathrm{e}^{x}=\dfrac{3}{\mathrm{e}}$, d'où :
+\[x=\ln\left(\frac{3}{\mathrm{e}}\right)=\ln 3-\ln\mathrm{e}=\ln 3-1.\]
+\[S=\{\ln 3-1\}.\]
+\item Posons $X=\mathrm{e}^{x}>0$ : $X^{2}+X-2=0$. $\Delta=1+8=9$, $X_{1}=\dfrac{-1-3}{2}=-2$, $X_{2}=\dfrac{-1+3}{2}=1$.
+$X=-2$ est rejetée (négative). Il reste $\mathrm{e}^{x}=1\iff x=0$.
+\[S=\{0\}.\]
+\end{enumerate}
+\textbf{Points de vigilance :} annoncer systématiquement $X=\mathrm{e}^{x}>0$ au début ; à la fin, \cle{rejeter} explicitement toute racine négative ou nulle avant de repasser à $x=\ln X$.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 --- Inéquations exponentielles]
+\begin{enumerate}
+\item La fonction $\exp$ est \textbf{strictement croissante} sur $\mathbb{R}$, donc elle conserve l'ordre :
+\[\mathrm{e}^{3x-1}>\mathrm{e}^{x+5}\iff 3x-1>x+5\iff 2x>6\iff x>3.\]
+\[S=]3\,;+\infty[.\]
+\item Posons $X=\mathrm{e}^{x}>0$ : $X^{2}-2X-3\leq 0$.
+$\Delta=4+12=16$, racines : $X_{1}=\dfrac{2-4}{2}=-1$, $X_{2}=\dfrac{2+4}{2}=3$.
+Un trinôme est du signe de $a=1>0$ à l'extérieur des racines, donc négatif \emph{entre} les racines : $X^{2}-2X-3\leq 0\iff X\in[-1\,;3]$.
+Comme $X>0$, on ne retient que $0<X\leq 3$, c'est-à-dire :
+\[\mathrm{e}^{x}\leq 3\iff x\leq \ln 3.\]
+\[S=]-\infty\,;\ln 3].\]
+\item $1=\mathrm{e}^{0}$, donc par stricte croissance de $\exp$ :
+\[\mathrm{e}^{-x+4}\geq \mathrm{e}^{0}\iff -x+4\geq 0\iff x\leq 4.\]
+\[S=]-\infty\,;4].\]
+\end{enumerate}
+\textbf{Point de vigilance :} à la question 3, l'inéquation $-x+4\geq 0$ se résout en divisant par $-1$, ce qui \cle{change le sens} de l'inégalité : $x\leq 4$ (et non $x\geq 4$).
+\end{corrige}
+
+\begin{corrige}[Exercice 7 --- Système d'inconnues $\mathrm{e}^{x}$ et $\mathrm{e}^{y}$]
+\begin{enumerate}
+\item Posons $X=\mathrm{e}^{x}$ et $Y=\mathrm{e}^{y}$, avec $X>0$ et $Y>0$. Le système devient :
+\[\begin{cases} X\times Y=\mathrm{e}^{5} \\[2pt] \dfrac{X}{Y}=\mathrm{e}^{3} \end{cases}\]
+\item De la deuxième équation : $X=Y\mathrm{e}^{3}$. En reportant dans la première :
+\[Y\mathrm{e}^{3}\times Y=\mathrm{e}^{5}\iff Y^{2}=\mathrm{e}^{2}\iff Y=\mathrm{e}\quad(\text{car }Y>0,\text{ on rejette }Y=-\mathrm{e}).\]
+Alors $X=\mathrm{e}\times\mathrm{e}^{3}=\mathrm{e}^{4}$.
+Retour aux inconnues initiales :
+\[x=\ln X=\ln(\mathrm{e}^{4})=4,\qquad y=\ln Y=\ln(\mathrm{e})=1.\]
+\[S=\{(4\,;\,1)\}.\]
+\item Vérification : $\mathrm{e}^{4}\times\mathrm{e}^{1}=\mathrm{e}^{4+1}=\mathrm{e}^{5}$ \checkmark\ et $\dfrac{\mathrm{e}^{4}}{\mathrm{e}^{1}}=\mathrm{e}^{4-1}=\mathrm{e}^{3}$ \checkmark. Le couple $(4\,;\,1)$ convient.
+\end{enumerate}
+\textbf{Point de vigilance :} ne pas oublier la condition $Y>0$ qui permet d'écarter la solution $Y=-\mathrm{e}$ de l'équation $Y^{2}=\mathrm{e}^{2}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 --- Limites, dérivée et primitive]
+\begin{enumerate}
+\item $f(x)=\mathrm{e}^{-3x+2}$, ici $a=-3<0$.
+En $+\infty$ : $-3x+2\to -\infty$, donc par composition $\displaystyle\lim_{x\to +\infty}f(x)=0$.
+En $-\infty$ : $-3x+2\to +\infty$, donc $\displaystyle\lim_{x\to -\infty}f(x)=+\infty$.
+\item Pour tout réel $x$, en factorisant numérateur et dénominateur par $\mathrm{e}^{x}$ :
+\[g(x)=\frac{\mathrm{e}^{x}\left(1-\mathrm{e}^{-x}\right)}{\mathrm{e}^{x}\left(1+\mathrm{e}^{-x}\right)}=\frac{1-\mathrm{e}^{-x}}{1+\mathrm{e}^{-x}}.\]
+En $+\infty$ : $\mathrm{e}^{-x}\to 0$, donc $\displaystyle\lim_{x\to +\infty}g(x)=\frac{1-0}{1+0}=1$.
+En $-\infty$ : $\mathrm{e}^{x}\to 0$, donc directement $g(x)=\dfrac{\mathrm{e}^{x}-1}{\mathrm{e}^{x}+1}\xrightarrow[x\to -\infty]{}\dfrac{0-1}{0+1}=-1$.
+\item $h(x)=\mathrm{e}^{4x-3}$ : $h'(x)=4\mathrm{e}^{4x-3}$. Une primitive est $H(x)=\dfrac{1}{4}\mathrm{e}^{4x-3}$.
+\item D'après le théorème fondamental :
+\[I=\int_{0}^{1}\mathrm{e}^{4x-3}\,\mathrm{d}x=\left[\frac{1}{4}\mathrm{e}^{4x-3}\right]_{0}^{1}=\frac{1}{4}\left(\mathrm{e}^{1}-\mathrm{e}^{-3}\right)=\frac{\mathrm{e}-\mathrm{e}^{-3}}{4}.\]
+\end{enumerate}
+\textbf{Point de vigilance :} dans le calcul de l'intégrale, bien évaluer la primitive aux \emph{deux} bornes : $F(1)-F(0)$, et ne pas oublier le facteur $\frac{1}{4}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 --- Étude complète d'une fonction exponentielle (type Bac)]
+\begin{enumerate}
+\item $f(x)=\mathrm{e}^{2x-4}$ avec $a=2>0$.
+En $-\infty$ : $2x-4\to -\infty$, donc $\displaystyle\lim_{x\to -\infty}f(x)=0$.
+En $+\infty$ : $2x-4\to +\infty$, donc $\displaystyle\lim_{x\to +\infty}f(x)=+\infty$.
+\textbf{Interprétation graphique :} la droite d'équation $y=0$ (l'axe des abscisses) est \cle{asymptote horizontale} à $(\mathcal{C}_{f})$ au voisinage de $-\infty$.
+\item $f'(x)=2\mathrm{e}^{2x-4}$. Comme $\mathrm{e}^{2x-4}>0$ pour tout réel $x$ et $2>0$, on a $f'(x)>0$ sur $\mathbb{R}$ : $f$ est \textbf{strictement croissante} sur $\mathbb{R}$.
+\item Tableau de variations :
+\begin{center}
+\begin{tabular}{|c|ccc|}
+\hline $x$ & $-\infty$ & & $+\infty$ \\ \hline $f'(x)$ & & $+$ & \\ \hline $f$ & $0$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+\item $f(2)=\mathrm{e}^{0}=1$ et $f'(2)=2\mathrm{e}^{0}=2$. L'équation de la tangente en $x_{0}=2$ est :
+\[y=f'(2)(x-2)+f(2)=2(x-2)+1=2x-3.\]
+\[(T):\ y=2x-3.\]
+\item $f(x)=\mathrm{e}^{2}\iff \mathrm{e}^{2x-4}=\mathrm{e}^{2}\iff 2x-4=2\iff x=3$ (par injectivité de $\exp$).
+\[S=\{3\}.\]
+\item Valeurs : $f(0)=\mathrm{e}^{-4}\approx 0,0$ ; $f(1)=\mathrm{e}^{-2}\approx 0,1$ ; $f(2)=1$ ; $f(2{,}5)=\mathrm{e}^{1}\approx 2,7$ ; $f(3)=\mathrm{e}^{2}\approx 7,4$.
+\begin{center}
+\begin{tabular}{|c|ccccc|}
+\hline $x$ & $0$ & $1$ & $2$ & $2{,}5$ & $3$ \\ \hline $f(x)$ & $0,0$ & $0,1$ & $1,0$ & $2,7$ & $7,4$ \\ \hline
+\end{tabular}
+\end{center}
+\textbf{Tracé :} dans le repère imposé, placer les cinq points du tableau, tracer en pointillés l'asymptote $y=0$ à gauche, tracer la tangente $(T):y=2x-3$ (droite passant par $(2\,;\,1)$ et $(3\,;\,3)$), puis la courbe lisse, croissante, passant par ces points et tangente à $(T)$ au point $(2\,;\,1)$.
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} limites + interprétation : 1 pt ; dérivée et signe : 1 pt ; tableau de variations : 0,5 pt ; tangente : 0,75 pt ; équation : 0,5 pt ; tableau de valeurs et tracé soigné : 1,25 pt.
+
+\textbf{Points de vigilance :} citer la stricte croissance (ou l'injectivité) de $\exp$ pour justifier l'équivalence de la question 5 ; dans l'équation de la tangente, ne pas confondre $f(2)$ et $f'(2)$ ; respecter les unités imposées sur les axes.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 --- Croissance d'une population de bactéries (type Bac)]
+\begin{enumerate}
+\item $N(0)=1000\,\mathrm{e}^{0}=1000$ milliers de bactéries, soit \textbf{1 000 000 de bactéries} au début de l'observation.
+\item $N'(t)=1000\times 0{,}3\,\mathrm{e}^{0{,}3t}=300\,\mathrm{e}^{0{,}3t}$.
+Pour tout $t\geq 0$, $\mathrm{e}^{0{,}3t}>0$, donc $N'(t)>0$ : $N$ est \textbf{strictement croissante} sur $[0\,;+\infty[$.
+\textbf{Interprétation :} la population de bactéries augmente continuellement au cours du temps, avec une vitesse de croissance proportionnelle à l'effectif (croissance exponentielle).
+\item Comme $0{,}3t\to +\infty$ quand $t\to +\infty$ : $\displaystyle\lim_{t\to +\infty}N(t)=+\infty$.
+\textbf{Conclusion :} le modèle prévoit une croissance illimitée de la population. En réalité, les ressources du milieu de culture étant limitées, ce modèle n'est valable que sur une durée restreinte.
+\item On résout :
+\begin{align*}
+N(t)>10\,000 &\iff 1000\,\mathrm{e}^{0{,}3t}>10\,000 \iff \mathrm{e}^{0{,}3t}>10\\
+&\iff 0{,}3t>\ln 10 \iff t>\frac{\ln 10}{0{,}3}\approx \frac{2{,}30}{0{,}3}\approx 7{,}7.
+\end{align*}
+La population dépasse 10 millions de bactéries à partir de $t_{0}\approx \textbf{7,7 heures}$ (environ 7 h 42 min).
+\item Pour tout $t\geq 0$ et $\tau>0$ :
+\begin{align*}
+N(t+\tau)=2N(t) &\iff 1000\,\mathrm{e}^{0{,}3(t+\tau)}=2\times 1000\,\mathrm{e}^{0{,}3t}\\
+&\iff \mathrm{e}^{0{,}3t}\times\mathrm{e}^{0{,}3\tau}=2\,\mathrm{e}^{0{,}3t}\\
+&\iff \mathrm{e}^{0{,}3\tau}=2 \quad (\text{car }\mathrm{e}^{0{,}3t}>0)\\
+&\iff 0{,}3\tau=\ln 2 \iff \tau=\frac{\ln 2}{0{,}3}\approx\frac{0{,}693}{0{,}3}\approx 2{,}3\text{ h}.
+\end{align*}
+Le temps de doublement est constant (environ 2,3 h), indépendant de $t$ : \textbf{l'affirmation du technicien est exacte}.
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} question 1 : 0,5 pt ; question 2 : 1 pt ; question 3 : 0,75 pt ; question 4 : 1,25 pt ; question 5 : 1,5 pt.
+
+\textbf{Points de vigilance :} penser à convertir les unités (milliers de bactéries) dans l'interprétation ; à la question 4, justifier le passage au $\ln$ par la stricte croissance de $\ln$ (qui conserve l'ordre) ; à la question 5, remarquer que $\tau$ ne dépend pas de $t$ --- c'est la propriété caractéristique des croissances exponentielles (temps de doublement constant).
+\end{corrige}
+
+\begin{corrige}[Exercice 11 --- Une inégalité fondamentale : $\mathrm{e}^{x}\geq x+1$ (type Bac)]
+\begin{enumerate}
+\item $h(x)=\mathrm{e}^{x}-x-1$ est dérivable sur $\mathbb{R}$ et $h'(x)=\mathrm{e}^{x}-1$.
+\item Par stricte croissance de $\exp$ :
+\[h'(x)>0\iff \mathrm{e}^{x}>1=\mathrm{e}^{0}\iff x>0 ;\qquad h'(x)<0\iff x<0 ;\qquad h'(0)=0.\]
+\item Limites : en $-\infty$, $\mathrm{e}^{x}\to 0$ et $-x-1\to +\infty$, donc $\displaystyle\lim_{x\to -\infty}h(x)=+\infty$.
+En $+\infty$, par croissance comparée $\mathrm{e}^{x}$ domine $x$ : $h(x)=\mathrm{e}^{x}\left(1-\dfrac{x+1}{\mathrm{e}^{x}}\right)\to +\infty$.
+\begin{center}
+\begin{tabular}{|c|ccccc|}
+\hline $x$ & $-\infty$ & & $0$ & & $+\infty$ \\ \hline $h'(x)$ & & $-$ & $0$ & $+$ & \\ \hline $h$ & $+\infty$ & $\searrow$ & $0$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+\item D'après le tableau, $h$ admet sur $\mathbb{R}$ un \textbf{minimum atteint en $x=0$}, de valeur :
+\[h(0)=\mathrm{e}^{0}-0-1=1-1=0.\]
+\item Pour tout réel $x$, $h(x)\geq h(0)=0$, c'est-à-dire $\mathrm{e}^{x}-x-1\geq 0$, donc :
+\[\boxed{\mathrm{e}^{x}\geq x+1\quad\text{pour tout }x\in\mathbb{R}.}\]
+L'égalité a lieu si et seulement si $h(x)=0$, c'est-à-dire \textbf{uniquement pour $x=0$}.
+\item Soit $t>0$ et $n\geq 1$ un entier. Appliquons l'inégalité de la question 5 à $x=\ln(1+t)$ (licite car $1+t>0$) :
+\[\mathrm{e}^{\ln(1+t)}\geq \ln(1+t)+1\iff 1+t\geq \ln(1+t)+1\iff \ln(1+t)\leq t.\]
+En multipliant par $n>0$ : $n\ln(1+t)\leq nt$, c'est-à-dire $\ln\!\left((1+t)^{n}\right)\leq nt$.
+La fonction $\exp$ étant strictement croissante, elle conserve l'ordre :
+\[(1+t)^{n}=\mathrm{e}^{\ln((1+t)^{n})}\leq \mathrm{e}^{nt}.\]
+L'affirmation du banquier est donc \textbf{justifiée} : à taux nominal égal, la capitalisation continue ($\mathrm{e}^{nt}$) majore toujours la capitalisation discrète ($(1+t)^{n}$).
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} question 1 : 0,5 pt ; question 2 : 0,75 pt ; question 3 : 1 pt ; question 4 : 0,75 pt ; question 5 : 1 pt ; question 6 : 1 pt.
+
+\textbf{Points de vigilance :} à la question 2, citer la \cle{stricte croissance} de $\exp$ pour passer de $\mathrm{e}^{x}>1$ à $x>0$ ; à la question 3, la limite en $+\infty$ est une forme indéterminée qu'il faut lever (factorisation par $\mathrm{e}^{x}$ ou croissance comparée) ; à la question 6, vérifier la condition d'application $1+t>0$ avant d'écrire $\ln(1+t)$, et justifier le passage à l'exponentielle par la conservation de l'ordre.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+root concept/.append style={concept color=popdark, font=\normalsize\bfseries},
+level 1/.append style={level distance=3.4cm, sibling angle=60},
+level 2/.append style={level distance=2.2cm, sibling angle=45, font=\scriptsize\bfseries}]
+\node[root concept]{Fonction exponentielle}
+child[concept color=popblue]{ node {Définition}
+  child { node {$e^x>0$} }
+  child { node {$e^0=1$} }
+}
+child[concept color=poporange]{ node {Propriétés algébriques}
+  child { node {$e^{a+b}=e^a e^b$} }
+  child { node {$e^{-a}=\frac{1}{e^a}$} }
+}
+child[concept color=popgreen]{ node {Équations et inéquations}
+  child { node {$e^A=e^B \Leftrightarrow A=B$} }
+  child { node {Poser $X=e^x$} }
+}
+child[concept color=poppurple]{ node {Limites}
+  child { node {$+\infty$ en $+\infty$} }
+  child { node {$0$ en $-\infty$} }
+}
+child[concept color=poppink]{ node {Dérivation}
+  child { node {$(e^u)'=u'e^u$} }
+  child { node {Primitive $\frac{1}{a}e^{ax+b}$} }
+}
+child[concept color=popgold]{ node {Étude et courbe}
+  child { node {Signe de $a$} }
+  child { node {Croissante si $a>0$} }
+};
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : la fonction exponentielle.}
+\end{popfigure}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\textbf{Définitions clés}
+\begin{itemize}
+\item La \cle{fonction exponentielle}, notée $\exp$ ou $x\mapsto e^x$, est l'unique fonction dérivable sur $\mathbb{R}$ telle que $f'=f$ et $f(0)=1$.
+\item Pour tout réel $x$ : $e^x>0$, $e^0=1$, $e^1=e\approx 2{,}718$.
+\item Elle est la \cle{réciproque} du logarithme népérien : pour $x>0$ et $y$ réel, $\ln x = y \iff x = e^y$.
+\end{itemize}
+
+\textbf{Formules à connaître par cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Notion} & \textbf{Formule} \\
+\hline
+Relation fonctionnelle & $e^{a+b}=e^a\times e^b$ ; \quad $e^{a-b}=\dfrac{e^a}{e^b}$ ; \quad $e^{-a}=\dfrac{1}{e^a}$ ; \quad $(e^a)^n=e^{na}$ \\
+\hline
+Équivalence fondamentale & $e^A=e^B \iff A=B$ ; \quad $e^A<e^B \iff A<B$ (stricte croissance) \\
+\hline
+Limites & $\displaystyle\lim_{x\to+\infty}e^x=+\infty$ ; \quad $\displaystyle\lim_{x\to-\infty}e^x=0$ (asymptote $y=0$) \\
+\hline
+Croissances comparées & $\displaystyle\lim_{x\to+\infty}\frac{e^x}{x}=+\infty$ ; \quad $\displaystyle\lim_{x\to-\infty}x\,e^x=0$ \\
+\hline
+Dérivée & $(e^x)'=e^x$ ; \quad $(e^{ax+b})'=a\,e^{ax+b}$ ; \quad $(e^u)'=u'e^u$ \\
+\hline
+Primitive & Une primitive de $e^{ax+b}$ ($a\neq 0$) est $\dfrac{1}{a}e^{ax+b}$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthodes express}
+\begin{itemize}
+\item \cle{Équation/inéquation en $e^x$} : isoler $e^x$, puis utiliser $e^x=k \iff x=\ln k$ (si $k>0$ ; pas de solution si $k\leq 0$).
+\item \cle{Équation du type $e^{2x}+\dots$} : poser $X=e^x$ ($X>0$), résoudre en $X$, revenir à $x=\ln X$ en éliminant les solutions négatives ou nulles.
+\item \cle{Inéquation} : la fonction exponentielle est strictement croissante, donc le sens de l'inégalité est \emph{conservé}.
+\item \cle{Limite de $e^{ax+b}$} : déterminer la limite de $ax+b$, puis composer (attention au signe de $a$).
+\item \cle{Étude de $f(x)=e^{ax+b}$} : $f'(x)=a\,e^{ax+b}$ a le signe de $a$ ; croissante si $a>0$, décroissante si $a<0$ ; courbe toujours au-dessus de l'axe des abscisses.
+\end{itemize}
+\end{aretenir}
+
+\begin{exemplebox}[Deux applications rapides pour vérifier ta maîtrise]
+\textbf{1. Équation avec changement de variable.} Résolvons $e^{2x}-3e^x+2=0$.
+Posons $X=e^x$ ($X>0$) : l'équation devient $X^2-3X+2=0$, soit $(X-1)(X-2)=0$, donc $X=1$ ou $X=2$ (toutes deux strictement positives, on les garde). D'où $x=\ln 1=0$ ou $x=\ln 2$. L'ensemble des solutions est $S=\{0\,;\,\ln 2\}$.
+
+\textbf{2. Limite avec composition.} Calculons $\displaystyle\lim_{x\to+\infty}e^{-2x+3}$.
+Comme $-2x+3\to-\infty$ quand $x\to+\infty$ et que $\displaystyle\lim_{X\to-\infty}e^X=0$, on obtient $\displaystyle\lim_{x\to+\infty}e^{-2x+3}=0$.
+\end{exemplebox}
+
+\begin{attention}[Pièges fréquents au Bac]
+\begin{itemize}
+\item Ne jamais écrire $e^{a+b}=e^a+e^b$ : c'est un \emph{produit}, $e^{a+b}=e^a\times e^b$.
+\item Après le changement de variable $X=e^x$, toute solution $X\leq 0$ doit être \emph{rejetée}, car $e^x>0$.
+\item Dans la primitive de $e^{ax+b}$, ne pas oublier le facteur $\dfrac{1}{a}$ : une primitive est $\dfrac{1}{a}e^{ax+b}$ et non $e^{ax+b}$.
+\item Pour les limites de $e^{ax+b}$, regarder d'abord le signe de $a$ : si $a<0$, les rôles de $+\infty$ et $-\infty$ s'échangent.
+\item L'équation $e^x=k$ n'a de solution que si $k>0$ ; $e^x=-3$ n'a aucune solution.
+\end{itemize}
+\end{attention}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+\item[$\square$] Je sais que $e^x>0$ pour tout réel $x$ et je m'en sers pour les signes et les domaines.
+\item[$\square$] Je connais par cœur $e^0=1$, $e^1=e$ et les propriétés algébriques ($e^{a+b}$, $e^{-a}$, $(e^a)^n$).
+\item[$\square$] Je sais passer de $\ln x = y$ à $x = e^y$ sans hésiter.
+\item[$\square$] Je sais résoudre $e^A = e^B$ et $e^A < e^B$ en conservant le sens de l'inégalité.
+\item[$\square$] Je pense au changement de variable $X=e^x$ pour les équations du second degré en $e^x$.
+\item[$\square$] Je n'oublie pas de rejeter les solutions $X\leq 0$ après le changement de variable.
+\item[$\square$] Je connais les limites de $e^x$ en $+\infty$ et $-\infty$ et l'asymptote horizontale $y=0$.
+\item[$\square$] Je sais dériver $e^{ax+b}$ (résultat : $a\,e^{ax+b}$) et $e^u$ (résultat : $u'e^u$).
+\item[$\square$] Je sais trouver une primitive de $e^{ax+b}$ : $\dfrac{1}{a}e^{ax+b}$, sans oublier le facteur $\dfrac{1}{a}$.
+\item[$\square$] Je sais dresser le tableau de variations complet de $f(x)=e^{ax+b}$ selon le signe de $a$.
+\item[$\square$] Je sais tracer la courbe : au-dessus de l'axe des abscisses, passant par un point calculé (souvent $f(0)=e^b$).
+\item[$\square$] Je vérifie toujours mes solutions d'équations en les reportant dans l'énoncé.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
