@@ -261,6 +261,7 @@ def autofix(body):
     body = body.replace("\\begin{tcblower}", "\\tcblower").replace("\\end{tcblower}", "")
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
+    body = _cases_math(body)
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
@@ -405,6 +406,40 @@ def _close_lists(body):
 
 
 _NODE_RE = re.compile(r"\bnode(?:\[([^\]]*)\])?([ \t]*(?:\([^()]*\))?[ \t]*(?:at\s*\([^()]*\))?[ \t]*\{)")
+
+
+_MATH_TOK = re.compile(r"\\\$|\$\$|\$|\\\[|\\\]|\\\(|\\\)|\\begin\{(align\*?|equation\*?|gather\*?|multline\*?|cases)\}|\\end\{(align\*?|equation\*?|gather\*?|multline\*?|cases)\}")
+
+
+def _cases_math(body):
+    """\\begin{cases} écrit hors mode math -> entouré de \\[ ... \\]."""
+    out, last, dollar, disp, envs = [], 0, False, 0, []
+    for m in _MATH_TOK.finditer(body):
+        t = m.group(0)
+        if t == "\\$":
+            continue
+        if t == "$":
+            dollar = not dollar
+        elif t in ("\\[", "\\("):
+            disp += 1
+        elif t in ("\\]", "\\)"):
+            disp = max(0, disp - 1)
+        elif m.group(1):
+            in_math = dollar or disp > 0 or any(e != "cases!" for e in envs)
+            if m.group(1) == "cases" and not in_math:
+                out.append(body[last:m.start()] + "\\[")
+                last = m.start()
+                envs.append("cases!")
+            else:
+                envs.append(m.group(1))
+        elif m.group(2):
+            if envs:
+                e = envs.pop()
+                if e == "cases!":
+                    out.append(body[last:m.end()] + "\\]")
+                    last = m.end()
+    out.append(body[last:])
+    return "".join(out)
 
 
 def _node_align(body):
