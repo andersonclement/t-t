@@ -297,6 +297,21 @@ def autofix(body):
     body = re.sub(r"\\begin\{popfigure\}.*?\\end\{popfigure\}", _fig, body, flags=re.S)
     # TikZ : font=\small\textbf -> \bfseries (\textbf attend un argument)
     body = re.sub(r"(font\s*=\s*\{?[^,\]}]*?)\\textbf\b", r"\1\\bfseries", body)
+    # pgfplots : coordinates (a,b) (c,d); sans accolades -> boucle infinie
+    body = re.sub(r"\bcoordinates\s*((?:\((?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)\s*)+);", lambda m: "coordinates {" + m.group(1).strip() + "};", body)
+    # environnement inventé "erreur" -> attention (boîte prévue par le contrat)
+    body = body.replace("\\begin{erreur}", "\\begin{attention}").replace("\\end{erreur}", "\\end{attention}")
+    body = body.replace("\\begin{astuce}", "\\begin{methode}").replace("\\end{astuce}", "\\end{methode}")
+    # tikzpicture[scale=petit] + plot domain=... : dépassement de dimension TeX
+    # (la coordonnée brute dépasse ~576cm avant application de scale) -> x=/y=
+    def _scale_to_xy(m):
+        pic = m.group(0)
+        sm = re.search(r"scale\s*=\s*(0?\.\d+)", pic)
+        if sm and float(sm.group(1)) < 0.3 and "domain=" in pic and re.search(r"\bplot\b", pic):
+            val = sm.group(1)
+            pic = pic[:sm.start()] + f"x={val}cm, y={val}cm" + pic[sm.end():]
+        return pic
+    body = re.sub(r"\\begin\{tikzpicture\}\[[^\]]*\].*?\\end\{tikzpicture\}", _scale_to_xy, body, flags=re.S)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
@@ -451,7 +466,7 @@ def _close_lists(body):
     return "".join(out)
 
 
-_NODE_RE = re.compile(r"\bnode(?:\[([^\]]*)\])?([ \t]*(?:\([^()]*\))?[ \t]*(?:at\s*\([^()]*\))?[ \t]*\{)")
+_NODE_RE = re.compile(r"\bnode((?:[ \t]*(?:\[[^\]]*\]|\([^()]*\)|at\s*\([^()]*\)))*)[ \t]*(\{)")
 
 
 _MATH_TOK = re.compile(r"\\\$|\$\$|\$|\\\[|\\\]|\\\(|\\\)|\\begin\{(align\*?|equation\*?|gather\*?|multline\*?|cases)\}|\\end\{(align\*?|equation\*?|gather\*?|multline\*?|cases)\}")
@@ -547,10 +562,16 @@ def _node_align(body):
                 if depth == 0:
                     break
             j += 1
-        text, opts = body[start:j + 1], m.group(1) or ""
+        text, header = body[start:j + 1], m.group(1) or ""
+        opt_m = re.search(r"\[([^\]]*)\]", header)
+        opts = opt_m.group(1) if opt_m else ""
         if "\\\\" in text and "align" not in opts and "text width" not in opts:
             out.append(body[last:m.start()])
-            out.append("node[" + (opts + ", " if opts.strip() else "") + "align=center]" + m.group(2))
+            if opt_m:
+                new_header = header[:opt_m.start()] + "[" + opts + ", align=center]" + header[opt_m.end():]
+            else:
+                new_header = "[align=center]" + header
+            out.append("node" + new_header + m.group(2))
             last = m.end()
     out.append(body[last:])
     return "".join(out)
