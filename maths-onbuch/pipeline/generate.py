@@ -253,6 +253,8 @@ def autofix(body):
     # automatique, on retire le numéro tapé par le modèle.
     body = re.sub(r"\\(coursec|courssub)\{\s*\d+(?:\.\d+)*\s*[.)\-–:]?\s+", r"\\\1{", body)
     body = _tabularx_sans_x(body)
+    # \tcblower est un séparateur, pas un environnement
+    body = body.replace("\\begin{tcblower}", "\\tcblower").replace("\\end{tcblower}", "")
     return body
 
 
