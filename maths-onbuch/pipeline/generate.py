@@ -280,8 +280,8 @@ def autofix(body):
                      if (("addplot" in l or "plot" in l) and "deg(" not in l) else l
                      for l in body.split("\n"))
     # \textbf{3x^2+...} dans une formule : \textbf n'accepte pas ^ et _ -> \boldsymbol
-    body = re.sub(r"(\$[^$]*?)\\textbf\{([^{}$]*[\^_][^{}$]*)\}([^$]*\$)",
-                  lambda m: m.group(1) + "\\boldsymbol{" + m.group(2) + "}" + m.group(3), body)
+    body = re.sub(r"(?<!\\)\$([^$]+)\$",
+                  lambda m: "$" + re.sub(r"\\textbf\{([^{}]*[\^_][^{}]*)\}", r"\\boldsymbol{\1}", m.group(1)) + "$", body)
     # calc TikZ : ($(2)*(U)$) -> ($2*(U)$) (un nombre entre parenthèses est pris pour un nœud)
     body = re.sub(r"\(\$\s*\((-?[\d.]+)\)\s*\*", r"($\1*", body)
     body = body.replace("\\not\\implies", "\\nRightarrow").replace("\\not\\iff", "\\nLeftrightarrow").replace("\\not\\Longrightarrow", "\\nRightarrow")
