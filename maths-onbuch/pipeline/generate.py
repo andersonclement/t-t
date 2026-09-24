@@ -262,6 +262,9 @@ def autofix(body):
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
     body = _close_lists(body)
+    # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
+    body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
+                  lambda m: m.group(1) + re.sub(r"\$(-?\d+),(\d+)\$", r"$\1{,}\2$", m.group(2)) + m.group(3), body)
     return body
 
 
