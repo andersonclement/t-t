@@ -273,6 +273,8 @@ def autofix(body):
     body = re.sub(r"([_^])\\(math[a-z]+|text|operatorname)\{([^{}]*)\}", r"\1{\\\2{\3}}", body)
     body = _align_close(body)
     body = _fill_const(body)
+    # \textbf{C.V}^{-1} dans un \text{} : exposant hors mode math -> \textsuperscript{$-1$}
+    body = re.sub(r"(\\textbf\{[^{}$]*\})\^\{([^{}$]*)\}", r"\1\\textsuperscript{$\2$}", body)
     # \SI{6,67e-11} sans unité (1 seul argument) : \SI avale l'argument suivant -> \num
     body = re.sub(r"\\SI\{([^{}]*)\}(?!\{)", r"\\num{\1}", body)
     body = _safe_sqrt(body)
@@ -402,7 +404,7 @@ def _close_lists(body):
     return "".join(out)
 
 
-_NODE_RE = re.compile(r"\\node\[([^\]]*)\]([^{;\n]*\{)")
+_NODE_RE = re.compile(r"\bnode(?:\[([^\]]*)\])?([ \t]*(?:\([^()]*\))?[ \t]*(?:at\s*\([^()]*\))?[ \t]*\{)")
 
 
 def _node_align(body):
@@ -419,10 +421,10 @@ def _node_align(body):
                 if depth == 0:
                     break
             j += 1
-        text, opts = body[start:j + 1], m.group(1)
+        text, opts = body[start:j + 1], m.group(1) or ""
         if "\\\\" in text and "align" not in opts and "text width" not in opts:
             out.append(body[last:m.start()])
-            out.append("\\node[" + (opts + ", " if opts.strip() else "") + "align=center]" + m.group(2))
+            out.append("node[" + (opts + ", " if opts.strip() else "") + "align=center]" + m.group(2))
             last = m.end()
     out.append(body[last:])
     return "".join(out)
