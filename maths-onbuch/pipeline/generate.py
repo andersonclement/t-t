@@ -234,7 +234,7 @@ def autofix(body):
     - virgule décimale dans une dimension TikZ : 0,55cm -> 0.55cm, aspect=2,6 -> 2.6
     - coordonnée calculée non protégée dans un \\foreach : (\\x,\\y) déjà sûr, rien à faire
     """
-    body = re.sub(r"(?<![\w.])(\d+),(\d+)\s*(cm|mm|pt|em|ex)\b", r"\1.\2\3", body)
+    body = re.sub(r"((?:=|\band)\s*-?)(\d+),(\d+)\s*(cm|mm|pt|em|ex)\b", r"\1\2.\3\4", body)
     body = re.sub(r"\b(aspect|scale|xscale|yscale|opacity|line width|inner sep|outer sep|minimum size|minimum width|minimum height|text width|samples|domain|xmin|xmax|ymin|ymax)\s*=\s*(-?\d+),(\d+)",
                   r"\1=\2.\3", body)
     # domain=-1,45:1,45 -> domain=-1.45:1.45
