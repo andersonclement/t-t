@@ -22,6 +22,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from generate import autofix  # noqa: E402  (corrections mécaniques sûres)
+
 ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / "build"
 OUT = ROOT / "cours"
@@ -60,15 +63,15 @@ def assemble(cat, L, serie):
     d = BUILD / L["id"]
     plan = json.loads((d / "plan.json").read_text())
     n = len(plan["sections"])
-    sections = [(d / f"s{i+1:02d}.ok.tex").read_text() for i in range(n)]
-    extras = [(title, (d / f"{k}.ok.tex").read_text()) for k, title in EXTRAS]
+    sections = [autofix((d / f"s{i+1:02d}.ok.tex").read_text()) for i in range(n)]
+    extras = [(title, autofix((d / f"{k}.ok.tex").read_text())) for k, title in EXTRAS]
     # Compléments propres à cette série (champ "extra" de lessons.json) :
     # insérés comme sections de cours supplémentaires, juste avant l'activité
     # d'intégration, uniquement pour les séries concernées.
     complements = []
     for ex in L.get("extra", []):
         if serie in ex["series"]:
-            content = (d / f"extra_{ex['id']}.ok.tex").read_text()
+            content = autofix((d / f"extra_{ex['id']}.ok.tex").read_text())
             complements.append((ex["titre"], content))
     niveau = SERIES_NOMS.get(serie, f"Tle {serie}")
     num = L["id"].lstrip("M")
