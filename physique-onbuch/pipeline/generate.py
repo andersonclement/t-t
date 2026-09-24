@@ -286,6 +286,7 @@ def autofix(body):
                   lambda m: m.group(1) + "\\boldsymbol{" + m.group(2) + "}" + m.group(3), body)
     # calc TikZ : ($(2)*(U)$) -> ($2*(U)$) (un nombre entre parenthèses est pris pour un nœud)
     body = re.sub(r"\(\$\s*\((-?[\d.]+)\)\s*\*", r"($\1*", body)
+    body = body.replace("\\not\\implies", "\\nRightarrow").replace("\\not\\iff", "\\nLeftrightarrow").replace("\\not\\Longrightarrow", "\\nRightarrow")
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
