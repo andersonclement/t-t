@@ -301,6 +301,25 @@ def autofix(body):
     body = re.sub(r"(font\s*=\s*\{?[^,\]}]*?)\\textbf\b", r"\1\\bfseries", body)
     # pgfplots : coordinates (a,b) (c,d); sans accolades -> boucle infinie
     body = re.sub(r"\bcoordinates\s*((?:\((?:[^()]|\((?:[^()]|\([^()]*\))*\))*\)\s*)+);", lambda m: "coordinates {" + m.group(1).strip() + "};", body)
+    # coordonnée TikZ avec cos()/sin()/tan() en arithmétique brute, sans accolades
+    # -> "No shape named `0' is known." (le composant est interprété comme un nom
+    # de nœud plutôt qu'évalué par pgfmath) ; il faut envelopper chaque composant
+    # contenant une fonction trigonométrique dans { }.
+    def _brace_trig_coords(body):
+        # composant sans $ (une vraie coordonnée TikZ ne contient jamais de maths
+        # délimitées) pour ne jamais toucher à de la prose "(..., ...)" hors figure
+        pat = re.compile(r"\(\s*((?:[^(),{}$]|\([^()]*\))+)\s*,\s*((?:[^(),{}$]|\([^()]*\))+)\s*\)")
+        def repl(m):
+            changed = [False]
+            def wrap(x):
+                if re.search(r"\b(?:cos|sin|tan)\(", x) and not (x.startswith("{") and x.endswith("}")):
+                    changed[0] = True
+                    return "{" + x + "}"
+                return x
+            a2, b2 = wrap(m.group(1)), wrap(m.group(2))
+            return "(" + a2 + ", " + b2 + ")" if changed[0] else m.group(0)
+        return pat.sub(repl, body)
+    body = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", lambda m: _brace_trig_coords(m.group(0)), body, flags=re.S)
     # environnement inventé "erreur" -> attention (boîte prévue par le contrat)
     body = body.replace("\\begin{erreur}", "\\begin{attention}").replace("\\end{erreur}", "\\end{attention}")
     body = body.replace("\\begin{astuce}", "\\begin{methode}").replace("\\end{astuce}", "\\end{methode}")
