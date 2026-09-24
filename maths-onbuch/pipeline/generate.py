@@ -240,6 +240,15 @@ def autofix(body):
     body = re.sub(r"(?<![\w.])(\d+),(\d+)\s*\\(linewidth|textwidth)", r"\1.\2\\\3", body)
     # at={(0,02,0,98)} (2D écrit à la française : 3 virgules) -> (0.02,0.98)
     body = re.sub(r"\((-?\d+),(\d+),(-?\d+),(\d+)\)", r"(\1.\2,\3.\4)", body)
+    # Titre de boîte contenant [ ou ] (intervalles ]a;b[) : on le protège par
+    # des accolades, sinon l'argument optionnel [..] est coupé.
+    def _protect(m):
+        title = m.group(2)
+        if ("[" in title or "]" in title) and not (title.startswith("{") and title.endswith("}")):
+            return f"\\begin{{{m.group(1)}}}[{{{title}}}]"
+        return m.group(0)
+    body = re.sub(r"\\begin\{(definition|propriete|aretenir|exemplebox|methode|attention|experience|savaistu|exoresolu|exercice|corrige)\}\[(.*)\][ \t]*$",
+                  _protect, body, flags=re.M)
     return body
 
 
