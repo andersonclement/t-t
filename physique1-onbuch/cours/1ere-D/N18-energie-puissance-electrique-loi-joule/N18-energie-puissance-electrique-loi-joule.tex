@@ -1,0 +1,2763 @@
+% Énergie, puissance électrique et loi de Joule — Physique 1ère D — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N18-energie-puissance-electrique-loi-joule.tex
+\newcommand{\DOCMATIERE}{Physique}
+\newcommand{\DOCNIVEAU}{1ère D}
+\newcommand{\DOCMODULE}{Module 4 : Aspects énergétiques des circuits électriques}
+\newcommand{\DOCLECON}{N18}
+\newcommand{\DOCTITRE}{Énergie, puissance électrique et loi de Joule}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\ch{ch} % cheval-vapeur (puissance moteur, unité usuelle hors SI)
+\DeclareSIUnit\franccfa{FCFA} % franc CFA (coûts, contexte camerounais)
+\DeclareSIUnit\dioptre{\ensuremath{\delta}} % vergence d'une lentille (dioptrie)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Énergie, puissance électrique et loi de Joule}{Physique}{1ère D}{Module 4 : Aspects énergétiques des circuits électriques}{N18}{6 h}{Cette leçon établit les expressions de l'énergie et de la puissance électriques consommées dans une portion de circuit, puis introduit la loi de Joule et la notion de rendement. Elle aboutit à la réalisation de bilans énergétiques complets, compétence clé pour comprendre la consommation des appareils domestiques et réussir au Probatoire.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais exprimer l'énergie électrique consommée dans une portion de circuit en fonction de la tension à ses bornes, de l'intensité et de la durée (W = U·I·Δt).
+\item À la fin de cette leçon, je sais exploiter la relation entre énergie, tension et quantité d'électricité (W = q·U).
+\item À la fin de cette leçon, je sais exprimer et calculer la puissance électrique consommée (P = U·I) et choisir les bonnes unités (W, kW, J, kWh).
+\item À la fin de cette leçon, je sais énoncer et exploiter la loi de Joule pour un conducteur ohmique (P = R·I², W = R·I²·Δt).
+\item À la fin de cette leçon, je sais mettre en évidence expérimentalement la conversion d'énergie électrique en chaleur et vérifier la loi de Joule.
+\item À la fin de cette leçon, je sais définir et calculer le rendement d'une portion de circuit ou d'un convertisseur (η = W\_utile / W\_consommée).
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Énergie électrique consommée dans une portion de circuit
+\item Puissance électrique consommée
+\item Effet Joule et loi de Joule
+\item Conversion d'énergie et rendement d'une portion de circuit
+\item Bilan énergétique complet d'une portion de circuit
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais exprimer l'énergie électrique consommée dans une portion de circuit en fonction de la tension à ses bornes, de l'intensité et de la durée (W = U·I·Δt).
+\item À la fin de cette leçon, je sais exploiter la relation entre énergie, tension et quantité d'électricité (W = q·U).
+\item À la fin de cette leçon, je sais exprimer et calculer la puissance électrique consommée (P = U·I) et choisir les bonnes unités (W, kW, J, kWh).
+\item À la fin de cette leçon, je sais énoncer et exploiter la loi de Joule pour un conducteur ohmique (P = R·I², W = R·I²·Δt).
+\item À la fin de cette leçon, je sais mettre en évidence expérimentalement la conversion d'énergie électrique en chaleur et vérifier la loi de Joule.
+\item À la fin de cette leçon, je sais définir et calculer le rendement d'une portion de circuit ou d'un convertisseur (η = W\_utile / W\_consommée).
+\item À la fin de cette leçon, je sais établir le bilan énergétique complet d'une portion de circuit (générateur, récepteurs, pertes).
+\item À la fin de cette leçon, je sais dégager les conditions permettant de réduire les pertes d'énergie dans une installation (transport en haute tension, choix des appareils).
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Intensité du courant, tension électrique et leurs mesures (ampèremètre, voltmètre)
+\item Loi d'Ohm pour un conducteur ohmique (U = R·I) et associations de dipôles
+\item Notion d'énergie et de puissance vues en classe de Seconde (travail mécanique, P = W/Δt)
+\item Quantité d'électricité q = I·Δt et lois des circuits (loi des nœuds, loi des mailles)
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Énergie électrique consommée dans une portion de circuit}
+
+À Yaoundé, la famille Ngo Bell reçoit chaque mois une facture ENEO qui ne cesse d'augmenter. Le père accuse le fer à repasser, la mère soupçonne le réfrigérateur, et le fils jure que sa chaîne hi-fi n'y est pour rien. Qui consomme réellement le plus d'énergie électrique ? Pourquoi certains appareils chauffent-ils autant ? Et comment réduire la facture sans se priver de confort ?
+
+Pour trancher ce débat familial, il ne suffit pas de regarder la puissance inscrite sur les appareils : il faut comprendre ce qu'est l'\cle{énergie électrique}, comment elle se mesure, et comment elle se transforme dans chaque dipôle. C'est l'objet de cette première section : définir et calculer l'énergie électrique consommée par une portion de circuit, puis l'exprimer dans les unités que l'on retrouve sur la facture ENEO.
+
+\courssub{De la tension électrique au travail des forces électriques}
+
+\textbf{Intuition.} Imagine une rivière qui descend une colline : l'eau, en descendant, cède de l'énergie qui peut faire tourner une turbine (comme au barrage d'Edéa sur la Sanaga). Dans un circuit électrique, ce sont les \cle{porteurs de charge} (les électrons dans un métal) qui « descendent » d'un point A de potentiel élevé vers un point B de potentiel plus faible. En traversant un dipôle (lampe, moteur, fer à repasser), ils lui cèdent de l'énergie. La \cle{tension} $U_{AB}$ mesure précisément l'énergie cédée \emph{par unité de charge}.
+
+\begin{aretenir}[Rappel : signification énergétique de la tension]
+La tension $U_{AB}$ entre deux points A et B d'un circuit est liée au travail des forces électriques qui s'exercent sur les porteurs de charge. Lorsqu'une charge $q$ passe de A à B, le travail des forces électriques vaut :
+\[ W_{\text{élec}} = q \times U_{AB} \]
+avec $q$ en coulombs (C), $U_{AB}$ en volts (V) et $W_{\text{élec}}$ en joules (J). Une tension de \SI{1}{V} signifie qu'une charge de \SI{1}{C} qui traverse le dipôle échange une énergie de \SI{1}{J}.
+\end{aretenir}
+
+\courssub{Énergie électrique reçue par une portion de circuit}
+
+Considérons une portion de circuit AB, parcourue par un courant continu d'intensité $I$ constante, et soumise à une tension $U_{AB}$ constante. Pendant la durée $\Delta t$, la quantité d'électricité qui traverse le dipôle est :
+\[ q = I \times \Delta t \]
+
+\begin{propriete}[Énergie électrique et travail des forces électriques]
+L'énergie électrique reçue par une portion de circuit AB est égale au travail des forces électriques sur la charge $q$ qui la traverse :
+\[ W = q \times U_{AB} \]
+Cette relation traduit le transfert d'énergie des porteurs de charge vers le dipôle. Elle est admise en Première, mais elle se justifie physiquement : le champ électrique $\vec{E}$ régnant dans le conducteur exerce sur chaque porteur de charge $q_0$ une force $\vec{F} = q_0 \vec{E}$ ; le travail de cette force le long du trajet des porteurs, entre A et B, vaut exactement $q\,U_{AB}$.
+\end{propriete}
+
+En remplaçant $q$ par $I \times \Delta t$, on obtient la relation fondamentale de cette section.
+
+\begin{definition}[Énergie électrique consommée par une portion de circuit]
+L'\cle{énergie électrique} $W$ reçue (consommée) par une portion de circuit AB, parcourue par un courant d'intensité $I$ constante et soumise à une tension $U$ constante pendant la durée $\Delta t$, est :
+\[ \boxed{W = U \times I \times \Delta t} \]
+\begin{itemize}
+\item $W$ : énergie électrique, en joules (J) ;
+\item $U$ : tension aux bornes de la portion de circuit, en volts (V) ;
+\item $I$ : intensité du courant, en ampères (A) ;
+\item $\Delta t$ : durée de fonctionnement, en secondes (s).
+\end{itemize}
+Cette énergie est \emph{reçue} par le dipôle : elle est ensuite convertie en d'autres formes (chaleur, lumière, mouvement...).
+\end{definition}
+
+\begin{attention}[Convention récepteur et signe de l'énergie]
+Pour que $W = U \times I \times \Delta t$ représente bien l'énergie \textbf{reçue} par le dipôle, il faut orienter la portion de circuit en \cle{convention récepteur} : la flèche de la tension $U$ (orientée du $+$ vers le $-$) et celle du courant $I$ sont en sens opposés (le courant « entre » par la borne de potentiel le plus élevé, notée A). Si l'on choisit la convention générateur (flèches dans le même sens), le produit $U \times I$ représente l'énergie \emph{cédée} par le dipôle, comme pour une batterie qui alimente le circuit.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+% Fils
+\draw[thick, popdark] (0,0) -- (2,0);
+\draw[thick, popdark] (5,0) -- (7,0);
+% Dipôle
+\draw[thick, popblue, fill=popblueL] (2,-0.6) rectangle (5,0.6);
+\node[popdark] at (3.5,0) {\textbf{Dipôle}};
+% Bornes
+\fill[popdark] (2,0) circle (2pt); \node[below, popdark] at (2,-0.65) {A};
+\fill[popdark] (5,0) circle (2pt); \node[below, popdark] at (5,-0.65) {B};
+% Courant (entre par A, vers la droite)
+\draw[-{Stealth[length=3mm]}, very thick, poporange] (0.4,0.35) -- (1.6,0.35);
+\node[above, poporange] at (1.0,0.4) {$I$};
+% Tension U_AB (flèche de A vers B, borne + vers -)
+\draw[-{Stealth[length=3mm]}, very thick, popgreen] (2.4,1.1) -- (4.6,1.1);
+\node[above, popgreen] at (3.5,1.15) {$U_{AB}$};
+% Énergie entrante
+\draw[-{Stealth[length=3mm]}, very thick, poppink] (1.2,-1.6) -- (2.6,-0.75);
+\node[poppink, align=center] at (1.2,-2.0) {Énergie électrique\\ $W = U\,I\,\Delta t$};
+% Formes d'énergie sortantes
+\draw[-{Stealth[length=2.5mm]}, thick, popgold] (4.4,-0.75) -- (5.8,-1.5);
+\node[popgold, align=center] at (6.1,-1.9) {chaleur, lumière,\\ mouvement...};
+\end{tikzpicture}
+\end{center}
+\legende{Portion de circuit AB en convention récepteur : le courant $I$ entre par la borne A (potentiel le plus élevé, borne $+$) ; la tension $U_{AB}$ est orientée de A vers B. L'énergie électrique $W = U\,I\,\Delta t$ est reçue par le dipôle puis convertie en d'autres formes d'énergie.}
+\end{popfigure}
+
+\textbf{Vérification par analyse dimensionnelle.} Un joule est un volt fois un coulomb : $[W] = \text{V} \times \text{C}$. Or $\text{C} = \text{A} \times \text{s}$, donc $U \times I \times \Delta t$ s'exprime en $\text{V} \cdot \text{A} \cdot \text{s} = \text{V} \cdot \text{C} = \text{J}$. La formule est homogène.
+
+\courssub{Interprétation microscopique : que devient cette énergie ?}
+
+À l'échelle microscopique, les électrons libres du conducteur sont mis en mouvement ordonné par le champ électrique : c'est le courant. Mais ce mouvement est constamment freiné par les interactions avec le réseau cristallin (les ions fixes du métal). À chaque « collision », un électron cède au réseau l'énergie qu'il vient de recevoir du champ électrique. Selon la nature du dipôle, cette énergie transférée prend des formes différentes :
+
+\begin{itemize}
+\item dans un \textbf{conducteur ohmique} (résistance, fer à repasser, chauffe-eau) : l'énergie augmente l'\cle{agitation thermique} des ions du réseau, c'est-à-dire la température du matériau — c'est l'\emph{effet Joule}, étudié en section 3 ;
+\item dans un \textbf{moteur} (ventilateur, pompe) : l'énergie est convertie en \emph{énergie mécanique} (mouvement), avec inévitablement un peu de chaleur ;
+\item dans un \textbf{électrolyseur} ou une \textbf{batterie en charge} : l'énergie est convertie en \emph{énergie chimique} (réactions chimiques) ;
+\item dans une \textbf{lampe} : l'énergie devient \emph{rayonnement} (lumière) et chaleur.
+\end{itemize}
+
+L'énergie électrique est donc une énergie de \emph{transit} : le dipôle la reçoit sous forme électrique et la convertit intégralement en d'autres formes. C'est le principe de conservation de l'énergie, fil conducteur de tout ce module.
+
+\courssub{Unités pratiques : le watt-heure et le kilowatt-heure}
+
+Le joule est une unité très petite à l'échelle domestique : une ampoule de \SI{75}{W} consomme \SI{75}{J} chaque seconde, soit \SI{270000}{J} en une heure ! Pour les consommations courantes, on utilise des unités plus parlantes.
+
+\begin{definition}[Watt-heure et kilowatt-heure]
+Le \cle{watt-heure} (Wh) est l'énergie consommée par un appareil de puissance \SI{1}{W} fonctionnant pendant une heure :
+\[ 1~\text{Wh} = 1~\text{W} \times 3600~\text{s} = 3600~\text{J} \]
+Le \cle{kilowatt-heure} (kWh) vaut mille watt-heures :
+\[ \boxed{1~\text{kWh} = 1000~\text{W} \times 3600~\text{s} = 3{,}6 \times 10^{6}~\text{J}} \]
+Avec $P = U \times I$ la puissance (section 2), l'énergie s'écrit aussi $W = P \times \Delta t$ : si $P$ est en kilowatts et $\Delta t$ en heures, $W$ s'obtient directement en kWh.
+\end{definition}
+
+\begin{attention}[Le kWh n'est pas « des kW par heure » !]
+Erreur classique au Probatoire : confondre le \textbf{kilowatt} (kW), unité de \emph{puissance}, avec le \textbf{kilowatt-heure} (kWh), unité d'\emph{énergie}. Le kWh n'est pas une puissance divisée par le temps, c'est une puissance \emph{multipliée} par le temps : $1~\text{kWh} = 1~\text{kW} \times 1~\text{h}$. Dire « cet appareil consomme 2 kW par heure » est physiquement incorrect ; on dit : « cet appareil de puissance 2 kW consomme 2 kWh en une heure ».
+\end{attention}
+
+\begin{methode}[Bien choisir ses unités pour calculer une énergie]
+\begin{enumerate}
+\item Identifier les données : tension $U$, intensité $I$ (ou puissance $P = U I$) et durée $\Delta t$.
+\item Pour un résultat en \textbf{joules} : convertir systématiquement $\Delta t$ en \textbf{secondes}, $U$ en volts, $I$ en ampères, puis appliquer $W = U\,I\,\Delta t$.
+\item Pour un résultat en \textbf{kWh} (facture, consommation domestique) : exprimer $P$ en \textbf{kilowatts} et $\Delta t$ en \textbf{heures}, puis $W = P \times \Delta t$.
+\item Pour passer de l'une à l'autre : multiplier les kWh par $3{,}6 \times 10^{6}$ pour obtenir des joules ; diviser les joules par $3{,}6 \times 10^{6}$ pour obtenir des kWh.
+\end{enumerate}
+\end{methode}
+
+\courssub{Lecture d'une plaque signalétique et ordres de grandeur}
+
+Tout appareil électrique porte une \cle{plaque signalétique} qui indique ses conditions normales d'utilisation : la \textbf{tension nominale} (au Cameroun, \SI{220}{V}) et la \textbf{puissance nominale} (par exemple « 1200 W » pour un fer à repasser). La puissance nominale est la puissance consommée par l'appareil lorsqu'il fonctionne sous sa tension nominale. Elle permet de prévoir la consommation d'énergie, à condition de connaître la \emph{durée réelle} de fonctionnement.
+
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\rowcolor{popblueL} \textbf{Appareil} & \textbf{Puissance nominale} & \textbf{Durée typique/jour} & \textbf{Énergie/jour} \\
+\hline
+Ampoule à incandescence & \SI{75}{W} & 5 h & \SI{0,375}{kWh} \\
+\hline
+Téléviseur & \SI{150}{W} & 4 h & \SI{0,60}{kWh} \\
+\hline
+Fer à repasser & \SI{1000}{W} & 0,5 h & \SI{0,50}{kWh} \\
+\hline
+Réfrigérateur & \SI{150}{W} (en marche) & 8 h effectives & \SI{1,2}{kWh} \\
+\hline
+\end{tabular}
+\end{center}
+
+Ce tableau éclaire le débat des Ngo Bell : le fer à repasser, malgré sa forte puissance, ne fonctionne que peu de temps ; le réfrigérateur, de puissance modeste, tourne toute la journée (par cycles) et finit par consommer davantage. \textbf{L'énergie dépend de la puissance ET de la durée.}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    ybar, bar width=22pt,
+    width=0.85\linewidth, height=6cm,
+    ymin=0, ymax=1.2,
+    ylabel={Énergie consommée en 1 h (kWh)},
+    symbolic x coords={Ampoule 75 W, TV 150 W, Fer 1000 W},
+    xtick=data,
+    x tick label style={font=\small},
+    nodes near coords,
+    every node near coord/.append style={font=\small\bfseries, color=popdark},
+    ymajorgrids=true, grid style={popline!50},
+    axis line style={popdark},
+    fill=popblue!70, draw=popblue
+]
+\addplot[popcurve] coordinates {(Ampoule 75 W,0.075) (TV 150 W,0.15) (Fer 1000 W,1.0)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Énergie consommée en une heure de fonctionnement par trois appareils domestiques. En une heure, le fer consomme plus de 13 fois l'énergie de l'ampoule ; mais sur une journée, tout dépend des durées d'utilisation.}
+\end{popfigure}
+
+\begin{exemplebox}[Le fer à repasser des Ngo Bell]
+Un fer à repasser porte la mention « 220 V — 1200 W ». Il fonctionne pendant 45 minutes sous sa tension nominale. Calculons l'énergie consommée.
+\begin{itemize}
+\item \textbf{En kWh} : $P = \SI{1200}{W} = \SI{1,2}{kW}$ et $\Delta t = 45~\text{min} = \SI{0,75}{h}$, donc
+\[ W = P \times \Delta t = 1{,}2 \times 0{,}75 = \SI{0,90}{kWh} \]
+\item \textbf{En joules} : $W = 0{,}90 \times 3{,}6 \times 10^{6} = \SI{3,24e6}{J}$, soit environ 3,2 MJ.
+\item \textbf{Coût} : au tarif domestique d'environ 65 à 70 FCFA\_/kWh, cette séance de repassage coûte $0{,}90 \times 70 \approx 63$ FCFA.
+\end{itemize}
+On peut retrouver l'intensité du courant : $I = \dfrac{P}{U} = \dfrac{1200}{220} \approx \SI{5,5}{A}$.
+\end{exemplebox}
+
+\begin{exoresolu}[Énergie consommée par un téléviseur]
+\textbf{Énoncé.} Le téléviseur de la famille Ngo Bell, branché sous $U = \SI{220}{V}$, est traversé par un courant d'intensité $I = \SI{0,68}{A}$. Il fonctionne en moyenne 4 h par jour pendant un mois de 30 jours. (1) Calculer l'énergie électrique consommée en un mois, en joules puis en kWh. (2) Estimer le coût mensuel à 70 FCFA\_/kWh.
+\tcblower
+\textbf{Solution.} (1) La durée mensuelle de fonctionnement est $\Delta t = 4 \times 30 = \SI{120}{h}$, soit en secondes $\Delta t = 120 \times 3600 = \SI{432000}{s}$.
+\[ W = U \times I \times \Delta t = 220 \times 0{,}68 \times 432000 = \SI{6,46656e7}{J} \approx \SI{6,47e7}{J} \]
+En kWh : $P = U \times I = 220 \times 0{,}68 = \SI{149,6}{W} \approx \SI{0,150}{kW}$, donc
+\[ W = P \times \Delta t = 0{,}150 \times 120 = \SI{18}{kWh} \]
+Vérification : $18 \times 3{,}6 \times 10^{6} = \SI{6,48e7}{J}$, cohérent (écart dû aux arrondis). (2) Coût : $18 \times 70 = 1260$ FCFA par mois. Le téléviseur pèse donc plus lourd sur la facture que le fer à repasser utilisé 45 min par jour ($0{,}90 \times 30 = 27$ kWh... en fait comparable !), ce qui montre l'importance de quantifier chaque usage avant d'accuser un appareil.
+\end{exoresolu}
+
+\begin{savaistu}[Le compteur ENEO mesure de l'énergie, pas de la puissance]
+Le compteur électrique installé par ENEO dans les foyers camerounais est un \emph{compteur d'énergie} : il totalise les kWh consommés. Sur les anciens compteurs électromécaniques, un disque tourne d'autant plus vite que la puissance appelée est grande, et chaque tour correspond à une énergie précise ; les compteurs électroniques modernes (prépayés, de type « Cashpower ») affichent directement le nombre de kWh restants. C'est pourquoi on dit familièrement « acheter du courant » : on achète en réalité de l'\emph{énergie électrique}. Le kWh facturé entre 65 et 100 FCFA\_/kWh selon la tranche de consommation, maîtriser les durées d'utilisation des appareils puissants est le premier levier pour réduire la facture — une piste que nous préciserons dans les sections suivantes avec la notion de rendement.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item L'énergie électrique reçue par une portion de circuit AB est le travail des forces électriques sur la charge qui la traverse : $W = q\,U_{AB}$ avec $q = I\,\Delta t$.
+\item Expression fondamentale : $W = U \times I \times \Delta t$ (V, A, s, J), valable en convention récepteur.
+\item Cette énergie est convertie par le dipôle en chaleur, lumière, mouvement ou énergie chimique.
+\item Unités pratiques : $1~\text{Wh} = 3600~\text{J}$ et $1~\text{kWh} = 3{,}6 \times 10^{6}~\text{J}$ ; avec $P$ en kW et $\Delta t$ en h, $W = P\,\Delta t$ s'obtient en kWh.
+\item La plaque signalétique donne la tension et la puissance nominales ; l'énergie consommée dépend de la puissance \emph{et} de la durée d'utilisation.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Puissance électrique consommée}
+
+Dans la section précédente, nous avons établi que l'énergie électrique consommée par une portion de circuit soumise à une tension $U$ et traversée par un courant d'intensité $I$ pendant la durée $\Delta t$ s'écrit $W = U \cdot I \cdot \Delta t$. Cette relation nous dit \emph{combien} d'énergie a été échangée, mais elle ne dit rien sur la \emph{vitesse} à laquelle cet échange s'effectue. Or, dans la vie quotidienne, c'est souvent cette vitesse qui compte : une ampoule de \SI{100}{W} éclaire plus fort qu'une ampoule de \SI{25}{W} non pas parce qu'elle consomme plus d'énergie au total, mais parce qu'elle consomme de l'énergie \emph{plus vite}. Cette grandeur, qui mesure le « débit » d'énergie, s'appelle la \cle{puissance}. C'est elle que le fabricant inscrit sur chaque appareil, c'est elle qui détermine la section des câbles d'une installation, et c'est elle qui explique pourquoi ENEO coupe le courant quand trop d'appareils fonctionnent en même temps dans un quartier.
+
+\courssub{Notion de puissance : l'énergie échangée par unité de temps}
+
+\textbf{Intuition et définition}\par
+
+Imagine deux marmites identiques posées sur deux réchauds électriques différents. La première bout au bout de cinq minutes, la seconde au bout de quinze minutes. Les deux réchauds ont finalement fourni la même énergie à l'eau (pour la porter à la même température), mais le premier l'a fait trois fois plus vite : on dit qu'il est trois fois plus \emph{puissant}. La puissance compare donc l'énergie échangée à la durée de l'échange.
+
+\begin{definition}[Puissance électrique consommée]
+La \cle{puissance électrique consommée} $P$ par une portion de circuit est l'énergie électrique $W$ qu'elle reçoit du reste du circuit par unité de temps :
+\[ P = \frac{W}{\Delta t} \]
+où $W$ s'exprime en joules (J), $\Delta t$ en secondes (s) et $P$ en \cle{watts} (W). Le watt est le joule par seconde : $\SI{1}{W} = \SI{1}{J.s^{-1}}$.
+\end{definition}
+
+\begin{attention}[Ne pas confondre énergie et puissance]
+L'énergie s'exprime en joules (ou en kWh), la puissance en watts. Dire « cet appareil consomme \SI{100}{W} par heure » est une erreur classique : la puissance est \emph{déjà} un débit d'énergie. On dira correctement : « cet appareil a une puissance de \SI{100}{W} » ou « cet appareil a consommé \SI{0,1}{kWh} en une heure ».
+\end{attention}
+
+\textbf{Expression de la puissance électrique consommée : $P = U \cdot I$}\par
+
+Nous savons que l'énergie consommée par une portion de circuit $AB$ pendant la durée $\Delta t$ est $W = U_{AB} \cdot I \cdot \Delta t$. En divisant les deux membres par $\Delta t$, on obtient immédiatement l'expression de la puissance.
+
+\begin{propriete}[Puissance électrique consommée par une portion de circuit]
+Une portion de circuit $AB$, soumise à une tension $U_{AB}$ (en volts) et traversée par un courant d'intensité $I$ (en ampères), consomme la puissance électrique :
+\[ P = U_{AB} \cdot I \]
+avec $P$ en watts (W). Cette relation est générale : elle vaut pour tout dipôle (récepteur ou générateur) en régime continu, à condition que $U$ et $I$ soient pris en valeurs algébriques avec la convention récepteur.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : de l'énergie à la puissance]
+Partons de l'expression de l'énergie consommée établie à la section précédente :
+\[ W = U \cdot I \cdot \Delta t \]
+Divisons membre à membre par la durée $\Delta t$ :
+\[ \frac{W}{\Delta t} = \frac{U \cdot I \cdot \Delta t}{\Delta t} = U \cdot I \]
+Par définition, le membre de gauche est la puissance $P$. D'où $\boxed{P = U \cdot I}$. Vérifions l'homogénéité : $[U] \times [I] = \mathrm{V \cdot A} = (\mathrm{J \cdot C^{-1}}) \times (\mathrm{C \cdot s^{-1}}) = \mathrm{J \cdot s^{-1}} = \mathrm{W}$. La relation est bien dimensionnellement correcte.
+\end{experience}
+
+\begin{exemplebox}[Intensité du courant dans une ampoule]
+Une ampoule porte l'inscription « \SI{220}{V} -- \SI{100}{W} ». En fonctionnement normal, elle est soumise à la tension $U = \SI{220}{V}$ et consomme la puissance $P = \SI{100}{W}$. L'intensité du courant qui la traverse est alors :
+\[ I = \frac{P}{U} = \frac{100}{220} \approx \SI{0,45}{A} \]
+Cette valeur est utile pour choisir le calibre d'un ampèremètre ou le fusible de protection du circuit.
+\end{exemplebox}
+
+\courssub{Puissance instantanée et puissance nominale}
+
+\textbf{Caractère instantané de la puissance}\par
+
+La puissance est une grandeur \emph{instantanée} : à chaque instant, le produit $U \cdot I$ donne la puissance échangée à cet instant. Si la tension ou l'intensité varient (baisse de tension du réseau en heure de pointe, variateur de lumière, démarrage d'un moteur), la puissance varie en conséquence. Lorsque la tension chute de \SI{220}{V} à \SI{180}{V} un soir à Douala, une bouilloire voit sa puissance diminuer et l'eau met plus longtemps à bouillir : l'énergie nécessaire est la même, mais elle arrive moins vite.
+
+\textbf{Puissance nominale}\par
+
+\begin{definition}[Puissance nominale]
+La \cle{puissance nominale} d'un appareil est la puissance qu'il consomme lorsqu'il fonctionne dans les conditions prévues par le constructeur, c'est-à-dire sous sa \cle{tension nominale}. Elle est inscrite sur la plaque signalétique de l'appareil, par exemple « \SI{220}{V} -- \SI{1500}{W} » pour une bouilloire.
+\end{definition}
+
+\begin{attention}[Pourquoi respecter la tension d'alimentation]
+Un appareil prévu pour \SI{220}{V} ne doit pas être branché sur une tension très différente. Pour un appareil dont la résistance interne $R$ est pratiquement constante, la puissance consommée s'écrit $P = U \cdot I = \dfrac{U^2}{R}$ : elle varie comme le \emph{carré} de la tension.
+\begin{itemize}
+\item Branché sur \SI{110}{V} (moitié de la tension nominale), l'appareil ne consomme que le quart de sa puissance nominale : une ampoule éclaire faiblement, un moteur peine à tourner.
+\item Branché sur \SI{380}{V}, la puissance est presque triplée : l'échauffement devient excessif et l'appareil est détruit, parfois avec un départ de feu.
+\end{itemize}
+C'est pourquoi, après une coupure, il est prudent de débrancher les appareils sensibles : le retour du courant s'accompagne parfois de surtensions destructrices.
+\end{attention}
+
+\courssub{Lien entre puissance et énergie : $W = P \cdot \Delta t$}
+
+En réécrivant la définition de la puissance, on obtient la relation pratique fondamentale :
+\[ W = P \cdot \Delta t \]
+Cette relation permet de choisir l'unité d'énergie adaptée au contexte :
+\begin{itemize}
+\item Si $P$ est en watts et $\Delta t$ en secondes, $W$ est en \cle{joules} (J) : unité du Système international, adaptée aux durées courtes et aux calculs de physique.
+\item Si $P$ est en kilowatts (kW) et $\Delta t$ en heures (h), $W$ est en \cle{kilowattheures} (kWh) : unité pratique utilisée par ENEO pour la facturation, adaptée aux durées longues de la vie domestique.
+\end{itemize}
+
+\begin{aretenir}[Correspondance entre joule et kilowattheure]
+\[ \SI{1}{kWh} = \SI{1}{kW} \times \SI{1}{h} = \SI{1000}{W} \times \SI{3600}{s} = \SI{3,6e6}{J} \]
+Un kilowattheure représente donc $3,6$ millions de joules : c'est l'énergie consommée par un appareil de \SI{1000}{W} fonctionnant pendant une heure.
+\end{aretenir}
+
+\begin{methode}[Estimer une facture d'électricité]
+Pour estimer la consommation (et donc la facture) d'un foyer :
+\begin{enumerate}
+\item Relever la puissance nominale $P$ de chaque appareil (plaque signalétique) et la convertir en kilowatts.
+\item Estimer la durée d'utilisation quotidienne $\Delta t$ de chaque appareil, en heures.
+\item Calculer l'énergie consommée par chaque appareil : $W = P \cdot \Delta t$, en kWh.
+\item Additionner toutes les énergies, puis multiplier par le nombre de jours et par le prix du kWh.
+\end{enumerate}
+C'est exactement la démarche que nous détaillerons dans le bilan énergétique de la section 5.
+\end{methode}
+
+\begin{attention}[Additionner des puissances : les précautions d'usage]
+On ne peut additionner directement les puissances nominales de plusieurs appareils que s'ils fonctionnent \emph{en même temps} et \emph{sous la même tension d'alimentation}. Deux erreurs fréquentes :
+\begin{itemize}
+\item Additionner les puissances d'appareils branchés sur des tensions différentes (par exemple \SI{220}{V} et \SI{12}{V}) pour en tirer un courant unique : le courant dépend de la tension, $I = P/U$, il faut raisonner circuit par circuit.
+\item Conclure qu'une ampoule « \SI{220}{V} -- \SI{100}{W} » consomme toujours \SI{100}{W} : si la tension du réseau chute, la puissance réelle chute aussi. Vérifie toujours la tension d'alimentation avant d'exploiter une puissance nominale.
+\end{itemize}
+\end{attention}
+
+\courssub{Mesure expérimentale de la puissance consommée}
+
+Pour mesurer la puissance consommée par un dipôle, on ne dispose pas au lycée d'un « wattmètre » : on mesure séparément la tension $U$ à ses bornes et l'intensité $I$ qui le traverse, puis on calcule le produit $P = U \cdot I$.
+
+\begin{experience}[Montage de mesure de la puissance consommée par un dipôle]
+\textbf{Matériel} : un générateur de tension continue réglable, un dipôle récepteur (lampe ou résistor), un ampèremètre, un voltmètre, des fils de connexion, un interrupteur.
+
+\textbf{Protocole} :
+\begin{enumerate}
+\item Brancher l'ampèremètre \emph{en série} avec le dipôle (il mesure l'intensité $I$ qui le traverse).
+\item Brancher le voltmètre \emph{en dérivation} aux bornes du dipôle (il mesure la tension $U$ à ses bornes).
+\item Respecter les bornes COM et les calibres : commencer par le calibre le plus élevé.
+\item Fermer l'interrupteur, relever $U$ et $I$, puis calculer $P = U \cdot I$.
+\end{enumerate}
+
+\textbf{Observations} : pour une lampe à incandescence alimentée sous $U = \SI{6,0}{V}$, on relève $I = \SI{0,50}{A}$, d'où $P = 6{,}0 \times 0{,}50 = \SI{3,0}{W}$. En augmentant la tension du générateur, la lampe brille davantage et le produit $U \cdot I$ augmente : la puissance consommée est bien liée à l'éclat, c'est-à-dire à la vitesse de conversion de l'énergie.
+
+\textbf{Interprétation} : le voltmètre, de résistance interne très grande, ne prélève qu'un courant négligeable ; l'ampèremètre, de résistance interne très faible, ne perturbe pas la tension. Le produit $U \cdot I$ mesuré représente donc fidèlement la puissance consommée par le dipôle.
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{circuitikz}[european, scale=1.0, transform shape]
+\draw (0,0) to[battery1, l={$G$}] (0,3)
+      to[nos, l={$K$}] (2,3)
+      to[ammeter, l={$A$}] (4,3)
+      to[R, l_={$D$}, v={$U$}] (4,0)
+      -- (0,0);
+\draw (4,3) -- (6.5,3) to[voltmeter, l={$V$}] (6.5,0) -- (4,0);
+\draw[->, thick, poporange] (3.1,3.45) -- (3.7,3.45) node[midway, above]{$I$};
+\end{circuitikz}
+\end{center}
+\legende{Montage de mesure de la puissance consommée par le dipôle $D$ : l'ampèremètre $A$ est branché en série (il mesure $I$), le voltmètre $V$ en dérivation aux bornes de $D$ (il mesure $U$). La puissance s'obtient par le calcul $P = U \cdot I$.}
+\end{popfigure}
+
+\courssub{Analyse graphique : comment $P$ dépend de $U$ et de $I$}
+
+La relation $P = U \cdot I$ montre que la puissance est \emph{proportionnelle} à la tension lorsque l'intensité est fixée, et proportionnelle à l'intensité lorsque la tension est fixée. Graphiquement, on obtient dans les deux cas une droite passant par l'origine, dont la pente a une signification physique précise.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.48\linewidth,
+    xlabel={$U$ (V)},
+    ylabel={$P$ (W)},
+    xmin=0, xmax=12, ymin=0, ymax=26,
+    xtick={0,2,4,6,8,10,12},
+    ytick={0,5,10,15,20,25},
+    grid=both, grid style={popline!40},
+    title={$I = \SI{2}{A}$ constant : $P = 2U$},
+    title style={font=\small},
+    label style={font=\small},
+    tick label style={font=\small},
+]
+\addplot[popcurve, domain=0:12, samples=50]{2*x};
+\addplot[only marks, mark=*, poporange, mark size=1.5pt] coordinates {(3,6) (6,12) (9,18)};
+\end{axis}
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.48\linewidth,
+    xlabel={$I$ (A)},
+    ylabel={$P$ (W)},
+    xmin=0, xmax=2.5, ymin=0, ymax=26,
+    xtick={0,0.5,1,1.5,2,2.5},
+    ytick={0,5,10,15,20,25},
+    grid=both, grid style={popline!40},
+    title={$U = \SI{10}{V}$ constante : $P = 10I$},
+    title style={font=\small},
+    label style={font=\small},
+    tick label style={font=\small},
+]
+\addplot[popcurve, domain=0:2.5, samples=50]{10*x};
+\addplot[only marks, mark=*, popgreen, mark size=1.5pt] coordinates {(0.5,5) (1,10) (2,20)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{À gauche : $P$ en fonction de $U$ à intensité constante ($I = \SI{2}{A}$) ; la pente de la droite vaut $I$. À droite : $P$ en fonction de $I$ à tension constante ($U = \SI{10}{V}$) ; la pente vaut $U$. Dans les deux cas, la droite passe par l'origine : la puissance est proportionnelle à chacune des deux grandeurs quand l'autre est fixée.}
+\end{popfigure}
+
+\begin{aretenir}[Lecture des graphiques]
+Sur le graphe $P = f(U)$ à $I$ constant, la pente de la droite est égale à l'intensité $I$ (en $\mathrm{W \cdot V^{-1}} = \mathrm{A}$). Sur le graphe $P = f(I)$ à $U$ constant, la pente est égale à la tension $U$ (en $\mathrm{W \cdot A^{-1}} = \mathrm{V}$). Retrouver la pente d'une telle droite expérimentale est une question classique au Probatoire.
+\end{aretenir}
+
+\courssub{Ordres de grandeur : les puissances des appareils domestiques}
+
+Pour acquérir le sens physique de la puissance, il est indispensable de connaître quelques ordres de grandeur des appareils courants dans les foyers camerounais.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|c|X|}
+\hline
+\rowcolor{popblueL} \textbf{Appareil} & \textbf{Puissance nominale} & \textbf{Remarque} \\
+\hline
+Lampe LED & \SI{5}{W} à \SI{15}{W} & Éclaire autant qu'une ancienne ampoule de \SI{60}{W} \\
+\hline
+Ampoule à incandescence & \SI{40}{W} à \SI{100}{W} & L'essentiel de l'énergie part en chaleur \\
+\hline
+Téléviseur & \SI{60}{W} à \SI{150}{W} & Dépend de la taille de l'écran \\
+\hline
+Ventilateur & \SI{50}{W} à \SI{100}{W} & Très utilisé pendant la saison chaude \\
+\hline
+Réfrigérateur & \SI{100}{W} à \SI{200}{W} & Fonctionne par intermittence (compresseur) \\
+\hline
+Fer à repasser & \SI{1000}{W} à \SI{1500}{W} & Appareil chauffant : forte puissance \\
+\hline
+Bouilloire électrique & \SI{1500}{W} à \SI{2200}{W} & L'un des appareils les plus puissants du foyer \\
+\hline
+Climatiseur & \SI{1000}{W} à \SI{3500}{W} & Justifie souvent l'achat d'un groupe électrogène \\
+\hline
+\end{tabularx}
+\end{center}
+
+On remarque que les appareils dont la fonction est de \emph{chauffer} (fer, bouilloire, réchaud) sont les plus puissants : convertir l'énergie électrique en chaleur rapidement exige un débit d'énergie élevé. Brancher simultanément une bouilloire, un fer à repasser et un climatiseur sur une même multiprise, c'est demander plus de \SI{5000}{W} à une prise prévue pour \SI{3500}{W} environ : d'où l'échauffement dangereux des câbles et les incendies d'origine électrique.
+
+\begin{savaistu}[Les groupes électrogènes se vendent en kVA]
+Face aux délestages, de nombreux foyers et commerces camerounais s'équipent de groupes électrogènes. Leur puissance est annoncée en \cle{kilovoltampères} (kVA) et non en kilowatts. La puissance réellement utilisable est donnée par $P = S \times \cos\varphi$, où $S$ est la puissance apparente en kVA et $\cos\varphi$ le facteur de puissance. Pour un usage domestique courant, on retient la règle pratique : $\SI{1}{kVA} \approx \SI{0,8}{kW}$ utile. Un groupe de \SI{5}{kVA} fournit donc environ \SI{4}{kW} : de quoi faire fonctionner un réfrigérateur, un téléviseur, quelques lampes et un ventilateur, mais pas une bouilloire et un climatiseur en même temps !
+\end{savaistu}
+
+\begin{exoresolu}[Puissance et énergie d'une bouilloire]
+\textbf{Énoncé.} Une bouilloire électrique porte l'inscription « \SI{220}{V} -- \SI{2000}{W} ». Elle fonctionne sous sa tension nominale pendant $\Delta t = \SI{5}{min}$ pour chauffer de l'eau.
+\begin{enumerate}
+\item Calculer l'intensité du courant qui la traverse.
+\item Calculer l'énergie électrique consommée, en joules puis en kilowattheures.
+\item Un soir, la tension du réseau tombe à $U' = \SI{200}{V}$. En supposant la résistance de la bouilloire constante, calculer sa nouvelle puissance. Commenter.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item En fonctionnement normal, $P = U \cdot I$, donc :
+\[ I = \frac{P}{U} = \frac{2000}{220} \approx \SI{9,1}{A} \]
+C'est un courant important : il justifie l'usage d'une prise et de câbles de section suffisante.
+\item L'énergie consommée est $W = P \cdot \Delta t$ avec $\Delta t = 5 \times 60 = \SI{300}{s}$ :
+\[ W = 2000 \times 300 = \SI{6,0e5}{J} \]
+En kilowattheures : $P = \SI{2,0}{kW}$ et $\Delta t = \dfrac{5}{60}\ \mathrm{h} \approx \SI{0,0833}{h}$, d'où :
+\[ W = 2{,}0 \times 0{,}0833 \approx \SI{0,167}{kWh} \]
+Vérification : $0{,}167 \times 3{,}6 \times 10^{6} \approx \SI{6,0e5}{J}$. Les deux résultats concordent.
+\item La résistance de la bouilloire se déduit du fonctionnement nominal : $P = \dfrac{U^2}{R}$, donc $R = \dfrac{U^2}{P} = \dfrac{220^2}{2000} = \SI{24,2}{\Omega}$. Sous $U' = \SI{200}{V}$ :
+\[ P' = \frac{U'^2}{R} = \frac{200^2}{24{,}2} \approx \SI{1653}{W} \approx \SI{1,65}{kW} \]
+La puissance a chuté d'environ $17\,\%$ pour une baisse de tension de seulement $9\,\%$, car la puissance varie comme le \emph{carré} de la tension. L'eau mettra donc plus longtemps à chauffer : l'énergie nécessaire est inchangée, mais elle arrive moins vite.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Pour t'entraîner]
+Un téléviseur de puissance nominale \SI{120}{W} fonctionne en moyenne \SI{5}{h} par jour sous \SI{220}{V}.
+\begin{enumerate}
+\item Calculer l'intensité du courant qui le traverse en fonctionnement.
+\item Calculer l'énergie consommée en un mois de 30 jours, en kWh.
+\item Le kWh étant facturé environ 75 FCFA, estimer le coût mensuel de fonctionnement du téléviseur.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : téléviseur]
+\begin{enumerate}
+\item $I = \dfrac{P}{U} = \dfrac{120}{220} \approx \SI{0,55}{A}$.
+\item Énergie journalière : $W_j = P \cdot \Delta t = 0{,}120 \times 5 = \SI{0,60}{kWh}$. Sur 30 jours : $W = 0{,}60 \times 30 = \SI{18}{kWh}$.
+\item Coût : $18 \times 75 = 1350$ FCFA par mois environ.
+\end{enumerate}
+\end{corrige}
+
+En résumé, la puissance $P = U \cdot I$ mesure la vitesse à laquelle une portion de circuit consomme l'énergie électrique, et l'énergie se retrouve par $W = P \cdot \Delta t$. Mais où \emph{va} cette énergie une fois consommée ? Pour de nombreux dipôles, elle est intégralement convertie en chaleur : c'est l'effet Joule, que nous étudions dans la section suivante.
+
+\coursec{Effet Joule et loi de Joule}
+
+Dans la section précédente, nous avons établi que la puissance électrique reçue par un dipôle récepteur s'écrit $P = U \cdot I$. Mais que devient cette énergie une fois absorbée ? La réponse dépend de la nature du récepteur : un moteur la convertit surtout en énergie mécanique, un accumulateur en énergie chimique... Il existe cependant un cas universel, inévitable, que tu as déjà constaté mille fois sans y prêter attention : \textbf{tout conducteur parcouru par un courant s'échauffe}. Touche le chargeur de ton téléphone après une heure de charge, ou l'adaptateur d'une rallonge alimentant une bouilloire : il est tiède, parfois chaud. Ce phénomène porte un nom : l'\cle{effet Joule}. C'est lui que nous allons maintenant étudier, quantifier et vérifier expérimentalement.
+
+\courssub{Mise en évidence expérimentale de l'effet Joule}
+
+\begin{experience}[Trois observations quotidiennes]
+\begin{itemize}
+\item \textbf{Lampe à incandescence} : le filament de tungstène, traversé par le courant, est porté à environ $\SI{2500}{\celsius}$ ; il devient blanc et émet de la lumière. Une vieille ampoule de $\SI{100}{W}$ brûle si on la touche après quelques minutes de fonctionnement.
+\item \textbf{Fer à repasser} : la résistance interne, parcourue par un courant d'environ $\SI{5}{A}$, chauffe la semelle jusqu'à $\SI{200}{\celsius}$. C'est l'effet Joule qui repasse tes habits de sortie.
+\item \textbf{Fusible} : c'est un fil fin calibré. Si l'intensité dépasse la valeur prévue (court-circuit, surcharge), l'échauffement devient si intense que le fil \emph{fond} et coupe le circuit, protégeant ainsi l'installation.
+\end{itemize}
+Dans les trois cas, l'observation est identique : le passage du courant dans un conducteur s'accompagne d'un \textbf{dégagement de chaleur}.
+\end{experience}
+
+\begin{definition}[Effet Joule]
+L'\cle{effet Joule} est la conversion d'énergie électrique en énergie thermique (chaleur), éventuellement accompagnée de rayonnement, dans \textbf{tout conducteur parcouru par un courant électrique}.
+
+Au niveau microscopique, les électrons libres, accélérés par le champ électrique, entrent en collision avec les ions du réseau cristallin du métal et leur communiquent de l'énergie : l'agitation thermique du conducteur augmente, donc sa température s'élève.
+\end{definition}
+
+\begin{attention}[Effet Joule : universel mais pas toujours dominant]
+L'effet Joule se produit dans \emph{tout} conducteur de résistance non nulle, y compris un moteur ou un électrolyseur. Mais attention : chez ces récepteurs, seule une \textbf{partie} de l'énergie reçue devient de la chaleur ; le reste est converti en énergie mécanique ou chimique. L'effet Joule y est alors une \emph{perte}. En revanche, dans un \textbf{conducteur ohmique} (résistance pure), la totalité de l'énergie électrique reçue est convertie en chaleur et rayonnement : c'est le seul cas où l'effet Joule absorbe tout le bilan.
+\end{attention}
+
+\courssub{La loi de Joule}
+
+Considérons un conducteur ohmique de résistance $R$, parcouru par un courant d'intensité constante $I$ pendant une durée $\Delta t$, sous une tension $U$. D'après la section 1, l'énergie électrique qu'il reçoit est $W = U \cdot I \cdot \Delta t$. Comme toute cette énergie est convertie en chaleur, l'énergie dissipée par effet Joule vaut $W_J = U \cdot I \cdot \Delta t$. Or la loi d'Ohm impose $U = R \cdot I$. En substituant, on obtient la loi fondamentale de cette section.
+
+\begin{propriete}[Loi de Joule]
+Pour un \textbf{conducteur ohmique} de résistance $R$ parcouru par un courant d'intensité $I$ pendant la durée $\Delta t$, l'énergie dissipée par effet Joule est :
+\[ W_J = R \cdot I^2 \cdot \Delta t \qquad \text{et la puissance :} \qquad P_J = R \cdot I^2 \]
+avec $W_J$ en joules (J), $P_J$ en watts (W), $R$ en ohms ($\Omega$), $I$ en ampères (A) et $\Delta t$ en secondes (s).
+
+\textbf{Démonstration (exigible).} Pour un conducteur ohmique, toute l'énergie électrique reçue est convertie en chaleur :
+\begin{align*}
+W_J &= U \cdot I \cdot \Delta t & &\text{(énergie reçue par un récepteur)}\\
+&= (R \cdot I) \cdot I \cdot \Delta t & &\text{(loi d'Ohm : } U = R \cdot I\text{)}\\
+&= R \cdot I^2 \cdot \Delta t
+\end{align*}
+En divisant par la durée $\Delta t$, on obtient la puissance : $P_J = \dfrac{W_J}{\Delta t} = R \cdot I^2$.
+
+\textbf{Vérification dimensionnelle} : $[R I^2] = \Omega \cdot A^2 = \dfrac{V}{A} \cdot A^2 = V \cdot A = W$. La formule est homogène à une puissance.
+\end{propriete}
+
+\begin{aretenir}[Les trois expressions de la puissance d'un conducteur ohmique]
+Pour un conducteur ohmique \emph{uniquement}, en combinant $P = U \cdot I$ avec la loi d'Ohm $U = R \cdot I$ :
+\[ P = U \cdot I = R \cdot I^2 = \frac{U^2}{R} \]
+On choisit l'expression la plus pratique selon les données de l'énoncé : $R \cdot I^2$ si l'on connaît le courant, $\dfrac{U^2}{R}$ si l'on connaît la tension.
+\end{aretenir}
+
+\begin{attention}[Piège classique du Probatoire]
+Les formules $P = R \cdot I^2$ et $P = \dfrac{U^2}{R}$ ne sont valables \textbf{que pour un conducteur ohmique}. Pour un moteur ou un électrolyseur (récepteurs actifs, caractérisés par une f.c.é.m. $E'$), la puissance reçue est $P = U \cdot I$ avec $U = E' + r \cdot I$, et seule la partie $P_J = r \cdot I^2$ est dissipée en chaleur. Écrire $P = \dfrac{U^2}{r}$ pour un moteur est une erreur grave : la tension $U$ à ses bornes n'est \emph{pas} égale à $r \cdot I$.
+\end{attention}
+
+\begin{exemplebox}[Pourquoi les rallonges surchargées chauffent]
+Une rallonge de mauvaise qualité présente une résistance totale $R = \SI{2}{\Omega}$. On y branche un fer à repasser et une bouilloire ; l'ensemble est parcouru par $I = \SI{10}{A}$.
+
+Puissance dissipée en chaleur dans le câble :
+\[ P_J = R \cdot I^2 = 2 \times 10^2 = \SI{200}{W} \]
+
+C'est autant qu'un petit radiateur... réparti le long du câble ! L'isolant plastique ramollit, peut fondre et provoquer un court-circuit, voire un incendie. Remarque la dépendance \textbf{quadratique} : si le courant double ($I = \SI{20}{A}$), la puissance dissipée est \emph{multipliée par quatre} ($P_J = \SI{800}{W}$). C'est pourquoi une petite surcharge peut avoir des conséquences disproportionnées.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=6.2cm,
+    xlabel={$I$ (A)}, ylabel={$P_J$ (W)},
+    xmin=0, xmax=11, ymin=0, ymax=260,
+    xtick={0,2,4,6,8,10}, ytick={0,50,100,150,200,250},
+    grid=both, grid style={popline!40},
+    axis line style={popdark}, label style={popdark},
+    tick label style={popdark, font=\small},
+]
+\addplot[popcurve, domain=0:11, samples=100] {2*x^2};
+\addplot[mark=*, mark size=2pt, poporange] coordinates {(10,200)};
+\draw[dashed, poporange] (axis cs:10,0) -- (axis cs:10,200) -- (axis cs:0,200);
+\node[poporange, anchor=south west, font=\small] at (axis cs:10,200) {$(10\ \mathrm{A}\,;\,200\ \mathrm{W})$};
+\node[popblue, font=\small, anchor=north west] at (axis cs:0.3,235) {$P_J = R\,I^2$ avec $R = \SI{2}{\Omega}$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Puissance dissipée par effet Joule en fonction de l'intensité, pour $R = \SI{2}{\Omega}$ : la courbe est une parabole. Quand $I$ double, $P_J$ quadruple.}
+\end{popfigure}
+
+\courssub{Vérification expérimentale de la loi de Joule : la calorimétrie}
+
+Comment s'assurer que $W_J = R \cdot I^2 \cdot \Delta t$ rend bien compte de la réalité ? L'idée de Joule lui-même, en 1841, est lumineuse : plonger le conducteur ohmique dans une masse d'eau connue et mesurer l'élévation de température. La chaleur reçue par l'eau, $Q = m \cdot c \cdot \Delta\theta$, doit être égale à l'énergie électrique dissipée.
+
+\begin{experience}[Vérification de la loi de Joule par calorimétrie]
+\textbf{Matériel} : calorimètre (vase isolant) avec son agitateur, conducteur ohmique de résistance $R$ (résistance plongeante), thermomètre, générateur de tension continue réglable, ampèremètre, interrupteur, balance, chronomètre, eau.
+
+\textbf{Protocole} :
+\begin{enumerate}
+\item Peser une masse $m$ d'eau froide et la verser dans le calorimètre ; noter la température initiale $\theta_i$.
+\item Plonger la résistance $R$ (entièrement immergée) et le thermomètre ; monter le circuit en série : générateur, interrupteur, ampèremètre, résistance.
+\item Fermer l'interrupteur et déclencher simultanément le chronomètre ; régler le générateur pour maintenir $I$ constante ; agiter régulièrement.
+\item Au bout de $\Delta t$ (par exemple $\SI{10}{min}$), ouvrir l'interrupteur et relever la température finale $\theta_f$.
+\end{enumerate}
+
+\textbf{Exploitation} : si le calorimètre est bien isolé, toute la chaleur dégagée par la résistance est absorbée par l'eau (et les accessoires) :
+\[ Q_{\text{eau}} = m \cdot c_{\text{eau}} \cdot (\theta_f - \theta_i) \qquad \text{à comparer à} \qquad W_J = R \cdot I^2 \cdot \Delta t \]
+On calcule l'écart relatif $\dfrac{|W_J - Q_{\text{eau}}|}{W_J}$ : s'il est faible (quelques pourcents), la loi de Joule est vérifiée, l'écart provenant des pertes thermiques inévitables et de la capacité thermique du calorimètre.
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.95, font=\small]
+% Circuit électrique (partie basse)
+\draw (0,0) to[battery1, l={$G$}] (0,2);
+\draw (0,2) to[ammeter, l={}] (2.2,2);
+\draw (2.2,2) to[nos, l={$K$}] (3.6,2);
+\draw (3.6,2) -- (4.6,2);
+% Calorimètre
+\draw[fill=popblueL, popblue!60] (4.2,0.4) rectangle (8.2,3.4);
+\draw[fill=popblue!15, draw=popblue] (4.45,0.6) rectangle (7.95,3.0);
+\node[popblue, anchor=north] at (6.2,0.4) {calorimètre (parois isolantes)};
+\node[popblue!70!popdark, font=\footnotesize] at (6.2,1.15) {eau : masse $m$, $c = \SI{4185}{J.kg^{-1}.K^{-1}}$};
+% Résistance plongeante (serpentin) et ses deux bornes
+\draw[poporange, very thick, decorate, decoration={coil, segment length=5pt, amplitude=4pt}] (4.9,2) -- (6.3,2);
+\node[poporange, anchor=south, font=\footnotesize] at (5.6,2.15) {$R$};
+% Fils de connexion à la résistance
+\draw (4.6,2) -- (4.9,2);
+\draw (6.3,2) -- (6.6,2) -- (6.6,-0.5) -- (0,-0.5) -- (0,0);
+% Thermomètre
+\draw[fill=poppinkL, draw=poppink] (7.2,1.3) rectangle (7.45,3.6);
+\draw[fill=poppink, draw=poppink] (7.24,1.3) rectangle (7.41,2.2);
+\node[poppink, anchor=west, font=\footnotesize] at (7.5,3.3) {thermomètre};
+\node[poppink, font=\footnotesize] at (7.32,1.6) {$\theta$};
+% Agitateur
+\draw[popgreen, thick] (6.6,3.6) -- (6.6,1.6);
+\draw[popgreen, thick] (6.35,1.6) -- (6.85,1.6);
+\node[popgreen, anchor=west, font=\footnotesize] at (6.7,3.5) {agitateur};
+% Ampèremètre en série, tension aux bornes du générateur
+\node[popink, font=\footnotesize] at (1.1,2.3) {$I$};
+\end{tikzpicture}
+\end{center}
+\legende{Dispositif de vérification expérimentale de la loi de Joule : un conducteur ohmique de résistance $R$, parcouru par un courant d'intensité $I$ constante pendant une durée $\Delta t$, est plongé dans l'eau d'un calorimètre. L'élévation de température $\Delta\theta = \theta_f - \theta_i$, mesurée au thermomètre, permet de calculer la chaleur reçue par l'eau $Q = m c \Delta\theta$ et de la comparer à $W_J = R I^2 \Delta t$.}
+\end{popfigure}
+
+\begin{exemplebox}[Exploitation d'une mesure de calorimétrie]
+On plonge un conducteur ohmique $R = \SI{20}{\Omega}$ dans un calorimètre contenant $m = \SI{200}{g}$ d'eau à $\theta_i = \SI{18,0}{\celsius}$. Le courant $I = \SI{1,5}{A}$ circule pendant $\Delta t = \SI{10}{min}$ ; la température finale relevée est $\theta_f = \SI{25,6}{\celsius}$.
+
+\textbf{Énergie électrique dissipée (prévision théorique).}
+\[ W_J = R \cdot I^2 \cdot \Delta t = 20 \times 1,5^2 \times 600 = \SI{27\,000}{J} = \SI{27}{kJ}. \]
+
+\textbf{Chaleur reçue par l'eau (mesure expérimentale).}
+\[ Q_{\text{eau}} = m \cdot c_{\text{eau}} \cdot (\theta_f - \theta_i) = 0,200 \times 4185 \times 7,6 \approx \SI{6\,361}{J} = \SI{6,36}{kJ}. \]
+
+\textbf{Comparaison.} La valeur mesurée est très inférieure à la prévision théorique ! L'écart relatif dépasse $75\%$, ce qui est anormalement élevé pour une simple vérification de loi. La cause la plus probable : le calorimètre utilisé possède une \textbf{capacité thermique propre} non négligeable (vase, agitateur, thermomètre) qui absorbe elle aussi une partie de la chaleur, ou la manipulation dure trop longtemps par rapport à l'isolation réelle du dispositif (fuites thermiques vers l'extérieur). En toute rigueur, on doit remplacer $m c_{\text{eau}}$ par $(m c_{\text{eau}} + \mu c_{\text{eau}})$, où $\mu$ est la \emph{valeur en eau} du calorimètre (vue dans le module Mouvements et interactions). Avec un calorimètre correctement isolé et sa valeur en eau prise en compte, l'écart relatif redescend typiquement à quelques pourcents, ce qui valide la loi de Joule.
+\end{exemplebox}
+
+\courssub{Applications utiles de l'effet Joule}
+
+Loin d'être une simple nuisance, l'effet Joule est \textbf{recherché et exploité} chaque fois qu'on a besoin de convertir de l'énergie électrique en chaleur de façon contrôlée.
+
+\begin{itemize}
+\item \textbf{Chauffage électrique} : radiateurs, chauffe-eau, cuisinières électriques et bouilloires utilisent une résistance chauffante calibrée pour dissiper une puissance $P_J = R I^2$ connue.
+\item \textbf{Fer à repasser} : déjà rencontré, la semelle chauffante est un conducteur ohmique dimensionné pour atteindre rapidement une température élevée.
+\item \textbf{Lampe à incandescence} : le filament de tungstène est porté à très haute température par effet Joule, jusqu'à émettre de la lumière visible (une part importante de l'énergie part cependant en chaleur non utile, d'où le faible rendement lumineux de ces lampes face aux LED).
+\item \textbf{Fusible de protection} : un fil calibré, volontairement fragile, est conçu pour fondre par effet Joule dès que l'intensité dépasse un seuil de sécurité, ouvrant ainsi le circuit avant qu'un échauffement dangereux ne se propage.
+\item \textbf{Soudure électrique par points} : un courant très intense, appliqué brièvement à la jonction de deux pièces métalliques, les porte localement à la fusion par effet Joule.
+\end{itemize}
+
+\courssub{Effet Joule indésirable : pertes et risques}
+
+Dans de nombreuses autres situations, l'effet Joule est au contraire une \textbf{perte} qu'il faut minimiser.
+
+\begin{attention}[Pertes en ligne et sécurité des installations]
+\begin{itemize}
+\item \textbf{Pertes dans les lignes de transport d'électricité} : un câble de transport (par exemple entre un barrage comme Nachtigal et une ville) possède une résistance non nulle. Toute intensité qui le traverse y dissipe une puissance $P_J = R I^2$, perdue pour l'utilisateur final. C'est pourquoi ENEO transporte l'électricité sous \textbf{très haute tension} (des centaines de kV) : à puissance transportée $P = UI$ fixée, augmenter $U$ permet de diminuer $I$, donc de réduire fortement les pertes $R I^2$ (qui varient comme le \emph{carré} de $I$).
+\item \textbf{Échauffement des câbles domestiques} : une rallonge ou une installation surchargée (trop d'appareils sur une même prise) est parcourue par une intensité supérieure à celle pour laquelle elle a été dimensionnée ; l'effet Joule y devient excessif, l'isolant peut fondre, avec un risque d'\textbf{incendie}.
+\item \textbf{Échauffement des composants électroniques} : dans un ordinateur ou un smartphone, l'effet Joule dans les circuits intégrés limite les performances (nécessité d'un système de refroidissement, ventilateur ou dissipateur thermique).
+\end{itemize}
+Retenir l'essentiel : réduire les pertes par effet Joule, c'est réduire soit $R$ (câbles de plus grande section, meilleurs conducteurs), soit $I$ à puissance égale (donc augmenter $U$).
+\end{attention}
+
+
+\coursec{Conversion d'énergie et rendement d'une portion de circuit}
+
+Dans la section précédente, nous avons vu que tout conducteur parcouru par un courant dégage de la chaleur : c'est l'\cle{effet Joule}, quantifié par la loi $P_J = R I^2$. Nous avons présenté cet effet tantôt comme une nuisance (échauffement des câbles), tantôt comme une application utile (chauffe-eau, fer à repasser). Il est temps de prendre de la hauteur et de poser la question générale : \emph{que devient exactement l'énergie électrique consommée par un appareil ?} La réponse à cette question va nous conduire à la notion capitale de \cle{rendement}, qui gouverne toute la politique énergétique d'un pays comme le Cameroun, du barrage de Nachtigal jusqu'à l'ampoule de ta chambre.
+
+\courssub{Généralisation : l'énergie consommée se convertit toujours}
+
+\textbf{Une observation de départ.}\par
+Branche un ventilateur pendant une heure et touche son moteur : il est chaud. Pourtant, tu n'as pas payé ENEO pour chauffer le moteur, mais pour brasser de l'air ! Une partie de l'énergie électrique a donc été convertie en énergie \emph{mécanique} (mouvement des pales, c'est l'énergie \emph{utile}), et une autre partie en \emph{chaleur} (énergie \emph{perdue}). Le principe de conservation de l'énergie, pilier de toute la physique, impose alors un bilan exact.
+
+\begin{propriete}[Bilan énergétique d'une portion de circuit]
+Dans une portion de circuit quelconque, l'énergie électrique consommée pendant la durée $\Delta t$ se retrouve intégralement sous d'autres formes. On distingue l'énergie \cle{utile} $W_{\text{utile}}$ (celle que l'on recherche) et l'énergie \cle{perdue} $W_{\text{pertes}}$ (le plus souvent de la chaleur par effet Joule) :
+\[ W_{\text{élec}} = W_{\text{utile}} + W_{\text{pertes}} \]
+En divisant par la durée $\Delta t$, on obtient le bilan de \cle{puissance}, équivalent au précédent :
+\[ P_{\text{consommée}} = P_{\text{utile}} + P_{\text{pertes}} \]
+\end{propriete}
+
+\textbf{Exemples de conversion.}\par
+Selon la nature du récepteur, l'énergie utile prend des formes différentes ; la chaleur, elle, est presque toujours présente :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Récepteur} & \textbf{Énergie utile} & \textbf{Énergie perdue} \\
+\hline
+Moteur (ventilateur, forage) & Énergie mécanique $W_m = E' I\, \Delta t$ & Chaleur $W_J = r I^2 \Delta t$ \\
+\hline
+Électrolyseur (production d'aluminium) & Énergie chimique & Chaleur par effet Joule \\
+\hline
+Lampe à incandescence & Rayonnement visible & Chaleur (énorme !) \\
+\hline
+Lampe LED & Rayonnement visible & Chaleur (faible) \\
+\hline
+Accumulateur en charge & Énergie chimique stockée & Chaleur \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Le cas du moteur : ne pas confondre les deux termes]
+Pour un moteur de force contre-électromotrice $E'$ et de résistance interne $r$, la puissance électrique consommée est $P = U I = (E' + rI) I = E' I + r I^2$. Le terme $E' I$ est la puissance \emph{mécanique utile} ; le terme $r I^2$ est la puissance perdue par effet Joule. \textbf{Erreur fréquente} : écrire que toute la puissance $UI$ est convertie en chaleur. Ce n'est vrai que pour un conducteur ohmique pur (résistance, chauffe-eau), jamais pour un moteur en rotation.
+\end{attention}
+
+\courssub{Le rendement d'une portion de circuit}
+
+\textbf{Intuition.}\par
+Deux lampes éclairent ta chambre avec la même clarté : une ampoule à incandescence de $\SI{75}{W}$ et une lampe LED de $\SI{10}{W}$. La seconde consomme $7,5$ fois moins pour le même service rendu : on dit qu'elle a un meilleur \cle{rendement}. Le rendement mesure la \emph{qualité} d'une conversion : quelle fraction de l'énergie payée est réellement utile ?
+
+\begin{definition}[Rendement d'une portion de circuit]
+Le \cle{rendement} $\eta$ (lettre grecque « êta ») d'une portion de circuit est le quotient de l'énergie utile par l'énergie électrique consommée pendant la même durée :
+\[ \eta = \dfrac{W_{\text{utile}}}{W_{\text{consommée}}} = \dfrac{P_{\text{utile}}}{P_{\text{consommée}}} \]
+$\eta$ est une grandeur \textbf{sans unité} (quotient de deux grandeurs de même nature), toujours comprise entre 0 et 1 :
+\[ 0 \leq \eta \leq 1 \]
+On l'exprime très souvent en pourcentage : $\eta = 0{,}80 = 80\,\%$.
+\end{definition}
+
+\begin{exemplebox}[Rendement d'un moteur électrique]
+Un moteur électrique (pompe de forage en zone rurale) consomme une puissance $P_{\text{cons}} = \SI{500}{W}$ et fournit une puissance mécanique utile $P_{\text{utile}} = \SI{400}{W}$.
+\begin{align*}
+\eta &= \dfrac{P_{\text{utile}}}{P_{\text{cons}}} = \dfrac{400}{500} = 0{,}80 = 80\,\% \\
+P_{\text{pertes}} &= P_{\text{cons}} - P_{\text{utile}} = 500 - 400 = \SI{100}{W}
+\end{align*}
+Les $\SI{100}{W}$ perdus chauffent le moteur (effet Joule dans les bobinages, frottements) : c'est pourquoi un moteur en fonctionnement est toujours tiède, voire chaud.
+\end{exemplebox}
+
+\begin{attention}[Un rendement supérieur à 100 \% est impossible]
+Le principe de conservation de l'énergie interdit de produire plus d'énergie utile qu'on n'en consomme : $\eta > 1$ est physiquement absurde. Si ton calcul donne $\eta = 1{,}25$ ou $250\,\%$, ne conclus jamais « le rendement est de $250\,\%$ » : cherche l'erreur ! Le plus souvent, c'est une erreur d'unité (énergie en kWh divisée par une énergie en joules, durée en minutes au lieu de secondes) ou une inversion entre $P_{\text{utile}}$ et $P_{\text{consommée}}$. Vérifie toujours que le numérateur est plus petit que le dénominateur.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small]
+% Boîtes
+\node[draw=popblue, fill=popblueL, rounded corners, minimum width=3.2cm, minimum height=1.1cm, align=center] (elec) at (0,0) {\textbf{Puissance électrique}\\ $P_{\text{élec}} = UI = \SI{500}{W}$};
+\node[draw=popgreen, fill=popgreenL, rounded corners, minimum width=3.2cm, minimum height=1.1cm, align=center] (meca) at (7,0.9) {\textbf{Puissance mécanique utile}\\ $P_m = E'I = \SI{400}{W}$};
+\node[draw=poporange, fill=poporangeL, rounded corners, minimum width=3.2cm, minimum height=1.1cm, align=center] (joule) at (7,-1.3) {\textbf{Pertes Joule}\\ $P_J = rI^2 = \SI{100}{W}$};
+% Flèches proportionnelles (épaisseur ~ puissance)
+\draw[line width=5pt, -{Stealth[length=4mm]}, popblue] (elec.east) -- (meca.west);
+\draw[line width=1.25pt, -{Stealth[length=4mm]}, poporange] (elec.east) -- (joule.west);
+\node[popmuted] at (4.6,1.6) {$\eta = 80\,\%$};
+\node[popmuted] at (4.6,-2.1) {$20\,\%$};
+\end{tikzpicture}
+\end{center}
+\legende{Chaîne énergétique d'un moteur : l'épaisseur des flèches est proportionnelle à la puissance transportée. La puissance électrique consommée se partage en puissance mécanique utile et en pertes par effet Joule.}
+\end{popfigure}
+
+\courssub{Rendement d'une chaîne de conversions successives}
+
+\textbf{Situation concrète.}\par
+L'électricité qui arrive chez toi est le résultat d'une longue chaîne : le barrage transforme l'énergie de l'eau en énergie mécanique (turbine), l'alternateur la transforme en énergie électrique, le transformateur l'adapte à la haute tension, la ligne la transporte... À chaque étape, une petite fraction est perdue. Que vaut le rendement global ?
+
+\begin{propriete}[Rendement d'une chaîne de conversions (admise)]
+Lorsque plusieurs conversions d'énergie se succèdent, le rendement global de la chaîne est le \textbf{produit} des rendements partiels :
+\[ \eta_{\text{global}} = \eta_1 \times \eta_2 \times \eta_3 \times \cdots \]
+\end{propriete}
+
+\textbf{Justification sur un exemple.}\par
+Considérons la chaîne « turbine $\to$ alternateur » d'un barrage. La turbine reçoit $\SI{1000}{kW}$ de puissance hydraulique avec $\eta_1 = 0{,}90$ : elle fournit $1000 \times 0{,}90 = \SI{900}{kW}$ mécaniques. L'alternateur, de rendement $\eta_2 = 0{,}95$, fournit alors $900 \times 0{,}95 = \SI{855}{kW}$ électriques. Le rendement global est donc :
+\[ \eta_{\text{global}} = \dfrac{855}{1000} = 0{,}855 = 0{,}90 \times 0{,}95 = \eta_1 \times \eta_2 \]
+Remarque bien que le rendement global est \emph{toujours inférieur} à chacun des rendements partiels : les pertes s'accumulent. C'est pourquoi on cherche à limiter le nombre de conversions dans une installation.
+
+\courssub{Diagramme de puissance : comparer incandescence et LED}
+
+Le diagramme de puissance (ou chaîne énergétique) représente visuellement le bilan d'une portion de circuit. Comparons deux lampes qui fournissent le même éclairement.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small]
+% --- Incandescence ---
+\node[align=center, font=\bfseries] at (3,3.1) {Lampe à incandescence ($\SI{60}{W}$)};
+\draw[fill=popblueL, draw=popblue] (0,2.2) rectangle (6,2.8);
+\node[align=center] at (3,2.5) {$P_{\text{élec}} = \SI{60}{W}$ ($100\,\%$)};
+\draw[fill=popgoldL, draw=popgold] (0,1.1) rectangle (0.6,1.7);
+\node[align=center] at (0.3,1.4) {\scriptsize $6\,$W};
+\draw[fill=poporangeL, draw=poporange] (0,0.0) rectangle (5.4,0.6);
+\node[align=center] at (2.7,0.3) {Chaleur perdue : $\SI{54}{W}$ ($90\,\%$)};
+\node[align=left, anchor=west, text width=2.6cm] at (6.3,1.4) {\scriptsize Lumière utile\\ $\eta \approx 10\,\%$};
+% --- LED ---
+\node[align=center, font=\bfseries] at (3,-1.6) {Lampe LED ($\SI{9}{W}$)};
+\draw[fill=popblueL, draw=popblue] (0,-2.5) rectangle (0.9,-1.9);
+\node[align=center] at (0.45,-2.2) {\scriptsize $9\,$W};
+\draw[fill=popgoldL, draw=popgold] (0,-3.6) rectangle (0.6,-3.0);
+\node[align=center] at (0.3,-3.3) {\scriptsize $6\,$W};
+\draw[fill=poporangeL, draw=poporange] (0,-4.7) rectangle (0.3,-4.1);
+\node[align=center] at (0.15,-4.4) {\scriptsize $3\,$W};
+\node[align=left, anchor=west, text width=3.4cm] at (1.2,-3.3) {\scriptsize Même lumière utile,\\ $\eta \approx 65\,\%$};
+\node[align=left, anchor=west, text width=3.4cm] at (1.2,-4.4) {\scriptsize Chaleur perdue\\ très faible};
+\end{tikzpicture}
+\end{center}
+\legende{Diagrammes de Sankey simplifiés : la largeur des bandes est proportionnelle à la puissance. À éclairement égal, la LED consomme près de 7 fois moins que la lampe à incandescence, car elle convertit en chaleur une part bien plus faible de l'énergie.}
+\end{popfigure}
+
+\begin{savaistu}[Pourquoi transporter l'électricité en haute tension ?]
+Au Cameroun, SONATREL transporte l'électricité des barrages (Edéa, Song Loulou, Lom Pangar, Nachtigal) vers les villes sous $\SI{220}{kV}$. Pourquoi une tension si élevée ? À puissance transportée $P = UI$ \emph{constante}, augmenter $U$ revient à diminuer $I$ : par exemple, pour transporter $\SI{200}{MW}$, il faut environ $\SI{910}{A}$ sous $\SI{220}{kV}$, mais plus de $\SI{9000}{A}$ sous $\SI{22}{kV}$ ! Or les pertes dans les lignes valent $P_J = R I^2$ : elles varient comme le \emph{carré} de l'intensité. En multipliant la tension par 10, on divise l'intensité par 10 et les pertes Joule par \textbf{100}. C'est toute la raison d'être des lignes haute tension et des transformateurs que l'on voit partout dans nos quartiers.
+\end{savaistu}
+
+\courssub{Comment réduire les pertes d'énergie ?}
+
+Le bilan $P_{\text{pertes}} = R I^2$ (pour les pertes Joule) et la notion de rendement indiquent quatre stratégies concrètes :
+
+\begin{enumerate}
+\item \textbf{Diminuer la résistance $R$ des conducteurs} : utiliser des câbles de grosse section (la résistance diminue quand la section augmente) et de bons conducteurs (cuivre, aluminium). C'est pourquoi les lignes SONATREL utilisent de gros câbles d'aluminium.
+\item \textbf{Diminuer l'intensité $I$ transportée} : comme $P_J = RI^2$, toute réduction de $I$ se paie au carré. On transporte donc l'énergie en haute tension, puis on abaisse la tension près des consommateurs grâce aux transformateurs.
+\item \textbf{Choisir des appareils à bon rendement} : remplacer les lampes à incandescence ($\eta \approx 10\,\%$) par des LED ($\eta$ de $50\,\%$ à $80\,\%$), choisir des moteurs et réfrigérateurs performants. À service rendu égal, la facture ENEO diminue dans le même rapport.
+\item \textbf{Supprimer les consommations inutiles} : un appareil en veille (téléviseur, décodeur Canal+, chargeur laissé branché) consomme quelques watts en permanence, soit une énergie $W = P\,\Delta t$ non négligeable sur une année car $\Delta t$ est énorme. Éteindre complètement les appareils est un geste à la fois économique et citoyen dans un pays où l'énergie est précieuse.
+\end{enumerate}
+
+\begin{methode}[Conduire un bilan énergétique en 3 étapes]
+\begin{enumerate}
+\item \textbf{Identifier l'énergie (ou la puissance) consommée} : c'est toujours $W_{\text{élec}} = U I\, \Delta t$ (ou $P = UI$), calculée aux bornes de la portion de circuit.
+\item \textbf{Identifier l'énergie utile} : se demander « à quoi sert l'appareil ? ». Mécanique pour un moteur ($E'I\,\Delta t$), chimique pour un électrolyseur, lumineuse pour une lampe.
+\item \textbf{Identifier les pertes par différence} : $W_{\text{pertes}} = W_{\text{élec}} - W_{\text{utile}}$, puis conclure par le rendement $\eta = W_{\text{utile}} / W_{\text{élec}}$. Vérifier que $0 \leq \eta \leq 1$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Rendement d'un moteur de forage]
+\textbf{Énoncé.} Un moteur électrique de résistance interne $r = \SI{5}{\Omega}$, alimenté sous $U = \SI{220}{V}$, est parcouru par un courant d'intensité $I = \SI{2}{A}$. Il fonctionne pendant $\Delta t = \SI{30}{min}$.
+\begin{enumerate}
+\item Calculer la puissance électrique consommée et la puissance perdue par effet Joule.
+\item En déduire la puissance mécanique utile et le rendement du moteur.
+\item Calculer, en joules puis en kWh, l'énergie électrique consommée pendant les 30 minutes.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Puissance électrique consommée :
+\[ P_{\text{élec}} = U I = 220 \times 2 = \SI{440}{W} \]
+Puissance perdue par effet Joule dans les bobinages :
+\[ P_J = r I^2 = 5 \times 2^2 = \SI{20}{W} \]
+\item Par conservation de la puissance :
+\[ P_{\text{utile}} = P_{\text{élec}} - P_J = 440 - 20 = \SI{420}{W} \]
+\[ \eta = \dfrac{P_{\text{utile}}}{P_{\text{élec}}} = \dfrac{420}{440} \approx 0{,}955 \approx 95,5\,\% \]
+Le résultat est bien inférieur à $100\,\%$ : cohérent.
+\item L'énergie consommée, avec $\Delta t = 30 \times 60 = \SI{1800}{s}$ :
+\[ W = P_{\text{élec}}\,\Delta t = 440 \times 1800 = \SI{7,92e5}{J} = \SI{792}{kJ} \]
+En kilowattheures, avec $\Delta t = \SI{0,5}{h}$ et $P = \SI{0,44}{kW}$ :
+\[ W = 0{,}44 \times 0{,}5 = \SI{0,22}{kWh} \]
+Vérification : $\SI{1}{kWh} = \SI{3,6e6}{J}$, donc $0{,}22 \times 3{,}6 \times 10^6 = \SI{7,92e5}{J}$. Les deux résultats concordent.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Installation solaire en zone rurale]
+Un panneau solaire alimente une installation villageoise. La chaîne énergétique comporte : le panneau ($\eta_1 = 18\,\%$), la batterie ($\eta_2 = 85\,\%$) et le convertisseur ($\eta_3 = 90\,\%$). Le site reçoit une puissance lumineuse de $\SI{2000}{W}$.
+\begin{enumerate}
+\item Calculer le rendement global de la chaîne.
+\item Calculer la puissance électrique disponible pour les lampes LED du village.
+\item Où se situe l'étape la plus défavorable ? Proposer une piste d'amélioration.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+\item Le rendement global est le produit des rendements partiels :
+\[ \eta_{\text{global}} = \eta_1 \times \eta_2 \times \eta_3 = 0{,}18 \times 0{,}85 \times 0{,}90 \approx 0{,}138 \approx 13,8\,\% \]
+\item Puissance disponible :
+\[ P = \eta_{\text{global}} \times P_{\text{reçue}} = 0{,}138 \times 2000 \approx \SI{276}{W} \]
+soit de quoi alimenter une trentaine de lampes LED de $\SI{9}{W}$.
+\item L'étape la plus défavorable est le panneau ($18\,\%$) : c'est lui qui limite toute la chaîne. On peut orienter les panneaux face au soleil, les nettoyer régulièrement (poussière de la saison sèche) ou choisir des panneaux plus performants.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Conservation de l'énergie : $W_{\text{élec}} = W_{\text{utile}} + W_{\text{pertes}}$, et de même pour les puissances.
+\item Rendement : $\eta = \dfrac{P_{\text{utile}}}{P_{\text{consommée}}}$, sans unité, $0 \leq \eta \leq 1$, souvent exprimé en $\%$.
+\item Chaîne de conversions : $\eta_{\text{global}} = \eta_1 \times \eta_2 \times \cdots$ (toujours inférieur à chaque rendement partiel).
+\item Réduire les pertes : diminuer $R$ (gros câbles), diminuer $I$ (haute tension), choisir des appareils à bon rendement, supprimer les veilles.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Bilan énergétique complet d'une portion de circuit}
+
+Dans les sections précédentes, nous avons appris à évaluer le \cle{rendement} d'une portion de circuit : un moteur ne transforme pas toute l'énergie électrique qu'il reçoit en énergie mécanique, et un générateur ne restitue pas au circuit toute l'énergie qu'il puise dans sa source (chimique, mécanique, solaire). Reste une question fondamentale : \emph{où va l'énergie, exactement ?} La réponse est l'un des principes les plus profonds de la physique : l'énergie ne disparaît jamais, elle se \textbf{conserve}. Cette dernière section consiste à « faire les comptes » d'un circuit complet, watt par watt, joule par joule. C'est la compétence qui te permettra, au Probatoire comme dans la vie quotidienne, de prévoir la durée de fonctionnement d'une batterie, le coût d'une facture ENEO ou le choix d'un appareil électrique.
+
+\courssub{Le bilan du générateur}
+
+\textbf{Situation concrète.} Une batterie de voiture (ou l'accumulateur d'une installation solaire en zone rurale) contient une réserve d'énergie chimique. Lorsqu'elle débite un courant $I$, cette énergie chimique se convertit en énergie électrique. Mais la batterie chauffe légèrement : une partie de l'énergie est perdue \emph{à l'intérieur même} du générateur, à cause de sa résistance interne $r$.
+
+Rappelons les résultats établis. Un générateur réel de force électromotrice $E$ et de résistance interne $r$, débitant un courant $I$, présente à ses bornes la tension $U_{PN} = E - rI$. La puissance électromagnétique convertie à l'intérieur du générateur est $P_{\text{conv}} = EI$. Multiplions la relation de tension par $I$ :
+\[ U_{PN}\,I = EI - rI^2. \]
+Chaque terme est une puissance, et chacun a une signification physique précise.
+
+\begin{propriete}[Bilan de puissance d'un générateur réel]
+Un générateur $(E, r)$ débitant un courant $I$ :
+\begin{itemize}
+\item \textbf{convertit} (puissance électromagnétique) :
+\[ P_{\text{conv}} = EI \]
+\item \textbf{fournit} au circuit extérieur (puissance de sortie) :
+\[ P_{\text{sortie}} = U_{PN}\,I = (E - rI)I = EI - rI^2 \]
+\item \textbf{dissipe} en interne, par effet Joule (pertes) :
+\[ P_{\text{Joule int}} = rI^2 \]
+\end{itemize}
+La conservation de l'énergie s'écrit alors :
+\[ \boxed{P_{\text{conv}} = P_{\text{sortie}} + P_{\text{Joule int}}} \qquad\text{soit}\qquad EI = U_{PN}I + rI^2. \]
+Le rendement du générateur est $\eta_{\text{gen}} = \dfrac{P_{\text{sortie}}}{P_{\text{conv}}} = \dfrac{U_{PN}}{E} = 1 - \dfrac{rI}{E}$.
+\end{propriete}
+
+\begin{attention}[Vocabulaire précis : « chimique » vs « électromagnétique »]
+La puissance $EI$ est la puissance \textbf{électromagnétique convertie} (travail des forces non électrostatiques par unité de temps). Elle est égale à la puissance chimique (ou mécanique, solaire) fournie par la source \emph{si l'on néglige les autres pertes internes} (frottements, fuite de courant, etc.). Au programme de Première, on assimile $P_{\text{conv}} = EI$ à la puissance fournie par la source d'énergie. Ne pas écrire $P_{\text{chimique}} = (E+rI)I$ : cette expression n'a pas de sens physique (la f.é.m. $E$ caractérise déjà la conversion d'énergie par charge).
+\end{attention}
+
+\begin{exemplebox}[Bilan d'un générateur réel]
+Un générateur de f.é.m. $E = \SI{12}{V}$ et de résistance interne $r = \SI{0,5}{\Omega}$ alimente un circuit parcouru par un courant $I = \SI{2}{A}$.
+\begin{align*}
+P_{\text{conv}} &= EI = 12 \times 2 = \SI{24}{W} \\
+U_{PN} &= E - rI = 12 - 0{,}5 \times 2 = \SI{11}{V} \\
+P_{\text{sortie}} &= U_{PN}I = 11 \times 2 = \SI{22}{W} \\
+P_{\text{Joule int}} &= rI^2 = 0{,}5 \times 2^2 = \SI{2}{W}
+\end{align*}
+Vérification : $22 + 2 = 24$ W. Le bilan est équilibré. Sur les \SI{24}{W} convertis électromagnétiquement, \SI{22}{W} partent vers le circuit extérieur et \SI{2}{W} échauffent le générateur. Rendement : $\eta = 22/24 \approx 91,7\,\%$.
+\end{exemplebox}
+
+\courssub{Le bilan des récepteurs}
+
+Le courant fourni par le générateur traverse ensuite les récepteurs. Chacun reçoit une puissance électrique $P_{\text{reçue}} = UI$ et la convertit selon sa nature.
+
+\textbf{Conducteur ohmique} (résistance $R$, tension $U$ à ses bornes) : toute l'énergie reçue est convertie en chaleur (et un peu de lumière pour une lampe à incandescence). C'est la loi de Joule :
+\[ P_{\text{reçue}} = UI = RI^2 = \frac{U^2}{R} = P_{\text{Joule}}. \]
+Il n'y a \emph{aucune} autre forme d'énergie produite : le rendement « thermique » est de 100 \%.
+
+\textbf{Récepteur actif} : moteur (f.c.é.m. $E'$, résistance interne $r'$) ou électrolyseur. La tension à ses bornes s'écrit $U = E' + r'I$ (récepteur), d'où, en multipliant par $I$ :
+\[ \boxed{P_{\text{reçue}} = UI = \underbrace{E'I}_{\text{puissance utile } P_{\text{utile}}} + \underbrace{r'I^2}_{\text{pertes Joule } P_{\text{Joule int}}}} \]
+\begin{itemize}
+\item $E'I$ est la puissance convertie en énergie \textbf{mécanique} (moteur d'un moulin à maïs, ventilateur, pompe à eau) ou \textbf{chimique} (électrolyse, recharge d'une batterie) ;
+\item $r'I^2$ est irrémédiablement perdue en chaleur dans les bobinages (ou l'électrolyte).
+\end{itemize}
+Le rendement du récepteur actif est $\eta_{\text{rec}} = \dfrac{E'I}{UI} = \dfrac{E'}{U}$.
+
+\begin{experience}[Vérification expérimentale de la loi de Joule]
+\textbf{Objectif :} Montrer que l'énergie thermique $Q$ dissipée dans un conducteur ohmique est proportionnelle à $RI^2\Delta t$.
+\textbf{Matériel :} Résistance $R$ (fil de nichrome ou résistance connue) plongée dans un calorimètre d'eau (masse $m_e$, capacité $c_e$), thermomètre, générateur de tension variable, ampèremètre, chronomètre.
+\textbf{Protocole :}
+\begin{enumerate}
+\item Mesurer la température initiale $\theta_i$ de l'eau.
+\item Fermer le circuit pendant une durée $\Delta t$ mesurée, en maintenant un courant constant $I$ (noté à l'ampèremètre).
+\item Ouvrir le circuit, agiter, mesurer la température finale $\theta_f$.
+\item Calculer l'énergie thermique reçue par l'eau : $Q = m_e c_e (\theta_f - \theta_i)$ (on néglige la chaleur absorbée par le calorimètre et les pertes vers l'extérieur si $\Delta t$ est court).
+\item Calculer l'énergie électrique dissipée : $W_{\text{élec}} = RI^2 \Delta t$.
+\item Recommencer pour plusieurs valeurs de $I$ (en changeant la tension du générateur).
+\end{enumerate}
+\textbf{Observations / Interprétation :} On trace $Q$ en fonction de $RI^2\Delta t$. Les points sont alignés sur une droite passant par l'origine de pente 1 (dans la limite des pertes thermiques). Cela valide $Q = RI^2\Delta t$.
+\textbf{Analyse dimensionnelle :} $[R] = \Omega = \text{V/A} = \text{J}/(\text{C}\cdot\text{A}) = \text{J}\cdot\text{s}/\text{C}^2$. $[I^2] = \text{A}^2 = \text{C}^2/\text{s}^2$. $[RI^2\Delta t] = (\text{J}\cdot\text{s}/\text{C}^2) \times (\text{C}^2/\text{s}^2) \times \text{s} = \text{J}$. Correct.
+\end{experience}
+
+\courssub{Conservation de l'énergie dans un circuit complet}
+
+Considérons le circuit série le plus riche de cette leçon : un générateur $(E, r)$ alimentant un moteur $(E', r')$ et un conducteur ohmique $R$, le tout parcouru par le même courant $I$.
+
+\begin{propriete}[Conservation de l'énergie électrique — Démonstration guidée]
+Dans un circuit série, la loi d'additivité des tensions (loi des mailles) donne :
+\[ U_{\text{générateur}} = \sum U_{\text{récepteurs}} \quad\Longleftrightarrow\quad E - rI = RI + (E' + r'I). \]
+En multipliant chaque terme par l'intensité $I$ (la même partout en série) :
+\[ EI - rI^2 = RI^2 + E'I + r'I^2. \]
+On reconnaît :
+\begin{itemize}
+\item $EI = P_{\text{conv}}$ : puissance électromagnétique convertie par le générateur.
+\item $rI^2 = P_{\text{Joule, gen}}$ : pertes Joule internes au générateur.
+\item $RI^2 = P_{\text{Joule, R}}$ : pertes Joule dans le conducteur ohmique.
+\item $r'I^2 = P_{\text{Joule, mot}}$ : pertes Joule internes au moteur.
+\item $E'I = P_{\text{mécanique}}$ : puissance mécanique utile développée par le moteur.
+\end{itemize}
+L'équation de conservation s'écrit sous deux formes équivalentes :
+\begin{enumerate}
+\item \textbf{Au niveau du circuit extérieur (bornes du générateur) :}
+\[ \boxed{P_{\text{sortie}} = \sum P_{\text{reçues par les récepteurs}}} \quad\Longleftrightarrow\quad U_{PN}I = RI^2 + E'I + r'I^2. \]
+\item \textbf{Au niveau global (source d'énergie comprise) :}
+\[ \boxed{P_{\text{conv}} = \sum P_{\text{utiles}} + \sum P_{\text{pertes Joule}}} \quad\Longleftrightarrow\quad EI = E'I + rI^2 + r'I^2 + RI^2. \]
+\end{enumerate}
+Cette propriété, conséquence directe de la conservation de l'énergie, est exigible au Probatoire : sache la démontrer à partir de la loi des mailles.
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[european, scale=0.95, transform shape, font=\small]
+% Circuit
+\draw (0,0) to[battery1, l_={$(E,r)$}, invert] (0,3) -- (2,3) 
+  to[R, l={$R$}, v={$U_R$}] (5,3) -- (6,3) 
+  to[generic, l={$(E',r')$}, v={$U_M$}] (6,0) -- (0,0);
+% Courant
+\draw[->, thick, popink] (1.2,2.2) -- (2.2,2.2) node[midway, above]{$I$};
+% Flèches de puissance (positions ajustées)
+% Générateur : conversion
+\draw[->, very thick, poporange] (-2.5,1.5) -- (-0.3,1.5) node[midway, above, align=center]{$P_{\text{conv}}=EI$};
+% Générateur : sortie
+\draw[->, very thick, popblue] (0.3,3.8) -- (2.5,3.8) node[midway, above]{$P_{\text{sortie}}=U_{PN}I$};
+% Générateur : perte interne
+\draw[->, very thick, poppink] (0.15,-0.4) -- (0.15,-1.5) node[right, align=left]{$rI^2$};
+% Résistance R : chaleur
+\draw[->, very thick, popgreen] (3.5,4.3) -- (3.5,3.3) node[midway, right]{$RI^2$};
+% Moteur : utile
+\draw[->, very thick, poppurple] (6.8,2.4) -- (6.3,2.4) node[midway, above, align=center]{$E'I$};
+% Moteur : perte
+\draw[->, very thick, poppink] (6.8,0.6) -- (6.3,0.6) node[midway, below, align=center]{$r'I^2$};
+\end{tikzpicture}
+\end{center}
+\legende{Circuit série générateur + résistor + moteur. Flèches de puissance : la puissance convertie $EI$ se répartit entre puissance de sortie $U_{PN}I$ et perte interne $rI^2$. La puissance de sortie alimente les récepteurs : chaleur $RI^2$, mécanique $E'I$, chaleur $r'I^2$.}
+\end{popfigure}
+
+\begin{methode}[Rédiger un bilan énergétique en quatre étapes]
+\begin{enumerate}
+\item \textbf{Schématiser} le circuit en identifiant chaque dipôle : générateur $(E,r)$, récepteurs actifs $(E',r')$, conducteurs ohmiques $R$. Indiquer le sens du courant $I$.
+\item \textbf{Dessiner les flèches de puissance} pour chaque dipôle :
+  \begin{itemize}
+  \item Générateur : flèche entrante $EI$ (conversion), flèches sortantes $U_{PN}I$ (sortie) et $rI^2$ (perte).
+  \item Conducteur ohmique : flèche entrante $UI$, flèche sortante $RI^2$ (chaleur).
+  \item Moteur : flèche entrante $UI$, flèches sortantes $E'I$ (utile) et $r'I^2$ (perte).
+  \end{itemize}
+\item \textbf{Écrire l'équation de conservation} : $P_{\text{conv}} = \sum P_{\text{utiles}} + \sum P_{\text{Joule}}$ ou $P_{\text{sortie}} = \sum P_{\text{reçues}}$.
+\item \textbf{Appliquer numériquement} avec les unités SI (watts, joules) et vérifier que la somme des termes de sortie égale le terme d'entrée : c'est le contrôle final.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Erreurs fréquentes au Probatoire]
+\begin{itemize}
+\item \textbf{Oublier les pertes Joule internes du générateur ($rI^2$)} : écrire $P_{\text{conv}} = P_{\text{sortie}}$. Faux si $r \neq 0$. Conséquence : rendement $> 1$ ou bilan non bouclé.
+\item \textbf{Confondre $P_{\text{sortie}}$ et $P_{\text{conv}}$} : $P_{\text{sortie}} = U_{PN}I = EI - rI^2$. C'est $P_{\text{sortie}}$ qui alimente les récepteurs.
+\item \textbf{Appliquer $P = RI^2$ à un dipôle actif} : un moteur n'est pas un conducteur ohmique pur. Sa puissance reçue est $UI$, sa perte Joule est $r'I^2$, sa puissance utile est $E'I$.
+\item \textbf{Oublier l'unité} : Puissance en \textbf{W} (Watt), Énergie en \textbf{J} (Joule) ou \textbf{kWh} ($1\,\text{kWh} = 3,6 \times 10^6\,\text{J}$).
+\end{itemize}
+\end{attention}
+
+\begin{exoresolu}[Bilan complet d'un circuit et durée de fonctionnement]
+Un accumulateur de f.é.m. $E = \SI{12}{V}$ et de résistance interne $r = \SI{0,5}{\Omega}$ alimente un moteur ($E' = \SI{9}{V}$, $r' = \SI{0,5}{\Omega}$) en série avec un conducteur ohmique $R = \SI{0,5}{\Omega}$. L'accumulateur stocke une énergie $W_{\text{stock}} = \SI{432}{kJ}$.
+\begin{enumerate}
+\item Calculer l'intensité $I$ du courant.
+\item Établir le bilan de puissance complet du circuit.
+\item Calculer le rendement global de l'installation (puissance mécanique / puissance convertie).
+\item Déterminer la durée de fonctionnement de l'accumulateur.
+\end{enumerate}
+\tcblower
+\textbf{1. Intensité.} Loi de Pouillet (maille unique) :
+\[ I = \frac{E - E'}{r + r' + R} = \frac{12 - 9}{0{,}5 + 0{,}5 + 0{,}5} = \frac{3}{1{,}5} = \SI{2,0}{A}. \]
+
+\textbf{2. Bilan de puissance.}
+\begin{align*}
+P_{\text{conv}} &= EI = 12 \times 2 = \SI{24}{W} \\
+P_{\text{Joule gen}} &= rI^2 = 0{,}5 \times 4 = \SI{2}{W} \\
+P_{\text{sortie}} &= U_{PN}I = (E - rI)I = 11 \times 2 = \SI{22}{W} \quad (\text{ou } 24 - 2) \\
+P_{\text{Joule R}} &= RI^2 = 0{,}5 \times 4 = \SI{2}{W} \\
+P_{\text{Joule mot}} &= r'I^2 = 0{,}5 \times 4 = \SI{2}{W} \\
+P_{\text{mécanique}} &= E'I = 9 \times 2 = \SI{18}{W}
+\end{align*}
+\textbf{Vérification :}
+\begin{itemize}
+\item Niveau générateur : $P_{\text{conv}} = P_{\text{sortie}} + P_{\text{Joule gen}} \Rightarrow 24 = 22 + 2$ \checkmark
+\item Niveau circuit extérieur : $P_{\text{sortie}} = P_{\text{Joule R}} + P_{\text{mécanique}} + P_{\text{Joule mot}} \Rightarrow 22 = 2 + 18 + 2$ \checkmark
+\item Global : $P_{\text{conv}} = P_{\text{mécanique}} + \sum P_{\text{Joule}} \Rightarrow 24 = 18 + (2+2+2)$ \checkmark
+\end{itemize}
+
+\textbf{3. Rendement global.}
+\[ \eta_{\text{global}} = \frac{P_{\text{mécanique}}}{P_{\text{conv}}} = \frac{18}{24} = 0{,}75 \quad\text{soit } 75\,\%. \]
+
+\textbf{4. Durée de fonctionnement.} L'énergie stockée est consommée à la puissance $P_{\text{conv}} = \SI{24}{W}$ :
+\[ \Delta t = \frac{W_{\text{stock}}}{P_{\text{conv}}} = \frac{432\,000}{24} = \SI{18\,000}{s} = \SI{5,0}{h}. \]
+L'accumulateur permet exactement 5 heures de fonctionnement.
+\end{exoresolu}
+
+\courssub{Applications concrètes : durée, coût, transport}
+
+Le bilan énergétique est un outil pratique de décision.
+
+\textbf{Durée de fonctionnement.} Une batterie d'énergie stockée $W_0$ alimentant un circuit qui lui soutire la puissance de sortie $P_{\text{sortie}}$ fonctionne pendant :
+\[ \Delta t = \frac{W_0}{P_{\text{conv}}} \quad (\text{car c'est l'énergie convertie qui épuise le stock}). \]
+C'est le calcul que fait l'ingénieur qui dimensionne un kit solaire pour un centre de santé rural : somme des puissances des appareils (réfrigérateur à vaccins, lampes, téléviseur), multipliée par les durées d'usage, comparée à l'énergie stockée dans les batteries.
+
+\textbf{Coût de fonctionnement (facture ENEO).} L'énergie facturée se mesure en kilowattheures : $W = P \times \Delta t$ avec $P$ en kW et $\Delta t$ en h. Une ampoule à incandescence de \SI{100}{W} allumée 5 h par jour consomme $0{,}1 \times 5 = \SI{0,5}{kWh}$ par jour, soit environ \SI{15}{kWh} par mois ; une lampe LED de \SI{12}{W} donnant le même éclairage n'en consomme que \SI{1,8}{kWh}. Le bilan énergétique justifie à lui seul le choix des LED.
+
+\textbf{Choix d'un appareil et réduction des pertes (Transport HT).} Le bilan montre que les pertes Joule varient en $RI^2$ : pour les réduire, on peut diminuer $R$ (câbles de plus gros diamètre, matériaux meilleurs conducteurs comme l'aluminium/acier pour les lignes SONATREL) ou diminuer $I$. C'est pourquoi SONATREL transporte l'électricité des barrages de Nachtigal ou de Lom Pangar sous \textbf{très haute tension} (225 kV, 400 kV) : à puissance transportée $P = UI$ fixée, augmenter $U$ réduit $I$, donc réduit drastiquement les pertes $RI^2$ dans les lignes.
+
+\begin{attention}[Conditions d'application des formules — Mémento]
+\begin{itemize}
+\item $P = UI$ : valable pour \emph{tout} dipôle en régime permanent, sans exception.
+\item $P = RI^2 = \dfrac{U^2}{R}$ : réservée au \emph{conducteur ohmique} seul (loi d'Ohm $U=RI$ exigée).
+\item $P_{\text{utile}} = E'I$ : réservée aux récepteurs actifs (moteur, électrolyseur).
+\item $W = P\,\Delta t$ : exige une puissance \emph{constante} pendant la durée $\Delta t$.
+\item Rendement $\eta = \dfrac{P_{\text{utile}}}{P_{\text{reçue}}}$ : toujours $\le 1$ (ou 100 \%). Si $\eta > 1$, il y a une erreur de signe ou de formule.
+\end{itemize}
+\end{attention}
+
+\courssub{Expérience : Conversion d'énergie dans un moteur à courant continu}
+\textbf{Objectif :} Mettre en évidence la conversion d'énergie électrique en énergie mécanique et les pertes Joule.
+\textbf{Matériel :} Moteur CC à aimant permanent (ex. moteur de voiture jouet), générateur de tension variable, ampèremètre, voltmètre, masse $m$ à soulever (ex. \SI{100}{g}), fil, chronomètre, règle.
+\textbf{Protocole :}
+\begin{enumerate}
+\item Brancher le moteur au générateur via l'ampèremètre (en série) et le voltmètre (en parallèle aux bornes du moteur).
+\item Attacher la masse $m$ à l'axe du moteur via le fil (enroulement).
+\item Régler la tension $U$ pour que le moteur soulève la masse à vitesse constante (ou mesurer le temps $\Delta t$ pour une hauteur $h$).
+\item Relever $U$, $I$, $\Delta t$, $h$.
+\end{enumerate}
+\textbf{Calculs et interprétation :}
+\begin{itemize}
+\item Énergie électrique reçue : $W_{\text{élec}} = UI\Delta t$.
+\item Énergie mécanique fournie (travail du poids) : $W_{\text{méc}} = mgh$.
+\item Pertes Joule (chaleur dans le moteur) : $W_{\text{Joule}} = W_{\text{élec}} - W_{\text{méc}}$.
+\item Rendement : $\eta = \dfrac{W_{\text{méc}}}{W_{\text{élec}}} = \dfrac{mgh}{UI\Delta t}$.
+\item Vérification : Mesurer la résistance interne $r'$ du moteur (ohmmètre, moteur arrêté). Calculer $r'I^2\Delta t$ et comparer à $W_{\text{Joule}}$.
+\end{itemize}
+\textbf{Résultat attendu :} $\eta < 1$ (typiquement 50-80 \% pour un petit moteur). L'échauffement du carter du moteur est palpable.
+
+\courssub{Synthèse de la leçon}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small, scale=0.9]
+% Générateur
+\draw[fill=popblueL, rounded corners=2pt] (0,0) rectangle (3.8,1.8);
+\node[align=center] at (1.9,0.9) {\textbf{Générateur réel} $(E,r)$\\ $P_{\text{conv}} = EI$\\ $P_{\text{sortie}} = U_{PN}I$\\ Perte : $rI^2$ (chaleur)};
+% Fil
+\draw[->, very thick, popblue] (3.8,0.9) -- (5.2,0.9) node[midway, above, font=\footnotesize]{$P_{\text{sortie}}$};
+% Résistance
+\draw[fill=popgreenL, rounded corners=2pt] (5.2,0) rectangle (9,1.8);
+\node[align=center] at (7.1,0.9) {\textbf{Conducteur ohmique} $R$\\ $P_{\text{reçue}} = UI$\\ Tout en chaleur : $RI^2$};
+% Fil
+\draw[->, very thick, popblue] (9,0.9) -- (10.4,0.9) node[midway, above, font=\footnotesize]{$UI$};
+% Moteur
+\draw[fill=poporangeL, rounded corners=2pt] (10.4,0) rectangle (14.2,1.8);
+\node[align=center] at (12.3,0.9) {\textbf{Moteur} $(E',r')$\\ $P_{\text{reçue}} = UI$\\ Utile : $E'I$ (mécanique)\\ Perte : $r'I^2$ (chaleur)};
+% Flèches pertes vers le bas
+\draw[->, thick, poppink] (1.9,0) -- (1.9,-0.6) node[below, font=\footnotesize]{Chaleur $rI^2$};
+\draw[->, thick, poppink] (7.1,0) -- (7.1,-0.6) node[below, font=\footnotesize]{Chaleur $RI^2$};
+\draw[->, thick, poppink] (12.3,0) -- (12.3,-0.6) node[below, font=\footnotesize]{Chaleur $r'I^2$};
+\draw[->, thick, poppurple] (12.3,1.8) -- (12.3,2.4) node[above, font=\footnotesize]{Mécanique $E'I$};
+\end{tikzpicture}
+\end{center}
+\legende{Tableau-dipôle récapitulatif : pour chaque dipôle, puissance reçue/fournie, puissance utile et pertes Joule. La somme des puissances utiles + pertes = puissance convertie par le générateur.}
+\end{popfigure}
+
+\begin{aretenir}[Formulaire de la leçon — À connaître par cœur]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Grandeur} & \textbf{Formule} & \textbf{Conditions / Remarques} \\
+\hline
+Énergie consommée & $W = UI\,\Delta t$ & Tout dipôle, régime permanent \\
+\hline
+Puissance consommée & $P = UI$ & Tout dipôle \\
+\hline
+Loi de Joule (puissance) & $P_J = RI^2 = \dfrac{U^2}{R}$ & Conducteur ohmique \textbf{uniquement} \\
+\hline
+Loi de Joule (énergie) & $W_J = RI^2\Delta t$ & Conducteur ohmique \textbf{uniquement} \\
+\hline
+Générateur $(E,r)$ & $P_{\text{conv}} = EI$ ; $P_{\text{sortie}} = U_{PN}I$ ; Perte $= rI^2$ & $U_{PN} = E - rI$ \\
+\hline
+Récepteur actif $(E',r')$ & $P_{\text{reçue}} = UI$ ; Utile $= E'I$ ; Perte $= r'I^2$ & $U = E' + r'I$ (moteur) \\
+\hline
+Rendement & $\eta = \dfrac{P_{\text{utile}}}{P_{\text{reçue}}} = \dfrac{W_{\text{utile}}}{W_{\text{reçue}}}$ & $0 \leq \eta \leq 1$ (ou 0 à 100 \%) \\
+\hline
+Conservation (global) & $EI = \sum E'I + \sum rI^2 + \sum RI^2$ & Circuit série : démo par loi des mailles $\times I$ \\
+\hline
+Conservation (extérieur) & $U_{PN}I = \sum UI_{\text{récepteurs}}$ & Puissance de sortie = somme puissances reçues \\
+\hline
+Unités & Énergie : J (ou kWh : $1\,\text{kWh}=3,6\,\text{MJ}$) ; Puissance : W & $P$ en W, $U$ en V, $I$ en A, $R$ en $\Omega$, $t$ en s \\
+\hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\begin{savaistu}[Bien dimensionner, c'est d'abord se protéger]
+Une installation électrique bien dimensionnée — câbles de section adaptée à l'intensité (norme NF C 15-100), disjoncteurs calibrés, prises en bon état — est la première condition de sécurité contre les incendies d'origine électrique. En effet, la loi de Joule l'affirme sans appel : un câble trop fin pour le courant qui le traverse ($R$ trop grand) dissipe une puissance $RI^2$ excessive et s'échauffe jusqu'à enflammer son isolant. Le disjoncteur, lui, « compte » le courant et coupe le circuit avant que l'échauffement ne devienne dangereux. À Yaoundé, Douala ou en zone rurale, de nombreux incendies domestiques proviennent de multiprizes surchargées, de rallonges enchevêtrées ou d'installations bricolées : le bilan de puissance que tu sais désormais établir est aussi un geste de prévention citoyenne.
+\end{savaistu}
+
+\begin{exercice}[Bilan et coût d'un atelier de couture]
+Un atelier à Douala utilise une machine à coudre assimilée à un moteur ($E' = \SI{60}{V}$, $r' = \SI{4}{\Omega}$) alimenté par un générateur ($E = \SI{110}{V}$, $r = \SI{1}{\Omega}$) en série avec un rhéostat $R = \SI{0}{\Omega}$ (court-circuité pour simplifier).
+\begin{enumerate}
+\item Montrer que l'intensité du courant est $I = \SI{10}{A}$.
+\item Établir le bilan complet des puissances (convertie, sortie, utiles, pertes) et vérifier la conservation de l'énergie.
+\item Calculer le rendement global de l'installation (puissance mécanique / puissance convertie par le générateur).
+\item L'atelier fonctionne 8 h par jour. Calculer l'énergie électrique quotidienne fournie par le générateur au circuit extérieur, en kWh.
+\item Si le tarif ENEO est de \SI{60}{FCFA/kWh}, quel est le coût mensuel (30 jours) de l'électricité pour cet atelier ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Atelier de couture]
+\textbf{1. Intensité.} Circuit série : $E - rI = E' + r'I + RI$. Avec $R=0$ :
+\[ I = \frac{E - E'}{r + r'} = \frac{110 - 60}{1 + 4} = \frac{50}{5} = \SI{10}{A}. \]
+
+\textbf{2. Bilan de puissance.}
+\begin{align*}
+P_{\text{conv}} &= EI = 110 \times 10 = \SI{1100}{W} \\
+P_{\text{Joule gen}} &= rI^2 = 1 \times 100 = \SI{100}{W} \\
+P_{\text{sortie}} &= U_{PN}I = (E - rI)I = (110 - 10) \times 10 = \SI{1000}{W} \quad (\text{ou } 1100 - 100) \\
+P_{\text{Joule mot}} &= r'I^2 = 4 \times 100 = \SI{400}{W} \\
+P_{\text{mécanique}} &= E'I = 60 \times 10 = \SI{600}{W}
+\end{align*}
+\textbf{Vérification :}
+\begin{itemize}
+\item Générateur : $P_{\text{conv}} = P_{\text{sortie}} + P_{\text{Joule gen}} \Rightarrow 1100 = 1000 + 100$ \checkmark
+\item Circuit extérieur : $P_{\text{sortie}} = P_{\text{mécanique}} + P_{\text{Joule mot}} \Rightarrow 1000 = 600 + 400$ \checkmark
+\item Global : $P_{\text{conv}} = P_{\text{mécanique}} + P_{\text{Joule gen}} + P_{\text{Joule mot}} \Rightarrow 1100 = 600 + 100 + 400$ \checkmark
+\end{itemize}
+
+\textbf{3. Rendement global.}
+\[ \eta_{\text{global}} = \frac{P_{\text{mécanique}}}{P_{\text{conv}}} = \frac{600}{1100} \approx 0{,}545 \quad\text{soit } 54,5\,\%. \]
+(Plus de la moitié de l'énergie convertie est perdue en chaleur : $100+400=500\,\text{W}$).
+
+\textbf{4. Énergie quotidienne fournie au circuit.}
+$P_{\text{sortie}} = \SI{1000}{W} = \SI{1,0}{kW}$. $\Delta t = \SI{8}{h}$.
+\[ W_{\text{jour}} = P_{\text{sortie}} \times \Delta t = 1,0 \times 8 = \SI{8,0}{kWh}. \]
+
+\textbf{5. Coût mensuel.}
+\[ W_{\text{mois}} = 8,0 \times 30 = \SI{240}{kWh}. \]
+\[ \text{Coût} = 240 \times 60 = \SI{14\,400}{FCFA}. \]
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu seras capable de :
+
+\begin{itemize}
+\item établir le \cle{bilan énergétique} complet d'une installation domestique réelle à partir des puissances nominales et des durées d'utilisation des appareils ;
+\item calculer une \cle{énergie électrique} consommée en joules et en kilowattheures, et la traduire en coût financier ;
+\item identifier les postes de consommation les plus importants et proposer des solutions chiffrées de réduction de la consommation ;
+\item calculer et comparer des \cle{rendements} de conversion d'énergie (éclairage) ;
+\item rédiger une argumentation scientifique destinée à conseiller un usager, dans l'esprit de l'approche par les compétences.
+\end{itemize}
+
+\courssub{Situation}
+
+La famille Ngo Bell habite un quartier de Yaoundé. Comme des millions de ménages camerounais, elle est abonnée au réseau ENEO et reçoit chaque mois une facture d'électricité qu'elle trouve de plus en plus lourde. Monsieur Ngo Bell, intrigué, demande à son fils Étienne, élève en Première C, de l'aider à comprendre d'où vient cette consommation et comment la réduire sans se priver du confort.
+
+Étienne relève la liste des appareils électriques de la maison, leurs puissances nominales (indiquées sur les plaques signalétiques) et leurs durées moyennes d'utilisation quotidienne :
+
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\rowcolor{popblueL} \textbf{Appareil} & \textbf{Puissance nominale} & \textbf{Durée d'utilisation par jour} \\
+\hline
+Réfrigérateur & $150~\mathrm{W}$ & $24~\mathrm{h}$ (en continu) \\
+\hline
+Fer à repasser & $1\,200~\mathrm{W}$ & $1~\mathrm{h}$ \\
+\hline
+6 ampoules à incandescence & $6 \times 75~\mathrm{W}$ & $5~\mathrm{h}$ \\
+\hline
+Téléviseur & $120~\mathrm{W}$ & $4~\mathrm{h}$ \\
+\hline
+Ventilateur & $80~\mathrm{W}$ & $6~\mathrm{h}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Le prix de l'énergie électrique facturé par ENEO est pris égal à $70~\mathrm{FCFA/kWh}$ (tarif domestique simplifié, hors taxes et redevances). On considère un mois de $30$ jours.
+
+Pour l'éclairage, on rappelle qu'une ampoule à incandescence ne convertit en lumière utile qu'environ $5~\%$ de l'énergie électrique qu'elle consomme (le reste est dissipé en chaleur par effet Joule), tandis qu'une ampoule LED en convertit environ $40~\%$. La famille envisage de remplacer les 6 ampoules à incandescence par 6 ampoules LED de $12~\mathrm{W}$ chacune, qui fournissent un éclairement équivalent, et de réduire la durée quotidienne de repassage à $30~\mathrm{min}$.
+
+\textbf{Problème posé :} combien la famille Ngo Bell dépense-t-elle chaque mois pour l'électricité ? Quel appareil coûte le plus cher ? Quelles économies les modifications envisagées permettraient-elles de réaliser ?
+
+\courssub{Consignes}
+
+\begin{enumerate}
+\item Calculer l'énergie électrique consommée chaque jour par chaque appareil, en wattheures (Wh), puis l'énergie totale mensuelle de l'installation en kilowattheures (kWh).
+\item En déduire le montant de la facture mensuelle d'électricité de la famille.
+\item Identifier l'appareil dont la consommation mensuelle est la plus coûteuse. Ce résultat correspond-il à l'intuition que l'on pourrait avoir en ne regardant que les puissances nominales ? Commenter.
+\item Calculer la nouvelle énergie mensuelle consommée si la famille remplace les ampoules à incandescence par les LED et réduit le repassage à $30~\mathrm{min}$ par jour. En déduire la nouvelle facture et l'économie mensuelle réalisée, en FCFA et en pourcentage.
+\item Calculer le rendement global de l'éclairage avant et après le remplacement des ampoules. Commenter.
+\item Rédiger en quelques lignes un conseil argumenté que Étienne pourrait donner à sa famille, en citant au moins deux conditions permettant de réduire les pertes d'énergie dans une installation domestique.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Formules utiles]
+\begin{itemize}
+\item Énergie électrique consommée par un dipôle : $E = U\,I\,t = P\,t$, avec $P$ en watts (W), $t$ en secondes (s) et $E$ en joules (J).
+\item Unité pratique : le kilowattheure, $1~\mathrm{kWh} = 3{,}6 \times 10^{6}~\mathrm{J}$ ; on l'obtient en multipliant une puissance en kW par une durée en heures.
+\item Coût : $\text{coût} = E~(\mathrm{kWh}) \times \text{prix du kWh}$.
+\item Loi de Joule pour un conducteur ohmique : $P_J = R\,I^2$ et $E_J = R\,I^2\,t$.
+\item Rendement d'une portion de circuit : $\eta = \dfrac{E_{\text{utile}}}{E_{\text{consommée}}} = \dfrac{P_{\text{utile}}}{P_{\text{consommée}}}$, grandeur sans unité, comprise entre 0 et 1 (souvent exprimée en $\%$).
+\item Bilan énergétique : l'énergie électrique consommée est la somme de toutes les formes d'énergie fournies (utiles et perdues) : $E_{\text{consommée}} = E_{\text{utile}} + E_{\text{perdue}}$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Bilan énergétique de la famille Ngo Bell]
+\textbf{Énoncé.} À partir des données de la situation, établir le bilan énergétique mensuel de l'installation, calculer la facture, puis évaluer les économies permises par le remplacement des ampoules et la réduction du repassage.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Question 1 — Énergies quotidiennes et mensuelle.}
+
+On applique $E = P\,t$ à chaque appareil, en exprimant $P$ en watts et $t$ en heures pour obtenir $E$ en Wh :
+
+\begin{itemize}
+\item Réfrigérateur : $E_1 = 150 \times 24 = 3\,600~\mathrm{Wh/jour}$ ;
+\item Fer à repasser : $E_2 = 1\,200 \times 1 = 1\,200~\mathrm{Wh/jour}$ ;
+\item Ampoules : $E_3 = 6 \times 75 \times 5 = 2\,250~\mathrm{Wh/jour}$ ;
+\item Téléviseur : $E_4 = 120 \times 4 = 480~\mathrm{Wh/jour}$ ;
+\item Ventilateur : $E_5 = 80 \times 6 = 480~\mathrm{Wh/jour}$.
+\end{itemize}
+
+Énergie quotidienne totale :
+\[ E_{\text{jour}} = 3\,600 + 1\,200 + 2\,250 + 480 + 480 = 8\,010~\mathrm{Wh} = 8{,}01~\mathrm{kWh}. \]
+
+Énergie mensuelle (30 jours) :
+\[ E_{\text{mois}} = 8{,}01 \times 30 = 240{,}3~\mathrm{kWh}. \]
+
+\textbf{Question 2 — Facture mensuelle.}
+
+\[ C = 240{,}3 \times 70 = 16\,821~\mathrm{FCFA}. \]
+
+\textbf{Question 3 — Appareil le plus coûteux.}
+
+Sur le mois, les consommations sont :
+\begin{itemize}
+\item Réfrigérateur : $3{,}6 \times 30 = 108~\mathrm{kWh}$, soit $7\,560~\mathrm{FCFA}$ ;
+\item Fer à repasser : $1{,}2 \times 30 = 36~\mathrm{kWh}$, soit $2\,520~\mathrm{FCFA}$ ;
+\item Ampoules : $2{,}25 \times 30 = 67{,}5~\mathrm{kWh}$, soit $4\,725~\mathrm{FCFA}$ ;
+\item Téléviseur : $0{,}48 \times 30 = 14{,}4~\mathrm{kWh}$, soit $1\,008~\mathrm{FCFA}$ ;
+\item Ventilateur : $0{,}48 \times 30 = 14{,}4~\mathrm{kWh}$, soit $1\,008~\mathrm{FCFA}$.
+\end{itemize}
+
+L'appareil le plus coûteux est le \cle{réfrigérateur} ($108~\mathrm{kWh}$, $7\,560~\mathrm{FCFA}$), alors que sa puissance nominale ($150~\mathrm{W}$) est huit fois plus faible que celle du fer à repasser. C'est la \textbf{durée d'utilisation} qui fait la différence : l'énergie dépend du produit $P \times t$, et non de la puissance seule. C'est une erreur fréquente de ne raisonner que sur les puissances nominales.
+
+\textbf{Question 4 — Économies réalisées.}
+
+Nouvelles consommations quotidiennes :
+\begin{itemize}
+\item LED : $E'_3 = 6 \times 12 \times 5 = 360~\mathrm{Wh/jour}$ (au lieu de $2\,250$) ;
+\item Repassage : $E'_2 = 1\,200 \times 0{,}5 = 600~\mathrm{Wh/jour}$ (au lieu de $1\,200$).
+\end{itemize}
+
+Nouvelle énergie quotidienne :
+\[ E'_{\text{jour}} = 3\,600 + 600 + 360 + 480 + 480 = 5\,520~\mathrm{Wh} = 5{,}52~\mathrm{kWh}. \]
+
+Nouvelle énergie mensuelle et nouvelle facture :
+\[ E'_{\text{mois}} = 5{,}52 \times 30 = 165{,}6~\mathrm{kWh} \quad;\qquad C' = 165{,}6 \times 70 = 11\,592~\mathrm{FCFA}. \]
+
+Économie mensuelle :
+\[ \Delta C = 16\,821 - 11\,592 = 5\,229~\mathrm{FCFA}, \]
+soit une réduction relative de
+\[ \dfrac{5\,229}{16\,821} \approx 0{,}311 \quad \text{soit environ } 31,1~\%. \]
+
+\textbf{Question 5 — Rendement global de l'éclairage.}
+
+Avant (6 ampoules à incandescence de $75~\mathrm{W}$, rendement unitaire $5~\%$) :
+\[ \eta_{\text{avant}} = \dfrac{P_{\text{lumineuse}}}{P_{\text{électrique}}} = \dfrac{0{,}05 \times 450}{450} = 0{,}05 = 5~\%. \]
+
+Après (6 LED de $12~\mathrm{W}$, rendement unitaire $40~\%$) :
+\[ \eta_{\text{après}} = \dfrac{0{,}40 \times 72}{72} = 0{,}40 = 40~\%. \]
+
+Le rendement de l'éclairage est multiplié par 8 : les LED convertissent en lumière utile une part bien plus grande de l'énergie consommée, et dissipent beaucoup moins de chaleur par effet Joule.
+
+\textbf{Question 6 — Conseil rédigé (exemple de production attendue).}
+
+« En remplaçant les six ampoules à incandescence par des LED et en limitant le repassage à trente minutes par jour, notre famille économiserait environ $5\,200~\mathrm{FCFA}$ par mois, soit plus de $62\,000~\mathrm{FCFA}$ par an, tout en gardant le même confort lumineux. Pour réduire encore les pertes d'énergie, il faut d'une part choisir des appareils à haut rendement (moins d'énergie dissipée par effet Joule) et d'autre part réduire les durées d'utilisation : éteindre les appareils en veille, dégivrer régulièrement le réfrigérateur et repasser en une seule fois. »
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence plusieurs acquis essentiels de la leçon :
+
+\begin{itemize}
+\item L'énergie électrique consommée par une portion de circuit s'exprime par $E = P\,t = U\,I\,t$ : elle dépend autant de la \textbf{durée d'utilisation} que de la puissance, ce qui explique pourquoi le réfrigérateur coûte plus cher que le fer à repasser.
+\item Le kilowattheure est l'unité pratique de la facturation ($1~\mathrm{kWh} = 3{,}6 \times 10^{6}~\mathrm{J}$) : savoir passer du joule au kWh est indispensable pour lire une facture ENEO.
+\item Le bilan énergétique d'une installation est la somme des énergies consommées par chaque appareil ; chaque appareil convertit l'énergie électrique en énergie utile et en énergie perdue, notamment par \cle{effet Joule}.
+\item Le rendement $\eta = \dfrac{E_{\text{utile}}}{E_{\text{consommée}}}$ est un outil de comparaison objectif : le passage de l'incandescence ($5~\%$) à la LED ($40~\%$) illustre concrètement la réduction des pertes.
+\item Réduire la consommation passe par deux leviers complémentaires : \textbf{améliorer le rendement} des appareils et \textbf{diminuer les durées d'utilisation}, sans renoncer au service rendu.
+\end{itemize}
+
+Tu es désormais capable d'analyser la facture d'électricité de ton propre foyer et de proposer, chiffres à l'appui, des gestes d'économie d'énergie : une compétence de physicien... et de citoyen.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Leçon 18 : Énergie, puissance électrique et loi de Joule}
+
+\courssub{Énergie électrique consommée dans une portion de circuit}
+
+\begin{propriete}[Énergie électrique reçue par un récepteur]
+Lorsqu'un récepteur est traversé par un courant d'intensité $I$ sous une tension $U$ (convention récepteur : $U>0$, $I>0$) pendant une durée $\Delta t$, l'énergie électrique qu'il reçoit est :
+\[ W_e = U\,I\,\Delta t \qquad \text{(en joules si } U \text{ en V, } I \text{ en A, } \Delta t \text{ en s)}. \]
+On utilise aussi le kilowattheure (kWh) : $\SI{1}{kWh} = \num{3,6e6}{J}$.
+\emph{Analyse dimensionnelle :} $[U I \Delta t] = \text{V}\cdot\text{A}\cdot\text{s} = \text{W}\cdot\text{s} = \text{J}$. \checkmark
+\end{propriete}
+
+\begin{methode}[Identifier et décrire une conversion d'énergie électrique]
+\begin{enumerate}
+\item \textbf{Repérer le dipôle} étudié dans le circuit et le sens conventionnel du courant qui le traverse.
+\item \textbf{Identifier l'énergie reçue} : tout récepteur traversé par un courant $I$ sous une tension $U$ reçoit l'énergie électrique $W_e = U\,I\,\Delta t$.
+\item \textbf{Identifier les formes d'énergie produites} : chaleur (effet Joule, \cle{toujours présent} si le dipôle a une résistance), énergie mécanique (moteur), énergie chimique (électrolyseur, accumulateur en charge), rayonnement (lampe, DEL).
+\item \textbf{Écrire la chaîne énergétique} sous la forme : énergie électrique reçue $\to$ énergie utile $+$ énergie thermique dissipée.
+\item \textbf{Conclure par une phrase} nommant explicitement les convertisseurs : « le moteur convertit l'énergie électrique en énergie mécanique et en chaleur ».
+\end{enumerate}
+\textbf{Réflexe :} l'effet Joule est \emph{toujours} présent dès qu'un courant traverse un conducteur ohmique ; ne jamais l'oublier dans la chaîne.
+\end{methode}
+
+\begin{exoresolu}[Le ventilateur de la maison]
+Un ventilateur utilisé pendant la saison sèche à Maroua est traversé par un courant d'intensité $I = \num{0,45}{A}$ sous une tension $U = \num{220}{V}$. Il fonctionne pendant $\Delta t = \num{3,0}{h}$.\\
+1. Calculer l'énergie électrique reçue par le ventilateur.\\
+2. Décrire la chaîne de conversion d'énergie mise en jeu.
+\tcblower
+\textbf{1. Énergie électrique reçue.}\\
+Le ventilateur est un récepteur : l'énergie électrique qu'il consomme pendant la durée $\Delta t$ est
+\[ W_e = U\,I\,\Delta t. \]
+Convertissons la durée en secondes : $\Delta t = \num{3,0} \times \num{3600} = \num{1,08e4}{s}$.\\
+Application numérique :
+\[ W_e = 220 \times \num{0,45} \times \num{1,08e4} = \num{1,07e6}{J} \approx \num{1,1}{MJ}. \]
+En kilowattheures : $W_e = U\,I\,\Delta t = 220 \times \num{0,45} \times \num{3,0} = \num{297}{Wh} \approx \num{0,30}{kWh}$.\\
+\textbf{2. Chaîne de conversion.}\\
+Le moteur du ventilateur convertit l'énergie électrique reçue principalement en \textbf{énergie mécanique} (rotation des pales, mise en mouvement de l'air) ; une partie est convertie en \textbf{chaleur} par effet Joule dans les bobinages (le moteur chauffe) et une faible part en énergie sonore.\\
+\textbf{Conclusion :} le ventilateur reçoit $W_e \approx \num{1,1}{MJ}$ ($\num{0,30}{kWh}$) et réalise la conversion : énergie électrique $\to$ énergie mécanique $+$ énergie thermique (effet Joule).
+\end{exoresolu}
+
+\courssub{Puissance électrique consommée}
+
+\begin{propriete}[Puissance électrique consommée par un récepteur]
+La puissance électrique reçue par un récepteur (convention récepteur) est :
+\[ P = U\,I \qquad \text{(en watts, avec } U \text{ en volts et } I \text{ en ampères)}. \]
+L'énergie consommée pendant $\Delta t$ s'écrit alors $W = P\,\Delta t$.
+\end{propriete}
+
+\begin{methode}[Exploiter $W = U I \Delta t$ et $P = U I$]
+\begin{enumerate}
+\item \textbf{Vérifier les conventions} : pour un récepteur, $U$ et $I$ sont comptés en convention récepteur (flèches de sens contraires) ; $U > 0$, $I > 0$.
+\item \textbf{Écrire la puissance} : $P = U\,I$ (en watts).
+\item \textbf{Écrire l'énergie} : $W = U\,I\,\Delta t = P\,\Delta t$. Attention aux unités : $W$ en joules si $\Delta t$ en secondes ; $W$ en wattheures si $P$ en watts et $\Delta t$ en heures.
+\item \textbf{Convertir si nécessaire} : $\SI{1}{kWh} = \num{3,6e6}{J}$ ; $\SI{1}{Wh} = \SI{3600}{J}$.
+\item \textbf{Vérifier l'ordre de grandeur} : un appareil domestique consomme typiquement de $\SI{0,1}{kWh}$ à quelques kWh par jour.
+\end{enumerate}
+\textbf{Analyse dimensionnelle :} $[U\,I\,\Delta t] = \text{V}\cdot\text{A}\cdot\text{s} = \text{W}\cdot\text{s} = \text{J}$. \checkmark
+\end{methode}
+
+\begin{exoresolu}[Facture d'électricité d'un foyer à Douala]
+Un fer à repasser porte les indications « $220$ V -- $1200$ W ». Il est utilisé en moyenne $\SI{45}{\minute}$ par jour pendant $30$ jours.\\
+1. Calculer l'intensité du courant qui traverse le fer en fonctionnement normal.\\
+2. Calculer l'énergie consommée en un mois, en kWh puis en joules.\\
+3. Le kWh est facturé $79$ FCFA par ENEO. Calculer la dépense mensuelle due au repassage.
+\tcblower
+\textbf{1. Intensité du courant.}\\
+En fonctionnement normal, le fer est soumis à sa tension nominale et consomme sa puissance nominale :
+\[ P = U\,I \quad \Longrightarrow \quad I = \dfrac{P}{U} = \dfrac{1200}{220} \approx \SI{5,5}{A}. \]
+\textbf{2. Énergie mensuelle.}\\
+Durée totale de fonctionnement : $\Delta t = 30 \times \SI{45}{\minute} = 30 \times \SI{0,75}{\hour} = \SI{22,5}{\hour}$.\\
+Avec $P$ en watts et $\Delta t$ en heures :
+\[ W = P\,\Delta t = 1200 \times \num{22,5} = \SI{2,7e4}{Wh} = \SI{27}{kWh}. \]
+Conversion en joules : $W = 27 \times \num{3,6e6} = \SI{9,7e7}{J}$, soit environ $\SI{97}{MJ}$.\\
+\textbf{3. Dépense.}\\
+$D = 27 \times 79 = \SI{2133}{FCFA} \approx \SI{2,1e3}{FCFA}$.\\
+\textbf{Conclusion :} le fer est traversé par $I \approx \SI{5,5}{A}$ ; le repassage coûte environ $\SI{2100}{FCFA}$ par mois pour $\SI{27}{kWh}$ consommés.
+\end{exoresolu}
+
+\courssub{Effet Joule et loi de Joule}
+
+\begin{propriete}[Loi de Joule -- Puissance et énergie dissipées par effet Joule]
+Dans un conducteur ohmique de résistance $R$ traversé par un courant $I$ sous une tension $U$ (loi d'Ohm $U=RI$), la puissance dissipée par effet Joule (énergie thermique) est :
+\[ P_J = R\,I^2 = \dfrac{U^2}{R} = U\,I \quad \text{(uniquement pour un conducteur ohmique)}. \]
+L'énergie dissipée pendant $\Delta t$ est :
+\[ W_J = R\,I^2\,\Delta t = \dfrac{U^2}{R}\,\Delta t = U\,I\,\Delta t. \]
+\emph{Analyse dimensionnelle :} $[R I^2] = \Omega \cdot \text{A}^2 = \text{V}\cdot\text{A} = \text{W}$. \checkmark
+\end{propriete}
+
+\begin{attention}[Conduiteur ohmique vs Récepteur actif]
+La relation $P_J = U I$ n'est valable que si \emph{toute} l'énergie électrique est convertie en chaleur (conducteur ohmique, résistor, lampe à filament). Pour un moteur (récepteur actif), $P_J = r I^2 < U I$ : une partie de l'énergie devient de l'énergie mécanique. Ne jamais écrire $P_J = UI$ pour un moteur.
+\end{attention}
+
+\begin{methode}[Protocole de vérification de $W_J = R I^2 \Delta t$]
+\begin{enumerate}
+\item \textbf{Choisir un dispositif calorimétrique} : un conducteur ohmique (résistor) de résistance $R$ connue, plongé dans une masse $m$ d'eau (calorimètre) ; la chaleur dégagée par effet Joule élève la température de l'eau.
+\item \textbf{Mesurer} : $R$ (ohmmètre), $I$ (ampèremètre en série), la durée $\Delta t$ (chronomètre) et l'élévation de température $\Delta\theta$ (thermomètre).
+\item \textbf{Calculer l'énergie reçue par l'eau} : $Q = m\,c_{\text{eau}}\,\Delta\theta$ (avec $c_{\text{eau}} = \SI{4180}{J.kg^{-1}.K^{-1}}$), en négligeant les pertes et la capacité du calorimètre.
+\item \textbf{Comparer} $Q$ à $R I^2 \Delta t$ : si $Q \approx R I^2 \Delta t$ (aux incertitudes près), la loi de Joule est vérifiée.
+\item \textbf{Variante} : faire varier $I$ et tracer $Q = f(I^2)$ ; on obtient une droite passant par l'origine, de pente $R\,\Delta t$.
+\end{enumerate}
+\textbf{Réflexe :} un écart $Q < R I^2 \Delta t$ s'explique par les pertes thermiques vers l'extérieur et l'échauffement du calorimètre.
+\end{methode}
+
+\begin{exoresolu}[TP : vérification de la loi de Joule]
+Au laboratoire du lycée, un résistor de résistance $R = \SI{10}{\ohm}$ est plongé dans $m = \SI{200}{g}$ d'eau contenue dans un calorimètre. Un courant $I = \SI{2,0}{A}$ le traverse pendant $\Delta t = \SI{5,0}{\minute}$. La température de l'eau s'élève de $\Delta\theta = \SI{6,8}{\celsius}$. On donne $c_{\text{eau}} = \SI{4180}{J.kg^{-1}.K^{-1}}$.\\
+1. Calculer l'énergie électrique dissipée par effet Joule.\\
+2. Calculer l'énergie reçue par l'eau et conclure.
+\tcblower
+\textbf{1. Énergie dissipée par effet Joule.}\\
+Durée en secondes : $\Delta t = 5{,}0 \times 60 = \SI{300}{s}$.
+\[ W_J = R\,I^2\,\Delta t = 10 \times (2{,}0)^2 \times 300 = \SI{1,2e4}{J} = \SI{12}{kJ}. \]
+\textbf{2. Énergie reçue par l'eau.}\\
+Masse en kilogrammes : $m = \SI{0,200}{kg}$.
+\[ Q = m\,c_{\text{eau}}\,\Delta\theta = \num{0,200} \times 4180 \times \num{6,8} \approx \SI{5,7e3}{J} = \SI{5,7}{kJ}. \]
+\textbf{Comparaison et conclusion :} $Q < W_J$ : l'eau n'a reçu qu'environ la moitié de l'énergie dissipée. L'écart s'explique par l'échauffement du calorimètre, du résistor lui-même et du thermomètre, ainsi que par les pertes thermiques vers l'air ambiant. L'ordre de grandeur étant cohérent et $Q \leq W_J$, les mesures sont \textbf{compatibles avec la loi de Joule} $W_J = R I^2 \Delta t$ (la vérification serait plus précise avec un calorimètre bien isolé et en tenant compte de sa capacité thermique).
+\end{exoresolu}
+
+\begin{methode}[Calculer la puissance et l'énergie dissipées par effet Joule]
+\begin{enumerate}
+\item \textbf{Identifier la résistance} $R$ du dipôle (ou la calculer par la loi d'Ohm $R = U/I$ pour un conducteur ohmique).
+\item \textbf{Choisir la formule adaptée aux données} :
+\[ P_J = R\,I^2 = \dfrac{U^2}{R} = U\,I \quad \text{(conducteur ohmique uniquement)}. \]
+\item \textbf{Énergie dissipée} : $W_J = R\,I^2\,\Delta t$.
+\item \textbf{Attention aux conditions d'application} : $P_J = U I$ n'est valable que si \emph{toute} l'énergie électrique est convertie en chaleur (conducteur ohmique, résistor). Pour un moteur, $P_J = r I^2 < UI$.
+\item \textbf{Vérifier l'homogénéité} : $[R I^2] = \Omega \cdot \text{A}^2 = \text{V}\cdot\text{A} = \text{W}$. \checkmark
+\end{enumerate}
+\textbf{Réflexe :} la puissance Joule varie comme le \emph{carré} de l'intensité : doubler $I$ quadruple les pertes. C'est la clé du transport de l'électricité à haute tension.
+\end{methode}
+
+\begin{exoresolu}[Pertes en ligne entre la centrale et le village]
+Une ligne électrique de résistance totale $R = \SI{4,0}{\ohm}$ alimente un village qui consomme une puissance $P = \SI{22}{kW}$ sous $U = \SI{220}{V}$ (en bout de ligne).\\
+1. Calculer l'intensité du courant dans la ligne.\\
+2. Calculer la puissance dissipée par effet Joule dans la ligne.\\
+3. Mêmes questions si le transport se fait sous $\SI{11}{kV}$ avec un transformateur abaisseur au village. Conclure.
+\tcblower
+\textbf{1. Intensité à $\SI{220}{V}$.}\\
+\[ I = \dfrac{P}{U} = \dfrac{\num{2,2e4}}{220} = \SI{100}{A}. \]
+\textbf{2. Pertes Joule dans la ligne.}
+\[ P_J = R\,I^2 = 4{,}0 \times 100^2 = \SI{4,0e4}{W} = \SI{40}{kW}. \]
+Les pertes ($\SI{40}{kW}$) dépassent la puissance utile ($\SI{22}{kW}$) : le transport à basse tension est catastrophique !\\
+\textbf{3. Transport à $\SI{11}{kV}$.}\\
+\[ I' = \dfrac{P}{U'} = \dfrac{\num{2,2e4}}{\num{1,1e4}} = \SI{2,0}{A} \quad ; \quad P'_J = R\,I'^2 = 4{,}0 \times (2{,}0)^2 = \SI{16}{W}. \]
+\textbf{Conclusion :} en multipliant la tension par $50$, l'intensité est divisée par $50$ et les pertes Joule, proportionnelles à $I^2$, sont divisées par $2500$ (de $\SI{40}{kW}$ à $\SI{16}{W}$). C'est pourquoi ENEO transporte l'électricité des barrages d'Edéa ou de Nachtigal sous haute tension : \textbf{pour réduire les pertes par effet Joule, on augmente la tension de transport et on réduit l'intensité}.
+\end{exoresolu}
+
+\begin{savaistu}[Le transport d'énergie au Cameroun]
+Le réseau interconnecté Sud (RIS) d'ENEO transporte l'énergie hydroélectrique des barrages d'\textbf{Edéa} (260 MW), de \textbf{Nachtigal} (420 MW) et de \textbf{Lom Pangar} (stockage/30 MW) vers Yaoundé, Douala et les grandes villes du Sud à \textbf{225 kV} et \textbf{90 kV}. Le réseau interconnecté Nord (RIN) dessert Garoua, Maroua, Ngaoundéré depuis le barrage de Lagdo (72 MW) à \textbf{90 kV}. L'électrification rurale utilise du \textbf{30 kV} (moyenne tension) puis du \textbf{220/380 V} (basse tension). Chaque palier de tension répond à un compromis : haute tension pour le transport (faibles pertes), basse tension pour la sécurité des utilisateurs.
+\end{savaistu}
+
+\courssub{Conversion d'énergie et rendement d'une portion de circuit}
+
+\begin{propriete}[Bilan de puissance d'un récepteur actif (Moteur, Électrolyseur)]
+Un récepteur actif (moteur, accumulateur en charge) se modélise par une force électromotrice (f.é.m.) $E'$ et une résistance interne $r$. La tension à ses bornes (convention récepteur) vaut :
+\[ U = E' + r\,I. \]
+En multipliant par $I$, on obtient le \textbf{bilan de puissance} :
+\[ \underbrace{U\,I}_{\text{Puissance électrique reçue } P_e} = \underbrace{E'\,I}_{\text{Puissance utile } P_u \text{ (mécanique ou chimique)}} + \underbrace{r\,I^2}_{\text{Puissance Joule dissipée } P_J}. \]
+L'énergie correspondante sur une durée $\Delta t$ : $W_e = W_u + W_J$.
+\end{propriete}
+
+\begin{propriete}[Rendement d'une portion de circuit]
+Le rendement $\eta$ (lettre grecqueêta) d'un convertisseur est le rapport de la puissance utile à la puissance reçue (ou des énergies correspondantes) :
+\[ \eta = \dfrac{P_{\text{utile}}}{P_{\text{reçue}}} = \dfrac{W_{\text{utile}}}{W_{\text{reçue}}}, \qquad 0 \le \eta \le 1 \quad (\text{souvent exprimé en \%}). \]
+\begin{itemize}
+\item \textbf{Moteur :} $\eta = \dfrac{E'I}{UI} = \dfrac{E'}{U}$.
+\item \textbf{Générateur :} $\eta = \dfrac{UI}{EI} = \dfrac{U}{E}$.
+\item \textbf{Chaîne de conversion :} les rendements se multiplient : $\eta_{\text{global}} = \eta_1 \times \eta_2 \times \dots$
+\end{itemize}
+\end{propriete}
+
+\begin{methode}[Bilan de puissance d'un moteur ($E'$, $r$)]
+\begin{enumerate}
+\item \textbf{Modéliser} le récepteur actif par sa f.é.m. $E'$ et sa résistance interne $r$ : tension à ses bornes $U = E' + rI$.
+\item \textbf{Multiplier par $I$} pour obtenir le bilan de puissance :
+\[ \underbrace{U\,I}_{\text{reçue}} = \underbrace{E'\,I}_{\text{utile (mécanique ou chimique)}} + \underbrace{r\,I^2}_{\text{dissipée par effet Joule}}. \]
+\item \textbf{Multiplier par $\Delta t$} pour le bilan d'énergie : $W_e = W_u + W_J$.
+\item \textbf{Exploiter les données} : si deux des trois grandeurs sont connues, en déduire la troisième.
+\item \textbf{Conclure} en précisant la nature de l'énergie utile (mécanique pour un moteur, chimique pour un électrolyseur).
+\end{enumerate}
+\textbf{Réflexe :} pour un moteur, $U I \neq r I^2$ : la loi d'Ohm ne s'applique \emph{pas} à un récepteur actif.
+\end{methode}
+
+\begin{exoresolu}[Moteur d'une pompe à eau]
+Le moteur électrique d'une pompe utilisée pour irriguer un champ de tomates a une f.é.m. $E' = \SI{200}{V}$ et une résistance interne $r = \SI{2,0}{\ohm}$. Il est alimenté sous $U = \SI{220}{V}$ et fonctionne pendant $\Delta t = \SI{2,0}{\hour}$.\\
+1. Calculer l'intensité $I$ du courant qui traverse le moteur.\\
+2. Établir le bilan de puissance du moteur.\\
+3. Calculer l'énergie mécanique fournie et l'énergie dissipée par effet Joule pendant le fonctionnement.
+\tcblower
+\textbf{1. Intensité du courant.}\\
+Pour un moteur : $U = E' + rI$, d'où
+\[ I = \dfrac{U - E'}{r} = \dfrac{220 - 200}{2{,}0} = \SI{10}{A}. \]
+\textbf{2. Bilan de puissance.}\\
+Puissance électrique reçue : $P_e = U\,I = 220 \times 10 = \SI{2,2e3}{W}$.\\
+Puissance mécanique utile : $P_u = E'\,I = 200 \times 10 = \SI{2,0e3}{W}$.\\
+Puissance dissipée par effet Joule : $P_J = r\,I^2 = 2{,}0 \times 10^2 = \SI{2,0e2}{W}$.\\
+Vérification : $P_u + P_J = 2000 + 200 = \SI{2200}{W} = P_e$. \checkmark\quad Le bilan est cohérent : $UI = E'I + rI^2$.\\
+\textbf{3. Énergies pendant $\Delta t = \SI{2,0}{\hour} = \SI{7,2e3}{s}$.}\\
+Énergie mécanique : $W_u = E'\,I\,\Delta t = 2000 \times \num{7,2e3} = \SI{1,44e7}{J} = \SI{14,4}{MJ}$.\\
+Énergie Joule : $W_J = r\,I^2\,\Delta t = 200 \times \num{7,2e3} = \SI{1,44e6}{J} = \SI{1,44}{MJ}$.\\
+\textbf{Conclusion :} sur les $\SI{15,8}{MJ}$ d'énergie électrique reçues, le moteur fournit $\SI{14,4}{MJ}$ d'énergie mécanique à la pompe et dissipe $\SI{1,44}{MJ}$ de chaleur par effet Joule dans ses bobinages.
+\end{exoresolu}
+
+\begin{methode}[Définir et exploiter un rendement]
+\begin{enumerate}
+\item \textbf{Définir le rendement} : $\eta = \dfrac{P_{\text{utile}}}{P_{\text{reçue}}} = \dfrac{W_{\text{utile}}}{W_{\text{reçue}}}$, grandeur sans unité, toujours comprise entre $0$ et $1$ (souvent exprimée en \%). 
+\item \textbf{Identifier correctement} l'énergie utile (ce pour quoi le dispositif est conçu) et l'énergie reçue (énergie électrique consommée).
+\item \textbf{Pour un moteur} : $\eta = \dfrac{E'I}{UI} = \dfrac{E'}{U}$. \textbf{Pour un générateur} : $\eta = \dfrac{UI}{EI} = \dfrac{U}{E}$.
+\item \textbf{Exploiter} : $P_{\text{utile}} = \eta\,P_{\text{reçue}}$ ou $P_{\text{reçue}} = \dfrac{P_{\text{utile}}}{\eta}$.
+\item \textbf{Chaîne de conversion} : les rendements se multiplient : $\eta_{\text{global}} = \eta_1 \times \eta_2$.
+\end{enumerate}
+\textbf{Réflexe :} un rendement ne s'exprime jamais en joules ni en watts ; vérifier que $\eta < 1$ (sinon erreur de sens dans le rapport).
+\end{methode}
+
+\begin{exoresolu}[Rendement du moteur de la pompe]
+On reprend le moteur de l'exercice précédent : $E' = \SI{200}{V}$, $r = \SI{2,0}{\ohm}$, $U = \SI{220}{V}$, $I = \SI{10}{A}$.\\
+1. Calculer le rendement du moteur.\\
+2. La pompe entraînée par ce moteur a un rendement de $75\,\%$. Calculer le rendement global de l'ensemble moteur--pompe et la puissance mécanique réellement communiquée à l'eau.
+\tcblower
+\textbf{1. Rendement du moteur.}\\
+\[ \eta_{\text{m}} = \dfrac{P_{\text{utile}}}{P_{\text{reçue}}} = \dfrac{E'I}{UI} = \dfrac{E'}{U} = \dfrac{200}{220} \approx \num{0,91} \quad \text{soit} \quad \eta_{\text{m}} \approx 91\,\%. \]
+\textbf{2. Rendement global.}\\
+Les rendements des conversions en chaîne se multiplient :
+\[ \eta_{\text{global}} = \eta_{\text{m}} \times \eta_{\text{pompe}} = \num{0,91} \times \num{0,75} \approx \num{0,68} \quad \text{soit} \quad 68\,\%. \]
+Puissance mécanique communiquée à l'eau :
+\[ P_{\text{eau}} = \eta_{\text{global}} \times P_e = \num{0,68} \times 2200 \approx \SI{1,5e3}{W} = \SI{1,5}{kW}. \]
+\textbf{Conclusion :} le moteur a un rendement d'environ $91\,\%$ ; l'ensemble moteur--pompe ne restitue à l'eau que $68\,\%$ de l'énergie électrique consommée, soit $\SI{1,5}{kW}$ : près d'un tiers de l'énergie payée est perdu (chaleur dans le moteur, frottements et turbulences dans la pompe).
+\end{exoresolu}
+
+\courssub{Bilan énergétique complet d'une portion de circuit}
+
+\begin{propriete}[Bilan de puissance d'un circuit série complet (Générateur + Récepteurs)]
+Pour un générateur réel $(E, r)$ alimentant un circuit série de récepteurs, la loi des mailles s'écrit :
+\[ E = rI + \sum U_{\text{récepteurs}}. \]
+En multipliant par $I$, on obtient le \textbf{bilan de puissance global} :
+\[ \underbrace{E\,I}_{\text{Puissance chimique convertie}} = \underbrace{rI^2}_{\text{Pertes Joule internes}} + \underbrace{U_{PN}\,I}_{\text{Puissance fournie au circuit extérieur}}. \]
+La puissance fournie se répartit entre les récepteurs : $U_{PN} I = \sum U_k I$.
+La conservation de l'énergie impose : somme des puissances utiles + somme des puissances Joule = $EI$.
+\end{propriete}
+
+\begin{methode}[Bilan de puissance d'un circuit série complet]
+\begin{enumerate}
+\item \textbf{Écrire la loi des mailles} : pour un générateur $(E, r)$ alimentant des récepteurs, $E = rI + \sum U_{\text{récepteurs}}$.
+\item \textbf{Multiplier par $I$} : $E\,I = rI^2 + \sum P_{\text{récepteurs}}$, c'est-à-dire
+\[ \underbrace{E\,I}_{\text{chimique convertie}} = \underbrace{rI^2}_{\text{Joule interne}} + \underbrace{U_{PN}\,I}_{\text{fournie au circuit extérieur}}. \]
+\item \textbf{Répartir} la puissance fournie entre les récepteurs : $U_{PN} I = \sum U_k I$ (additivité des tensions en série).
+\item \textbf{Vérifier la conservation} : la somme des puissances utiles et des puissances Joule doit égaler la puissance totale convertie par le générateur.
+\item \textbf{Conclure} par un tableau ou un diagramme de bilan énergétique avec les valeurs numériques et le rendement global.
+\end{enumerate}
+\textbf{Réflexe :} en série, le même courant $I$ traverse tous les dipôles : les puissances s'ajoutent directement.
+\end{methode}
+
+\begin{exoresolu}[Bilan d'un circuit : batterie, moteur et lampe]
+Une batterie d'accumulateurs de f.é.m. $E = \SI{12}{V}$ et de résistance interne $r = \SI{0,50}{\ohm}$ alimente un circuit série comportant une lampe de résistance $R = \SI{3,5}{\ohm}$ et un petit moteur de f.é.m. $E' = \SI{6,0}{V}$ et de résistance interne $r' = \SI{1,0}{\ohm}$.\\
+1. Calculer l'intensité $I$ du courant dans le circuit.\\
+2. Établir le bilan complet de puissance du circuit.\\
+3. Calculer le rendement global du circuit (rapport de la puissance mécanique utile à la puissance chimique convertie).
+\tcblower
+\textbf{1. Intensité du courant.}\\
+Loi des mailles (circuit série) : $E = rI + RI + E' + r'I$, d'où
+\[ I = \dfrac{E - E'}{r + R + r'} = \dfrac{12 - 6{,}0}{0{,}50 + 3{,}5 + 1{,}0} = \dfrac{6{,}0}{5{,}0} = \SI{1,2}{A}. \]
+\textbf{2. Bilan de puissance.}\\
+Puissance chimique convertie par la batterie : $P_{\text{tot}} = E\,I = 12 \times 1{,}2 = \SI{14,4}{W}$.\\
+Puissance Joule dans la batterie : $rI^2 = 0{,}50 \times (1{,}2)^2 = \SI{0,72}{W}$.\\
+Puissance Joule dans la lampe : $RI^2 = 3{,}5 \times (1{,}2)^2 = \SI{5,04}{W}$ (chaleur et rayonnement).\\
+Puissance reçue par le moteur : $U_M I = (E' + r'I)I = (6{,}0 + 1{,}2) \times 1{,}2 = \SI{8,64}{W}$, qui se décompose en :
+\begin{itemize}
+\item puissance mécanique utile : $E'I = 6{,}0 \times 1{,}2 = \SI{7,2}{W}$ ;
+\item puissance Joule dans le moteur : $r'I^2 = 1{,}0 \times (1{,}2)^2 = \SI{1,44}{W}$.
+\end{itemize}
+Vérification de la conservation :
+\[ rI^2 + RI^2 + E'I + r'I^2 = 0{,}72 + 5{,}04 + 7{,}2 + 1{,}44 = \SI{14,4}{W} = E\,I. \quad \checkmark \]
+\textbf{3. Rendement global.}
+\[ \eta = \dfrac{P_{\text{mécanique}}}{P_{\text{chimique}}} = \dfrac{E'I}{EI} = \dfrac{7{,}2}{14{,}4} = \num{0,50} \quad \text{soit} \quad \eta = 50\,\%. \]
+\textbf{Conclusion :} sur les $\SI{14,4}{W}$ convertis par la batterie, $\SI{7,2}{W}$ sont transformés en énergie mécanique, $\SI{5,04}{W}$ en chaleur et lumière dans la lampe, et $\SI{2,16}{W}$ sont perdus par effet Joule dans la batterie et le moteur ; le rendement global de la conversion en énergie mécanique est de $50\,\%$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Confondre énergie et puissance, ou mélanger les unités.} $W = P\,\Delta t$ donne des joules si $P$ est en watts et $\Delta t$ en \emph{secondes}, des wattheures si $\Delta t$ est en \emph{heures}. Convertir systématiquement : $\SI{1}{kWh} = \num{3,6e6}{J}$. Écrire « $W = \SI{27}{kWh} = \SI{9,7e7}{J}$ » et non un mélange des deux.
+\item \textbf{Appliquer la loi d'Ohm à un moteur.} Pour un récepteur actif, $U = E' + rI$ et non $U = rI$. La puissance reçue $UI$ n'est \emph{pas} égale à la puissance Joule $rI^2$ : écrire $P_J = UI$ pour un moteur est une faute de physique éliminatoire.
+\item \textbf{Oublier le carré dans la loi de Joule.} $P_J = R\,I^2$ : si l'intensité double, les pertes sont \emph{quadruplées}. C'est l'argument attendu pour justifier le transport en haute tension ; l'oublier fausse tous les calculs de pertes en ligne.
+\item \textbf{Inverser le rapport dans le rendement.} $\eta = \dfrac{\text{utile}}{\text{reçue}} \leq 1$. Un rendement supérieur à $100\,\%$ (ou exprimé en watts) signale immédiatement l'inversion. Pour un moteur : $\eta = E'/U$ ; pour un générateur : $\eta = U/E$.
+\item \textbf{Présenter un bilan sans vérification de la conservation.} Le jury attend la vérification explicite $UI = E'I + rI^2$ (avec les valeurs numériques). Un bilan non vérifié, ou des puissances « oubliées » (Joule interne du générateur, par exemple), fait perdre les points de rigueur. Toujours conclure par une phrase : « on vérifie que la puissance convertie par le générateur se répartit intégralement entre... ».
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Leçon 18 : Énergie, puissance électrique et loi de Joule}
+
+\courssub{Énergie électrique consommée dans une portion de circuit}
+
+\begin{experience}[Observation : le compteur électrique ENEO]
+À Douala comme à Yaoundé, chaque abonné ENEO dispose d'un compteur qui tourne (ou affiche des chiffres) lorsque des appareils fonctionnent. Ce compteur mesure une grandeur physique : l'\cle{énergie électrique} consommée. Plus la puissance des appareils est grande et plus ils fonctionnent longtemps, plus l'énergie consommée augmente.
+\end{experience}
+
+\begin{definition}[Énergie électrique consommée par un dipôle]
+Soit un dipôle récepteur (récepteur passif ou actif) traversé par un courant d'intensité $i(t)$ et soumis à une tension $u(t)$ aux bornes (convention récepteur : $\vec{i}$ entre par la borne $+$). L'énergie électrique $\delta W$ reçue par le dipôle pendant un intervalle de temps infinitésimal $\mathrm{d}t$ est :
+\[
+\delta W = u(t)\,i(t)\,\mathrm{d}t
+\]
+L'énergie électrique consommée sur une durée finie $\Delta t = t_2 - t_1$ est l'intégrale de la puissance instantanée :
+\[
+W = \int_{t_1}^{t_2} u(t)\,i(t)\,\mathrm{d}t
+\]
+\end{definition}
+
+\begin{propriete}[Cas d'un régime continu ou sinusoïdal constant]
+Si la tension $U$ et l'intensité $I$ sont constantes (régime continu) ou efficaces et en phase (régime sinusoïdal pur résistif), l'énergie consommée pendant $\Delta t$ s'écrit simplement :
+\[
+\boxed{W = U\,I\,\Delta t}
+\]
+\begin{itemize}
+\item $W$ en joules (\si{\joule} ou \si{J}),
+\item $U$ en volts (\si{\volt} ou \si{V}),
+\item $I$ en ampères (\si{\ampere} ou \si{A}),
+\item $\Delta t$ en secondes (\si{\second} ou \si{s}).
+\end{itemize}
+\end{propriete}
+
+\begin{aretenir}[Unité pratique : le kilowattheure]
+L'unité SI (le joule) est trop petite pour la facturation domestique. On utilise le \cle{kilowattheure} (\si{\kWh}) :
+\[
+\SI{1}{kWh} = \SI{1000}{W} \times \SI{3600}{s} = \SI{3,6e6}{J} = \SI{3,6}{MJ}
+\]
+C'est l'énergie consommée par un appareil de \SI{1}{kW} pendant \SI{1}{h}. La facture ENEO/SONATREL s'établit en kWh.
+\end{aretenir}
+
+\begin{exemplebox}[Énergie d'un fer à repasser]
+Un fer à repasser fonctionne sous $U = \SI{220}{V}$ avec $I = \SI{6,5}{A}$ pendant $\Delta t = \SI{20}{min} = \SI{1200}{s}$.
+\[
+W = U I \Delta t = 220 \times 6,5 \times 1200 = \SI{1,716e6}{J} \approx \SI{1,72}{MJ}
+\]
+En kWh : $W = \dfrac{1,716 \times 10^6}{3,6 \times 10^6} = \SI{0,477}{kWh}$.
+\end{exemplebox}
+
+\courssub{Puissance électrique consommée}
+
+\begin{definition}[Puissance électrique instantanée et moyenne]
+La \cle{puissance électrique} $p(t)$ reçue par un dipôle à l'instant $t$ est la dérivée temporelle de l'énergie :
+\[
+p(t) = \frac{\mathrm{d}W}{\mathrm{d}t} = u(t)\,i(t)
+\]
+La puissance moyenne sur une durée $\Delta t$ est :
+\[
+P = \frac{W}{\Delta t} = \frac{1}{\Delta t}\int_{t_1}^{t_2} u(t)i(t)\,\mathrm{d}t
+\]
+\end{definition}
+
+\begin{propriete}[Puissance en régime continu / sinusoïdal constant]
+Pour $U$ et $I$ constants (ou efficaces en phase) :
+\[
+\boxed{P = U\,I}
+\]
+Unité SI : le \cle{watt} (\si{\watt} ou \si{W}) avec $\SI{1}{W} = \SI{1}{J.s^{-1}} = \SI{1}{V.A}$.
+\begin{itemize}
+\item \textbf{Dipôle récepteur} (convention récepteur respectée) : $P > 0$, il \emph{consomme} de la puissance.
+\item \textbf{Dipôle générateur} (convention générateur : courant sort par le $+$) : $P_{\text{fournie}} = E\,I > 0$, il \emph{fournit} de la puissance.
+\end{itemize}
+\end{propriete}
+
+\begin{attention}[Convention récepteur / générateur]
+Ne jamais confondre la tension aux bornes $U$ (toujours $V_+ - V_-$) et la f.é.m. $E$ d'un générateur. Pour un générateur réel ($E, r$) fournissant un courant $I$ :
+\begin{itemize}
+\item Puissance fournie par le siège : $P_{\text{fournie}} = E\,I$.
+\item Puissance absorbée par la résistance interne : $P_{J,r} = r I^2$.
+\item Tension aux bornes (utilisable) : $U = E - r I$.
+\item Puissance utile fournie au circuit extérieur : $P_{\text{utile}} = U I = E I - r I^2$.
+\end{itemize}
+Vérification : $P_{\text{fournie}} = P_{J,r} + P_{\text{utile}}$.
+\end{attention}
+
+\courssub{Effet Joule et loi de Joule}
+
+\begin{experience}[Expérience : Échauffement d'un résistor dans l'eau]
+\textbf{Matériel :} Résistor $R = \SI{20}{\ohm}$, générateur réglable, ampèremètre, calorimètre avec $m = \SI{200}{g}$ d'eau ($c = \SI{4180}{J.kg^{-1}.K^{-1}}$), thermomètre, chronomètre.
+\textbf{Protocole :} Plonger le résistor dans l'eau. Fermer le circuit avec $I = \SI{2}{A}$ pendant $\Delta t = \SI{5}{min}$. Mesurer $\Delta\theta$.
+\textbf{Observation :} La température de l'eau augmente. L'énergie électrique a été convertie en énergie thermique.
+\textbf{Interprétation :} Les électrons en mouvement heurtent les ions du cristal métallique (résistor) : leur énergie cinétique ordonnée devient agitation thermique désordonnée. C'est l'\cle{effet Joule}.
+\end{experience}
+
+\begin{propriete}[Loi de Joule -- Puissance et énergie dissipées par effet Joule]
+Dans un conducteur ohmique de résistance $R$ traversé par un courant $I$ (régime continu ou valeurs efficaces en régime sinusoïdal), la puissance dissipée en chaleur (perte par effet Joule) vaut :
+\[
+\boxed{P_J = R\,I^2 = \frac{U^2}{R} = U\,I}
+\]
+L'énergie thermique (énergie Joule) dégagée pendant $\Delta t$ est :
+\[
+\boxed{W_J = R\,I^2\,\Delta t = \frac{U^2}{R}\,\Delta t = U\,I\,\Delta t}
+\]
+\begin{itemize}
+\item $P_J$ en \si{W}, $W_J$ en \si{J}.
+\item $R$ en \si{\ohm}, $I$ en \si{A}, $U$ en \si{V}, $\Delta t$ en \si{s}.
+\end{itemize}
+\textbf{Analyse dimensionnelle :} $[R I^2] = \Omega \cdot A^2 = (V/A) \cdot A^2 = V \cdot A = W$. Correct.
+\end{propriete}
+
+\begin{aretenir}[Effet Joule : perte ou utilité ?]
+\begin{itemize}
+\item \textbf{Perte (à minimiser) :} Lignes de transport SONATREL (haute tension pour réduire $I$), bobinages des moteurs (moulin à maïs, ventilateur), transformateurs, câbles de rallonge.
+\item \textbf{Utilité recherchée :} Radiateurs, fers à repasser, bouilloires, fours, sèche-cheveux, chauffe-eau, plaques de cuisson.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Conversion d'énergie et rendement d'une portion de circuit}
+
+\begin{definition}[Conversion d'énergie dans un dipôle récepteur]
+Un dipôle récepteur convertit l'énergie électrique reçue ($W_{\text{élec}} = U I \Delta t$) en une ou plusieurs autres formes d'énergie :
+\begin{itemize}
+\item \textbf{Résistor ohmique :} 100\% en énergie thermique ($W_{\text{th}} = W_J$).
+\item \textbf{Moteur électrique :} Énergie mécanique utile ($W_m$) + énergie thermique (pertes Joule dans les bobines $W_{J,r'}$ + frottements).
+\item \textbf{Accumulateur en charge :} Énergie chimique (stockée) + énergie thermique (pertes Joule interne $W_{J,r}$).
+\item \textbf{Électrolyseur / Lampe :} Énergie chimique / Énergie lumineuse + énergie thermique.
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Rendement $\eta$ d'une portion de circuit]
+Le \cle{rendement} $\eta$ (lettre grecqueêta) d'une portion de circuit réceptrice est le rapport de l'énergie (ou puissance) utile fournie par cette portion à l'énergie (ou puissance) électrique qu'elle absorbe :
+\[
+\boxed{\eta = \frac{W_{\text{utile}}}{W_{\text{absorbée}}} = \frac{P_{\text{utile}}}{P_{\text{absorbée}}}}
+\]
+Propriétés :
+\begin{itemize}
+\item $\eta$ est sans unité (souvent exprimé en \%, $\eta_{\%} = 100 \times \eta$).
+\item Toujours $0 \le \eta \le 1$ (premier principe de la thermodynamique : on ne crée pas d'énergie).
+\item $\eta = 1$ (100\%) est inaccessible (pertes Joule, frottements, rayonnement...).
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[Rendement d'un moteur de moulin à maïs]
+$P_{\text{absorbée}} = \SI{750}{W}$, $I = \SI{3,4}{A}$, $r' = \SI{4}{\ohm}$.
+Pertes Joule : $P_J = r' I^2 = 4 \times (3,4)^2 = \SI{46,24}{W}$.
+Puissance mécanique utile : $P_m = P_{\text{absorbée}} - P_J = 750 - 46,24 = \SI{703,76}{W}$.
+Rendement : $\eta = \dfrac{703,76}{750} = 0,938 = \SI{93,8}{\%}$.
+\end{exemplebox}
+
+\courssub{Bilan énergétique complet d'une portion de circuit}
+
+\begin{methode}[Établir un bilan de puissance (ou d'énergie) dans un circuit]
+\begin{enumerate}
+\item \textbf{Schéma :} Représenter tous les dipôles (générateurs $E, r$, récepteurs passifs $R$, récepteurs actifs $E', r'$), le sens du courant $I$, les flèches de tension (convention récepteur pour les charges, convention générateur pour les sources).
+\item \textbf{Loi des mailles :} Écrire $\sum \pm E \pm U = 0$ pour trouver $I$.
+\item \textbf{Puissances par dipôle :}
+      \begin{itemize}
+      \item Générateur ($E, r$) : $P_{\text{fournie}} = E I$ ; Perte interne $P_{J,r} = r I^2$ ; Puissance utile aux bornes $P_{\text{borne}} = U I = E I - r I^2$.
+      \item Résistor $R$ : $P_J = R I^2$ (perte thermique totale).
+      \item Moteur ($E', r'$) : $P_{\text{absorbée}} = U' I = E' I + r' I^2$ ; Perte Joule interne $P_{J,r'} = r' I^2$ ; Puissance mécanique utile $P_m = E' I$.
+      \end{itemize}
+\item \textbf{Bilan global :} $\sum P_{\text{fournies (générateurs)}} = \sum P_{\text{absorbées (récepteurs)}} = \sum P_{\text{utiles}} + \sum P_{\text{pertes (Joule + autres)}}$.
+\item \textbf{Rendement global :} $\eta = \dfrac{\sum P_{\text{utiles}}}{\sum P_{\text{fournies}}}$.
+\end{enumerate}
+\end{methode}
+
+\begin{savaistu}[Transport d'énergie : le rôle de la haute tension (Nachtigal, Lom Pangar)]
+Le Cameroun produit de l'électricité aux barrages (Nachtigal \SI{420}{MW}, Lom Pangar, Edéa, Song Loulou). Pour l'acheminer vers Yaoundé, Douala, Bafoussam via le réseau SONATREL/ENEO sans pertes excessives, on élève la tension à \SI{225}{kV} ou \SI{90}{kV} (haute tension).
+\textbf{Pourquoi ?} Pour une puissance $P$ à transporter, $I = P/U$. Pertes Joule $P_J = R_{\text{ligne}} I^2 = R_{\text{ligne}} P^2 / U^2$.
+Doubler $U$ divise les pertes par 4. C'est la clé de l'électrification rurale et urbaine efficace.
+\end{savaistu}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : choisir la (ou les) bonne(s) réponse(s)]
+Pour chaque question, indiquer la ou les bonnes réponses en justifiant brièvement.
+\begin{enumerate}
+\item L'énergie électrique consommée par un dipôle récepteur traversé par un courant $I$ sous une tension $U$ pendant la durée $\Delta t$ s'écrit :
+\begin{enumerate}
+\item[a.] $W = U\,I\,\Delta t$ \qquad b. $W = \dfrac{U\,I}{\Delta t}$ \qquad c. $W = \dfrac{U\,\Delta t}{I}$ \qquad d. $W = U\,I^2\,\Delta t$
+\end{enumerate}
+\item Le kilowattheure (kWh) est une unité :
+\begin{enumerate}
+\item[a.] de puissance \qquad b. d'énergie \qquad c. d'intensité \qquad d. de tension
+\end{enumerate}
+\item Un conducteur ohmique de résistance $R$ convertit intégralement l'énergie électrique reçue en :
+\begin{enumerate}
+\item[a.] énergie mécanique \qquad b. énergie chimique \qquad c. énergie thermique \qquad d. énergie lumineuse
+\end{enumerate}
+\item La puissance dissipée par effet Joule dans un résistor vaut :
+\begin{enumerate}
+\item[a.] $P_J = R\,I$ \qquad b. $P_J = R\,I^2$ \qquad c. $P_J = \dfrac{U^2}{R}$ \qquad d. $P_J = U\,I^2$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+Répondre par vrai ou faux et justifier chaque réponse par une phrase ou un calcul.
+\begin{enumerate}
+\item L'énergie électrique consommée par un appareil ne dépend que de sa puissance nominale.
+\item $\SI{1}{kWh} = \SI{3,6e6}{J}$.
+\item Dans un moteur électrique, toute l'énergie électrique consommée est convertie en énergie mécanique utile.
+\item Le rendement d'une portion de circuit est toujours inférieur ou égal à 1.
+\item Pour transporter une même puissance, augmenter la tension de la ligne augmente les pertes par effet Joule.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et expressions]
+\begin{enumerate}
+\item Définir la \cle{puissance électrique} consommée par un dipôle et donner son unité SI.
+\item Énoncer la \cle{loi de Joule} en précisant la signification et l'unité de chaque grandeur.
+\item Définir le \cle{rendement} $\eta$ d'une portion de circuit et donner son expression en fonction des puissances.
+\item Citer deux dispositifs domestiques dans lesquels l'effet Joule est recherché, et deux dans lesquels il constitue une perte.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+\begin{enumerate}
+\item Un fer à repasser est traversé par un courant d'intensité $I = \SI{6,5}{A}$ sous une tension $U = \SI{220}{V}$. Calculer la puissance électrique qu'il consomme.
+\item Calculer l'énergie consommée par ce fer fonctionnant pendant $\Delta t = \SI{20}{min}$, en joules puis en kilowattheures.
+\item Un résistor de résistance $R = \SI{47}{\ohm}$ est parcouru par un courant $I = \SI{0,30}{A}$. Calculer la puissance dissipée par effet Joule.
+\item Une ampoule convertit $\SI{12}{J}$ d'énergie lumineuse utile pour $\SI{100}{J}$ d'énergie électrique consommée. Calculer son rendement.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Chauffe-eau électrique]
+Un chauffe-eau électrique porte les indications « $220\ \text{V}$ -- $2\,000\ \text{W}$ ».
+\begin{enumerate}
+\item Calculer l'intensité du courant qui le traverse en fonctionnement normal.
+\item En déduire la résistance de son élément chauffant en fonctionnement.
+\item Calculer l'énergie consommée pendant une chauffe de $\SI{30}{min}$, en joules puis en kilowattheures.
+\item Le kWh est facturé $\SI{99}{FCFA}$ par ENEO. Calculer le coût de cette chauffe.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vérification expérimentale de la loi de Joule]
+Au laboratoire du lycée, on plonge un résistor de résistance $R = \SI{20}{\ohm}$ parcouru par un courant d'intensité $I = \SI{2}{A}$ dans un calorimètre contenant $m = \SI{200}{g}$ d'eau (capacité thermique massique $c = \SI{4180}{J.kg^{-1}.K^{-1}}$), pendant $\Delta t = \SI{5}{min}$.
+\begin{enumerate}
+\item Calculer l'énergie électrique $W_J$ dissipée par effet Joule dans le résistor.
+\item En supposant que toute cette énergie chauffe l'eau, calculer l'élévation de température $\Delta\theta$ attendue.
+\item La mesure donne une élévation de température inférieure à la valeur calculée. Proposer deux explications physiques à cet écart.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Moteur électrique d'un moulin à maïs]
+Le moteur électrique d'un moulin à maïs consomme une puissance électrique $P_e = \SI{750}{W}$. Il est traversé par un courant d'intensité $I = \SI{3,4}{A}$ et sa résistance interne vaut $r = \SI{4}{\ohm}$.
+\begin{enumerate}
+\item Calculer la puissance $P_J$ perdue par effet Joule dans le moteur.
+\item En déduire la puissance mécanique utile $P_m$ fournie par le moteur.
+\item Calculer le rendement $\eta$ du moteur. Exprimer le résultat en pourcentage.
+\item Calculer l'énergie perdue par effet Joule pendant $\SI{2}{h}$ de fonctionnement.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Transport de l'énergie électrique]
+SONATREL doit transporter une puissance $P = \SI{50}{kW}$ sur une ligne dont la résistance totale est $R = \SI{2}{\ohm}$.
+\begin{enumerate}
+\item Calculer l'intensité du courant dans la ligne si le transport s'effectue sous $U_1 = \SI{220}{V}$, puis la puissance $P_{J1}$ perdue par effet Joule.
+\item Reprendre les mêmes calculs pour un transport sous $U_2 = \SI{11000}{V}$.
+\item Comparer $P_{J1}$ et $P_{J2}$ et conclure sur l'intérêt du transport en haute tension entre le barrage de Nachtigal et les villes.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Circuit générateur -- moteur -- résistor]
+Un générateur de force électromotrice $E = \SI{24}{V}$ et de résistance interne $r = \SI{1}{\ohm}$ alimente, montés en série, un moteur de force contre-électromotrice $E' = \SI{16}{V}$ et de résistance interne $r' = \SI{2}{\ohm}$, et un résistor de résistance $R = \SI{3}{\ohm}$.
+\begin{enumerate}
+\item Faire le schéma du circuit en représentant les flèches de tension et le sens du courant.
+\item En appliquant la loi des mailles, montrer que l'intensité du courant dans le circuit vaut $I = \SI{1,33}{A}$ (on prendra $I = \dfrac{4}{3}\ \text{A}$ pour les calculs).
+\item Établir le bilan de puissance complet du circuit :
+\begin{enumerate}
+\item puissance totale fournie par le générateur ;
+\item puissance perdue par effet Joule dans chacun des trois dipôles ;
+\item puissance mécanique utile fournie par le moteur.
+\end{enumerate}
+\item Vérifier que la puissance fournie par le générateur est égale à la somme des puissances reçues et dissipées dans le circuit.
+\item Définir puis calculer le rendement global $\eta$ de la portion de circuit (rapport entre la puissance utile et la puissance fournie par le générateur).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Facture d'électricité d'une famille à Douala]
+Une famille de Douala souhaite limiter sa consommation mensuelle à $\SI{150}{kWh}$. Sans climatiseur, ses appareils consomment déjà $\SI{120}{kWh}$ par mois. Elle envisage d'acheter un climatiseur de puissance $P = \SI{1500}{W}$ qui fonctionnerait $\SI{2}{h}$ par jour, tous les jours du mois (30 jours).
+\begin{enumerate}
+\item Calculer l'énergie mensuelle $W_{\text{clim}}$ consommée par le climatiseur, en kilowattheures.
+\item La famille peut-elle respecter son objectif de $\SI{150}{kWh}$ par mois ? Justifier par le calcul.
+\item Calculer le coût mensuel supplémentaire dû au climatiseur, le kWh étant facturé $\SI{99}{FCFA}$.
+\item La famille décide de limiter le fonctionnement du climatiseur pour ne pas dépasser son objectif. Calculer la durée maximale de fonctionnement quotidien autorisée, en minutes.
+\item Citer deux conseils pratiques permettant à cette famille de réduire sa consommation d'énergie électrique.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Chauffage de l'eau et rendement d'une bouilloire]
+Pour préparer le petit-déjeuner, Mme Etoundi utilise une bouilloire électrique portant les indications « $220\ \text{V}$ -- $1\,800\ \text{W}$ » pour chauffer $m = \SI{1,5}{kg}$ d'eau de $\theta_1 = \SI{25}{\celsius}$ à $\theta_2 = \SI{90}{\celsius}$. On donne la capacité thermique massique de l'eau : $c = \SI{4180}{J.kg^{-1}.K^{-1}}$.
+\begin{enumerate}
+\item Calculer l'intensité du courant traversant la bouilloire en fonctionnement.
+\item Calculer l'énergie thermique $W_{\text{th}}$ nécessaire pour chauffer l'eau.
+\item La chauffe dure $\Delta t = \SI{4}{min}$ et $\SI{30}{s}$. Calculer l'énergie électrique $W_e$ consommée par la bouilloire, en joules puis en kilowattheures.
+\item En déduire le rendement $\eta$ de la bouilloire. Commenter la valeur obtenue : où est passée l'énergie manquante ?
+\item Calculer la résistance $R$ de l'élément chauffant de la bouilloire, puis vérifier la loi de Joule en retrouvant la puissance dissipée à partir de $R$ et de l'intensité calculée à la question 1.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : choisir la (ou les) bonne(s) réponse(s)]
+\begin{enumerate}
+\item \textbf{Réponse a.} $W = U\,I\,\Delta t$. Vérification dimensionnelle : $[U\,I\,\Delta t] = V \cdot A \cdot s = W \cdot s = J$. Les réponses b et c ne sont pas homogènes à une énergie ; la réponse d ($U I^2 \Delta t$) est homogène à $\si{W.A.s}$, donc incorrecte.
+\item \textbf{Réponse b.} Le kilowattheure est une unité d'\emph{énergie} : $\SI{1}{kWh} = \SI{1000}{W} \times \SI{3600}{s} = \SI{3,6e6}{J}$. C'est le produit d'une puissance par une durée.
+\item \textbf{Réponse c.} Un conducteur ohmique convertit \emph{intégralement} l'énergie électrique reçue en énergie thermique : c'est l'effet Joule, $W_J = R I^2 \Delta t$.
+\item \textbf{Réponses b et c.} $P_J = R I^2$ et, comme $U = R I$ pour un conducteur ohmique, $P_J = \dfrac{U^2}{R}$. Les réponses a et d ne sont pas homogènes à une puissance ($R I$ est homogène à une tension ; $U I^2$ à $\si{W.A}$).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, en justifiant]
+\begin{enumerate}
+\item \textbf{Faux.} L'énergie consommée vaut $W = P\,\Delta t$ : elle dépend de la puissance \emph{et} de la durée de fonctionnement. Une lampe de $\SI{10}{W}$ allumée $\SI{100}{h}$ consomme autant ($\SI{1}{kWh}$) qu'un appareil de $\SI{1000}{W}$ pendant $\SI{1}{h}$.
+\item \textbf{Vrai.} $\SI{1}{kWh} = \SI{1000}{W} \times \SI{3600}{s} = \SI{3,6e6}{J}$.
+\item \textbf{Faux.} Une partie de l'énergie électrique est dissipée en chaleur par effet Joule dans les bobinages ($P_J = r' I^2$) et par les frottements mécaniques. Seule la puissance $P_m = E' I$ est convertie en énergie mécanique utile.
+\item \textbf{Vrai.} L'énergie utile ne peut jamais dépasser l'énergie absorbée (conservation de l'énergie), donc $\eta = \dfrac{W_{\text{utile}}}{W_{\text{absorbée}}} \le 1$. L'égalité $\eta = 1$ est une limite idéale jamais atteinte en pratique.
+\item \textbf{Faux.} C'est le contraire : à puissance transportée $P$ fixée, $I = P/U$, donc $P_J = R_{\text{ligne}} I^2 = \dfrac{R_{\text{ligne}} P^2}{U^2}$. Augmenter $U$ \emph{diminue} les pertes Joule (en $1/U^2$). C'est le principe du transport en haute tension (\SI{225}{kV} chez SONATREL).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions et expressions]
+\begin{enumerate}
+\item La \cle{puissance électrique} consommée par un dipôle est l'énergie électrique qu'il reçoit par unité de temps : $P = \dfrac{W}{\Delta t} = U\,I$ en régime continu. Son unité SI est le \textbf{watt} (\si{W}), avec $\SI{1}{W} = \SI{1}{J.s^{-1}} = \SI{1}{V.A}$.
+\item \textbf{Loi de Joule :} l'énergie dissipée en chaleur par un conducteur ohmique de résistance $R$ (en \si{\ohm}) traversé par un courant d'intensité $I$ (en \si{A}) pendant la durée $\Delta t$ (en \si{s}) vaut $W_J = R I^2 \Delta t$ (en joules, \si{J}). La puissance dissipée vaut $P_J = R I^2 = \dfrac{U^2}{R}$ (en watts, \si{W}).
+\item Le \cle{rendement} $\eta$ d'une portion de circuit est le rapport de la puissance utile qu'elle fournit à la puissance électrique qu'elle absorbe : $\eta = \dfrac{P_{\text{utile}}}{P_{\text{absorbée}}}$. C'est un nombre sans unité, compris entre 0 et 1, souvent exprimé en pourcentage.
+\item Effet Joule \emph{recherché} : fer à repasser, bouilloire (aussi : chauffe-eau, four, radiateur). Effet Joule \emph{subi (perte)} : lignes de transport ENEO, bobinages d'un moteur de ventilateur (aussi : transformateurs, câbles de rallonge).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item $P = U\,I = 220 \times \num{6,5} = \SI{1430}{W} = \SI{1,43}{kW}$.
+\item $\Delta t = \SI{20}{min} = \SI{1200}{s}$.
+\[
+W = P\,\Delta t = 1430 \times 1200 = \SI{1,716e6}{J} \approx \SI{1,72}{MJ}
+\]
+En kilowattheures : $W = \dfrac{1,716 \times 10^6}{3,6 \times 10^6} = \SI{0,477}{kWh}$ (ou directement $W = \num{1,430}\ \text{kW} \times \tfrac{1}{3}\ \text{h} = \SI{0,477}{kWh}$).
+\item $P_J = R I^2 = 47 \times (\num{0,30})^2 = 47 \times \num{0,09} = \SI{4,23}{W}$.
+\item $\eta = \dfrac{W_{\text{utile}}}{W_{\text{absorbée}}} = \dfrac{12}{100} = \num{0,12} = \SI{12}{\%}$. (C'est le rendement typique d'une lampe à incandescence : l'essentiel part en chaleur.)
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Chauffe-eau électrique]
+\begin{enumerate}
+\item En fonctionnement normal, $P = U\,I$, donc :
+\[
+I = \frac{P}{U} = \frac{2000}{220} = \SI{9,09}{A}
+\]
+\item L'élément chauffant est un conducteur ohmique : $R = \dfrac{U}{I} = \dfrac{220}{9,09} = \SI{24,2}{\ohm}$. Vérification : $R = \dfrac{U^2}{P} = \dfrac{220^2}{2000} = \dfrac{48\,400}{2000} = \SI{24,2}{\ohm}$. Cohérent.
+\item $\Delta t = \SI{30}{min} = \SI{1800}{s}$.
+\[
+W = P\,\Delta t = 2000 \times 1800 = \SI{3,6e6}{J} = \SI{3,6}{MJ}
+\]
+En kilowattheures : $W = 2\ \text{kW} \times \num{0,5}\ \text{h} = \SI{1,0}{kWh}$.
+\item Coût $= 1,0 \times 99 = \SI{99}{FCFA}$.
+\end{enumerate}
+\textbf{Point de vigilance :} ne pas oublier de convertir les minutes en secondes pour obtenir des joules, ou raisonner directement en kW et en heures pour obtenir des kWh.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Vérification expérimentale de la loi de Joule]
+\begin{enumerate}
+\item $\Delta t = \SI{5}{min} = \SI{300}{s}$. Loi de Joule :
+\[
+W_J = R I^2 \Delta t = 20 \times (2)^2 \times 300 = 20 \times 4 \times 300 = \SI{2,4e4}{J} = \SI{24}{kJ}
+\]
+\item Si toute l'énergie chauffe l'eau : $W_J = m\,c\,\Delta\theta$, donc :
+\[
+\Delta\theta = \frac{W_J}{m\,c} = \frac{24\,000}{\num{0,200} \times 4180} = \frac{24\,000}{836} = \SI{28,7}{K} \quad (\text{soit } \SI{28,7}{\celsius})
+\]
+\item L'élévation mesurée est inférieure car :
+\begin{itemize}
+\item une partie de l'énergie thermique est perdue vers l'extérieur (calorimètre non parfaitement isolé, échanges avec l'air et les parois) ;
+\item une partie de l'énergie sert à chauffer le calorimètre lui-même, le thermomètre et le résistor (capacités thermiques non négligées).
+\end{itemize}
+On peut aussi citer l'évaporation de l'eau et les erreurs de lecture du thermomètre.
+\end{enumerate}
+\textbf{Point de vigilance :} convertir la masse en kilogrammes ($m = \SI{0,200}{kg}$) et la durée en secondes avant tout calcul.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Moteur électrique d'un moulin à maïs]
+\begin{enumerate}
+\item Puissance perdue par effet Joule dans les bobinages :
+\[
+P_J = r I^2 = 4 \times (\num{3,4})^2 = 4 \times \num{11,56} = \SI{46,24}{W} \approx \SI{46,2}{W}
+\]
+\item Bilan de puissance du moteur : $P_e = P_m + P_J$, donc :
+\[
+P_m = P_e - P_J = 750 - 46,24 = \SI{703,76}{W} \approx \SI{704}{W}
+\]
+\item Rendement :
+\[
+\eta = \frac{P_m}{P_e} = \frac{703,76}{750} = \num{0,938} \quad \text{soit } \eta \approx \SI{93,8}{\%}
+\]
+\item $\Delta t = \SI{2}{h} = \SI{7200}{s}$ :
+\[
+W_J = P_J\,\Delta t = 46,24 \times 7200 = \SI{3,33e5}{J} \approx \SI{333}{kJ}
+\]
+(soit environ $\SI{0,0924}{kWh}$ d'énergie gaspillée en chaleur).
+\end{enumerate}
+\textbf{Point de vigilance :} attention à ne pas écrire $P_m = E' I$ sans avoir vérifié que le bilan $P_e = P_m + P_J$ est bien la relation attendue ; ici on néglige les frottements mécaniques, comme le suggère l'énoncé.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Transport de l'énergie électrique]
+\begin{enumerate}
+\item Sous $U_1 = \SI{220}{V}$ :
+\[
+I_1 = \frac{P}{U_1} = \frac{50\,000}{220} = \SI{227}{A}
+\]
+\[
+P_{J1} = R I_1^2 = 2 \times (\num{227,3})^2 = 2 \times 51\,653 = \SI{1,03e5}{W} \approx \SI{103}{kW}
+\]
+La puissance perdue ($\SI{103}{kW}$) dépasse la puissance à transporter ($\SI{50}{kW}$) : le transport est impossible en pratique sous \SI{220}{V}.
+\item Sous $U_2 = \SI{11000}{V}$ :
+\[
+I_2 = \frac{P}{U_2} = \frac{50\,000}{11\,000} = \SI{4,55}{A}
+\]
+\[
+P_{J2} = R I_2^2 = 2 \times (\num{4,545})^2 = 2 \times \num{20,66} = \SI{41,3}{W}
+\]
+\item Comparaison :
+\[
+\frac{P_{J1}}{P_{J2}} = \frac{103\,306}{41,3} \approx 2500 = \left(\frac{U_2}{U_1}\right)^2 = \left(\frac{11\,000}{220}\right)^2 = 50^2
+\]
+En multipliant la tension par 50, on divise les pertes Joule par 2500. \textbf{Conclusion :} le transport en haute tension (\SI{90}{kV}, \SI{225}{kV}) entre les barrages (Nachtigal, Lom Pangar) et les villes permet d'acheminer l'énergie avec des pertes négligeables ; c'est la justification physique du réseau haute tension de SONATREL. On abaisse ensuite la tension près des consommateurs par des transformateurs.
+\end{enumerate}
+\textbf{Point de vigilance :} la tension $U$ utilisée dans $I = P/U$ est la tension de \emph{transport}, pas la tension aux bornes de la résistance de ligne ; ne pas écrire $I = U/R$.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Circuit générateur -- moteur -- résistor]
+\begin{enumerate}
+\item Schéma : générateur $(E, r)$ en convention générateur (courant sortant par la borne $+$), moteur $(E', r')$ et résistor $R$ en convention récepteur, le tout en série, parcouru par le courant $I$.
+\begin{popfigure}
+\begin{center}
+\begin{circuitikz}[european, scale=0.9, transform shape]
+\draw (0,0) to[battery1, l={$E$}, i={$I$}] (0,3) to[R=$r$] (3,3) to[R=$R$, v={$U_R$}] (6,3) to[R=$r'$] (6,1.5) to[V, invert, l_={$E'$}] (6,0) -- (0,0);
+\node at (6.9,2.2) {moteur};
+\end{circuitikz}
+\end{center}
+\legende{Circuit série : générateur $(E,r)$, résistor $R$, moteur $(E',r')$.}
+\end{popfigure}
+\item \textbf{Loi des mailles} (dans le sens du courant, les f.é.m. $E$ et $E'$ s'opposent) :
+\[
+E - r I - R I - E' - r' I = 0 \quad\Longrightarrow\quad I = \frac{E - E'}{r + R + r'} = \frac{24 - 16}{1 + 3 + 2} = \frac{8}{6} = \frac{4}{3}\ \text{A} \approx \SI{1,33}{A}
+\]
+\item Bilan de puissance, avec $I = \dfrac{4}{3}\ \text{A}$ et $I^2 = \dfrac{16}{9}\ \text{A}^2$ :
+\begin{enumerate}
+\item Puissance totale fournie par le générateur :
+\[
+P_{\text{fournie}} = E\,I = 24 \times \frac{4}{3} = \SI{32}{W}
+\]
+\item Pertes Joule :
+\[
+P_{J,r} = r I^2 = 1 \times \frac{16}{9} = \SI{1,78}{W} \quad ; \quad P_{J,r'} = r' I^2 = 2 \times \frac{16}{9} = \SI{3,56}{W} \quad ; \quad P_{J,R} = R I^2 = 3 \times \frac{16}{9} = \SI{5,33}{W}
+\]
+\item Puissance mécanique utile du moteur :
+\[
+P_m = E' I = 16 \times \frac{4}{3} = \SI{21,3}{W}
+\]
+\end{enumerate}
+\item Vérification du bilan :
+\[
+P_{J,r} + P_{J,R} + P_{J,r'} + P_m = \frac{16}{9} + \frac{48}{9} + \frac{32}{9} + \frac{64}{3} = \frac{16 + 48 + 32 + 192}{9} = \frac{288}{9} = \SI{32}{W} = P_{\text{fournie}}
+\]
+La puissance fournie par le générateur est bien égale à la somme des puissances dissipées et converties : l'énergie se conserve.
+\item Le rendement global est le rapport de la puissance utile (mécanique) à la puissance fournie par le générateur :
+\[
+\eta = \frac{P_m}{P_{\text{fournie}}} = \frac{21,33}{32} = \num{0,667} \quad \text{soit } \eta \approx \SI{66,7}{\%}
+\]
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} schéma correct avec flèches (1 pt) ; loi des mailles posée et $I$ justifié (2 pts) ; $P_{\text{fournie}}$ (1 pt) ; les trois pertes Joule (2 pts) ; $P_m$ (1 pt) ; vérification du bilan (1,5 pt) ; rendement défini et calculé (1,5 pt).\\
+\textbf{Points de vigilance :} citer la loi des mailles avant de l'appliquer ; distinguer $P_{\text{fournie}} = E I$ (siège du générateur) de $P_{\text{utile aux bornes}} = U I$ ; ne pas oublier la perte Joule interne $r I^2$ du générateur dans le bilan ; conserver $I = \tfrac{4}{3}$ A (valeur exacte) dans les calculs pour éviter les erreurs d'arrondi.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Facture d'électricité d'une famille à Douala]
+\begin{enumerate}
+\item Énergie mensuelle du climatiseur (30 jours à raison de $\SI{2}{h}$ par jour, soit $\SI{60}{h}$) :
+\[
+W_{\text{clim}} = P\,\Delta t = \num{1,5}\ \text{kW} \times 60\ \text{h} = \SI{90}{kWh}
+\]
+\item Consommation totale : $W_{\text{tot}} = 120 + 90 = \SI{210}{kWh} > \SI{150}{kWh}$.\\
+\textbf{Non}, la famille dépasse son objectif de $\SI{60}{kWh}$.
+\item Coût supplémentaire : $90 \times 99 = \SI{8910}{FCFA}$ par mois.
+\item Budget restant pour le climatiseur : $150 - 120 = \SI{30}{kWh}$ par mois, soit $\dfrac{30}{30} = \SI{1}{kWh}$ par jour. Durée quotidienne maximale :
+\[
+\Delta t_{\max} = \frac{W}{P} = \frac{1\ \text{kWh}}{\num{1,5}\ \text{kW}} = \frac{2}{3}\ \text{h} = \SI{40}{min}
+\]
+\item Conseils pratiques (deux parmi) :
+\begin{itemize}
+\item remplacer les lampes à incandescence par des lampes LED (même éclairage, puissance 5 à 10 fois plus faible) ;
+\item éteindre complètement les appareils en veille (téléviseur, décodeur) et débrancher les chargeurs inutilisés ;
+\item régler le climatiseur à \SI{25}{\celsius} plutôt qu'à \SI{18}{\celsius} et fermer portes et fenêtres ;
+\item utiliser un chauffe-eau solaire ou ne chauffer l'eau qu'au moment du besoin.
+\end{itemize}
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} $W_{\text{clim}}$ (2 pts) ; comparaison et conclusion (2 pts) ; coût (2 pts) ; durée maximale avec conversion en minutes (2 pts) ; deux conseils pertinents (2 pts).\\
+\textbf{Point de vigilance :} travailler en kW et en heures pour obtenir directement des kWh ; expliciter la comparaison avec l'objectif avant de conclure.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Chauffage de l'eau et rendement d'une bouilloire]
+\begin{enumerate}
+\item Intensité en fonctionnement :
+\[
+I = \frac{P}{U} = \frac{1800}{220} = \SI{8,18}{A}
+\]
+\item Énergie thermique nécessaire (élévation de température $\Delta\theta = 90 - 25 = \SI{65}{K}$) :
+\[
+W_{\text{th}} = m\,c\,\Delta\theta = \num{1,5} \times 4180 \times 65 = \SI{4,0755e5}{J} \approx \SI{408}{kJ}
+\]
+\item $\Delta t = \SI{4}{min}\,\SI{30}{s} = \SI{270}{s}$.
+\[
+W_e = P\,\Delta t = 1800 \times 270 = \SI{4,86e5}{J} = \SI{486}{kJ}
+\]
+En kilowattheures : $W_e = \dfrac{486\,000}{3,6 \times 10^6} = \SI{0,135}{kWh}$.
+\item Rendement :
+\[
+\eta = \frac{W_{\text{th}}}{W_e} = \frac{407\,550}{486\,000} = \num{0,839} \quad \text{soit } \eta \approx \SI{84}{\%}
+\]
+\textbf{Commentaire :} le rendement est bon mais inférieur à 100 \%. L'énergie manquante (environ $\SI{78}{kJ}$) a servi à chauffer la paroi et la résistance de la bouilloire, et s'est perdue vers l'air ambiant par convection et rayonnement (et un peu par évaporation de l'eau).
+\item Résistance de l'élément chauffant :
+\[
+R = \frac{U^2}{P} = \frac{220^2}{1800} = \frac{48\,400}{1800} = \SI{26,9}{\ohm}
+\]
+Vérification de la loi de Joule avec $I = \SI{8,18}{A}$ :
+\[
+P_J = R I^2 = 26,9 \times (\num{8,18})^2 = 26,9 \times \num{66,9} = \SI{1800}{W}
+\]
+On retrouve bien la puissance nominale : la loi de Joule est vérifiée (l'élément chauffant est un conducteur ohmique, donc $P = U I = R I^2 = \dfrac{U^2}{R}$).
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} intensité (1,5 pt) ; $W_{\text{th}}$ avec $\Delta\theta$ correct (2 pts) ; $W_e$ en J et en kWh (2 pts) ; rendement et commentaire physique (2 pts) ; résistance et vérification de la loi de Joule (2,5 pts).\\
+\textbf{Points de vigilance :} convertir la durée en secondes ($\SI{270}{s}$) ; l'écart de température s'exprime indifféremment en K ou en \si{\celsius} ; pour la question 5, utiliser la valeur non arrondie de $I$ ($\tfrac{1800}{220}$ A) afin de retomber exactement sur \SI{1800}{W} ; justifier le rendement par un bilan d'énergie, pas seulement par un nombre.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+root concept/.append style={concept color=popdark, font=\small\bfseries},
+level 1/.append style={level distance=3.4cm, sibling angle=60},
+level 2/.append style={level distance=2.2cm, font=\footnotesize, text=black}]
+\node[root concept]{Énergie et puissance électriques}
+  child[concept color=popblue]{ node {Énergie consommée}
+    child[concept color=popblueL]{ node {$W = U\,I\,t$} }
+    child[concept color=popblueL]{ node {$W = U\,q$} }
+  }
+  child[concept color=poporange]{ node {Puissance consommée}
+    child[concept color=poporangeL]{ node {$P = U\,I$} }
+    child[concept color=poporangeL]{ node {$P = \dfrac{W}{t}$} }
+  }
+  child[concept color=popred]{ node {Effet Joule}
+    child[concept color=poppinkL]{ node {$P_J = R\,I^2$} }
+    child[concept color=poppinkL]{ node {$W_J = R\,I^2 t$} }
+  }
+  child[concept color=popgreen]{ node {Rendement}
+    child[concept color=popgreenL]{ node {$\eta = \dfrac{W_u}{W_c} < 1$} }
+  }
+  child[concept color=popgold]{ node {Bilan énergétique}
+    child[concept color=popgoldL]{ node {$W_c = W_u + W_J$} }
+  }
+  child[concept color=popmuted]{ node {Réduire les pertes}
+    child[concept color=popmuted!40]{ node {$\uparrow U$, $\downarrow R$, $\downarrow I$} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : énergie, puissance électrique et loi de Joule.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{1. Définitions clés}
+\begin{itemize}
+\item \cle{Énergie électrique consommée} par une portion de circuit : énergie totale reçue du générateur pendant la durée $t$ ; elle se convertit en énergie utile (mécanique, chimique, lumineuse\ldots) et en chaleur.
+\item \cle{Puissance électrique consommée} : énergie consommée par unité de temps ; elle s'exprime en watt (W).
+\item \cle{Effet Joule} : dégagement de chaleur dans tout conducteur parcouru par un courant, dû à sa résistance.
+\item \cle{Rendement} $\eta$ : rapport de l'énergie (ou puissance) utile à l'énergie (ou puissance) consommée ; grandeur sans unité, toujours inférieure à 1.
+\end{itemize}
+
+\textbf{2. Formules à connaître par c\oe ur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|l|}
+\hline
+\rowcolor{popblueL} \textbf{Grandeur} & \textbf{Formule} & \textbf{Unités SI} \\
+\hline
+Énergie consommée & $W = U\,I\,t = U\,q$ & J (ou kWh) \\
+\hline
+Puissance consommée & $P = U\,I = \dfrac{W}{t}$ & W \\
+\hline
+Loi de Joule (récepteur purement résistif) & $W_J = R\,I^2 t = \dfrac{U^2}{R}\,t$ \;;\; $P_J = R\,I^2$ & J ; W \\
+\hline
+Rendement & $\eta = \dfrac{W_u}{W_c} = \dfrac{P_u}{P_c}$ & sans unité \\
+\hline
+Bilan énergétique & $W_c = W_u + W_J$ \;;\; $P_c = P_u + P_J$ & J ; W \\
+\hline
+Conversion & $1\ \text{kWh} = 3{,}6\times 10^{6}\ \text{J}$ & -- \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{3. Méthodes express}
+\begin{itemize}
+\item \textbf{Calculer une énergie} : identifier $U$, $I$, $t$ (convertir $t$ en secondes) puis $W = UIt$ ; pour un résistor, $W = RI^2t$.
+\item \textbf{Bilan d'une portion de circuit} : écrire $W_c = W_u + W_J$, calculer chaque terme, vérifier la cohérence ($W_u < W_c$).
+\item \textbf{Rendement} : $\eta = W_u/W_c$ ; l'exprimer en pourcentage en multipliant par 100.
+\item \textbf{Réduire les pertes en ligne} : transporter l'énergie à haute tension (à $P$ fixée, $I$ diminue donc $P_J = RI^2$ chute) et utiliser des câbles de faible résistance (grosse section, bon conducteur).
+\item \textbf{Vérification expérimentale de la loi de Joule} : mesurer l'échauffement $\Delta\theta$ d'une masse d'eau connue ; $W_J = RI^2t$ doit égaler $mc\,\Delta\theta$ (calorimètre supposé parfait).
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+\item[$\square$] Je sais écrire et utiliser $W = U\,I\,t$ avec $t$ en secondes et $W$ en joules.
+\item[$\square$] Je sais convertir sans erreur $1\ \text{kWh} = 3{,}6\times 10^{6}\ \text{J}$.
+\item[$\square$] Je sais que la puissance consommée est $P = U\,I$ et que $P = W/t$.
+\item[$\square$] Je connais la loi de Joule : $W_J = R\,I^2 t$ et $P_J = R\,I^2$ (réservée aux récepteurs purement résistifs).
+\item[$\square$] Je sais passer de $P = RI^2$ à $P = U^2/R$ grâce à la loi d'Ohm, uniquement pour un résistor.
+\item[$\square$] Je sais écrire le bilan énergétique $W_c = W_u + W_J$ d'une portion de circuit (moteur, électrolyseur\ldots).
+\item[$\square$] Je sais calculer un rendement $\eta = W_u/W_c = P_u/P_c$ et l'exprimer en pourcentage.
+\item[$\square$] Je sais expliquer pourquoi SONATREL transporte l'électricité à haute tension : diminuer $I$, donc les pertes Joule $RI^2$.
+\item[$\square$] Je sais décrire le protocole de vérification expérimentale de la loi de Joule (calorimètre, thermomètre, ampèremètre, chronomètre).
+\item[$\square$] Je vérifie toujours l'homogénéité de mes formules et j'accompagne chaque résultat de son unité SI.
+\item[$\square$] Je n'oublie pas que le rendement est toujours strictement inférieur à 1 (ou 100 \%).
+\item[$\square$] Je distingue énergie consommée, énergie utile et énergie dissipée par effet Joule dans un exercice de bilan.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
