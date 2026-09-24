@@ -261,7 +261,38 @@ def autofix(body):
     body = body.replace("\\begin{tcblower}", "\\tcblower").replace("\\end{tcblower}", "")
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
+    body = _close_lists(body)
     return body
+
+
+_ENV_RE = re.compile(r"\\(begin|end)\{([^}]+)\}")
+
+
+def _close_lists(body):
+    """Ferme les listes (enumerate/itemize) oubliées : si un environnement se
+    ferme alors qu'une liste ouverte à l'intérieur ne l'est pas, on insère les
+    \\end{...} manquants juste avant."""
+    out, last, stack = [], 0, []
+    for m in _ENV_RE.finditer(body):
+        kind, env = m.group(1), m.group(2)
+        if kind == "begin":
+            stack.append(env)
+            continue
+        if env in stack and stack[-1] != env:
+            # listes ouvertes au-dessus de l'environnement qui se ferme
+            missing = []
+            while stack and stack[-1] != env and stack[-1] in ("enumerate", "itemize"):
+                missing.append(stack.pop())
+            if stack and stack[-1] == env:
+                out.append(body[last:m.start()])
+                out.append("".join(f"\\end{{{e}}}\n" for e in missing))
+                last = m.start()
+            else:
+                stack.extend(reversed(missing))
+        if stack and stack[-1] == env:
+            stack.pop()
+    out.append(body[last:])
+    return "".join(out)
 
 
 _NODE_RE = re.compile(r"\\node\[([^\]]*)\]([^{;\n]*\{)")
