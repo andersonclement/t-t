@@ -33,7 +33,27 @@ def check(ref):
     return False
 
 
+def finalize():
+    """Marque DONE les leçons dont tous les blocs sont validés (y compris
+    celles dont un bloc a été corrigé à la main après le passage du générateur)."""
+    import json
+    cat = json.loads((g.ROOT / "pipeline" / "lessons.json").read_text())
+    for L in cat["lessons"]:
+        d = g.BUILD / L["id"]
+        if (d / "DONE").exists() or not (d / "plan.json").exists():
+            continue
+        n = len(json.loads((d / "plan.json").read_text())["sections"])
+        need = [f"s{i+1:02d}" for i in range(n)] + ["activite", "methodes", "exercices", "corriges", "bilan"] + \
+               [f"extra_{e['id']}" for e in L.get("extra", [])]
+        if all((d / f"{k}.ok.tex").exists() for k in need):
+            (d / "DONE").write_text("ok")
+            print(f"✔ {L['id']} complète (finalisée)")
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--finalize"]:
+        finalize()
+        sys.exit()
     if len(sys.argv) == 1:
         for e in sorted(g.BUILD.glob("*/*.err")):
             first = e.read_text().splitlines()

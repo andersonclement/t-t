@@ -303,7 +303,7 @@ def _tabularx_sans_x(body):
                 env_out = m.group(0)
                 target = "tabularx"
             else:
-                has_x = "X" in spec
+                has_x = any(c in spec for c in "XCLR")
                 target = "tabularx" if has_x else "tabular"
                 if target == "tabularx":
                     w = width[1:-1] if width else "\\linewidth"
