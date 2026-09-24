@@ -266,6 +266,11 @@ def autofix(body):
     body = _cases_math(body)
     # Markdown oublié : **gras** -> \textbf{gras}
     body = re.sub(r"\*\*([^*\n$]+?)\*\*", r"\\textbf{\1}", body)
+    # mhchem : étiquette de flèche en commande math (->[\alpha]) et \dots -> mode math
+    def _ce(m):
+        t = re.sub(r"(->|<=>|<-)\[(\\[A-Za-z]+[^\]$]*)\]", r"\1[$\2$]", m.group(0))
+        return t.replace("\\dots", "$\\cdots$").replace("\\ldots", "$\\cdots$")
+    body = re.sub(r"\\ce\{(?:[^{}]|\{[^{}]*\})*\}", _ce, body)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
