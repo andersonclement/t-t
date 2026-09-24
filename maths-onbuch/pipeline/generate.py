@@ -266,6 +266,10 @@ def autofix(body):
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
     # calc TikZ : le coefficient précède le point, ($(U)*0.55$) -> ($0.55*(U)$)
     body = re.sub(r"\(\$\s*\(([^()$]+)\)\s*\*\s*(-?[\d.]+)\s*\$\)", r"($\2*(\1)$)", body)
+    # label=above right:$L(1,2,5)$ : les virgules de l'étiquette coupent les options
+    body = re.sub(r"(?<![{\w])label=([a-z ]+:\$[^$]*,[^$]*\$)", r"label={\1}", body)
+    # Indice/exposant fait d'une commande à argument : x_\mathcal{P} -> x_{\mathcal{P}}
+    body = re.sub(r"([_^])\\(math[a-z]+|text|operatorname)\{([^{}]*)\}", r"\1{\\\2{\3}}", body)
     body = _align_close(body)
     body = _fill_const(body)
     body = _safe_sqrt(body)
