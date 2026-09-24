@@ -279,6 +279,9 @@ def autofix(body):
     body = "\n".join(_trig.sub(lambda m: f"{m.group(1)}(deg({m.group(2)}))", l)
                      if (("addplot" in l or "plot" in l) and "deg(" not in l) else l
                      for l in body.split("\n"))
+    # \textbf{3x^2+...} dans une formule : \textbf n'accepte pas ^ et _ -> \boldsymbol
+    body = re.sub(r"(\$[^$]*?)\\textbf\{([^{}$]*[\^_][^{}$]*)\}([^$]*\$)",
+                  lambda m: m.group(1) + "\\boldsymbol{" + m.group(2) + "}" + m.group(3), body)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
