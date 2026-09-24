@@ -266,6 +266,7 @@ def autofix(body):
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
     # calc TikZ : le coefficient précède le point, ($(U)*0.55$) -> ($0.55*(U)$)
     body = re.sub(r"\(\$\s*\(([^()$]+)\)\s*\*\s*(-?[\d.]+)\s*\$\)", r"($\2*(\1)$)", body)
+    body = _widen_tabular(body)
     # label=above right:$L(1,2,5)$ : les virgules de l'étiquette coupent les options
     body = re.sub(r"(?<![{\w])label=([a-z ]+:\$[^$]*,[^$]*\$)", r"label={\1}", body)
     # Indice/exposant fait d'une commande à argument : x_\mathcal{P} -> x_{\mathcal{P}}
@@ -278,6 +279,31 @@ def autofix(body):
     body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
                   lambda m: m.group(1) + re.sub(r"\$(-?\d+),(\d+)\$", r"$\1{,}\2$", m.group(2)) + m.group(3), body)
     return body
+
+
+def _widen_tabular(body):
+    """Tableau simple (spec faite de c/l/r et |) dont les lignes ont PLUS de
+    cases que de colonnes déclarées (cas typique des tableaux de variations) :
+    on ajoute les colonnes manquantes en fin de spec."""
+    def cells(row):
+        depth, n = 0, 1
+        for ch in row:
+            depth += (ch == "{") - (ch == "}")
+            n += (ch == "&" and depth == 0)
+        return n
+
+    def fix(m):
+        spec, content = m.group(1), m.group(2)
+        k = len(re.findall(r"[lcr]", spec))
+        rows = [r for r in re.split(r"\\\\", content) if "&" in r]
+        if not rows or "\\multicolumn" in content:
+            return m.group(0)
+        need = max(cells(r) for r in rows)
+        if need <= k:
+            return m.group(0)
+        spec2 = spec.rstrip("|") + "c" * (need - k) + ("|" if spec.endswith("|") else "")
+        return "\\begin{tabular}{" + spec2 + "}" + content + "\\end{tabular}"
+    return re.sub(r"\\begin\{tabular\}\{([|lcr ]+)\}(.*?)\\end\{tabular\}", fix, body, flags=re.S)
 
 
 def _fill_const(body):
