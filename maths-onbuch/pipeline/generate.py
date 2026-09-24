@@ -262,6 +262,7 @@ def autofix(body):
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
     body = _cases_math(body)
+    body = _lonely_items(body)
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
@@ -440,6 +441,19 @@ def _cases_math(body):
                     last = m.end()
     out.append(body[last:])
     return "".join(out)
+
+
+_BOX = "definition|propriete|aretenir|exemplebox|methode|attention|experience|savaistu|exoresolu|exercice|corrige|bilan"
+
+
+def _lonely_items(body):
+    """Boîte dont le contenu commence directement par \\item (sans liste) -> itemize."""
+    def fix(m):
+        inner = m.group(3)
+        if re.match(r"\s*\\item\b", inner) and not re.search(r"\\begin\{(itemize|enumerate|description)\}", inner):
+            inner = "\n\\begin{itemize}" + inner.rstrip() + "\n\\end{itemize}\n"
+        return m.group(1) + inner + m.group(4)
+    return re.sub(r"(\\begin\{(" + _BOX + r")\}(?:\[(?:[^\[\]]|\{[^{}]*\})*\])?)(.*?)(\\end\{\2\})", fix, body, flags=re.S)
 
 
 def _node_align(body):
