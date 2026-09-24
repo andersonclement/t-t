@@ -262,6 +262,8 @@ def autofix(body):
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
     body = _cases_math(body)
+    # \textbf{mot** (fermeture Markdown) -> \textbf{mot}
+    body = re.sub(r"\\textbf\{([^{}*\n]*)\*\*", r"\\textbf{\1}", body)
     # Markdown oublié : **gras** -> \textbf{gras}
     body = re.sub(r"\*\*([^*\n$]+?)\*\*", r"\\textbf{\1}", body)
     # mhchem : étiquette de flèche en commande math (->[\alpha]) et \dots -> mode math
