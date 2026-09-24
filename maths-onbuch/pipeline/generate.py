@@ -265,12 +265,37 @@ def autofix(body):
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
     body = _align_close(body)
+    body = _fill_const(body)
     body = _safe_sqrt(body)
     body = _close_lists(body)
     # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
     body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
                   lambda m: m.group(1) + re.sub(r"\$(-?\d+),(\d+)\$", r"$\1{,}\2$", m.group(2)) + m.group(3), body)
     return body
+
+
+def _fill_const(body):
+    """fill between[of=F and {0}] : pgfplots exige deux chemins nommés. Chaque
+    constante {k} devient une droite horizontale invisible y = k, nommée et
+    tracée sur le domaine du soft clip."""
+    counter = [0]
+
+    def fix(m):
+        indent, opts, a, b, rest = m.group(1), m.group(2), m.group(3), m.group(4), m.group(5)
+        dom = re.search(r"domain\s*=\s*([-\d.]+\s*:\s*[-\d.]+)", rest)
+        dom = f", domain={dom.group(1)}" if dom else ""
+        pre, names = [], []
+        for side in (a, b):
+            c = re.fullmatch(r"\{\s*(-?[\d.]+)\s*\}", side.strip())
+            if c:
+                counter[0] += 1
+                name = f"hconst{counter[0]}"
+                pre.append(f"{indent}\\addplot[draw=none, forget plot, name path={name}{dom}] {{{c.group(1)}}};\n")
+                names.append(name)
+            else:
+                names.append(side.strip())
+        return "".join(pre) + f"{indent}\\addplot[{opts}] fill between[of={names[0]} and {names[1]}{rest}"
+    return re.sub(r"(?m)^([ \t]*)\\addplot\[([^\]]*)\]\s*fill between\[of=\s*(\{[^{}]*\}|[\w-]+)\s+and\s+(\{[^{}]*\}|[\w-]+)(.*)$", fix, body)
 
 
 def _align_close(body):
