@@ -776,7 +776,7 @@ Ne raccourcis pas le contenu : la version finale doit être au moins aussi riche
         if len(rev) < 0.7 * len(raw):
             log(f"[{L['id']}] relecture {what} trop courte ({len(rev)} < {len(raw)}), version initiale conservée")
             rev = raw
-        elif len(rev) > 2.5 * len(raw) or ((name == "bilan" or name.startswith("extra_")) and len(rev) > 1.6 * len(raw)):
+        elif len(rev) > 2.5 * len(raw) or ((name in ("bilan", "corriges") or name.startswith("extra_")) and len(rev) > 1.6 * len(raw)):
             # Le relecteur réécrit parfois tout un second cours (fiche bilan
             # gonflée, sections dupliquées) : on garde la version du rédacteur.
             log(f"[{L['id']}] relecture {what} gonflée ({len(rev)} > {len(raw)}), version initiale conservée")
