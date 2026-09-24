@@ -1,0 +1,2900 @@
+% Introduction à la théorie des graphes — Mathématiques 1ère D — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N11-introduction-theorie-graphes.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1ère D}
+\newcommand{\DOCMODULE}{Organisation et gestion des données}
+\newcommand{\DOCLECON}{N11}
+\newcommand{\DOCTITRE}{Introduction à la théorie des graphes}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Introduction à la théorie des graphes}{Mathématiques}{1ère D}{Organisation et gestion des données}{N11}{5 h}{Cette leçon introduit la théorie des graphes : définition, ordre, degré d'un sommet, graphes simples, orientés et complets. Elle fournit les outils de modélisation pour résoudre des problèmes concrets de réseaux, de tournois et d'organisation au quotidien.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais justifier qu'une représentation graphique est un graphe
+\item À la fin de cette leçon, je sais déterminer l'ordre d'un graphe
+\item À la fin de cette leçon, je sais déterminer le degré d'un sommet et reconnaître un sommet isolé
+\item À la fin de cette leçon, je sais reconnaître deux sommets adjacents
+\item À la fin de cette leçon, je sais justifier qu'un graphe est simple, orienté ou complet
+\item À la fin de cette leçon, je sais appliquer la propriété reliant la somme des degrés au nombre d'arêtes
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Situations de modélisation et notion de graphe
+\item Ordre d'un graphe, degré d'un sommet, sommets adjacents
+\item Graphes simples, graphes orientés, graphes complets
+\item Propriété fondamentale : somme des degrés et nombre d'arêtes
+\item Résolution de problèmes concrets à l'aide des graphes
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais justifier qu'une représentation graphique est un graphe
+\item À la fin de cette leçon, je sais déterminer l'ordre d'un graphe
+\item À la fin de cette leçon, je sais déterminer le degré d'un sommet et reconnaître un sommet isolé
+\item À la fin de cette leçon, je sais reconnaître deux sommets adjacents
+\item À la fin de cette leçon, je sais justifier qu'un graphe est simple, orienté ou complet
+\item À la fin de cette leçon, je sais appliquer la propriété reliant la somme des degrés au nombre d'arêtes
+\item À la fin de cette leçon, je sais modéliser une situation concrète de la vie courante par un graphe et l'exploiter
+\item À la fin de cette leçon, je sais résoudre un problème par raisonnement en identifiant et caractérisant les formes planes associées à un graphe
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Vocabulaire ensembliste : ensemble, élément, cardinal d'un ensemble
+\item Dénombrement élémentaire : compter des paires, nombre de façons de choisir 2 éléments parmi n
+\item Notion de couple et de paire (distinction ordre / non-ordre)
+\item Lecture et interprétation de schémas et de tableaux (tableau à double entrée)
+\item Résolution d'équations simples du premier degré
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Situations de modélisation et notion de graphe}
+
+\courssub{Une même idée derrière trois situations de la vie quotidienne}
+
+À Yaoundé, la société CAMWATER veut relier 6 quartiers par des canalisations d'eau potable sans gaspiller de tuyaux : quels quartiers faut-il relier \emph{directement}, et lesquels seront desservis en passant par un quartier voisin ? Pendant ce temps, à Douala, le tournoi de football inter-quartiers doit organiser ses matchs : chaque équipe rencontre-t-elle toutes les autres, et comment représenter les rencontres déjà jouées ? Enfin, sur les réseaux sociaux, comment savoir qui sont les « amis d'amis » d'un utilisateur ?
+
+Ces trois situations semblent très différentes : de l'eau, du football, des amitiés. Pourtant, elles ont une structure commune profonde. Dans chacune, on trouve :
+
+\begin{itemize}
+\item des \textbf{objets} (des quartiers, des équipes, des personnes) ;
+\item des \textbf{liens} entre certains de ces objets (une canalisation directe, un match joué, une relation d'amitié).
+\end{itemize}
+
+Si l'on accepte de représenter chaque objet par un \textbf{point} et chaque lien par un \textbf{trait} joignant deux points, alors les trois situations deviennent le \emph{même} objet mathématique : un \cle{graphe}. C'est exactement la puissance des mathématiques : un seul outil pour traiter des milliers de situations concrètes.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Situation} & \textbf{Les points (sommets)} & \textbf{Les traits (arêtes)} \\
+\hline
+Canalisations CAMWATER & Quartiers de Yaoundé & Canalisation directe entre deux quartiers \\
+\hline
+Tournoi de football & Équipes du tournoi & Match joué (ou à jouer) entre deux équipes \\
+\hline
+Réseau social & Comptes des utilisateurs & Relation d'amitié entre deux comptes \\
+\hline
+Réseau routier & Villes du Cameroun & Route directe reliant deux villes \\
+\hline
+Réseau électrique & Transformateurs, quartiers & Ligne électrique reliant deux points du réseau \\
+\hline
+\end{tabularx}
+\end{center}
+
+La \textbf{problématique} de cette leçon est donc la suivante : \emph{comment décrire rigoureusement ces objets « points reliés par des traits », quel vocabulaire utiliser, et quelles propriétés permettent de résoudre les problèmes concrets qu'ils modélisent ?}
+
+\courssub{Première modélisation : le réseau routier camerounais}
+
+Imaginons cinq grandes villes du Cameroun : Douala, Yaoundé, Bafoussam, Bamenda et Buea. Entre certaines de ces villes, il existe une route directe ; entre d'autres, il faut passer par une ville intermédiaire. Par exemple :
+
+\begin{itemize}
+\item Douala est reliée directement à Yaoundé, à Bafoussam et à Buea ;
+\item Yaoundé est reliée directement à Douala et à Bafoussam ;
+\item Bafoussam est reliée directement à Douala, à Yaoundé et à Bamenda ;
+\item Buea n'est reliée directement qu'à Douala ;
+\item Bamenda n'est reliée directement qu'à Bafoussam.
+\end{itemize}
+
+Oublions maintenant la géographie réelle (les distances, les courbes des routes, les positions exactes sur la carte) et ne gardons que l'essentiel : \emph{qui est relié à qui}. Chaque ville devient un point, chaque route directe devient un trait.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle, fill=popdark, inner sep=2.2pt}]
+\node[label=above:{\footnotesize Douala}] (D) at (0,0) {};
+\node[label=above:{\footnotesize Yaoundé}] (Y) at (3,0.6) {};
+\node[label=above:{\footnotesize Bafoussam}] (Bf) at (1.4,2.2) {};
+\node[label=below:{\footnotesize Buea}] (Bu) at (-1.6,-1.4) {};
+\node[label=above:{\footnotesize Bamenda}] (Bm) at (3.4,3.2) {};
+\draw[popblue, thick] (D) -- (Y);
+\draw[popblue, thick] (D) -- (Bf);
+\draw[popblue, thick] (D) -- (Bu);
+\draw[popblue, thick] (Y) -- (Bf);
+\draw[popblue, thick] (Bf) -- (Bm);
+\end{tikzpicture}
+\end{center}
+\legende{Le réseau routier entre cinq villes camerounaises modélisé par un graphe : chaque disque noir est une ville (sommet), chaque segment est une route directe (arête).}
+\end{popfigure}
+
+Ce dessin est un \textbf{graphe}. Remarque bien ce qui a disparu : la longueur réelle des routes, leur sinuosité, la position exacte des villes. Le graphe ne conserve que l'information \emph{structurelle} : les villes et leurs liaisons directes. C'est précisément cette information qui permet de répondre à des questions comme : « Peut-on aller de Buea à Bamenda ? En passant par combien de villes au minimum ? »
+
+\courssub{Définition d'un graphe et vocabulaire fondamental}
+
+L'intuition est maintenant en place : passons à l'énoncé rigoureux.
+
+\begin{definition}[Graphe, sommet, arête]
+Un \cle{graphe} est un ensemble de points appelés \cle{sommets}, dont certains sont reliés par des lignes appelées \cle{arêtes}.
+\begin{itemize}
+\item Chaque arête relie \textbf{deux sommets} (éventuellement confondus) : ces sommets sont appelés les \cle{extrémités} de l'arête.
+\item Une arête dont les deux extrémités sont le même sommet s'appelle une \cle{boucle}.
+\item Lorsque deux sommets sont reliés par plusieurs arêtes distinctes, on dit qu'il y a des \cle{arêtes multiples}.
+\end{itemize}
+\end{definition}
+
+\begin{aretenir}[Ce qui définit un graphe]
+Un graphe est entièrement déterminé par deux informations :
+\begin{enumerate}
+\item la liste de ses \textbf{sommets} ;
+\item la liste de ses \textbf{arêtes}, c'est-à-dire les paires de sommets reliés.
+\end{enumerate}
+La forme du dessin (longueur des traits, position des points, courbure des lignes) n'a \textbf{aucune importance}.
+\end{aretenir}
+
+Illustrons le vocabulaire sur un exemple simple. Considérons le graphe formé de trois sommets $A$, $B$, $C$, avec une arête entre $A$ et $B$, une arête entre $B$ et $C$, et une boucle en $C$ (par exemple, un quartier $C$ où une canalisation part d'un point et y revient après avoir desservi une boucle de distribution). Alors :
+
+\begin{itemize}
+\item les extrémités de la première arête sont $A$ et $B$ ;
+\item la boucle a pour unique extrémité le sommet $C$ (compté deux fois) ;
+\item les sommets $A$ et $C$ ne sont reliés par aucune arête directe.
+\end{itemize}
+
+\begin{methode}[Justifier qu'une représentation est un graphe]
+Pour justifier qu'une représentation graphique est un graphe, on procède en deux étapes :
+\begin{enumerate}
+\item \textbf{Identifier les sommets} : repérer les points clairement marqués (disques, points nommés) et vérifier qu'ils sont en nombre fini.
+\item \textbf{Vérifier chaque ligne} : contrôler que chaque ligne tracée relie exactement deux sommets distincts, ou un sommet à lui-même (boucle).
+\end{enumerate}
+Si ces deux conditions sont satisfaites, la représentation est un graphe. Sinon (par exemple si une ligne « part dans le vide » ou relie trois points), ce n'est pas un graphe.
+\end{methode}
+
+\begin{attention}[Un croisement d'arêtes n'est pas un sommet]
+Erreur très fréquente : croire que deux arêtes qui se croisent sur le dessin créent un nouveau sommet. \textbf{C'est faux.} Un sommet est un point \emph{explicitement marqué} (un disque, un point nommé). Si deux arêtes se croisent en un endroit où aucun point n'est marqué, ce croisement n'a aucune signification : c'est un simple effet du dessin, comme deux routes qui se croisent par un pont sans échangeur. Dans le doute, redessine le graphe en évitant le croisement : le graphe reste le même.
+\end{attention}
+
+\courssub{Le dessin n'est pas le graphe : non-unicité de la représentation}
+
+Voici une idée subtile mais essentielle. Un graphe est un objet \emph{abstrait} : une liste de sommets et une liste de liaisons. Le dessin que l'on en fait n'est qu'\textbf{une} représentation possible parmi une infinité. Deux dessins très différents peuvent représenter \emph{exactement le même graphe}, dès lors qu'ils ont les mêmes sommets et les mêmes liaisons.
+
+\begin{exemplebox}[Deux dessins, un seul graphe]
+Considérons le graphe à 4 sommets $A$, $B$, $C$, $D$ dont les arêtes sont :
+\[ \{A;B\},\quad \{B;C\},\quad \{C;D\},\quad \{D;A\},\quad \{A;C\}. \]
+On peut le dessiner comme un carré avec une diagonale, ou bien en plaçant les sommets tout autrement. Les deux dessins ci-dessous représentent \textbf{le même graphe}, car les liaisons sont identiques : seule la disposition change.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05, every node/.style={circle, fill=popdark, inner sep=2pt}]
+% Premier dessin : carré avec diagonale
+\node[label=left:{\footnotesize $A$}] (A1) at (0,0) {};
+\node[label=right:{\footnotesize $B$}] (B1) at (2,0) {};
+\node[label=right:{\footnotesize $C$}] (C1) at (2,2) {};
+\node[label=left:{\footnotesize $D$}] (D1) at (0,2) {};
+\draw[popblue, thick] (A1) -- (B1) -- (C1) -- (D1) -- (A1);
+\draw[popblue, thick] (A1) -- (C1);
+\node[draw=none, fill=none, inner sep=0pt] at (1,-0.9) {\footnotesize Dessin 1};
+% Deuxième dessin : même graphe, autre disposition
+\node[label=above:{\footnotesize $A$}] (A2) at (6,2.4) {};
+\node[label=below:{\footnotesize $B$}] (B2) at (5,-0.4) {};
+\node[label=right:{\footnotesize $C$}] (C2) at (8,1) {};
+\node[label=left:{\footnotesize $D$}] (D2) at (4.6,1.6) {};
+\draw[poporange, thick] (A2) -- (B2);
+\draw[poporange, thick] (B2) -- (C2);
+\draw[poporange, thick] (C2) -- (D2);
+\draw[poporange, thick] (D2) -- (A2);
+\draw[poporange, thick] (A2) -- (C2);
+\node[draw=none, fill=none, inner sep=0pt] at (6.3,-0.9) {\footnotesize Dessin 2};
+\end{tikzpicture}
+\end{center}
+\legende{Deux dessins différents du même graphe : mêmes sommets $A, B, C, D$, mêmes arêtes. Seule la disposition des points change.}
+\end{popfigure}
+
+\begin{attention}[Ne pas confondre le graphe et son dessin]
+Deux conséquences pratiques de cette remarque :
+\begin{enumerate}
+\item Pour vérifier que deux dessins représentent le même graphe, on compare les \textbf{listes de sommets et de liaisons}, pas l'allure des figures.
+\item On a le droit de déplacer les sommets et de courber les arêtes pour rendre un dessin plus lisible (par exemple pour éviter les croisements) : le graphe ne change pas.
+\end{enumerate}
+\end{attention}
+
+\courssub{Deuxième modélisation : les amitiés dans une classe de Première}
+
+Dans une classe de Première C au lycée de Nkongsamba, on s'intéresse aux relations d'amitié entre cinq élèves : Amina, Brice, Carine, Désiré et Élise. On convient que l'amitié est réciproque : si Amina est amie avec Brice, alors Brice est ami avec Amina. L'enquête donne les résultats suivants :
+
+\begin{itemize}
+\item Amina est amie avec Brice et Carine ;
+\item Brice est ami avec Amina et Désiré ;
+\item Carine est amie avec Amina, Désiré et Élise ;
+\item Désiré est ami avec Brice et Carine ;
+\item Élise n'est amie qu'avec Carine.
+\end{itemize}
+
+Chaque élève devient un sommet, chaque amitié devient une arête. Comptons les arêtes : Amina--Brice, Amina--Carine, Brice--Désiré, Carine--Désiré, Carine--Élise. On obtient donc un graphe à \textbf{5 sommets} et \textbf{5 arêtes}. Des questions naturelles surgissent alors : qui a le plus d'amis ? (C'est Carine, avec 3 amis.) Élise peut-elle être mise en relation avec Brice par une chaîne d'amis ? Oui : Élise -- Carine -- Amina -- Brice, ou encore Élise -- Carine -- Désiré -- Brice. Toutes ces questions se traiteront avec les outils des sections suivantes (degré d'un sommet, chaînes).
+
+\begin{savaistu}[1736 : la naissance de la théorie des graphes]
+La théorie des graphes est née en 1736 avec le célèbre \textbf{problème des sept ponts de Königsberg}. La ville de Königsberg (aujourd'hui Kaliningrad) était traversée par un fleuve entourant deux îles, reliées entre elles et aux berges par sept ponts. Les habitants se demandaient : peut-on se promener en traversant \emph{chaque pont une fois et une seule}, et revenir à son point de départ ? Le grand mathématicien suisse \textbf{Leonhard Euler} a résolu le problème en le ramenant à un graphe : les quatre zones de terre deviennent des sommets, les sept ponts des arêtes. Il a démontré que la promenade était \emph{impossible}, en observant simplement le nombre d'arêtes arrivant à chaque sommet. Cette idée géniale -- oublier la géographie pour ne garder que les connexions -- est le point de départ de toute la théorie des graphes, aujourd'hui utilisée partout : réseaux routiers, internet, réseaux sociaux, planification des réseaux électriques et d'eau au Cameroun, algorithmes de GPS.
+\end{savaistu}
+
+\courssub{Exemple chiffré complet : le réseau de quatre quartiers}
+
+\begin{exoresolu}[Modéliser un réseau de quartiers]
+La commune de Bafoussam veut étudier le réseau de pistes reliant quatre quartiers $Q_1$, $Q_2$, $Q_3$ et $Q_4$. Il existe exactement cinq pistes directes : entre $Q_1$ et $Q_2$, entre $Q_1$ et $Q_3$, entre $Q_2$ et $Q_3$, entre $Q_2$ et $Q_4$, et entre $Q_3$ et $Q_4$.
+\begin{enumerate}
+\item Dresser le tableau des liaisons directes entre quartiers.
+\item Dessiner le graphe modélisant cette situation et justifier que c'est bien un graphe.
+\item Le quartier $Q_1$ est-il relié directement au quartier $Q_4$ ? Peut-on néanmoins aller de $Q_1$ à $Q_4$ ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item On construit un tableau à double entrée : on met « oui » lorsqu'une piste directe relie les deux quartiers, « non » sinon. Le tableau est symétrique car une piste relie toujours les deux quartiers dans les deux sens.
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\rowcolor{popblueL} & $Q_1$ & $Q_2$ & $Q_3$ & $Q_4$ \\
+\hline
+$Q_1$ & -- & oui & oui & non \\
+\hline
+$Q_2$ & oui & -- & oui & oui \\
+\hline
+$Q_3$ & oui & oui & -- & oui \\
+\hline
+$Q_4$ & non & oui & oui & -- \\
+\hline
+\end{tabular}
+\end{center}
+\item On représente chaque quartier par un sommet et chaque piste par une arête :
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle, fill=popdark, inner sep=2pt}]
+\node[label=left:{\footnotesize $Q_1$}] (a) at (0,0) {};
+\node[label=right:{\footnotesize $Q_2$}] (b) at (3,0) {};
+\node[label=right:{\footnotesize $Q_3$}] (c) at (3,2.2) {};
+\node[label=left:{\footnotesize $Q_4$}] (d) at (0,2.2) {};
+\draw[popgreen, thick] (a) -- (b);
+\draw[popgreen, thick] (a) -- (c);
+\draw[popgreen, thick] (b) -- (c);
+\draw[popgreen, thick] (b) -- (d);
+\draw[popgreen, thick] (c) -- (d);
+\end{tikzpicture}
+\end{center}
+Justification : la représentation est constituée de \textbf{4 sommets} clairement marqués ($Q_1$, $Q_2$, $Q_3$, $Q_4$) et de \textbf{5 lignes}, chacune reliant exactement deux sommets distincts. C'est donc bien un graphe. Remarque : l'arête $Q_1Q_3$ et l'arête $Q_2Q_4$ se croisent sur le dessin, mais ce croisement n'est \textbf{pas} un sommet, car aucun point n'y est marqué.
+\item D'après le tableau, il n'existe \textbf{pas} de piste directe entre $Q_1$ et $Q_4$ : les sommets correspondants ne sont pas reliés par une arête. En revanche, on peut aller de $Q_1$ à $Q_4$ en passant par $Q_2$ (pistes $Q_1Q_2$ puis $Q_2Q_4$) ou par $Q_3$ (pistes $Q_1Q_3$ puis $Q_3Q_4$). Sur le graphe, cela correspond à un « chemin » de $Q_1$ vers $Q_4$, notion que nous étudierons plus tard.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[À toi de modéliser]
+Six équipes $E_1, E_2, E_3, E_4, E_5, E_6$ participent au tournoi inter-quartiers de Douala. Les matchs déjà joués sont : $E_1$ contre $E_2$ ; $E_1$ contre $E_4$ ; $E_2$ contre $E_3$ ; $E_3$ contre $E_4$ ; $E_4$ contre $E_5$ ; $E_5$ contre $E_6$.
+\begin{enumerate}
+\item Modélise cette situation par un graphe : précise les sommets et les arêtes, puis dessine-le.
+\item Justifie que ta représentation est bien un graphe.
+\item L'équipe $E_6$ a-t-elle déjà rencontré l'équipe $E_1$ ? L'équipe $E_2$ a-t-elle joué contre $E_4$ ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : tournoi inter-quartiers]
+\begin{enumerate}
+\item Les sommets sont les six équipes $E_1, \dots, E_6$. Les arêtes sont les paires $\{E_1;E_2\}$, $\{E_1;E_4\}$, $\{E_2;E_3\}$, $\{E_3;E_4\}$, $\{E_4;E_5\}$, $\{E_5;E_6\}$. On place six points étiquetés et on trace un segment pour chaque match joué (toute disposition des points convient).
+\item La représentation comporte 6 sommets clairement marqués et 6 lignes, chacune reliant exactement deux sommets distincts : c'est bien un graphe.
+\item $E_6$ n'a pas joué contre $E_1$ : aucune arête ne relie ces deux sommets. De même, $E_2$ n'a pas joué contre $E_4$ : les sommets $E_2$ et $E_4$ ne sont pas reliés par une arête.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de cette section]
+\begin{itemize}
+\item Un \cle{graphe} est un ensemble de \cle{sommets} dont certains sont reliés par des \cle{arêtes}.
+\item Une arête a deux \cle{extrémités} ; si elles sont confondues, c'est une \cle{boucle} ; deux sommets peuvent être reliés par des \cle{arêtes multiples}.
+\item Pour justifier qu'une représentation est un graphe : identifier les sommets, puis vérifier que chaque ligne relie deux sommets (éventuellement confondus).
+\item Un croisement d'arêtes sans point marqué \textbf{n'est pas} un sommet.
+\item Un même graphe admet une infinité de dessins : seules comptent les listes des sommets et des liaisons.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Ordre d'un graphe, degré d'un sommet, sommets adjacents}
+
+Dans la section précédente, nous avons découvert qu'un \cle{graphe} est un objet mathématique formé de \cle{sommets} (les points) et d'\cle{arêtes} (les liaisons), et qu'il permet de modéliser des situations très concrètes : réseau routier entre villes, amitiés entre élèves, connexions entre ordinateurs. Mais un dessin ne suffit pas : pour exploiter un graphe, il faut savoir le \emph{mesurer}. Combien a-t-il de sommets ? Quel sommet est le plus « connecté » ? Quels sommets communiquent directement entre eux ? C'est toute l'ambition de cette section : définir rigoureusement trois outils de mesure fondamentaux — l'\cle{ordre}, le \cle{degré} et l'\cle{adjacence} — que tu utiliseras dans toute la suite du chapitre et au Probatoire.
+
+\courssub{L'ordre d'un graphe : compter les sommets}
+
+Commençons par la notion la plus simple. Imagine le réseau des agences Express Union dans une ville : chaque agence est un sommet, chaque ligne de transfert directe entre deux agences est une arête. La première question naturelle est : « combien y a-t-il d'agences ? ». C'est exactement ce que mesure l'ordre du graphe.
+
+\begin{definition}[Ordre d'un graphe]
+L'\cle{ordre} d'un graphe est le nombre de ses sommets.
+\end{definition}
+
+Autrement dit, déterminer l'ordre d'un graphe revient à \textbf{compter les points} du dessin, sans se préoccuper des arêtes. On dit par exemple : « ce graphe est d'ordre 6 » pour signifier qu'il possède 6 sommets.
+
+\begin{exemplebox}[Ordres de quelques graphes]
+\begin{itemize}
+\item Le graphe des amitiés entre 5 élèves d'une classe de Première C est d'ordre $5$.
+\item Le graphe des liaisons aériennes reliant Douala, Yaoundé, Garoua et N'Djamena est d'ordre $4$.
+\item Un graphe réduit à un seul sommet, sans aucune arête, est d'ordre $1$ : c'est le plus petit graphe possible.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Ne pas confondre ordre et nombre d'arêtes]
+L'\cle{ordre} compte les \textbf{sommets}, jamais les arêtes. Un graphe d'ordre $4$ peut avoir $0$, $3$ ou $6$ arêtes : son ordre reste $4$. Au Probatoire, la question « donner l'ordre du graphe » est souvent le premier point facile de l'exercice : ne le perds pas en comptant les traits !
+\end{attention}
+
+\courssub{Le degré d'un sommet : mesurer sa « connectivité »}
+
+\textbf{Intuition et définition}\par
+
+Reprenons notre graphe d'amitiés. Certains élèves sont très sociables et reliés à beaucoup de camarades ; d'autres n'ont qu'un ou deux amis. Pour quantifier cela, on compte, pour chaque sommet, le nombre d'arêtes qui le touchent. C'est le degré.
+
+\begin{definition}[Degré d'un sommet]
+Le \cle{degré} d'un sommet $S$, noté $d(S)$, est le nombre d'arêtes dont $S$ est une extrémité, \textbf{une boucle comptant pour $2$}.
+\end{definition}
+
+Pourquoi une boucle compte-t-elle double ? Une boucle est une arête qui relie un sommet \emph{à lui-même} : elle « part » du sommet et y « revient », donc elle touche le sommet en \textbf{deux points}. Compter $2$ pour chaque boucle est la convention qui rendra vraie la propriété fondamentale de la section 4 (la somme des degrés égale le double du nombre d'arêtes).
+
+\begin{methode}[Déterminer le degré d'un sommet]
+Pour déterminer le degré d'un sommet $S$ sur un dessin :
+\begin{enumerate}
+\item Repérer toutes les arêtes qui \textbf{partent} de $S$ (c'est-à-dire dont $S$ est une extrémité).
+\item Compter chaque arête ordinaire pour $1$.
+\item Compter chaque \textbf{boucle} en $S$ pour $2$.
+\item Additionner : le total est $d(S)$.
+\end{enumerate}
+Sur un tableau d'adjacence, le degré d'un sommet s'obtient en \textbf{additionnant les coefficients de sa ligne} (ou de sa colonne), en veillant à ce qu'une boucle soit notée $2$ sur la diagonale — ou comptée deux fois.
+\end{methode}
+
+\begin{attention}[La boucle ajoute 2, pas 1 !]
+L'erreur la plus fréquente au Probatoire est d'oublier qu'une \cle{boucle} ajoute \textbf{2} au degré du sommet. Si un sommet possède deux arêtes ordinaires et une boucle, son degré est $2 + 2 = 4$, et non $3$. Vérifie systématiquement la présence de boucles avant de conclure.
+\end{attention}
+
+\textbf{Un exemple complet : degrés annotés sur un graphe}\par
+
+Considérons le graphe $G$ ci-dessous, à 6 sommets $A$, $B$, $C$, $D$, $E$ et $F$. Il contient volontairement toutes les situations délicates : une boucle, des arêtes multiples et un sommet isolé.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle, draw=popblue, fill=popblueL, thick, inner sep=2pt, minimum size=7mm, font=\small\bfseries}]
+\node (A) at (0,2) {A};
+\node (B) at (2.5,2.6) {B};
+\node (C) at (5,2) {C};
+\node (D) at (0,0) {D};
+\node (E) at (5,0) {E};
+\node (F) at (2.5,-1.2) {F};
+\draw[thick, popdark] (A) -- (B);
+\draw[thick, popdark] (B) -- (C);
+\draw[thick, popdark] (A) -- (D);
+\draw[thick, popdark] (C) -- (E);
+\draw[thick, popdark] (B) -- (E);
+\draw[thick, popdark] (A) -- (C);
+\draw[thick, poporange] (B) edge[loop above, looseness=8] (B);
+\draw[thick, popdark] (A) .. controls (1.2,0.4) .. (E);
+\draw[thick, popdark] (A) .. controls (2.2,-0.4) .. (E);
+\node[draw=none, fill=none, text=popink, font=\small] at (-0.9,2.2) {$d(A)=5$};
+\node[draw=none, fill=none, text=popink, font=\small] at (2.5,3.4) {$d(B)=5$};
+\node[draw=none, fill=none, text=popink, font=\small] at (5.9,2.2) {$d(C)=3$};
+\node[draw=none, fill=none, text=popink, font=\small] at (-0.9,-0.2) {$d(D)=1$};
+\node[draw=none, fill=none, text=popink, font=\small] at (5.9,-0.2) {$d(E)=4$};
+\node[draw=none, fill=none, text=popink, font=\small] at (2.5,-1.9) {$d(F)=0$};
+\end{tikzpicture}
+\end{center}
+\legende{Graphe $G$ d'ordre 6, avec une boucle en $B$, deux arêtes entre $A$ et $E$, et le sommet isolé $F$.}
+\end{popfigure}
+
+Détaillons le calcul de chaque degré, en appliquant la méthode :
+
+\begin{itemize}
+\item \textbf{Sommet $A$} : arêtes $AB$, $AD$, $AC$ et \emph{deux} arêtes distinctes $AE$ : $d(A) = 5$.
+\item \textbf{Sommet $B$} : arêtes $BA$, $BC$, $BE$ et une \emph{boucle} qui compte $2$ : $d(B) = 3 + 2 = 5$.
+\item \textbf{Sommet $C$} : arêtes $CB$, $CE$, $CA$ : $d(C) = 3$.
+\item \textbf{Sommet $D$} : seule arête $DA$ : $d(D) = 1$.
+\item \textbf{Sommet $E$} : arêtes $EC$, $EB$ et les deux arêtes $EA$ : $d(E) = 4$.
+\item \textbf{Sommet $F$} : aucune arête ne le touche : $d(F) = 0$.
+\end{itemize}
+
+\begin{attention}[Arêtes multiples : chaque trait compte]
+Lorsque deux sommets sont reliés par \textbf{plusieurs arêtes} (ici les deux courbes entre $A$ et $E$), chacune compte pour $1$ dans le degré. Ne lis pas « $A$ et $E$ sont reliés, donc $+1$ » : lis « il y a deux arêtes $AE$, donc $+2$ ».
+\end{attention}
+
+\textbf{Lecture du degré sur un tableau d'adjacence}\par
+
+Un graphe peut aussi être décrit par un \cle{tableau d'adjacence} : un tableau carré où le coefficient à l'intersection de la ligne $X$ et de la colonne $Y$ indique le nombre d'arêtes reliant $X$ à $Y$. Voici celui du graphe $G$ :
+
+\begin{popfigure}
+\begin{center}
+\begin{tabular}{|c|cccccc|c|}
+\hline
+\rowcolor{popblueL} & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ & \textbf{Degré} \\
+\hline
+$A$ & 0 & 1 & 1 & 1 & 2 & 0 & $5$ \\
+\hline
+$B$ & 1 & 2 & 1 & 0 & 1 & 0 & $5$ \\
+\hline
+$C$ & 1 & 1 & 0 & 0 & 1 & 0 & $3$ \\
+\hline
+$D$ & 1 & 0 & 0 & 0 & 0 & 0 & $1$ \\
+\hline
+$E$ & 2 & 1 & 1 & 0 & 0 & 0 & $4$ \\
+\hline
+$F$ & 0 & 0 & 0 & 0 & 0 & 0 & $0$ \\
+\hline
+\end{tabular}
+\end{center}
+\legende{Tableau d'adjacence du graphe $G$ : la somme de chaque ligne donne le degré du sommet.}
+\end{popfigure}
+
+Deux remarques essentielles :
+\begin{itemize}
+\item Le tableau est \textbf{symétrique} par rapport à la diagonale : l'arête $AB$ est aussi l'arête $BA$. C'est une bonne façon de vérifier qu'on ne s'est pas trompé en le remplissant.
+\item La boucle en $B$ apparaît comme un $2$ sur la diagonale (case $B$--$B$), ce qui traduit exactement la règle « une boucle compte pour $2$ ».
+\end{itemize}
+
+\courssub{Sommets adjacents et sommet isolé}
+
+\textbf{Sommets adjacents : être directement reliés}\par
+
+Dans un réseau routier, deux villes sont « voisines » si une route les relie directement, sans passer par une troisième ville. Cette idée se traduit ainsi :
+
+\begin{definition}[Sommets adjacents]
+Deux sommets sont dits \cle{adjacents} s'ils sont reliés par \textbf{au moins une arête}. On dit aussi qu'ils sont \emph{voisins}.
+\end{definition}
+
+Retiens bien le « \textbf{au moins une} » : que deux sommets soient reliés par une ou par trois arêtes, ils sont adjacents, un point c'est tout. L'adjacence est une relation \emph{qualitative} (oui ou non), pas quantitative.
+
+Sur notre graphe $G$ :
+\begin{itemize}
+\item $A$ est adjacent à $B$, $C$, $D$ et $E$ (quatre voisins) ;
+\item $B$ est adjacent à $A$, $C$ et $E$ — la boucle ne rend pas $B$ « adjacent à lui-même » au sens où l'on parle de \emph{deux} sommets ;
+\item $F$ n'est adjacent à \textbf{aucun} sommet.
+\end{itemize}
+
+Sur le tableau d'adjacence, deux sommets sont adjacents exactement lorsque le coefficient à l'intersection de leur ligne et de leur colonne est \textbf{non nul}.
+
+\textbf{Sommet isolé : le cas du degré zéro}\par
+
+\begin{definition}[Sommet isolé]
+Un sommet \cle{isolé} est un sommet de degré $0$, c'est-à-dire un sommet qui n'est l'extrémité d'aucune arête.
+\end{definition}
+
+Dans le graphe $G$, le sommet $F$ est isolé : il ne communique avec personne. Concrètement, c'est la ville sans route, l'élève sans ami dans le graphe d'amitiés, l'ordinateur débranché du réseau. Remarque qu'un graphe peut très bien contenir un sommet isolé : cela reste un graphe, et ce sommet compte dans l'ordre !
+
+\begin{propriete}[Lien entre degré et adjacence]
+Dans un graphe, le degré d'un sommet sans boucle est égal au nombre de ses voisins \emph{comptés avec multiplicité} ; en particulier, dans un graphe sans boucle ni arête multiple, le degré d'un sommet est exactement le \textbf{nombre de sommets qui lui sont adjacents}.
+\end{propriete}
+
+Cette propriété est immédiate à partir des définitions : chaque arête ordinaire partant de $S$ mène à un voisin distinct. Elle sera très utile dès la section 3, lorsque nous étudierons les graphes simples.
+
+\textbf{Exemple chiffré : le graphe des amitiés}\par
+
+\begin{exemplebox}[Qui est l'élève le plus « connecté » ?]
+Cinq élèves d'une classe de Première D à Bafoussam — Aïcha, Boris, Carine, David et Élodie — déclarent leurs amitiés réciproques au sein du groupe :
+\begin{itemize}
+\item Aïcha est amie avec Boris, Carine et Élodie ;
+\item Boris est ami avec Aïcha et David ;
+\item Carine est amie avec Aïcha, David et Élodie ;
+\item David est ami avec Boris et Carine ;
+\item Élodie est amie avec Aïcha et Carine.
+\end{itemize}
+Le graphe est d'ordre $5$. Comptons les degrés :
+\begin{align*}
+d(\text{Aïcha}) &= 3, & d(\text{Boris}) &= 2, & d(\text{Carine}) &= 3,\\
+d(\text{David}) &= 2, & d(\text{Élodie}) &= 2.
+\end{align*}
+Les sommets de plus grand degré sont Aïcha et Carine ($d = 3$) : ce sont les élèves les plus « connectées » du groupe. Aïcha et Boris sont adjacents ; Boris et Élodie ne le sont pas (aucune arête ne les relie directement, même si Aïcha les connaît tous les deux). Aucun sommet n'est isolé : tout le monde a au moins deux amis.
+\end{exemplebox}
+
+\begin{savaistu}[Degré, popularité et réseaux sociaux]
+Sur les réseaux sociaux, ton compte est un sommet et chaque abonnement est une arête : le \cle{degré} de ton sommet mesure ta popularité ! Les comptes de très grand degré (les « influenceurs ») jouent un rôle central dans la diffusion de l'information. De plus, les algorithmes de recommandation (« vous connaissez peut-être... ») fonctionnent exactement avec la notion d'\cle{adjacence} : ils te proposent les voisins de tes voisins, c'est-à-dire les sommets adjacents à tes sommets adjacents. La théorie des graphes que tu apprends aujourd'hui fait tourner Facebook, TikTok et WhatsApp !
+\end{savaistu}
+
+\textbf{Exercice résolu de synthèse}\par
+
+\begin{exoresolu}[Réseau de pistes rurales]
+Dans un arrondissement de la région de l'Adamaoua, cinq villages $V_1$, $V_2$, $V_3$, $V_4$, $V_5$ sont reliés par des pistes rurales. Le tableau d'adjacence du réseau est :
+\begin{center}
+\begin{tabular}{|c|ccccc|}
+\hline
+\rowcolor{popgreenL} & $V_1$ & $V_2$ & $V_3$ & $V_4$ & $V_5$ \\
+\hline
+$V_1$ & 0 & 1 & 1 & 0 & 0 \\
+\hline
+$V_2$ & 1 & 0 & 1 & 1 & 0 \\
+\hline
+$V_3$ & 1 & 1 & 0 & 0 & 0 \\
+\hline
+$V_4$ & 0 & 1 & 0 & 0 & 0 \\
+\hline
+$V_5$ & 0 & 0 & 0 & 0 & 0 \\
+\hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+\item Quel est l'ordre de ce graphe ?
+\item Déterminer le degré de chaque sommet.
+\item Quels sommets sont adjacents à $V_2$ ? Existe-t-il un sommet isolé ?
+\item Quel village est le mieux desservi ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Le graphe possède $5$ sommets : il est d'\textbf{ordre} $5$.
+\item On additionne les coefficients de chaque ligne :
+\begin{align*}
+d(V_1) &= 0+1+1+0+0 = 2,\\
+d(V_2) &= 1+0+1+1+0 = 3,\\
+d(V_3) &= 1+1+0+0+0 = 2,\\
+d(V_4) &= 0+1+0+0+0 = 1,\\
+d(V_5) &= 0+0+0+0+0 = 0.
+\end{align*}
+\item Les coefficients non nuls de la ligne de $V_2$ correspondent à $V_1$, $V_3$ et $V_4$ : ce sont les sommets \textbf{adjacents} à $V_2$. Le sommet $V_5$ a un degré nul : c'est un \textbf{sommet isolé} (le village $V_5$ n'est relié à aucune piste).
+\item Le village le mieux desservi est $V_2$, de degré $3$ : trois pistes en partent directement.
+\end{enumerate}
+\end{exoresolu}
+
+\textbf{À toi de jouer}\par
+
+\begin{exercice}[À toi de jouer]
+On considère le graphe des liaisons de bus entre quatre quartiers $Q_1$, $Q_2$, $Q_3$, $Q_4$ : $Q_1$ est relié à $Q_2$ par deux lignes distinctes et à $Q_3$ par une ligne ; $Q_2$ est relié à $Q_4$ ; $Q_3$ possède une boucle (une ligne circulaire qui part de $Q_3$ et y revient).
+\begin{enumerate}
+\item Donner l'ordre du graphe.
+\item Calculer le degré de chaque sommet.
+\item Citer les sommets adjacents à $Q_1$. Y a-t-il un sommet isolé ?
+\end{enumerate}
+\end{exercice}
+
+\textbf{Corrigé}\par
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Le graphe est d'ordre $4$.
+\item $d(Q_1) = 2 + 1 = 3$ (deux lignes vers $Q_2$, une vers $Q_3$) ; $d(Q_2) = 2 + 1 = 3$ ; $d(Q_3) = 1 + 2 = 3$ (la boucle compte $2$) ; $d(Q_4) = 1$.
+\item $Q_1$ est adjacent à $Q_2$ et à $Q_3$. Aucun sommet n'est isolé car tous les degrés sont non nuls.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item L'\cle{ordre} d'un graphe est le \textbf{nombre de ses sommets}.
+\item Le \cle{degré} d'un sommet est le nombre d'arêtes dont il est une extrémité, \textbf{une boucle comptant pour $2$} ; sur un tableau d'adjacence, c'est la somme de sa ligne.
+\item Deux sommets sont \cle{adjacents} s'ils sont reliés par \textbf{au moins une} arête.
+\item Un sommet \cle{isolé} est un sommet de degré $0$.
+\item Concrètement, le degré mesure la « connectivité » : nombre d'amis, de routes, de liaisons directes.
+\end{itemize}
+\end{aretenir}
+
+Maintenant que tu sais mesurer un graphe, nous allons dans la section suivante \emph{classer} les graphes : qu'est-ce qu'un graphe simple, un graphe orienté, un graphe complet ? Ces catégories te permettront de choisir le bon modèle pour chaque situation concrète.
+
+\coursec{Graphes simples, graphes orientés, graphes complets}
+
+Dans la section précédente, nous avons appris à compter les sommets d'un graphe (son \cle{ordre}), à compter les arêtes qui touchent un sommet (son \cle{degré}) et à reconnaître deux sommets \cle{adjacents}. Nous avons aussi rencontré des situations variées : parfois une arête relie un sommet à lui-même (une \cle{boucle}), parfois deux sommets sont reliés par plusieurs arêtes, parfois le sens de parcours importe (une rue à sens unique n'est pas une rue à double sens !). Il est temps de classer les graphes en grandes familles, car chaque famille possède ses propres propriétés. C'est l'objet de cette section : les graphes \cle{simples}, les graphes \cle{orientés} et les graphes \cle{complets}.
+
+\courssub{Graphes simples}
+
+\textbf{Intuition.} Imagine le réseau d'amitié entre les élèves de ta classe : deux élèves sont soit amis, soit ne le sont pas — on ne compte pas « deux fois » la même amitié, et personne n'est « ami avec lui-même ». Un tel réseau se représente par un graphe où il n'y a ni boucle, ni arête en double. C'est exactement l'idée d'un graphe simple.
+
+\begin{definition}[Graphe simple]
+Un graphe est dit \cle{simple} s'il vérifie les deux conditions suivantes :
+\begin{itemize}
+\item il ne possède \textbf{aucune boucle} (aucune arête ne relie un sommet à lui-même) ;
+\item il ne possède \textbf{aucune arête multiple} : entre deux sommets distincts, il y a \textbf{au plus une} arête.
+\end{itemize}
+\end{definition}
+
+\begin{exemplebox}[Reconnaître un graphe simple]
+Considérons les cinq villages $A$, $B$, $C$, $D$, $E$ d'un arrondissement, reliés par des pistes rurales : $A$--$B$, $A$--$C$, $B$--$C$, $C$--$D$.
+\begin{itemize}
+\item Ce graphe est \textbf{simple} : aucune piste ne part d'un village pour y revenir directement, et deux villages sont reliés par au plus une piste.
+\item Si l'on ajoutait une \emph{deuxième} piste entre $C$ et $D$ (une piste en terre et une piste en latérite), le graphe ne serait \textbf{plus simple} (arête multiple).
+\item Si l'on ajoutait une boucle en $E$ (un circuit touristique qui part de $E$ et revient à $E$), le graphe ne serait \textbf{plus simple} non plus.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[« Au plus une » ne veut pas dire « exactement une »]
+Dans un graphe simple, deux sommets peuvent très bien \emph{ne pas être reliés du tout}. La condition est : \textbf{au plus une} arête entre deux sommets, c'est-à-dire zéro ou une. Un graphe simple n'est donc pas forcément « très connecté » : il peut même contenir un sommet isolé. Ne confonds pas « simple » avec « complet » (nous y reviendrons).
+\end{attention}
+
+\courssub{Graphes orientés}
+
+\textbf{Intuition.} À Yaoundé, certaines rues du centre-ville sont à \emph{sens unique} : on peut aller du carrefour $X$ au carrefour $Y$, mais pas l'inverse. De même, dans un championnat, « l'équipe $A$ reçoit l'équipe $B$ » (match à domicile) n'est pas la même chose que « l'équipe $B$ reçoit l'équipe $A$ ». Dans une entreprise, « $M$ est le supérieur hiérarchique de $N$ » a un sens bien précis. Pour modéliser ces situations, il faut donner une \emph{direction} aux arêtes : on obtient un graphe orienté.
+
+\begin{definition}[Graphe orienté, arc]
+Un graphe est dit \cle{orienté} lorsque chacune de ses arêtes est munie d'un \textbf{sens de parcours}, représenté par une flèche. Une arête orientée s'appelle un \cle{arc}. Un arc allant du sommet $x$ vers le sommet $y$ se note $(x\,;\,y)$ ou $\overrightarrow{xy}$ : $x$ est l'\textbf{origine} (ou extrémité initiale) de l'arc, $y$ est son \textbf{extrémité finale}.
+\end{definition}
+
+\begin{exemplebox}[Trois situations concrètes de graphes orientés]
+\begin{itemize}
+\item \textbf{Circulation.} Les carrefours d'un quartier sont les sommets ; un arc de $X$ vers $Y$ signifie « on peut rouler directement de $X$ vers $Y$ ». Une rue à double sens se représente par \emph{deux} arcs opposés : $(X\,;\,Y)$ et $(Y\,;\,X)$.
+\item \textbf{Matchs domicile/extérieur.} Dans un championnat de football, les équipes sont les sommets ; un arc $(A\,;\,B)$ signifie « $A$ reçoit $B$ » (match joué à domicile pour $A$).
+\item \textbf{Hiérarchie.} Dans une entreprise ou un lycée, un arc $(M\,;\,N)$ signifie « $M$ est le supérieur direct de $N$ ». Le proviseur est à la racine, les enseignants et le personnel en dessous.
+\end{itemize}
+\end{exemplebox}
+
+\begin{savaistu}[Degré entrant, degré sortant — un avant-goût de la Terminale]
+Dans un graphe orienté, le degré d'un sommet se raffine en deux nombres : le \textbf{degré entrant} $d^{-}(x)$, nombre d'arcs qui \emph{arrivent} en $x$, et le \textbf{degré sortant} $d^{+}(x)$, nombre d'arcs qui \emph{partent} de $x$. Par exemple, dans un graphe de matchs, $d^{+}(A)$ compte les matchs que $A$ reçoit à domicile. Tu étudieras cela en détail en Terminale, avec les matrices d'adjacence.
+\end{savaistu}
+
+\begin{attention}[« Orienté » et « simple » sont des notions indépendantes]
+Erreur très fréquente au Probatoire : croire qu'un graphe orienté est automatiquement simple, ou qu'un graphe simple ne peut pas être orienté. C'est faux !
+\begin{itemize}
+\item Un graphe \textbf{orienté} peut être simple (au plus un arc entre deux sommets, pas de boucle) ou non simple (une boucle orientée, ou deux arcs de même sens entre les mêmes sommets).
+\item Un graphe \textbf{non orienté} peut être simple ou non.
+\end{itemize}
+Les deux questions se traitent donc \emph{séparément} : « le graphe est-il orienté ? » (regarde s'il y a des flèches) puis « est-il simple ? » (regarde s'il y a des boucles ou des arêtes multiples).
+\end{attention}
+
+\courssub{Graphes complets}
+
+\textbf{Intuition.} Organisons un tournoi de football où \emph{chaque} équipe rencontre \emph{toutes} les autres. Alors, dans le graphe des rencontres, chaque sommet est relié à tous les autres : on ne peut ajouter aucune arête supplémentaire. Un tel graphe, « saturé » de connexions, est dit complet.
+
+\begin{definition}[Graphe complet]
+Un graphe \textbf{simple} est dit \cle{complet} lorsque deux sommets \textbf{quelconques et distincts} sont toujours adjacents. Autrement dit, chaque sommet est relié à \emph{tous} les autres. Le graphe complet d'ordre $n$ se note \cle{$K_n$}.
+\end{definition}
+
+\begin{aretenir}[Caractérisation par les degrés]
+Dans un graphe simple d'ordre $n$, le degré d'un sommet est au plus $n-1$ (il peut être adjacent à chacun des $n-1$ autres sommets). Le graphe est complet si et seulement si \textbf{chaque sommet est de degré exactement $n-1$}.
+\end{aretenir}
+
+\begin{methode}[Justifier qu'un graphe est complet (ou non)]
+Pour montrer qu'un graphe $G$ d'ordre $n$ est complet :
+\begin{enumerate}
+\item Vérifier d'abord que $G$ est \textbf{simple} : ni boucle, ni arête multiple.
+\item Pour \textbf{chaque} sommet, vérifier qu'il est adjacent à \textbf{tous} les autres, c'est-à-dire que son degré vaut $n-1$.
+\item Conclure : si les deux conditions sont satisfaites pour tous les sommets, $G$ est complet et $G = K_n$.
+\end{enumerate}
+Pour montrer qu'un graphe n'est \textbf{pas} complet, il suffit d'exhiber \textbf{un seul couple} de sommets non adjacents (contre-exemple).
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.9, every node/.style={circle, draw=popdark, fill=popblueL, inner sep=1.6pt, minimum size=14pt, font=\small}]
+% K3
+\begin{scope}[shift={(0,0)}]
+\node (a) at (90:1.1) {$A$};
+\node (b) at (210:1.1) {$B$};
+\node (c) at (330:1.1) {$C$};
+\draw[popink, thick] (a)--(b) (b)--(c) (c)--(a);
+\node[draw=none, fill=none, rectangle] at (0,-1.9) {$K_3$};
+\end{scope}
+% K4
+\begin{scope}[shift={(4.2,0)}]
+\node (a) at (45:1.1) {$A$};
+\node (b) at (135:1.1) {$B$};
+\node (c) at (225:1.1) {$C$};
+\node (d) at (315:1.1) {$D$};
+\draw[popink, thick] (a)--(b) (b)--(c) (c)--(d) (d)--(a) (a)--(c) (b)--(d);
+\node[draw=none, fill=none, rectangle] at (0,-1.9) {$K_4$};
+\end{scope}
+% K5
+\begin{scope}[shift={(8.4,0)}]
+\node (a) at (90:1.15) {$A$};
+\node (b) at (162:1.15) {$B$};
+\node (c) at (234:1.15) {$C$};
+\node (d) at (306:1.15) {$D$};
+\node (e) at (18:1.15) {$E$};
+\draw[popink, thick] (a)--(b) (b)--(c) (c)--(d) (d)--(e) (e)--(a) (a)--(c) (a)--(d) (b)--(d) (b)--(e) (c)--(e);
+\node[draw=none, fill=none, rectangle] at (0,-1.9) {$K_5$};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{Les graphes complets $K_3$, $K_4$ et $K_5$, dessinés sur des sommets disposés en polygones réguliers : chaque sommet est relié à tous les autres.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.85, every node/.style={circle, draw=popdark, fill=poporangeL, inner sep=1.6pt, minimum size=14pt, font=\small}]
+% (a) simple non complet
+\begin{scope}[shift={(0,0)}]
+\node (a) at (90:1.05) {$A$};
+\node (b) at (210:1.05) {$B$};
+\node (c) at (330:1.05) {$C$};
+\node (d) at (0:1.5) {$D$};
+\draw[popink, thick] (a)--(b) (a)--(c) (b)--(c) (c)--(d);
+\node[draw=none, fill=none, rectangle, align=center] at (0.4,-2) {(a) simple,\\ non complet};
+\end{scope}
+% (b) complet
+\begin{scope}[shift={(5.2,0)}]
+\node (a) at (90:1.05) {$A$};
+\node (b) at (210:1.05) {$B$};
+\node (c) at (330:1.05) {$C$};
+\node (d) at (0:1.5) {$D$};
+\draw[popgreen, thick] (a)--(b) (a)--(c) (a)--(d) (b)--(c) (b)--(d) (c)--(d);
+\node[draw=none, fill=none, rectangle, align=center] at (0.4,-2) {(b) complet : $K_4$};
+\end{scope}
+% (c) orienté
+\begin{scope}[shift={(10.4,0)}]
+\node (a) at (90:1.05) {$A$};
+\node (b) at (210:1.05) {$B$};
+\node (c) at (330:1.05) {$C$};
+\node (d) at (0:1.5) {$D$};
+\draw[poppurple, thick, -{Stealth[length=2.5mm]}] (a)--(b);
+\draw[poppurple, thick, -{Stealth[length=2.5mm]}] (b)--(c);
+\draw[poppurple, thick, -{Stealth[length=2.5mm]}] (a)--(c);
+\draw[poppurple, thick, -{Stealth[length=2.5mm]}] (c)--(d);
+\draw[poppurple, thick, -{Stealth[length=2.5mm]}] (d)--(a);
+\node[draw=none, fill=none, rectangle, align=center] at (0.4,-2) {(c) orienté};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{Le même ensemble de sommets $\{A\,;\,B\,;\,C\,;\,D\}$ : (a) graphe simple non complet (l'arête $A$--$D$ manque) ; (b) graphe complet $K_4$ ; (c) graphe orienté (les flèches indiquent le sens des arcs).}
+\end{popfigure}
+
+\courssub{Nombre d'arêtes du graphe complet $K_n$}
+
+\textbf{Question.} Si $n$ équipes participent à un tournoi où chacune rencontre toutes les autres une seule fois, combien de matchs doit-on organiser ? Autrement dit : combien d'arêtes possède le graphe complet $K_n$ ?
+
+\begin{propriete}[Nombre d'arêtes de $K_n$]
+Le graphe complet d'ordre $n$ (avec $n \geq 1$) possède exactement
+\[ \frac{n(n-1)}{2} \quad \text{arêtes.} \]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée, par dénombrement des paires de sommets]
+Une arête d'un graphe simple est entièrement déterminée par le \textbf{couple non ordonné} de ses deux extrémités : l'arête $A$--$B$ est la même que l'arête $B$--$A$. Compter les arêtes de $K_n$ revient donc à compter les \textbf{paires} de sommets distincts.
+\begin{enumerate}
+\item \textbf{Choix du premier sommet.} Il y a $n$ sommets, donc $n$ choix possibles pour la première extrémité.
+\item \textbf{Choix du second sommet.} Il doit être différent du premier (pas de boucle dans un graphe simple) : il reste $n-1$ choix.
+\item \textbf{Produit.} Cela donne $n(n-1)$ couples \emph{ordonnés} $(x\,;\,y)$ avec $x \neq y$.
+\item \textbf{Correction du double comptage.} Chaque arête $\{x\,;\,y\}$ a été comptée deux fois : une fois comme $(x\,;\,y)$ et une fois comme $(y\,;\,x)$. On divise donc par $2$ :
+\[ \text{nombre d'arêtes de } K_n = \frac{n(n-1)}{2}. \]
+\end{enumerate}
+\textbf{Vérification sur les figures.} $K_3$ : $\frac{3 \times 2}{2} = 3$ arêtes (le triangle). $K_4$ : $\frac{4 \times 3}{2} = 6$ arêtes. $K_5$ : $\frac{5 \times 4}{2} = 10$ arêtes. Compte-les sur la figure précédente !
+\end{experience}
+
+\begin{attention}[Deux erreurs classiques dans ce dénombrement]
+\begin{itemize}
+\item \textbf{Oublier de diviser par 2} : $n(n-1)$ compte les couples \emph{ordonnés} ; une arête n'a pas de sens, il faut diviser par $2$.
+\item \textbf{Appliquer la formule à un graphe non complet} : la formule $\frac{n(n-1)}{2}$ donne le nombre d'arêtes de $K_n$ \emph{uniquement}. Pour un graphe simple quelconque d'ordre $n$, elle donne seulement un \textbf{majorant} : un graphe simple d'ordre $n$ possède \emph{au plus} $\frac{n(n-1)}{2}$ arêtes.
+\end{itemize}
+\end{attention}
+
+\begin{exoresolu}[Tournoi de football à six équipes]
+Le lycée de Nkongsamba organise un tournoi de football entre $6$ classes de Première. Chaque classe rencontre toutes les autres exactement une fois.
+\begin{enumerate}
+\item Modéliser la situation par un graphe et préciser sa nature.
+\item Combien de matchs le comité d'organisation doit-il programmer ?
+\item Le comité affirme : « notre graphe est complet car il est simple ». Que penser de cet argument ?
+\end{enumerate}
+\tcblower
+\textbf{1. Modélisation.} Chaque classe est un sommet ; on relie deux sommets par une arête si les deux classes se rencontrent. Comme chaque classe joue contre toutes les autres, deux sommets quelconques sont adjacents. De plus, il n'y a ni boucle (une classe ne joue pas contre elle-même) ni arête multiple (chaque paire de classes se rencontre une seule fois) : le graphe est \textbf{simple} et \textbf{complet}. C'est le graphe $K_6$, d'ordre $6$.
+
+\textbf{2. Nombre de matchs.} Chaque match correspond à une arête de $K_6$. D'après la propriété :
+\[ \frac{6 \times (6-1)}{2} = \frac{6 \times 5}{2} = 15. \]
+Le comité doit programmer \textbf{15 matchs}. Vérification par les degrés : chaque sommet est de degré $5$ (chaque classe joue $5$ matchs), la somme des degrés vaut $6 \times 5 = 30$, et le nombre d'arêtes est la moitié : $30/2 = 15$. Cohérent avec la propriété fondamentale de la section suivante !
+
+\textbf{3. Analyse de l'argument.} L'argument est \textbf{faux} : un graphe simple n'est pas nécessairement complet. « Simple » signifie seulement qu'il y a \emph{au plus} une arête entre deux sommets ; « complet » exige qu'il y en ait \emph{exactement une} entre tout couple de sommets. La bonne justification est : le graphe est simple, \emph{et} chaque sommet est de degré $6-1 = 5$, donc adjacent à tous les autres : il est complet.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+On considère le graphe $G$ de sommets $A$, $B$, $C$, $D$, $E$ et d'arêtes : $A$--$B$, $A$--$C$, $A$--$D$, $A$--$E$, $B$--$C$, $B$--$D$, $C$--$E$, $D$--$E$.
+\begin{enumerate}
+\item Justifier que $G$ est simple. Est-il orienté ?
+\item Déterminer le degré de chaque sommet. Le graphe $G$ est-il complet ?
+\item Combien d'arêtes faudrait-il ajouter pour obtenir $K_5$ ? Lesquelles ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\textbf{1.} Il n'y a aucune boucle et aucune arête n'apparaît deux fois : $G$ est \textbf{simple}. Aucune arête ne porte de flèche : $G$ n'est \textbf{pas orienté}.
+
+\textbf{2.} $d(A) = 4$, $d(B) = 3$, $d(C) = 3$, $d(D) = 3$, $d(E) = 3$. Pour être complet, il faudrait que chaque sommet soit de degré $5-1 = 4$. Or $d(B) = 3 \neq 4$ (par exemple, $B$ et $E$ ne sont pas adjacents) : $G$ n'est \textbf{pas complet}.
+
+\textbf{3.} $K_5$ possède $\frac{5 \times 4}{2} = 10$ arêtes ; $G$ en possède $8$. Il manque donc $2$ arêtes : $B$--$E$ et $C$--$D$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Un graphe est \cle{simple} s'il n'a \textbf{ni boucle ni arête multiple} (au plus une arête entre deux sommets).
+\item Un graphe est \cle{orienté} si ses arêtes ont un sens ; on parle alors d'\cle{arcs}. « Orienté » et « simple » sont deux notions \textbf{indépendantes}.
+\item Un graphe simple d'ordre $n$ est \cle{complet} (noté $K_n$) si deux sommets quelconques sont toujours adjacents, c'est-à-dire si chaque sommet est de degré $n-1$.
+\item $K_n$ possède $\dfrac{n(n-1)}{2}$ arêtes : c'est le nombre de paires de sommets.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Propriété fondamentale : somme des degrés et nombre d'arêtes}
+
+Dans la section précédente, tu as appris à reconnaître les grandes familles de graphes : graphes simples, graphes orientés, graphes complets. Tu sais désormais compter les sommets (l'ordre), compter les arêtes, et déterminer le degré de chaque sommet. Une question naturelle se pose alors : existe-t-il un lien entre tous ces nombres ? La réponse est oui, et ce lien est l'un des plus beaux et des plus utiles résultats de la théorie des graphes. Il porte un nom amusant : le \cle{lemme des poignées de main}. C'est lui qui va nous permettre, dans cette section, de retrouver le nombre d'arêtes sans dessiner le graphe, de détecter des erreurs dans un tableau de degrés, et même de résoudre des problèmes de la vie courante.
+
+\courssub{Intuition : pourquoi compter deux fois ?}
+
+Imagine une soirée à Yaoundé où plusieurs amis se retrouvent. Chaque fois que deux personnes se serrent la main, on peut compter l'événement de deux façons :
+\begin{itemize}
+\item soit on compte les \emph{poignées de main} : chaque échange compte pour $1$ ;
+\item soit on demande à chaque personne combien de mains elle a serrées, puis on additionne toutes les réponses.
+\end{itemize}
+Mais chaque poignée de main a été comptée \textbf{deux fois} dans la deuxième méthode : une fois par chacun des deux participants. La somme des réponses est donc exactement le \textbf{double} du nombre de poignées de main.
+
+Transposons : les personnes sont les \cle{sommets}, les poignées de main sont les \cle{arêtes}, et le nombre de mains serrées par une personne est le \cle{degré} du sommet. L'intuition est maintenant claire : la somme des degrés doit être le double du nombre d'arêtes.
+
+\begin{propriete}[Théorème des poignées de main (lemme des poignées de main)]
+Dans un graphe \textbf{non orienté} (simple ou non), la somme des degrés de tous les sommets est égale au double du nombre d'arêtes :
+\[ \sum_{s \in S} d(s) = 2\,m, \]
+où $S$ désigne l'ensemble des sommets, $d(s)$ le degré du sommet $s$ et $m$ le nombre d'arêtes du graphe.
+\emph{Cette démonstration est exigible : elle est rédigée en classe et doit être sue.}
+\end{propriete}
+
+\begin{experience}[Démonstration guidée du théorème des poignées de main]
+Notons $S = \{s_1, s_2, \ldots, s_n\}$ l'ensemble des sommets et $m$ le nombre d'arêtes.
+\begin{enumerate}
+\item \textbf{Compter par les sommets.} Pour chaque sommet $s_i$, le degré $d(s_i)$ est le nombre d'extrémités d'arêtes qui touchent $s_i$ (une boucle en compte deux). La somme $\sum d(s_i)$ compte donc le \emph{nombre total d'extrémités d'arêtes} dans tout le graphe.
+\item \textbf{Compter par les arêtes.} Chaque arête possède exactement \textbf{deux extrémités} : elle contribue donc exactement $2$ au total des extrémités. Une boucle, qui relie un sommet à lui-même, contribue aussi $2$, mais au \emph{même} sommet : c'est bien pour cela qu'on a défini le degré d'un sommet portant une boucle en comptant la boucle deux fois.
+\item \textbf{Conclure.} Les deux comptages dénombrent le même objet (les extrémités d'arêtes) : ils sont égaux. Comme il y a $m$ arêtes, le total des extrémités vaut $2m$. Donc :
+\[ \sum_{i=1}^{n} d(s_i) = 2m. \]
+\end{enumerate}
+Ce raisonnement de \emph{double comptage} est une technique fondamentale en mathématiques : compter une même quantité de deux manières différentes pour obtenir une égalité.
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle, draw=popblue, fill=popblueL, thick, minimum size=7mm, inner sep=1pt}]
+\node (A) at (0,2) {$A$};
+\node (B) at (2.2,2.6) {$B$};
+\node (C) at (4,1.6) {$C$};
+\node (D) at (2.6,0) {$D$};
+\node (E) at (0.2,0) {$E$};
+\draw[thick, popdark] (A)--(B) (B)--(C) (C)--(D) (D)--(E) (E)--(A) (A)--(C) (B)--(D);
+\node[draw=none, fill=none, poporange, font=\small\bfseries] at (-0.7,2.3) {$d=3$};
+\node[draw=none, fill=none, poporange, font=\small\bfseries] at (2.2,3.1) {$d=3$};
+\node[draw=none, fill=none, poporange, font=\small\bfseries] at (4.7,1.8) {$d=3$};
+\node[draw=none, fill=none, poporange, font=\small\bfseries] at (3.1,-0.4) {$d=3$};
+\node[draw=none, fill=none, poporange, font=\small\bfseries] at (-0.5,-0.4) {$d=2$};
+\end{tikzpicture}
+\end{center}
+\legende{Un graphe à $5$ sommets et $7$ arêtes. La somme des degrés vaut $3+3+3+3+2 = 14 = 2\times 7$.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+% arête simple
+\draw[line width=2.5pt, popblue] (0,0) -- (2.5,0);
+\fill[poporange] (0,0) circle (3pt);
+\fill[poporange] (2.5,0) circle (3pt);
+\node[poporange, font=\small\bfseries] at (0,-0.45) {$+1$};
+\node[poporange, font=\small\bfseries] at (2.5,-0.45) {$+1$};
+\node[popdark, font=\small] at (1.25,0.4) {arête : contribution $2$};
+% boucle
+\draw[line width=2.5pt, popgreen] (5.5,0) circle (0.55);
+\fill[poporange] (5.5,-0.55) circle (3pt);
+\node[poporange, font=\small\bfseries] at (5.5,-1.15) {$+2$ au même sommet};
+\node[popdark, font=\small] at (5.5,0.85) {boucle : contribution $2$};
+\end{tikzpicture}
+\end{center}
+\legende{Idée de la démonstration : chaque arête apporte exactement $2$ à la somme des degrés, une boucle apporte $2$ au même sommet.}
+\end{popfigure}
+
+\courssub{Conséquences immédiates : parité de la somme et parité du nombre de sommets impairs}
+
+\begin{propriete}[Parité de la somme des degrés]
+Dans tout graphe non orienté, la somme des degrés des sommets est un nombre \cle{pair}.
+\end{propriete}
+
+En effet, cette somme vaut $2m$, et le double d'un entier est toujours pair. Cette remarque toute simple est un redoutable \emph{test de cohérence}, comme nous le verrons dans les applications.
+
+\begin{propriete}[Corollaire : nombre de sommets de degré impair]
+Dans un graphe non orienté, le nombre de sommets de degré \cle{impair} est toujours un nombre \cle{pair}.
+\emph{Démonstration guidée par parité, à savoir refaire.}
+\end{propriete}
+
+\begin{experience}[Démonstration du corollaire par parité]
+Partageons l'ensemble des sommets en deux groupes : le groupe $P$ des sommets de degré \textbf{pair} et le groupe $I$ des sommets de degré \textbf{impair}. Alors :
+\[ \underbrace{\sum_{s \in P} d(s)}_{\text{somme de nombres pairs}} + \underbrace{\sum_{s \in I} d(s)}_{\text{somme de nombres impairs}} = 2m. \]
+\begin{enumerate}
+\item La somme des degrés pairs est un nombre pair (toute somme de nombres pairs est paire).
+\item Le total $2m$ est pair.
+\item Donc la somme des degrés impairs vaut : (pair) $-$ (pair) = \textbf{pair}.
+\item Or une somme de nombres impairs n'est paire que si elle contient un nombre \textbf{pair} de termes (car impair $+$ impair $=$ pair, mais impair $+$ impair $+$ impair $=$ impair).
+\item Conclusion : le groupe $I$ contient un nombre pair de sommets. \hfill $\square$
+\end{enumerate}
+\end{experience}
+
+\begin{aretenir}[Les deux faits à retenir absolument]
+\begin{itemize}
+\item $\displaystyle \sum d(s) = 2m$ : la somme des degrés est le double du nombre d'arêtes.
+\item Le nombre de sommets de degré impair est toujours pair : $0$, $2$, $4$, $6$\ldots\ jamais $1$, $3$, $5$\ldots
+\end{itemize}
+\end{aretenir}
+
+\courssub{Application 1 : retrouver le nombre d'arêtes connaissant les degrés}
+
+\begin{methode}[Calculer le nombre d'arêtes à partir des degrés]
+\begin{enumerate}
+\item Additionner les degrés de \emph{tous} les sommets du graphe.
+\item Diviser le résultat par $2$ : le quotient est le nombre d'arêtes $m$.
+\item \textbf{Contrôle obligatoire} : si le résultat n'est pas un nombre entier, les données sont fausses (erreur d'énoncé ou de comptage des degrés).
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Exemple chiffré]
+Un graphe possède $6$ sommets de degrés respectifs $4$, $3$, $3$, $2$, $2$, $2$. Combien a-t-il d'arêtes ?
+
+\textbf{Solution.} La somme des degrés vaut :
+\[ 4 + 3 + 3 + 2 + 2 + 2 = 16. \]
+Le nombre d'arêtes est donc $m = \dfrac{16}{2} = 8$. Le graphe possède \textbf{8 arêtes}. On peut le vérifier en dessinant un tel graphe et en comptant directement les arêtes : on en trouve bien $8$.
+\end{exemplebox}
+
+\begin{attention}[Erreur fréquente : oublier de diviser par 2]
+Beaucoup d'élèves additionnent les degrés et donnent \emph{cette somme} comme nombre d'arêtes. C'est faux ! Dans l'exemple précédent, répondre « 16 arêtes » est une erreur : chaque arête a été comptée deux fois (une fois à chaque extrémité). Retiens le réflexe : \textbf{somme des degrés, puis division par 2}. Autre piège : si la somme des degrés est impaire, ne conclus pas « le graphe a $7{,}5$ arêtes » — un nombre d'arêtes est entier ; conclus que \emph{les données sont incohérentes}.
+\end{attention}
+
+\courssub{Application 2 : vérifier la cohérence d'un tableau de degrés (test de parité)}
+
+Avant même de chercher à dessiner un graphe, on peut tester si une liste de degrés est \emph{possible}. Deux conditions nécessaires (équivalentes) :
+\begin{itemize}
+\item la somme des degrés doit être \textbf{paire} ;
+\item le nombre de degrés impairs doit être \textbf{pair}.
+\end{itemize}
+
+\begin{exoresolu}[Test de cohérence]
+Un élève affirme avoir construit un graphe dont les sommets ont pour degrés : $3$, $3$, $2$, $2$, $1$. Est-ce possible ?
+\tcblower
+\textbf{Solution.} Calculons la somme des degrés :
+\[ 3 + 3 + 2 + 2 + 1 = 11. \]
+Or $11$ est \textbf{impair}, alors que la somme des degrés doit toujours être paire (elle vaut $2m$). On peut aussi compter les degrés impairs : il y en a trois ($3$, $3$ et $1$), et $3$ est impair, ce qui contredit le corollaire. \textbf{Conclusion : un tel graphe n'existe pas ; l'élève s'est trompé.}
+
+\emph{Remarque :} si l'on remplace le dernier degré par $2$, la somme devient $12 = 2\times 6$ et il y a deux degrés impairs : le test de parité est satisfait et un tel graphe peut exister.
+\end{exoresolu}
+
+\courssub{Application 3 : le problème des poignées de main}
+
+Voici l'application concrète qui a donné son nom au théorème. Elle est très appréciée au Probatoire car elle montre la puissance de la modélisation.
+
+\begin{exoresolu}[Poignées de main à une réunion]
+Lors d'une réunion du conseil de classe d'un lycée de Douala, chaque participant serre la main de certaines autres personnes (jamais la sienne, et au plus une fois la même personne). Montrer que le nombre de personnes ayant serré un nombre \textbf{impair} de mains est pair.
+\tcblower
+\textbf{Solution.} Modélisons la situation par un graphe :
+\begin{itemize}
+\item chaque participant est un \textbf{sommet} ;
+\item on trace une \textbf{arête} entre deux sommets lorsque les deux personnes se sont serré la main.
+\end{itemize}
+Le graphe obtenu est simple (pas de boucle, au plus une arête entre deux sommets). Le degré d'un sommet est exactement le nombre de mains serrées par la personne correspondante. D'après le corollaire du théorème des poignées de main, le nombre de sommets de degré impair est pair. Donc \textbf{le nombre de personnes ayant serré un nombre impair de mains est pair}, quelle que soit la configuration de la réunion. Remarque étonnante : ce résultat ne dépend ni du nombre de participants, ni de qui a serré la main de qui !
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Un graphe possède $5$ sommets de degrés $4$, $3$, $3$, $3$, $3$. Déterminer son nombre d'arêtes.
+\item Existe-t-il un graphe simple dont les degrés sont $5$, $4$, $3$, $2$, $1$, $1$ ? Justifier par un argument de parité, puis affiner le raisonnement.
+\item Dans un quartier de Bafoussam, on modélise les liaisons téléphoniques directes entre maisons par un graphe à $8$ sommets. Sept maisons ont respectivement $1$, $2$, $2$, $3$, $3$, $4$ et $5$ liaisons, et la somme des degrés vaut $24$. Quel est le degré de la huitième maison, et combien y a-t-il de liaisons au total ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Somme des degrés : $4+3+3+3+3 = 16$, donc $m = \dfrac{16}{2} = 8$ arêtes.
+\item \textbf{Test de parité :} Somme des degrés $= 5+4+3+2+1+1 = 16$ (paire). Nombre de degrés impairs : $5, 3, 1, 1$ soit $4$ (pair). Le test de parité \textbf{ne permet pas d'éliminer} cette suite ; c'est une condition nécessaire mais non suffisante.
+\textbf{Raisonnement structurel (affinage) :} Dans un graphe simple à $6$ sommets, le degré maximal est $5$. Le sommet de degré $5$ est adjacent à tous les autres. Les deux sommets de degré $1$ sont donc nécessairement adjacents \emph{uniquement} au sommet de degré $5$. Le sommet de degré $4$ doit être adjacent à $4$ sommets. Il l'est déjà au sommet de degré $5$ ; il lui faut $3$ voisins supplémentaires parmi les $4$ sommets restants (degrés $4, 3, 2, 1, 1$ restants $\to$ en fait les sommets restants ont degrés visés $4, 3, 2, 1, 1$ mais l'un des $1$ est déjà saturé...). Plus rigoureusement : les deux sommets de degré $1$ sont saturés (liés au sommet de degré $5$). Il reste les sommets de degrés visés $4, 3, 2$ (non saturés) et le sommet de degré $5$ (déjà saturé à $5$). Le sommet de degré $4$ doit se lier à $3$ de ces sommets restants non saturés, mais il n'y en a que $3$ (degrés $4, 3, 2$ visés). Il se lie donc à tous les trois. Le sommet de degré $3$ (visé) a maintenant au moins $2$ liaisons (vers degré $5$ et degré $4$), il lui en faut une troisième. Le sommet de degré $2$ (visé) a déjà $2$ liaisons (vers degré $5$ et degré $4$), il est saturé. Le sommet de degré $3$ ne peut plus se lier qu'au sommet de degré $4$ (déjà fait) ou aux sommets de degré $1$ (saturés). Contradiction. \textbf{Aucun graphe simple ne réalise cette suite de degrés.}
+\item Soit $x$ le degré de la huitième maison : $1+2+2+3+3+4+5+x = 24$, donc $20 + x = 24$ et $x = 4$. Le nombre total de liaisons est $m = \dfrac{24}{2} = 12$.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Le lemme des poignées de main, un héritage d'Euler]
+Cette propriété est traditionnellement appelée \emph{lemme des poignées de main} (\emph{handshaking lemma} en anglais). Le grand mathématicien suisse \textbf{Leonhard Euler} l'utilisait déjà en 1736 dans son célèbre article sur les \emph{ponts de Königsberg}, considéré comme l'acte de naissance de la théorie des graphes. Euler y étudiait la parité des degrés pour montrer qu'on ne pouvait pas traverser chaque pont de la ville exactement une fois. Trois siècles plus tard, ce même lemme est utilisé chaque jour : les ingénieurs de MTN ou d'Orange s'en servent pour vérifier la cohérence des plans de câblage des réseaux, et les concepteurs de réseaux sociaux pour analyser les connexions entre utilisateurs. Une petite formule, $ \sum d(s) = 2m $, et tout un monde d'applications !
+\end{savaistu}
+
+\coursec{Résolution de problèmes concrets à l'aide des graphes}
+
+Dans la section précédente, nous avons établi la propriété fondamentale de la théorie des graphes : dans tout graphe non orienté, la somme des degrés des sommets est égale au double du nombre d'arêtes. Cette propriété, et tous les outils construits depuis le début de la leçon (ordre, degré, adjacence, graphes simples, orientés, complets), n'ont de valeur que s'ils servent à \emph{résoudre des problèmes}. C'est précisément l'objet de cette dernière section : apprendre à regarder une situation de la vie courante — un tournoi de football à Yaoundé, un réseau de distribution d'eau, un conflit d'enclos au zoo de Mvog-Betsi — et à la traduire en un graphe que l'on sait analyser. Tu vas découvrir que la théorie des graphes est avant tout un \cle{art de la modélisation}.
+
+\courssub{La démarche générale de modélisation}
+
+Toute situation concrète traitée par les graphes repose sur le même schéma de pensée. On commence par repérer les \emph{objets} en jeu (personnes, villes, équipes, espèces animales) et la \emph{relation} qui les lie deux à deux (se connaître, être reliées par une route, s'affronter, être incompatibles). Le graphe n'est alors que la photographie mathématique de cette situation.
+
+\begin{methode}[Les 4 étapes de la modélisation par un graphe]
+Pour résoudre un problème concret à l'aide d'un graphe, on suit toujours la même démarche :
+\begin{enumerate}
+\item \textbf{Objets $\rightarrow$ sommets.} Identifier les objets de la situation ; chacun devient un sommet du graphe. Le nombre d'objets donne l'\cle{ordre} du graphe.
+\item \textbf{Relation $\rightarrow$ arêtes.} Choisir et \emph{énoncer clairement} la relation modélisée : deux sommets sont reliés par une arête (ou un arc si la relation a un sens) si et seulement si les objets correspondants sont en relation.
+\item \textbf{Question $\rightarrow$ propriété du graphe.} Traduire la question posée en langage de graphes : nombre de matchs = nombre d'arêtes ; ville la mieux desservie = sommet de degré maximal ; groupes compatibles = sommets non adjacents, etc.
+\item \textbf{Réponse $\rightarrow$ interprétation.} Résoudre dans le graphe (dénombrement, propriété de la somme des degrés, lecture du dessin), puis \emph{revenir au contexte} pour formuler la conclusion en français, avec les unités ou les objets concrets.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Bien choisir la relation modélisée]
+L'erreur la plus fréquente — et la plus grave — est de mal choisir la relation. Par exemple, dans un problème de tournoi, relier les équipes qui \emph{ne se rencontrent pas} au lieu de celles qui se rencontrent conduit à compter exactement le contraire de ce qui est demandé. De même, dans un problème de conflits, une arête doit représenter l'\emph{incompatibilité} (on cherche ensuite des sommets \emph{non} adjacents), et non la compatibilité. \textbf{Réflexe à acquérir :} avant de dessiner quoi que ce soit, écris une phrase du type « deux sommets sont adjacents si et seulement si \ldots ». Cette phrase est la clé de toute la modélisation.
+\end{attention}
+
+\courssub{Problème type 1 : organisation d'un tournoi}
+
+\textbf{Situation.} Le principal d'un lycée de Douala organise un tournoi inter-classes de football : chaque équipe rencontre toutes les autres une seule fois. Combien de matchs faut-il programmer ?
+
+\textbf{Modélisation.} Les objets sont les équipes (sommets) ; la relation est « se rencontrer ». Comme chaque équipe joue contre toutes les autres, le graphe est \cle{complet} : c'est $K_n$ où $n$ est le nombre d'équipes. La question « combien de matchs ? » se traduit par « combien d'arêtes possède $K_n$ ? ».
+
+\begin{propriete}[Nombre d'arêtes d'un graphe complet]
+Le graphe complet $K_n$ d'ordre $n$ possède
+\[ \frac{n(n-1)}{2} \quad \text{arêtes.} \]
+\emph{Démonstration (formatrice) :} dans $K_n$, chacun des $n$ sommets est de degré $n-1$. La somme des degrés vaut donc $n(n-1)$. D'après la propriété fondamentale, cette somme est le double du nombre d'arêtes $m$, d'où $2m = n(n-1)$, soit $m = \dfrac{n(n-1)}{2}$.
+\end{propriete}
+
+\begin{exemplebox}[Tournoi de 8 équipes]
+Un lycée de Yaoundé organise un tournoi où 8 équipes se rencontrent toutes une seule fois. Le graphe est $K_8$, complet d'ordre 8. Le nombre de matchs est le nombre d'arêtes :
+\[ m = \frac{8 \times 7}{2} = 28. \]
+Il faut donc programmer \textbf{28 matchs}. Si chaque journée permet de jouer 4 matchs, le tournoi durera $28 / 4 = 7$ journées.
+\end{exemplebox}
+
+\begin{exemplebox}[Poignées de main à un mariage]
+À un mariage à Bafoussam, 10 invités se saluent : chacun serre la main de tous les autres, une seule fois. Combien de poignées de main sont échangées ?
+
+Les invités sont les sommets, la relation est « se serrer la main » : le graphe est $K_{10}$. Chaque sommet est de degré 9, donc la somme des degrés vaut $10 \times 9 = 90$. Par la propriété fondamentale, le nombre d'arêtes (c'est-à-dire de poignées de main) est $90 / 2 = 45$. On retrouve bien $\dfrac{10 \times 9}{2} = 45$.
+\end{exemplebox}
+
+\courssub{Problème type 2 : réseau de transport ou de distribution}
+
+\textbf{Situation.} Une compagnie de transport dessert plusieurs villes du Littoral par des liaisons directes. On veut connaître la taille du réseau, la ville la mieux desservie, ou vérifier la cohérence des données.
+
+\textbf{Modélisation.} Les villes sont les sommets ; la relation est « être reliées par une liaison directe ». L'ordre du graphe donne le nombre de villes ; le degré d'un sommet donne le nombre de liaisons directes de la ville correspondante ; la ville la mieux desservie est le sommet de \cle{degré maximal}.
+
+\begin{exoresolu}[Réseau de distribution d'eau]
+CAMWATER relie 5 quartiers $A$, $B$, $C$, $D$, $E$ d'une ville par des canalisations directes. Les liaisons sont : $AB$, $AC$, $AD$, $BC$, $BE$, $CD$. Déterminer l'ordre du graphe, le degré de chaque sommet, le nombre total de canalisations, et le quartier le mieux desservi. Vérifier la propriété fondamentale.
+\tcblower
+\textbf{Modélisation :} sommets = quartiers ; arêtes = canalisations directes.
+
+\textbf{Ordre :} le graphe a 5 sommets, il est d'ordre 5.
+
+\textbf{Degrés :} on compte, pour chaque sommet, le nombre d'arêtes qui le touchent :
+\begin{align*}
+d(A) &= 3 \quad (AB,\ AC,\ AD) & d(B) &= 3 \quad (AB,\ BC,\ BE)\\
+d(C) &= 3 \quad (AC,\ BC,\ CD) & d(D) &= 2 \quad (AD,\ CD)\\
+d(E) &= 1 \quad (BE)
+\end{align*}
+
+\textbf{Nombre de canalisations :} les arêtes listées sont au nombre de 6.
+
+\textbf{Vérification :} somme des degrés $= 3+3+3+2+1 = 12 = 2 \times 6$. La propriété fondamentale est bien vérifiée.
+
+\textbf{Interprétation :} les quartiers $A$, $B$ et $C$ sont les mieux desservis (3 canalisations chacun) ; le quartier $E$ est le plus fragile : une seule canalisation l'alimente, et une panne sur $BE$ le prive d'eau. C'est exactement le genre de conclusion qu'un ingénieur réseau tire d'un tel graphe.
+\end{exoresolu}
+
+\courssub{Problème type 3 : compatibilités et conflits}
+
+\textbf{Situation.} Le zoo de Mvog-Betsi reçoit 6 espèces animales. Certaines espèces ne peuvent pas cohabiter dans le même enclos (prédateur et proie, agressivité). Comment répartir les animaux ?
+
+\textbf{Modélisation.} Les espèces sont les sommets ; la relation est « être \emph{incompatibles} » : deux sommets sont adjacents si et seulement si les espèces ne peuvent pas cohabiter. Deux espèces peuvent partager un enclos si et seulement si leurs sommets sont \emph{non adjacents}.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle, draw=popdark, fill=popblueL, inner sep=1.6pt, font=\small\bfseries}]
+\node (L) at (90:2.3) {L};
+\node (Z) at (150:2.3) {Z};
+\node (A) at (210:2.3) {A};
+\node (P) at (270:2.3) {P};
+\node (C) at (330:2.3) {C};
+\node (G) at (30:2.3) {G};
+\draw[popink, thick] (L) -- (Z);
+\draw[popink, thick] (L) -- (A);
+\draw[popink, thick] (L) -- (C);
+\draw[popink, thick] (L) -- (P);
+\draw[popink, thick] (P) -- (Z);
+\draw[popink, thick] (P) -- (A);
+\draw[popink, thick] (P) -- (G);
+\draw[popink, thick] (C) -- (A);
+\draw[popink, thick] (C) -- (G);
+\draw[popink, thick] (Z) -- (A);
+\end{tikzpicture}
+\end{center}
+\legende{Graphe de conflit : L = lion, P = panthère, Z = zèbre, A = antilope, C = crocodile, G = gazelle. Une arête relie deux espèces \emph{incompatibles}.}
+\end{popfigure}
+
+\textbf{Exploitation.} On lit les degrés : $d(L) = 4$, $d(P) = 4$, $d(Z) = 3$, $d(A) = 4$, $d(C) = 3$, $d(G) = 2$. La somme des degrés vaut $4+4+3+4+3+2 = 20$, donc le graphe a $10$ arêtes, ce que confirme le dessin. Pour former un enclos, on cherche un ensemble de sommets \emph{deux à deux non adjacents}. Par exemple :
+\begin{itemize}
+\item $Z$ n'est adjacent ni à $C$ ni à $G$, et $C$ n'est pas adjacent à $G$ : l'enclos $\{Z, C, G\}$ est valide ;
+\item $L$ et $P$ ne sont pas adjacents : on peut former l'enclos $\{L, P\}$ ;
+\item il reste $A$, qui est adjacent à tous les autres sommets sauf $G$\ldots\ mais $G$ est déjà placé avec $Z$ et $C$, et $A$ est incompatible avec $Z$ et $C$ : $A$ doit donc avoir son propre enclos.
+\end{itemize}
+Une répartition possible est donc : enclos 1 : zèbre, crocodile, gazelle ; enclos 2 : lion, panthère ; enclos 3 : antilope seule. Trois enclos suffisent.
+
+\begin{savaistu}[Vers la Terminale : la coloration de graphes]
+La question « quel est le nombre \emph{minimal} d'enclos ? » est un problème de \cle{coloration de graphe} : on cherche à attribuer une « couleur » (un enclos) à chaque sommet de sorte que deux sommets adjacents n'aient jamais la même couleur, avec le moins de couleurs possible. Ce nombre minimal s'appelle le \emph{nombre chromatique}. Les mêmes idées permettent de construire des emplois du temps (deux épreuves ayant des élèves communs ne peuvent avoir lieu en même temps) ou d'attribuer des fréquences radio aux émetteurs de MTN et d'Orange sans interférences. Tu étudieras cela en Terminale : la présente leçon en pose les fondations.
+\end{savaistu}
+
+\courssub{Problème type 4 : situation orientée}
+
+Certaines relations ont un \emph{sens} : une rue en sens unique ne se parcourt que dans une direction ; dans un organigramme, le chef dirige le subordonné et non l'inverse. On utilise alors un \cle{graphe orienté}, où chaque arête devient un \cle{arc} muni d'une flèche.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.2, every node/.style={circle, draw=popdark, fill=poporangeL, inner sep=1.6pt, font=\small\bfseries}, >=Stealth]
+\node (A) at (0,0) {A};
+\node (B) at (2.6,1.4) {B};
+\node (C) at (2.6,-1.4) {C};
+\node (D) at (5.2,1.4) {D};
+\node (E) at (5.2,-1.4) {E};
+\draw[->, poppurple, thick] (A) -- (B);
+\draw[->, poppurple, thick] (A) -- (C);
+\draw[->, poppurple, thick] (B) -- (D);
+\draw[->, poppurple, thick] (C) -- (E);
+\draw[->, poppurple, thick] (D) -- (E);
+\draw[->, poppurple, thick] (C) -- (B);
+\draw[->, poppurple, thick] (E) .. controls (3, -2.6) and (1.5,-2.2) .. (A);
+\end{tikzpicture}
+\end{center}
+\legende{Graphe orienté de la circulation entre 5 carrefours d'un quartier de Douala : chaque arc fléché est une rue en sens unique.}
+\end{popfigure}
+
+\textbf{Exploitation.} Dans un graphe orienté, on distingue, pour chaque sommet, les arcs qui \emph{partent} (degré sortant) et ceux qui \emph{arrivent} (degré entrant). Ici :
+\begin{itemize}
+\item de $A$ partent 2 arcs (vers $B$ et $C$) et 1 arc arrive (depuis $E$) ;
+\item le carrefour $E$ reçoit 2 arcs (depuis $C$ et $D$) et n'en émet qu'un (vers $A$) : c'est un point de convergence du trafic, candidat naturel à l'embouteillage ;
+\item peut-on aller de $A$ à $D$ ? Oui : $A \rightarrow B \rightarrow D$. Peut-on revenir de $D$ à $A$ ? Oui : $D \rightarrow E \rightarrow A$. Le quartier reste entièrement praticable malgré les sens uniques.
+\end{itemize}
+
+\begin{attention}[Arc et arête : ne pas confondre]
+Dans un graphe orienté, l'arc de $X$ vers $Y$ n'autorise le passage que de $X$ vers $Y$. Avant de conclure qu'un trajet est possible, vérifie le sens de \emph{chaque} flèche du chemin. Et n'oublie pas : la propriété « somme des degrés = double du nombre d'arêtes » s'adapte en « somme des degrés sortants = somme des degrés entrants = nombre d'arcs ».
+\end{attention}
+
+\courssub{Graphes et formes planes : triangles, quadrilatères, symétries}
+
+Un graphe dessiné est aussi une \emph{figure géométrique}, et les connaissances sur les formes planes et les transformations élémentaires y trouvent leur place.
+
+\textbf{Figures connues dans un graphe.} Trois sommets deux à deux adjacents forment un \emph{triangle} du graphe ; quatre sommets reliés en boucle forment un \emph{quadrilatère} (un cycle de longueur 4). Dans le graphe de conflit de la figure précédente, les sommets $L$, $Z$, $A$ sont deux à deux adjacents : ils forment un triangle, ce qui signifie que ces trois espèces sont \emph{mutuellement} incompatibles — aucune paire ne peut cohabiter. Repérer les triangles est donc un outil d'analyse : un triangle de conflits impose trois enclos distincts à lui seul.
+
+\textbf{Symétries d'un graphe dessiné sur un polygone régulier.} Place les 6 sommets du graphe de conflit aux sommets d'un hexagone régulier, comme sur la figure. On peut alors lire la configuration à l'aide des transformations du plan :
+\begin{itemize}
+\item la symétrie axiale d'axe la droite $(LP)$ (qui passe par le centre de l'hexagone et les milieux des côtés $[ZA]$ et $[CG]$) échange $Z$ et $G$, $A$ et $C$, et laisse $L$ et $P$ fixes : les arêtes $LZ$ et $LG$ se correspondent, de même que $ZA$ et $GC$ ;
+\item les sommets $L$ et $P$, images l'un de l'autre par la rotation de centre le centre de l'hexagone et d'angle $180\degres$ (symétrie centrale), jouent des rôles analogues : on vérifie que $d(L) = d(P) = 4$.
+\end{itemize}
+Deux sommets échangés par une symétrie du graphe ont \emph{le même degré} et des voisinages de même structure : les transformations élémentaires permettent ainsi de \emph{prévoir} des propriétés du graphe sans tout recompter.
+
+\begin{attention}[Le dessin n'est pas le graphe]
+Un même graphe peut être dessiné de mille façons : deux arêtes qui se croisent sur le dessin ne créent \emph{pas} un nouveau sommet, et un dessin très symétrique peut cacher des asymétries (vérifie toujours les degrés sur la liste des arêtes). Inversement, les symétries lues sur un dessin ne sont des propriétés du graphe que si elles respectent \emph{toutes} les arêtes.
+\end{attention}
+
+\courssub{Rédaction complète d'une solution : un modèle à imiter}
+
+Au Probatoire, un problème de graphes se rédige en suivant les 4 étapes de la modélisation. Voici un modèle complet.
+
+\begin{exoresolu}[Festival des arts à Kribi]
+Lors d'un festival, 6 troupes de danse $T_1, T_2, \ldots, T_6$ doivent se produire. Deux troupes partageant des musiciens ne peuvent pas répéter en même temps. Les conflits sont : $T_1$ avec $T_2$ et $T_3$ ; $T_2$ avec $T_3$ et $T_4$ ; $T_3$ avec $T_5$ ; $T_4$ avec $T_5$ et $T_6$.
+\begin{enumerate}
+\item Modéliser la situation par un graphe et préciser sa nature.
+\item Déterminer l'ordre du graphe et le degré de chaque sommet.
+\item Vérifier la propriété fondamentale et en déduire le nombre de conflits.
+\item Proposer une répartition des troupes en créneaux de répétition.
+\end{enumerate}
+\tcblower
+\textbf{1. Modélisation.} Les objets sont les 6 troupes : ce sont les sommets. \emph{Relation choisie : deux sommets sont adjacents si et seulement si les troupes correspondantes partagent des musiciens (conflit).} La relation est symétrique et sans boucle : le graphe est \textbf{simple et non orienté}. Arêtes : $T_1T_2$, $T_1T_3$, $T_2T_3$, $T_2T_4$, $T_3T_5$, $T_4T_5$, $T_4T_6$.
+
+\textbf{2. Ordre et degrés.} Le graphe est d'ordre 6. On compte :
+\[ d(T_1) = 2,\quad d(T_2) = 3,\quad d(T_3) = 3,\quad d(T_4) = 3,\quad d(T_5) = 2,\quad d(T_6) = 1. \]
+
+\textbf{3. Vérification.} Somme des degrés : $2+3+3+3+2+1 = 14$. D'après la propriété fondamentale, le nombre d'arêtes est $14/2 = 7$, ce qui correspond exactement aux 7 conflits listés. La modélisation est cohérente.
+
+\textbf{4. Répartition.} On cherche des ensembles de sommets deux à deux non adjacents. On remarque le triangle $T_1T_2T_3$ (trois conflits mutuels) : ces trois troupes doivent occuper trois créneaux différents. On propose :
+\begin{itemize}
+\item créneau 1 : $T_1$, $T_4$ (non adjacents) ;
+\item créneau 2 : $T_2$, $T_5$ (non adjacents) ;
+\item créneau 3 : $T_3$, $T_6$ (non adjacents).
+\end{itemize}
+\textbf{Conclusion dans le contexte :} trois créneaux de répétition suffisent, et trois sont nécessaires à cause du triangle de conflits $T_1T_2T_3$. Le festival peut donc organiser ses répétitions sur une seule matinée de trois créneaux.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer : réseau de taxis-motos]
+Dans une commune de l'Extrême-Nord, 7 stations de taxis-motos sont reliées par des pistes directes. Chaque station est reliée à exactement 3 autres.
+\begin{enumerate}
+\item Modéliser la situation par un graphe : préciser les sommets, la relation, la nature du graphe.
+\item Un tel graphe existe-t-il ? Justifier à l'aide de la propriété fondamentale.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : réseau de taxis-motos]
+\textbf{1.} Sommets : les 7 stations. Relation : « être reliées par une piste directe », symétrique et sans boucle : graphe simple non orienté d'ordre 7.
+
+\textbf{2.} Si chaque sommet était de degré 3, la somme des degrés vaudrait $7 \times 3 = 21$, qui est \emph{impair}. Or la propriété fondamentale impose que cette somme soit le double du nombre d'arêtes, donc \emph{paire}. Contradiction : un tel réseau \textbf{n'existe pas}. Il faudra qu'au moins une station soit reliée à un nombre pair d'autres stations.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Modéliser, c'est suivre 4 étapes : \textbf{objets $\rightarrow$ sommets}, \textbf{relation $\rightarrow$ arêtes} (énoncée explicitement), \textbf{question $\rightarrow$ propriété du graphe}, \textbf{réponse $\rightarrow$ interprétation} dans le contexte.
+\item Tournoi où chacun rencontre tous les autres : graphe complet $K_n$, nombre de matchs $= \dfrac{n(n-1)}{2}$.
+\item Réseau : ordre = nombre de sites ; degré = nombre de liaisons ; site le mieux desservi = sommet de degré maximal.
+\item Conflits : arête = incompatibilité ; un groupe compatible = sommets deux à deux non adjacents ; un triangle de conflits impose trois groupes distincts.
+\item Relation à sens unique : graphe orienté, arcs fléchés ; vérifier le sens de \emph{chaque} flèche.
+\item La propriété fondamentale (somme des degrés $= 2 \times$ nombre d'arêtes) sert à compter, vérifier, et parfois prouver l'\emph{impossibilité} d'une situation (argument de parité).
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Introduction à la théorie des graphes}
+
+\courssub{Objectifs de la leçon}
+
+À l'issue de cette leçon, tu seras capable de :
+\begin{itemize}
+\item traduire une situation concrète de la vie courante (tournoi sportif, réseau de distribution d'eau, réseau téléphonique) en un \cle{graphe} ;
+\item justifier qu'une représentation graphique est un graphe, puis qu'il est \cle{simple}, \cle{orienté} ou \cle{complet} ;
+\item déterminer l'\cle{ordre} d'un graphe et le \cle{degré} de chacun de ses sommets ;
+\item reconnaître des \cle{sommets adjacents} et repérer un éventuel \cle{sommet isolé} ;
+\item exploiter la \cle{propriété fondamentale} : la somme des degrés des sommets est égale au double du nombre d'arêtes, pour calculer un nombre de matchs, de canalisations ou vérifier la cohérence de données ;
+\item rédiger un rapport de modélisation structuré en quatre étapes : \emph{comprendre}, \emph{modéliser}, \emph{calculer}, \emph{conclure et vérifier}.
+\end{itemize}
+
+\courssub{Situations de modélisation et notion de graphe}
+
+Nous partons de deux situations réelles, très différentes en apparence, qui partageront la même structure mathématique.
+
+\textbf{Partie A : Le tournoi de football du quartier Nkolbisson (Yaoundé).}
+
+Le comité de développement organise un tournoi réunissant \textbf{7 équipes} : Aigles ($A$), Baobabs ($B$), Castors ($C$), Diamants ($D$), Étoiles ($E$), Flamants ($F$) et Gazelles ($G$). Règlement : \emph{chaque équipe rencontre chacune des autres exactement une fois} (tournoi toutes rondes simple), et aucune équipe ne joue contre elle-même. Le président M. Etoundi doit réserver le terrain municipal (\num{5000} FCFA par match). \emph{Combien de matchs au total ? Quel budget prévoir ?}
+
+\textbf{Partie B : Le réseau d'eau potable de CAMWATER à Nkolbisson.}
+
+Six réservoirs $R_1$ à $R_6$ sont reliés par des canalisations bidirectionnelles. Le tableau ci-dessous liste les liaisons directes :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Réservoir} & \textbf{Relié directement à} \\
+\hline
+$R_1$ & $R_2$, $R_3$, $R_4$ \\
+\hline
+$R_2$ & $R_1$, $R_3$ \\
+\hline
+$R_3$ & $R_1$, $R_2$, $R_4$, $R_5$ \\
+\hline
+$R_4$ & $R_1$, $R_3$, $R_5$ \\
+\hline
+$R_5$ & $R_3$, $R_4$ \\
+\hline
+$R_6$ & aucun \\
+\hline
+\end{tabularx}
+\end{center}
+
+L'ingénieur cherche : le réservoir le mieux connecté (point névralgique), l'existence d'un réservoir isolé (urgence), et le nombre total de canalisations pour valider la cohérence du tableau.
+
+\courssub{Ordre d'un graphe, degré d'un sommet, sommets adjacents}
+
+\begin{definition}[Graphe, sommet, arête]
+Un \cle{graphe} $G$ est un couple $(S, A)$ où $S$ est un ensemble fini non vide de \cle{sommets} (ou nœuds) et $A$ est un ensemble d'\cle{arêtes}, chaque arête étant un couple non ordonné de deux sommets (éventuellement identiques). On note $G = (S, A)$.
+\end{definition}
+
+\begin{definition}[Ordre d'un graphe]
+L'\cle{ordre} d'un graphe $G$, noté $|S|$ ou $n(G)$, est le nombre de ses sommets.
+\end{definition}
+
+\begin{definition}[Degré d'un sommet]
+Le \cle{degré} d'un sommet $s \in S$, noté $d(s)$, est le nombre d'arêtes ayant $s$ pour extrémité. Une boucle (arête reliant un sommet à lui-même) compte pour $2$ dans le degré.
+\end{definition}
+
+\begin{definition}[Sommets adjacents, sommet isolé]
+Deux sommets $u$ et $v$ sont \cle{adjacents} s'il existe une arête $\{u, v\} \in A$. Un sommet de degré $0$ est dit \cle{isolé}.
+\end{definition}
+
+\courssub{Graphes simples, graphes orientés, graphes complets}
+
+\begin{definition}[Graphe simple]
+Un graphe est \cle{simple} s'il ne contient \emph{ni boucle} (arête reliant un sommet à lui-même), \emph{ni arêtes multiples} (plusieurs arêtes reliant le même couple de sommets).
+\end{definition}
+
+\begin{definition}[Graphe orienté]
+Un \cle{graphe orienté} (ou \cle{digraphe}) est un couple $(S, \mathcal{A})$ où $\mathcal{A}$ est un ensemble d'\cle{arcs}, chaque arc étant un couple \emph{ordonné} $(u, v)$ de sommets. On représente un arc par une flèche $u \to v$. Le \cle{degré sortant} $d^+(u)$ est le nombre d'arcs partant de $u$ ; le \cle{degré entrant} $d^-(u)$ est le nombre d'arcs arrivant en $u$.
+\end{definition}
+
+\begin{definition}[Graphe complet]
+Un graphe simple est \cle{complet} si \emph{tout couple de sommets distincts} est adjacent. On le note $K_n$ où $n$ est l'ordre. Dans $K_n$, chaque sommet a pour degré $n-1$.
+\end{definition}
+
+\begin{propriete}[Caractérisation des graphes complets]
+Un graphe simple d'ordre $n$ est complet \ssi\ il possède exactement $\dfrac{n(n-1)}{2}$ arêtes.
+\end{propriete}
+
+\courssub{Propriété fondamentale : somme des degrés et nombre d'arêtes}
+
+\begin{experience}[Démonstration de la propriété fondamentale (double comptage)]
+Soit $G = (S, A)$ un graphe (simple ou non, non orienté) d'ordre $n$ et de taille $m = |A|$.
+Comptons le nombre $N$ de couples $(s, a)$ où $s$ est un sommet et $a$ une arête incidente à $s$.
+\begin{enumerate}
+\item \textbf{Par les sommets :} pour chaque sommet $s$, il y a $d(s)$ arêtes incidentes. Donc $N = \sum_{s \in S} d(s)$.
+\item \textbf{Par les arêtes :} chaque arête $a = \{u, v\}$ (ou boucle $\{u, u\}$) est incidente à \emph{exactement 2} extrémités (une boucle compte pour ses deux extrémités confondues). Donc $N = 2m$.
+\end{enumerate}
+En égalant les deux expressions : $\displaystyle \sum_{s \in S} d(s) = 2m$.
+\end{experience}
+
+\begin{propriete}[Propriété fondamentale -- Exigible au Probatoire]
+Dans tout graphe non orienté, la somme des degrés de tous les sommets est égale au double du nombre d'arêtes :
+\[ \sum_{s \in S} d(s) = 2m. \]
+\textbf{Conséquences immédiates :}
+\begin{itemize}
+\item La somme des degrés est toujours un nombre \textbf{pair}.
+\item Le nombre de sommets de degré \textbf{impair} est \textbf{pair}.
+\item Dans un graphe complet $K_n$ : $\sum d(s) = n(n-1) = 2m \implies m = \frac{n(n-1)}{2}$.
+\end{itemize}
+\end{propriete}
+
+\courssub{Résolution de problèmes concrets : Activité d'intégration}
+
+\courssub{Consignes de travail}
+
+Travail en groupes de 4 élèves. Chaque groupe rédige un mini-rapport structuré en 4 étapes : \textbf{1. Comprendre}, \textbf{2. Modéliser}, \textbf{3. Calculer}, \textbf{4. Conclure et vérifier}.
+
+\textbf{Partie A. Tournoi de Nkolbisson}
+\begin{enumerate}
+\item En prenant les équipes comme sommets, expliquer ce que représente une arête. Justifier que cette modélisation est bien un graphe.
+\item Justifier que ce graphe est \cle{simple} et \cle{complet}. Quel est son ordre ?
+\item Quel est le degré de chaque sommet ? En déduire la somme des degrés.
+\item En utilisant la propriété fondamentale, calculer le nombre total d'arêtes (matchs).
+\item Retrouver ce résultat par la formule $\dfrac{n(n-1)}{2}$ du graphe complet d'ordre $n$. Les deux résultats concordent-ils ?
+\item Calculer le budget total de location du terrain (\num{5000} FCFA/match).
+\end{enumerate}
+
+\textbf{Partie B. Réseau CAMWATER}
+\begin{enumerate}
+\item Construire le graphe du réseau : sommets = réservoirs, arêtes = canalisations directes.
+\item Justifier que ce graphe est simple et non orienté. Est-il complet ? Justifier.
+\item Donner l'ordre du graphe et le degré de chaque sommet. Quels sommets sont adjacents à $R_3$ ?
+\item Identifier le réservoir le mieux connecté. Existe-t-il un sommet isolé ? Que conseilles-tu à la CAMWATER ?
+\item Calculer la somme des degrés, puis en déduire le nombre de canalisations. Vérifier en comptant les arêtes sur la figure et dans le tableau.
+\end{enumerate}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé de l'activité d'intégration]
+\textbf{Partie A. Tournoi de Nkolbisson}
+\begin{enumerate}
+\item \textbf{Modélisation :} L'ensemble des sommets est $S = \{A, B, C, D, E, F, G\}$. Une arête $\{X, Y\}$ signifie « l'équipe $X$ rencontre l'équipe $Y$ ». C'est bien un graphe : ensemble de sommets fini, arêtes reliant des paires de sommets.
+\item \textbf{Nature du graphe :} Aucune équipe ne se rencontre elle-même $\Rightarrow$ pas de boucle. Deux équipes ne se rencontrent qu'une fois $\Rightarrow$ pas d'arêtes multiples. Le graphe est \cle{simple}. Chaque équipe rencontre toutes les autres $\Rightarrow$ tout couple de sommets distincts est adjacent. Le graphe est \cle{complet}. Son ordre est $n = 7$.
+\item \textbf{Degrés :} Chaque équipe joue contre les 6 autres. $\forall X \in S,\ d(X) = 6$. Somme des degrés : $\sum d(X) = 7 \times 6 = 42$.
+\item \textbf{Nombre de matchs (propriété fondamentale) :} $2m = 42 \implies m = 21$ matchs.
+\item \textbf{Vérification (formule graphe complet) :} $m = \dfrac{n(n-1)}{2} = \dfrac{7 \times 6}{2} = 21$. Concordance parfaite.
+\item \textbf{Budget :} $21 \times \num{5000} = \num{105000}$ FCFA.
+\end{enumerate}
+\tcblower
+\textbf{Partie B. Réseau CAMWATER}
+\begin{enumerate}
+\item \textbf{Construction :} Voir figure ci-dessous. Sommets $R_1,\dots,R_6$. Arêtes d'après le tableau.
+\item \textbf{Nature :} Pas de boucle, pas d'arêtes doubles $\Rightarrow$ \cle{simple}. Canalisations bidirectionnelles $\Rightarrow$ \cle{non orienté}. Non complet : $R_1$ et $R_5$ ne sont pas reliés ; $R_6$ n'est relié à personne.
+\item \textbf{Ordre et degrés :} Ordre $n = 6$.
+\begin{align*}
+d(R_1) &= 3 \quad (R_2, R_3, R_4) \\
+d(R_2) &= 2 \quad (R_1, R_3) \\
+d(R_3) &= 4 \quad (R_1, R_2, R_4, R_5) \\
+d(R_4) &= 3 \quad (R_1, R_3, R_5) \\
+d(R_5) &= 2 \quad (R_3, R_4) \\
+d(R_6) &= 0 \quad (\text{isolé})
+\end{align*}
+Sommets adjacents à $R_3$ : $R_1, R_2, R_4, R_5$.
+\item \textbf{Analyse :} Réservoir le mieux connecté : $R_3$ (degré 4) = point névralgique à surveiller. $R_6$ est un \cle{sommet isolé} : zone non desservie $\Rightarrow$ raccordement d'urgence recommandé.
+\item \textbf{Nombre de canalisations :} Somme des degrés $= 3+2+4+3+2+0 = 14$. Propriété fondamentale : $2m = 14 \implies m = 7$ canalisations.
+\textbf{Vérification :} Arêtes listées : $R_1R_2,\ R_1R_3,\ R_1R_4,\ R_2R_3,\ R_3R_4,\ R_3R_5,\ R_4R_5$. Exactement 7. Le tableau est cohérent (chaque canalisation y apparaît deux fois, total 14 cases = somme des degrés).
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle, draw=popblue, fill=popblueL, inner sep=2pt, font=\small\bfseries, minimum width=0.7cm}]
+% Coordonnées avec points (TikZ exige le point décimal)
+\node (R1) at (0, 2.5) {$R_1$};
+\node (R2) at (-2.2, 1.0) {$R_2$};
+\node (R3) at (0, 1.0) {$R_3$};
+\node (R4) at (2.2, 1.0) {$R_4$};
+\node (R5) at (1.1, -0.8) {$R_5$};
+\node (R6) at (-2.2, -0.8) {$R_6$};
+% Arêtes
+\draw[popdark, thick] (R1)--(R2) (R1)--(R3) (R1)--(R4) (R2)--(R3) (R3)--(R4) (R3)--(R5) (R4)--(R5);
+% Mise en évidence R3 (névralgique) et R6 (isolé)
+\node[draw=poporange, thick, circle, minimum width=0.9cm] at (0, 1.0) {};
+\node[draw=poppink, thick, circle, minimum width=0.9cm] at (-2.2, -0.8) {};
+\end{tikzpicture}
+\end{center}
+\legende{Graphe du réseau CAMWATER : 6 sommets, 7 arêtes. $R_3$ (entouré orange) est le plus connecté ; $R_6$ (entouré rose) est isolé.}
+\end{popfigure}
+
+\begin{attention}[Pièges fréquents et points de vigilance]
+\begin{itemize}
+\item \textbf{Comptage dans le tableau :} Dans un tableau d'adjacence (comme Partie B), chaque arête est listée \emph{deux fois} (une par extrémité). Le total des cases remplies donne la \emph{somme des degrés}, \textbf{pas} le nombre d'arêtes. Il faut \textbf{diviser par 2}.
+\item \textbf{Boucle et degré :} Si une boucle existe (graphe non simple), elle ajoute \textbf{2} au degré de son sommet (elle a deux extrémités confondues). La propriété $\sum d(s) = 2m$ reste valide.
+\item \textbf{Graphe orienté :} La propriété fondamentale ne s'applique \emph{pas} directement aux arcs. On a $\sum d^+(s) = \sum d^-(s) = m$ (nombre d'arcs).
+\item \textbf{Degré impair :} Le nombre de sommets de degré impair est toujours pair (conséquence de la propriété). Utile pour vérifier rapidement une liste de degrés.
+\item \textbf{Notation :} Ne pas confondre $n$ (ordre = nb sommets) et $m$ (taille = nb arêtes).
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Histoire et applications au Cameroun]
+\begin{itemize}
+\item \textbf{Origines (1736) :} Leonhard Euler résout le problème des \emph{7 ponts de Königsberg} : « Peut-on traverser chaque pont une seule fois ? » $\rightarrow$ naissance de la théorie des graphes.
+\item \textbf{CAMTEL / MTN / Orange :} Le réseau de fibre optique ou d'antennes relais est un graphe (sommets = centrailles/antennes, arêtes = liaisons). Chercher le chemin le plus court = algorithme de Dijkstra (Terminale).
+\item \textbf{Électrification rurale (AER/ENEO) :} Relier des villages au réseau au coût minimal = \emph{arbre couvrant de poids minimum} (algorithme de Kruskal/Prim).
+\item \textbf{Transport (Camrail, cars interurbains) :} Gares = sommets, liaisons directes = arêtes (pondérées par distance/temps/coût).
+\item \textbf{Réseaux sociaux :} Amis Facebook = graphe non orienté ; Abonnés Twitter/X = graphe orienté (arc $A \to B$ si $A$ suit $B$).
+\end{itemize}
+\end{savaistu}
+
+\courssub{Bilan et synthèse}
+
+Cette leçon a permis d'installer les concepts fondamentaux à travers la modélisation :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Notion} & \textbf{Définition / Propriété} & \textbf{Illustration (Activité)} \\
+\hline
+Graphe & Ensemble de sommets + arêtes & Équipes / Réservoirs \\
+\hline
+Ordre ($n$) & Nombre de sommets & $n=7$ (tournoi), $n=6$ (eau) \\
+\hline
+Degré $d(s)$ & Nb d'arêtes incidentes à $s$ & $d=6$ (chaque équipe), $d(R_3)=4$ \\
+\hline
+Adjacence & Deux sommets reliés par une arête & $R_3$ adjacent à $R_1,R_2,R_4,R_5$ \\
+\hline
+Sommet isolé & $d(s)=0$ & $R_6$ (urgence raccordement) \\
+\hline
+Graphe simple & Pas de boucle, pas d'arêtes multiples & Les deux graphes de l'activité \\
+\hline
+Graphe orienté & Arcs (flèches) au lieu d'arêtes & Réseau Twitter, sens unique routier \\
+\hline
+Graphe complet $K_n$ & Tous couples distincts adjacents & Tournoi toutes rondes ($K_7$) \\
+\hline
+Propriété fondamentale & $\sum d(s) = 2m$ & $42=2\times21$ ; $14=2\times7$ \\
+\hline
+Formule $K_n$ & $m = \frac{n(n-1)}{2}$ & $21 = \frac{7\times6}{2}$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\vspace{0.5em}
+\noindent \textbf{Démarche type pour tout problème de modélisation par graphe :}
+\begin{enumerate}
+\item \textbf{Comprendre} : Identifier les objets (sommets) et les relations (arêtes/arcs). Préciser si orienté ou non.
+\item \textbf{Modéliser} : Dessiner le graphe ou écrire la liste d'adjacence / matrice. Vérifier : simple ? complet ? sommets isolés ?
+\item \textbf{Calculer} : Ordre, degrés, somme des degrés, nombre d'arêtes (propriété fondamentale), chemins, etc.
+\item \textbf{Conclure et vérifier} : Répondre à la question posée (budit, nombre de canalisations, point névralgique). Vérifier la cohérence (somme degrés paire, comptage visuel, formule $K_n$).
+\end{enumerate}
+
+\courssub{Exercices d'entraînement (Probatoire type)}
+
+\begin{exercice}[Exercice 1 -- Réseau téléphonique]
+Une entreprise installe un réseau téléphonique entre 5 bâtiments $B_1$ à $B_5$. Les liaisons directes (bidirectionnelles) sont : $B_1-B_2$, $B_1-B_3$, $B_2-B_3$, $B_2-B_4$, $B_3-B_4$, $B_3-B_5$, $B_4-B_5$.
+\begin{enumerate}
+\item Représenter ce réseau par un graphe. Donner son ordre.
+\item Calculer le degré de chaque bâtiment. Quel bâtiment est le plus connecté ?
+\item Vérifier la propriété fondamentale. Combien y a-t-il de liaisons au total ?
+\item Ce graphe est-il complet ? Justifier.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Exercice 2 -- Tournoi d'échecs]
+Huit joueurs participent à un tournoi toutes rondes (chacun rencontre tous les autres une fois). Une victoire rapporte 1 point, une nulle 0,5 point, une défaite 0 point.
+\begin{enumerate}
+\item Modéliser par un graphe. Préciser sa nature (simple, complet, orienté...). Donner son ordre.
+\item Combien de parties au total seront jouées ?
+\item À la fin du tournoi, la somme des points de tous les joueurs est 28. Combien y a-t-il eu de parties nulles ? (Indication : chaque partie distribue 1 point au total).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Exercice 3 -- Vérification de données]
+Un étudiant note les degrés des 6 sommets d'un graphe simple : $3, 3, 2, 2, 1, 1$.
+\begin{enumerate}
+\item Ces degrés sont-ils possibles pour un graphe simple ? Justifier par la propriété fondamentale.
+\item Si oui, combien d'arêtes possède ce graphe ?
+\item Peut-on avoir un graphe simple d'ordre 5 avec les degrés $4, 4, 3, 2, 1$ ? Justifier.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item Ordre $n=5$. Graphe simple non orienté.
+\item Degrés : $d(B_1)=2$, $d(B_2)=3$, $d(B_3)=4$, $d(B_4)=3$, $d(B_5)=2$. Le plus connecté : $B_3$ (degré 4).
+\item Somme degrés $= 2+3+4+3+2 = 14$. $2m=14 \Rightarrow m=7$ liaisons. Vérifié sur la liste (7 traits d'union).
+\item Non complet : $K_5$ aurait $\frac{5\times4}{2}=10$ arêtes. Ici $m=7 < 10$. Par ex. $B_1$ et $B_4$ ne sont pas adjacents.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2]
+\begin{enumerate}
+\item Sommets = 8 joueurs. Arête = partie jouée. Graphe simple, complet, non orienté. Ordre $n=8$.
+\item Nombre de parties $m = \frac{8\times7}{2} = 28$ parties.
+\item Si pas de nulle : 28 parties $\times$ 1 point = 28 points. Somme observée = 28. Donc \textbf{0 partie nulle}.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3]
+\begin{enumerate}
+\item Somme degrés $= 3+3+2+2+1+1 = 12$ (pair). $2m=12 \Rightarrow m=6$. Possible (ex: deux triangles disjoints ou un cycle $C_6$ avec une corde).
+\item $m=6$ arêtes.
+\item Somme degrés $= 4+4+3+2+1 = 14$ (pair). $m=7$. Mais dans un graphe simple d'ordre 5, degré max = 4. Deux sommets de degré 4 $\Rightarrow$ ils sont reliés à tous les autres (donc entre eux). Le sommet de degré 1 ne peut être relié qu'à un seul. Contradiction : les deux sommets de degré 4 sont reliés au sommet de degré 1 $\Rightarrow$ ce dernier aurait degré $\ge 2$. \textbf{Impossible}.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Introduction à la théorie des graphes}
+
+\courssub{Situations de modélisation et notion de graphe}
+
+\begin{definition}[Graphe, sommet, arête, boucle]
+Un \cle{graphe} $G$ est un couple $(S, A)$ où :
+\begin{itemize}
+\item $S$ est un ensemble fini non vide dont les éléments sont appelés \cle{sommets} (ou nœuds) ;
+\item $A$ est un ensemble fini d'\cle{arêtes}, chaque arête étant une paire non ordonnée de sommets (éventuellement identiques).
+\end{itemize}
+Une arête reliant un sommet à lui-même est appelée une \cle{boucle}.
+\end{definition}
+
+\begin{methode}[Reconnaître un graphe]
+Pour justifier qu'une représentation graphique est un \cle{graphe}, on procède en trois étapes :
+\begin{enumerate}
+\item Repérer les \cle{sommets} : ce sont les points (ou « nœuds ») de la figure, souvent désignés par des lettres.
+\item Repérer les \cle{arêtes} : ce sont les lignes (segments ou courbes) reliant deux sommets. Chaque arête relie exactement deux sommets (éventuellement confondus : c'est alors une \cle{boucle}).
+\item Vérifier que \textbf{toute arête a ses deux extrémités sur des sommets} : une ligne qui « flotte » sans extrémité sur un sommet disqualifie la figure.
+\end{enumerate}
+\textbf{Réflexe rédaction :} conclure par la phrase canonique : « La figure est constituée d'un ensemble fini de sommets et d'arêtes reliant des paires de sommets : c'est un graphe. »
+\begin{attention}
+Le croisement de deux arêtes \textbf{en dehors d'un sommet} n'est pas un sommet ! Le nombre de sommets se compte uniquement sur les points marqués.
+\end{attention}
+\end{methode}
+
+\begin{exoresolu}[Plan de quartier]
+Cinq villes du Littoral $A$, $B$, $C$, $D$, $E$ sont reliées par des routes bitumées : $A$--$B$, $A$--$C$, $B$--$C$, $B$--$D$, $C$--$E$ et $D$--$E$. On représente chaque ville par un point et chaque route par un trait.
+\begin{enumerate}
+\item Justifier que cette représentation est un graphe.
+\item Deux routes se croisent sur le dessin en un point $M$ qui n'est pas une ville. $M$ est-il un sommet ?
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item La représentation est constituée :
+\begin{itemize}
+\item d'un ensemble fini de cinq points $A$, $B$, $C$, $D$, $E$ : les \cle{sommets} ;
+\item de six traits reliant des paires de sommets : les \cle{arêtes} $AB$, $AC$, $BC$, $BD$, $CE$, $DE$.
+\end{itemize}
+Chaque arête a bien ses deux extrémités sur des sommets. \textbf{Conclusion :} la représentation est un graphe, car elle est formée d'un ensemble fini de sommets reliés par des arêtes.
+\item $M$ n'est pas une ville, donc $M$ n'est pas un sommet du graphe. Le croisement de deux arêtes en un point non marqué ne crée pas de sommet : c'est un simple artefact du dessin. Le graphe conserve ses $5$ sommets et ses $6$ arêtes.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={circle, draw=popdark, fill=popblueL, thick, minimum size=7mm, inner sep=0pt}]
+% Sommets
+\node (A) at (0,2) {$A$};
+\node (B) at (2,2) {$B$};
+\node (C) at (2.6,0) {$C$};
+\node (D) at (1.4,0) {$D$};
+\node (E) at (4,2) {$E$};
+% Arêtes
+\draw[popblue, thick] (A) -- (B) node[midway, above, fill=white, inner sep=1pt] {$AB$};
+\draw[popblue, thick] (A) -- (C);
+\draw[popblue, thick] (B) -- (C);
+\draw[popblue, thick] (B) -- (D);
+\draw[popblue, thick] (C) -- (E);
+\draw[popblue, thick] (D) -- (E);
+% Croisement artificiel M (AC et BD se croisent presque, on force un croisement visible pour l'exemple)
+% On dessine AC et BD avec un léger décalage pour montrer le croisement M
+\draw[poporange, dashed, thick] (A) -- (C);
+\draw[poporange, dashed, thick] (B) -- (D);
+% Point M au croisement approximatif
+\coordinate (M) at (intersection of A--C and B--D);
+\fill[poporange] (M) circle (2pt) node[above right, black, fill=white, inner sep=1pt] {$M$};
+% Légendes des arêtes réelles (noir)
+\draw[popdark, very thick] (A) -- (B);
+\draw[popdark, very thick] (A) -- (C);
+\draw[popdark, very thick] (B) -- (C);
+\draw[popdark, very thick] (B) -- (D);
+\draw[popdark, very thick] (C) -- (E);
+\draw[popdark, very thick] (D) -- (E);
+\end{tikzpicture}
+\legende{Représentation du graphe des 5 villes. Le point $M$ (orange) est un croisement d'arêtes, \textbf{pas} un sommet.}
+\end{popfigure}
+
+\courssub{Ordre d'un graphe, degré d'un sommet, sommets adjacents}
+
+\begin{definition}[Ordre, degré, sommet isolé, sommets adjacents]
+Soit $G=(S,A)$ un graphe.
+\begin{itemize}
+\item L'\cle{ordre} de $G$ est le cardinal de $S$, noté $|S|$ ou $n$. C'est le nombre total de sommets (sommet isolé compris).
+\item Le \cle{degré} d'un sommet $x \in S$, noté $d(x)$, est le nombre d'arêtes incidentes à $x$. \textbf{Une boucle en $x$ compte pour $2$} dans $d(x)$.
+\item Un sommet de degré $0$ est appelé \cle{sommet isolé}.
+\item Deux sommets $x$ et $y$ sont dits \cle{adjacents} s'il existe au moins une arête les reliant.
+\end{itemize}
+\end{definition}
+
+\begin{methode}[Ordre et degré]
+\begin{enumerate}
+\item \textbf{Ordre d'un graphe :} compter le nombre de \cle{sommets}. On le note souvent $n$. Un sommet \cle{isolé} (de degré $0$) \textbf{compte} dans l'ordre.
+\item \textbf{Degré d'un sommet $x$}, noté $d(x)$ : compter le nombre d'arêtes dont $x$ est une extrémité. \textbf{Une boucle en $x$ compte pour $2$} dans le degré.
+\item \textbf{Sommets adjacents :} deux sommets sont \cle{adjacents} s'ils sont reliés par au moins une arête.
+\item \textbf{Vérification systématique :} additionner tous les degrés et contrôler que la somme vaut le double du nombre d'arêtes (voir propriété fondamentale).
+\end{enumerate}
+\textbf{Réflexe :} dresser un tableau « sommet / degré » avant de répondre ; cela évite les oublis et permet la vérification.
+\end{methode}
+
+\begin{exoresolu}[Réseau de cybercafés]
+Un réseau de cybercafés de Yaoundé est modélisé par le graphe suivant : les sommets sont $A$, $B$, $C$, $D$, $E$, $F$ et les arêtes sont $AB$, $AC$, $AD$, $BC$, $BE$, $CD$, $DE$. Le sommet $F$ n'est relié à aucun autre.
+\begin{enumerate}
+\item Déterminer l'ordre de ce graphe.
+\item Déterminer le degré de chaque sommet et identifier le(s) sommet(s) isolé(s).
+\item Citer deux sommets adjacents et deux sommets non adjacents.
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item Le graphe possède $6$ sommets : $A$, $B$, $C$, $D$, $E$, $F$. \textbf{L'ordre du graphe est $6$} (le sommet isolé $F$ compte).
+\item On compte, pour chaque sommet, le nombre d'arêtes qui le touchent :
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} Sommet & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \\
+\hline
+Arêtes incidentes & $AB,AC,AD$ & $AB,BC,BE$ & $AC,BC,CD$ & $AD,CD,DE$ & $BE,DE$ & aucune \\
+\hline
+Degré & $3$ & $3$ & $3$ & $3$ & $2$ & $0$ \\
+\hline
+\end{tabularx}
+\end{center}
+Le sommet $F$ est de degré $0$ : c'est un \cle{sommet isolé}.
+\item $A$ et $B$ sont reliés par l'arête $AB$ : ce sont des \cle{sommets adjacents}. En revanche, $A$ et $E$ ne sont reliés par aucune arête : ce sont des sommets \textbf{non adjacents}.
+\end{enumerate}
+\textbf{Vérification :} somme des degrés $= 3+3+3+3+2+0 = 14$ et nombre d'arêtes $=7$. Or $14 = 2\times 7$ : le résultat est cohérent.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={circle, draw=popdark, fill=popgreenL, thick, minimum size=7mm, inner sep=0pt}]
+% Sommets
+\node (A) at (0,0) {$A$};
+\node (B) at (2,1.5) {$B$};
+\node (C) at (2,-1.5) {$C$};
+\node (D) at (0,-3) {$D$};
+\node (E) at (-2,-1.5) {$E$};
+\node (F) at (-3,2) {$F$};
+% Arêtes
+\draw[popgreen, thick] (A) -- (B);
+\draw[popgreen, thick] (A) -- (C);
+\draw[popgreen, thick] (A) -- (D);
+\draw[popgreen, thick] (B) -- (C);
+\draw[popgreen, thick] (B) -- (E);
+\draw[popgreen, thick] (C) -- (D);
+\draw[popgreen, thick] (D) -- (E);
+% F isolé
+\node[draw=poporange, fill=poporangeL, thick] at (-3,2) {$F$};
+\end{tikzpicture}
+\legende{Graphe du réseau de cybercafés. $F$ est un sommet isolé (orange).}
+\end{popfigure}
+
+\courssub{Graphes simples, graphes orientés, graphes complets}
+
+\begin{definition}[Graphe simple]
+Un graphe est dit \cle{simple} s'il ne contient \textbf{ni boucle} (arête reliant un sommet à lui-même), \textbf{ni arêtes multiples} (deux arêtes ou plus reliant la même paire de sommets distincts).
+\end{definition}
+
+\begin{definition}[Graphe orienté, arc, degrés entrant/sortant]
+Un \cle{graphe orienté} est un graphe dont les arêtes, appelées \cle{arcs}, sont des paires \textbf{ordonnées} de sommets. Un arc de $x$ vers $y$ se note $\overrightarrow{xy}$ ou $x \to y$.
+Pour un sommet $x$ :
+\begin{itemize}
+\item le \cle{degré sortant} $d^+(x)$ est le nombre d'arcs partant de $x$ ;
+\item le \cle{degré entrant} $d^-(x)$ est le nombre d'arcs arrivant en $x$ ;
+\item le \cle{degré total} est $d(x) = d^+(x) + d^-(x)$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Graphe complet]
+Un graphe simple est dit \cle{complet} si \textbf{tout couple de sommets distincts} est relié par une arête. Un graphe complet d'ordre $n$ est noté $K_n$. Il possède exactement $\dfrac{n(n-1)}{2}$ arêtes, et chaque sommet est de degré $n-1$.
+\end{definition}
+
+\begin{methode}[Caractériser un graphe]
+\begin{enumerate}
+\item \textbf{Graphe simple :} vérifier qu'il n'y a \textbf{ni boucle} \textbf{ni arêtes multiples}. Si les deux conditions sont remplies, le graphe est simple.
+\item \textbf{Graphe orienté :} vérifier que chaque arête (appelée alors \cle{arc}) porte un \textbf{sens}, matérialisé par une flèche. On parle alors de degré entrant $d^-(x)$ et de degré sortant $d^+(x)$.
+\item \textbf{Graphe complet :} vérifier que \textbf{tout couple de sommets distincts} est relié par une arête. Un graphe complet d'ordre $n$ possède exactement $\dfrac{n(n-1)}{2}$ arêtes, et chaque sommet est de degré $n-1$.
+\end{enumerate}
+\textbf{Réflexe :} pour prouver qu'un graphe n'est \emph{pas} complet, il suffit d'exhiber \textbf{un seul} couple de sommets non adjacents.
+\end{methode}
+
+\begin{exoresolu}[Championnat de quartier]
+Quatre équipes $A$, $B$, $C$, $D$ d'un quartier de Douala s'affrontent en tournoi. On représente chaque équipe par un sommet et chaque match déjà joué par une arête. Ont été joués : $A$--$B$, $A$--$C$, $A$--$D$, $B$--$C$, $B$--$D$. Le match $C$--$D$ n'a pas encore eu lieu.
+\begin{enumerate}
+\item Ce graphe est-il simple ? Justifier.
+\item Ce graphe est-il complet ? Justifier.
+\item Combien d'arêtes aurait le graphe complet d'ordre $4$ ? Que représente ce nombre ?
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item Chaque match n'a été joué qu'une seule fois, donc il n'y a pas d'arêtes multiples ; aucune équipe ne joue contre elle-même, donc il n'y a pas de boucle. \textbf{Conclusion :} le graphe est \cle{simple} (ni boucle, ni arêtes multiples).
+\item Le graphe serait complet si tout couple de sommets était relié par une arête. Or les sommets $C$ et $D$ ne sont \textbf{pas adjacents} (le match $C$--$D$ n'a pas eu lieu). \textbf{Conclusion :} le graphe n'est \textbf{pas complet}.
+\item Le graphe complet d'ordre $n=4$ possède
+\[
+\frac{n(n-1)}{2}=\frac{4\times 3}{2}=6 \text{ arêtes.}
+\]
+Ce nombre représente le nombre total de matchs d'un tournoi où chaque équipe rencontre toutes les autres une seule fois. Il reste donc $6-5=1$ match à jouer : $C$--$D$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1, every node/.style={circle, draw=popdark, fill=poppinkL, thick, minimum size=7mm, inner sep=0pt}]
+% Sommets K4 moins une arête
+\node (A) at (0,2) {$A$};
+\node (B) at (2,2) {$B$};
+\node (C) at (0,0) {$C$};
+\node (D) at (2,0) {$D$};
+% Arêtes jouées (plein)
+\draw[poppink, very thick] (A) -- (B);
+\draw[poppink, very thick] (A) -- (C);
+\draw[poppink, very thick] (A) -- (D);
+\draw[poppink, very thick] (B) -- (C);
+\draw[poppink, very thick] (B) -- (D);
+% Arête manquante (pointillé)
+\draw[popmuted, dashed, thick] (C) -- (D) node[midway, below, fill=white, inner sep=1pt] {$C$--$D$ (non joué)};
+\end{tikzpicture}
+\legende{Graphe du championnat : $K_4$ privé de l'arête $CD$.}
+\end{popfigure}
+
+\begin{exoresolu}[Graphe orienté : circulation en sens unique]
+Dans une ville, quatre carrefours $X$, $Y$, $Z$, $T$ sont reliés par des rues en sens unique : $X\to Y$, $Y\to Z$, $Z\to X$, $X\to T$, $T\to Z$.
+\begin{enumerate}
+\item Justifier que ce graphe est orienté.
+\item Déterminer $d^+(X)$, $d^-(X)$ et $d(X)$.
+\item Vérifier que la somme des degrés sortants est égale au nombre d'arcs.
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item Chaque rue est parcourue dans un seul sens, matérialisé par une flèche : les arêtes sont des \cle{arcs}. \textbf{Conclusion :} le graphe est \cle{orienté}.
+\item Les arcs partant de $X$ sont $X\to Y$ et $X\to T$ : donc $d^+(X)=2$. Le seul arc arrivant en $X$ est $Z\to X$ : donc $d^-(X)=1$. Le degré total est
+\[
+d(X)=d^+(X)+d^-(X)=2+1=3.
+\]
+\item Degrés sortants : $d^+(X)=2$, $d^+(Y)=1$ (arc $Y\to Z$), $d^+(Z)=1$ (arc $Z\to X$), $d^+(T)=1$ (arc $T\to Z$). Somme : $2+1+1+1=5$. Le graphe possède exactement $5$ arcs. \textbf{Conclusion :} la somme des degrés sortants est bien égale au nombre d'arcs (chaque arc possède une unique origine).
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, >=Stealth, every node/.style={circle, draw=popdark, fill=poppurpleL, thick, minimum size=7mm, inner sep=0pt}]
+% Sommets
+\node (X) at (0,2) {$X$};
+\node (Y) at (-2,0) {$Y$};
+\node (Z) at (2,0) {$Z$};
+\node (T) at (0,0) {$T$};
+% Arcs
+\draw[poppurple, very thick, ->] (X) -- (Y);
+\draw[poppurple, very thick, ->] (Y) -- (Z);
+\draw[poppurple, very thick, ->] (Z) -- (X);
+\draw[poppurple, very thick, ->] (X) -- (T);
+\draw[poppurple, very thick, ->] (T) -- (Z);
+% Degrés
+\node[above left, fill=white, inner sep=1pt] at (X) {$d^+=2, d^-=1$};
+\node[below left, fill=white, inner sep=1pt] at (Y) {$d^+=1, d^-=1$};
+\node[below right, fill=white, inner sep=1pt] at (Z) {$d^+=1, d^-=2$};
+\node[above right, fill=white, inner sep=1pt] at (T) {$d^+=1, d^-=1$};
+\end{tikzpicture}
+\legende{Graphe orienté de la circulation. Flèches = sens unique.}
+\end{popfigure}
+
+\begin{savaistu}[Le graphe du réseau MTN/Orange]
+Dans les télécommunications (MTN, Orange, CAMTEL), les antennes relais sont des sommets et les liaisons fibres/hertziennes sont des arêtes (ou arcs si flux dirigé). Optimiser le routage d'un appel ou d'un paquet de données revient à chercher un \emph{chemin le plus court} dans un graphe pondéré. Les algorithmes de Dijkstra ou Bellman-Ford, étudiés en Terminale, résolvent ce problème concret.
+\end{savaistu}
+
+\courssub{Propriété fondamentale : somme des degrés et nombre d'arêtes}
+
+\begin{propriete}[Somme des degrés — Formule des poignées de main]
+Dans tout graphe non orienté (simple ou non, avec ou sans boucles), la somme des degrés des sommets est égale au double du nombre d'arêtes :
+\[
+\sum_{x \in S} d(x) = 2\,m \quad \text{où } m = |A| \text{ est le nombre d'arêtes.}
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration par double comptage]
+On compte le nombre de couples $(x, a)$ où $x$ est un sommet et $a$ une arête incidente à $x$.
+\begin{enumerate}
+\item En fixant le sommet $x$, il y a $d(x)$ arêtes incidentes. En sommant sur tous les sommets, on obtient $\sum d(x)$.
+\item En fixant l'arête $a$, elle a exactement $2$ extrémités (une boucle en a $2$ au même sommet). En sommant sur les $m$ arêtes, on obtient $2m$.
+\end{enumerate}
+Les deux comptages désignent le même ensemble de couples, donc $\sum d(x) = 2m$. \qed
+\end{experience}
+
+\begin{methode}[La « formule des poignées de main »]
+\textbf{Démarche type :}
+\begin{enumerate}
+\item Identifier l'inconnue : nombre d'arêtes $m$, degré manquant, ou nombre de sommets.
+\item Écrire la relation $\sum d(x) = 2m$ en remplaçant les valeurs connues.
+\item Résoudre l'équation obtenue.
+\item \textbf{Contrôle de cohérence :} la somme des degrés doit être \textbf{paire} ; un résultat impair signale une erreur.
+\end{enumerate}
+\textbf{Conséquence à retenir :} dans tout graphe, le nombre de sommets de degré \textbf{impair} est \textbf{pair}.
+\end{methode}
+
+\begin{aretenir}[Conséquences immédiates]
+\begin{itemize}
+\item $\displaystyle m = \frac{1}{2}\sum d(x)$.
+\item La somme des degrés est toujours un nombre \textbf{pair}.
+\item Le nombre de sommets de degré impair est \textbf{pair} (sinon la somme serait impaire).
+\end{itemize}
+\end{aretenir}
+
+\begin{exoresolu}[Poignées de main à une cérémonie]
+Lors d'une cérémonie à Bafoussam, chaque invité a serré la main à un certain nombre de personnes. On modélise la situation par un graphe dont les sommets sont les invités et les arêtes les poignées de main échangées. Les degrés des sommets sont : $4$, $3$, $3$, $2$, $2$, $2$.
+\begin{enumerate}
+\item Déterminer le nombre de poignées de main échangées.
+\item Peut-on construire un graphe dont les degrés seraient $3$, $3$, $3$, $2$, $2$, $2$ ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item La somme des degrés est
+\[
+\sum d(x) = 4+3+3+2+2+2 = 16.
+\]
+D'après la propriété fondamentale, $\sum d(x) = 2m$ où $m$ est le nombre d'arêtes. Donc
+\[
+m = \frac{16}{2} = 8.
+\]
+\textbf{Conclusion :} $8$ poignées de main ont été échangées.
+\item La somme des degrés serait $3+3+3+2+2+2 = 15$, qui est \textbf{impaire}. Or la somme des degrés d'un graphe est toujours égale à $2m$, donc toujours \textbf{paire}. \textbf{Conclusion :} un tel graphe n'existe pas. (De façon équivalente : il y aurait $3$ sommets de degré impair, or leur nombre doit être pair.)
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Degré manquant]
+Un graphe possède $9$ arêtes. Cinq de ses sommets ont pour degrés respectifs $1$, $2$, $2$, $3$, $4$, et le dernier sommet $S$ a un degré inconnu.
+\begin{enumerate}
+\item Déterminer le degré de $S$.
+\item Le sommet $S$ est-il isolé ?
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item Notons $d$ le degré de $S$. D'après la propriété fondamentale :
+\begin{align*}
+\sum d(x) &= 2m \\
+1+2+2+3+4+d &= 2\times 9 \\
+12 + d &= 18 \\
+d &= 6.
+\end{align*}
+\textbf{Conclusion :} le sommet $S$ est de degré $6$.
+\item Un sommet isolé est un sommet de degré $0$. Or $d(S)=6\neq 0$ : \textbf{$S$ n'est pas isolé} ; c'est même le sommet de plus grand degré du graphe.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Résolution de problèmes concrets à l'aide des graphes}
+
+\begin{methode}[Modéliser une situation concrète par un graphe]
+\begin{enumerate}
+\item \textbf{Choisir les sommets :} identifier les « objets » de la situation (personnes, villes, équipes, appareils, agences MTN/Orange, etc.).
+\item \textbf{Choisir les arêtes :} identifier la relation binaire qui relie ces objets (amitié, route, match, câble, communication...). Préciser si la relation a un sens (graphe orienté) ou non.
+\item \textbf{Traduire la question} en langage de graphes : ordre, degré, adjacence, graphe complet, nombre d'arêtes.
+\item \textbf{Exploiter les outils du cours} : comptage direct, formule $\frac{n(n-1)}{2}$, propriété $\sum d(x)=2m$.
+\item \textbf{Conclure en revenant au contexte} avec une phrase rédigée et l'unité ou l'objet concret (matchs, câbles, poignées de main...).
+\end{enumerate}
+\textbf{Réflexe :} « chacun est relié à tous les autres » $\Rightarrow$ graphe complet $\Rightarrow$ $\frac{n(n-1)}{2}$ liens.
+\end{methode}
+
+\begin{exoresolu}[Électrification rurale]
+Une coopérative veut électrifier $6$ villages $V_1, V_2, \dots, V_6$ d'un arrondissement de la région du Nord. Pour minimiser les coûts, on étudie deux scénarios :
+\begin{itemize}
+\item \textbf{Scénario 1 :} relier \emph{chaque} village à \emph{tous} les autres par une ligne directe.
+\item \textbf{Scénario 2 :} un réseau où les degrés des villages sont $2$, $2$, $3$, $3$, $3$, $3$.
+\end{itemize}
+\begin{enumerate}
+\item Combien de lignes directes le scénario 1 nécessite-t-il ?
+\item Combien de lignes le scénario 2 nécessite-t-il ?
+\item Sachant qu'une ligne coûte $2\,500\,000$ FCFA, calculer l'économie réalisée en choisissant le scénario 2.
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item Dans le scénario 1, le graphe est \cle{complet} d'ordre $n=6$ : chaque village est relié à tous les autres. Le nombre de lignes est
+\[
+\frac{n(n-1)}{2}=\frac{6\times 5}{2}=15.
+\]
+\textbf{Le scénario 1 nécessite $15$ lignes.}
+\item Dans le scénario 2, la somme des degrés est
+\[
+\sum d(x)=2+2+3+3+3+3=16.
+\]
+D'après la propriété fondamentale, le nombre $m$ d'arêtes (lignes) vérifie $2m=16$, donc $m=8$. \textbf{Le scénario 2 nécessite $8$ lignes.}
+\item Économie en nombre de lignes : $15-8=7$ lignes. Économie en francs :
+\[
+7 \times 2\,500\,000 = 17\,500\,000 \text{ FCFA}.
+\]
+\textbf{Conclusion :} en choisissant le scénario 2, la coopérative économise $17\,500\,000$ FCFA.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7]
+% Scénario 1 : K6
+\begin{scope}[xshift=0cm]
+\node[draw=popdark, fill=popblueL, circle, minimum size=6mm] (V1) at (90:2) {$V_1$};
+\node[draw=popdark, fill=popblueL, circle, minimum size=6mm] (V2) at (30:2) {$V_2$};
+\node[draw=popdark, fill=popblueL, circle, minimum size=6mm] (V3) at (-30:2) {$V_3$};
+\node[draw=popdark, fill=popblueL, circle, minimum size=6mm] (V4) at (-90:2) {$V_4$};
+\node[draw=popdark, fill=popblueL, circle, minimum size=6mm] (V5) at (-150:2) {$V_5$};
+\node[draw=popdark, fill=popblueL, circle, minimum size=6mm] (V6) at (150:2) {$V_6$};
+\foreach \i/\j in {V1/V2, V1/V3, V1/V4, V1/V5, V1/V6,
+                   V2/V3, V2/V4, V2/V5, V2/V6,
+                   V3/V4, V3/V5, V3/V6,
+                   V4/V5, V4/V6,
+                   V5/V6}
+  \draw[popblue, thin] (\i) -- (\j);
+\node[below=0.5cm, font=\bfseries, text=popblue] at (0,-2.5) {Scénario 1 : $K_6$ (15 lignes)};
+\end{scope}
+
+% Scénario 2 : Cycle + 2 cordes
+\begin{scope}[xshift=7cm]
+\node[draw=popdark, fill=popgreenL, circle, minimum size=6mm] (W1) at (90:2) {$V_1$};
+\node[draw=popdark, fill=popgreenL, circle, minimum size=6mm] (W2) at (30:2) {$V_2$};
+\node[draw=popdark, fill=popgreenL, circle, minimum size=6mm] (W3) at (-30:2) {$V_3$};
+\node[draw=popdark, fill=popgreenL, circle, minimum size=6mm] (W4) at (-90:2) {$V_4$};
+\node[draw=popdark, fill=popgreenL, circle, minimum size=6mm] (W5) at (-150:2) {$V_5$};
+\node[draw=popdark, fill=popgreenL, circle, minimum size=6mm] (W6) at (150:2) {$V_6$};
+% Cycle
+\draw[popgreen, thick] (W1) -- (W2) -- (W3) -- (W4) -- (W5) -- (W6) -- (W1);
+% Cordes (1,4) et (2,5)
+\draw[popgreen, thick] (W1) -- (W4);
+\draw[popgreen, thick] (W2) -- (W5);
+\node[below=0.5cm, font=\bfseries, text=popgreen] at (7,-2.5) {Scénario 2 : 8 lignes (degrés 3,3,3,3,2,2)};
+\end{scope}
+\end{tikzpicture}
+\legende{Comparaison des deux scénarios d'électrification.}
+\end{popfigure}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Compter un croisement d'arêtes comme un sommet.} Seuls les points marqués (nommés) sont des sommets ; deux arêtes peuvent se croiser sans créer de sommet.
+\item \textbf{Oublier qu'une boucle compte double.} Une boucle en un sommet $x$ ajoute $2$ au degré $d(x)$, pas $1$.
+\item \textbf{Oublier le sommet isolé dans l'ordre.} Un sommet de degré $0$ compte dans l'ordre du graphe : l'ordre est le nombre \emph{total} de sommets, pas le nombre de sommets « reliés ».
+\item \textbf{Écrire $\sum d(x) = m$ au lieu de $\sum d(x) = 2m$.} C'est l'erreur la plus fréquente : chaque arête possède \emph{deux} extrémités, donc la somme des degrés vaut le \emph{double} du nombre d'arêtes. Contrôle réflexe : la somme des degrés doit être paire.
+\item \textbf{Confondre « complet » et « très connecté ».} Un graphe complet exige que \emph{tous} les couples de sommets soient adjacents : un seul couple non relié suffit à dire qu'il n'est pas complet. Et pour un graphe complet d'ordre $n$, le nombre d'arêtes est $\frac{n(n-1)}{2}$, pas $n(n-1)$ (on ne compte pas chaque arête deux fois).
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{aretenir}[Rappels essentiels -- Vocabulaire de base]
+\begin{itemize}
+\item L'\cle{ordre} d'un graphe est le nombre de ses sommets.
+\item Le \cle{degré} d'un sommet est le nombre d'arêtes incidentes à ce sommet (une boucle compte pour $2$).
+\item Deux sommets sont \cle{adjacents} s'ils sont reliés par au moins une arête.
+\item Un sommet de degré $0$ est dit \cle{isolé}.
+\item Un \cle{graphe simple} ne contient ni boucle, ni arêtes multiples.
+\item Un \cle{graphe orienté} est constitué d'arcs (paires ordonnées de sommets).
+\item Un \cle{graphe complet} d'ordre $n$ relie chaque paire de sommets distincts par exactement une arête ; il a $\frac{n(n-1)}{2}$ arêtes et chaque sommet a pour degré $n-1$.
+\item \textbf{Propriété fondamentale (Lemme des poignées de main) :} Dans tout graphe, la somme des degrés de tous les sommets est égale au double du nombre d'arêtes : $\sum \deg(v) = 2 \times (\text{nombre d'arêtes})$.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[QCM : vocabulaire des graphes]
+Pour chaque question, une seule réponse est exacte. Recopie la lettre correspondante sur ta copie.
+\begin{enumerate}
+\item L'\cle{ordre} d'un graphe est :
+\begin{enumerate}
+\item[a)] le nombre de ses arêtes ;
+\item[b)] le nombre de ses sommets ;
+\item[c)] le plus grand degré de ses sommets.
+\end{enumerate}
+\item Un sommet dont le degré vaut $0$ est dit :
+\begin{enumerate}
+\item[a)] adjacent ; \quad b)] complet ; \quad c)] isolé.
+\end{enumerate}
+\item Dans un graphe \emph{non orienté}, une \cle{boucle} en un sommet compte dans le degré de ce sommet pour :
+\begin{enumerate}
+\item[a)] $0$ ; \quad b)] $1$ ; \quad c)] $2$.
+\end{enumerate}
+\item Un graphe complet d'ordre $5$ possède :
+\begin{enumerate}
+\item[a)] $5$ arêtes ; \quad b)] $10$ arêtes ; \quad c)] $20$ arêtes.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+Réponds par VRAI ou FAUX en justifiant chaque réponse par une propriété du cours ou un contre-exemple.
+\begin{enumerate}
+\item Deux sommets reliés par au moins une arête sont dits adjacents.
+\item Un graphe simple peut contenir une boucle.
+\item Dans un graphe, la somme des degrés des sommets est toujours un nombre pair.
+\item Un graphe orienté est un graphe dont certaines arêtes sont remplacées par des flèches (arcs).
+\item Tout graphe complet est un graphe simple.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Lecture directe sur un graphe]
+On considère le graphe ci-dessous.
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle,draw=popblue,fill=popblueL,inner sep=1.6pt,font=\small\bfseries}]
+\node (A) at (0,1.5) {$A$};
+\node (B) at (2,1.5) {$B$};
+\node (C) at (2,0) {$C$};
+\node (D) at (0,0) {$D$};
+\node (E) at (3.4,0.75) {$E$};
+\draw[popdark,thick] (A)--(B) (A)--(D) (B)--(C) (C)--(D) (B)--(E) (C)--(E);
+\end{tikzpicture}
+\legende{Graphe $G$ à cinq sommets}
+\end{popfigure}
+\begin{enumerate}
+\item Quel est l'ordre de ce graphe ?
+\item Déterminer le degré de chaque sommet.
+\item Citer deux sommets adjacents et deux sommets non adjacents.
+\item Ce graphe est-il complet ? Justifier.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+\begin{enumerate}
+\item Un graphe possède $8$ arêtes. Quelle est la somme des degrés de ses sommets ?
+\item Un graphe simple d'ordre $6$ est complet. Combien possède-t-il d'arêtes ? Quel est le degré de chaque sommet ?
+\item Les degrés des sommets d'un graphe sont $4$, $3$, $3$, $2$ et $2$. Combien ce graphe possède-t-il d'arêtes ?
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{methode}[Étudier un graphe donné par un dessin]
+\begin{enumerate}
+\item \textbf{Vérifier que c'est un graphe :} ensemble de sommets non vide, arêtes reliant des paires de sommets (boucles autorisées selon le type).
+\item \textbf{Ordre :} compter les sommets.
+\item \textbf{Degrés :} pour chaque sommet, compter les arêtes incidentes (boucle $=2$).
+\item \textbf{Adjacence :} deux sommets sont adjacents s'ils sont reliés par au moins une arête.
+\item \textbf{Sommet isolé :} degré $0$.
+\item \textbf{Vérification :} sommer les degrés, diviser par $2$, comparer au comptage visuel des arêtes.
+\end{enumerate}
+\end{methode}
+
+\begin{exercice}[Étude complète d'un graphe dessiné]
+On considère le graphe $G$ ci-dessous, à six sommets, comportant une boucle en $B$ et un sommet isolé.
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.15, every node/.style={circle,draw=popblue,fill=popblueL,inner sep=1.6pt,font=\small\bfseries}]
+\node (A) at (0,1.6) {$A$};
+\node (B) at (2,1.6) {$B$};
+\node (C) at (4,1.6) {$C$};
+\node (D) at (0,0) {$D$};
+\node (E) at (2,0) {$E$};
+\node (F) at (4,0) {$F$};
+\draw[popdark,thick] (A)--(B) (A)--(D) (B)--(E) (D)--(E) (B)--(C) (E)--(C);
+\draw[popdark,thick] (B) edge[loop above,looseness=14] (B);
+\end{tikzpicture}
+\legende{Graphe $G$ : le sommet $F$ est isolé}
+\end{popfigure}
+\begin{enumerate}
+\item Justifier que cette représentation est bien un graphe, puis déterminer son ordre.
+\item Déterminer le degré de chacun des six sommets (on n'oubliera pas la boucle).
+\item Citer deux sommets adjacents et deux sommets non adjacents.
+\item Identifier le sommet isolé et vérifier que son degré est nul.
+\item Calculer la somme des degrés, en déduire le nombre d'arêtes, puis vérifier en comptant les arêtes sur la figure.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Graphe simple ou non ?]
+Un graphe $G$ a six sommets dont les degrés sont : $5$, $4$, $3$, $3$, $2$, $1$.
+\begin{enumerate}
+\item Calculer le nombre d'arêtes de $G$.
+\item Un tel graphe peut-il être \cle{simple} ? On raisonnera sur le sommet de degré $5$ et sur le sommet de degré $1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Une question d'existence]
+\begin{enumerate}
+\item Existe-t-il un graphe dont les sommets ont pour degrés $3$, $3$, $3$, $3$, $5$ ? Justifier la réponse à l'aide de la propriété fondamentale du cours.
+\item Existe-t-il un graphe \emph{simple} d'ordre $5$ dont tous les sommets sont de degré $4$ ? Si oui, le décrire et donner son nombre d'arêtes.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Poignées de main à la chefferie]
+Lors d'une réunion de $9$ notables à la chefferie de Bandjoun, certaines personnes se sont saluées par une poignée de main (deux personnes quelconques se serrent la main au plus une fois, et personne ne se serre sa propre main). On modélise la situation par un graphe dont les sommets sont les personnes et dont les arêtes représentent les poignées de main échangées.
+\begin{enumerate}
+\item Préciser la nature de ce graphe (simple ? orienté ? complet ?). Justifier.
+\item À quoi correspond le degré d'un sommet dans cette situation ?
+\item En utilisant la propriété fondamentale du cours, montrer que le nombre de personnes ayant serré un nombre \emph{impair} de mains est pair.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Championnat de football du Littoral]
+Un championnat réunit $10$ équipes de la région du Littoral. Chaque équipe rencontre chacune des autres équipes exactement une fois (matchs aller seulement).
+\begin{enumerate}
+\item Modéliser la situation par un graphe : que représentent les sommets ? les arêtes ?
+\item Préciser la nature de ce graphe : est-il simple ? orienté ? complet ? Justifier chaque réponse.
+\item Quel est le degré de chaque sommet ? En déduire, à l'aide de la propriété fondamentale, le nombre total de matchs joués dans le championnat.
+\item Retrouver ce résultat par un dénombrement direct.
+\item Pour des raisons budgétaires, la ligue décide finalement que chaque équipe ne rencontre que $6$ adversaires, chacun une seule fois. Montrer que cette organisation est possible du point de vue de la parité, et calculer le nombre de matchs correspondant.
+\item La ligue envisage ensuite que chaque équipe rencontre exactement $5$ adversaires parmi les $9$ autres, mais avec seulement $9$ équipes participantes. Montrer que cette organisation est impossible.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Réseau routier entre sept villes du Cameroun]
+Le tableau suivant indique les liaisons routières \emph{directes} (sans passer par une autre ville du tableau) entre sept villes : Douala (D), Yaoundé (Y), Bafoussam (B), Bamenda (M), Nkongsamba (N), Édéa (E) et Mbouda (O).
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Ville} & \textbf{Liaisons directes avec} \\ \hline
+Douala (D) & Y, N, E \\ \hline
+Yaoundé (Y) & D, E, B \\ \hline
+Bafoussam (B) & Y, M, O, N \\ \hline
+Bamenda (M) & B, O \\ \hline
+Nkongsamba (N) & D, B \\ \hline
+Édéa (E) & D, Y \\ \hline
+Mbouda (O) & B, M \\ \hline
+\end{tabularx}
+\end{center}
+\begin{enumerate}
+\item Construire le graphe modélisant ce réseau routier (on représentera chaque ville par un sommet et chaque liaison directe par une arête).
+\item Justifier que ce graphe est simple et non orienté.
+\item Déterminer l'ordre du graphe et le degré de chaque sommet.
+\item Quelle est la ville la mieux desservie ? Justifier.
+\item Existe-t-il une ville isolée ? Justifier.
+\item Ce graphe est-il complet ? Justifier de deux manières différentes : par les degrés, puis par le nombre d'arêtes.
+\item Vérifier la propriété fondamentale : calculer la somme des degrés et en déduire le nombre de liaisons directes, puis vérifier par dénombrement dans le tableau.
+\item Un transporteur veut relier deux villes sans liaison directe en passant par exactement une ville intermédiaire. Proposer un itinéraire de Douala à Bafoussam, et un itinéraire de Nkongsamba à Mbouda.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Incompatibilités d'horaires au concours d'entrée à l'ENAM]
+Cinq candidats $A$, $B$, $C$, $D$ et $E$ passent les épreuves orales d'un concours administratif à Yaoundé. Pour des raisons de jury, deux candidats ne peuvent pas passer en même temps si leurs dossiers présentent une incompatibilité. Le tableau suivant indique les incompatibilités (une croix signifie que les deux candidats ne peuvent \emph{pas} passer en même temps) :
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}\hline
+\rowcolor{popblueL} & $A$ & $B$ & $C$ & $D$ & $E$ \\ \hline
+$A$ & & $\times$ & $\times$ & $\times$ & \\ \hline
+$B$ & $\times$ & & $\times$ & & \\ \hline
+$C$ & $\times$ & $\times$ & & $\times$ & $\times$ \\ \hline
+$D$ & $\times$ & & $\times$ & & \\ \hline
+$E$ & & & $\times$ & & \\ \hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+\item Construire le graphe $G$ des incompatibilités : les sommets sont les candidats, et deux sommets sont reliés par une arête lorsque les deux candidats sont incompatibles.
+\item Justifier que $G$ est un graphe simple non orienté, et donner son ordre.
+\item Déterminer le degré de chaque sommet, puis vérifier la propriété fondamentale en calculant le nombre d'arêtes de deux façons.
+\item Le graphe $G$ est-il complet ? Justifier.
+\item Traduire en termes de graphe la phrase : \og deux candidats peuvent passer en même temps \fg.
+\item Le candidat $A$ passe le lundi matin. En utilisant le graphe, déterminer quels candidats peuvent passer en même temps que lui.
+\item Le centre d'examen veut organiser les passages en un minimum de créneaux, chaque créneau ne regroupant que des candidats mutuellement compatibles. Proposer une organisation en trois créneaux et justifier, à l'aide du graphe, qu'elle est correcte.
+\item Le candidat $E$ est-il isolé dans le graphe ? Interpréter concrètement la réponse.
+\end{enumerate}
+\end{exercice}
+
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{corrige}[Exercice 1 --- QCM : vocabulaire des graphes]
+\begin{enumerate}
+\item \textbf{b)} Par définition, l'\cle{ordre} d'un graphe est le nombre de ses sommets.
+\item \textbf{c)} Un sommet de degré $0$ n'est incident à aucune arête : il est dit \cle{isolé}.
+\item \textbf{c)} Une boucle part d'un sommet et y revient : elle contribue pour $2$ au degré de ce sommet (convention nécessaire à la propriété fondamentale $\sum \deg(v) = 2 \times (\text{nombre d'arêtes})$).
+\item \textbf{b)} Un graphe complet d'ordre $n$ possède $\dfrac{n(n-1)}{2}$ arêtes. Pour $n=5$ : $\dfrac{5\times 4}{2} = \dfrac{20}{2} = 10$ arêtes.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 --- Vrai ou faux, en justifiant]
+\begin{enumerate}
+\item \textbf{VRAI.} C'est exactement la définition de deux sommets \cle{adjacents} : reliés par au moins une arête.
+\item \textbf{FAUX.} Par définition, un graphe \cle{simple} ne contient \emph{ni} boucle \emph{ni} arêtes multiples. Contre-exemple : un sommet $A$ muni d'une boucle n'est pas un graphe simple.
+\item \textbf{VRAI.} D'après la propriété fondamentale, $\sum \deg(v) = 2 \times (\text{nombre d'arêtes})$, qui est un multiple de $2$, donc un nombre pair.
+\item \textbf{FAUX.} Un graphe \cle{orienté} ne contient \emph{que} des arcs (paires ordonnées de sommets). Un graphe contenant à la fois des arêtes et des arcs est un graphe \emph{mixte}, pas un graphe orienté.
+\item \textbf{VRAI.} Un graphe complet relie chaque paire de sommets distincts par \emph{exactement une} arête : il n'a donc ni boucle, ni arêtes multiples. C'est bien un graphe simple.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 --- Lecture directe sur un graphe]
+\begin{enumerate}
+\item Le graphe possède $5$ sommets ($A$, $B$, $C$, $D$, $E$) : son \cle{ordre} est $5$.
+\item On compte les arêtes incidentes à chaque sommet :
+\begin{itemize}
+\item $\deg(A) = 2$ (arêtes $AB$ et $AD$) ;
+\item $\deg(B) = 3$ (arêtes $AB$, $BC$ et $BE$) ;
+\item $\deg(C) = 3$ (arêtes $BC$, $CD$ et $CE$) ;
+\item $\deg(D) = 2$ (arêtes $AD$ et $CD$) ;
+\item $\deg(E) = 2$ (arêtes $BE$ et $CE$).
+\end{itemize}
+\item Sommets adjacents : $A$ et $B$ (reliés par une arête). Sommets non adjacents : $A$ et $C$ (aucune arête ne les relie ; on pouvait aussi citer $A$ et $E$, $B$ et $D$, ou $D$ et $E$).
+\item \textbf{Non, ce graphe n'est pas complet.} Un graphe complet d'ordre $5$ posséderait $\dfrac{5\times 4}{2} = 10$ arêtes ; or on en compte seulement $6$ sur la figure. De plus, des paires de sommets comme $(A, C)$ ne sont pas reliées.
+\end{enumerate}
+\emph{Vérification (bon réflexe) :} somme des degrés $= 2+3+3+2+2 = 12 = 2 \times 6$ : cohérent avec les $6$ arêtes comptées.
+\end{corrige}
+
+\begin{corrige}[Exercice 4 --- Calculs directs]
+\begin{enumerate}
+\item D'après la propriété fondamentale : somme des degrés $= 2 \times 8 = 16$.
+\item Graphe complet d'ordre $6$ : nombre d'arêtes $= \dfrac{6 \times 5}{2} = 15$. Chaque sommet est relié aux $5$ autres, donc le degré de chaque sommet est $6 - 1 = 5$.
+\item Somme des degrés $= 4 + 3 + 3 + 2 + 2 = 14$. D'après la propriété fondamentale, le nombre d'arêtes est $\dfrac{14}{2} = 7$.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je m'entraîne}
+
+\begin{corrige}[Exercice 5 --- Étude complète d'un graphe dessiné]
+\begin{enumerate}
+\item Cette représentation est bien un graphe : l'ensemble des sommets $\{A, B, C, D, E, F\}$ est non vide, et chaque arête relie une paire de sommets (la boucle relie $B$ à lui-même, ce qui est autorisé dans un graphe non simple). L'\cle{ordre} du graphe est $6$.
+\item Degrés des sommets (la boucle en $B$ compte pour $2$) :
+\begin{itemize}
+\item $\deg(A) = 2$ ($AB$, $AD$) ;
+\item $\deg(B) = 5$ ($AB$, $BE$, $BC$, plus la boucle qui ajoute $2$) ;
+\item $\deg(C) = 2$ ($BC$, $CE$) ;
+\item $\deg(D) = 2$ ($AD$, $DE$) ;
+\item $\deg(E) = 3$ ($BE$, $DE$, $CE$) ;
+\item $\deg(F) = 0$.
+\end{itemize}
+\item Sommets adjacents : $A$ et $B$ (ou $B$ et $E$). Sommets non adjacents : $A$ et $C$ (ou $D$ et $F$).
+\item Le sommet \cle{isolé} est $F$ : aucune arête ne lui est incidente, et effectivement $\deg(F) = 0$.
+\item Somme des degrés : $2 + 5 + 2 + 2 + 3 + 0 = 14$. D'après la propriété fondamentale, le nombre d'arêtes est $\dfrac{14}{2} = 7$. Comptage sur la figure : $AB$, $AD$, $BE$, $DE$, $BC$, $CE$ (soit $6$ arêtes) plus la boucle en $B$ : $7$ au total. \textbf{Le résultat est vérifié.}
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Point de vigilance]
+L'erreur classique est d'oublier que la boucle compte pour $2$ dans le degré de $B$ : on trouverait alors $\deg(B) = 4$ et une somme des degrés égale à $13$, nombre impair, ce qui doit immédiatement vous alerter grâce à la propriété fondamentale.
+\end{attention}
+
+\begin{corrige}[Exercice 6 --- Graphe simple ou non ?]
+\begin{enumerate}
+\item Somme des degrés : $5 + 4 + 3 + 3 + 2 + 1 = 18$. Le nombre d'arêtes est donc $\dfrac{18}{2} = 9$.
+\item \textbf{Oui, un tel graphe peut être simple.} Raisonnons :
+\begin{itemize}
+\item Le graphe est d'ordre $6$. Le sommet de degré $5$ est donc adjacent à \emph{tous} les autres sommets (dans un graphe simple d'ordre $6$, le degré maximal possible est $6 - 1 = 5$).
+\item En particulier, il est adjacent au sommet de degré $1$. Ce sommet de degré $1$ n'a donc aucune autre arête : c'est cohérent, son unique voisin est le sommet de degré $5$.
+\item Retirons ces deux sommets et les arêtes correspondantes : il reste $4$ sommets dont les degrés (dans le sous-graphe) sont $4 - 1 = 3$, $3 - 1 = 2$, $3 - 1 = 2$, $2 - 1 = 1$, c'est-à-dire la suite $(3, 2, 2, 1)$, dont la somme $8$ est paire. Cette suite est réalisable par un graphe simple (par exemple une chaîne à laquelle on ajoute une arête). Aucune boucle ni arête multiple n'est nécessaire.
+\end{itemize}
+La suite de degrés $(5, 4, 3, 3, 2, 1)$ est donc réalisable par un graphe simple.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 --- Une question d'existence]
+\begin{enumerate}
+\item \textbf{Non, un tel graphe n'existe pas.} La somme des degrés serait $3 + 3 + 3 + 3 + 5 = 17$, qui est un nombre \emph{impair}. Or, d'après la propriété fondamentale, la somme des degrés de tout graphe est égale au double du nombre d'arêtes, donc toujours \emph{paire}. Contradiction : un tel graphe ne peut pas exister.
+\item \textbf{Oui.} Dans un graphe simple d'ordre $5$, le degré maximal d'un sommet est $5 - 1 = 4$. Exiger que \emph{tous} les sommets soient de degré $4$ signifie que chaque sommet est relié à tous les autres : c'est exactement le graphe \cle{complet} $K_5$. Nombre d'arêtes : $\dfrac{5 \times 4}{2} = 10$. Vérification : somme des degrés $= 5 \times 4 = 20 = 2 \times 10$. \textbf{Cohérent.}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 --- Poignées de main à la chefferie]
+\begin{enumerate}
+\item Le graphe est \textbf{simple et non orienté} :
+\begin{itemize}
+\item \emph{Simple} : personne ne se serre sa propre main (pas de boucle) et deux personnes se serrent la main au plus une fois (pas d'arêtes multiples) ;
+\item \emph{Non orienté} : la poignée de main est symétrique --- si $A$ serre la main de $B$, alors $B$ serre la main de $A$ ;
+\item \emph{Non complet} : l'énoncé précise que \emph{certaines} personnes se sont saluées, donc toutes les paires ne sont pas nécessairement reliées.
+\end{itemize}
+\item Le degré d'un sommet est le \textbf{nombre de poignées de main échangées par la personne} correspondante.
+\item Notons $S$ la somme des degrés des $9$ sommets. D'après la propriété fondamentale, $S = 2 \times (\text{nombre d'arêtes})$, donc $S$ est \emph{pair}. Décomposons :
+\[ S = \underbrace{\sum_{\deg(v) \text{ pair}} \deg(v)}_{\text{somme paire}} + \underbrace{\sum_{\deg(v) \text{ impair}} \deg(v)}_{\text{à étudier}}. \]
+La somme des degrés pairs est paire. Comme $S$ est pair, la somme des degrés impairs doit être paire également. Or une somme de nombres impairs est paire si et seulement si elle contient un nombre \emph{pair} de termes. Conclusion : \textbf{le nombre de personnes ayant serré un nombre impair de mains est pair}. C'est le célèbre \emph{lemme des poignées de main}.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{corrige}[Exercice 9 --- Championnat de football du Littoral]
+\begin{enumerate}
+\item \textbf{Modélisation :} les sommets représentent les $10$ équipes ; une arête entre deux sommets représente le match joué entre les deux équipes correspondantes.
+\item \textbf{Nature du graphe :}
+\begin{itemize}
+\item \emph{Simple} : oui --- chaque paire d'équipes se rencontre au plus une fois (pas d'arêtes multiples) et aucune équipe ne joue contre elle-même (pas de boucle) ;
+\item \emph{Non orienté} : oui --- le match entre $A$ et $B$ est le même que celui entre $B$ et $A$ (relation symétrique) ;
+\item \emph{Complet} : oui --- chaque équipe rencontre chacune des autres exactement une fois, donc toute paire de sommets distincts est reliée par une arête. C'est le graphe complet $K_{10}$.
+\end{itemize}
+\item Chaque équipe joue contre les $9$ autres : le degré de chaque sommet est $9$. Somme des degrés : $10 \times 9 = 90$. D'après la propriété fondamentale, le nombre total de matchs est $\dfrac{90}{2} = 45$.
+\item Dénombrement direct : un match est le choix de $2$ équipes parmi $10$, soit $\dbinom{10}{2} = \dfrac{10 \times 9}{2} = 45$ matchs. On retrouve bien le même résultat.
+\item Chaque équipe rencontre $6$ adversaires : on cherche un graphe simple d'ordre $10$ dont tous les sommets sont de degré $6$. Somme des degrés : $10 \times 6 = 60$, qui est \emph{paire} : la condition de parité imposée par la propriété fondamentale est satisfaite, donc l'organisation n'est pas exclue (un tel graphe $6$-régulier d'ordre $10$ existe effectivement). Le nombre de matchs serait $\dfrac{60}{2} = 30$.
+\item Avec $9$ équipes rencontrant chacune exactement $5$ adversaires, la somme des degrés serait $9 \times 5 = 45$, nombre \emph{impair}. Or la somme des degrés d'un graphe est toujours paire (propriété fondamentale). \textbf{Cette organisation est donc impossible.}
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} Q1 : 1 pt ; Q2 : 2 pts (trois justifications) ; Q3 : 2 pts ; Q4 : 1 pt ; Q5 : 2 pts ; Q6 : 2 pts.
+\end{corrige}
+
+\begin{attention}[Points de vigilance --- Probatoire]
+\begin{itemize}
+\item À la question 3, il faut \emph{citer explicitement} la propriété fondamentale ($\sum \deg(v) = 2 \times \text{nombre d'arêtes}$) : c'est la justification attendue, pas seulement le calcul.
+\item À la question 6, ne pas se contenter de dire « c'est bizarre » : la seule justification valable est l'argument de parité (somme des degrés impaire).
+\item Ne pas confondre le nombre de matchs ($45$) avec la somme des degrés ($90$) : chaque match fait intervenir \emph{deux} équipes, d'où la division par $2$.
+\end{itemize}
+\end{attention}
+
+\begin{corrige}[Exercice 10 --- Réseau routier entre sept villes du Cameroun]
+\begin{enumerate}
+\item On représente chaque ville par un sommet et chaque liaison directe par une arête :
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={circle,draw=popblue,fill=popblueL,inner sep=2pt,font=\small\bfseries}]
+\node (D) at (0,2) {$D$};
+\node (Y) at (2,3) {$Y$};
+\node (E) at (2,1) {$E$};
+\node (N) at (-1,0.5) {$N$};
+\node (B) at (4,2) {$B$};
+\node (M) at (5.5,3.5) {$M$};
+\node (O) at (5.5,0.5) {$O$};
+\draw[popdark,thick] (D)--(Y) (D)--(N) (D)--(E) (Y)--(E) (Y)--(B) (B)--(N) (B)--(M) (B)--(O) (M)--(O);
+\end{tikzpicture}
+\legende{Graphe du réseau routier (liaisons directes)}
+\end{popfigure}
+\item \textbf{Simple} : aucune ville n'est reliée à elle-même (pas de boucle) et il n'existe qu'une seule liaison directe par paire de villes (pas d'arêtes multiples). \textbf{Non orienté} : une route se pratique dans les deux sens, la relation de liaison est symétrique (le tableau est symétrique).
+\item L'ordre du graphe est $7$. Degrés lus dans le tableau :
+\[ \deg(D) = 3, \quad \deg(Y) = 3, \quad \deg(B) = 4, \quad \deg(M) = 2, \quad \deg(N) = 2, \quad \deg(E) = 2, \quad \deg(O) = 2. \]
+\item La ville la mieux desservie est \textbf{Bafoussam ($B$)}, de degré $4$ (liaisons directes avec Yaoundé, Bamenda, Mbouda et Nkongsamba) : c'est le degré maximal du graphe.
+\item \textbf{Non, il n'existe pas de ville isolée} : tous les sommets ont un degré supérieur ou égal à $2$, donc aucun n'est de degré $0$.
+\item \textbf{Le graphe n'est pas complet}, justifié de deux façons :
+\begin{itemize}
+\item \emph{Par les degrés :} dans un graphe complet d'ordre $7$, chaque sommet aurait pour degré $7 - 1 = 6$ ; or le degré maximal ici est $4$.
+\item \emph{Par le nombre d'arêtes :} un graphe complet d'ordre $7$ aurait $\dfrac{7 \times 6}{2} = 21$ arêtes ; or ce graphe en a $9$ (voir question 7), et $9 \neq 21$.
+\end{itemize}
+\item Somme des degrés : $3 + 3 + 4 + 2 + 2 + 2 + 2 = 18$. D'après la propriété fondamentale, le nombre de liaisons directes est $\dfrac{18}{2} = 9$. Vérification dans le tableau : chaque liaison apparaît deux fois (une fois dans la ligne de chacune des deux villes), donc les $18$ occurrences correspondent bien à $9$ liaisons distinctes : $D\!-\!Y$, $D\!-\!N$, $D\!-\!E$, $Y\!-\!E$, $Y\!-\!B$, $B\!-\!M$, $B\!-\!O$, $B\!-\!N$, $M\!-\!O$. \textbf{Vérifié.}
+\item On cherche une ville intermédiaire commune :
+\begin{itemize}
+\item \emph{Douala $\to$ Bafoussam :} les voisins de $D$ sont $\{Y, N, E\}$, ceux de $B$ sont $\{Y, M, O, N\}$. Villes communes : $Y$ et $N$. Itinéraires possibles : \textbf{D -- Y -- B} ou \textbf{D -- N -- B}.
+\item \emph{Nkongsamba $\to$ Mbouda :} les voisins de $N$ sont $\{D, B\}$, ceux de $O$ sont $\{B, M\}$. Seule ville commune : $B$. Unique itinéraire : \textbf{N -- B -- O}.
+\end{itemize}
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} Q1 : 1,5 pt ; Q2 : 1 pt ; Q3 : 1,5 pt ; Q4 : 0,5 pt ; Q5 : 0,5 pt ; Q6 : 1,5 pt ; Q7 : 1,5 pt ; Q8 : 2 pts.
+\end{corrige}
+
+\begin{attention}[Points de vigilance --- Probatoire]
+\begin{itemize}
+\item Le tableau compte chaque liaison \emph{deux fois} : pour obtenir le nombre de liaisons, il faut diviser par $2$ --- c'est exactement le contenu de la propriété fondamentale.
+\item « Justifier de deux manières différentes » impose deux arguments réellement distincts et rédigés ; un seul argument ne rapporte que la moitié des points.
+\item Pour la question 8, expliciter les ensembles de voisins et leur intersection est la démarche attendue : elle montre que l'itinéraire repose sur le graphe et non sur une intuition géographique.
+\end{itemize}
+\end{attention}
+
+\begin{corrige}[Exercice 11 --- Incompatibilités d'horaires au concours d'entrée à l'ENAM]
+\begin{enumerate}
+\item Les sommets sont les cinq candidats ; on relie deux sommets lorsque les candidats sont incompatibles. Arêtes : $AB$, $AC$, $AD$, $BC$, $CD$, $CE$.
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={circle,draw=popblue,fill=popblueL,inner sep=2pt,font=\small\bfseries}]
+\node (A) at (90:2) {$A$};
+\node (B) at (18:2) {$B$};
+\node (C) at (-54:2) {$C$};
+\node (D) at (-126:2) {$D$};
+\node (E) at (162:2) {$E$};
+\draw[popdark,thick] (A)--(B) (A)--(C) (A)--(D) (B)--(C) (C)--(D) (C)--(E);
+\end{tikzpicture}
+\legende{Graphe $G$ des incompatibilités (une arête = une incompatibilité)}
+\end{popfigure}
+\item \textbf{Simple} : un candidat n'est pas incompatible avec lui-même (pas de boucle) et chaque paire de candidats est soit compatible, soit incompatible une seule fois (pas d'arêtes multiples). \textbf{Non orienté} : l'incompatibilité est symétrique --- si $A$ est incompatible avec $B$, alors $B$ est incompatible avec $A$ (le tableau est symétrique). L'ordre de $G$ est $5$.
+\item Degrés : $\deg(A) = 3$, $\deg(B) = 2$, $\deg(C) = 4$, $\deg(D) = 2$, $\deg(E) = 1$. Somme des degrés : $3 + 2 + 4 + 2 + 1 = 12$. D'après la propriété fondamentale, le nombre d'arêtes est $\dfrac{12}{2} = 6$. Comptage direct des arêtes listées à la question 1 : $6$. \textbf{Les deux méthodes concordent.}
+\item \textbf{Non, $G$ n'est pas complet.} Dans un graphe complet d'ordre $5$, chaque sommet serait de degré $4$ ; or $\deg(A) = 3$, $\deg(B) = 2$, $\deg(E) = 1$. Il manque des arêtes, par exemple $AE$, $BD$, $BE$ et $DE$.
+\item \og Deux candidats peuvent passer en même temps \fg{} signifie qu'ils ne sont pas incompatibles, c'est-à-dire que \textbf{les deux sommets correspondants ne sont pas adjacents} dans $G$ (aucune arête ne les relie).
+\item Les voisins de $A$ sont $B$, $C$ et $D$ : ce sont les candidats incompatibles avec $A$. Le seul sommet non adjacent à $A$ (autre que $A$ lui-même) est $E$. \textbf{Seul le candidat $E$ peut passer en même temps que $A$} le lundi matin.
+\item Organisation proposée en trois créneaux :
+\begin{itemize}
+\item \emph{Créneau 1 :} $\{A, E\}$ --- $A$ et $E$ ne sont pas adjacents : compatibles ;
+\item \emph{Créneau 2 :} $\{B, D\}$ --- $B$ et $D$ ne sont pas adjacents : compatibles ;
+\item \emph{Créneau 3 :} $\{C\}$ --- un candidat seul ne pose aucun problème.
+\end{itemize}
+Chaque créneau ne regroupe que des sommets deux à deux non adjacents : l'organisation est \textbf{correcte}. De plus, elle est \emph{optimale} : les sommets $A$, $B$ et $C$ sont deux à deux adjacents (triangle $ABC$), donc ces trois candidats doivent obligatoirement passer dans trois créneaux distincts ; deux créneaux ne suffiraient pas.
+\item \textbf{Non, $E$ n'est pas isolé} : $\deg(E) = 1$ (il est incompatible avec $C$). Concrètement, $E$ est compatible avec trois candidats ($A$, $B$ et $D$) : il peut passer en même temps que n'importe lequel d'entre eux.
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} Q1 : 1,5 pt ; Q2 : 1,5 pt ; Q3 : 1,5 pt ; Q4 : 1 pt ; Q5 : 1 pt ; Q6 : 1 pt ; Q7 : 1,5 pt ; Q8 : 1 pt.
+\end{corrige}
+
+\begin{attention}[Points de vigilance --- Probatoire]
+\begin{itemize}
+\item Attention au sens de la modélisation : ici une arête signifie une \emph{incompatibilité}. Dire « deux candidats compatibles sont adjacents » serait une inversion complète du modèle.
+\item À la question 7, il ne suffit pas de proposer trois groupes : il faut \emph{vérifier sur le graphe} que les sommets de chaque groupe sont deux à deux non adjacents, et justifier le caractère minimal à l'aide du triangle $ABC$.
+\item La somme des degrés ($12$) est paire : si vous trouvez un nombre impair à la question 3, c'est qu'une arête a été oubliée ou comptée en double --- utilisez la propriété fondamentale comme test de cohérence.
+\end{itemize}
+\end{attention}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[mindmap, grow cyclic,
+  every node/.style={concept, text=white, font=\small\bfseries},
+  root concept/.append style={concept color=popdark, font=\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=60},
+  level 2/.append style={level distance=2.2cm, sibling angle=45, font=\scriptsize},
+  concept connection/.append style={color=popmuted}]
+\node[root concept]{Théorie des graphes}
+  child[concept color=popblue]{ node {Notion de graphe}
+    child { node {Sommets, arêtes} }
+    child { node {Modéliser une situation} }
+  }
+  child[concept color=poporange]{ node {Ordre}
+    child { node {Nombre de sommets} }
+  }
+  child[concept color=popgreen]{ node {Degré d'un sommet}
+    child { node {Arêtes incidentes} }
+    child { node {Sommet isolé : $d=0$} }
+  }
+  child[concept color=poppurple]{ node {Types de graphes}
+    child { node {Simple} }
+    child { node {Orienté} }
+    child { node {Complet} }
+  }
+  child[concept color=poppink]{ node {Propriété fondamentale}
+    child { node {$\sum d = 2 \times$ arêtes} }
+  }
+  child[concept color=popgold]{ node {Problèmes concrets}
+    child { node {Réseaux, poignées de main} }
+  };
+\end{tikzpicture}
+\end{center}
+\legende{Carte mentale de la leçon : les six idées forces de l'introduction à la théorie des graphes.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{1. Définitions clés.}
+\begin{itemize}
+  \item Un \cle{graphe} est un ensemble de points appelés \cle{sommets}, reliés par des lignes appelées \cle{arêtes} (ou \cle{arcs} si elles sont fléchées).
+  \item L'\cle{ordre} d'un graphe est le nombre de ses sommets.
+  \item Le \cle{degré} d'un sommet $A$, noté $d(A)$, est le nombre d'arêtes dont $A$ est une extrémité (une boucle compte pour $2$).
+  \item Deux sommets sont \cle{adjacents} s'ils sont reliés par au moins une arête.
+  \item Un sommet est \cle{isolé} si son degré est nul : $d(A)=0$.
+  \item Un graphe est \cle{simple} s'il n'a ni boucle, ni arêtes multiples entre deux mêmes sommets.
+  \item Un graphe est \cle{orienté} si ses arêtes sont munies d'un sens (flèches) : ce sont des arcs.
+  \item Un graphe est \cle{complet} si deux sommets distincts quelconques sont toujours adjacents.
+\end{itemize}
+
+\textbf{2. Formules à connaître par c\oe ur.}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Résultat} & \textbf{Énoncé} \\ \hline
+Propriété fondamentale & Dans tout graphe, la somme des degrés des sommets est égale au double du nombre d'arêtes : $\displaystyle\sum_{A} d(A) = 2\,m$ où $m$ est le nombre d'arêtes. \\ \hline
+Conséquence & La somme des degrés est toujours un nombre \textbf{pair} ; le nombre de sommets de degré impair est pair. \\ \hline
+Graphe complet d'ordre $n$ & Chaque sommet a pour degré $n-1$ ; le nombre d'arêtes est $\dfrac{n(n-1)}{2}$. \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{3. Méthodes express.}
+\begin{itemize}
+  \item \textbf{Ordre d'un graphe} : compter les sommets (points nommés), jamais les arêtes.
+  \item \textbf{Degré d'un sommet} : compter les arêtes qui partent de ce sommet ; vérifier ensuite que la somme de tous les degrés vaut deux fois le nombre d'arêtes (auto-contrôle).
+  \item \textbf{Justifier qu'un graphe est simple} : dire qu'il n'y a aucune boucle et qu'entre deux sommets il y a au plus une arête.
+  \item \textbf{Justifier qu'un graphe est complet} : vérifier que chaque sommet est relié à \emph{tous} les autres, c'est-à-dire $d(A)=n-1$ pour tout sommet.
+  \item \textbf{Modéliser une situation concrète} : identifier les objets (sommets) et les relations (arêtes ou arcs), dessiner le graphe, puis exploiter degrés et propriété fondamentale.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais dire si une représentation est un graphe (sommets + arêtes).
+  \item[$\square$] Je sais déterminer l'ordre d'un graphe sans me tromper.
+  \item[$\square$] Je sais calculer le degré de chaque sommet, boucle comprise (elle compte double).
+  \item[$\square$] Je sais reconnaître deux sommets adjacents et un sommet isolé.
+  \item[$\square$] Je sais justifier qu'un graphe est simple, orienté ou complet.
+  \item[$\square$] Je connais par c\oe ur : somme des degrés $=$ $2 \times$ nombre d'arêtes.
+  \item[$\square$] Je sais qu'un graphe complet d'ordre $n$ possède $\dfrac{n(n-1)}{2}$ arêtes.
+  \item[$\square$] Je vérifie toujours mes degrés avec la propriété fondamentale.
+  \item[$\square$] Je sais traduire une situation concrète (amis, routes, matchs, réseaux) par un graphe.
+  \item[$\square$] Je rédige mes justifications avec le vocabulaire exact : sommet, arête, arc, adjacent, degré, ordre.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
