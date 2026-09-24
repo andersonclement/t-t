@@ -261,6 +261,9 @@ def autofix(body):
     body = body.replace("\\begin{tcblower}", "\\tcblower").replace("\\end{tcblower}", "")
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
+    # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
+    body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
+    body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
     body = _close_lists(body)
     # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
     body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
