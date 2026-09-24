@@ -273,6 +273,9 @@ def autofix(body):
         t = re.sub(r"(->|<=>|<-)\[(\\[A-Za-z]+[^\]$]*)\]", r"\1[$\2$]", m.group(0))
         return t.replace("\\dots", "$\\cdots$").replace("\\ldots", "$\\cdots$")
     body = re.sub(r"\\ce\{(?:[^{}]|\{[^{}]*\})*\}", _ce, body)
+    # exercice non fermé avant son corrigé -> \end{exercice} inséré
+    body = re.sub(r"(\\begin\{exercice\}(?:(?!\\end\{exercice\}|\\begin\{exercice\}).)*?)(\n\s*\\begin\{corrige\})",
+                  r"\1\n\\end{exercice}\n\2", body, flags=re.S)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
