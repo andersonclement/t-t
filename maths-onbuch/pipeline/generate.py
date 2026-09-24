@@ -274,6 +274,11 @@ def autofix(body):
     # exercice non fermé avant son corrigé -> \end{exercice} inséré
     body = re.sub(r"(\\begin\{exercice\}(?:(?!\\end\{exercice\}|\\begin\{exercice\}).)*?)(\n\s*\\begin\{corrige\})",
                   r"\1\n\\end{exercice}\n\2", body, flags=re.S)
+    # pgf calcule sin/cos en degrés : un argument contenant « pi » est en radians -> deg(...)
+    _trig = re.compile(r"\b(sin|cos|tan)\(((?:[^()]|\((?:[^()]|\([^()]*\))*\))*?\bpi\b(?:[^()]|\((?:[^()]|\([^()]*\))*\))*?)\)")
+    body = "\n".join(_trig.sub(lambda m: f"{m.group(1)}(deg({m.group(2)}))", l)
+                     if (("addplot" in l or "plot" in l) and "deg(" not in l) else l
+                     for l in body.split("\n"))
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
