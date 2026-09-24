@@ -287,6 +287,8 @@ def autofix(body):
     # calc TikZ : ($(2)*(U)$) -> ($2*(U)$) (un nombre entre parenthèses est pris pour un nœud)
     body = re.sub(r"\(\$\s*\((-?[\d.]+)\)\s*\*", r"($\1*", body)
     body = body.replace("\\not\\implies", "\\nRightarrow").replace("\\not\\iff", "\\nLeftrightarrow").replace("\\not\\Longrightarrow", "\\nRightarrow")
+    # unité de vergence : orthographe anglaise \diopter -> \dioptre (déclarée dans le préambule)
+    body = re.sub(r"\\diopter\b", r"\\dioptre", body)
     # popfigure : \begin{center} non refermé -> \end{center} avant la légende
     def _fig(m):
         t = m.group(0)
