@@ -337,6 +337,9 @@ def autofix(body):
     body = re.sub(r"\\begin\{tikzpicture\}\[[^\]]*\].*?\\end\{tikzpicture\}", _scale_to_xy, body, flags=re.S)
     body = _box_as_command(body)
     body = _lonely_items(body)
+    # X'_{...}^N : le "'" après X se lit ^\prime, donc le "^N" qui suit forme un
+    # second exposant sur le même atome -> "Double superscript". On regroupe.
+    body = re.sub(r"(\b[A-Za-zΑ-Ωα-ω]+'_\{(?:[^{}]|\{[^{}]*\})*\})\^", r"{\1}^", body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
     body = re.sub(r"(to\[[^\]]*?\b(?:l|l_|l\^|v|v_|v\^|i|i_|i\^|a|a_|a\^)=)\$([^$]*)\$",
                   lambda m: m.group(1) + "{$" + m.group(2) + "$}", body)
