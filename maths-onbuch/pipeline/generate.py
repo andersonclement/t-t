@@ -263,6 +263,13 @@ def autofix(body):
     body = _node_align(body)
     body = _cases_math(body)
     body = _lonely_items(body)
+    # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
+    body = re.sub(r"(to\[[^\]]*?\b(?:l|l_|l\^|v|v_|v\^|i|i_|i\^|a|a_|a\^)=)\$([^$]*)\$",
+                  lambda m: m.group(1) + "{$" + m.group(2) + "$}", body)
+    # enumerate[a)] (syntaxe enumerate.sty) -> enumitem : label=\alph*)
+    _lab = {"a": r"\alph*", "A": r"\Alph*", "i": r"\roman*", "I": r"\Roman*", "1": r"\arabic*"}
+    body = re.sub(r"\\begin\{enumerate\}\[(\(?)([aAiI1])([.)\]]?)\]",
+                  lambda m: "\\begin{enumerate}[label=" + m.group(1) + _lab[m.group(2)] + m.group(3) + "]", body)
     # la boîte bilan n'a pas de titre optionnel : [..] s'imprimerait tel quel
     body = re.sub(r"\\begin\{bilan\}\[[^\]\n]*\]", r"\\begin{bilan}", body)
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}

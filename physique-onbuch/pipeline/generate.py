@@ -265,6 +265,13 @@ def autofix(body):
     body = _node_align(body)
     body = _cases_math(body)
     body = _lonely_items(body)
+    # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
+    body = re.sub(r"(to\[[^\]]*?\b(?:l|l_|l\^|v|v_|v\^|i|i_|i\^|a|a_|a\^)=)\$([^$]*)\$",
+                  lambda m: m.group(1) + "{$" + m.group(2) + "$}", body)
+    # enumerate[a)] (syntaxe enumerate.sty) -> enumitem : label=\alph*)
+    _lab = {"a": r"\alph*", "A": r"\Alph*", "i": r"\roman*", "I": r"\Roman*", "1": r"\arabic*"}
+    body = re.sub(r"\\begin\{enumerate\}\[(\(?)([aAiI1])([.)\]]?)\]",
+                  lambda m: "\\begin{enumerate}[label=" + m.group(1) + _lab[m.group(2)] + m.group(3) + "]", body)
     # circuitikz : Tnpn/Tpnp n'ont pas les ancres .B/.C/.E -> npn/pnp
     body = re.sub(r"\bT(npn|pnp)\b", r"\1", body)
     # la boîte bilan n'a pas de titre optionnel : [..] s'imprimerait tel quel
