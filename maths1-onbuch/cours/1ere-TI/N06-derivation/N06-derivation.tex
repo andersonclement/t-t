@@ -1,0 +1,3115 @@
+% Dérivation — Mathématiques 1ère TI — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N06-derivation.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1ère TI}
+\newcommand{\DOCMODULE}{Relations et opérations fondamentales dans l'ensemble des nombres réels}
+\newcommand{\DOCLECON}{N06}
+\newcommand{\DOCTITRE}{Dérivation}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Dérivation}{Mathématiques}{1ère TI}{Relations et opérations fondamentales dans l'ensemble des nombres réels}{N06}{10 h}{Cette leçon introduit la notion fondamentale de nombre dérivé comme limite du taux d'accroissement, puis construit les outils de calcul des fonctions dérivées. Elle montre enfin comment la dérivée permet d'étudier les variations d'une fonction, de déterminer ses extrema et de tracer des tangentes à une courbe.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais étudier la dérivabilité d'une fonction en un réel a par la limite du taux d'accroissement
+\item À la fin de cette leçon, je sais calculer le nombre dérivé d'une fonction en un point et interpréter géométriquement ce nombre
+\item À la fin de cette leçon, je sais étudier la dérivabilité à gauche et à droite en un point, notamment pour une fonction définie par intervalles
+\item À la fin de cette leçon, je sais déterminer une équation de tangente ou de demi-tangente à une courbe en un de ses points
+\item À la fin de cette leçon, je sais déterminer la fonction dérivée des fonctions usuelles, d'une somme, d'un produit, d'un quotient et de la composée par une fonction affine
+\item À la fin de cette leçon, je sais utiliser le signe de la dérivée pour déterminer le sens de variation d'une fonction sur un intervalle
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Dérivabilité en un point et nombre dérivé
+\item Dérivabilité à gauche, à droite ; tangentes et demi-tangentes
+\item Fonction dérivée sur un intervalle et dérivées usuelles
+\item Opérations sur les fonctions dérivables
+\item Dérivée et sens de variation
+\item Tableau de variations, extrema et approximation affine
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais étudier la dérivabilité d'une fonction en un réel a par la limite du taux d'accroissement
+\item À la fin de cette leçon, je sais calculer le nombre dérivé d'une fonction en un point et interpréter géométriquement ce nombre
+\item À la fin de cette leçon, je sais étudier la dérivabilité à gauche et à droite en un point, notamment pour une fonction définie par intervalles
+\item À la fin de cette leçon, je sais déterminer une équation de tangente ou de demi-tangente à une courbe en un de ses points
+\item À la fin de cette leçon, je sais déterminer la fonction dérivée des fonctions usuelles, d'une somme, d'un produit, d'un quotient et de la composée par une fonction affine
+\item À la fin de cette leçon, je sais utiliser le signe de la dérivée pour déterminer le sens de variation d'une fonction sur un intervalle
+\item À la fin de cette leçon, je sais dresser le tableau des variations d'une fonction et en déduire ses extrema sur un ensemble
+\item À la fin de cette leçon, je sais déterminer l'approximation affine d'une fonction autour d'un réel et l'utiliser pour estimer des valeurs
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Limites de fonctions en un point (leçon sur les limites et la continuité)
+\item Taux d'accroissement et pente d'une droite (Seconde)
+\item Équations de droites dans le plan repéré
+\item Fonctions usuelles : polynômes, racine carrée, valeur absolue, fonctions rationnelles
+\item Lecture graphique : courbe représentative, sécantes
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Dérivabilité en un point et nombre dérivé}
+
+Au marché Mokolo, Mama Ngo Bell vend des arachides grillées. Chaque matin, elle observe un phénomène curieux : le bénéfice qu'elle réalise dépend de la quantité d'arachides qu'elle produit. Produire trop peu fait perdre des clients ; produire trop fait perdre de l'argent, car les arachides invendues se gâtent. Elle se pose alors deux questions : \emph{à quel rythme son bénéfice varie-t-il quand elle augmente sa production d'un kilogramme ? Existe-t-il une quantité qui maximise son bénéfice ?}
+
+Pour répondre à ces questions, les mathématiciens du XVII\textsuperscript{e} siècle ont inventé un outil puissant : la \cle{dérivation}. Elle mesure la \emph{vitesse de variation} d'une grandeur en un instant précis, et permet de repérer ses valeurs extrêmes. Cette leçon construit cet outil pas à pas, en partant d'une idée très simple : la pente d'une droite.
+
+\courssub{Le taux d'accroissement : la pente d'une sécante}
+
+Soit $f$ une fonction définie sur un intervalle $I$ contenant un réel $a$. Prenons un point fixe $A(a\,;\,f(a))$ sur la courbe $\mathcal{C}_f$, et un point mobile $M(a+h\,;\,f(a+h))$ avec $h\neq 0$. La droite $(AM)$ est une \cle{sécante} de la courbe. Son coefficient directeur vaut :
+\[ \tau(h)=\frac{f(a+h)-f(a)}{h}. \]
+Ce quotient s'appelle le \cle{taux d'accroissement} (ou taux de variation) de $f$ entre $a$ et $a+h$. Il mesure la variation \emph{moyenne} de $f$ par unité de $x$ sur l'intervalle $[a\,;\,a+h]$ (ou $[a+h\,;\,a]$ si $h<0$).
+
+\begin{exemplebox}[Un taux d'accroissement concret]
+Si $f(x)=x^2$, $a=1$ et $h=0{,}5$, alors
+\[ \tau(0{,}5)=\frac{f(1{,}5)-f(1)}{0{,}5}=\frac{2{,}25-1}{0{,}5}=2{,}5. \]
+Entre $x=1$ et $x=1{,}5$, la fonction $x\mapsto x^2$ augmente en moyenne de $2{,}5$ unités par unité de $x$.
+\end{exemplebox}
+
+L'idée fondatrice du calcul différentiel est la suivante : lorsque $M$ se rapproche de $A$ (c'est-à-dire lorsque $h$ tend vers $0$), la sécante $(AM)$ \emph{pivote} autour de $A$ et se rapproche d'une position limite : la \cle{tangente} à la courbe en $A$. Le coefficient directeur de cette tangente sera précisément la limite du taux d'accroissement.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.9\linewidth, axis lines=middle, xlabel=$x$, ylabel=$y$,
+  xmin=-0.4, xmax=3.2, ymin=-0.4, ymax=5.5,
+  xtick={1,2,3}, ytick={1,4}, grid=none, tick label style={font=\small}]
+  \addplot[popcurve,domain=-0.3:2.35,samples=200]{x^2};
+  \addplot[poporange,thick,domain=-0.2:2.6,samples=2]{2*x-1};
+  \addplot[popgreen,thick,domain=0:3,samples=2]{3*x-2};
+  \addplot[poppurple,thick,domain=0.3:3,samples=2]{4*x-3};
+  \addplot[popmuted,dashed,domain=0.6:3,samples=2]{5*x-4};
+  \addplot[only marks,mark=*,mark size=1.8pt,popink] coordinates {(1,1)};
+  \addplot[only marks,mark=*,mark size=1.4pt,popgreen] coordinates {(2,4)};
+  \addplot[only marks,mark=*,mark size=1.4pt,poppurple] coordinates {(1.5,2.25)};
+  \addplot[only marks,mark=*,mark size=1.4pt,popmuted] coordinates {(1.25,1.5625)};
+  \node[popink,anchor=west] at (axis cs:1.05,0.7) {$A(1\,;\,1)$};
+  \node[popgreen,anchor=south west] at (axis cs:2,4) {$M_1$};
+  \node[poppurple,anchor=south east] at (axis cs:1.5,2.25) {$M_2$};
+  \node[poporange,anchor=south east,rotate=63] at (axis cs:2.3,3.6) {tangente};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f(x)=x^2$. Quand $M$ se rapproche de $A$, la sécante $(AM)$ pivote vers la tangente en $A$, de coefficient directeur $f'(1)=2$.}
+\end{center}
+\end{popfigure}
+
+\courssub{Définition : fonction dérivable en un point, nombre dérivé}
+
+\begin{definition}[Dérivabilité en un point et nombre dérivé]
+Soit $f$ une fonction définie sur un intervalle $I$ et $a$ un réel de $I$. On dit que $f$ est \cle{dérivable en} $a$ si le taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ admet une \textbf{limite finie} quand $x$ tend vers $a$. Cette limite est appelée \cle{nombre dérivé} de $f$ en $a$ et se note $f'(a)$ :
+\[ f'(a)=\lim_{x\to a}\frac{f(x)-f(a)}{x-a}. \]
+En posant $x=a+h$, on obtient l'écriture équivalente, souvent plus commode pour les calculs :
+\[ f'(a)=\lim_{h\to 0}\frac{f(a+h)-f(a)}{h}. \]
+\end{definition}
+
+\begin{attention}[Les deux écritures sont interchangeables]
+Les formes $\lim\limits_{x\to a}\dfrac{f(x)-f(a)}{x-a}$ et $\lim\limits_{h\to 0}\dfrac{f(a+h)-f(a)}{h}$ désignent \emph{le même} nombre. Choisis celle qui simplifie les calculs. Erreur fréquente : oublier que la limite doit être \textbf{finie} ; une limite infinie signifie que la fonction \emph{n'est pas} dérivable en $a$.
+\end{attention}
+
+\begin{methode}[Étudier la dérivabilité de $f$ en $a$]
+\begin{enumerate}
+\item Vérifier que $f$ est définie en $a$ et au voisinage de $a$.
+\item Former le taux d'accroissement $\tau(h)=\dfrac{f(a+h)-f(a)}{h}$ et le simplifier (factoriser $h$ au numérateur est souvent la clé).
+\item Calculer $\lim\limits_{h\to 0}\tau(h)$.
+\item Conclure : si la limite est un réel $\ell$, alors $f$ est dérivable en $a$ et $f'(a)=\ell$ ; sinon (limite infinie ou inexistante), $f$ n'est pas dérivable en $a$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[$f(x)=x^2$ est dérivable en $3$ et $f'(3)=6$]
+Pour $h\neq 0$ :
+\begin{align*}
+\tau(h)&=\frac{f(3+h)-f(3)}{h}=\frac{(3+h)^2-9}{h}\\
+&=\frac{9+6h+h^2-9}{h}=\frac{h(6+h)}{h}=6+h.
+\end{align*}
+Donc $\lim\limits_{h\to 0}\tau(h)=6$, limite finie. Conclusion : $f$ est dérivable en $3$ et $f'(3)=6$.
+\end{exemplebox}
+
+\begin{exoresolu}[Dérivabilité de $f(x)=\dfrac{1}{x}$ en $a=2$]
+Montrer que la fonction $f:x\mapsto \dfrac{1}{x}$ est dérivable en $2$ et déterminer $f'(2)$.
+\tcblower
+Pour $h\neq 0$ et $h>-2$ (pour que $2+h \neq 0$) :
+\begin{align*}
+\tau(h)&=\frac{f(2+h)-f(2)}{h}=\frac{\dfrac{1}{2+h}-\dfrac{1}{2}}{h}
+=\frac{\dfrac{2-(2+h)}{2(2+h)}}{h}\\
+&=\frac{-h}{2h(2+h)}=\frac{-1}{2(2+h)}.
+\end{align*}
+Or $\lim\limits_{h\to 0}\dfrac{-1}{2(2+h)}=-\dfrac{1}{4}$, limite finie. Donc $f$ est dérivable en $2$ et
+\[ f'(2)=-\frac{1}{4}. \]
+Le signe négatif traduit le fait que la fonction $\frac{1}{x}$ est décroissante au voisinage de $2$.
+\end{exoresolu}
+
+\courssub{Interprétations géométrique et cinématique}
+
+\begin{aretenir}[Interprétation géométrique du nombre dérivé]
+Si $f$ est dérivable en $a$, alors $f'(a)$ est le \cle{coefficient directeur de la tangente} à la courbe $\mathcal{C}_f$ au point $A(a\,;\,f(a))$. Cette tangente est la position limite des sécantes $(AM)$ lorsque $M$ tend vers $A$.
+\end{aretenir}
+
+\begin{savaistu}[La vitesse instantanée : la dérivée en mouvement]
+Un chauffeur de bus Yaoundé--Douala parcourt $230$ km en $3$ h : sa vitesse \emph{moyenne} est d'environ $76{,}7$ km/h. Mais à un instant précis, que dit son compteur ? Si $x(t)$ est la position du bus à l'instant $t$, la vitesse moyenne entre $t$ et $t+h$ est le taux d'accroissement $\dfrac{x(t+h)-x(t)}{h}$, et la vitesse \emph{instantanée} affichée au compteur est sa limite quand $h\to 0$ : c'est exactement $x'(t)$. La dérivation est née de ce problème cinématique, étudié indépendamment par Newton (mouvement des planètes) et Leibniz (tangentes aux courbes) vers 1680.
+\end{savaistu}
+
+\begin{savaistu}[Trois notations, trois génies]
+La notation $f'(x)$ est due à \textbf{Lagrange} (fin du XVIII\textsuperscript{e} siècle). \textbf{Leibniz} écrivait $\dfrac{\mathrm{d}y}{\mathrm{d}x}$, notation encore utilisée en physique, et \textbf{Newton} plaçait un point au-dessus de la lettre : $\dot{x}$. Les trois notations coexistent aujourd'hui selon les disciplines.
+\end{savaistu}
+
+\courssub{Dérivabilité à gauche, à droite et demi-tangentes}
+
+Parfois, la limite bilatère n'existe pas, mais les limites unilatérales existent. C'est le cas aux bornes d'intervalle de définition ou en présence d'un point anguleux.
+
+\begin{definition}[Dérivabilité à gauche et à droite]
+Soit $f$ définie sur un intervalle $I$ et $a \in I$.
+\begin{itemize}
+\item $f$ est \cle{dérivable à gauche} en $a$ si $\lim\limits_{h\to 0^-}\dfrac{f(a+h)-f(a)}{h}$ existe et est finie. On note cette limite $f'_g(a)$ (nombre dérivé à gauche).
+\item $f$ est \cle{dérivable à droite} en $a$ si $\lim\limits_{h\to 0^+}\dfrac{f(a+h)-f(a)}{h}$ existe et est finie. On note cette limite $f'_d(a)$ (nombre dérivé à droite).
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Caractérisation de la dérivabilité]
+$f$ est dérivable en $a$ \textbf{si et seulement si} $f$ est dérivable à gauche et à droite en $a$ \textbf{et} $f'_g(a)=f'_d(a)$. Dans ce cas, $f'(a)=f'_g(a)=f'_d(a)$.
+\end{propriete}
+
+\begin{aretenir}[Interprétation géométrique : demi-tangentes]
+\begin{itemize}
+\item Si $f$ est dérivable à gauche en $a$, la courbe $\mathcal{C}_f$ admet en $A(a\,;\,f(a))$ une \cle{demi-tangente gauche} de coefficient directeur $f'_g(a)$.
+\item Si $f$ est dérivable à droite en $a$, la courbe $\mathcal{C}_f$ admet en $A$ une \cle{demi-tangente droite} de coefficient directeur $f'_d(a)$.
+\item Si $f$ est dérivable en $a$, les deux demi-tangentes se confondent en la \cle{tangente} de coefficient directeur $f'(a)$.
+\end{itemize}
+\end{aretenir}
+
+\begin{methode}[Équation de la tangente (ou demi-tangente) en un point]
+Soit $f$ dérivable (à gauche / à droite) en $a$. La tangente (ou demi-tangente) en $A(a\,;\,f(a))$ a pour équation :
+\[ y = f'(a)\,(x-a) + f(a) \qquad \text{(resp. } y = f'_g(a)\,(x-a) + f(a) \text{ ou } y = f'_d(a)\,(x-a) + f(a)\text{).} \]
+\end{methode}
+
+\begin{exemplebox}[Demi-tangentes de $f(x)=|x|$ en $0$]
+Pour $h>0$ : $\tau(h)=\frac{|h|}{h}=1$, donc $f'_d(0)=1$.
+Pour $h<0$ : $\tau(h)=\frac{|h|}{h}=-1$, donc $f'_g(0)=-1$.
+$f'_g(0) \neq f'_d(0)$ : $f$ n'est pas dérivable en $0$.
+La courbe admet deux demi-tangentes en $O$ : $y=x$ (droite, pour $x\ge 0$) et $y=-x$ (gauche, pour $x\le 0$).
+\end{exemplebox}
+
+\courssub{Fonctions non dérivables en un point}
+
+La dérivabilité n'est pas automatique. Deux situations classiques de non-dérivabilité doivent être connues et sues par cœur.
+
+\textbf{1. Point anguleux : la valeur absolue en $0$.}
+Soit $f(x)=|x|$. On a vu que $f'_g(0)=-1$ et $f'_d(0)=1$. Les nombres dérivés à gauche et à droite sont différents (et finis), donc $f$ n'est \textbf{pas dérivable en $0$}. La courbe présente un \emph{point anguleux} avec deux demi-tangentes distinctes.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.8\linewidth, axis lines=middle, xlabel=$x$, ylabel=$y$,
+  xmin=-2.6, xmax=2.6, ymin=-0.5, ymax=2.6,
+  xtick={-2,-1,1,2}, ytick={1,2}, tick label style={font=\small}]
+  \addplot[popcurve,domain=-2.3:2.3,samples=200]{abs(x)};
+  \addplot[poporange,thick,dashed,domain=0:2.3,samples=2]{x};
+  \addplot[popgreen,thick,dashed,domain=-2.3:0,samples=2]{-x};
+  \addplot[only marks,mark=*,mark size=1.8pt,popink] coordinates {(0,0)};
+  \node[poporange,anchor=south,rotate=45] at (axis cs:1.6,1.35) {\small pente $1$};
+  \node[popgreen,anchor=south,rotate=-45] at (axis cs:-1.6,1.35) {\small pente $-1$};
+  \node[popink,anchor=north] at (axis cs:0,-0.12) {\small point anguleux};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $x\mapsto |x|$ : en $0$, deux demi-tangentes de pentes $-1$ et $1$ ; la fonction n'est pas dérivable en $0$.}
+\end{center}
+\end{popfigure}
+
+\textbf{2. Tangente verticale : la racine carrée en $0$.}
+Soit $g(x)=\sqrt{x}$, définie sur $[0\,;\,+\infty[$. Pour $h>0$ :
+\[ \tau(h)=\frac{\sqrt{h}-0}{h}=\frac{1}{\sqrt{h}}\xrightarrow[h\to 0^+]{}+\infty. \]
+La limite est infinie : $g$ n'est pas dérivable à droite en $0$ (donc pas dérivable en $0$). Géométriquement, la courbe admet en $O$ une \emph{demi-tangente verticale} (droite $x=0$).
+
+\begin{attention}[Continuité ne suffit pas]
+Une fonction peut être continue en $a$ sans y être dérivable : $x\mapsto |x|$ est continue en $0$ mais non dérivable en $0$. La continuité est une condition \emph{nécessaire}, pas \emph{suffisante}, de dérivabilité.
+\end{attention}
+
+\courssub{Dérivabilité et continuité}
+
+\begin{propriete}[Dérivable en $a$ implique continue en $a$]
+Si $f$ est dérivable en $a$, alors $f$ est continue en $a$. La réciproque est fausse.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée (exigible au Probatoire)]
+On suppose $f$ dérivable en $a$ et on veut montrer que $\lim\limits_{x\to a}f(x)=f(a)$.
+\begin{enumerate}
+\item Pour $x\neq a$, complète l'identité : $f(x)-f(a)=\dfrac{f(x)-f(a)}{x-a}\times \ldots$
+\item Quelle est la limite de $\dfrac{f(x)-f(a)}{x-a}$ quand $x\to a$ ? Celle de $(x-a)$ ?
+\item Conclus en utilisant la limite d'un produit.
+\end{enumerate}
+\textbf{Rédaction.} Pour $x\neq a$ :
+\[ f(x)-f(a)=\frac{f(x)-f(a)}{x-a}\times (x-a). \]
+Par dérivabilité, le premier facteur tend vers $f'(a)$ (limite finie) ; le second tend vers $0$. Par produit de limites :
+\[ \lim_{x\to a}\bigl(f(x)-f(a)\bigr)=f'(a)\times 0=0, \]
+c'est-à-dire $\lim\limits_{x\to a}f(x)=f(a)$ : $f$ est continue en $a$. $\square$
+\end{experience}
+
+\begin{attention}[Contraposée très utile]
+La contraposée de la propriété est : si $f$ n'est \textbf{pas continue} en $a$, alors $f$ n'est \textbf{pas dérivable} en $a$. C'est souvent le moyen le plus rapide de prouver une non-dérivabilité. En revanche, ne conclus jamais « $f$ continue en $a$, donc $f$ dérivable en $a$ » : c'est le piège classique du Probatoire (contre-exemple : $|x|$ en $0$).
+\end{attention}
+
+\begin{exoresolu}[Synthèse : dérivabilité, continuité et tangente]
+Soit $f(x)=x^2+1$. Montrer que $f$ est dérivable en $a=1$, calculer $f'(1)$, donner l'équation de la tangente en $A(1\,;\,2)$, puis justifier que $f$ est continue en $1$.
+\tcblower
+Pour $h\neq 0$ :
+\[ \tau(h)=\frac{(1+h)^2+1-2}{h}=\frac{2h+h^2}{h}=2+h \xrightarrow[h\to 0]{} 2. \]
+La limite est finie : $f$ est dérivable en $1$ et $f'(1)=2$.
+D'après la propriété « dérivable $\Rightarrow$ continue », $f$ est continue en $1$ (et effectivement $\lim\limits_{x\to 1}f(x)=2=f(1)$).
+La tangente en $A(1\,;\,2)$ a pour équation : $y = 2(x-1) + 2$, soit $y = 2x$.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item En revenant à la définition, montrer que $f(x)=3x-2$ est dérivable en tout réel $a$ et que $f'(a)=3$.
+\item Montrer que $g(x)=\sqrt{x}$ est dérivable en $a=4$ et calculer $g'(4)$. Donner l'équation de la tangente en $A(4\,;\,2)$.
+\item La fonction $h(x)=|x-2|$ est-elle dérivable en $2$ ? Justifier en calculant $h'_g(2)$ et $h'_d(2)$. Donner les équations des demi-tangentes.
+\item Soit $f$ définie par $f(x)= \begin{cases} x^2 & \text{si } x \le 1 \\ 2x-1 & \text{si } x > 1 \end{cases}$. Étudier la dérivabilité de $f$ en $1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercices]
+\textbf{1.} Pour tout $a \in \mathbb{R}$, $h \neq 0$ :
+$\tau(h)=\dfrac{3(a+h)-2-(3a-2)}{h}=\dfrac{3h}{h}=3 \xrightarrow[h\to 0]{} 3$.
+Limite finie : $f$ dérivable en tout $a$, $f'(a)=3$. (Fonction affine, tangente = courbe).
+
+\textbf{2.} Pour $h > -4$, $h \neq 0$ :
+$\tau(h)=\dfrac{\sqrt{4+h}-2}{h}=\dfrac{(\sqrt{4+h}-2)(\sqrt{4+h}+2)}{h(\sqrt{4+h}+2)}=\dfrac{h}{h(\sqrt{4+h}+2)}=\dfrac{1}{\sqrt{4+h}+2} \xrightarrow[h\to 0]{} \dfrac{1}{4}$.
+Donc $g$ est dérivable en $4$ et $g'(4)=\dfrac{1}{4}$.
+Tangente en $A(4\,;\,2)$ : $y = \frac{1}{4}(x-4) + 2$, soit $y = \frac{x}{4} + 1$.
+
+\textbf{3.} Pour $h>0$ : $\tau(h)=\dfrac{|h|}{h}=1 \Rightarrow h'_d(2)=1$.
+Pour $h<0$ : $\tau(h)=\dfrac{|h|}{h}=-1 \Rightarrow h'_g(2)=-1$.
+$h'_g(2) \neq h'_d(2)$ : $h$ n'est pas dérivable en $2$ (point anguleux).
+Demi-tangente droite : $y = 1\cdot(x-2) + 0 = x-2$ (pour $x \ge 2$).
+Demi-tangente gauche : $y = -1\cdot(x-2) + 0 = -x+2$ (pour $x \le 2$).
+
+\textbf{4.} Continuité en $1$ : $f(1)=1$. $\lim_{x\to 1^-}f(x)=1$, $\lim_{x\to 1^+}f(x)=1$. $f$ continue en $1$.
+Dérivabilité à gauche : $f'_g(1) = \lim_{h\to 0^-}\frac{(1+h)^2-1}{h} = \lim_{h\to 0^-}(2+h)=2$.
+Dérivabilité à droite : $f'_d(1) = \lim_{h\to 0^+}\frac{2(1+h)-1-1}{h} = \lim_{h\to 0^+}\frac{2h}{h}=2$.
+$f'_g(1)=f'_d(1)=2 \in \mathbb{R}$, donc $f$ est dérivable en $1$ et $f'(1)=2$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $f$ est dérivable en $a$ si $\lim\limits_{h\to 0}\dfrac{f(a+h)-f(a)}{h}$ existe et est \textbf{finie} ; cette limite est $f'(a)$.
+\item $f'(a)$ est le coefficient directeur de la tangente à $\mathcal{C}_f$ en $A(a\,;\,f(a))$, et la vitesse instantanée si $f$ est une position.
+\item Dérivabilité à gauche/droite : limites unilatérales du taux d'accroissement $\to$ demi-tangentes.
+\item $f$ dérivable en $a \iff f'_g(a)=f'_d(a) \in \mathbb{R}$.
+\item Non-dérivabilité typique : point anguleux ($|x|$ en $0$, pentes finies différentes) ou tangente verticale ($\sqrt{x}$ en $0$, pente infinie).
+\item Dérivable en $a$ $\Rightarrow$ continue en $a$ ; la réciproque est fausse.
+\item Équation de la tangente en $A(a\,;\,f(a))$ : $y = f'(a)(x-a) + f(a)$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Dérivabilité à gauche, à droite ; tangentes et demi-tangentes}
+
+Dans la section précédente, nous avons défini la dérivabilité d'une fonction $f$ en un réel $a$ par l'existence d'une limite finie du taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ lorsque $x$ tend vers $a$. Mais cette limite doit exister \emph{des deux côtés} de $a$ : que $x$ s'approche de $a$ par valeurs inférieures ou par valeurs supérieures. Que se passe-t-il lorsque la fonction « change de comportement » exactement en $a$ ? Pense à la fonction valeur absolue : sa courbe forme un « V » pointu en $0$. À gauche de $0$, la courbe descend avec une pente de $-1$ ; à droite, elle monte avec une pente de $+1$. Il n'y a pas \emph{une} tangente en $0$, mais deux « demi-tangentes ». C'est tout l'objet de cette section : raffiner la notion de dérivabilité en regardant séparément la gauche et la droite, puis en tirer les conséquences géométriques : tangentes, demi-tangentes et tangentes verticales.
+
+\courssub{Dérivabilité à gauche et à droite en un réel}
+
+\textbf{Intuition.}\par
+Imaginons que tu marches le long d'une route de montagne tracée sur une carte. En un point $A$, la route peut arriver avec une certaine pente et repartir avec une pente différente : c'est un virage en pointe, comme un col de montagne. Pour décrire la situation, on mesure la pente \emph{en arrivant} (à gauche) et la pente \emph{en repartant} (à droite). Si les deux pentes coïncident, la route est « lisse » en $A$ ; sinon, il y a un point anguleux.
+
+\begin{definition}[Nombre dérivé à gauche, nombre dérivé à droite]
+Soit $f$ une fonction définie sur un intervalle contenant un réel $a$.
+\begin{itemize}
+\item On dit que $f$ est \cle{dérivable à gauche} en $a$ si le taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ admet une limite finie lorsque $x$ tend vers $a$ par valeurs inférieures ($x \to a^{-}$, c'est-à-dire $x < a$). Cette limite est appelée \cle{nombre dérivé à gauche} de $f$ en $a$ et notée :
+\[ f'_{g}(a) = \lim_{x \to a^{-}} \frac{f(x)-f(a)}{x-a} = \lim_{h \to 0^{-}} \frac{f(a+h)-f(a)}{h}. \]
+\item On dit que $f$ est \cle{dérivable à droite} en $a$ si le taux d'accroissement admet une limite finie lorsque $x$ tend vers $a$ par valeurs supérieures ($x \to a^{+}$, $x > a$). Cette limite est le \cle{nombre dérivé à droite} de $f$ en $a$ :
+\[ f'_{d}(a) = \lim_{x \to a^{+}} \frac{f(x)-f(a)}{x-a} = \lim_{h \to 0^{+}} \frac{f(a+h)-f(a)}{h}. \]
+\end{itemize}
+\end{definition}
+
+Le lien avec la dérivabilité « tout court » est immédiat et fondamental : une limite existe si et seulement si les limites à gauche et à droite existent et sont égales.
+
+\begin{propriete}[Théorème : critère de dérivabilité en un point]
+Soit $f$ une fonction définie sur un intervalle contenant $a$. Alors :
+\[ f \text{ est dérivable en } a \iff f \text{ est dérivable à gauche et à droite en } a \ \text{et}\ f'_{g}(a) = f'_{d}(a). \]
+Dans ce cas, $f'(a) = f'_{g}(a) = f'_{d}(a)$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée du théorème]
+Rappelons un résultat du chapitre sur les limites : $\lim\limits_{x \to a} g(x) = \ell$ si et seulement si $\lim\limits_{x \to a^{-}} g(x) = \lim\limits_{x \to a^{+}} g(x) = \ell$.
+\begin{enumerate}
+\item Pose $g(x) = \dfrac{f(x)-f(a)}{x-a}$ pour $x \neq a$. Que signifie « $f$ est dérivable en $a$ » en termes de limite de $g$ ?
+\item Applique le rappel à la fonction $g$ : que peux-tu conclure sur les limites à gauche et à droite ?
+\item Conclus : l'existence de la limite finie $f'(a)$ équivaut à l'existence de deux limites finies $f'_g(a)$ et $f'_d(a)$ \emph{égales}, et leur valeur commune est $f'(a)$.
+\end{enumerate}
+\end{experience}
+
+\begin{exemplebox}[La fonction valeur absolue en $0$]
+Étudions la dérivabilité en $0$ de $f(x) = |x|$. On a $f(0) = 0$.
+\begin{itemize}
+\item \textbf{À gauche :} pour $x < 0$, $|x| = -x$, donc
+\[ \frac{f(x)-f(0)}{x-0} = \frac{-x}{x} = -1 \xrightarrow[x \to 0^{-}]{} -1, \quad \text{donc } f'_{g}(0) = -1. \]
+\item \textbf{À droite :} pour $x > 0$, $|x| = x$, donc
+\[ \frac{f(x)-f(0)}{x-0} = \frac{x}{x} = 1 \xrightarrow[x \to 0^{+}]{} 1, \quad \text{donc } f'_{d}(0) = 1. \]
+\end{itemize}
+Comme $f'_{g}(0) = -1 \neq 1 = f'_{d}(0)$, la fonction valeur absolue \textbf{n'est pas dérivable en $0$}, bien qu'elle y soit continue. Sa courbe présente en $0$ un \cle{point anguleux}.
+\end{exemplebox}
+
+\begin{attention}[Continuité ne suffit pas, et dérivabilité implique continuité]
+La fonction $|x|$ est continue en $0$ mais non dérivable en $0$ : la continuité n'implique pas la dérivabilité. En revanche, si $f$ est dérivable en $a$, alors $f$ est continue en $a$. Conséquence pratique : \textbf{si $f$ n'est pas continue en $a$, elle ne peut pas être dérivable en $a$} — il est inutile de calculer les taux d'accroissement.
+\end{attention}
+
+\courssub{Fonctions définies par intervalles : étude au point de raccordement}
+
+Dans de nombreuses situations concrètes, une grandeur est définie par des formules différentes selon les valeurs de la variable : tarification d'un forfait téléphonique (MTN ou Orange) qui change à partir d'un certain volume de données, impôt calculé par tranches, etc. Mathématiquement, ce sont des \cle{fonctions définies par intervalles} (ou « par morceaux »). La question naturelle est : la fonction est-elle dérivable au point de raccordement ?
+
+\begin{methode}[Étudier la dérivabilité au point de raccordement]
+Soit $f$ définie par deux expressions de part et d'autre d'un réel $a$. Pour étudier la dérivabilité de $f$ en $a$ :
+\begin{enumerate}
+\item \textbf{Continuité d'abord.} Calculer $f(a)$, $\lim\limits_{x \to a^{-}} f(x)$ et $\lim\limits_{x \to a^{+}} f(x)$. Si ces trois valeurs ne coïncident pas, $f$ n'est pas continue en $a$, donc \textbf{pas dérivable} en $a$ : on s'arrête là.
+\item \textbf{Taux à gauche.} Calculer $f'_{g}(a) = \lim\limits_{x \to a^{-}} \dfrac{f(x)-f(a)}{x-a}$ en utilisant l'expression de $f$ valable pour $x < a$.
+\item \textbf{Taux à droite.} Calculer $f'_{d}(a) = \lim\limits_{x \to a^{+}} \dfrac{f(x)-f(a)}{x-a}$ avec l'expression valable pour $x > a$.
+\item \textbf{Conclusion.} Si $f'_{g}(a) = f'_{d}(a)$ (limites finies), alors $f$ est dérivable en $a$ et $f'(a)$ est cette valeur commune. Sinon, $f$ n'est pas dérivable en $a$ : la courbe admet un point anguleux (deux demi-tangentes) ou présente une discontinuité.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Un raccordement dérivable]
+On considère la fonction $f$ définie sur $\mathbb{R}$ par :
+\[ f(x) = \begin{cases} x^{2} & \text{si } x \leq 1 \\ 2x - 1 & \text{si } x > 1 \end{cases} \]
+$f$ est-elle dérivable en $1$ ?
+\tcblower
+\textbf{Étape 1 : continuité en $1$.}
+$f(1) = 1^{2} = 1$. De plus :
+\[ \lim_{x \to 1^{-}} f(x) = \lim_{x \to 1^{-}} x^{2} = 1 \quad \text{et} \quad \lim_{x \to 1^{+}} f(x) = \lim_{x \to 1^{+}} (2x-1) = 1. \]
+Les trois valeurs sont égales : $f$ est continue en $1$. On peut poursuivre.
+
+\textbf{Étape 2 : nombre dérivé à gauche.} Pour $x < 1$, $f(x) = x^{2}$ :
+\[ \frac{f(x)-f(1)}{x-1} = \frac{x^{2}-1}{x-1} = \frac{(x-1)(x+1)}{x-1} = x+1 \xrightarrow[x \to 1^{-}]{} 2. \]
+Donc $f'_{g}(1) = 2$.
+
+\textbf{Étape 3 : nombre dérivé à droite.} Pour $x > 1$, $f(x) = 2x-1$ :
+\[ \frac{f(x)-f(1)}{x-1} = \frac{(2x-1)-1}{x-1} = \frac{2(x-1)}{x-1} = 2 \xrightarrow[x \to 1^{+}]{} 2. \]
+Donc $f'_{d}(1) = 2$.
+
+\textbf{Étape 4 : conclusion.} $f'_{g}(1) = f'_{d}(1) = 2$, donc $f$ \textbf{est dérivable en $1$} et $f'(1) = 2$. Géométriquement, la parabole $y = x^{2}$ et la droite $y = 2x-1$ se raccordent « en douceur » au point $A(1\,;1)$ : la droite est précisément la tangente à la parabole en ce point.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6.5cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-1.2, xmax=2.6, ymin=-1.5, ymax=4.5,
+  xtick={-1,1,2}, ytick={1,2,3,4},
+  grid=both, grid style={popline!40},
+  samples=200
+]
+\addplot[popcurve, domain=-1.1:1] {x^2};
+\addplot[popcurve, domain=1:2.4, poporange, very thick] {2*x-1};
+\addplot[popgreen, dashed, thick, domain=-0.2:2.4] {2*x-1};
+\addplot[only marks, mark=*, mark size=2pt, popdark] coordinates {(1,1)};
+\node[popdark, above right] at (axis cs:1,1) {$A(1\,;1)$};
+\node[popblue, above left] at (axis cs:-0.9,0.81) {$y=x^{2}$};
+\node[poporange, right] at (axis cs:2.1,3.2) {$y=2x-1$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Raccordement dérivable en $x=1$ : la parabole et la droite partagent la même tangente (en pointillés verts) d'équation $y = 2x-1$.}
+\end{popfigure}
+
+\begin{attention}[Le piège classique : oublier la continuité]
+Beaucoup d'élèves se précipitent sur les taux d'accroissement sans vérifier la continuité. Or si $f$ n'est pas continue en $a$, le dénominateur $x-a$ tend vers $0$ alors que le numérateur $f(x)-f(a)$ ne tend pas vers $0$ : le taux explose et les calculs deviennent absurdes. \textbf{Réflexe obligatoire : continuité d'abord, taux ensuite.} Autre piège : utiliser la mauvaise expression de $f$ pour le taux à gauche ou à droite — relis bien la définition par morceaux.
+\end{attention}
+
+\courssub{Tangente à une courbe en un point}
+
+\textbf{Intuition.}\par
+Lorsque $f$ est dérivable en $a$, les sécantes $(AM)$, avec $M(x\,;f(x))$, « pivotent » autour de $A(a\,;f(a))$ et se rapprochent d'une position limite lorsque $M$ se rapproche de $A$ : la \cle{tangente}. Sa pente est la limite des pentes des sécantes, c'est-à-dire $f'(a)$.
+
+\begin{propriete}[Équation de la tangente]
+Soit $f$ une fonction dérivable en $a$, de courbe représentative $\mathcal{C}_f$ dans un repère. La tangente à $\mathcal{C}_f$ au point $A(a\,;f(a))$ est la droite passant par $A$ et de coefficient directeur $f'(a)$. Son équation est :
+\[ \boxed{\ y = f'(a)\,(x - a) + f(a)\ } \]
+\end{propriete}
+
+\begin{experience}[Démonstration : retrouver l'équation de la tangente]
+\begin{enumerate}
+\item La tangente $T$ en $A$ est une droite non verticale de coefficient directeur $f'(a)$. Écris sa forme générale : $y = f'(a)\,x + p$, où $p$ est un réel à déterminer.
+\item $T$ passe par $A(a\,;f(a))$ : traduis cela par l'égalité $f(a) = f'(a)\,a + p$.
+\item Tire-en $p = f(a) - f'(a)\,a$.
+\item Remplace dans l'équation : $y = f'(a)\,x + f(a) - f'(a)\,a = f'(a)(x-a) + f(a)$. C'est le résultat annoncé.
+\end{enumerate}
+\end{experience}
+
+\begin{exemplebox}[Tangente à la parabole en $A(1\,;1)$]
+Soit $f(x) = x^{2}$. On a vu (section précédente) que $f'(1) = 2$. L'équation de la tangente à la parabole au point $A(1\,;1)$ est :
+\[ y = f'(1)(x-1) + f(1) = 2(x-1) + 1 = 2x - 1. \]
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-2.2, xmax=2.6, ymin=-1.8, ymax=4.5,
+  xtick={-2,-1,1,2}, ytick={-1,1,2,3,4},
+  grid=both, grid style={popline!40},
+  samples=200
+]
+\addplot[popcurve, domain=-2:2.1] {x^2};
+\addplot[poporange, thick, domain=-0.5:2.5] {2*x-1};
+\addplot[only marks, mark=*, mark size=2pt, popdark] coordinates {(1,1)};
+\node[popdark, above left] at (axis cs:1,1) {$A(1\,;1)$};
+\node[popblue, left] at (axis cs:-1.7,3.4) {$\mathcal{C}_f : y=x^{2}$};
+\node[poporange, below right] at (axis cs:2.3,3.6) {$T : y=2x-1$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La parabole $y = x^{2}$ et sa tangente en $A(1\,;1)$, d'équation $y = 2x-1$. La tangente « épouse » la courbe au voisinage de $A$.}
+\end{popfigure}
+
+\courssub{Demi-tangentes et points anguleux}
+
+Lorsque $f$ est dérivable à gauche et à droite en $a$ mais que $f'_{g}(a) \neq f'_{d}(a)$, il n'existe pas de tangente unique en $A(a\,;f(a))$. En revanche, chaque « moitié » de courbe admet sa propre position limite de sécante : ce sont les \cle{demi-tangentes}.
+
+\begin{definition}[Demi-tangentes]
+Soit $f$ définie au voisinage de $a$ et $A(a\,;f(a))$ un point de sa courbe $\mathcal{C}_f$.
+\begin{itemize}
+\item Si $f$ est dérivable à gauche en $a$, $\mathcal{C}_f$ admet en $A$ une \cle{demi-tangente à gauche}, d'équation :
+\[ y = f'_{g}(a)\,(x-a) + f(a), \quad \text{tracée pour } x \leq a. \]
+\item Si $f$ est dérivable à droite en $a$, $\mathcal{C}_f$ admet en $A$ une \cle{demi-tangente à droite}, d'équation :
+\[ y = f'_{d}(a)\,(x-a) + f(a), \quad \text{tracée pour } x \geq a. \]
+\end{itemize}
+Lorsque $f'_{g}(a) \neq f'_{d}(a)$, le point $A$ est appelé \cle{point anguleux} de la courbe.
+\end{definition}
+
+\begin{exemplebox}[Demi-tangentes de la valeur absolue en $0$]
+Pour $f(x) = |x|$ en $0$ : $f'_{g}(0) = -1$ et $f'_{d}(0) = 1$. La courbe admet donc :
+\begin{itemize}
+\item une demi-tangente à gauche : $y = -1 \times (x-0) + 0$, soit $y = -x$ (pour $x \leq 0$) ;
+\item une demi-tangente à droite : $y = 1 \times (x-0) + 0$, soit $y = x$ (pour $x \geq 0$).
+\end{itemize}
+Ici, les demi-tangentes coïncident avec la courbe elle-même, puisque $|x|$ est affine de chaque côté de $0$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-2.6, xmax=2.6, ymin=-1.2, ymax=4.2,
+  xtick={-2,-1,1,2}, ytick={1,2,3,4},
+  grid=both, grid style={popline!40},
+  samples=300
+]
+\addplot[popcurve, domain=-2.4:0] {x^2 - 0.5*x + 1};
+\addplot[popcurve, domain=0:2.4, poporange, very thick] {x + 1};
+\addplot[popgreen, dashed, thick, domain=-2.2:0] {-0.5*x + 1};
+\addplot[popgreen, dashed, thick, domain=0:2.2] {x + 1};
+\addplot[only marks, mark=*, mark size=2pt, popdark] coordinates {(0,1)};
+\node[popdark, above right] at (axis cs:0,1) {$A(0\,;1)$};
+\node[popgreen, left] at (axis cs:-1.9,2.1) {demi-tangente à gauche};
+\node[popgreen, right] at (axis cs:1.15,1.7) {demi-tangente à droite};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Point anguleux en $A$ : la courbe admet deux demi-tangentes (en pointillés verts) de pentes différentes $f'_{g}(0) = -\dfrac{1}{2} \neq 1 = f'_{d}(0)$ ; $f$ n'est pas dérivable en $0$.}
+\end{popfigure}
+
+\courssub{Cas de la tangente verticale}
+
+Il reste un dernier cas spectaculaire : celui où le taux d'accroissement n'a pas de limite finie, mais tend vers $+\infty$ ou $-\infty$. La fonction n'est alors pas dérivable en $a$, pourtant la courbe possède bel et bien une tangente : une \cle{tangente verticale}.
+
+\begin{definition}[Tangente verticale]
+Soit $f$ une fonction continue en $a$. Si
+\[ \lim_{x \to a} \frac{f(x)-f(a)}{x-a} = +\infty \quad \text{ou} \quad -\infty, \]
+alors la courbe $\mathcal{C}_f$ admet au point $A(a\,;f(a))$ une \cle{tangente verticale} d'équation $x = a$. Si la limite infinie n'a lieu que d'un seul côté (par exemple $x \to a^{+}$), on parle de \cle{demi-tangente verticale}.
+\end{definition}
+
+\begin{exemplebox}[La fonction racine carrée en $0$]
+Soit $f(x) = \sqrt{x}$, définie sur $[0\,;+\infty[$. Elle est continue en $0$ et $f(0) = 0$. Pour $x > 0$ :
+\[ \frac{f(x)-f(0)}{x-0} = \frac{\sqrt{x}}{x} = \frac{1}{\sqrt{x}} \xrightarrow[x \to 0^{+}]{} +\infty. \]
+La fonction racine carrée n'est donc \textbf{pas dérivable en $0$} (la limite n'est pas finie), mais sa courbe admet à l'origine une \textbf{demi-tangente verticale} : la droite d'équation $x = 0$ (l'axe des ordonnées). La courbe « démarre » de l'origine en montant verticalement, comme un avion qui décolle à la verticale avant de s'incliner.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-0.6, xmax=4.6, ymin=-0.6, ymax=2.6,
+  xtick={1,2,3,4}, ytick={1,2},
+  grid=both, grid style={popline!40},
+  samples=300
+]
+\addplot[popcurve, domain=0:4.4] {sqrt(max(0,x))};
+\addplot[poporange, thick, dashed] coordinates {(0,0) (0,2.4)};
+\addplot[only marks, mark=*, mark size=2pt, popdark] coordinates {(0,0)};
+\node[popdark, below right] at (axis cs:0.05,0) {$O$};
+\node[popblue, above] at (axis cs:3.2,1.79) {$y=\sqrt{x}$};
+\node[poporange, right, rotate=90] at (axis cs:0.12,1.6) {demi-tangente verticale $x=0$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La courbe de $x \mapsto \sqrt{x}$ : en $0$, le taux d'accroissement tend vers $+\infty$ ; la courbe admet une demi-tangente verticale.}
+\end{popfigure}
+
+\begin{attention}[Ne pas confondre les situations en un point]
+Face à l'étude de la dérivabilité de $f$ en $a$, trois conclusions sont possibles — rédige-les soigneusement :
+\begin{itemize}
+\item limite finie unique : $f$ est dérivable en $a$, tangente d'équation $y = f'(a)(x-a)+f(a)$ ;
+\item deux limites finies \emph{différentes} à gauche et à droite : $f$ non dérivable en $a$, point anguleux, deux demi-tangentes ;
+\item limite infinie : $f$ non dérivable en $a$, mais tangente (ou demi-tangente) \emph{verticale} d'équation $x = a$.
+\end{itemize}
+Dire « $f$ n'est pas dérivable » ne dispense jamais de préciser la situation géométrique : c'est souvent là que se gagnent les points au Probatoire.
+\end{attention}
+
+\begin{exoresolu}[Bilan : étude complète en un point de raccordement]
+Soit $g$ la fonction définie sur $\mathbb{R}$ par :
+\[ g(x) = \begin{cases} -x^{2} + 2x & \text{si } x \leq 1 \\ x^{2} - 2x + 2 & \text{si } x > 1 \end{cases} \]
+Étudier la continuité et la dérivabilité de $g$ en $1$, puis interpréter géométriquement.
+\tcblower
+\textbf{Continuité.} $g(1) = -1 + 2 = 1$.
+\[ \lim_{x \to 1^{-}} g(x) = -1 + 2 = 1 \quad ; \quad \lim_{x \to 1^{+}} g(x) = 1 - 2 + 2 = 1. \]
+$g$ est continue en $1$.
+
+\textbf{Dérivabilité à gauche.} Pour $x < 1$ :
+\[ \frac{g(x)-g(1)}{x-1} = \frac{-x^{2}+2x-1}{x-1} = \frac{-(x-1)^{2}}{x-1} = -(x-1) \xrightarrow[x \to 1^{-}]{} 0, \]
+donc $g'_{g}(1) = 0$.
+
+\textbf{Dérivabilité à droite.} Pour $x > 1$ :
+\[ \frac{g(x)-g(1)}{x-1} = \frac{x^{2}-2x+2-1}{x-1} = \frac{(x-1)^{2}}{x-1} = x-1 \xrightarrow[x \to 1^{+}]{} 0, \]
+donc $g'_{d}(1) = 0$.
+
+\textbf{Conclusion.} $g'_{g}(1) = g'_{d}(1) = 0$ : $g$ est dérivable en $1$ et $g'(1) = 0$. La courbe admet au point $A(1\,;1)$ une \textbf{tangente horizontale} d'équation $y = 0 \times (x-1) + 1$, c'est-à-dire $y = 1$.
+\end{exoresolu}
+
+\begin{savaistu}[Pourquoi les routes et les rails évitent les points anguleux]
+Lorsqu'on construit une route ou une voie ferrée — par exemple la ligne Douala--Yaoundé —, on veille à ce que les virages se raccordent « en douceur » : mathématiquement, la courbe suivie doit être dérivable partout, sans point anguleux. Un raccordement non dérivable correspondrait à un changement brutal de direction, source d'inconfort et de danger à grande vitesse. Les ingénieurs utilisent des courbes de raccordement (clothoïdes) pour garantir non seulement la dérivabilité, mais la continuité de la dérivée : c'est le début de ce que tu étudieras plus tard sous le nom de « régularité » des fonctions.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Soit $h$ définie par $h(x) = x^{2} + x$ si $x \leq 0$ et $h(x) = \sqrt{x} + x$ si $x > 0$. Étudier la continuité puis la dérivabilité de $h$ en $0$. Interpréter géométriquement.
+\item Déterminer une équation de la tangente à la courbe de $f(x) = x^{3}$ au point d'abscisse $-1$, sachant que $f'(-1) = 3$.
+\item Montrer que la courbe de $f(x) = |x-2|$ admet un point anguleux en $x = 2$ et donner les équations des deux demi-tangentes.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item \textbf{Continuité :} $h(0) = 0$ ; $\lim\limits_{x \to 0^{-}} h(x) = 0$ et $\lim\limits_{x \to 0^{+}} h(x) = 0$. Donc $h$ est continue en $0$.
+\textbf{Dérivabilité à gauche :} pour $x < 0$, $\dfrac{h(x)-h(0)}{x} = \dfrac{x^{2}+x}{x} = x+1 \to 1$, donc $h'_{g}(0) = 1$.
+\textbf{Dérivabilité à droite :} pour $x > 0$, $\dfrac{h(x)-h(0)}{x} = \dfrac{\sqrt{x}+x}{x} = \dfrac{1}{\sqrt{x}} + 1 \xrightarrow[x \to 0^{+}]{} +\infty$.
+$h$ n'est pas dérivable à droite en $0$, donc pas dérivable en $0$. La courbe admet en $O$ une demi-tangente à gauche d'équation $y = x$ et une demi-tangente verticale à droite ($x = 0$).
+\item $y = f'(-1)(x-(-1)) + f(-1) = 3(x+1) - 1 = 3x + 2$.
+\item Pour $x < 2$ : $\dfrac{|x-2|}{x-2} = \dfrac{-(x-2)}{x-2} = -1 \to -1 = f'_{g}(2)$. Pour $x > 2$ : $\dfrac{|x-2|}{x-2} = 1 \to 1 = f'_{d}(2)$. Comme $-1 \neq 1$, point anguleux en $A(2\,;0)$. Demi-tangente à gauche : $y = -(x-2) = -x+2$ ; demi-tangente à droite : $y = x - 2$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $f$ est \textbf{dérivable en $a$} si et seulement si $f'_{g}(a)$ et $f'_{d}(a)$ existent (limites finies) et sont \textbf{égales} ; alors $f'(a)$ est cette valeur commune.
+\item Fonction définie par intervalles : \textbf{continuité d'abord}, puis taux d'accroissement à gauche et à droite avec la bonne expression.
+\item Tangente en $A(a\,;f(a))$ : $y = f'(a)(x-a) + f(a)$.
+\item $f'_{g}(a) \neq f'_{d}(a)$ (finis) : \textbf{point anguleux}, deux demi-tangentes $y = f'_{g}(a)(x-a)+f(a)$ et $y = f'_{d}(a)(x-a)+f(a)$.
+\item Taux d'accroissement de limite infinie : \textbf{tangente verticale} $x = a$ (exemple type : $\sqrt{x}$ en $0$).
+\end{itemize}
+\end{aretenir}
+
+\coursec{Fonction dérivée sur un intervalle et dérivées usuelles}
+
+Dans la section précédente, nous avons appris à étudier la dérivabilité d'une fonction \emph{en un point} : calcul du nombre dérivé $f'(a)$, dérivabilité à gauche et à droite, tangentes et demi-tangentes. Cette étude point par point est précieuse, mais elle serait fastidieuse si, pour chaque question, il fallait repartir de la limite du taux d'accroissement. L'idée géniale de Newton et de Leibniz, au XVII\textsuperscript{e} siècle, a été de \emph{globaliser} la notion : au lieu de calculer $f'(a)$ pour un seul réel $a$, on calcule une \cle{fonction dérivée} $f'$, valable pour tous les points d'un intervalle à la fois. C'est l'objet de cette section, qui te donnera aussi la « boîte à outils » indispensable : le tableau des dérivées des fonctions usuelles.
+
+\courssub{Fonction dérivable sur un intervalle}
+
+\textbf{Intuition.}\par
+Imagine la route Yaoundé--Douala. Dire qu'une fonction est dérivable sur un intervalle, c'est dire que la route est « lisse » partout sur ce tronçon : en chaque point, on peut tracer une tangente non verticale à la courbe, sans angle brusque ni rupture. Un seul point anguleux (comme en $0$ pour $x \mapsto |x|$) suffit à gâcher la dérivabilité sur tout intervalle le contenant.
+
+\begin{definition}[Dérivabilité sur un intervalle]
+Soit $f$ une fonction numérique et $I$ un intervalle contenu dans son ensemble de définition.
+\begin{itemize}
+\item On dit que $f$ est \cle{dérivable sur l'intervalle ouvert} $I$ si $f$ est dérivable en tout réel de $I$.
+\item Si $I = [a ; b]$ est fermé en $a$ (respectivement en $b$), on dit que $f$ est dérivable sur $I$ si $f$ est dérivable en tout point de $]a ; b[$ (respectivement $]a ; b]$) \textbf{et} dérivable à droite en $a$ (respectivement à gauche en $b$).
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Bornes fermées : une seule dérivabilité latérale exigée]
+En une borne fermée de l'intervalle, la fonction n'est définie que d'un seul côté : on ne peut donc exiger que la dérivabilité du « bon » côté. Par exemple, $f(x) = \sqrt{x}$ est dérivable sur $]0 ; +\infty[$ ; on ne peut pas parler de dérivabilité sur $[0 ; +\infty[$ car $f$ n'est pas dérivable à droite en $0$ (le taux d'accroissement $\frac{\sqrt{h}}{h} = \frac{1}{\sqrt{h}}$ tend vers $+\infty$ : la courbe admet en $0$ une demi-tangente \emph{verticale}).
+\end{attention}
+
+\courssub{Fonction dérivée}
+
+\begin{definition}[Fonction dérivée]
+Soit $f$ une fonction dérivable sur un intervalle $I$. La \cle{fonction dérivée} de $f$ sur $I$, notée $f'$, est la fonction qui à tout réel $x$ de $I$ associe le nombre dérivé $f'(x)$ :
+\[ f' : I \longrightarrow \mathbb{R}, \qquad x \longmapsto f'(x) = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}. \]
+\end{definition}
+
+Autrement dit, $f'(x)$ donne, en chaque point d'abscisse $x$, le \cle{coefficient directeur de la tangente} à la courbe de $f$ au point $(x\,;\,f(x))$. La fonction dérivée est donc une « machine à pentes » : elle encode toute l'information sur l'inclinaison de la courbe.
+
+\begin{methode}[Justifier la dérivabilité sur un intervalle avant de calculer $f'$]
+Face à une question « étudier la dérivabilité de $f$ sur $I$ et déterminer $f'$ », adopte toujours la démarche suivante :
+\begin{enumerate}
+\item \textbf{Vérifier le domaine} : déterminer l'ensemble de définition de $f$ et vérifier que $I$ y est inclus.
+\item \textbf{Identifier la nature de $f$} : fonction usuelle, somme, produit, quotient, composée avec une fonction affine.
+\item \textbf{Justifier} : citer le théorème qui garantit la dérivabilité (fonction usuelle dérivable sur son domaine, opérations sur les fonctions dérivables, dénominateur non nul pour un quotient).
+\item \textbf{Calculer} $f'(x)$ à l'aide des formules, puis simplifier.
+\end{enumerate}
+Au Probatoire, la justification (étape 3) rapporte des points : ne l'oublie jamais, même si elle tient en une phrase.
+\end{methode}
+
+\courssub{Dérivées des fonctions usuelles : démonstrations par la définition}
+
+Avant de donner le tableau récapitulatif, démontrons quelques formules fondamentales en revenant à la définition du nombre dérivé. Ces démonstrations sont formatrices et leurs étapes sont exigibles au Probatoire.
+
+\begin{experience}[Démonstration : $(x^2)' = 2x$]
+Soit $f(x) = x^2$, définie sur $\mathbb{R}$. Fixons $x \in \mathbb{R}$ et calculons le taux d'accroissement entre $x$ et $x+h$ (avec $h \neq 0$) :
+\[ \frac{f(x+h)-f(x)}{h} = \frac{(x+h)^2 - x^2}{h} = \frac{x^2 + 2xh + h^2 - x^2}{h} = \frac{h(2x+h)}{h} = 2x + h. \]
+Quand $h$ tend vers $0$, $2x + h$ tend vers $2x$. Donc $f$ est dérivable en tout réel $x$ et
+\[ f'(x) = 2x. \]
+\end{experience}
+
+\begin{experience}[Démonstration : $\left(\dfrac{1}{x}\right)' = -\dfrac{1}{x^2}$]
+Soit $g(x) = \dfrac{1}{x}$, définie sur $\mathbb{R}^*$. Fixons $x \neq 0$ et $h$ non nul assez petit pour que $x+h \neq 0$ :
+\[ \frac{g(x+h)-g(x)}{h} = \frac{1}{h}\left(\frac{1}{x+h} - \frac{1}{x}\right) = \frac{1}{h}\cdot\frac{x-(x+h)}{x(x+h)} = \frac{-1}{x(x+h)}. \]
+Quand $h$ tend vers $0$, $x(x+h)$ tend vers $x^2 \neq 0$, donc le taux tend vers $-\dfrac{1}{x^2}$. La fonction inverse est dérivable sur $\mathbb{R}^*$ et
+\[ g'(x) = -\frac{1}{x^2}. \]
+Remarque au passage : $g'(x) < 0$ pour tout $x \neq 0$, ce qui confirme que la fonction inverse est décroissante sur $]-\infty ; 0[$ et sur $]0 ; +\infty[$.
+\end{experience}
+
+\begin{experience}[Démonstration : $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$]
+Soit $r(x) = \sqrt{x}$, définie sur $[0 ; +\infty[$. Fixons $x > 0$. L'astuce consiste à multiplier par la \cle{quantité conjuguée} :
+\[ \frac{r(x+h)-r(x)}{h} = \frac{\sqrt{x+h}-\sqrt{x}}{h} = \frac{(\sqrt{x+h}-\sqrt{x})(\sqrt{x+h}+\sqrt{x})}{h\,(\sqrt{x+h}+\sqrt{x})} = \frac{h}{h\,(\sqrt{x+h}+\sqrt{x})} = \frac{1}{\sqrt{x+h}+\sqrt{x}}. \]
+Quand $h$ tend vers $0$, le dénominateur tend vers $2\sqrt{x} > 0$. Donc $r$ est dérivable en tout $x > 0$ et
+\[ r'(x) = \frac{1}{2\sqrt{x}}. \]
+En $x = 0$, le taux vaut $\frac{\sqrt{h}}{h} = \frac{1}{\sqrt{h}} \to +\infty$ quand $h \to 0^+$ : pas de dérivabilité à droite en $0$.
+\end{experience}
+
+\courssub{Tableau des dérivées usuelles}
+
+\begin{propriete}[Dérivées des fonctions usuelles]
+Les fonctions usuelles sont dérivables sur les domaines indiqués, avec les dérivées suivantes :
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\rowcolor{popblueL} \textbf{Fonction $f(x)$} & \textbf{Définie sur} & \textbf{Dérivable sur} & \textbf{Dérivée $f'(x)$} \\
+\hline
+$k$ (constante) & $\mathbb{R}$ & $\mathbb{R}$ & $0$ \\
+\hline
+$x$ & $\mathbb{R}$ & $\mathbb{R}$ & $1$ \\
+\hline
+$x^n$ \ ($n \in \mathbb{N}^*$) & $\mathbb{R}$ & $\mathbb{R}$ & $n\,x^{\,n-1}$ \\
+\hline
+$\dfrac{1}{x}$ & $\mathbb{R}^*$ & $\mathbb{R}^*$ & $-\dfrac{1}{x^2}$ \\
+\hline
+$\sqrt{x}$ & $[0\,;\,+\infty[$ & $]0\,;\,+\infty[$ & $\dfrac{1}{2\sqrt{x}}$ \\
+\hline
+\end{tabular}
+\end{center}
+La formule $(x^n)' = n x^{n-1}$ a été démontrée pour $n = 1$ et $n = 2$ ; elle est \textbf{admise} pour $n \geq 3$ (elle se prouve par récurrence, technique que tu verras en Terminale).
+\end{propriete}
+
+\begin{attention}[Racine carrée : définie en 0, mais pas dérivable en 0]
+C'est le piège classique du Probatoire. La fonction $x \mapsto \sqrt{x}$ est \textbf{définie} sur $[0 ; +\infty[$ mais \textbf{dérivable seulement} sur $]0 ; +\infty[$. Écrire « $f'(0) = \frac{1}{2\sqrt{0}}$ » est une double erreur : le quotient n'a pas de sens, et la limite du taux d'accroissement est infinie. Graphiquement, la courbe de $\sqrt{x}$ admet en l'origine une demi-tangente verticale, dont le « coefficient directeur » est infini.
+\end{attention}
+
+\begin{exemplebox}[Dérivée de $f(x) = x^3$ sur $\mathbb{R}$]
+La fonction $f(x) = x^3$ est une fonction puissance ($n = 3$), dérivable sur $\mathbb{R}$. D'après la formule $(x^n)' = n x^{n-1}$ :
+\[ f'(x) = 3x^2. \]
+Calculons $f'(-2)$ : $f'(-2) = 3\times(-2)^2 = 3 \times 4 = 12$. La tangente à la courbe de $f$ au point d'abscisse $-2$ a pour coefficient directeur $12$ : la courbe « monte » fortement en ce point.
+\end{exemplebox}
+
+\courssub{Lecture graphique : le signe de $f'$ le long de la courbe}
+
+Puisque $f'(x)$ est le coefficient directeur de la tangente en $x$, on peut lire le signe de $f'$ directement sur la courbe : là où les tangentes « montent », $f' > 0$ ; là où elles « descendent », $f' < 0$ ; là où la tangente est horizontale, $f' = 0$. La figure suivante superpose la fonction $f(x) = x^3 - 3x$ et sa dérivée $f'(x) = 3x^2 - 3$ pour illustrer ce lien.
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+  width=\linewidth, height=5.2cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$f(x)$},
+  domain=-2.3:2.3, samples=200,
+  ymin=-3.5, ymax=3.5,
+  xtick={-2,-1,0,1,2}, ytick={-2,2},
+  title={$f(x)=x^3-3x$}, title style={font=\small},
+  every axis plot/.append style={thick}
+]
+\addplot[popcurve]{x^3-3*x};
+\addplot[poporange, dashed, domain=-1.6:-0.4, samples=2]{2};
+\addplot[poporange, dashed, domain=0.4:1.6, samples=2]{-2};
+\node[popmuted, font=\small] at (axis cs:1.5,2.6) {$f$};
+\end{axis}
+\end{tikzpicture}
+
+\vspace{0.3cm}
+\begin{tikzpicture}
+\begin{axis}[
+  width=\linewidth, height=5.2cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$f'(x)$},
+  domain=-2.3:2.3, samples=200,
+  ymin=-4.5, ymax=10,
+  xtick={-2,-1,0,1,2}, ytick={-3,0,9},
+  title={$f'(x)=3x^2-3$}, title style={font=\small},
+  every axis plot/.append style={thick}
+]
+\addplot[popcurve, popgreen]{3*x^2-3};
+\addplot[popmuted, thin, domain=-2.3:2.3, samples=2]{0};
+\draw[popmuted, dotted] (axis cs:-1,-4.5) -- (axis cs:-1,10);
+\draw[popmuted, dotted] (axis cs:1,-4.5) -- (axis cs:1,10);
+\node[popgreen, font=\small] at (axis cs:1.7,7) {$f'$};
+\end{axis}
+\end{tikzpicture}
+\legende{En haut, la courbe de $f(x)=x^3-3x$ (tangentes horizontales en $x=-1$ et $x=1$, en pointillés orange). En bas, sa dérivée $f'(x)=3x^2-3$ : positive là où $f$ croît, négative sur $]-1\,;\,1[$ où $f$ décroît, nulle en $-1$ et $1$.}
+\end{popfigure}
+
+On observe parfaitement la correspondance : $f'$ s'annule exactement aux abscisses où la tangente à la courbe de $f$ est horizontale, et le signe de $f'$ reflète la montée ou la descente de $f$. Ce lien sera étudié en détail dans la section 5.
+
+\begin{exoresolu}[{Dérivabilité et fonction dérivée de $f(x) = \dfrac{1}{x}$ sur $]0 ; +\infty[$}]
+Énoncé. On considère la fonction $f(x) = \dfrac{1}{x}$. Justifier que $f$ est dérivable sur $]0 ; +\infty[$, déterminer $f'$, puis donner une équation de la tangente à la courbe de $f$ au point d'abscisse $2$.
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item \textbf{Dérivabilité} : $f$ est la fonction inverse, fonction usuelle dérivable sur $\mathbb{R}^*$, donc en particulier sur $]0 ; +\infty[$.
+\item \textbf{Fonction dérivée} : pour tout $x > 0$, $f'(x) = -\dfrac{1}{x^2}$.
+\item \textbf{Tangente en $2$} : on calcule $f(2) = \dfrac{1}{2}$ et $f'(2) = -\dfrac{1}{4}$. L'équation de la tangente est
+\[ y = f'(2)(x-2) + f(2) = -\frac{1}{4}(x-2) + \frac{1}{2} = -\frac{1}{4}x + 1. \]
+\end{enumerate}
+La tangente au point $\left(2\,;\,\frac{1}{2}\right)$ a donc pour équation $y = -\dfrac{1}{4}x + 1$.
+\end{exoresolu}
+
+\courssub{Complément : la notation différentielle}
+
+En physique et en Terminale, tu rencontreras la notation de Leibniz : au lieu de $f'(x)$, on écrit
+\[ \frac{\mathrm{d}f}{\mathrm{d}x} \qquad \text{ou} \qquad \frac{\mathrm{d}y}{\mathrm{d}x}. \]
+Elle se lit « dérivée de $f$ par rapport à $x$ » et rappelle l'origine de la dérivée : un rapport de petites variations $\frac{\Delta y}{\Delta x}$ dont on prend la limite. Si une grandeur dépend du temps, on note $\frac{\mathrm{d}x}{\mathrm{d}t}$ ou $\dot{x}$ sa dérivée par rapport au temps $t$.
+
+\begin{savaistu}[Position, vitesse, accélération : la dérivée au cœur de la mécanique]
+Si $x(t)$ est la position d'un véhicule sur l'axe Yaoundé--Bafoussam à l'instant $t$, alors sa \cle{vitesse} est $v(t) = \dfrac{\mathrm{d}x}{\mathrm{d}t} = x'(t)$, et son \cle{accélération} est $a(t) = v'(t) = x''(t)$. C'est exactement ce formalisme qui a permis à Newton d'écrire les lois du mouvement : la dérivée est née, en grande partie, pour décrire le mouvement. Aujourd'hui, elle sert aussi bien aux ingénieurs de CAMTEL pour optimiser les débits qu'aux économistes pour étudier les coûts marginaux.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $f$ est \textbf{dérivable sur un intervalle} $I$ si elle est dérivable en tout point de $I$ (dérivabilité à droite ou à gauche aux bornes fermées).
+\item La \textbf{fonction dérivée} $f'$ associe à tout $x$ de $I$ le nombre dérivé $f'(x)$, coefficient directeur de la tangente en $x$.
+\item Formules à connaître par cœur : $(k)' = 0$, $(x)' = 1$, $(x^n)' = n x^{n-1}$, $\left(\frac{1}{x}\right)' = -\frac{1}{x^2}$, $(\sqrt{x})' = \frac{1}{2\sqrt{x}}$.
+\item $\sqrt{x}$ est définie sur $[0 ; +\infty[$ mais dérivable seulement sur $]0 ; +\infty[$.
+\item Le signe de $f'$ se lit graphiquement : tangentes montantes $\Rightarrow f' > 0$ ; tangentes descendantes $\Rightarrow f' < 0$ ; tangente horizontale $\Rightarrow f' = 0$.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[Pour t'entraîner]
+\begin{enumerate}
+\item En utilisant la définition du nombre dérivé, démontrer que la dérivée de $f(x) = x$ est $f'(x) = 1$.
+\item Déterminer la fonction dérivée de $g(x) = x^4$ sur $\mathbb{R}$ et calculer $g'(-1)$.
+\item La fonction $h(x) = \sqrt{x}$ est-elle dérivable sur $[0 ; 4]$ ? Justifier précisément.
+\item Soit $k(x) = \dfrac{1}{x}$. Déterminer une équation de la tangente à sa courbe au point d'abscisse $-1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Pour $h \neq 0$ : $\dfrac{(x+h)-x}{h} = \dfrac{h}{h} = 1 \xrightarrow[h \to 0]{} 1$. Donc $f'(x) = 1$ pour tout réel $x$.
+\item $g(x) = x^4$ est une fonction puissance dérivable sur $\mathbb{R}$ : $g'(x) = 4x^3$. Alors $g'(-1) = 4(-1)^3 = -4$.
+\item Non : $h$ est dérivable sur $]0 ; 4]$, mais pas à droite en $0$, car $\dfrac{\sqrt{h}-0}{h} = \dfrac{1}{\sqrt{h}} \to +\infty$ quand $h \to 0^+$. La courbe admet en $0$ une demi-tangente verticale.
+\item $k(-1) = -1$ et $k'(-1) = -\dfrac{1}{(-1)^2} = -1$. Tangente : $y = -1\,(x+1) - 1$, soit $y = -x - 2$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Opérations sur les fonctions dérivables}
+
+Dans la section précédente, nous avons construit la \cle{fonction dérivée} d'une fonction sur un intervalle et dressé le tableau des dérivées usuelles : $x^n$, $\sqrt{x}$, $\dfrac{1}{x}$, etc. Mais les fonctions que l'on rencontre au Probatoire — et dans la vie courante — sont rarement des fonctions usuelles pures. Le bénéfice d'un transporteur de la ligne Yaoundé--Douala peut se modéliser par $f(x) = \dfrac{2x+1}{x-3}$ (en certaines unités, selon le nombre $x$ de passagers), la distance d'arrêt d'un véhicule est un polynôme de degré $2$ en fonction de la vitesse, etc. Ces fonctions sont des \emph{sommes}, \emph{produits}, \emph{quotients} ou \emph{composées} de fonctions usuelles. L'objectif de cette section est de fournir les \emph{règles de calcul} qui permettent de dériver toutes ces fonctions sans revenir à chaque fois à la définition par le taux d'accroissement.
+
+\courssub{Dérivée d'une somme et d'un produit par un réel}
+
+L'intuition est immédiate : si deux quantités varient, la variation de leur somme est la somme de leurs variations. Si ton salaire augmente de $u'(a)$ francs par mois et ta prime de $v'(a)$ francs par mois, ton revenu total augmente de $u'(a)+v'(a)$ francs par mois.
+
+\begin{propriete}[Dérivée d'une somme et d'un produit par un réel]
+Soient $u$ et $v$ deux fonctions dérivables en un réel $a$, et $k$ un réel. Alors :
+\begin{enumerate}
+\item la fonction $u+v$ est dérivable en $a$ et $(u+v)'(a) = u'(a) + v'(a)$ ;
+\item la fonction $ku$ est dérivable en $a$ et $(ku)'(a) = k\,u'(a)$.
+\end{enumerate}
+Ces résultats s'étendent à tout intervalle sur lequel $u$ et $v$ sont dérivables : on écrit alors $(u+v)' = u'+v'$ et $(ku)' = k\,u'$.
+\end{propriete}
+
+\begin{experience}[Démonstration exigible : dérivée de la somme]
+Posons $s = u+v$ et écrivons son taux d'accroissement en $a$, pour $x \neq a$ :
+\[
+\frac{s(x)-s(a)}{x-a} = \frac{u(x)+v(x)-u(a)-v(a)}{x-a} = \frac{u(x)-u(a)}{x-a} + \frac{v(x)-v(a)}{x-a}.
+\]
+Par hypothèse, $\dfrac{u(x)-u(a)}{x-a} \to u'(a)$ et $\dfrac{v(x)-v(a)}{x-a} \to v'(a)$ quand $x \to a$. La limite d'une somme étant la somme des limites :
+\[
+\lim_{x \to a} \frac{s(x)-s(a)}{x-a} = u'(a)+v'(a),
+\]
+donc $s$ est dérivable en $a$ et $s'(a) = u'(a)+v'(a)$.\par
+Pour $ku$, on factorise simplement : $\dfrac{ku(x)-ku(a)}{x-a} = k\,\dfrac{u(x)-u(a)}{x-a} \to k\,u'(a)$ quand $x \to a$. \quad $\blacksquare$
+\end{experience}
+
+\begin{exemplebox}[Première application : dériver un polynôme]
+Soit $f(x) = x^3 + 5x^2 - 2x + 7$. En appliquant les deux règles précédentes et les dérivées usuelles terme à terme :
+\[
+f'(x) = 3x^2 + 5\times 2x - 2\times 1 + 0 = 3x^2 + 10x - 2.
+\]
+Remarque que la dérivée de la constante $7$ est nulle : une constante ne varie pas, son taux d'accroissement est identiquement égal à $0$.
+\end{exemplebox}
+
+\begin{aretenir}[Conséquence pratique]
+Toute fonction polynôme est dérivable sur $\mathbb{R}$, et on la dérive \emph{terme à terme} : la dérivée de $a_nx^n + a_{n-1}x^{n-1} + \dots + a_1x + a_0$ est $na_nx^{n-1} + (n-1)a_{n-1}x^{n-2} + \dots + a_1$.
+\end{aretenir}
+
+\courssub{Dérivée d'un produit}
+
+Voici maintenant le premier vrai piège du chapitre : la dérivée d'un produit \textbf{n'est pas} le produit des dérivées. L'intuition géométrique aide à comprendre : si un rectangle a pour côtés $u(x)$ et $v(x)$ qui grandissent tous les deux, son aire $u(x)v(x)$ augmente à la fois parce que la longueur grandit (gain $u'(x)\,v(x)$) \emph{et} parce que la largeur grandit (gain $u(x)\,v'(x)$). Les deux contributions s'ajoutent.
+
+\begin{propriete}[Dérivée d'un produit]
+Si $u$ et $v$ sont dérivables en $a$, alors $uv$ est dérivable en $a$ et
+\[
+(uv)'(a) = u'(a)\,v(a) + u(a)\,v'(a).
+\]
+Sur un intervalle où $u$ et $v$ sont dérivables : $(uv)' = u'v + uv'$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : l'astuce d'ajouter et retrancher]
+Écrivons le taux d'accroissement de $uv$ en $a$, pour $x \neq a$ :
+\[
+\frac{u(x)v(x)-u(a)v(a)}{x-a}.
+\]
+\textbf{Astuce} : on ajoute et on retranche la même quantité $u(a)v(x)$ au numérateur, ce qui ne change pas sa valeur :
+\[
+u(x)v(x)-u(a)v(a) = \underbrace{u(x)v(x)-u(a)v(x)}_{\text{on factorise } v(x)} + \underbrace{u(a)v(x)-u(a)v(a)}_{\text{on factorise } u(a)}.
+\]
+Ainsi :
+\[
+\frac{u(x)v(x)-u(a)v(a)}{x-a} = \frac{u(x)-u(a)}{x-a}\,v(x) + u(a)\,\frac{v(x)-v(a)}{x-a}.
+\]
+Quand $x \to a$ : le premier taux tend vers $u'(a)$ ; $v(x) \to v(a)$ car toute fonction dérivable en $a$ est continue en $a$ ; le second taux tend vers $v'(a)$. Par passage à la limite dans un produit et une somme :
+\[
+(uv)'(a) = u'(a)\,v(a) + u(a)\,v'(a). \qquad \blacksquare
+\]
+\end{experience}
+
+\begin{exemplebox}[Produit : $g(x) = x\sqrt{x}$]
+Posons $u(x) = x$ et $v(x) = \sqrt{x}$, dérivables sur $]0\,;\,+\infty[$ avec $u'(x) = 1$ et $v'(x) = \dfrac{1}{2\sqrt{x}}$. Alors, pour tout $x > 0$ :
+\[
+g'(x) = 1\times \sqrt{x} + x\times \frac{1}{2\sqrt{x}} = \sqrt{x} + \frac{x}{2\sqrt{x}} = \sqrt{x} + \frac{\sqrt{x}}{2} = \frac{3}{2}\sqrt{x},
+\]
+car $\dfrac{x}{\sqrt{x}} = \sqrt{x}$ pour $x > 0$. Vérification : $g(x) = x^{3/2}$, et la formule des puissances donne bien $g'(x) = \dfrac{3}{2}x^{1/2}$. Les deux approches concordent.
+\end{exemplebox}
+
+\begin{attention}[Les deux erreurs les plus fréquentes au Probatoire]
+\textbf{Erreur n°1 :} écrire $(uv)' = u'v'$. C'est \textbf{faux} ! Contre-exemple : $u(x)=v(x)=x$, donc $(uv)(x) = x^2$ et $(uv)'(x) = 2x$, alors que $u'(x)v'(x) = 1\times 1 = 1$. La bonne formule est $(uv)' = u'v + uv'$.\par
+\textbf{Erreur n°2 :} écrire $\left(\dfrac{u}{v}\right)' = \dfrac{u'}{v'}$. C'est \textbf{faux} ! Contre-exemple : avec $u(x)=v(x)=x$, on a $\dfrac{u(x)}{v(x)} = 1$ pour $x\neq 0$, de dérivée $0$, alors que $\dfrac{u'(x)}{v'(x)} = \dfrac{1}{1} = 1$. La bonne formule est donnée au paragraphe suivant.
+\end{attention}
+
+\courssub{Dérivée d'un quotient}
+
+\begin{propriete}[Dérivée d'un quotient]
+Si $u$ et $v$ sont dérivables en $a$ et si $v(a) \neq 0$, alors $\dfrac{u}{v}$ est dérivable en $a$ et
+\[
+\left(\frac{u}{v}\right)'(a) = \frac{u'(a)\,v(a) - u(a)\,v'(a)}{\bigl(v(a)\bigr)^2}.
+\]
+Cas particulier (avec $u = 1$) : $\left(\dfrac{1}{v}\right)'(a) = -\dfrac{v'(a)}{\bigl(v(a)\bigr)^2}$.
+\end{propriete}
+
+\begin{attention}[La condition $v(a) \neq 0$ est indispensable]
+La formule du quotient n'a de sens que là où le dénominateur ne s'annule pas. Avant de dériver un quotient, commence toujours par déterminer l'ensemble de définition, puis précise l'ensemble de dérivabilité dans ta conclusion. Oublier cette condition est sanctionné au Probatoire.
+\end{attention}
+
+\begin{experience}[Démonstration guidée]
+\textbf{Étape 1 : dérivée de $\dfrac{1}{v}$.} Comme $v(a)\neq 0$ et $v$ est continue en $a$ (car dérivable en $a$), $v(x)\neq 0$ pour $x$ assez proche de $a$. Pour $x \neq a$, on calcule :
+\[
+\frac{\dfrac{1}{v(x)}-\dfrac{1}{v(a)}}{x-a} = \frac{\dfrac{v(a)-v(x)}{v(x)\,v(a)}}{x-a} = -\frac{1}{v(x)\,v(a)}\times \frac{v(x)-v(a)}{x-a}.
+\]
+Quand $x\to a$, le taux $\dfrac{v(x)-v(a)}{x-a}$ tend vers $v'(a)$ et $v(x)\to v(a)$, d'où
+\[
+\left(\frac{1}{v}\right)'(a) = -\frac{v'(a)}{\bigl(v(a)\bigr)^2}.
+\]
+\textbf{Étape 2 : le quotient comme produit.} On écrit $\dfrac{u}{v} = u\times \dfrac{1}{v}$ et on applique la règle du produit avec l'étape 1 :
+\[
+\left(\frac{u}{v}\right)' = u'\times\frac{1}{v} + u\times\left(-\frac{v'}{v^2}\right) = \frac{u'}{v} - \frac{uv'}{v^2} = \frac{u'v - uv'}{v^2}. \qquad \blacksquare
+\]
+\end{experience}
+
+\begin{exoresolu}[Dériver $f(x) = \dfrac{2x+1}{x-3}$]
+Soit $f(x) = \dfrac{2x+1}{x-3}$, définie sur $\mathbb{R}\setminus\{3\}$. Déterminer la fonction dérivée $f'$.
+\tcblower
+\textbf{Solution.} $f$ est un quotient avec $u(x) = 2x+1$ et $v(x) = x-3$, fonctions dérivables sur $\mathbb{R}$, et $v(x)\neq 0$ pour tout $x\neq 3$. Donc $f$ est dérivable sur $\mathbb{R}\setminus\{3\}$. On a $u'(x) = 2$ et $v'(x) = 1$. La formule du quotient donne, pour tout $x \neq 3$ :
+\begin{align*}
+f'(x) &= \frac{u'(x)v(x)-u(x)v'(x)}{\bigl(v(x)\bigr)^2} = \frac{2(x-3)-(2x+1)\times 1}{(x-3)^2} \\
+&= \frac{2x-6-2x-1}{(x-3)^2} = \frac{-7}{(x-3)^2}.
+\end{align*}
+\textbf{Conclusion :} $f'(x) = -\dfrac{7}{(x-3)^2}$ pour tout $x\in\mathbb{R}\setminus\{3\}$. Comme $(x-3)^2 > 0$, on a $f'(x) < 0$ sur chacun des intervalles $]-\infty\,;\,3[$ et $]3\,;\,+\infty[$ : $f$ est donc strictement décroissante sur chacun de ces intervalles — résultat précieux pour la section 5. Attention : on ne peut pas conclure à une décroissance sur la réunion des deux intervalles.
+\end{exoresolu}
+
+\courssub{Dérivée de la composée par une fonction affine}
+
+De nombreuses fonctions du programme sont de la forme $x \mapsto f(ax+b)$ : $\sqrt{2x-5}$, $(3x-2)^4$, $\dfrac{1}{4x+1}$, etc. On compose d'abord la fonction affine $x \mapsto ax+b$, puis une fonction usuelle $f$.
+
+\begin{propriete}[Dérivée de $f(ax+b)$]
+Soit $f$ une fonction dérivable sur un intervalle $J$, et $a$, $b$ deux réels. Si $x_0$ est tel que $ax_0+b \in J$, alors la fonction $g : x \mapsto f(ax+b)$ est dérivable en $x_0$ et
+\[
+g'(x_0) = a\,f'(ax_0+b).
+\]
+Autrement dit : on dérive $f$ « comme si $ax+b$ était la variable », puis on multiplie par $a$, le coefficient de $x$.
+\end{propriete}
+
+\begin{experience}[Démonstration par le taux d'accroissement (cas $a\neq 0$)]
+Posons $g(x) = f(ax+b)$. Pour $x \neq x_0$, notons $X = ax+b$ et $X_0 = ax_0+b$. Comme $a \neq 0$, on a $X \neq X_0$ et l'on peut écrire :
+\[
+\frac{g(x)-g(x_0)}{x-x_0} = \frac{f(X)-f(X_0)}{x-x_0} = \frac{f(X)-f(X_0)}{X-X_0}\times\frac{X-X_0}{x-x_0} = a\,\frac{f(X)-f(X_0)}{X-X_0},
+\]
+car $X - X_0 = a(x-x_0)$, donc $\dfrac{X-X_0}{x-x_0} = a$. Quand $x \to x_0$, $X = ax+b \to ax_0+b = X_0$, donc le taux de $f$ tend vers $f'(X_0) = f'(ax_0+b)$. Ainsi $g'(x_0) = a\,f'(ax_0+b)$. (Si $a = 0$, $g$ est constante et $g' = 0$, ce qui reste cohérent avec la formule.) \quad $\blacksquare$
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  etape/.style={draw=popblue, fill=popblueL, rounded corners=3pt, minimum height=0.9cm, align=center, font=\small},
+  deriv/.style={draw=poporange, fill=poporangeL, rounded corners=3pt, align=center, font=\small},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}]
+\node[etape] (x) at (0,0) {$x$};
+\node[etape] (aff) at (3.2,0) {$3x-2$};
+\node[etape] (puiss) at (6.6,0) {$(3x-2)^4$};
+\draw[fleche] (x) -- (aff) node[midway, above, font=\small]{fonction affine};
+\draw[fleche] (aff) -- (puiss) node[midway, above, font=\small]{puissance $4$};
+\node[deriv] (d1) at (3.2,-1.8) {dérivée : $3$};
+\node[deriv, align=center] (d2) at (6.6,-1.8) {dérivée : $4X^3$\\ avec $X=3x-2$};
+\draw[fleche, poporange] (aff) -- (d1);
+\draw[fleche, poporange] (puiss) -- (d2);
+\node[deriv, draw=poppurple, fill=poppurpleL, align=center] (res) at (10.8,0) {$h'(x) = 3\times 4(3x-2)^3$\\ $= 12(3x-2)^3$};
+\draw[fleche, poppurple] (puiss) -- (res) node[midway, above, font=\small]{on multiplie};
+\draw[fleche, poporange, dashed] (d1.east) -- (8.6,-1.8) -- (8.6,-0.9) -- (res.south);
+\end{tikzpicture}
+\end{center}
+\legende{Arbre de décomposition de $h(x)=(3x-2)^4$ : on dérive chaque étape, puis on multiplie les dérivées rencontrées le long de la chaîne.}
+\end{popfigure}
+
+\begin{exemplebox}[Trois applications directes]
+\begin{itemize}
+\item $h(x) = (3x-2)^4$ : ici $f(X) = X^4$, $f'(X) = 4X^3$, $a = 3$, donc $h'(x) = 3\times 4(3x-2)^3 = 12(3x-2)^3$ pour tout $x\in\mathbb{R}$.
+\item $r(x) = \sqrt{2x-5}$ : $f(X) = \sqrt{X}$, $f'(X) = \dfrac{1}{2\sqrt{X}}$, $a = 2$. La fonction $r$ est définie pour $2x-5 \geq 0$, et dérivable pour $2x-5 > 0$, c'est-à-dire sur $\left]\dfrac{5}{2}\,;\,+\infty\right[$, avec $r'(x) = \dfrac{2}{2\sqrt{2x-5}} = \dfrac{1}{\sqrt{2x-5}}$.
+\item $q(x) = \dfrac{1}{4x+1}$ : $f(X) = \dfrac{1}{X}$, $f'(X) = -\dfrac{1}{X^2}$, $a = 4$, donc $q'(x) = -\dfrac{4}{(4x+1)^2}$ pour tout $x \neq -\dfrac{1}{4}$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Deux pièges sur la composée affine]
+\textbf{Piège n°1 :} oublier de multiplier par $a$. Écrire que la dérivée de $\sqrt{2x-5}$ est $\dfrac{1}{2\sqrt{2x-5}}$ est faux : il manque le facteur $a = 2$.\par
+\textbf{Piège n°2 :} confondre ensemble de définition et ensemble de dérivabilité. La fonction $r(x) = \sqrt{2x-5}$ est \emph{définie} sur $\left[\dfrac{5}{2}\,;\,+\infty\right[$ mais \emph{dérivable} seulement sur $\left]\dfrac{5}{2}\,;\,+\infty\right[$ : en $x = \dfrac{5}{2}$, la courbe admet une demi-tangente verticale (le taux d'accroissement tend vers $+\infty$), donc $r$ n'y est pas dérivable.
+\end{attention}
+
+\begin{savaistu}[Et la composée générale ?]
+La règle complète, que tu étudieras en Terminale, s'énonce ainsi : si $v$ est dérivable en $a$ et $u$ dérivable en $v(a)$, alors $u\circ v$ est dérivable en $a$ et
+\[
+(u\circ v)'(a) = v'(a)\times u'\bigl(v(a)\bigr).
+\]
+La règle de la composée affine en est le cas particulier $v(x) = ax+b$ (alors $v'(a) = a$). Retiens l'image de l'arbre ci-dessus : \emph{on dérive étage par étage et l'on multiplie les dérivées rencontrées}. C'est la « règle de la chaîne », l'un des outils les plus puissants de l'analyse, utilisé en physique pour les vitesses composées et en économie pour les taux de variation liés.
+\end{savaistu}
+
+\courssub{Stratégie générale et tableau récapitulatif}
+
+\begin{methode}[Identifier la structure avant de dériver]
+Face à une fonction $f$ à dériver :
+\begin{enumerate}
+\item \textbf{Lire la dernière opération effectuée} dans l'expression de $f(x)$ : est-ce une somme, un produit, un quotient, ou une composée (une fonction « de » quelque chose) ?
+\item \textbf{Choisir la formule correspondante} et nommer $u$, $v$ (et leurs dérivées) explicitement sur ta copie.
+\item \textbf{Appliquer la formule} sans sauter d'étape, puis simplifier le numérateur ou l'expression obtenue.
+\item \textbf{Préciser l'ensemble de dérivabilité} (valeurs interdites, domaine de la racine carrée, etc.).
+\end{enumerate}
+\end{methode}
+
+\begin{aretenir}[Tableau des formules d'opérations]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Opération} & \textbf{Dérivée} \\
+\hline
+Somme : $u+v$ & $u'+v'$ \\
+\hline
+Produit par un réel : $ku$ & $k\,u'$ \\
+\hline
+Produit : $uv$ & $u'v + uv'$ \\
+\hline
+Carré : $u^2$ & $2u'u$ \\
+\hline
+Inverse : $\dfrac{1}{v}$ \; ($v\neq 0$) & $-\dfrac{v'}{v^2}$ \\
+\hline
+Quotient : $\dfrac{u}{v}$ \; ($v\neq 0$) & $\dfrac{u'v - uv'}{v^2}$ \\
+\hline
+Composée affine : $f(ax+b)$ & $a\,f'(ax+b)$ \\
+\hline
+Puissance affine : $(ax+b)^n$ & $an(ax+b)^{n-1}$ \\
+\hline
+Racine affine : $\sqrt{ax+b}$ & $\dfrac{a}{2\sqrt{ax+b}}$ \\
+\hline
+\end{tabularx}
+\end{center}
+Les formules du carré, de la puissance affine et de la racine affine sont des conséquences directes des formules du produit et de la composée affine : par exemple $(u^2)' = u'u + uu' = 2u'u$.
+\end{aretenir}
+
+\begin{exoresolu}[Entraînement complet]
+Dériver les fonctions suivantes sur leur ensemble de dérivabilité :
+\[
+f(x) = \frac{2x+1}{x-3}, \qquad g(x) = x\sqrt{x}, \qquad h(x) = (3x-2)^4.
+\]
+\tcblower
+\textbf{1.} $f$ est un quotient : traité en détail plus haut, $f'(x) = -\dfrac{7}{(x-3)^2}$ sur $\mathbb{R}\setminus\{3\}$.\par
+\textbf{2.} $g$ est un produit avec $u(x)=x$, $v(x)=\sqrt{x}$, dérivables sur $]0\,;\,+\infty[$ :
+\[
+g'(x) = \sqrt{x} + \frac{x}{2\sqrt{x}} = \sqrt{x} + \frac{\sqrt{x}}{2} = \frac{3}{2}\sqrt{x} \quad \text{sur } ]0\,;\,+\infty[.
+\]
+\textbf{3.} $h$ est une composée affine avec $f(X) = X^4$ et $a = 3$ :
+\[
+h'(x) = 3\times 4(3x-2)^3 = 12(3x-2)^3 \quad \text{sur } \mathbb{R}.
+\]
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Dériver les fonctions suivantes en précisant l'ensemble de dérivabilité :
+\begin{enumerate}
+\item $p(x) = 4x^3 - 5x^2 + \dfrac{2}{x}$ ;
+\item $q(x) = (x^2+1)\sqrt{x}$ ;
+\item $r(x) = \dfrac{x-1}{2x+5}$ ;
+\item $s(x) = \sqrt{5x-1}$ et $t(x) = (1-2x)^5$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\textbf{1.} $p$ est une somme de fonctions dérivables sur $\mathbb{R}^*$ (à cause du terme $\dfrac{2}{x}$) :
+\[
+p'(x) = 12x^2 - 10x - \frac{2}{x^2} \quad \text{sur } \mathbb{R}^*.
+\]
+\textbf{2.} $q$ est un produit avec $u(x) = x^2+1$ et $v(x) = \sqrt{x}$, dérivables sur $]0\,;\,+\infty[$ :
+\[
+q'(x) = 2x\sqrt{x} + \frac{x^2+1}{2\sqrt{x}} = \frac{4x^2 + x^2 + 1}{2\sqrt{x}} = \frac{5x^2+1}{2\sqrt{x}} \quad \text{sur } ]0\,;\,+\infty[,
+\]
+en réduisant au même dénominateur $2\sqrt{x}$ et en utilisant $2x\sqrt{x} = \dfrac{4x^2}{2\sqrt{x}}$ car $x\sqrt{x} = \dfrac{x^2}{\sqrt{x}}$.\par
+\textbf{3.} $r$ est un quotient avec $u(x) = x-1$, $v(x) = 2x+5$, et $v(x) = 0$ pour $x = -\dfrac{5}{2}$ :
+\[
+r'(x) = \frac{1\times(2x+5)-(x-1)\times 2}{(2x+5)^2} = \frac{2x+5-2x+2}{(2x+5)^2} = \frac{7}{(2x+5)^2} \quad \text{sur } \mathbb{R}\setminus\left\{-\tfrac{5}{2}\right\}.
+\]
+\textbf{4.} Composées affines : $s$ est dérivable pour $5x-1 > 0$, c'est-à-dire sur $\left]\dfrac{1}{5}\,;\,+\infty\right[$, avec
+\[
+s'(x) = \frac{5}{2\sqrt{5x-1}} ;
+\]
+$t$ est dérivable sur $\mathbb{R}$ avec
+\[
+t'(x) = -2\times 5(1-2x)^4 = -10(1-2x)^4.
+\]
+\end{corrige}
+
+Ces règles de calcul maîtrisées, tu disposes désormais de tous les outils algébriques de la dérivation. La section suivante leur donnera tout leur sens : grâce au signe de la dérivée, nous pourrons déterminer le \emph{sens de variation} d'une fonction et dresser son tableau de variations complet.
+
+\coursec{Dérivée et sens de variation}
+
+Dans la section précédente, tu as appris à \emph{calculer} des dérivées : dérivées des fonctions usuelles, d'une somme, d'un produit, d'un quotient, d'une composée avec une fonction affine. Tu disposes maintenant d'une véritable boîte à outils algébrique. Mais à quoi sert tout cela ? C'est la question que tout élève se pose légitimement, et la réponse est magnifique : \textbf{le signe de la dérivée révèle le sens de variation de la fonction}. Autrement dit, un calcul purement algébrique (le signe de $f'(x)$) va nous permettre de décrire le comportement géométrique de la courbe (elle monte, elle descend, elle reste horizontale). C'est l'un des théorèmes les plus puissants et les plus utilisés du programme de Première, et il sera au cœur de presque tous les problèmes du Probatoire.
+
+\courssub{Intuition : lire la pente des tangentes}
+
+Reprenons l'image du conducteur sur la route Douala--Yaoundé. Imagine que la courbe représentative d'une fonction $f$ est le profil d'une route de collines. En chaque point de la courbe, la tangente représente le cap de ta voiture à cet instant :
+
+\begin{itemize}
+\item si la route \emph{monte} (fonction croissante), la tangente est inclinée « vers le haut » : sa pente, c'est-à-dire $f'(x)$, est \textbf{positive} ;
+\item si la route \emph{descend} (fonction décroissante), la tangente est inclinée « vers le bas » : sa pente $f'(x)$ est \textbf{négative} ;
+\item si la route est momentanément \emph{plate} (sommet d'une colline, fond d'une vallée, ou simple palier), la tangente est \textbf{horizontale} : $f'(x) = 0$.
+\end{itemize}
+
+Cette intuition géométrique est le contenu exact du théorème fondamental de cette section. La dérivée en un point étant le coefficient directeur de la tangente en ce point, il est naturel que son signe gouverne la montée ou la descente de la courbe.
+
+\courssub{Le théorème fondamental}
+
+\begin{propriete}[Théorème fondamental : signe de $f'$ et sens de variation de $f$]
+Soit $f$ une fonction dérivable sur un intervalle $I$.
+\begin{enumerate}
+\item Si $f'(x) \geq 0$ pour tout $x \in I$, alors $f$ est \cle{croissante} sur $I$.
+\item Si $f'(x) \leq 0$ pour tout $x \in I$, alors $f$ est \cle{décroissante} sur $I$.
+\item Si $f'(x) = 0$ pour tout $x \in I$, alors $f$ est \cle{constante} sur $I$.
+\end{enumerate}
+De plus, pour la stricte monotonie : si $f'(x) > 0$ pour tout $x \in I$, \emph{sauf éventuellement en des points isolés} où $f'$ s'annule, alors $f$ est \cle{strictement croissante} sur $I$ (résultat analogue avec $f'(x) < 0$ pour la stricte décroissance).
+\end{propriete}
+
+\begin{attention}[Théorème admis]
+Ce théorème est \textbf{admis} en Première : sa démonstration rigoureuse repose sur le \emph{théorème des accroissements finis}, que tu étudieras en Terminale. En revanche, tu dois savoir le \emph{justifier intuitivement} par les tangentes : si en tout point de $I$ la tangente a un coefficient directeur positif, la courbe ne peut que monter sur $I$.
+\end{attention}
+
+\begin{experience}[Justification graphique du théorème]
+Considérons une fonction $f$ dérivable sur $I$ avec $f'(x) > 0$ sur $I$, et raisonnons pas à pas.
+\begin{enumerate}
+\item Soient $a$ et $b$ deux réels de $I$ avec $a < b$. On veut comparer $f(a)$ et $f(b)$.
+\item En chaque point $x$ de $[a\,;b]$, la tangente à la courbe a pour coefficient directeur $f'(x) > 0$ : localement, la courbe « monte ».
+\item La dérivée étant la limite du taux d'accroissement, dire que $f'(x) > 0$ signifie que pour $h$ assez petit et positif, $\dfrac{f(x+h)-f(x)}{h} > 0$, donc $f(x+h) > f(x)$ : la fonction augmente localement autour de chaque point.
+\item En progressant de proche en proche de $a$ vers $b$, la fonction ne cesse d'augmenter : on obtient $f(a) < f(b)$.
+\item Conclusion : $f$ est croissante sur $I$. Le raisonnement est identique avec $f'(x) < 0$, en inversant les inégalités.
+\end{enumerate}
+\end{experience}
+
+\courssub{Réciproque partielle : la croissance impose le signe de la dérivée}
+
+Le théorème précédent dit : « $f' \geq 0$ entraîne $f$ croissante ». Peut-on renverser l'implication ? Partiellement, oui, et cette fois la démonstration est à ta portée : elle repose sur le signe du taux d'accroissement.
+
+\begin{propriete}[Réciproque partielle]
+Soit $f$ une fonction dérivable sur un intervalle $I$. Si $f$ est croissante sur $I$, alors $f'(x) \geq 0$ pour tout $x \in I$. De même, si $f$ est décroissante sur $I$, alors $f'(x) \leq 0$ pour tout $x \in I$.
+\end{propriete}
+
+\begin{experience}[Démonstration : le signe du taux d'accroissement]
+Démontrons que si $f$ est croissante et dérivable sur $I$, alors $f' \geq 0$ sur $I$.
+\begin{enumerate}
+\item Fixons $a \in I$. Pour tout $x \in I$ avec $x \neq a$, considérons le taux d'accroissement $\tau(x) = \dfrac{f(x) - f(a)}{x - a}$.
+\item \textbf{Cas 1 :} $x > a$. Comme $f$ est croissante, $f(x) \geq f(a)$. Le numérateur $f(x)-f(a)$ est positif ou nul et le dénominateur $x-a$ est strictement positif : donc $\tau(x) \geq 0$.
+\item \textbf{Cas 2 :} $x < a$. Comme $f$ est croissante, $f(x) \leq f(a)$. Le numérateur et le dénominateur sont tous deux négatifs : le quotient $\tau(x)$ est encore positif ou nul.
+\item Ainsi, pour tout $x \neq a$, $\tau(x) \geq 0$.
+\item Or $f$ est dérivable en $a$, donc $\tau(x)$ admet une limite quand $x$ tend vers $a$, et cette limite est $f'(a)$. Une limite de quantités positives ou nulles est positive ou nulle (passage à la limite dans une inégalité large) : donc $f'(a) \geq 0$.
+\item Ceci vaut pour tout $a \in I$ : on a bien $f' \geq 0$ sur $I$. $\blacksquare$
+\end{enumerate}
+\end{experience}
+
+\begin{attention}[Pourquoi « réciproque \emph{partielle} » ?]
+Si $f$ est \emph{strictement} croissante et dérivable, on ne peut pas conclure que $f' > 0$ partout ! Contre-exemple : $f(x) = x^3$ est strictement croissante sur $\mathbb{R}$, pourtant $f'(0) = 0$. La démonstration ci-dessus ne donne que des inégalités \emph{larges}, car une limite de quantités strictement positives peut être nulle. Retiens : croissance $\Rightarrow f' \geq 0$, jamais $f' > 0$.
+\end{attention}
+
+\courssub{Méthode d'étude des variations}
+
+Toute la stratégie d'étude des variations d'une fonction se résume en trois étapes, que tu dois apprendre à rédiger avec soin.
+
+\begin{methode}[Les trois étapes de l'étude des variations]
+\begin{enumerate}
+\item \textbf{Dériver.} Préciser le domaine de dérivabilité de $f$ et calculer $f'(x)$ à l'aide des opérations sur les dérivées (somme, produit, quotient, composée affine).
+\item \textbf{Étudier le signe de $f'(x)$.} Factoriser $f'(x)$ autant que possible (produit de facteurs du premier degré, trinôme, quotient), puis dresser un \emph{tableau de signes} de $f'(x)$ sur le domaine d'étude.
+\item \textbf{Conclure.} Sur chaque intervalle où $f' \geq 0$, $f$ est croissante ; là où $f' \leq 0$, $f$ est décroissante. Regrouper ces conclusions dans le \emph{tableau de variations}, en y plaçant les valeurs de $f$ aux bornes et aux points où $f'$ s'annule.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges de rédaction fréquents]
+\begin{itemize}
+\item N'oublie jamais le \textbf{domaine de définition} : les variations s'étudient sur le domaine de $f$, pas sur $\mathbb{R}$ tout entier. Une valeur interdite coupe le tableau de variations.
+\item Le signe de $f'$ seul ne suffit pas à conclure sur un intervalle qui n'est pas inclus dans le domaine : vérifie toujours que $f$ est bien dérivable sur l'intervalle considéré.
+\item Dans le tableau de variations, les flèches traduisent la monotonie ; les valeurs de $f$ (calculées, pas devinées !) figurent aux extrémités des flèches.
+\end{itemize}
+\end{attention}
+
+\courssub{Exemple complet : la fonction $f(x) = x^3 - 3x + 1$}
+
+\begin{exemplebox}[Variations de $f(x) = x^3 - 3x + 1$ sur $\mathbb{R}$]
+\textbf{Étape 1 : dérivation.} $f$ est une fonction polynôme, donc dérivable sur $\mathbb{R}$, et pour tout réel $x$ :
+\[ f'(x) = 3x^2 - 3 = 3(x^2 - 1) = 3(x-1)(x+1). \]
+\textbf{Étape 2 : signe de $f'$.} $f'(x)$ est un produit de trois facteurs ; $3 > 0$, $x-1$ s'annule en $1$, $x+1$ s'annule en $-1$. Le trinôme $x^2-1$ est positif à l'extérieur de ses racines et négatif entre elles :
+\begin{center}
+\begin{tabular}{|c|ccccccc|}\hline
+$x$ & $-\infty$ & & $-1$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+\end{tabular}
+\end{center}
+Plus précisément : $f'(x) > 0$ sur $]-\infty\,;-1[$, $f'(x) < 0$ sur $]-1\,;1[$, $f'(x) > 0$ sur $]1\,;+\infty[$, et $f'(-1) = f'(1) = 0$.
+
+\textbf{Étape 3 : conclusion.} $f$ est croissante sur $]-\infty\,;-1]$, décroissante sur $[-1\,;1]$, croissante sur $[1\,;+\infty[$. On calcule les valeurs remarquables :
+\[ f(-1) = -1 + 3 + 1 = 3 \qquad \text{et} \qquad f(1) = 1 - 3 + 1 = -1. \]
+Tableau de variations :
+\begin{center}
+\begin{tabular}{|c|ccccccc|}\hline
+$x$ & $-\infty$ & & $-1$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+$f$ & & $\nearrow$ & $3$ & $\searrow$ & $-1$ & $\nearrow$ & \\ \hline
+\end{tabular}
+\end{center}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-2.8, xmax=2.8, ymin=-3.5, ymax=4.5,
+  xtick={-2,-1,1,2}, ytick={-1,3},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small}
+]
+\addplot[popcurve,domain=-2.35:2.35,samples=200]{x^3-3*x+1};
+\addplot[poporange,thick,domain=-1.9:-0.1]{3};
+\addplot[poporange,thick,domain=0.1:1.9]{-1};
+\addplot[only marks,mark=*,mark size=2pt,popdark] coordinates {(-1,3) (1,-1)};
+\node[popdark,above left,font=\small] at (axis cs:-1,3) {$A(-1\,;3)$};
+\node[popdark,below right,font=\small] at (axis cs:1,-1) {$B(1\,;-1)$};
+\draw[-{Stealth},poppurple,very thick] (axis cs:-2.2,-3.1) -- (axis cs:-1.35,2.2);
+\draw[-{Stealth},poppurple,very thick] (axis cs:-0.45,2.2) -- (axis cs:0.45,-0.2);
+\draw[-{Stealth},poppurple,very thick] (axis cs:1.35,-0.2) -- (axis cs:2.2,4.1);
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x)=x^3-3x+1$. Les tangentes en $A$ et $B$ sont horizontales car $f'(-1)=f'(1)=0$. Les flèches violettes indiquent la monotonie : montée, descente, montée.}
+\end{popfigure}
+
+\begin{attention}[$f'(a) = 0$ ne signifie pas forcément un extremum]
+Dans l'exemple précédent, les annulations de $f'$ en $-1$ et $1$ correspondent bien à un maximum et à un minimum locaux. Mais ce n'est \textbf{pas automatique} ! Considère $g(x) = x^3$ : on a $g'(x) = 3x^2$, donc $g'(0) = 0$, pourtant $g$ est \emph{strictement croissante sur $\mathbb{R}$ tout entier} (car $g'(x) > 0$ pour tout $x \neq 0$, l'annulation en $0$ étant un point isolé). En $0$, la courbe traverse sa tangente horizontale : ce n'est pas un extremum. Retiens la règle d'or : \textbf{$f'$ s'annule en $a$ \emph{en changeant de signe}} $\iff$ $f$ admet un extremum local en $a$. L'annulation seule ne suffit pas.
+\end{attention}
+
+\courssub{Exemple avec une fonction rationnelle}
+
+\begin{exoresolu}[Variations de $f(x) = \dfrac{x+1}{x-2}$]
+\textbf{Énoncé.} Soit $f$ la fonction définie par $f(x) = \dfrac{x+1}{x-2}$. Déterminer son domaine de définition, calculer $f'(x)$, étudier son signe et dresser le tableau de variations de $f$.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Étape 1 : domaine et dérivation.} $f$ est définie si et seulement si $x - 2 \neq 0$, c'est-à-dire sur $\mathcal{D}_f = \mathbb{R} \setminus \{2\} = ]-\infty\,;2[ \cup ]2\,;+\infty[$.
+
+$f$ est une fonction rationnelle, donc dérivable sur son domaine. Posons $u(x) = x+1$ et $v(x) = x-2$ : alors $u'(x) = 1$ et $v'(x) = 1$. La formule du quotient $\left(\dfrac{u}{v}\right)' = \dfrac{u'v - uv'}{v^2}$ donne, pour tout $x \neq 2$ :
+\begin{align*}
+f'(x) &= \frac{1 \times (x-2) - (x+1) \times 1}{(x-2)^2} = \frac{x - 2 - x - 1}{(x-2)^2} = \frac{-3}{(x-2)^2}.
+\end{align*}
+
+\textbf{Étape 2 : signe de $f'$.} Pour tout $x \neq 2$, $(x-2)^2 > 0$ (un carré est toujours positif, et il ne s'annule pas sur le domaine). Comme le numérateur $-3$ est strictement négatif, on obtient :
+\[ f'(x) = \frac{-3}{(x-2)^2} < 0 \quad \text{pour tout } x \in \mathcal{D}_f. \]
+
+\textbf{Étape 3 : conclusion.} $f$ est \emph{strictement décroissante sur $]-\infty\,;2[$} et \emph{strictement décroissante sur $]2\,;+\infty[$}.
+
+\begin{center}
+\begin{tabular}{|c|ccc|}\hline
+$x$ & $-\infty$ & & $2$ \\ \hline
+$f'(x)$ & & $-$ & \\ \hline
+$f$ & & $\searrow$ & \\ \hline
+\end{tabular}
+\quad
+\begin{tabular}{|c|ccc|}\hline
+$x$ & $2$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $-$ & \\ \hline
+$f$ & & $\searrow$ & \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{Remarque cruciale.} On dit que $f$ est décroissante \emph{sur chacun des intervalles} de son domaine, mais \textbf{pas} sur la réunion $]-\infty\,;2[ \cup ]2\,;+\infty[$. En effet, $f(1) = -2 < f(3) = 4$ alors que $1 < 3$ : la réunion des deux intervalles n'est pas un intervalle, et le théorème ne s'y applique pas. Rédige toujours « décroissante sur $]-\infty\,;2[$ et sur $]2\,;+\infty[$ », jamais « décroissante sur $\mathbb{R}\setminus\{2\}$ ».
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7.5cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-4, xmax=8, ymin=-5, ymax=6,
+  xtick={-2,2,4,6}, ytick={-4,-2,1,2,4},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small},
+  restrict y to domain=-6:7
+]
+\addplot[popcurve,domain=-4:1.85,samples=150]{(x+1)/(x-2)};
+\addplot[popcurve,domain=2.15:8,samples=150]{(x+1)/(x-2)};
+\addplot[poporange,dashed,thick] coordinates {(2,-5) (2,6)};
+\addplot[popgreen,dashed,thick,domain=-4:8]{1};
+\node[poporange,font=\small,anchor=west] at (axis cs:2.2,5) {$x=2$};
+\node[popgreen,font=\small,anchor=south west] at (axis cs:-3.8,1.1) {$y=1$};
+\draw[-{Stealth},poppurple,very thick] (axis cs:-2.5,0.4) -- (axis cs:0.5,-1.4);
+\draw[-{Stealth},poppurple,very thick] (axis cs:3,4.5) -- (axis cs:6.5,1.4);
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Hyperbole de $f(x)=\dfrac{x+1}{x-2}$ : décroissante sur chaque intervalle du domaine. Asymptotes : droite verticale $x=2$ et droite horizontale $y=1$.}
+\end{popfigure}
+
+\courssub{Lecture graphique : tangentes horizontales et points où $f'$ s'annule}
+
+Le lien entre dérivée et variations se lit aussi directement sur une courbe :
+
+\begin{itemize}
+\item là où la courbe \emph{monte} en se déplaçant de gauche à droite, $f'(x) > 0$ ;
+\item là où elle \emph{descend}, $f'(x) < 0$ ;
+\item aux points où la tangente est \emph{horizontale}, $f'(x) = 0$ : ce sont les candidats à être des extrema locaux (sommets et creux de la courbe), comme les points $A(-1\,;3)$ et $B(1\,;-1)$ de la première figure.
+\end{itemize}
+
+Réciproquement, si l'on te donne la courbe de $f$ et qu'on te demande le \emph{signe} de $f'$, il suffit d'observer le sens de variation : c'est une compétence classique du Probatoire, où la courbe de $f$ sert à déterminer graphiquement le tableau de signes de $f'$.
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Étudier les variations de $f(x) = -x^2 + 4x - 1$ sur $\mathbb{R}$ et dresser son tableau de variations.
+\item Soit $g(x) = \dfrac{2x-3}{x+1}$. Montrer que $g$ est strictement croissante sur chacun des intervalles de son domaine.
+\item La fonction $h(x) = x^3 + x$ vérifie $h'(0) = 1$ et $h'(x) > 0$ pour tout $x$. Que peut-on en conclure ? Comparer avec le cas de $x \mapsto x^3$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+\item $f$ est un polynôme, dérivable sur $\mathbb{R}$ : $f'(x) = -2x + 4 = -2(x-2)$. Donc $f'(x) > 0$ pour $x < 2$ et $f'(x) < 0$ pour $x > 2$ : $f$ est croissante sur $]-\infty\,;2]$, décroissante sur $[2\,;+\infty[$, avec $f(2) = -4+8-1 = 3$ (maximum).
+\item $g$ est définie sur $\mathbb{R}\setminus\{-1\}$. Avec $u = 2x-3$, $v = x+1$ : $g'(x) = \dfrac{2(x+1)-(2x-3)}{(x+1)^2} = \dfrac{5}{(x+1)^2} > 0$ sur chaque intervalle du domaine. Donc $g$ est strictement croissante sur $]-\infty\,;-1[$ et sur $]-1\,;+\infty[$.
+\item $h'(x) = 3x^2 + 1 \geq 1 > 0$ pour tout $x$ : $h$ est strictement croissante sur $\mathbb{R}$. Pour $x \mapsto x^3$, la dérivée $3x^2$ s'annule en $0$ mais reste strictement positive ailleurs : la conclusion de stricte croissance sur $\mathbb{R}$ est la même, grâce au cas des points isolés.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[D'où vient ce théorème ?]
+Le lien entre le signe de $f'$ et les variations de $f$ repose sur un pilier de l'analyse : le \cle{théorème des accroissements finis}, qui affirme que si $f$ est continue sur $[a\,;b]$ et dérivable sur $]a\,;b[$, alors il existe un réel $c \in ]a\,;b[$ tel que $f(b) - f(a) = f'(c)(b-a)$. Autrement dit, quelque part entre $a$ et $b$, la tangente est parallèle à la corde joignant les points d'abscisses $a$ et $b$ ! Si $f' \geq 0$ partout, alors $f(b) - f(a) \geq 0$ : la fonction est croissante. Tu démontreras ce théorème en Terminale ; il est associé au mathématicien Joseph-Louis \emph{Lagrange} (1736--1813), né à Turin et l'un des fondateurs de l'analyse moderne.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $f' \geq 0$ sur $I \Rightarrow f$ croissante sur $I$ ; $f' \leq 0$ sur $I \Rightarrow f$ décroissante sur $I$ ; $f' = 0$ sur $I \Rightarrow f$ constante sur $I$.
+\item $f' > 0$ sauf en des points isolés $\Rightarrow f$ \emph{strictement} croissante.
+\item Réciproque : $f$ croissante et dérivable sur $I \Rightarrow f' \geq 0$ sur $I$ (démonstration par le signe du taux d'accroissement).
+\item Méthode en trois étapes : \textbf{dériver}, \textbf{étudier le signe de $f'$} (factorisation, tableau de signes), \textbf{conclure} dans un tableau de variations.
+\item $f'(a) = 0$ donne une tangente horizontale, mais un extremum seulement si $f'$ \emph{change de signe} en $a$.
+\item Les conclusions de monotonie se donnent sur des \emph{intervalles} du domaine, jamais sur une réunion d'intervalles disjoints.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Tableau de variations, extrema et approximation affine}
+
+Dans la section précédente, nous avons découvert le lien fondamental entre le \cle{signe de la dérivée} et le \cle{sens de variation} d'une fonction : là où $f'$ est positive, $f$ croît ; là où $f'$ est négative, $f$ décroît. Il est temps de rassembler toutes ces informations dans un outil de synthèse puissant, le \cle{tableau de variations}, puis d'exploiter ce tableau pour résoudre des problèmes concrets : trouver le bénéfice maximal d'une entreprise, l'aire maximale d'un terrain, ou encore estimer rapidement $\sqrt{4,02}$ sans calculatrice. C'est tout l'art de cette dernière section.
+
+\courssub{Construction du tableau des variations}
+
+Le tableau des variations est la \emph{carte d'identité} d'une fonction : il résume sur quelques lignes son domaine, le signe de sa dérivée, ses variations, ses valeurs remarquables et ses limites aux bornes.
+
+\begin{methode}[Construire un tableau de variations]
+\begin{enumerate}
+\item \textbf{Première ligne} : placer les valeurs remarquables de $x$ : bornes du domaine d'étude, valeurs interdites, et les points où $f'$ s'annule ou n'existe pas.
+\item \textbf{Deuxième ligne} : indiquer le \cle{signe de $f'(x)$} sur chaque intervalle, et $0$ aux points où $f'$ s'annule.
+\item \textbf{Troisième ligne} : dessiner les flèches ($\nearrow$ si $f$ croît, $\searrow$ si $f$ décroît) et écrire les \textbf{valeurs} $f(x)$ aux points remarquables, ainsi que les \textbf{limites} aux bornes ouvertes du domaine.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Tableau de variations de $f(x)=x^3-3x+1$]
+$f$ est dérivable sur $\mathbb{R}$ et $f'(x)=3x^2-3=3(x-1)(x+1)$. Le signe de $f'$ est celui d'un trinôme : $f'(x)>0$ sur $]-\infty;-1[$ et sur $]1;+\infty[$, $f'(x)<0$ sur $]-1;1[$. De plus $f(-1)=-1+3+1=3$, $f(1)=1-3+1=-1$, et $\lim_{x\to-\infty}f(x)=-\infty$, $\lim_{x\to+\infty}f(x)=+\infty$.
+
+\begin{center}
+\begin{tabular}{|c|ccccccc|}\hline
+$x$ & $-\infty$ & & $-1$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $-\infty$ & $\nearrow$ & $3$ & $\searrow$ & $-1$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+\end{exemplebox}
+
+\begin{attention}[Rigueur dans le tableau]
+Une flèche $\nearrow$ ne suffit pas : il faut écrire les \textbf{valeurs exactes} aux sommets des flèches ($f(-1)=3$, pas seulement « maximum »). Aux bornes ouvertes ou à l'infini, on écrit une \textbf{limite}, jamais une valeur comme $f(+\infty)$ qui n'a aucun sens. Enfin, une valeur interdite se signale par une double barre dans le tableau.
+\end{attention}
+
+\courssub{Extrema d'une fonction}
+
+\begin{definition}[Maximum, minimum, extremum]
+Soit $f$ une fonction définie sur un ensemble $E$ et $c\in E$.
+\begin{itemize}
+\item $f$ admet un \cle{maximum} en $c$ sur $E$ si pour tout $x\in E$, $f(x)\le f(c)$. Le nombre $M=f(c)$ est le maximum de $f$ sur $E$.
+\item $f$ admet un \cle{minimum} en $c$ sur $E$ si pour tout $x\in E$, $f(x)\ge f(c)$.
+\item Un \cle{extremum} est un maximum ou un minimum.
+\item On parle d'\cle{extremum local} en $c$ si l'inégalité n'est vraie que sur un \emph{petit intervalle} autour de $c$ (un voisinage de $c$), et non sur tout $E$.
+\end{itemize}
+\end{definition}
+
+Dans l'exemple précédent, $f(x)=x^3-3x+1$ admet un \textbf{maximum local} $3$ en $x=-1$ et un \textbf{minimum local} $-1$ en $x=1$. Ce ne sont pas des extrema sur $\mathbb{R}$ tout entier, puisque $f$ tend vers $\pm\infty$.
+
+\begin{propriete}[Condition nécessaire d'extremum local — démonstration exigible]
+Soit $f$ définie sur un intervalle $I$, $c$ un point \textbf{intérieur} à $I$. Si $f$ admet un extremum local en $c$ et si $f$ est dérivable en $c$, alors $f'(c)=0$.
+\end{propriete}
+
+\begin{experience}[Démonstration par les taux à gauche et à droite]
+Supposons que $f$ admet un \textbf{maximum local} en $c$. Il existe donc un voisinage de $c$ sur lequel $f(x)\le f(c)$, c'est-à-dire $f(x)-f(c)\le 0$.
+\begin{enumerate}
+\item \textbf{À droite de $c$} : pour $x>c$, $x-c>0$, donc le taux $\dfrac{f(x)-f(c)}{x-c}\le 0$. En passant à la limite : $f'(c)\le 0$.
+\item \textbf{À gauche de $c$} : pour $x<c$, $x-c<0$, donc $\dfrac{f(x)-f(c)}{x-c}\ge 0$. En passant à la limite : $f'(c)\ge 0$.
+\item \textbf{Conclusion} : $f'(c)\le 0$ et $f'(c)\ge 0$, donc $f'(c)=0$.
+\end{enumerate}
+Le cas d'un minimum local se traite de même (les inégalités se renversent deux fois). Géométriquement : la tangente en un extremum local est \textbf{horizontale}.
+\end{experience}
+
+\begin{attention}[$f'(c)=0$ ne suffit pas !]
+La condition $f'(c)=0$ est \textbf{nécessaire mais non suffisante}. Contre-exemple : $f(x)=x^3$ vérifie $f'(0)=0$, pourtant $f$ est strictement croissante sur $\mathbb{R}$ et n'a \textbf{aucun extremum} en $0$ (on parle de point d'inflexion à tangente horizontale). Il faut donc toujours vérifier que $f'$ \textbf{change de signe} en $c$. Attention aussi à l'hypothèse « $c$ intérieur à $I$ » : aux \textbf{extrémités} d'un intervalle fermé, une fonction peut admettre un extremum sans que sa dérivée s'y annule (par exemple $f(x)=x$ sur $[0;1]$ admet un maximum en $1$, et $f'(1)=1\neq 0$).
+\end{attention}
+
+\begin{propriete}[Condition suffisante d'extremum local]
+Si $f'$ s'annule en $c$ \textbf{en changeant de signe}, alors $f$ admet un extremum local en $c$ : un maximum si $f'$ passe de $+$ à $-$, un minimum si $f'$ passe de $-$ à $+$.
+\end{propriete}
+
+\begin{experience}[Justification par les variations]
+Supposons que $f'$ passe de $+$ à $-$ en $c$. Alors $f$ est croissante à gauche de $c$ et décroissante à droite : pour tout $x$ proche de $c$ avec $x<c$, $f(x)\le f(c)$ (croissance), et pour $x>c$, $f(x)\le f(c)$ (décroissance). Donc $f(c)$ est bien un maximum local. L'autre cas est symétrique.
+\end{experience}
+
+\courssub{Problèmes d'optimisation}
+
+\begin{methode}[Résoudre un problème d'optimisation en quatre étapes]
+\begin{enumerate}
+\item \textbf{Choisir la variable} : identifier la grandeur inconnue $x$ et son ensemble de variation (contraintes du problème).
+\item \textbf{Modéliser} : exprimer la quantité à optimiser (coût, aire, bénéfice) comme une fonction $f(x)$.
+\item \textbf{Dériver et étudier} : calculer $f'$, dresser le tableau de variations sur l'ensemble des contraintes.
+\item \textbf{Conclure} : lire l'extremum dans le tableau et répondre à la question posée, avec les unités.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Bénéfice maximal d'un atelier de Yaoundé]
+Un atelier de confection produit $x$ centaines de pagnes par mois ($x\in[0;8]$). Son bénéfice mensuel, en centaines de milliers de FCFA, est $B(x)=-x^3+6x^2$. Pour quelle production le bénéfice est-il maximal ?
+\tcblower
+\textbf{Étapes 1 et 2 :} la variable est $x\in[0;8]$, la fonction $B$ est donnée.
+
+\textbf{Étape 3 :} $B'(x)=-3x^2+12x=3x(4-x)$. Sur $[0;8]$, $B'(x)=0$ pour $x=0$ ou $x=4$ ; $B'(x)>0$ sur $]0;4[$ et $B'(x)<0$ sur $]4;8]$. De plus $B(0)=0$, $B(4)=-64+96=32$, $B(8)=-512+384=-128$.
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $0$ & & $4$ & & $8$ \\ \hline
+$B'(x)$ & $0$ & $+$ & $0$ & $-$ & \\ \hline
+$B$ & $0$ & $\nearrow$ & $32$ & $\searrow$ & $-128$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{Étape 4 :} $B'$ s'annule en $4$ en passant de $+$ à $-$ : le bénéfice est maximal pour une production de $\textbf{400 pagnes}$, et vaut $32$ centaines de milliers de FCFA, soit $\textbf{3\,200\,000 FCFA}$.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.8\linewidth,height=5.5cm,axis lines=middle,xlabel={$x$ (centaines de pagnes)},ylabel={$B(x)$},xmin=-0.3,xmax=8.5,ymin=-30,ymax=40,xtick={0,2,4,6,8},ytick={0,32},samples=150]
+\addplot[popcurve,domain=0:8]{-x^3+6*x^2};
+\addplot[poporange,dashed,domain=0:8]{32};
+\addplot[only marks,mark=*,poporange] coordinates {(4,32)};
+\node[poporange,anchor=south] at (axis cs:4,32) {maximum $(4\,;\,32)$};
+\node[popmuted,anchor=west,font=\small] at (axis cs:5.2,32) {tangente horizontale};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Au maximum du bénéfice, la tangente à la courbe est horizontale : $B'(4)=0$.}
+\end{popfigure}
+
+\begin{exoresolu}[Aire maximale d'un enclos]
+Un éleveur de Bafia dispose de $\SI{100}{m}$ de clôture pour délimiter un enclos rectangulaire adossé à un mur (le mur remplace un des grands côtés). Quelles dimensions donnent l'aire maximale ?
+\tcblower
+Soit $x$ la longueur (en m) de chaque côté perpendiculaire au mur ; le côté parallèle au mur mesure $100-2x$, avec $x\in]0;50[$. L'aire est $A(x)=x(100-2x)=-2x^2+100x$.
+
+$A'(x)=-4x+100$ s'annule en $x=25$, en passant de $+$ à $-$. L'aire est donc maximale pour $x=25$ m ; le côté parallèle au mur mesure $100-2\times 25=50$ m, et l'aire maximale vaut $A(25)=25\times 50=1250\ \text{m}^2$.
+\end{exoresolu}
+
+\courssub{Approximation affine}
+
+Revenons à la définition du nombre dérivé : $f'(a)=\lim_{h\to 0}\dfrac{f(a+h)-f(a)}{h}$. Dire que ce quotient tend vers $f'(a)$ signifie que, pour $h$ \textbf{proche de $0$}, $\dfrac{f(a+h)-f(a)}{h}\approx f'(a)$, c'est-à-dire :
+
+\begin{propriete}[Approximation affine]
+Si $f$ est dérivable en $a$, alors pour $h$ proche de $0$ :
+\[ f(a+h)\approx f(a)+h\,f'(a). \]
+Géométriquement, au voisinage du point d'abscisse $a$, la courbe se confond avec sa \textbf{tangente} $y=f(a)+f'(a)(x-a)$.
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.85\linewidth,height=6cm,axis lines=middle,xlabel={$x$},ylabel={$y$},xmin=3.2,xmax=4.8,ymin=1.75,ymax=2.25,xtick={4},ytick={2},samples=200,legend style={at={(0.02,0.98)},anchor=north west,font=\small}]
+\addplot[popcurve,domain=3.2:4.8]{sqrt(max(0,x))};
+\addlegendentry{$y=\sqrt{x}$}
+\addplot[poporange,thick,domain=3.2:4.8]{x/4+1};
+\addlegendentry{tangente $y=\dfrac{x}{4}+1$}
+\addplot[only marks,mark=*,popdark] coordinates {(4,2)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Zoom sur $\sqrt{x}$ au voisinage de $a=4$ : localement, courbe et tangente se confondent.}
+\end{popfigure}
+
+\begin{exemplebox}[Estimation de $\sqrt{4,02}$ sans calculatrice]
+Prenons $f(x)=\sqrt{x}$, $a=4$, $h=0{,}02$. On a $f(4)=2$ et $f'(x)=\dfrac{1}{2\sqrt{x}}$, donc $f'(4)=\dfrac{1}{4}$.
+\[ \sqrt{4,02}\approx f(4)+0{,}02\times f'(4)=2+\frac{0{,}02}{4}=2{,}005. \]
+La valeur donnée par une calculatrice est $\sqrt{4,02}\approx 2{,}0049937\ldots$ : l'erreur commise est d'environ $0{,}0000063$, soit moins de $0{,}0004\,\%$ de la valeur exacte. L'approximation est excellente car $h$ est très petit.
+\end{exemplebox}
+
+\begin{exoresolu}[Estimation de $(1,001)^3$]
+Estimer $(1,001)^3$ par approximation affine et évaluer l'erreur.
+\tcblower
+Posons $f(x)=x^3$, $a=1$, $h=0{,}001$. Alors $f(1)=1$ et $f'(x)=3x^2$, donc $f'(1)=3$.
+\[ (1,001)^3\approx 1+0{,}001\times 3=1{,}003. \]
+Valeur exacte : $(1,001)^3=1{,}003003001$. L'erreur est d'environ $3\times 10^{-6}$ : négligeable. Remarquons que l'erreur est de l'ordre de $h^2$ : plus $h$ est petit, plus l'approximation est précise.
+\end{exoresolu}
+
+\begin{attention}[Limites de l'approximation affine]
+L'approximation $f(a+h)\approx f(a)+hf'(a)$ n'est fiable que pour $h$ \textbf{proche de $0$}. Estimer $\sqrt{9}$ en partant de $a=4$ (donc $h=5$) donnerait $2+\frac{5}{4}=3{,}25$ au lieu de $3$ : erreur grossière ! Choisir toujours le point $a$ le plus proche possible, où $f(a)$ et $f'(a)$ se calculent exactement.
+\end{attention}
+
+\begin{savaistu}[Les ingénieurs adorent les tangentes]
+L'approximation affine est le premier étage des \emph{développements limités}, outil quotidien des ingénieurs et des physiciens : c'est ainsi que l'on écrit $\sin h\approx h$ pour les petits angles, ce qui simplifie l'étude du pendule. Les concepteurs de réseaux (chez CAMTEL ou MTN) linéarisent de la même façon des phénomènes complexes autour d'un point de fonctionnement.
+\end{savaistu}
+
+\courssub{Synthèse : démarche complète d'étude d'une fonction}
+
+\begin{aretenir}[Plan d'étude d'une fonction au Probatoire]
+\begin{enumerate}
+\item \textbf{Domaine de définition} $D_f$ (dénominateurs, racines carrées).
+\item \textbf{Dérivabilité} et calcul de $f'(x)$.
+\item \textbf{Signe de $f'$} : factoriser, résoudre $f'(x)=0$.
+\item \textbf{Limites} aux bornes de $D_f$.
+\item \textbf{Tableau de variations} complet (signes, flèches, valeurs, limites).
+\item \textbf{Extrema} : lire dans le tableau, justifier par le changement de signe de $f'$.
+\item \textbf{Tangentes remarquables} : tangente horizontale aux extrema, tangente en un point demandé ($y=f(a)+f'(a)(x-a)$).
+\item \textbf{Courbe} : placer les points remarquables, les tangentes, puis tracer en respectant le tableau.
+\end{enumerate}
+\end{aretenir}
+
+\begin{exercice}[Pour s'entraîner]
+Soit $f(x)=x+\dfrac{4}{x}$ définie sur $]0;+\infty[$.
+\begin{enumerate}
+\item Calculer $f'(x)$ et dresser le tableau de variations de $f$.
+\item Montrer que $f$ admet un minimum et le préciser.
+\item À l'aide de l'approximation affine en $a=4$, estimer $f(4,01)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+1. $f'(x)=1-\dfrac{4}{x^2}=\dfrac{x^2-4}{x^2}$. Sur $]0;+\infty[$, $f'(x)$ a le signe de $x^2-4$ : négatif sur $]0;2[$, positif sur $]2;+\infty[$, nul en $2$. Limites : $\lim_{x\to 0^+}f(x)=+\infty$ et $\lim_{x\to+\infty}f(x)=+\infty$ ; $f(2)=4$.
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $0$ & & $2$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $+\infty$ & $\searrow$ & $4$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+
+2. $f'$ s'annule en $2$ en passant de $-$ à $+$ : $f$ admet un minimum en $2$, égal à $4$.
+
+3. $f(4)=5$ et $f'(4)=1-\dfrac{4}{16}=\dfrac{3}{4}$. Donc $f(4,01)\approx 5+0{,}01\times 0{,}75=5{,}0075$. (Valeur exacte : $f(4,01)=4{,}01+\dfrac{4}{4{,}01}\approx 5{,}00751$ : l'approximation est excellente.)
+\end{corrige}
+
+Tu disposes maintenant de la boîte à outils complète de la dérivation : du taux d'accroissement au tableau de variations, des tangentes aux problèmes d'optimisation. À toi de jouer : c'est en étudiant des fonctions, encore et encore, que ces outils deviendront des réflexes pour le Probatoire.
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu seras capable de mobiliser \emph{ensemble} les savoir-faire de la leçon pour résoudre un problème concret d'optimisation. Plus précisément, tu devras :
+
+\begin{itemize}
+\item justifier la dérivabilité d'une fonction polynôme sur un intervalle et calculer sa fonction dérivée ;
+\item étudier le signe d'une fonction dérivée (trinôme du second degré) et en déduire le sens de variation de la fonction ;
+\item dresser un tableau de variations complet et en extraire un extremum ;
+\item interpréter concrètement un maximum dans une situation économique réelle ;
+\item déterminer l'équation d'une tangente à une courbe et la représenter ;
+\item utiliser l'approximation affine d'une fonction autour d'un point pour estimer rapidement une valeur, puis évaluer la qualité de cette estimation ;
+\item rédiger un conseil argumenté, en français correct, à destination d'une personne non mathématicienne.
+\end{itemize}
+
+\courssub{Situation}
+
+Mama Ngo Bell tient depuis quinze ans un étalage d'arachides grillées au marché central de Douala. Chaque matin, elle achète ses arachides brutes chez un grossiste de Mboppi, les grille elle-même, puis les vend au détail. Très organisée, elle note chaque soir dans un cahier la quantité vendue et son gain du jour.
+
+Après plusieurs mois d'observations, son fils aîné, élève en Première C au lycée bilingue de Deïdo, l'a aidée à modéliser ses gains. Pour $x$ kilogrammes d'arachides vendus dans la journée, le bénéfice journalier de Mama Ngo Bell, exprimé en \textbf{centaines de francs CFA}, est donné par la fonction :
+
+\[ B(x) = -x^3 + 12x^2 + 5x + 20, \qquad x \in [0\,;\,13]. \]
+
+\begin{itemize}
+\item Le terme $20$ correspond à un petit revenu fixe (location d'un coin de table à une voisine) ;
+\item les termes $12x^2 + 5x$ traduisent la croissance des ventes quand l'étalage est bien achalandé ;
+\item le terme $-x^3$ traduit les pertes qui apparaissent quand elle achète trop de marchandise : invendus grillés qui se perdent, prix cassés en fin de journée pour écouler le stock, fatigue qui l'oblige parfois à payer un porteur.
+\end{itemize}
+
+Mama Ngo Bell se pose trois questions très concrètes :
+
+\begin{enumerate}
+\item « Combien de kilogrammes dois-je préparer chaque matin pour gagner le plus possible ? »
+\item « Combien vais-je gagner ce jour-là, en francs CFA ? »
+\item « Si je vends $8$ kg et que je décide d'en vendre un peu plus, de combien mon bénéfice va-t-il augmenter environ ? »
+\end{enumerate}
+
+Ton groupe est chargé de répondre à Mama Ngo Bell en mobilisant les outils de la dérivation.
+
+\courssub{Consignes}
+
+Travail en groupes de trois ou quatre élèves. Durée indicative : 1 h 30, suivie d'une restitution collective de 30 minutes. Chaque groupe rédige ses réponses sur une feuille qui sera présentée à la classe.
+
+\begin{enumerate}
+\item \textbf{Dérivabilité et calcul de la dérivée.} Justifier que la fonction $B$ est dérivable sur l'intervalle $[0\,;\,13]$, puis calculer $B'(x)$ pour tout réel $x$ de cet intervalle.
+\item \textbf{Signe de la dérivée et variations.}
+\begin{enumerate}
+\item Montrer que l'équation $B'(x) = 0$ admet deux solutions réelles, dont une seule, notée $x_1$, appartient à $[0\,;\,13]$. Donner la valeur exacte de $x_1$, puis une valeur approchée au dixième.
+\item Étudier le signe de $B'(x)$ sur $[0\,;\,13]$.
+\item Dresser le tableau des variations complet de $B$ sur $[0\,;\,13]$ (on calculera $B(0)$, $B(x_1)$ et $B(13)$, avec des valeurs approchées au dixième si nécessaire).
+\end{enumerate}
+\item \textbf{Optimisation.} En déduire la quantité d'arachides (en kg, arrondie au dixième) que Mama Ngo Bell doit vendre pour obtenir un bénéfice maximal, puis calculer ce bénéfice maximal \emph{en francs CFA} (attention à l'unité !).
+\item \textbf{Tangente.} Déterminer une équation de la tangente $(T)$ à la courbe représentative de $B$ au point d'abscisse $4$. Sur papier millimétré (ou à la calculatrice), tracer la courbe de $B$ et la tangente $(T)$ dans un même repère (unités : 1 cm pour 1 kg en abscisse, 1 cm pour 50 centaines de FCFA en ordonnée). Observer la position de la tangente par rapport à la courbe, de part et d'autre du point de contact : que remarque-t-on ?
+\item \textbf{Approximation affine.}
+\begin{enumerate}
+\item Calculer $B(8)$ et $B'(8)$, puis écrire l'approximation affine de $B(8+h)$ pour $h$ proche de $0$.
+\item En déduire une estimation rapide de $B(8{,}1)$, puis calculer la valeur exacte $B(8{,}1)$ et l'erreur commise. L'approximation est-elle satisfaisante pour une commerçante ?
+\end{enumerate}
+\item \textbf{Conseil argumenté.} Rédiger en cinq à huit lignes un conseil clair et argumenté à l'attention de Mama Ngo Bell : quantité à préparer, gain espéré, et ce qu'elle peut espérer gagner de plus si elle passe de $8$ kg à environ $8{,}2$ kg.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item \textbf{Dérivabilité des polynômes :} toute fonction polynôme est dérivable sur $\mathbb{R}$, donc sur tout intervalle de $\mathbb{R}$.
+\item \textbf{Dérivées usuelles :} $(x^n)' = n x^{n-1}$ ; $(ku)' = k\,u'$ ; $(u+v)' = u' + v'$.
+\item \textbf{Lien dérivée/variations :} si $f'(x) > 0$ sur un intervalle $I$, alors $f$ est strictement croissante sur $I$ ; si $f'(x) < 0$ sur $I$, alors $f$ est strictement décroissante sur $I$.
+\item \textbf{Extremum local :} si $f'$ s'annule en $c$ \emph{en changeant de signe}, alors $f$ admet un extremum local en $c$.
+\item \textbf{Tangente en $a$ :} $y = f'(a)(x - a) + f(a)$.
+\item \textbf{Approximation affine :} pour $h$ proche de $0$, $f(a+h) \approx f(a) + h\,f'(a)$.
+\item \textbf{Signe d'un trinôme :} $ax^2+bx+c$ est du signe de $a$ à l'extérieur de ses racines et du signe contraire entre les racines (lorsque $\Delta > 0$).
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Le bénéfice maximal de Mama Ngo Bell — corrigé complet]
+\textbf{Énoncé rappelé.} $B(x) = -x^3 + 12x^2 + 5x + 20$ sur $[0\,;\,13]$ (bénéfice en centaines de FCFA). On cherche le maximum de $B$, une tangente, une approximation affine, et un conseil à rédiger.
+
+\tcblower
+
+\textbf{1. Dérivabilité et calcul de $B'(x)$.}
+
+$B$ est une fonction polynôme ; or toute fonction polynôme est dérivable sur $\mathbb{R}$. Elle est donc dérivable sur $[0\,;\,13]$. En dérivant terme à terme (dérivée d'une somme, dérivée de $x^n$, produit par des constantes) :
+
+\[ B'(x) = -3x^2 + 24x + 5. \]
+
+\textbf{2. Signe de $B'(x)$ et variations de $B$.}
+
+\emph{(a) Résolution de $B'(x) = 0$.} On résout $-3x^2 + 24x + 5 = 0$, ce qui équivaut, en multipliant les deux membres par $-1$, à $3x^2 - 24x - 5 = 0$.
+
+\[ \Delta = (-24)^2 - 4 \times 3 \times (-5) = 576 + 60 = 636 = 4 \times 159 > 0. \]
+
+L'équation admet donc deux racines réelles distinctes :
+
+\[ x = \frac{24 \pm \sqrt{636}}{6} = \frac{24 \pm 2\sqrt{159}}{6} = 4 \pm \frac{\sqrt{159}}{3}. \]
+
+Comme $\sqrt{159} \approx 12{,}61$, on obtient :
+
+\[ x_0 = 4 - \frac{\sqrt{159}}{3} \approx -0{,}2 \quad \text{et} \quad x_1 = 4 + \frac{\sqrt{159}}{3} \approx 8{,}2. \]
+
+Seule $x_1 \approx 8{,}2$ appartient à l'intervalle d'étude $[0\,;\,13]$ ; la racine $x_0 \approx -0{,}2$ est à écarter.
+
+\emph{(b) Signe de $B'(x)$.} $B'$ est un trinôme du second degré dont le coefficient de $x^2$ est $-3 < 0$ : il est donc du signe de $-3$ (c'est-à-dire \textbf{négatif}) à l'extérieur de ses racines, et \textbf{positif entre ses racines}. Sur $[0\,;\,13]$, seule la racine $x_1$ intervient, d'où :
+
+\begin{itemize}
+\item sur $[0\,;\,x_1[$ : $B'(x) > 0$, donc $B$ est strictement croissante ;
+\item $B'(x_1) = 0$ ;
+\item sur $]x_1\,;\,13]$ : $B'(x) < 0$, donc $B$ est strictement décroissante.
+\end{itemize}
+
+\emph{(c) Valeurs aux bornes et au sommet.}
+
+\begin{align*}
+B(0) &= 20 ;\\
+B(13) &= -(13)^3 + 12 \times (13)^2 + 5 \times 13 + 20 = -2197 + 2028 + 65 + 20 = -84 ;\\
+B(x_1) &\approx B(8{,}2) = -(8{,}2)^3 + 12 \times (8{,}2)^2 + 5 \times 8{,}2 + 20\\
+&= -551{,}368 + 806{,}88 + 41 + 20 \approx 316{,}5.
+\end{align*}
+
+D'où le tableau de variations :
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $0$ & & $x_1 \approx 8{,}2$ & & $13$ \\ \hline
+$B'(x)$ & & $+$ & $0$ & $-$ & \\ \hline
+$B$ & $20$ & $\nearrow$ & $\approx 316{,}5$ & $\searrow$ & $-84$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{3. Optimisation.}
+
+$B'$ s'annule en $x_1$ en passant du signe $+$ au signe $-$ : $B$ admet donc un \textbf{maximum} en $x_1 \approx 8{,}2$, et ce maximum vaut environ $316{,}5$ centaines de FCFA. Comme $B$ est croissante puis décroissante sur tout l'intervalle, ce maximum local est bien le maximum de $B$ sur $[0\,;\,13]$.
+
+\emph{Conclusion concrète :} Mama Ngo Bell doit préparer environ $\cle{8{,}2\ \text{kg}}$ d'arachides par jour ; son bénéfice maximal est alors d'environ :
+
+\[ 316{,}5 \times 100 = \cle{31\,650\ \text{FCFA par jour}}. \]
+
+On remarque au passage que vendre $13$ kg lui ferait perdre de l'argent ($B(13) = -84$, soit une perte de $8\,400$ FCFA) : trop de stock détruit le bénéfice.
+
+\textbf{4. Tangente au point d'abscisse 4.}
+
+\[ B(4) = -64 + 12 \times 16 + 20 + 20 = -64 + 192 + 40 = 168, \qquad B'(4) = -3 \times 16 + 96 + 5 = -48 + 101 = 53. \]
+
+L'équation de la tangente $(T)$ au point d'abscisse $4$ est :
+
+\[ y = B'(4)(x-4) + B(4) = 53(x-4) + 168 \quad \Longleftrightarrow \quad \boxed{y = 53x - 44}. \]
+
+Pour le tracé : $(T)$ passe par les points $(0\,;\,-44)$ et $(4\,;\,168)$. Sur le graphique, on observe un phénomène remarquable : la tangente \emph{traverse} la courbe au point de contact. En effet, la courbe est d'abord au-dessus de sa tangente (pour $x < 4$), puis en dessous (pour $x > 4$) : le point d'abscisse $4$ est un \emph{point d'inflexion} de la courbe. Cela montre que la tangente épouse toujours la courbe au voisinage du point de contact, mais ne reste pas nécessairement d'un seul côté.
+
+\textbf{5. Approximation affine autour de $x = 8$.}
+
+\emph{(a)} $B(8) = -512 + 12 \times 64 + 40 + 20 = -512 + 768 + 60 = 316$ et $B'(8) = -3 \times 64 + 192 + 5 = -192 + 197 = 5$. L'approximation affine de $B$ au voisinage de $8$ s'écrit :
+
+\[ B(8 + h) \approx B(8) + h\,B'(8) = 316 + 5h. \]
+
+\emph{(b)} Pour $h = 0{,}1$ : $B(8{,}1) \approx 316 + 5 \times 0{,}1 = 316{,}5$.
+
+Valeur exacte :
+
+\[ B(8{,}1) = -(8{,}1)^3 + 12 \times (8{,}1)^2 + 5 \times 8{,}1 + 20 = -531{,}441 + 787{,}32 + 40{,}5 + 20 = 316{,}379. \]
+
+L'erreur commise est $|316{,}5 - 316{,}379| \approx 0{,}12$ centaine, soit environ $\cle{12\ \text{FCFA}}$ : négligeable pour une commerçante. L'approximation affine est donc excellente ici, car $h = 0{,}1$ est petit : la courbe est presque confondue avec sa tangente au voisinage du point d'abscisse $8$.
+
+\textbf{6. Conseil à Mama Ngo Bell (exemple de rédaction).}
+
+\emph{« Mama, d'après les calculs, ton gain augmente quand tu vends plus d'arachides, mais seulement jusqu'à environ $8{,}2$ kg par jour. Au-delà, les invendus et les prix cassés te font perdre de l'argent : si tu prépares $13$ kg, tu peux même perdre jusqu'à $8\,400$ FCFA dans la journée. Prépare donc chaque matin environ $8$ kg et un petit quart de kg en plus : ton bénéfice sera alors maximal, autour de $31\,650$ FCFA par jour. Si tu passes de $8$ kg à $8{,}1$ kg, tu gagnes environ $50$ FCFA de plus ; le gain devient presque nul ensuite, car tu es déjà tout près du sommet de la courbe. »}
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence plusieurs idées centrales de la leçon :
+
+\begin{itemize}
+\item \textbf{La dérivation comme outil d'optimisation.} On ne cherche plus un maximum « au hasard » ou en tâtonnant avec la calculatrice : le signe de la dérivée localise \emph{exactement} l'extremum. C'est la démarche utilisée en économie, en agronomie ou en gestion de stock.
+\item \textbf{La chaîne complète de raisonnement :} dérivabilité $\rightarrow$ calcul de $B'$ $\rightarrow$ signe de $B'$ $\rightarrow$ variations $\rightarrow$ extremum $\rightarrow$ interprétation concrète. Chaque étape s'appuie sur un théorème précis du cours ; aucune ne peut être sautée dans une copie de Probatoire.
+\item \textbf{L'importance des unités et du contexte.} Le résultat brut $316{,}5$ ne signifie rien seul : c'est en le convertissant en francs CFA ($31\,650$ FCFA) qu'il devient une information utile pour Mama Ngo Bell. De même, la lecture du tableau montre qu'au-delà de l'optimum, le bénéfice chute jusqu'à devenir négatif — un phénomène que toute commerçante reconnaît.
+\item \textbf{La tangente et l'approximation affine comme outils de prévision rapide.} L'approximation $B(8+h) \approx 316 + 5h$ permet d'estimer instantanément l'effet d'une petite variation de la quantité vendue, avec une erreur minime (ici environ $12$ FCFA). C'est exactement l'idée du \emph{calcul différentiel} : remplacer localement une courbe par sa tangente.
+\item \textbf{Une mise en garde graphique.} La tangente au point d'abscisse $4$ traverse la courbe : la position relative d'une courbe et de sa tangente n'est pas toujours la même, et seule une étude précise (ou un tracé soigneux) permet de conclure.
+\item \textbf{La communication mathématique.} La dernière consigne montre qu'un résultat mathématique n'a de valeur que s'il est traduit en langage clair et argumenté pour celui qui doit prendre une décision.
+\end{itemize}
+
+\begin{attention}[Erreurs fréquentes repérées pendant la restitution]
+\begin{itemize}
+\item Oublier que le bénéfice est en \emph{centaines} de FCFA et annoncer « $316{,}5$ FCFA » au lieu de $31\,650$ FCFA ;
+\item conclure au maximum en $x_1$ sans avoir vérifié le \emph{changement de signe} de $B'$ (une dérivée nulle ne suffit pas : penser à $x \mapsto x^3$ en $0$) ;
+\item donner les deux racines du trinôme comme candidates, alors que $x_0 \approx -0{,}2$ n'appartient pas à $[0\,;\,13]$ ;
+\item se tromper dans le calcul du discriminant en oubliant que $c = -5$ est négatif ($\Delta = b^2 - 4ac$ donne ici $576 + 60$, et non $576 - 60$) ;
+\item écrire la tangente $y = 53x - 44$ sans avoir calculé séparément $B(4)$ et $B'(4)$, ni justifié la formule $y = B'(4)(x-4) + B(4)$ ;
+\item affirmer que la tangente reste toujours au-dessus (ou toujours en dessous) de la courbe : le tracé montre ici qu'elle la traverse au point d'abscisse $4$ ;
+\item utiliser l'approximation affine avec un $h$ trop grand sans se méfier de l'erreur commise.
+\end{itemize}
+\end{attention}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Dérivation}
+
+\courssub{Étudier la dérivabilité en un point par le taux d'accroissement}
+
+\begin{methode}[Étudier la dérivabilité de $f$ en $a$]
+Pour savoir si $f$ est dérivable en $a$ et calculer $f'(a)$ :
+\begin{enumerate}
+\item Vérifier d'abord que $f$ est \cle{définie en $a$} (sinon la question est close).
+\item Former le \cle{taux d'accroissement} $\tau_a(x)=\dfrac{f(x)-f(a)}{x-a}$ pour $x\neq a$.
+\item Simplifier $\tau_a(x)$ (factoriser $x-a$, multiplier par la quantité conjuguée s'il y a des racines carrées).
+\item Calculer $\lim\limits_{x\to a}\tau_a(x)$.
+\item Conclure : si la limite existe et est \textbf{finie} et égale à $\ell$, alors $f$ est dérivable en $a$ et $f'(a)=\ell$ ; si la limite est infinie ou n'existe pas, $f$ n'est pas dérivable en $a$.
+\end{enumerate}
+\textbf{Réflexe :} on peut aussi poser $h=x-a$ et étudier $\lim\limits_{h\to 0}\dfrac{f(a+h)-f(a)}{h}$, souvent plus confortable pour les calculs.
+\end{methode}
+
+\begin{exoresolu}[Dérivabilité de la fonction racine carrée en $0$ et en $4$]
+Soit $f$ la fonction définie sur $[0\,;+\infty[$ par $f(x)=\sqrt{x}$.
+\begin{enumerate}
+\item Étudier la dérivabilité de $f$ en $4$ et donner $f'(4)$.
+\item $f$ est-elle dérivable en $0$ ? Interpréter graphiquement.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f$ est définie en $4$ et $f(4)=2$. Pour $x\geq 0$, $x\neq 4$ :
+\[
+\tau_4(x)=\frac{\sqrt{x}-2}{x-4}=\frac{\sqrt{x}-2}{(\sqrt{x}-2)(\sqrt{x}+2)}=\frac{1}{\sqrt{x}+2}.
+\]
+On a utilisé l'identité remarquable $x-4=(\sqrt{x}-2)(\sqrt{x}+2)$, valable car $x\geq 0$. Comme $\lim\limits_{x\to 4}(\sqrt{x}+2)=4$, on obtient :
+\[
+\lim_{x\to 4}\tau_4(x)=\frac{1}{4}.
+\]
+Cette limite est finie, donc $f$ est \textbf{dérivable en $4$} et $\boxed{f'(4)=\dfrac{1}{4}}$.
+
+\textbf{2.} Pour $x>0$ : $\tau_0(x)=\dfrac{\sqrt{x}-0}{x-0}=\dfrac{1}{\sqrt{x}}$. Or $\lim\limits_{x\to 0^+}\dfrac{1}{\sqrt{x}}=+\infty$. La limite n'est pas finie, donc $f$ \textbf{n'est pas dérivable en $0$}.
+
+\textbf{Interprétation :} la courbe de $f$ admet au point $O(0\,;0)$ une \cle{demi-tangente verticale} (la tangente « se redresse » : la pente devient infiniment grande).
+\end{exoresolu}
+
+\courssub{Dérivabilité à gauche, à droite ; fonctions définies par morceaux}
+
+\begin{methode}[Étudier la dérivabilité d'une fonction définie par intervalles en la jonction]
+Soit $f$ définie par deux expressions de part et d'autre de $a$.
+\begin{enumerate}
+\item \textbf{Continuité d'abord :} vérifier que $\lim\limits_{x\to a^-}f(x)=\lim\limits_{x\to a^+}f(x)=f(a)$. Si $f$ n'est pas continue en $a$, elle n'est \textbf{pas dérivable} en $a$ (une fonction dérivable en un point y est continue).
+\item Calculer le \cle{nombre dérivé à gauche} : $f'_g(a)=\lim\limits_{x\to a^-}\dfrac{f(x)-f(a)}{x-a}$ avec l'expression valable pour $x<a$.
+\item Calculer le \cle{nombre dérivé à droite} : $f'_d(a)=\lim\limits_{x\to a^+}\dfrac{f(x)-f(a)}{x-a}$ avec l'expression valable pour $x>a$.
+\item Conclure : $f$ est dérivable en $a$ \textbf{si et seulement si} $f'_g(a)=f'_d(a)$ (valeurs finies) ; alors $f'(a)$ est cette valeur commune. Sinon, la courbe admet deux demi-tangentes distinctes : on parle de \cle{point anguleux}.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Un raccordement de piste à Yaoundé]
+Pour modéliser le profil d'une piste, on considère la fonction $f$ définie sur $\mathbb{R}$ par :
+\[
+f(x)=\begin{cases} x^2 & \text{si } x\leq 1 \\ 2x-1 & \text{si } x>1 \end{cases}
+\]
+Étudier la continuité puis la dérivabilité de $f$ en $1$. Interpréter graphiquement.
+\tcblower
+\textbf{Continuité en $1$.} $f(1)=1^2=1$. De plus $\lim\limits_{x\to 1^-}x^2=1$ et $\lim\limits_{x\to 1^+}(2x-1)=1$. Les trois valeurs coïncident : $f$ est \textbf{continue en $1$}. L'étude de la dérivabilité a donc un sens.
+
+\textbf{Dérivabilité à gauche.} Pour $x<1$ :
+\[
+\frac{f(x)-f(1)}{x-1}=\frac{x^2-1}{x-1}=\frac{(x-1)(x+1)}{x-1}=x+1 \xrightarrow[x\to 1^-]{} 2.
+\]
+Donc $f'_g(1)=2$.
+
+\textbf{Dérivabilité à droite.} Pour $x>1$ :
+\[
+\frac{f(x)-f(1)}{x-1}=\frac{(2x-1)-1}{x-1}=\frac{2(x-1)}{x-1}=2 \xrightarrow[x\to 1^+]{} 2.
+\]
+Donc $f'_d(1)=2$.
+
+\textbf{Conclusion.} $f'_g(1)=f'_d(1)=2$, valeur finie : $f$ est \textbf{dérivable en $1$} et $\boxed{f'(1)=2}$. La courbe admet au point $A(1\,;1)$ une unique tangente, d'équation $y=2(x-1)+1$, c'est-à-dire $y=2x-1$ : le raccordement est « lisse », sans angle.
+\end{exoresolu}
+
+\courssub{Fonction dérivée sur un intervalle et dérivées usuelles}
+
+\begin{propriete}[Fonction dérivée sur un intervalle]
+Soit $f$ une fonction définie sur un intervalle $I$. On dit que $f$ est \cle{dérivable sur $I$} si elle est dérivable en tout point de $I$ (aux bornes, on considère la dérivabilité à droite pour la borne gauche, et à gauche pour la borne droite).
+La \cle{fonction dérivée} de $f$ sur $I$, notée $f'$, est la fonction qui associe à tout $x\in I$ le nombre dérivé $f'(x)$.
+\end{propriete}
+
+\begin{aretenir}[Dérivées des fonctions usuelles (à connaître par cœur)]
+\begin{center}
+\begin{tabular}{|c|c|c|}\hline
+Fonction $f(x)$ & Domaine de dérivabilité & Dérivée $f'(x)$ \\ \hline
+$k$ (constante) & $\mathbb{R}$ & $0$ \\ \hline
+$x^n$ ($n\in\mathbb{N}^*$) & $\mathbb{R}$ & $nx^{n-1}$ \\ \hline
+$x^\alpha$ ($\alpha\in\mathbb{R}$) & $]0\,;+\infty[$ & $\alpha x^{\alpha-1}$ \\ \hline
+$\sqrt{x}$ & $]0\,;+\infty[$ & $\dfrac{1}{2\sqrt{x}}$ \\ \hline
+$\dfrac{1}{x}$ & $\mathbb{R}^*$ & $-\dfrac{1}{x^2}$ \\ \hline
+$\sin x$ & $\mathbb{R}$ & $\cos x$ \\ \hline
+$\cos x$ & $\mathbb{R}$ & $-\sin x$ \\ \hline
+\end{tabular}
+\end{center}
+\textbf{Attention :} $\sqrt{x}$ n'est \textbf{pas} dérivable en $0$ (demi-tangente verticale).
+\end{aretenir}
+
+\courssub{Opérations sur les fonctions dérivables : formules et démonstrations}
+
+\begin{propriete}[Règles de dérivation (démonstrations exigibles au Probatoire)]
+Soient $u$ et $v$ deux fonctions dérivables en $a$.
+\begin{itemize}
+\item \textbf{Somme :} $u+v$ est dérivable en $a$ et $(u+v)'(a)=u'(a)+v'(a)$.
+\item \textbf{Produit par un réel :} $\forall k\in\mathbb{R},\; ku$ est dérivable en $a$ et $(ku)'(a)=k\,u'(a)$.
+\item \textbf{Produit :} $uv$ est dérivable en $a$ et $(uv)'(a)=u'(a)v(a)+u(a)v'(a)$.
+\item \textbf{Quotient :} Si $v(a)\neq 0$, $\dfrac{u}{v}$ est dérivable en $a$ et $\left(\dfrac{u}{v}\right)'(a)=\dfrac{u'(a)v(a)-u(a)v'(a)}{v(a)^2}$.
+\item \textbf{Composée affine :} Si $u$ est dérivable en $v(a)$, alors $u\circ v$ est dérivable en $a$ et $(u\circ v)'(a)=v'(a)\times u'(v(a))$. Cas particulier : $\big(u(ax+b)\big)'(x)=a\times u'(ax+b)$.
+\end{itemize}
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : formule du produit]
+On veut montrer $(uv)'(a)=u'(a)v(a)+u(a)v'(a)$.
+\begin{enumerate}
+\item Écrire le taux d'accroissement de $uv$ en $a$ : $\tau(x)=\dfrac{u(x)v(x)-u(a)v(a)}{x-a}$.
+\item Ajouter et soustraire $u(x)v(a)$ au numérateur.
+\item Factoriser par $u(x)$ et $v(a)$.
+\item Faire tendre $x$ vers $a$ en utilisant la continuité de $u$ en $a$ (car $u$ dérivable $\Rightarrow$ $u$ continue).
+\item Conclure.
+\end{enumerate}
+\tcblower
+\textbf{Solution :}
+\[
+\tau(x)=\frac{u(x)v(x)-u(x)v(a)+u(x)v(a)-u(a)v(a)}{x-a}=u(x)\frac{v(x)-v(a)}{x-a}+v(a)\frac{u(x)-u(a)}{x-a}.
+\]
+Comme $u$ est dérivable en $a$, elle est continue en $a$ : $\lim\limits_{x\to a}u(x)=u(a)$.
+En passant à la limite : $\lim\limits_{x\to a}\tau(x)=u(a)v'(a)+v(a)u'(a)$.
+\end{experience}
+
+\courssub{Calculer une fonction dérivée : sommes, produits, quotients, composée affine}
+
+\begin{methode}[Déterminer la fonction dérivée d'une fonction numérique]
+\begin{enumerate}
+\item \textbf{Identifier la structure} de $f$ : somme, produit $u\times v$, produit par un réel $k\,u$, quotient $\dfrac{u}{v}$, ou composée $x\mapsto u(ax+b)$.
+\item \textbf{Choisir la bonne formule} :
+\[
+(u+v)'=u'+v' \qquad (ku)'=k\,u' \qquad (uv)'=u'v+uv'
+\]
+\[
+\left(\frac{u}{v}\right)'=\frac{u'v-uv'}{v^2} \qquad \big(u(ax+b)\big)'=a\times u'(ax+b).
+\]
+\item \textbf{Préciser le domaine de dérivabilité} : pour un quotient, exclure les valeurs qui annulent $v$ ; pour une racine carrée, l'intérieur doit être $>0$ (pas $\geq 0$).
+\item Calculer $u'$ et $v'$ séparément, puis assembler en simplifiant (factoriser au maximum le numérateur d'un quotient : c'est indispensable pour le tableau de signes ensuite).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Trois calculs de dérivées]
+Déterminer la fonction dérivée de chacune des fonctions suivantes, en précisant l'ensemble de dérivabilité.
+\begin{enumerate}
+\item $f(x)=x^3-5x^2+7x-3$ sur $\mathbb{R}$ ;
+\item $g(x)=(2x+1)\sqrt{x}$ sur $]0\,;+\infty[$ ;
+\item $h(x)=\dfrac{3x-2}{x+1}$ sur $\mathbb{R}\setminus\{-1\}$ ;
+\item $k(x)=\sqrt{3x-2}$ sur $\left]\dfrac{2}{3}\,;+\infty\right[$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f$ est un polynôme, dérivable sur $\mathbb{R}$. Par linéarité (somme et produits par des réels) :
+\[
+f'(x)=3x^2-10x+7.
+\]
+
+\textbf{2.} $g$ est un produit $u\,v$ avec $u(x)=2x+1$ et $v(x)=\sqrt{x}$, toutes deux dérivables sur $]0\,;+\infty[$ (attention : $\sqrt{x}$ n'est dérivable que sur $]0\,;+\infty[$, pas en $0$). On a $u'(x)=2$ et $v'(x)=\dfrac{1}{2\sqrt{x}}$. Donc :
+\[
+g'(x)=u'v+uv'=2\sqrt{x}+(2x+1)\times\frac{1}{2\sqrt{x}}=\frac{4x+2x+1}{2\sqrt{x}}=\frac{6x+1}{2\sqrt{x}}.
+\]
+
+\textbf{3.} $h=\dfrac{u}{v}$ avec $u(x)=3x-2$, $v(x)=x+1$ ; $v$ ne s'annule qu'en $-1$, donc $h$ est dérivable sur $\mathbb{R}\setminus\{-1\}$. Avec $u'=3$ et $v'=1$ :
+\[
+h'(x)=\frac{u'v-uv'}{v^2}=\frac{3(x+1)-(3x-2)\times 1}{(x+1)^2}=\frac{3x+3-3x+2}{(x+1)^2}=\frac{5}{(x+1)^2}.
+\]
+
+\textbf{4.} $k$ est de la forme $u(ax+b)$ avec $u=\sqrt{\phantom{x}}$, $a=3$, $b=-2$. Pour $x>\dfrac{2}{3}$, $3x-2>0$, donc $k$ est dérivable sur $\left]\dfrac{2}{3}\,;+\infty\right[$ :
+\[
+k'(x)=a\times u'(ax+b)=3\times\frac{1}{2\sqrt{3x-2}}=\frac{3}{2\sqrt{3x-2}}.
+\]
+\end{exoresolu}
+
+\courssub{Déterminer une équation de tangente ou de demi-tangente}
+
+\begin{methode}[Équation de la tangente en $A(a\,;f(a))$]
+\begin{enumerate}
+\item Vérifier que $f$ est dérivable en $a$ et calculer $f'(a)$.
+\item Calculer $f(a)$.
+\item Écrire la formule : $\boxed{y=f'(a)(x-a)+f(a)}$.
+\item Développer et réduire pour obtenir $y=mx+p$.
+\end{enumerate}
+\textbf{Cas des demi-tangentes :} si $f$ n'est dérivable qu'à gauche (resp. à droite) en $a$, on écrit la demi-tangente avec $f'_g(a)$ (resp. $f'_d(a)$) en précisant la restriction $x\leq a$ (resp. $x\geq a$). Si le taux tend vers l'infini, la (demi-)tangente est \textbf{verticale} : $x=a$.
+\end{methode}
+
+\begin{exoresolu}[Tangente à la courbe de $f(x)=x^2-3x+1$]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x)=x^2-3x+1$ et $(\mathcal{C})$ sa courbe représentative.
+\begin{enumerate}
+\item Déterminer une équation de la tangente $(T)$ à $(\mathcal{C})$ au point $A$ d'abscisse $2$.
+\item Existe-t-il un point de $(\mathcal{C})$ où la tangente est parallèle à la droite d'équation $y=x-5$ ?
+\end{enumerate}
+\tcblower
+\textbf{1.} $f$ est un polynôme, dérivable sur $\mathbb{R}$, et $f'(x)=2x-3$. On calcule :
+\[
+f(2)=4-6+1=-1 \qquad \text{et} \qquad f'(2)=1.
+\]
+La tangente en $A(2\,;-1)$ a pour équation :
+\[
+y=f'(2)(x-2)+f(2)=1\times(x-2)-1=x-3.
+\]
+Donc $\boxed{(T):\ y=x-3}$.
+
+\textbf{2.} Deux droites sont parallèles si et seulement si elles ont le même coefficient directeur. La tangente en un point d'abscisse $a$ a pour coefficient directeur $f'(a)=2a-3$. On résout :
+\[
+2a-3=1 \iff a=2.
+\]
+C'est le point $A$ de la question 1 : la tangente $(T)$, de coefficient directeur $1$ comme la droite $y=x-5$, est la seule tangente à $(\mathcal{C})$ qui lui soit parallèle.
+\end{exoresolu}
+
+\courssub{Étudier le sens de variation et dresser le tableau de variations}
+
+\begin{methode}[De la dérivée au tableau de variations]
+\begin{enumerate}
+\item Déterminer l'ensemble de dérivabilité de $f$ et \textbf{calculer $f'(x)$}.
+\item \textbf{Factoriser} $f'(x)$ au maximum (produit de facteurs du premier degré, discriminant pour un trinôme).
+\item Étudier le \textbf{signe de $f'(x)$} sur l'ensemble d'étude (tableau de signes).
+\item Appliquer le théorème : $f'>0$ sur un intervalle $\Rightarrow$ $f$ strictement croissante ; $f'<0$ $\Rightarrow$ $f$ strictement décroissante ; $f'=0$ $\Rightarrow$ $f$ constante.
+\item Dresser le \cle{tableau de variations} : ligne de $x$ (bornes et zéros de $f'$), ligne du signe de $f'$, ligne des flèches de $f$ avec les \textbf{images} des valeurs remarquables et les limites aux bornes si elles sont connues.
+\item Lire les \cle{extrema} : $f$ admet un minimum (resp. maximum) local en $c$ si $f'$ s'annule en $c$ en changeant de signe de $-$ vers $+$ (resp. de $+$ vers $-$).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Variations de $f(x)=x^3-3x+2$]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x)=x^3-3x+2$.
+\begin{enumerate}
+\item Calculer $f'(x)$ et étudier son signe.
+\item Dresser le tableau de variations de $f$ sur $\mathbb{R}$.
+\item Préciser les extrema locaux de $f$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f$ est un polynôme, dérivable sur $\mathbb{R}$ : $f'(x)=3x^2-3=3(x^2-1)=3(x-1)(x+1)$.
+
+$f'$ est un trinôme du second degré s'annulant en $-1$ et $1$, positif à l'extérieur des racines (coefficient $3>0$) :
+\[
+f'(x)>0 \text{ sur } ]-\infty\,;-1[\cup]1\,;+\infty[, \qquad f'(x)<0 \text{ sur } ]-1\,;1[.
+\]
+
+\textbf{2.} Images remarquables : $f(-1)=-1+3+2=4$ et $f(1)=1-3+2=0$. D'où le tableau :
+
+\begin{center}
+\begin{tabular}{|c|ccccccc|}\hline
+$x$ & $-\infty$ & & $-1$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+$f$ & & $\nearrow$ & $4$ & $\searrow$ & $0$ & $\nearrow$ & \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{3.} Lecture du tableau :
+\begin{itemize}
+\item $f'$ s'annule en $-1$ en passant de $+$ à $-$ : $f$ admet un \textbf{maximum local} en $-1$, égal à $f(-1)=4$ ;
+\item $f'$ s'annule en $1$ en passant de $-$ à $+$ : $f$ admet un \textbf{minimum local} en $1$, égal à $f(1)=0$.
+\end{itemize}
+\end{exoresolu}
+
+\courssub{Approximation affine d'une fonction autour d'un réel}
+
+\begin{methode}[Utiliser l'approximation affine]
+Si $f$ est dérivable en $a$, alors pour $h$ voisin de $0$ :
+\[
+\boxed{f(a+h)\approx f(a)+h\,f'(a)} \qquad \text{ou, de façon équivalente,} \qquad f(x)\approx f(a)+f'(a)(x-a).
+\]
+Démarche :
+\begin{enumerate}
+\item Identifier la fonction $f$, le point $a$ (où $f(a)$ et $f'(a)$ sont \textbf{faciles à calculer exactement}) et l'écart $h=x-a$.
+\item Calculer $f(a)$ et $f'(a)$.
+\item Écrire $f(a+h)\approx f(a)+h\,f'(a)$ et conclure par une valeur décimale.
+\end{enumerate}
+\textbf{Idée directrice :} on remplace localement la courbe par sa tangente ; l'approximation n'est bonne que pour $h$ \textbf{petit}.
+\end{methode}
+
+\begin{exoresolu}[Estimer $\sqrt{4{,}02}$ sans calculatrice]
+\begin{enumerate}
+\item Donner l'approximation affine de $f(x)=\sqrt{x}$ au voisinage de $a=4$.
+\item En déduire une valeur approchée de $\sqrt{4{,}02}$, puis de $\sqrt{3{,}97}$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f(x)=\sqrt{x}$ est dérivable sur $]0\,;+\infty[$ et $f'(x)=\dfrac{1}{2\sqrt{x}}$. En $a=4$ :
+\[
+f(4)=2 \qquad \text{et} \qquad f'(4)=\frac{1}{2\sqrt{4}}=\frac{1}{4}.
+\]
+L'approximation affine au voisinage de $4$ s'écrit, pour $h$ proche de $0$ :
+\[
+\sqrt{4+h}\approx 2+\frac{h}{4}.
+\]
+
+\textbf{2.} Pour $\sqrt{\num{4,02}}$, on prend $h=\num{0,02}$ :
+\[
+\sqrt{\num{4,02}}\approx 2+\frac{\num{0,02}}{4}=2+\num{0,005}=\num{2,005}.
+\]
+(La calculatrice donne $\num{2,00499\ldots}$ : l'approximation est excellente.)
+
+Pour $\sqrt{\num{3,97}}$, on prend $h=-\num{0,03}$ :
+\[
+\sqrt{\num{3,97}}\approx 2+\frac{-\num{0,03}}{4}=2-\num{0,0075}=\num{1,9925}.
+\]
+\textbf{Conclusion :} $\sqrt{\num{4,02}}\approx \num{2,005}$ et $\sqrt{\num{3,97}}\approx \num{1,9925}$.
+\end{exoresolu}
+
+\courssub{Problème d'optimisation avec extrema}
+
+\begin{methode}[Résoudre un problème d'optimisation]
+\begin{enumerate}
+\item \textbf{Modéliser} : choisir la variable $x$, préciser son ensemble (contraintes de l'énoncé : longueurs positives, etc.), exprimer la grandeur à optimiser $f(x)$.
+\item \textbf{Dériver} $f$ et étudier le signe de $f'$ sur l'ensemble choisi.
+\item Dresser le tableau de variations et repérer l'extremum cherché.
+\item \textbf{Conclure en répondant à la question posée}, avec les unités et le contexte (et vérifier que la solution est dans l'ensemble admissible).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Le champ de M. Etoundi]
+M. Etoundi, agriculteur de l'Ouest, dispose de \SI{100}{m} de grillage pour clôturer un champ rectangulaire adossé à un mur (le mur ferme un des grands côtés, le grillage sert pour les trois autres côtés). On note $x$ la longueur, en mètres, de chaque côté perpendiculaire au mur.
+\begin{enumerate}
+\item Montrer que l'aire du champ est $\mathcal{A}(x)=100x-2x^2$ avec $x\in[0\,;50]$.
+\item Déterminer les dimensions du champ d'aire maximale et cette aire maximale.
+\end{enumerate}
+\tcblower
+\textbf{1.} Le grillage couvre deux côtés de longueur $x$ et un côté parallèle au mur de longueur $\ell$ : $2x+\ell=100$, donc $\ell=100-2x$. Comme $\ell\geq 0$, on a $x\leq 50$, et $x\geq 0$ : $x\in[0\,;50]$. L'aire est :
+\[
+\mathcal{A}(x)=x\,\ell=x(100-2x)=100x-2x^2.
+\]
+
+\textbf{2.} $\mathcal{A}$ est un polynôme, dérivable sur $[0\,;50]$ : $\mathcal{A}'(x)=100-4x=4(25-x)$.
+
+$\mathcal{A}'(x)>0$ pour $x<25$ et $\mathcal{A}'(x)<0$ pour $x>25$. Tableau de variations :
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $0$ & & $25$ & & $50$ \\ \hline
+$\mathcal{A}'(x)$ & & $+$ & $0$ & $-$ & \\ \hline
+$\mathcal{A}$ & $0$ & $\nearrow$ & $1250$ & $\searrow$ & $0$ \\ \hline
+\end{tabular}
+\end{center}
+
+avec $\mathcal{A}(25)=100\times 25-2\times 25^2=2500-1250=1250$.
+
+$\mathcal{A}'$ s'annule en $25$ en passant de $+$ à $-$ : $\mathcal{A}$ admet un \textbf{maximum} en $x=25$. Alors $\ell=100-2\times 25=50$.
+
+\textbf{Conclusion :} le champ d'aire maximale a pour dimensions $25$ m de largeur et $50$ m de longueur le long du mur, pour une aire maximale de $\SI{1250}{m^2}$.
+\end{exoresolu}
+
+\begin{savaistu}[Histoire et applications au Cameroun]
+Le calcul différentiel a été développé indépendamment par \textbf{Newton} (fluxions, physique) et \textbf{Leibniz} (différentiels, notation $\frac{dy}{dx}$) à la fin du XVIIe siècle. La notation $f'(x)$ est due à Lagrange.
+Au Cameroun, la dérivée est un outil quotidien :
+\begin{itemize}
+\item \textbf{Économie :} le coût marginal $C'(x)$ (dérivée de la fonction coût) guide les décisions de production à la SONARA ou dans les brasseries.
+\item \textbf{Physique :} la vitesse instantanée $v(t)=x'(t)$ et l'accélération $a(t)=v'(t)$ modélisent le mouvement des véhicules sur l'autoroute Yaoundé-Douala.
+\item \textbf{Hydraulique :} le débit instantané $Q(t)=V'(t)$ (dérivée du volume) est crucial pour la gestion des barrages (Lom Pangar, Memve'ele).
+\item \textbf{Télécoms :} l'optimisation du débit binaire (MTN, Orange) utilise la dérivée de la fonction capacité de Shannon.
+\end{itemize}
+\end{savaistu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Oublier de vérifier la continuité avant la dérivabilité} pour une fonction définie par morceaux. Si $f$ n'est pas continue en $a$, elle n'est pas dérivable en $a$ : le dire clairement, c'est souvent un point de la question.
+\item \textbf{Confondre $f(a)$ et $f'(a)$ dans l'équation de la tangente.} La formule est $y=f'(a)(x-a)+f(a)$ : $f'(a)$ est le coefficient directeur, $f(a)$ est l'ordonnée du point de contact. Les deux calculs doivent apparaître explicitement.
+\item \textbf{Mal appliquer la dérivée du quotient} : $(u/v)'=\dfrac{u'v-uv'}{v^2}$. Erreurs classiques : écrire $u'v+uv'$ au numérateur, oublier le carré au dénominateur, ou dériver « terme à terme » $\dfrac{u'}{v'}$ (c'est faux !).
+\item \textbf{Oublier le facteur $a$ dans la dérivée d'une composée affine} : $\big(u(ax+b)\big)'=a\times u'(ax+b)$. Ainsi $(\sqrt{3x-2})'=\dfrac{3}{2\sqrt{3x-2}}$ et non $\dfrac{1}{2\sqrt{3x-2}}$.
+\item \textbf{Affirmer un extremum sans changement de signe de $f'$.} $f'(c)=0$ ne suffit pas (penser à $x^3$ en $0$) : il faut que $f'$ s'annule en $c$ \emph{en changeant de signe}. De même, dans un tableau de variations, les flèches vont dans la ligne de $f$ et les signes dans la ligne de $f'$ — ne pas les mélanger.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : Dérivabilité et nombre dérivé]
+Parmi les affirmations suivantes, une seule est exacte. Laquelle ?
+\begin{enumerate}
+    \item La fonction $f(x)=|x|$ est dérivable en $0$ et $f'(0)=0$.
+    \item Si $f$ est dérivable en $a$, alors $f$ est continue en $a$.
+    \item La fonction $g(x)=\sqrt{x}$ est dérivable sur $\mathbb{R}$.
+    \item Si $f'(a)$ existe, alors $\lim_{x\to a}f(x)=f'(a)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou Faux ? Justifier]
+Déterminer si les affirmations suivantes sont vraies ou fausses. Justifier chaque réponse par une propriété du cours ou un contre-exemple.
+\begin{enumerate}
+    \item La fonction $f(x)=x^3$ admet une tangente à l'origine.
+    \item Si $f$ et $g$ sont dérivables en $a$, alors $\frac{f}{g}$ est dérivable en $a$.
+    \item La fonction $h(x)=|x-2|$ est dérivable à gauche et à droite en $2$.
+    \item Si $f'(x)>0$ sur un intervalle $I$, alors $f$ est strictement croissante sur $I$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs de nombres dérivés]
+Calculer le nombre dérivé en $a$ des fonctions suivantes (préciser si la fonction est dérivable en $a$) :
+\begin{enumerate}
+    \item $f(x)=3x^2-5x+2$ en $a=1$.
+    \item $g(x)=\dfrac{1}{x}$ en $a=-2$.
+    \item $h(x)=\sqrt{x+3}$ en $a=1$.
+    \item $k(x)=|x+1|$ en $a=-1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et notations]
+Compléter les phrases suivantes avec les termes mathématiques exacts :
+\begin{enumerate}
+    \item Soit $f$ une fonction définie sur un intervalle $I$ et $a\in I$. On dit que $f$ est \emph{...} en $a$ si le taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ admet une limite finie quand $x$ tend vers $a$.
+    \item Cette limite, quand elle existe, se note \emph{...} et s'appelle le \emph{...} de $f$ en $a$.
+    \item L'équation de la tangente à la courbe $\mathcal{C}_f$ au point d'abscisse $a$ (si $f$ est dérivable en $a$) est \emph{...}.
+    \item On dit que $f$ est \emph{...} sur $I$ si elle est dérivable en tout point de $I$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Dérivabilité de fonctions définies par morceaux]
+Soit la fonction $f$ définie sur $\mathbb{R}$ par :
+\[
+f(x) = \begin{cases}
+x^2 & \text{si } x \le 0 \\
+x   & \text{si } x > 0
+\end{cases}
+\]
+\begin{enumerate}
+    \item Étudier la continuité de $f$ en $0$.
+    \item Calculer le taux d'accroissement $\dfrac{f(x)-f(0)}{x-0}$ pour $x<0$ et pour $x>0$.
+    \item En déduire les nombres dérivés à gauche et à droite en $0$. $f$ est-elle dérivable en $0$ ?
+    \item Tracer schématiquement la courbe $\mathcal{C}_f$ au voisinage de $0$ et représenter les demi-tangentes.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Dérivées des fonctions usuelles et opérations]
+Déterminer la fonction dérivée et son ensemble de définition (domaine de dérivabilité) pour les fonctions suivantes :
+\begin{enumerate}
+    \item $f(x) = 3x^4 - 5x^2 + 2$
+    \item $g(x) = (x^2 + 1)(2x - 3)$
+    \item $h(x) = \dfrac{4x - 1}{x + 2}$
+    \item $k(x) = \sqrt{5x - 3}$
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Tangente et position relative]
+Soit la fonction $f(x)=x^3-2x$ et sa courbe $\mathcal{C}_f$.
+\begin{enumerate}
+    \item Déterminer une équation de la tangente $\mathcal{T}$ à $\mathcal{C}_f$ au point d'abscisse $-1$.
+    \item Étudier le signe de $f(x) - (\text{équation de }\mathcal{T})$ pour $x \neq -1$.
+    \item En déduire la position relative de $\mathcal{C}_f$ et de $\mathcal{T}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Tableau de variations et extrema]
+Soit $f(x)=x^3-6x^2+9x+1$ définie sur l'intervalle $[0\,;\,4]$.
+\begin{enumerate}
+    \item Calculer $f'(x)$ et résoudre $f'(x)=0$ sur $[0\,;\,4]$.
+    \item Dresser le tableau de variations complet de $f$ sur $[0\,;\,4]$.
+    \item Déterminer les extrema (minimum et maximum) de $f$ sur $[0\,;\,4]$ et les abscisses où ils sont atteints.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Problème d'optimisation : Le champ du planteur]
+Un planteur de la région de l'Ouest dispose de \SI{100}{m} de grillage pour clôturer un champ rectangulaire. L'un des grands côtés du rectangle est adossé à un mur en béton (donc pas besoin de grillage de ce côté-là). On note $x$ la longueur (en mètres) du côté perpendiculaire au mur.
+\begin{enumerate}
+    \item Exprimer la longueur $L$ du côté parallèle au mur en fonction de $x$. Quelles sont les valeurs possibles de $x$ ? (On note $I$ cet intervalle).
+    \item Exprimer l'aire $A(x)$ du champ en fonction de $x$.
+    \item Étudier les variations de la fonction $A$ sur $I$.
+    \item Quelles dimensions doit choisir le planteur pour maximiser l'aire de son champ ? Quelle est cette aire maximale ?
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Approximation affine et encadrement d'erreur]
+On cherche à donner une valeur approchée de $(2,003)^4$ sans calculatrice.
+\begin{enumerate}
+    \item Soit $f(x)=x^4$. Écrire l'approximation affine de $f$ au voisinage de $2$.
+    \item En déduire une valeur approchée de $(2,003)^4$ par excès ou par défaut ? Justifier.
+    \item On admet que pour tout $x\in[2\,;\,2,003]$, $|f''(x)| \le 48$. En utilisant la formule de Taylor-Young à l'ordre 2 (ou le théorème de la valeur moyenne appliqué à $f'$), encadrer l'erreur commise.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Étude complète type Probatoire]
+Soit la fonction $f$ définie sur $\mathbb{R}^*=\{x\in\mathbb{R} \mid x\neq 1\}$ par :
+\[
+f(x) = \frac{x^2 - 3x + 3}{x - 1}
+\]
+\begin{enumerate}
+    \item Déterminer l'ensemble de définition $D_f$ de $f$. Calculer les limites de $f$ aux bornes de $D_f$ (notamment en $1^-$, $1^+$, $-\infty$, $+\infty$). En déduire les asymptotes.
+    \item Calculer $f'(x)$ et simplifier l'expression.
+    \item Dresser le tableau de variations de $f$ sur $D_f$.
+    \item Déterminer une équation de la tangente $\mathcal{T}$ à la courbe $\mathcal{C}_f$ au point d'abscisse $2$.
+    \item Montrer que la courbe $\mathcal{C}_f$ coupe sa tangente $\mathcal{T}$ en un second point. Déterminer les coordonnées de ce point.
+    \item Tracer schématiquement $\mathcal{C}_f$, ses asymptotes et la tangente $\mathcal{T}$ dans un repère orthonormé.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : Dérivabilité et nombre dérivé]
+La bonne réponse est la \textbf{b)}.
+
+\begin{itemize}
+    \item \textbf{a) Fausse.} Pour $f(x)=|x|$, le taux d'accroissement en $0$ vaut $\dfrac{|x|}{x}$, qui vaut $-1$ si $x<0$ et $1$ si $x>0$. Les limites à gauche et à droite sont différentes : $f$ n'est \textbf{pas} dérivable en $0$ (elle admet seulement deux demi-tangentes).
+    \item \textbf{b) Vraie.} C'est un théorème du cours : toute fonction dérivable en $a$ est continue en $a$. En effet, pour $x\neq a$ :
+    \[
+    f(x)-f(a)=\frac{f(x)-f(a)}{x-a}\times(x-a)\xrightarrow[x\to a]{} f'(a)\times 0 = 0,
+    \]
+    donc $\lim_{x\to a}f(x)=f(a)$.
+    \item \textbf{c) Fausse.} $g(x)=\sqrt{x}$ n'est définie que sur $[0\,;\,+\infty[$, et n'est pas dérivable en $0$ : le taux $\dfrac{\sqrt{x}-\sqrt{0}}{x-0}=\dfrac{1}{\sqrt{x}}$ tend vers $+\infty$ quand $x\to 0^+$ (demi-tangente verticale).
+    \item \textbf{d) Fausse.} Si $f$ est dérivable en $a$, alors $\lim_{x\to a}f(x)=f(a)$ (continuité), et non $f'(a)$. Confondre $f(a)$ et $f'(a)$ est une erreur classique.
+\end{itemize}
+
+\textbf{Point de vigilance :} la réciproque de b) est fausse : la continuité n'implique pas la dérivabilité (contre-exemple : $x\mapsto |x|$ en $0$).
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou Faux ? Justifier]
+\begin{enumerate}
+    \item \textbf{Vrai.} $f(x)=x^3$ est dérivable en $0$ et $f'(x)=3x^2$, donc $f'(0)=0$. La tangente à l'origine a pour équation $y=f(0)+f'(0)(x-0)=0$ : c'est l'axe des abscisses. (C'est une tangente \emph{horizontale} ; la courbe la traverse en ce point, mais la tangente existe bien.)
+    \item \textbf{Faux.} Il manque une hypothèse essentielle : il faut $g(a)\neq 0$. Contre-exemple : $f(x)=1$ et $g(x)=x$ sont dérivables en $0$, mais $\dfrac{f}{g}(x)=\dfrac{1}{x}$ n'est même pas définie en $0$, donc pas dérivable en $0$.
+    \item \textbf{Vrai.} Pour $x<2$, $h(x)=-(x-2)=2-x$, donc le taux d'accroissement en $2$ vaut $\dfrac{(2-x)-0}{x-2}=-1$ : $h'_g(2)=-1$. Pour $x>2$, $h(x)=x-2$, donc le taux vaut $1$ : $h'_d(2)=1$. Les deux nombres dérivés unilatéraux existent ; comme ils sont différents, $h$ n'est pas dérivable en $2$ (point anguleux).
+    \item \textbf{Vrai.} C'est le théorème fondamental du cours : si $f$ est dérivable sur un intervalle $I$ et si $f'(x)>0$ pour tout $x\in I$, alors $f$ est strictement croissante sur $I$. \textbf{Attention :} l'hypothèse « $I$ est un intervalle » est indispensable : sur une réunion d'intervalles disjoints, le signe de $f'$ ne garantit pas la monotonie globale (exemple : $x\mapsto \dfrac{1}{x}$ a une dérivée strictement négative sur $\mathbb{R}^*$, sans être décroissante sur $\mathbb{R}^*$).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Calculs directs de nombres dérivés]
+\begin{enumerate}
+    \item $f(x)=3x^2-5x+2$, $a=1$. On a $f(1)=3-5+2=0$. Taux d'accroissement :
+    \[
+    \frac{f(x)-f(1)}{x-1}=\frac{3x^2-5x+2}{x-1}=\frac{(x-1)(3x-2)}{x-1}=3x-2 \xrightarrow[x\to 1]{} 1.
+    \]
+    $f$ est dérivable en $1$ et $f'(1)=1$. (Vérification : $f'(x)=6x-5$, donc $f'(1)=1$.)
+    \item $g(x)=\dfrac{1}{x}$, $a=-2$.
+    \[
+    \frac{g(x)-g(-2)}{x-(-2)}=\frac{\dfrac{1}{x}+\dfrac{1}{2}}{x+2}=\frac{\dfrac{2+x}{2x}}{x+2}=\frac{1}{2x}\xrightarrow[x\to -2]{} -\frac{1}{4}.
+    \]
+    $g$ est dérivable en $-2$ et $g'(-2)=-\dfrac{1}{4}$. (Vérification : $g'(x)=-\dfrac{1}{x^2}$, donc $g'(-2)=-\dfrac{1}{4}$.)
+    \item $h(x)=\sqrt{x+3}$, $a=1$. On a $h(1)=\sqrt{4}=2$. On utilise la quantité conjuguée :
+    \[
+    \frac{\sqrt{x+3}-2}{x-1}=\frac{(x+3)-4}{(x-1)\bigl(\sqrt{x+3}+2\bigr)}=\frac{x-1}{(x-1)\bigl(\sqrt{x+3}+2\bigr)}=\frac{1}{\sqrt{x+3}+2}\xrightarrow[x\to 1]{} \frac{1}{4}.
+    \]
+    $h$ est dérivable en $1$ et $h'(1)=\dfrac{1}{4}$.
+    \item $k(x)=|x+1|$, $a=-1$. On a $k(-1)=0$. Pour $x>-1$, le taux vaut $\dfrac{x+1}{x+1}=1$ ; pour $x<-1$, il vaut $\dfrac{-(x+1)}{x+1}=-1$. Les limites à gauche et à droite diffèrent : $k$ \textbf{n'est pas dérivable} en $-1$ (mais $k'_g(-1)=-1$ et $k'_d(-1)=1$).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Définitions et notations]
+\begin{enumerate}
+    \item On dit que $f$ est \cle{dérivable} en $a$ si le taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ admet une limite \emph{finie} quand $x$ tend vers $a$.
+    \item Cette limite se note \cle{$f'(a)$} et s'appelle le \cle{nombre dérivé} de $f$ en $a$.
+    \item L'équation de la tangente à $\mathcal{C}_f$ au point d'abscisse $a$ est \cle{$y=f'(a)(x-a)+f(a)$}.
+    \item On dit que $f$ est \cle{dérivable sur $I$} si elle est dérivable en tout point de $I$ ; la fonction $x\mapsto f'(x)$ est alors appelée \cle{fonction dérivée} de $f$ sur $I$, notée $f'$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Dérivabilité de fonctions définies par morceaux]
+\begin{enumerate}
+    \item \textbf{Continuité en $0$.} On a $f(0)=0^2=0$.
+    \[
+    \lim_{x\to 0^-}f(x)=\lim_{x\to 0^-}x^2=0 \quad\text{et}\quad \lim_{x\to 0^+}f(x)=\lim_{x\to 0^+}x=0.
+    \]
+    Les deux limites sont égales à $f(0)$ : $f$ est \textbf{continue en $0$}.
+    \item \textbf{Taux d'accroissement.} Comme $f(0)=0$ :
+    \begin{itemize}
+        \item pour $x<0$ : $\dfrac{f(x)-f(0)}{x-0}=\dfrac{x^2}{x}=x$ ;
+        \item pour $x>0$ : $\dfrac{f(x)-f(0)}{x-0}=\dfrac{x}{x}=1$.
+    \end{itemize}
+    \item \textbf{Nombres dérivés unilatéraux.}
+    \[
+    f'_g(0)=\lim_{x\to 0^-}x=0 \qquad\text{et}\qquad f'_d(0)=\lim_{x\to 0^+}1=1.
+    \]
+    Comme $f'_g(0)\neq f'_d(0)$, $f$ \textbf{n'est pas dérivable en $0$}. Le point $(0\,;\,0)$ est un point anguleux : la courbe y admet deux demi-tangentes distinctes.
+    \item \textbf{Tracé.} À gauche de $0$, la courbe est l'arc de parabole $y=x^2$, qui arrive en $0$ avec une demi-tangente horizontale ($y=0$) ; à droite, c'est la demi-droite $y=x$, qui part de $0$ avec une demi-tangente de pente $1$.
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+\draw[->,popmuted] (-2.2,0) -- (2.4,0) node[below left]{$x$};
+\draw[->,popmuted] (0,-0.5) -- (0,2.6) node[below left]{$y$};
+\draw[popblue,thick,domain=-1.5:0,samples=80] plot (\x,{\x*\x});
+\draw[poporange,thick,domain=0:2] plot (\x,{\x});
+\draw[popblue,dashed] (-1,0) -- (0.6,0);
+\draw[poporange,dashed] (0,0) -- (-0.5,-0.5);
+\fill[popdark] (0,0) circle (1.5pt) node[above left]{$O$};
+\node[popblue] at (-1.5,1.7) {$y=x^2$};
+\node[poporange] at (1.8,1.4) {$y=x$};
+\end{tikzpicture}
+\end{center}
+\legende{Point anguleux en $0$ : demi-tangente horizontale à gauche, demi-tangente de pente $1$ à droite.}
+\end{popfigure}
+\end{enumerate}
+
+\textbf{Point de vigilance :} la continuité (question 1) ne suffit pas pour conclure à la dérivabilité ; il faut impérativement comparer les deux taux d'accroissement unilatéraux.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Dérivées des fonctions usuelles et opérations]
+\begin{enumerate}
+    \item $f(x)=3x^4-5x^2+2$ est un polynôme, dérivable sur $\mathbb{R}$ :
+    \[
+    f'(x)=12x^3-10x.
+    \]
+    \item $g(x)=(x^2+1)(2x-3)$ est dérivable sur $\mathbb{R}$ (produit de polynômes). Avec $u=x^2+1$, $u'=2x$, $v=2x-3$, $v'=2$ :
+    \[
+    g'(x)=u'v+uv'=2x(2x-3)+2(x^2+1)=4x^2-6x+2x^2+2=6x^2-6x+2.
+    \]
+    (Vérification par développement : $g(x)=2x^3-3x^2+2x-3$, d'où $g'(x)=6x^2-6x+2$.)
+    \item $h(x)=\dfrac{4x-1}{x+2}$ est définie et dérivable sur $\mathbb{R}\setminus\{-2\}$. Avec $u=4x-1$, $u'=4$, $v=x+2$, $v'=1$ :
+    \[
+    h'(x)=\frac{u'v-uv'}{v^2}=\frac{4(x+2)-(4x-1)\times 1}{(x+2)^2}=\frac{4x+8-4x+1}{(x+2)^2}=\frac{9}{(x+2)^2}.
+    \]
+    \item $k(x)=\sqrt{5x-3}$ est définie pour $5x-3\ge 0$, c'est-à-dire sur $\left[\dfrac{3}{5}\,;\,+\infty\right[$, et dérivable là où $5x-3>0$, c'est-à-dire sur $\left]\dfrac{3}{5}\,;\,+\infty\right[$ (la fonction racine carrée n'est pas dérivable en $0$). C'est la composée de la fonction affine $x\mapsto 5x-3$ par la fonction racine ; d'après la formule $(\sqrt{ax+b})'=\dfrac{a}{2\sqrt{ax+b}}$ :
+    \[
+    k'(x)=\frac{5}{2\sqrt{5x-3}}.
+    \]
+\end{enumerate}
+
+\textbf{Point de vigilance :} pour $k$, ne pas oublier que le domaine de \emph{dérivabilité} $\left]\frac{3}{5}\,;\,+\infty\right[$ est strictement inclus dans le domaine de \emph{définition} $\left[\frac{3}{5}\,;\,+\infty\right[$.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Tangente et position relative]
+\begin{enumerate}
+    \item $f(x)=x^3-2x$ est dérivable sur $\mathbb{R}$ et $f'(x)=3x^2-2$. En $a=-1$ : $f(-1)=-1+2=1$ et $f'(-1)=3-2=1$. La tangente $\mathcal{T}$ a pour équation :
+    \[
+    y=f'(-1)(x-(-1))+f(-1)=1\times(x+1)+1=x+2.
+    \]
+    \item Étudions le signe de la différence :
+    \[
+    f(x)-(x+2)=x^3-2x-x-2=x^3-3x-2.
+    \]
+    On sait que $x=-1$ est racine (la tangente touche la courbe en $-1$). Factorisons :
+    \[
+    x^3-3x-2=(x+1)(x^2-x-2)=(x+1)(x+1)(x-2)=(x+1)^2(x-2).
+    \]
+    Comme $(x+1)^2\ge 0$ pour tout $x$, le signe de la différence est celui de $(x-2)$ :
+    \begin{itemize}
+        \item si $x<2$ (et $x\neq -1$) : $f(x)-(x+2)<0$ ;
+        \item si $x>2$ : $f(x)-(x+2)>0$ ;
+        \item si $x=2$ ou $x=-1$ : différence nulle.
+    \end{itemize}
+    \item \textbf{Position relative.}
+    \begin{itemize}
+        \item Sur $]-\infty\,;\,2[$, $\mathcal{C}_f$ est \textbf{en dessous} de $\mathcal{T}$ (elles se touchent en $x=-1$) ;
+        \item sur $]2\,;\,+\infty[$, $\mathcal{C}_f$ est \textbf{au-dessus} de $\mathcal{T}$ ;
+        \item les deux courbes se recoupent au point $(2\,;\,4)$, car $f(2)=8-4=4$ et $2+2=4$.
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Point de vigilance :} une tangente peut recouper la courbe ailleurs qu'au point de contact ; « tangente » ne signifie pas « la courbe reste d'un seul côté ».
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Tableau de variations et extrema]
+\begin{enumerate}
+    \item $f(x)=x^3-6x^2+9x+1$ est un polynôme, dérivable sur $\mathbb{R}$ :
+    \[
+    f'(x)=3x^2-12x+9=3(x^2-4x+3)=3(x-1)(x-3).
+    \]
+    Sur $[0\,;\,4]$, $f'(x)=0$ pour $x=1$ ou $x=3$. Le trinôme est positif à l'extérieur des racines : $f'(x)>0$ sur $[0\,;\,1[$ et sur $]3\,;\,4]$, $f'(x)<0$ sur $]1\,;\,3[$.
+    \item Valeurs : $f(0)=1$, $f(1)=1-6+9+1=5$, $f(3)=27-54+27+1=1$, $f(4)=64-96+36+1=5$.
+    \begin{center}
+    \begin{tabular}{|c|ccccccc|}\hline
+    $x$ & $0$ & & $1$ & & $3$ & & $4$ \\ \hline
+    $f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+    $f$ & $1$ & $\nearrow$ & $5$ & $\searrow$ & $1$ & $\nearrow$ & $5$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \item \textbf{Extrema sur $[0\,;\,4]$.} D'après le tableau :
+    \begin{itemize}
+        \item le \textbf{minimum} de $f$ sur $[0\,;\,4]$ vaut $1$, atteint en $x=0$ et en $x=3$ ;
+        \item le \textbf{maximum} de $f$ sur $[0\,;\,4]$ vaut $5$, atteint en $x=1$ et en $x=4$.
+    \end{itemize}
+    On remarque que $f(1)=5$ est un maximum \emph{local} et $f(3)=1$ un minimum \emph{local}, mais les extrema globaux tiennent compte des bornes de l'intervalle.
+\end{enumerate}
+
+\textbf{Point de vigilance :} sur un segment, il faut toujours comparer les valeurs aux extrema locaux \emph{et} aux bornes de l'intervalle.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Problème d'optimisation : le champ du planteur]
+\begin{enumerate}
+    \item Le grillage sert pour deux côtés de longueur $x$ et un côté de longueur $L$ (le mur remplace le quatrième côté) :
+    \[
+    2x+L=100 \quad\Longrightarrow\quad L=100-2x.
+    \]
+    On doit avoir $x>0$ et $L>0$, soit $100-2x>0$, c'est-à-dire $x<50$. Donc $I=\left]0\,;\,50\right[$.
+    \item L'aire du rectangle est :
+    \[
+    A(x)=x\times L=x(100-2x)=-2x^2+100x.
+    \]
+    \item $A$ est un polynôme, dérivable sur $\mathbb{R}$ : $A'(x)=-4x+100=4(25-x)$.
+    \begin{itemize}
+        \item $A'(x)>0$ pour $x<25$ : $A$ est strictement croissante sur $]0\,;\,25]$ ;
+        \item $A'(x)<0$ pour $x>25$ : $A$ est strictement décroissante sur $[25\,;\,50[$.
+    \end{itemize}
+    De plus $A(25)=-2\times 625+100\times 25=-1250+2500=1250$.
+    \begin{center}
+    \begin{tabular}{|c|ccccc|}\hline
+    $x$ & $0$ & & $25$ & & $50$ \\ \hline
+    $A'(x)$ & & $+$ & $0$ & $-$ & \\ \hline
+    $A$ & $0$ & $\nearrow$ & $1250$ & $\searrow$ & $0$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \item $A$ admet son maximum en $x=25$. Alors $L=100-2\times 25=50$ m et
+    \[
+    A(25)=25\times 50=\SI{1250}{m^2}.
+    \]
+    \textbf{Conclusion :} le planteur doit choisir un champ de $\SI{25}{m}$ de large (perpendiculairement au mur) et $\SI{50}{m}$ de long (parallèlement au mur) ; l'aire maximale est $\SI{1250}{m^2}$.
+\end{enumerate}
+
+\textbf{Barème indicatif (4 pts) :} 0,5 pt pour $L=100-2x$ et l'intervalle ; 0,5 pt pour $A(x)$ ; 1,5 pt pour la dérivée et le tableau ; 1,5 pt pour les dimensions et l'aire maximale avec unités.
+
+\textbf{Points de vigilance :} justifier l'intervalle $I$ (longueurs strictement positives) ; conclure par une phrase avec les unités ; vérifier que le maximum trouvé appartient bien à $I$.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Approximation affine et estimation de l'erreur]
+\begin{enumerate}
+    \item $f(x)=x^4$ est dérivable en $2$, avec $f(2)=16$ et $f'(x)=4x^3$, donc $f'(2)=32$. L'approximation affine de $f$ au voisinage de $2$ est :
+    \[
+    f(2+h)\approx f(2)+f'(2)\,h=16+32h \qquad (h \text{ proche de } 0).
+    \]
+    \item Pour $(2,003)^4$, on pose $h=0,003$ :
+    \[
+    (2,003)^4\approx 16+32\times 0,003=16+0,096=16,096.
+    \]
+    \textbf{Sens de l'approximation :} la courbe de $f$ est au-dessus de sa tangente au voisinage de $2$ (fonction convexe), donc l'approximation affine donne une valeur \textbf{par défaut}. (Vérification à la calculatrice : la valeur exacte est $16{,}096216\ldots$, légèrement supérieure à $16{,}096$.)
+    \item \textbf{Estimation de l'erreur (pour aller plus loin).} Développons exactement avec $h=0,003$ :
+    \[
+    (2+h)^4=16+32h+24h^2+8h^3+h^4.
+    \]
+    L'erreur commise est donc :
+    \[
+    E=24h^2+8h^3+h^4=24\times(0,003)^2+8\times(0,003)^3+(0,003)^4.
+    \]
+    Le terme dominant est $24\times 9\times 10^{-6}=2,16\times 10^{-4}$, les deux suivants sont négligeables ($2,16\times 10^{-7}$ et $8,1\times 10^{-11}$). D'où :
+    \[
+    16{,}096\le (2,003)^4\le 16{,}09622.
+    \]
+    L'approximation $16{,}096$ est donc exacte à environ $2\times 10^{-4}$ près : c'est excellent pour un calcul mental !
+\end{enumerate}
+
+\textbf{Barème indicatif (4 pts) :} 1 pt pour l'approximation affine ; 1 pt pour la valeur approchée et le sens (position courbe/tangente) ; 2 pts pour l'estimation de l'erreur et l'encadrement final.
+
+\textbf{Points de vigilance :} bien identifier $h=x-a$ (ici $h=0,003$ et non $2,003$) ; l'approximation affine n'est valable que pour $h$ \emph{proche de $0$} ; le signe de l'erreur se justifie par la position de la courbe par rapport à sa tangente.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Étude complète type Probatoire]
+\textbf{Remarque préalable :} l'expression $\dfrac{x^2-3x+3}{x-1}$ n'est pas définie qu'en $x=1$ ; l'ensemble de définition est donc $D_f=\mathbb{R}\setminus\{1\}$.
+
+\begin{enumerate}
+    \item \textbf{Ensemble de définition et limites.} $D_f=\left]-\infty\,;\,1\right[\cup\left]1\,;\,+\infty\right[$.
+    \begin{itemize}
+        \item En $1$ : le numérateur vaut $1-3+3=1\neq 0$. Quand $x\to 1^-$, $x-1\to 0^-$, donc $\lim_{x\to 1^-}f(x)=-\infty$ ; quand $x\to 1^+$, $x-1\to 0^+$, donc $\lim_{x\to 1^+}f(x)=+\infty$. La droite d'équation \textbf{$x=1$ est asymptote verticale} à $\mathcal{C}_f$.
+        \item En $\pm\infty$ : $f(x)\sim \dfrac{x^2}{x}=x$, donc $\lim_{x\to -\infty}f(x)=-\infty$ et $\lim_{x\to +\infty}f(x)=+\infty$.
+        \item Asymptote oblique : la division euclidienne de $x^2-3x+3$ par $x-1$ donne $x^2-3x+3=(x-1)(x-2)+1$. Donc, pour tout $x\neq 1$ :
+        \[
+        f(x)=x-2+\frac{1}{x-1}.
+        \]
+        Comme $\lim_{x\to\pm\infty}\dfrac{1}{x-1}=0$, la droite d'équation \textbf{$y=x-2$ est asymptote oblique} à $\mathcal{C}_f$ en $-\infty$ et en $+\infty$.
+    \end{itemize}
+    \item \textbf{Dérivée.} $f$ est dérivable sur $D_f$ comme quotient de polynômes. Avec $u=x^2-3x+3$, $u'=2x-3$, $v=x-1$, $v'=1$ :
+    \[
+    f'(x)=\frac{(2x-3)(x-1)-(x^2-3x+3)}{(x-1)^2}=\frac{2x^2-5x+3-x^2+3x-3}{(x-1)^2}=\frac{x^2-2x}{(x-1)^2}=\frac{x(x-2)}{(x-1)^2}.
+    \]
+    \item \textbf{Tableau de variations.} Le dénominateur $(x-1)^2$ est strictement positif sur $D_f$ ; le signe de $f'$ est celui de $x(x-2)$ : positif sur $]-\infty\,;\,0[$ et $]2\,;\,+\infty[$, négatif sur $]0\,;\,1[$ et $]1\,;\,2[$. Valeurs : $f(0)=\dfrac{3}{-1}=-3$ ; $f(2)=\dfrac{4-6+3}{1}=1$.
+    \begin{center}
+    \begin{tabular}{|c|ccccccccc|}\hline
+    $x$ & $-\infty$ & & $0$ & & $1$ & & $2$ & & $+\infty$ \\ \hline
+    $f'(x)$ & & $+$ & $0$ & $-$ & & $-$ & $0$ & $+$ & \\ \hline
+    $f$ & $-\infty$ & $\nearrow$ & $-3$ & $\searrow$ & $-\infty \;\Vert\; +\infty$ & $\searrow$ & $1$ & $\nearrow$ & $+\infty$ \\ \hline
+    \end{tabular}
+    \end{center}
+    $f$ admet un maximum local $-3$ en $x=0$ et un minimum local $1$ en $x=2$.
+    \item \textbf{Tangente en $2$.} $f(2)=1$ et $f'(2)=\dfrac{2\times(2-2)}{(2-1)^2}=0$. La tangente $\mathcal{T}$ est horizontale :
+    \[
+    y=f'(2)(x-2)+f(2)=1.
+    \]
+    \item \textbf{Intersection de $\mathcal{C}_f$ et de $\mathcal{T}$.} On résout $f(x)=1$ pour $x\neq 1$ :
+    \[
+    \frac{x^2-3x+3}{x-1}=1 \iff x^2-3x+3=x-1 \iff x^2-4x+4=0 \iff (x-2)^2=0.
+    \]
+    L'équation admet $x=2$ comme unique solution, et c'est une racine \emph{double}.
+    \textbf{Conclusion :} la tangente $\mathcal{T}$ ne rencontre $\mathcal{C}_f$ qu'au point de contact $A(2\,;\,1)$. La racine double traduit le fait que la courbe « épouse » sa tangente en ce point (contact d'ordre supérieur) : c'est cohérent avec le fait que $A$ est le minimum local, la courbe restant au-dessus de $\mathcal{T}$ au voisinage de $2$.
+    \item \textbf{Tracé.}
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.75]
+\draw[->,popmuted] (-4.5,0) -- (6.5,0) node[below left]{$x$};
+\draw[->,popmuted] (0,-6.5) -- (0,6.5) node[below left]{$y$};
+\draw[popmuted,dashed] (1,-6.5) -- (1,6.5);
+\node[popdark,above right] at (1,6.2) {$x=1$};
+\draw[popmuted,dashed,domain=-4:6] plot (\x,{\x-2});
+\node[popdark,above left] at (5.6,3.6) {$y=x-2$};
+\draw[popblue,thick,domain=-4:0.72,samples=120] plot (\x,{(\x*\x-3*\x+3)/(\x-1)});
+\draw[popblue,thick,domain=1.32:6,samples=120] plot (\x,{(\x*\x-3*\x+3)/(\x-1)});
+\draw[poporange,thick,domain=0.3:3.7] plot (\x,{1});
+\node[poporange,above] at (0.9,1) {$\mathcal{T}: y=1$};
+\fill[popdark] (2,1) circle (1.8pt) node[below right]{$A(2\,;\,1)$};
+\fill[popdark] (0,-3) circle (1.8pt) node[left]{$(0\,;\,-3)$};
+\end{tikzpicture}
+\end{center}
+\legende{Courbe $\mathcal{C}_f$, asymptotes $x=1$ et $y=x-2$, tangente horizontale en $A(2\,;\,1)$.}
+\end{popfigure}
+\end{enumerate}
+
+\textbf{Barème indicatif (10 pts) :} 2 pts pour $D_f$, les quatre limites et les asymptotes (dont la division euclidienne) ; 2 pts pour $f'(x)$ simplifiée ; 2 pts pour le tableau de variations complet ; 1 pt pour la tangente ; 1,5 pt pour l'intersection (résolution et conclusion) ; 1,5 pt pour le tracé cohérent.
+
+\textbf{Points de vigilance :}
+\begin{itemize}
+    \item Justifier chaque limite (signe du dénominateur en $1^-$ et $1^+$ ; termes de plus haut degré en l'infini).
+    \item L'asymptote oblique exige la forme $f(x)=ax+b+\dfrac{r}{x-1}$ obtenue par division euclidienne, puis le passage à la limite.
+    \item Le tableau doit faire apparaître la double barre de valeur interdite en $x=1$.
+    \item Pour l'intersection courbe--tangente, une racine double signifie un contact : il faut le mentionner explicitement dans la conclusion.
+\end{itemize}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small},
+  root concept/.append style={concept color=popink, font=\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=51.4},
+  level 2/.append style={level distance=2.2cm, sibling angle=40, font=\scriptsize}]
+\node[root concept]{Dérivation}
+  child[concept color=popblue]{ node {Nombre dérivé}
+    child { node {Taux $\frac{f(x)-f(a)}{x-a}$} }
+    child { node {$f'(a)$} }
+  }
+  child[concept color=poporange]{ node {Dérivabilité}
+    child { node {À gauche, à droite} }
+    child { node {Sur un intervalle} }
+  }
+  child[concept color=popgreen]{ node {Tangentes}
+    child { node {$y=f'(a)(x-a)+f(a)$} }
+    child { node {Demi-tangentes} }
+  }
+  child[concept color=poppurple]{ node {Dérivées usuelles}
+    child { node {$x^n,\ \sqrt{x},\ \frac{1}{x}$} }
+    child { node {$\cos,\ \sin$} }
+  }
+  child[concept color=poppink]{ node {Opérations}
+    child { node {$u+v,\ ku,\ uv$} }
+    child { node {$\frac{u}{v},\ u\circ v$} }
+  }
+  child[concept color=popgold]{ node {Variations}
+    child { node {Signe de $f'$} }
+    child { node {Tableau, extrema} }
+  }
+  child[concept color=popdark]{ node {Approximation affine}
+    child { node {$f(a+h)\approx f(a)+hf'(a)$} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : la dérivation en sept idées.}
+\end{popfigure}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\textbf{Définitions clés.}
+\begin{itemize}
+  \item \cle{Nombre dérivé} : $f$ est dérivable en $a$ si le taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ admet une limite finie en $a$ ; cette limite est notée $f'(a)$ et s'appelle le nombre dérivé de $f$ en $a$.
+  \item \cle{Dérivabilité à droite / à gauche} : on étudie la limite du taux pour $x>a$ (resp. $x<a$) ; on note $f'_d(a)$ et $f'_g(a)$. $f$ est dérivable en $a$ si et seulement si $f'_d(a)$ et $f'_g(a)$ existent, sont finies et $f'_d(a)=f'_g(a)$.
+  \item \cle{Fonction dérivée} : si $f$ est dérivable en tout point d'un intervalle $I$, on définit sur $I$ la fonction dérivée $f' : x\mapsto f'(x)$.
+  \item \cle{Approximation affine} : au voisinage de $a$, $f(a+h)\approx f(a)+h\,f'(a)$ pour $h$ proche de $0$.
+\end{itemize}
+
+\textbf{Formules à connaître par cœur.}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|l|X|}\hline
+\rowcolor{popblueL} Fonction & Dérivée & Opération & Dérivée \\ \hline
+$x^n$ ($n\in\mathbb{Z}^*$) & $nx^{n-1}$ & $(u+v)'$ & $u'+v'$ \\ \hline
+$\sqrt{x}$ & $\dfrac{1}{2\sqrt{x}}$ (pour $x>0$) & $(ku)'$ & $ku'$ \\ \hline
+$\dfrac{1}{x}$ & $-\dfrac{1}{x^2}$ (pour $x\neq 0$) & $(uv)'$ & $u'v+uv'$ \\ \hline
+$\cos x$ & $-\sin x$ & $\left(\dfrac{u}{v}\right)'$ & $\dfrac{u'v-uv'}{v^2}$ \\ \hline
+$\sin x$ & $\cos x$ & $(u\circ v)'$ & $v'\times(u'\circ v)$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Théorèmes fondamentaux.}
+\begin{itemize}
+  \item \cle{Tangente} en $A(a,f(a))$ : $y=f'(a)(x-a)+f(a)$. Demi-tangentes si $f$ est dérivable seulement à droite ou seulement à gauche en $a$.
+  \item \cle{Dérivabilité et continuité} : $f$ dérivable en $a$ $\Rightarrow$ $f$ continue en $a$ (réciproque fausse : $x\mapsto|x|$ est continue en $0$ mais non dérivable en $0$).
+  \item \cle{Sens de variation} : si $f'\geq 0$ (resp. $f'\leq 0$) sur un intervalle $I$, alors $f$ est croissante (resp. décroissante) sur $I$ ; si l'inégalité est stricte, la monotonie est stricte.
+  \item \cle{Extremum local} : si $f$ est dérivable sur $I$ et admet un extremum local en $c$ intérieur à $I$, alors $f'(c)=0$ (condition nécessaire, non suffisante : penser à $x\mapsto x^3$ en $0$).
+\end{itemize}
+
+\textbf{Méthodes express.}
+\begin{itemize}
+  \item Dérivabilité en $a$ : former le taux d'accroissement, simplifier, passer à la limite ; pour une fonction définie par morceaux, comparer $f'_g(a)$ et $f'_d(a)$.
+  \item Étude des variations : calculer $f'$, factoriser, dresser le tableau de signes de $f'$, puis le tableau de variations de $f$ avec les limites aux bornes.
+  \item Tangente : calculer $f(a)$ et $f'(a)$, appliquer la formule $y=f'(a)(x-a)+f(a)$, puis réduire.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Conditions d'application à ne jamais oublier]
+\begin{itemize}
+  \item La formule $(x^n)'=nx^{n-1}$ est valable sur $\mathbb{R}$ si $n\in\mathbb{N}^*$, et sur $\mathbb{R}^*$ si $n$ est un entier strictement négatif.
+  \item La fonction $\sqrt{x}$ est dérivable sur $]0\,;\,+\infty[$ seulement : en $0$, le taux d'accroissement tend vers $+\infty$ (demi-tangente verticale), donc $\sqrt{x}$ n'est pas dérivable en $0$.
+  \item Avant de dériver un quotient $\dfrac{u}{v}$, vérifier que $v$ ne s'annule pas sur l'ensemble considéré.
+  \item Dans $(uv)'=u'v+uv'$ et $\left(\dfrac{u}{v}\right)'=\dfrac{u'v-uv'}{v^2}$, l'ordre des termes compte : au numérateur du quotient, c'est $u'v-uv'$ et non $uv'-u'v$.
+  \item Pour la composée avec une fonction affine : $(u(ax+b))'=a\,u'(ax+b)$ ; ne pas oublier le facteur $a$.
+\end{itemize}
+\end{attention}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais écrire le taux d'accroissement $\dfrac{f(x)-f(a)}{x-a}$ et calculer sa limite en $a$.
+  \item[$\square$] Je sais étudier la dérivabilité à gauche et à droite d'une fonction en un point (valeur absolue, fonction définie par morceaux).
+  \item[$\square$] Je connais par cœur les dérivées de $x^n$, $\sqrt{x}$, $\dfrac{1}{x}$, $\cos$, $\sin$, avec leurs ensembles de dérivabilité.
+  \item[$\square$] Je maîtrise $(uv)'=u'v+uv'$ et $\left(\dfrac{u}{v}\right)'=\dfrac{u'v-uv'}{v^2}$ sans intervertir les termes.
+  \item[$\square$] Je sais dériver $u(ax+b)$ : $(u(ax+b))'=a\,u'(ax+b)$.
+  \item[$\square$] Je sais écrire l'équation de la tangente $y=f'(a)(x-a)+f(a)$ et celle d'une demi-tangente.
+  \item[$\square$] Je vérifie toujours que $v(x)\neq 0$ avant de dériver un quotient.
+  \item[$\square$] Je sais dresser le tableau de signes de $f'$ puis le tableau de variations de $f$.
+  \item[$\square$] Je sais qu'un extremum local en un point intérieur impose $f'(c)=0$, et je vérifie le changement de signe de $f'$ pour conclure.
+  \item[$\square$] Je sais utiliser l'approximation affine $f(a+h)\approx f(a)+h\,f'(a)$ pour estimer une valeur (ex. $\sqrt{4{,}1}\approx 2{,}025$).
+  \item[$\square$] Je n'oublie pas que dérivable $\Rightarrow$ continue, mais que la réciproque est fausse.
+  \item[$\square$] Je rédige proprement : j'annonce le domaine de dérivabilité avant tout calcul de $f'$.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
