@@ -337,6 +337,9 @@ def autofix(body):
     body = re.sub(r"\\begin\{tikzpicture\}\[[^\]]*\].*?\\end\{tikzpicture\}", _scale_to_xy, body, flags=re.S)
     body = _box_as_command(body)
     body = _lonely_items(body)
+    # arc[...radius=X and Y...] : syntaxe "and" valable seulement pour arc(...)
+    # en notation chemin, pas pour arc[...] en notation clé=valeur -> x radius/y radius
+    body = re.sub(r"\bradius\s*=\s*([\d.]+)\s+and\s+([\d.]+)", r"x radius=\1, y radius=\2", body)
     # X'_{...}^N : le "'" après X se lit ^\prime, donc le "^N" qui suit forme un
     # second exposant sur le même atome -> "Double superscript". On regroupe.
     body = re.sub(r"(\b[A-Za-zΑ-Ωα-ω]+'_\{(?:[^{}]|\{[^{}]*\})*\})\^", r"{\1}^", body)
