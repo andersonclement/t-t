@@ -497,7 +497,12 @@ def _box_as_command(body):
         out.append("\\begin{" + m.group(1) + "}" + (m.group(2) or "") + body[m.end():j] + "\\end{" + m.group(1) + "}")
         pos = j + 1
     out.append(body[pos:])
-    return "".join(out)
+    body = "".join(out)
+    # \\savaistu[Titre] seul sur sa ligne, fermé plus loin par \\end{savaistu}
+    for env in _BOX.split("|"):
+        if body.count("\\end{" + env + "}") > body.count("\\begin{" + env + "}"):
+            body = re.sub(r"^\\" + env + r"(\[[^\n]*\])?[ \t]*$", lambda m: "\\begin{" + env + "}" + (m.group(1) or ""), body, flags=re.M)
+    return body
 
 
 def _node_align(body):
