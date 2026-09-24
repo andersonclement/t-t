@@ -1,0 +1,2916 @@
+% Probabilités élémentaires — Mathématiques Tle A — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic MA10-probabilites-elementaires-a.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle A}
+\newcommand{\DOCMODULE}{Organisation et gestion des données}
+\newcommand{\DOCLECON}{A10}
+\newcommand{\DOCTITRE}{Probabilités élémentaires}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+
+\begin{document}
+
+\pagegarde{Probabilités élémentaires}{Mathématiques}{Tle A}{Organisation et gestion des données}{A10}{6 h}{Cette leçon introduit le vocabulaire fondamental des probabilités (expérience aléatoire, univers, événements) et les premières règles de calcul : équiprobabilité, événement contraire et réunion d'événements. À travers des situations concrètes de jeux, tirages et loteries familières, l'élève apprend à décrire l'univers d'une expérience et à calculer des probabilités simples.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais reconnaître une expérience aléatoire et distinguer issue, événement et événement élémentaire
+\item À la fin de cette leçon, je sais décrire en extension l'univers d'une expérience aléatoire simple (dé, pièce, urne, tirage de cartes)
+\item À la fin de cette leçon, je sais définir la probabilité d'un événement et vérifier qu'elle est comprise entre 0 et 1
+\item À la fin de cette leçon, je sais calculer une probabilité dans un cas d'équiprobabilité par le rapport cas favorables / cas possibles
+\item À la fin de cette leçon, je sais identifier et calculer la probabilité de l'événement contraire d'un événement donné
+\item À la fin de cette leçon, je sais déterminer la réunion et l'intersection de deux événements et reconnaître des événements incompatibles
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Expériences aléatoires et vocabulaire des événements
+\item Probabilité d'un événement
+\item Équiprobabilité : cas favorables sur cas possibles
+\item Événement contraire
+\item Réunion de deux événements
+\item Problèmes concrets : jeux, tirages et loteries
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais reconnaître une expérience aléatoire et distinguer issue, événement et événement élémentaire
+\item À la fin de cette leçon, je sais décrire en extension l'univers d'une expérience aléatoire simple (dé, pièce, urne, tirage de cartes)
+\item À la fin de cette leçon, je sais définir la probabilité d'un événement et vérifier qu'elle est comprise entre 0 et 1
+\item À la fin de cette leçon, je sais calculer une probabilité dans un cas d'équiprobabilité par le rapport cas favorables / cas possibles
+\item À la fin de cette leçon, je sais identifier et calculer la probabilité de l'événement contraire d'un événement donné
+\item À la fin de cette leçon, je sais déterminer la réunion et l'intersection de deux événements et reconnaître des événements incompatibles
+\item À la fin de cette leçon, je sais calculer la probabilité de la réunion de deux événements avec la formule P(A∪B) = P(A) + P(B) − P(A∩B)
+\item À la fin de cette leçon, je sais résoudre des problèmes concrets de probabilités issus de jeux, tirages et loteries
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Ensembles : réunion, intersection, complémentaire, cardinal d'un ensemble fini (notions de Seconde/Première)
+\item Fractions : simplification, addition de fractions, comparaison
+\item Dénombrement élémentaire : compter les issues d'un tirage à l'aide d'un tableau ou d'un arbre simple
+\item Proportionnalité et pourcentages (calculs de fréquences)
+\item Lecture et interprétation de tableaux à double entrée
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Expériences aléatoires et vocabulaire des événements}
+
+\textbf{Situation d'accroche.} À Yaoundé, un opérateur de téléphonie organise une grande tombola : chaque client qui recharge au moins 1000 FCFA reçoit un ticket numéroté de 1 à 500, et un seul numéro gagne un smartphone dernier cri. Quelques rues plus loin, au marché Mokolo, une vendeuse propose à ses clients de tirer une boule dans un sac opaque contenant 3 boules rouges et 7 boules noires : tirer une boule rouge donne droit à un cadeau. Un élève de Terminale hésite : vaut-il mieux acheter un ticket de tombola ou tenter le tirage au sac ? Et que dire du parieur qui mise sur « au moins un six en deux lancers de dé » ? Pour répondre à ces questions de la vie quotidienne, il faut apprendre à \cle{mesurer le hasard} : c'est exactement l'objet des probabilités.
+
+\textbf{Problématique.} Comment décrire rigoureusement une situation de hasard ? Comment nommer, comparer et combiner les résultats qui nous intéressent ? Cette première section pose le vocabulaire fondamental sur lequel tout le reste de la leçon sera construit.
+
+\courssub{Notion d'expérience aléatoire}
+
+\textbf{Intuition.} Certaines expériences sont \emph{déterministes} : si tu laisses tomber une pierre, elle tombe ; si tu chauffes de l'eau à 100 $^{\circ}$C, elle bout. Le résultat est prévisible avec certitude. D'autres expériences, au contraire, échappent à toute prévision : quand tu lances une pièce de monnaie, tu sais qu'elle retombera sur Pile ou sur Face, mais tu ne peux pas dire \emph{laquelle} des deux faces apparaîtra. C'est ce type d'expérience que les mathématiciens étudient.
+
+\begin{definition}[Expérience aléatoire]
+Une \cle{expérience aléatoire} est une expérience dont :
+\begin{itemize}
+\item on connaît \textbf{tous les résultats possibles} à l'avance ;
+\item on ne peut pas \textbf{prévoir avec certitude} lequel de ces résultats se réalisera lors d'une épreuve.
+\end{itemize}
+Chaque réalisation de l'expérience s'appelle une \cle{épreuve}, et chaque résultat possible s'appelle une \cle{issue} (ou \emph{éventualité}).
+\end{definition}
+
+\begin{exemplebox}[Expériences aléatoires ou non ?]
+\begin{itemize}
+\item Lancer un dé à six faces et noter le numéro obtenu : expérience aléatoire (issues : 1, 2, 3, 4, 5, 6).
+\item Tirer une boule dans le sac du marché Mokolo et noter sa couleur : expérience aléatoire (issues : rouge, noire).
+\item Relever le numéro du ticket gagnant de la tombola : expérience aléatoire (issues : les entiers de 1 à 500).
+\item Mesurer la taille d'un élève de 1,75 m avec une règle graduée : ce n'est \textbf{pas} une expérience aléatoire au sens de cette leçon, le résultat est fixé.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Les deux conditions sont indispensables]
+Pour parler d'expérience aléatoire, il faut \textbf{à la fois} connaître tous les résultats possibles \textbf{et} être dans l'impossibilité de prévoir celui qui sortira. Une expérience dont on ignore même la liste des résultats possibles (par exemple « quelle sera la météo dans un an jour pour jour ? ») ne rentre pas dans le cadre de cette leçon.
+\end{attention}
+
+\courssub{L'univers $\Omega$ : l'ensemble de toutes les issues}
+
+\textbf{Intuition.} Avant de parler de chance de gagner, il faut d'abord savoir \emph{ce qui peut arriver}. On regroupe donc toutes les issues possibles dans un seul ensemble : c'est l'univers.
+
+\begin{definition}[Univers]
+L'\cle{univers} d'une expérience aléatoire, noté $\Omega$ (lettre grecque « oméga »), est l'\textbf{ensemble de toutes les issues possibles} de cette expérience.
+\end{definition}
+
+Décrire l'univers \emph{en extension}, c'est écrire explicitement la liste de toutes ses issues entre accolades.
+
+\begin{exemplebox}[Univers de quelques expériences classiques]
+\begin{itemize}
+\item \textbf{Lancer d'un dé à six faces} : $\Omega = \{1\,;\,2\,;\,3\,;\,4\,;\,5\,;\,6\}$.
+\item \textbf{Lancer d'une pièce} : $\Omega = \{P\,;\,F\}$ (P pour Pile, F pour Face).
+\item \textbf{Deux lancers successifs d'une pièce} : $\Omega = \{PP\,;\,PF\,;\,FP\,;\,FF\}$. Attention : $PF$ et $FP$ sont deux issues \emph{différentes}, car l'ordre des lancers compte.
+\item \textbf{Tombola de Yaoundé} : $\Omega = \{1\,;\,2\,;\,\dots\,;\,500\}$, qui contient 500 issues.
+\end{itemize}
+\end{exemplebox}
+
+\begin{methode}[Décrire correctement un univers]
+\begin{enumerate}
+\item Identifier précisément ce qu'on observe (le numéro du dé, la couleur de la boule, la suite des faces obtenues...).
+\item Se demander si l'\textbf{ordre} compte : pour deux lancers successifs, $PF \neq FP$.
+\item Lister \textbf{toutes} les issues sans en oublier et sans répétition : un arbre ou un tableau à double entrée aide à ne rien manquer.
+\item Vérifier le nombre total d'issues trouvées (par exemple $2 \times 2 = 4$ pour deux lancers de pièce, $6 \times 6 = 36$ pour deux dés).
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.62,font=\small]
+% Tableau des 36 issues de deux dés
+\foreach \i in {1,...,6}{
+  \node at (\i,7.2) {\textbf{\i}};
+  \node at (0,7-\i) {\textbf{\i}};
+}
+\node at (0,7.2) {\textbf{dé 1 / dé 2}};
+\foreach \i in {1,...,6}{
+  \foreach \j in {1,...,6}{
+    \ifnum\i=6
+      \node[fill=poporangeL,minimum size=0.85cm] at (\j,7-\i) {(\i;\j)};
+    \else
+      \ifnum\j=6
+        \node[fill=poporangeL,minimum size=0.85cm] at (\j,7-\i) {(\i;\j)};
+      \else
+        \node[fill=popblueL,minimum size=0.85cm] at (\j,7-\i) {(\i;\j)};
+      \fi
+    \fi
+  }
+}
+\draw[popdark,thick] (-0.45,0.55) grid (6.45,6.55);
+\end{tikzpicture}
+\end{center}
+\legende{Les 36 issues du lancer de deux dés, présentées dans un tableau à double entrée. Chaque case $(i\,;\,j)$ signifie « le premier dé donne $i$ et le second donne $j$ ». En orange, les issues où apparaît au moins un six : il y en a 11, et non 12 !}
+\end{popfigure}
+
+\begin{savaistu}[Pourquoi 36 et pas 12 ?]
+Beaucoup d'élèves pensent qu'en lançant deux dés, il n'y a que 21 résultats possibles parce que $(2\,;\,5)$ et $(5\,;\,2)$ « se ressemblent ». C'est faux : les deux dés sont distincts (imagine l'un rouge et l'autre bleu), donc $(2\,;\,5)$ et $(5\,;\,2)$ sont deux issues différentes. C'est en comptant correctement les 36 issues que le grand mathématicien Cardan, puis Pascal et Fermat au XVII$^{\text{ème}}$ siècle, ont fondé le calcul des probabilités... à partir de questions de jeux de dés posées par des parieurs !
+\end{savaistu}
+
+\courssub{Événements : décrire ce qui nous intéresse}
+
+\textbf{Intuition.} Dans la tombola, ce qui t'intéresse n'est pas l'issue précise « le ticket 347 sort », mais plutôt « \emph{mon} numéro sort ». Au marché Mokolo, ce qui compte, c'est « la boule est rouge ». Un événement est donc un \emph{regroupement d'issues} : celles qui réalisent la condition qui nous intéresse.
+
+\begin{definition}[Événement, événement élémentaire]
+Soit $\Omega$ l'univers d'une expérience aléatoire.
+\begin{itemize}
+\item Un \cle{événement} est une \textbf{partie} (un sous-ensemble) de $\Omega$.
+\item Un \cle{événement élémentaire} est un événement réduit à une seule issue (un \emph{singleton}), par exemple $\{5\}$.
+\item L'événement $\Omega$ tout entier est appelé \cle{événement certain} : il se réalise toujours.
+\item L'événement vide $\emptyset$ est appelé \cle{événement impossible} : il ne se réalise jamais.
+\end{itemize}
+On dit qu'un événement $A$ est \textbf{réalisé} lorsque l'issue obtenue appartient à $A$.
+\end{definition}
+
+\begin{exemplebox}[Décrire un événement en extension]
+On lance un dé équilibré : $\Omega = \{1\,;\,2\,;\,3\,;\,4\,;\,5\,;\,6\}$.
+\begin{itemize}
+\item L'événement $A$ : « obtenir un nombre pair » s'écrit $A = \{2\,;\,4\,;\,6\}$.
+\item L'événement $B$ : « obtenir un multiple de 3 » s'écrit $B = \{3\,;\,6\}$.
+\item L'événement $C$ : « obtenir 7 » est impossible : $C = \emptyset$.
+\item L'événement $D$ : « obtenir un nombre entre 1 et 6 » est certain : $D = \Omega$.
+\item L'événement $\{5\}$ : « obtenir 5 » est un événement élémentaire.
+\end{itemize}
+Pour deux lancers de pièce, l'événement $E$ : « obtenir au moins un Pile » s'écrit $E = \{PP\,;\,PF\,;\,FP\}$. Remarque que $FF$ n'y figure pas.
+\end{exemplebox}
+
+\begin{attention}[Événement ou issue ?]
+Ne confonds pas l'issue $5$ et l'événement élémentaire $\{5\}$. L'issue est un \emph{élément} de $\Omega$ ; l'événement est une \emph{partie} de $\Omega$. On écrit $5 \in \Omega$ mais $\{5\} \subset \Omega$.
+\end{attention}
+
+\courssub{Opérations sur les événements : intersection, réunion, inclusion}
+
+Puisque les événements sont des ensembles, on peut les combiner avec les opérations ensemblistes. Chaque opération correspond à un mot du langage courant : c'est cette correspondance qui permet de traduire les énoncés du Bac.
+
+\begin{definition}[Intersection, réunion, inclusion]
+Soient $A$ et $B$ deux événements d'un univers $\Omega$.
+\begin{itemize}
+\item L'\cle{intersection} $A \cap B$ (lire « $A$ \textbf{et} $B$ ») est l'événement réalisé lorsque $A$ et $B$ sont réalisés \textbf{en même temps}.
+\item La \cle{réunion} $A \cup B$ (lire « $A$ \textbf{ou} $B$ ») est l'événement réalisé lorsque \textbf{au moins l'un} des deux événements $A$ ou $B$ est réalisé.
+\item On dit que $A$ est \cle{inclus} dans $B$, noté $A \subset B$, lorsque la réalisation de $A$ entraîne obligatoirement celle de $B$.
+\end{itemize}
+\end{definition}
+
+\begin{exemplebox}[Intersection et réunion avec un dé]
+Avec $A = \{2\,;\,4\,;\,6\}$ (« nombre pair ») et $B = \{3\,;\,6\}$ (« multiple de 3 ») :
+\begin{itemize}
+\item $A \cap B = \{6\}$ : « obtenir un nombre pair \textbf{et} multiple de 3 » ;
+\item $A \cup B = \{2\,;\,3\,;\,4\,;\,6\}$ : « obtenir un nombre pair \textbf{ou} multiple de 3 » ;
+\item $B \not\subset A$ car $3 \in B$ mais $3 \notin A$ ; en revanche $\{6\} \subset A$ et $\{6\} \subset B$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Le « ou » mathématique est inclusif]
+En mathématiques, « $A$ ou $B$ » signifie « $A$, ou $B$, \textbf{ou les deux} ». Ainsi $6$ appartient bien à $A \cup B$ dans l'exemple précédent, même s'il réalise les deux événements à la fois. Ce « ou » n'est pas le « ou exclusif » du « fromage ou dessert » !
+\end{attention}
+
+\courssub{Événements incompatibles et événement contraire}
+
+\begin{definition}[Événements incompatibles]
+Deux événements $A$ et $B$ sont dits \cle{incompatibles} (ou \emph{disjoints}) lorsqu'ils ne peuvent pas se réaliser en même temps, c'est-à-dire :
+\[ A \cap B = \emptyset. \]
+\end{definition}
+
+\begin{definition}[Événement contraire]
+Soit $A$ un événement. L'\cle{événement contraire} de $A$, noté $\bar{A}$, est l'événement réalisé lorsque $A$ ne l'est \textbf{pas}. Il est formé de toutes les issues de $\Omega$ qui ne sont pas dans $A$ :
+\[ \bar{A} = \Omega \setminus A, \qquad A \cup \bar{A} = \Omega \quad \text{et} \quad A \cap \bar{A} = \emptyset. \]
+\end{definition}
+
+\begin{exemplebox}[Contraire et incompatibilité avec un dé]
+Toujours avec $\Omega = \{1\,;\,2\,;\,3\,;\,4\,;\,5\,;\,6\}$ :
+\begin{itemize}
+\item Si $A = \{2\,;\,4\,;\,6\}$ (« nombre pair »), alors $\bar{A} = \{1\,;\,3\,;\,5\}$ (« nombre impair »).
+\item Les événements $P = \{1\,;\,2\}$ et $Q = \{5\,;\,6\}$ sont incompatibles car $P \cap Q = \emptyset$, mais $Q$ n'est \textbf{pas} le contraire de $P$ : en effet $\bar{P} = \{3\,;\,4\,;\,5\,;\,6\} \neq Q$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Incompatibles ne veut pas dire contraires]
+C'est l'erreur la plus fréquente au Bac. Deux événements \textbf{contraires} sont toujours \textbf{incompatibles} (car $A \cap \bar{A} = \emptyset$), mais la \textbf{réciproque est fausse} : deux événements incompatibles ne sont contraires que si, en plus, leur réunion vaut $\Omega$ tout entier. Retiens : pour être contraires, il faut \emph{à la fois} $A \cap B = \emptyset$ \emph{et} $A \cup B = \Omega$.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1,font=\small]
+% Univers
+\draw[popdark,thick,fill=popcream] (0,0) rectangle (8.6,5.2);
+\node[popdark,font=\bfseries] at (8.1,4.75) {$\Omega$};
+% Événement A
+\draw[popblue,very thick,fill=popblueL,fill opacity=0.75] (3,2.4) ellipse (2.1 and 1.5);
+\node[popblue,font=\bfseries] at (1.7,3.3) {$A$};
+% Événement B
+\draw[poporange,very thick,fill=poporangeL,fill opacity=0.6] (5.2,2.4) ellipse (2.1 and 1.5);
+\node[poporange,font=\bfseries] at (6.9,3.3) {$B$};
+% Intersection
+\node[popdark,font=\bfseries] at (4.1,2.4) {$A \cap B$};
+% Étiquettes zones
+\node[popblue] at (2.2,1.5) {$A$ seul};
+\node[poporange] at (6.1,1.5) {$B$ seul};
+\node[popmuted] at (7.6,0.6) {$\overline{A \cup B}$};
+\end{tikzpicture}
+\end{center}
+\legende{Diagramme de Venn : l'univers $\Omega$ est le rectangle ; les événements $A$ et $B$ sont deux disques. La zone commune est $A \cap B$ ; l'ensemble des deux disques forme $A \cup B$ ; la partie du rectangle extérieure aux deux disques est $\overline{A \cup B}$, c'est-à-dire $\bar{A} \cap \bar{B}$.}
+\end{popfigure}
+
+\begin{methode}[Traduire une phrase en opérations sur les événements]
+\begin{enumerate}
+\item « $A$ \textbf{et} $B$ » (les deux en même temps) se traduit par $A \cap B$.
+\item « $A$ \textbf{ou} $B$ » (au moins l'un des deux) se traduit par $A \cup B$.
+\item « \textbf{au moins un} » : pense au contraire ! « Au moins un Pile » est le contraire de « aucun Pile ». Souvent, on passe par $\bar{A}$.
+\item « \textbf{aucun} » ou « \textbf{ni... ni} » : « ni $A$ ni $B$ » se traduit par $\bar{A} \cap \bar{B}$, qui est aussi $\overline{A \cup B}$.
+\item « $A$ \textbf{mais pas} $B$ » se traduit par $A \cap \bar{B}$.
+\item Vérifie toujours ta traduction en écrivant l'événement \textbf{en extension} sur un exemple simple.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Univers et événements pour un dé équilibré]
+On lance un dé équilibré à six faces et on note le numéro obtenu. On considère les événements $M$ : « obtenir un multiple de 3 » et $S$ : « obtenir un nombre strictement supérieur à 4 ».
+\begin{enumerate}
+\item Décrire l'univers $\Omega$, puis les événements $M$ et $S$ en extension.
+\item Décrire en extension $M \cap S$, $M \cup S$ et $\bar{M}$.
+\item Les événements $M$ et $S$ sont-ils incompatibles ? Sont-ils contraires ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item L'univers est l'ensemble des six numéros possibles : $\Omega = \{1\,;\,2\,;\,3\,;\,4\,;\,5\,;\,6\}$. Les multiples de 3 dans $\Omega$ sont 3 et 6, donc $M = \{3\,;\,6\}$. Les nombres strictement supérieurs à 4 sont 5 et 6, donc $S = \{5\,;\,6\}$.
+\item \begin{itemize}
+\item $M \cap S = \{6\}$ : seul 6 est à la fois multiple de 3 et strictement supérieur à 4 ;
+\item $M \cup S = \{3\,;\,5\,;\,6\}$ : « multiple de 3 ou strictement supérieur à 4 » ;
+\item $\bar{M} = \{1\,;\,2\,;\,4\,;\,5\}$ : « ne pas obtenir de multiple de 3 ».
+\end{itemize}
+\item $M \cap S = \{6\} \neq \emptyset$, donc $M$ et $S$ ne sont \textbf{pas incompatibles} (ils peuvent se réaliser en même temps, si on obtient 6). À plus forte raison, ils ne sont pas contraires : des événements contraires sont toujours incompatibles.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Traduire « au moins un six » en deux lancers]
+On lance deux fois de suite un dé équilibré. On note $A$ l'événement « obtenir au moins un six sur les deux lancers ».
+\begin{enumerate}
+\item Combien l'univers $\Omega$ contient-il d'issues ?
+\item Décrire $\bar{A}$ par une phrase, puis dénombrer ses issues à l'aide du tableau des 36 issues.
+\item En déduire le nombre d'issues de $A$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Chaque lancer donne 6 résultats, donc $\Omega$ contient $6 \times 6 = 36$ issues, représentées dans le tableau à double entrée de cette section.
+\item $\bar{A}$ est l'événement « n'obtenir \textbf{aucun} six », c'est-à-dire « ni six au premier lancer, ni six au second ». Dans le tableau, ce sont les cases où ni la ligne ni la colonne ne vaut 6 : il reste $5 \times 5 = 25$ issues.
+\item Puisque $A$ et $\bar{A}$ partitionnent $\Omega$, l'événement $A$ contient $36 - 25 = 11$ issues : ce sont exactement les cases coloriées en orange sur la figure (6 dans la ligne du 6, 6 dans la colonne du 6, moins la case $(6\,;\,6)$ comptée deux fois).
+\end{enumerate}
+Ce passage par l'événement contraire est une stratégie fondamentale : nous la réutiliserons dans les sections suivantes pour calculer des probabilités.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Au marché Mokolo, le sac contient 3 boules rouges numérotées $R_1, R_2, R_3$ et 7 boules noires numérotées $N_1, \dots, N_7$. On tire une boule au hasard.
+\begin{enumerate}
+\item Décrire l'univers $\Omega$ en extension. Combien contient-il d'issues ?
+\item Écrire en extension l'événement $R$ : « la boule est rouge », puis $\bar{R}$.
+\item On note $P$ l'événement « le numéro de la boule est pair ». Écrire $P$ en extension, puis $R \cap P$ et $R \cup P$.
+\item Les événements $R$ et $P$ sont-ils incompatibles ? Contraires ? Justifier.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item $\Omega = \{R_1\,;\,R_2\,;\,R_3\,;\,N_1\,;\,N_2\,;\,N_3\,;\,N_4\,;\,N_5\,;\,N_6\,;\,N_7\}$, qui contient $10$ issues.
+\item $R = \{R_1\,;\,R_2\,;\,R_3\}$ et $\bar{R} = \{N_1\,;\,N_2\,;\,\dots\,;\,N_7\}$ (« la boule est noire »).
+\item $P = \{R_2\,;\,N_2\,;\,N_4\,;\,N_6\}$. Alors $R \cap P = \{R_2\}$ et $R \cup P = \{R_1\,;\,R_2\,;\,R_3\,;\,N_2\,;\,N_4\,;\,N_6\}$.
+\item $R \cap P = \{R_2\} \neq \emptyset$, donc $R$ et $P$ ne sont pas incompatibles ; ils ne peuvent donc pas être contraires non plus.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Une \cle{expérience aléatoire} a des résultats connus d'avance mais imprévisibles ; l'\cle{univers} $\Omega$ est l'ensemble de toutes ses issues.
+\item Un \cle{événement} est une partie de $\Omega$ : événement élémentaire (singleton), certain ($\Omega$), impossible ($\emptyset$).
+\item $A \cap B$ = « $A$ \textbf{et} $B$ » ; $A \cup B$ = « $A$ \textbf{ou} $B$ » (ou inclusif) ; $\bar{A}$ = « \textbf{pas} $A$ ».
+\item $A$ et $B$ sont \cle{incompatibles} si $A \cap B = \emptyset$ ; ils sont \cle{contraires} si de plus $A \cup B = \Omega$. Contraire $\Rightarrow$ incompatible, mais pas l'inverse.
+\item Pour « au moins un », pense au passage par l'événement contraire.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Probabilité d'un événement}
+
+Dans la section précédente, nous avons appris à décrire une expérience aléatoire : son univers $\Omega$, ses événements élémentaires, ses événements composés. Nous savons désormais \emph{nommer} les événements. Mais une question essentielle reste en suspens : face à un événement, comment \emph{mesurer} sa chance de se réaliser ? Quand la météo annonce « 80 \% de risque de pluie à Douala demain », quand un élève dit « j'ai une chance sur deux de tirer le bon sujet », quand une loterie affiche « vos chances de gagner sont de 1 sur 1000 », tout le monde manipule des \cle{probabilités} sans toujours savoir ce que ce nombre signifie exactement. Cette section donne un sens précis à ce nombre compris entre $0$ et $1$.
+
+\courssub{Approche intuitive : la stabilisation des fréquences}
+
+Imaginons une expérience très simple : on lance une pièce de monnaie bien équilibrée et on note si elle tombe sur « Pile » ou sur « Face ». Sur un seul lancer, on ne peut rien prédire. Sur dix lancers, on peut obtenir 7 fois Pile, ou 3 fois Pile : le hasard semble régner en maître. Mais que se passe-t-il si l'on répète l'expérience un très grand nombre de fois ?
+
+Notons $f_n$ la \cle{fréquence} d'apparition de « Pile » après $n$ lancers, c'est-à-dire :
+\[ f_n = \frac{\text{nombre de « Pile » obtenus}}{n}. \]
+
+Un élève de Terminale a simulé ces lancers sur sa calculatrice et a consigné ses résultats :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} Nombre de lancers $n$ & 10 & 50 & 100 & 500 & 1000 \\
+\hline
+Nombre de « Pile » & 7 & 28 & 54 & 243 & 503 \\
+\hline
+Fréquence $f_n$ & 0,70 & 0,56 & 0,54 & 0,486 & 0,503 \\
+\hline
+\end{tabularx}
+\end{center}
+
+On observe que les fréquences, très fluctuantes pour les petites valeurs de $n$, se \emph{stabilisent} autour de $0,5$ lorsque $n$ devient grand. C'est un phénomène général, que l'on admettra :
+
+\begin{aretenir}[Stabilisation des fréquences (observation admise)]
+Lorsqu'on répète une expérience aléatoire un grand nombre de fois dans les mêmes conditions, la fréquence d'apparition d'un événement $A$ se stabilise autour d'une valeur fixe. Cette valeur est appelée la \cle{probabilité} de l'événement $A$.
+\end{aretenir}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.9\linewidth, height=6cm,
+    xlabel={Nombre de lancers $n$},
+    ylabel={Fréquence de « Pile »},
+    xmin=0, xmax=1050, ymin=0.35, ymax=0.75,
+    grid=major, grid style={popline!40},
+    tick label style={font=\small},
+    label style={font=\small}
+]
+\addplot[popline, dashed, domain=0:1050] {0.5};
+\addplot[popcurve, mark=*, mark size=2pt] coordinates {
+    (10,0.70) (50,0.56) (100,0.54) (500,0.486) (1000,0.503)
+};
+\node[font=\small, popmuted] at (axis cs:700,0.515) {valeur théorique $0{,}5$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Fréquence d'apparition de « Pile » en fonction du nombre de lancers : la courbe se stabilise vers $0,5$.}
+\end{popfigure}
+
+Cette observation donne l'\emph{intuition} de la probabilité : c'est la valeur « idéale » vers laquelle tend la fréquence d'un événement quand on répète l'expérience indéfiniment. Dire que la probabilité d'obtenir « Pile » vaut $0,5$, c'est dire que sur un très grand nombre de lancers, on obtiendra environ la moitié de Pile.
+
+\courssub{Définition d'une probabilité}
+
+L'approche par les fréquences est concrète, mais elle ne suffit pas pour faire des calculs : on ne va pas lancer un dé un million de fois à chaque problème ! Les mathématiciens ont donc défini la probabilité de manière abstraite, en imposant les règles qu'elle doit respecter pour être cohérente avec l'observation des fréquences.
+
+\begin{definition}[Probabilité sur un univers fini]
+Soit $\Omega$ l'univers \emph{fini} d'une expérience aléatoire. Une \cle{probabilité} sur $\Omega$ est une application, notée $P$, qui associe à chaque événement $A$ (c'est-à-dire à chaque partie de $\Omega$) un nombre réel $P(A)$, appelé \cle{probabilité de l'événement $A$}, vérifiant les deux axiomes suivants :
+\begin{itemize}
+\item \textbf{Positivité et majoration :} pour tout événement $A$, $0 \leq P(A) \leq 1$ ;
+\item \textbf{Normalisation :} $P(\Omega) = 1$.
+\end{itemize}
+\end{definition}
+
+Le nombre $P(A)$ se lit « probabilité de $A$ » ou « P de A ». Il mesure le degré de chance que l'événement $A$ se réalise. C'est un nombre \emph{sans unité}.
+
+\begin{propriete}[Propriétés fondamentales (admises)]
+Pour toute probabilité $P$ sur un univers $\Omega$ :
+\begin{itemize}
+\item $P(\Omega) = 1$ : l'événement certain a pour probabilité $1$ ;
+\item $P(\varnothing) = 0$ : l'événement impossible a pour probabilité $0$ ;
+\item pour tout événement $A$ : $0 \leq P(A) \leq 1$.
+\end{itemize}
+\end{propriete}
+
+Ces propriétés sont \emph{admises}, mais elles sont parfaitement cohérentes avec l'approche par les fréquences :
+\begin{itemize}
+\item L'événement $\Omega$ se réalise à \emph{chaque} expérience (l'issue obtenue appartient toujours à $\Omega$) : sa fréquence vaut toujours $1$, donc $P(\Omega) = 1$.
+\item L'événement $\varnothing$ ne se réalise \emph{jamais} : sa fréquence vaut toujours $0$, donc $P(\varnothing) = 0$.
+\item Une fréquence est un quotient dont le numérateur est compris entre $0$ et le dénominateur : elle est toujours comprise entre $0$ et $1$. Il en va donc de même pour une probabilité.
+\end{itemize}
+
+\begin{attention}[Une probabilité est toujours comprise entre 0 et 1]
+Une probabilité ne peut \textbf{jamais} être négative ni strictement supérieure à $1$. Si tes calculs aboutissent à $P(A) = 1,4$ ou à $P(A) = -0,2$, c'est le signal certain d'une erreur : vérifie immédiatement ton raisonnement, ton dénombrement ou tes additions. De même, une probabilité s'exprime par un nombre \emph{sans unité} : écrire « $P(A) = 0,5$ élèves » n'a aucun sens.
+\end{attention}
+
+\courssub{Probabilité et événements élémentaires}
+
+En Terminale A, les univers étudiés sont \emph{finis} : $\Omega = \{\omega_1 ; \omega_2 ; \ldots ; \omega_n\}$. Chaque issue $\omega_i$ possède sa propre probabilité $P(\{\omega_i\})$, souvent notée simplement $p_i$. La règle suivante, que nous admettons, est le moteur de tous les calculs de cette leçon.
+
+\begin{propriete}[Probabilité d'un événement composé (admise)]
+La probabilité d'un événement $A$ est la \textbf{somme des probabilités des événements élémentaires} qui composent $A$ :
+\[ P(A) = \sum_{\omega_i \in A} P(\{\omega_i\}). \]
+En particulier, la somme des probabilités de \emph{toutes} les issues de l'univers vaut $1$ :
+\[ P(\{\omega_1\}) + P(\{\omega_2\}) + \cdots + P(\{\omega_n\}) = P(\Omega) = 1. \]
+\end{propriete}
+
+Justifions cette règle sur un exemple concret. On lance un dé équilibré : $\Omega = \{1 ; 2 ; 3 ; 4 ; 5 ; 6\}$. Considérons l'événement $A$ : « obtenir un nombre pair », c'est-à-dire $A = \{2 ; 4 ; 6\}$. Si l'on répète le lancer un grand nombre de fois, la fréquence de $A$ est la somme des fréquences de $2$, de $4$ et de $6$ (compter les lancers pairs, c'est additionner les lancers donnant 2, ceux donnant 4 et ceux donnant 6). En passant à la limite, la probabilité de $A$ est donc la somme des probabilités de ses trois issues.
+
+\begin{exemplebox}[Dé équilibré : la somme des probabilités vaut 1]
+Pour un dé équilibré, chaque face a la même probabilité : $P(\{1\}) = P(\{2\}) = \cdots = P(\{6\}) = \dfrac{1}{6}$. Vérifions :
+\[ P(\{1\}) + P(\{2\}) + P(\{3\}) + P(\{4\}) + P(\{5\}) + P(\{6\}) = 6 \times \frac{1}{6} = 1. \]
+On retrouve bien $P(\Omega) = 1$. De plus, pour $A = \{2 ; 4 ; 6\}$ :
+\[ P(A) = \frac{1}{6} + \frac{1}{6} + \frac{1}{6} = \frac{3}{6} = \frac{1}{2}. \]
+\end{exemplebox}
+
+\courssub{Interpréter une probabilité : de 0 à 1}
+
+Un nombre entre $0$ et $1$, c'est abstrait. Voici comment lui donner du sens :
+
+\begin{itemize}
+\item $P(A) = 0$ : l'événement est \cle{impossible} (par exemple, obtenir $7$ avec un dé classique à six faces).
+\item $P(A)$ proche de $0$ : l'événement est \emph{peu probable} (gagner le gros lot à une loterie).
+\item $P(A) = 0,5$ : l'événement a \emph{une chance sur deux} de se réaliser (obtenir Pile).
+\item $P(A)$ proche de $1$ : l'événement est \emph{très probable} (le soleil se lèvera demain matin).
+\item $P(A) = 1$ : l'événement est \cle{certain} (obtenir un nombre compris entre 1 et 6 avec un dé).
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[x=10cm]
+\draw[thick, popdark, -{Stealth}] (0,0) -- (1.05,0);
+\foreach \x/\lab in {0/{0}, 0.25/{0,25}, 0.5/{0,5}, 0.75/{0,75}, 1/{1}} {
+    \draw[popdark] (\x,0.06) -- (\x,-0.06) node[below, font=\small] {\lab};
+}
+\fill[popink] (0,0) circle (2.5pt);
+\node[above, font=\small, popink, align=center] at (0,0.08) {impossible};
+\fill[poporange] (0.15,0) circle (2.5pt);
+\node[above, font=\small, poporange, align=center] at (0.15,0.08) {peu probable};
+\fill[poppurple] (0.5,0) circle (2.5pt);
+\node[above, font=\small, poppurple, align=center] at (0.5,0.08) {une chance\\sur deux};
+\fill[popgreen] (0.85,0) circle (2.5pt);
+\node[above, font=\small, popgreen, align=center] at (0.85,0.08) {très probable};
+\fill[popblue] (1,0) circle (2.5pt);
+\node[above, font=\small, popblue, align=center] at (1,0.08) {certain};
+\end{tikzpicture}
+\end{center}
+\legende{L'échelle des probabilités : tout événement se situe quelque part entre $0$ (impossible) et $1$ (certain).}
+\end{popfigure}
+
+\courssub{Lien entre probabilité et pourcentage}
+
+Une probabilité est un nombre compris entre $0$ et $1$, mais dans la vie courante on préfère souvent les pourcentages. Le passage de l'un à l'autre est immédiat : il suffit de multiplier par $100$.
+
+\begin{aretenir}[Probabilité et pourcentage]
+Dire que $P(A) = 0,25$ signifie que l'événement $A$ a \textbf{25 \% de chances} de se réaliser. Plus généralement :
+\[ \text{pourcentage de chances} = P(A) \times 100. \]
+Ainsi : $P(A) = 0,5 \leftrightarrow 50\,\%$ ; $P(A) = 0,1 \leftrightarrow 10\,\%$ ; $P(A) = 1 \leftrightarrow 100\,\%$.
+\end{aretenir}
+
+Quand le présentateur météo de la CRTV annonce « 70 \% de risque de pluie demain à Yaoundé », il affirme en langage mathématique que la probabilité de l'événement « il pleut demain » est $0,7$. Et si l'on observait un très grand nombre de journées ayant les mêmes conditions météorologiques, il pleuvrait dans environ $7$ cas sur $10$.
+
+\begin{exoresolu}[Lire et interpréter une probabilité]
+Dans un sac contenant des jetons de tombola à l'école de quartier, on estime que la probabilité de tirer un jeton gagnant est $P(G) = 0,08$.
+\begin{enumerate}
+\item Interpréter ce résultat en pourcentage.
+\item Sur 500 tirages effectués dans les mêmes conditions, combien de jetons gagnants peut-on espérer obtenir environ ?
+\item La probabilité $P(G)$ peut-elle valoir $1,08$ ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item $P(G) = 0,08 = 0,08 \times 100\,\% = 8\,\%$. Le jeton gagnant a donc $8\,\%$ de chances d'être tiré : c'est un événement peu probable, mais pas impossible.
+\item D'après la stabilisation des fréquences, sur un grand nombre de tirages, la fréquence des jetons gagnants est proche de $0,08$. On peut donc espérer environ :
+\[ 500 \times 0,08 = 40 \text{ jetons gagnants.} \]
+\item Non : une probabilité est toujours comprise entre $0$ et $1$. La valeur $1,08$ est impossible ; elle signalerait une erreur de calcul.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{savaistu}[Des jeux de dés aux assurances]
+La théorie des probabilités est née au XVII\textsuperscript{e} siècle, lorsqu'un joueur passionné, le chevalier de Méré, posa à Blaise \textbf{Pascal} des questions sur les jeux de hasard : comment partager équitablement les mises d'une partie de dés interrompue ? Pascal échangea sur ce sujet avec Pierre de \textbf{Fermat} en 1654 : cette correspondance est considérée comme l'acte de naissance du calcul des probabilités. Trois siècles plus tard, cette théorie est partout : les compagnies d'assurance calculent les probabilités d'accidents pour fixer leurs tarifs, les médecins évaluent l'efficacité d'un vaccin, les météorologues annoncent des risques de pluie, et même les opérateurs de téléphonie (MTN, Orange) estiment le trafic sur leurs réseaux pour éviter les saturations aux heures de pointe.
+\end{savaistu}
+
+\begin{attention}[Probabilité et certitude sur un petit nombre d'essais]
+Une probabilité de $0,5$ ne garantit \textbf{pas} d'obtenir exactement 5 Pile sur 10 lancers ! La probabilité décrit ce qui se passe sur un \emph{grand} nombre de répétitions. Sur quelques essais, tout peut arriver : obtenir 10 Pile de suite est peu probable, mais pas impossible. Ne confonds jamais « probabilité $0,5$ » avec « une fois sur deux à coup sûr ».
+\end{attention}
+
+Nous savons désormais ce qu'est une probabilité et comment l'interpréter. Reste à apprendre à la \emph{calculer} efficacement : c'est l'objet de la section suivante, consacrée au cas fondamental de l'équiprobabilité, où le calcul se ramène au célèbre rapport « nombre de cas favorables sur nombre de cas possibles ».
+
+\coursec{Équiprobabilité : cas favorables sur cas possibles}
+
+Dans la section précédente, nous avons défini la \cle{probabilité} d'un événement comme un nombre compris entre $0$ et $1$ qui mesure la chance de réalisation de cet événement. Mais une question fondamentale reste posée : \emph{comment calculer concrètement ce nombre ?} La réponse est remarquablement simple dans un cas très fréquent : celui où toutes les issues de l'expérience ont la même chance d'apparaître. C'est la situation d'\cle{équiprobabilité}, et c'est elle qui va nous fournir la formule la plus célèbre de tout le chapitre : \og cas favorables sur cas possibles \fg. Cette formule, tu l'utiliseras dans la grande majorité des exercices du Baccalauréat. Encore faut-il savoir \emph{quand} elle s'applique, et surtout \emph{comment dénombrer correctement}. C'est l'objet de cette section.
+
+\courssub{La situation d'équiprobabilité}
+
+\textbf{Intuition.} Imagine un dé à six faces, parfaitement cubique, homogène, non truqué. Quand on le lance, aucune face n'a de raison d'apparaître plus souvent qu'une autre : la face 1, la face 2, ..., la face 6 ont toutes \emph{la même chance} de sortir. De même, une pièce de monnaie équilibrée donne Pile et Face avec la même chance, et des boules \emph{indiscernables au toucher} placées dans une urne ont toutes la même chance d'être tirées.
+
+\begin{definition}[Équiprobabilité]
+On dit qu'une expérience aléatoire est en situation d'\cle{équiprobabilité} lorsque toutes les issues de l'univers $\Omega$ ont la même probabilité d'apparaître.
+\end{definition}
+
+\begin{exemplebox}[Situations d'équiprobabilité ou non]
+\begin{itemize}
+\item Lancer d'un dé \textbf{non truqué} : équiprobabilité (chaque face a la même chance).
+\item Lancer d'une pièce \textbf{équilibrée} : équiprobabilité entre Pile et Face.
+\item Tirage d'une boule dans une urne contenant des boules \textbf{indiscernables au toucher} : équiprobabilité.
+\item Tirage au sort d'un élève dans une classe : équiprobabilité si le tirage est honnête.
+\item \textbf{Contre-exemples} : un dé pipé (chargé), des boules de tailles différentes, une pièce faussée : il n'y a \emph{pas} équiprobabilité.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Vérifier l'équiprobabilité AVANT tout calcul]
+L'erreur la plus grave de ce chapitre est d'appliquer la formule \og cas favorables sur cas possibles \fg{} sans avoir vérifié que l'on est en situation d'équiprobabilité. Si le dé est truqué, si les boules ne sont pas indiscernables au toucher, si la pièce est faussée, alors la formule est \textbf{fausse} et tout le calcul s'effondre. Dans un énoncé de Bac, cherche toujours les expressions-clés : \og dé équilibré \fg, \og non truqué \fg, \og boules indiscernables au toucher \fg, \og tirage au hasard \fg. Ce sont elles qui te donnent le droit d'utiliser la formule. \textbf{Rédige cette justification explicitement dans ta copie.}
+\end{attention}
+
+\courssub{La formule fondamentale}
+
+\begin{propriete}[Probabilité en situation d'équiprobabilité — Formule fondamentale]
+Si une expérience aléatoire est en situation d'équiprobabilité, alors pour tout événement $A$ :
+\[
+P(A) = \frac{\text{nombre de cas favorables à } A}{\text{nombre de cas possibles}} = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)}
+\]
+où $\mathrm{Card}(A)$ désigne le nombre d'issues qui réalisent $A$ et $\mathrm{Card}(\Omega)$ le nombre total d'issues.
+\end{propriete}
+
+\begin{experience}[Pourquoi cette formule est-elle vraie ?]
+Justifions la formule pas à pas ; ce raisonnement est formatrice et peut être redemandé.
+\begin{enumerate}
+\item Notons $n = \mathrm{Card}(\Omega)$ le nombre total d'issues : $\Omega = \{e_1, e_2, \dots, e_n\}$.
+\item Par hypothèse d'équiprobabilité, toutes les issues ont la même probabilité. Appelons $p$ cette probabilité commune : $P(e_1) = P(e_2) = \dots = P(e_n) = p$.
+\item Or la somme des probabilités de toutes les issues vaut $1$ (l'une des issues se réalise forcément). Donc :
+\[
+\underbrace{p + p + \dots + p}_{n \text{ termes}} = 1 \quad \text{c'est-à-dire} \quad n \times p = 1,
+\]
+d'où $p = \dfrac{1}{n} = \dfrac{1}{\mathrm{Card}(\Omega)}$. Chaque issue a donc pour probabilité $\dfrac{1}{\mathrm{Card}(\Omega)}$.
+\item L'événement $A$ est la réunion de ses issues, qui sont deux à deux incompatibles. Sa probabilité est donc la somme des probabilités de ses issues. Si $A$ contient $k = \mathrm{Card}(A)$ issues :
+\[
+P(A) = \underbrace{\frac{1}{n} + \frac{1}{n} + \dots + \frac{1}{n}}_{k \text{ termes}} = \frac{k}{n} = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)}.
+\]
+\end{enumerate}
+La formule est ainsi entièrement justifiée : tout repose sur l'équiprobabilité (étape 2) et sur le fait que la somme des probabilités des issues vaut $1$ (étape 3).
+\end{experience}
+
+\begin{aretenir}[Conséquences immédiates]
+En situation d'équiprobabilité :
+\begin{itemize}
+\item chaque issue élémentaire a pour probabilité $\dfrac{1}{\mathrm{Card}(\Omega)}$ ;
+\item pour tout événement $A$ : $0 \le P(A) \le 1$ ;
+\item $P(\Omega) = 1$ (événement certain) et $P(\emptyset) = 0$ (événement impossible) ;
+\item la somme des probabilités de toutes les issues vaut toujours $1$ : c'est un excellent \textbf{moyen de vérification} de tes calculs.
+\end{itemize}
+\end{aretenir}
+
+\begin{methode}[Calculer une probabilité en situation d'équiprobabilité]
+\begin{enumerate}
+\item \textbf{Décrire l'univers} $\Omega$ : lister (ou compter) toutes les issues possibles de l'expérience.
+\item \textbf{Vérifier l'équiprobabilité} : dé équilibré ? boules indiscernables au toucher ? Le mentionner dans la rédaction.
+\item \textbf{Dénombrer les cas possibles} : calculer $\mathrm{Card}(\Omega)$, éventuellement à l'aide d'un tableau à double entrée ou d'un arbre.
+\item \textbf{Dénombrer les cas favorables} : calculer $\mathrm{Card}(A)$ en listant soigneusement les issues qui réalisent $A$.
+\item \textbf{Appliquer la formule et simplifier} la fraction obtenue.
+\item \textbf{Vérifier} la cohérence : le résultat est-il entre $0$ et $1$ ? La somme des probabilités de toutes les issues vaut-elle $1$ ?
+\end{enumerate}
+\end{methode}
+
+\courssub{Bien dénombrer l'univers : tableaux et arbres}
+
+Toute la difficulté pratique réside dans le \cle{dénombrement}. Quand l'expérience comporte deux étapes (deux dés, deux pièces), un \textbf{tableau à double entrée} ou un \textbf{arbre} permet de ne rien oublier et de ne rien compter deux fois.
+
+\begin{exemplebox}[Deux lancers d'une pièce équilibrée]
+On lance deux fois de suite une pièce équilibrée. L'univers est :
+\[
+\Omega = \{PP,\ PF,\ FP,\ FF\}, \qquad \mathrm{Card}(\Omega) = 4.
+\]
+Chacune de ces quatre issues a pour probabilité $\dfrac{1}{4}$. L'événement $A$ : \og obtenir exactement une fois Pile \fg{} est réalisé par les issues $PF$ et $FP$, donc $P(A) = \dfrac{2}{4} = \dfrac{1}{2}$.
+\end{exemplebox}
+
+\begin{attention}[Le piège classique des deux pièces]
+Beaucoup d'élèves raisonnent ainsi : \og avec deux lancers, on peut obtenir 0 Pile, 1 Pile ou 2 Piles, donc chaque cas a probabilité $\frac{1}{3}$ \fg. \textbf{C'est faux !} Ces trois résultats ne sont \emph{pas} équiprobables : \og 1 Pile \fg{} peut se produire de deux façons ($PF$ ou $FP$), alors que \og 0 Pile \fg{} ne se produit que d'une seule façon ($FF$). Les issues équiprobables sont les quatre couples $PP, PF, FP, FF$. On a donc :
+\[
+P(\text{0 Pile}) = \frac{1}{4}, \qquad P(\text{1 Pile}) = \frac{2}{4} = \frac{1}{2}, \qquad P(\text{2 Piles}) = \frac{1}{4}.
+\]
+Vérification : $\frac{1}{4} + \frac{1}{2} + \frac{1}{4} = 1$. \textbf{Règle d'or : raisonne toujours sur des issues équiprobables, quitte à distinguer $PF$ et $FP$.}
+\end{attention}
+
+\courssub{Exemple fondateur : la somme de deux dés}
+
+On lance deux dés équilibrés, un rouge et un bleu, et on s'intéresse à la somme des faces obtenues. Le tableau à double entrée ci-dessous représente les $6 \times 6 = 36$ issues équiprobables.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.62, every node/.style={font=\small}]
+% Grille et sommes
+\foreach \i in {1,...,6}{
+  \foreach \j in {1,...,6}{
+    \pgfmathtruncatemacro{\s}{\i+\j}
+    \ifnum\s=7
+      \fill[poporange!55] (\j-1,6-\i) rectangle (\j,7-\i);
+    \else
+      \fill[popblueL!40] (\j-1,6-\i) rectangle (\j,7-\i);
+    \fi
+    \node at (\j-0.5,6.5-\i) {\s};
+  }
+}
+\draw[popdark, thick] (0,0) grid (6,6);
+% En-têtes
+\foreach \j in {1,...,6}{
+  \node[font=\small\bfseries, popblue] at (\j-0.5,6.35) {\j};
+  \node[font=\small\bfseries, popblue] at (-0.35,6.5-\j) {\j};
+}
+\node[font=\small\itshape, popdark] at (3,7) {Résultat du dé bleu};
+\node[font=\small\itshape, popdark, rotate=90] at (-1.1,3) {Résultat du dé rouge};
+\end{tikzpicture}
+\end{center}
+\legende{Les 36 issues équiprobables du lancer de deux dés. En orange, les 6 cases favorables à l'événement \og la somme vaut 7 \fg.}
+\end{popfigure}
+
+\begin{exoresolu}[Somme égale à 7 avec deux dés]
+\textbf{Énoncé.} On lance deux dés équilibrés à six faces. Quelle est la probabilité que la somme des faces soit égale à 7 ?
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Univers} : chaque issue est un couple (dé rouge ; dé bleu). Il y a $\mathrm{Card}(\Omega) = 6 \times 6 = 36$ issues.
+\item \textbf{Équiprobabilité} : les dés sont équilibrés, donc les 36 couples sont équiprobables, chacun de probabilité $\dfrac{1}{36}$.
+\item \textbf{Cas favorables} : l'événement $A$ \og la somme vaut 7 \fg{} est réalisé par les couples
+\[
+(1;6),\ (2;5),\ (3;4),\ (4;3),\ (5;2),\ (6;1),
+\]
+soit $\mathrm{Card}(A) = 6$ cas favorables (cases orange du tableau).
+\item \textbf{Calcul} :
+\[
+P(A) = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)} = \frac{6}{36} = \frac{1}{6}.
+\]
+\end{enumerate}
+La probabilité d'obtenir une somme égale à 7 est donc $\boxed{\dfrac{1}{6}}$. C'est d'ailleurs la somme la plus probable avec deux dés : observe sur le tableau que les autres sommes apparaissent moins souvent (la somme 2 n'apparaît qu'une seule fois, donc $P(\text{somme } 2) = \frac{1}{36}$).
+\end{exoresolu}
+
+\courssub{Application aux urnes}
+
+Le modèle de l'\cle{urne} est le grand classique des exercices de probabilités : une urne contient des boules de couleurs différentes, indiscernables au toucher, et on en tire une au hasard.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+% Urne
+\draw[popdark, very thick] (-2.2,0) -- (-2.2,2.6) .. controls (-2.2,3.3) and (2.2,3.3) .. (2.2,2.6) -- (2.2,0);
+\draw[popdark, very thick] (-2.2,0) .. controls (-2.2,-0.8) and (2.2,-0.8) .. (2.2,0);
+% Boules rouges (4)
+\fill[popink] (-1.5,0.55) circle (0.42);
+\fill[popink] (-0.5,0.5) circle (0.42);
+\fill[popink] (0.5,0.55) circle (0.42);
+\fill[popink] (1.5,0.5) circle (0.42);
+% Boules vertes (3)
+\fill[popgreen] (-1.0,1.4) circle (0.42);
+\fill[popgreen] (0.0,1.35) circle (0.42);
+\fill[popgreen] (1.0,1.4) circle (0.42);
+% Boules noires (5)
+\fill[popdark] (-1.5,2.25) circle (0.42);
+\fill[popdark] (-0.5,2.3) circle (0.42);
+\fill[popdark] (0.5,2.25) circle (0.42);
+\fill[popdark] (1.5,2.3) circle (0.42);
+\fill[popdark] (0.0,2.2) circle (0.42);
+% Légendes avec probabilités
+\node[popink, font=\small\bfseries] at (4.6,2.3) {4 rouges : $P(R)=\dfrac{4}{12}=\dfrac{1}{3}$};
+\node[popgreen, font=\small\bfseries] at (4.6,1.4) {3 vertes : $P(V)=\dfrac{3}{12}=\dfrac{1}{4}$};
+\node[popdark, font=\small\bfseries] at (4.75,0.5) {5 noires : $P(N)=\dfrac{5}{12}$};
+\end{tikzpicture}
+\end{center}
+\legende{Urne contenant 4 boules rouges, 3 vertes et 5 noires (12 boules indiscernables au toucher), avec la probabilité de tirer chaque couleur.}
+\end{popfigure}
+
+\begin{exemplebox}[Tirage dans une urne]
+Une urne contient 4 boules rouges, 3 boules vertes et 5 boules noires, indiscernables au toucher. On tire une boule au hasard.
+\begin{itemize}
+\item \textbf{Univers} : chaque boule est une issue ; $\mathrm{Card}(\Omega) = 4 + 3 + 5 = 12$.
+\item \textbf{Équiprobabilité} : garantie car les boules sont indiscernables au toucher.
+\item Probabilité de tirer une boule rouge : $P(R) = \dfrac{4}{12} = \dfrac{1}{3}$.
+\item Probabilité de tirer une boule verte : $P(V) = \dfrac{3}{12} = \dfrac{1}{4}$.
+\item Probabilité de tirer une boule noire : $P(N) = \dfrac{5}{12}$.
+\end{itemize}
+\textbf{Vérification systématique} : $\dfrac{4}{12} + \dfrac{3}{12} + \dfrac{5}{12} = \dfrac{12}{12} = 1$. La somme des probabilités de toutes les issues vaut bien $1$ : le calcul est cohérent.
+\end{exemplebox}
+
+\begin{attention}[Dénombrer les boules, pas les couleurs]
+Dans l'exemple précédent, il y a 3 couleurs mais 12 boules. L'univers équiprobable est constitué des \textbf{12 boules}, pas des 3 couleurs ! Écrire $P(R) = \frac{1}{3}$ parce qu'il y a 3 couleurs serait une erreur (ici le résultat $\frac{1}{3}$ est correct mais pour une autre raison : $\frac{4}{12}$). Pour éviter toute confusion, imagine les boules \emph{numérotées} : $R_1, R_2, R_3, R_4, V_1, V_2, V_3, N_1, \dots, N_5$ : ce sont ces 12 issues qui sont équiprobables.
+\end{attention}
+
+\courssub{Application aux jeux de cartes}
+
+Les jeux de cartes sont un terrain d'entraînement idéal. Rappelons la composition d'un \textbf{jeu de 32 cartes} : 4 couleurs (cœur, carreau, trèfle, pique) de 8 cartes chacune (7, 8, 9, 10, valet, dame, roi, as). Un \textbf{jeu de 52 cartes} comporte 4 couleurs de 13 cartes (2 à 10, valet, dame, roi, as). Les \emph{figures} sont les valets, dames et rois.
+
+\begin{exoresolu}[Tirage d'une carte dans un jeu de 32]
+\textbf{Énoncé.} On tire une carte au hasard dans un jeu de 32 cartes bien battu. Calculer la probabilité des événements suivants :
+$A$ : \og tirer un as \fg{} ; $B$ : \og tirer un cœur \fg{} ; $C$ : \og tirer une figure \fg.
+\tcblower
+\textbf{Solution détaillée.} Le jeu est bien battu : les 32 cartes sont équiprobables et $\mathrm{Card}(\Omega) = 32$.
+\begin{itemize}
+\item Il y a 4 as dans le jeu : $P(A) = \dfrac{4}{32} = \dfrac{1}{8}$.
+\item Il y a 8 cœurs : $P(B) = \dfrac{8}{32} = \dfrac{1}{4}$.
+\item Il y a 3 figures par couleur (valet, dame, roi) et 4 couleurs, donc $3 \times 4 = 12$ figures : $P(C) = \dfrac{12}{32} = \dfrac{3}{8}$.
+\end{itemize}
+Chaque résultat est compris entre $0$ et $1$ et chaque fraction a été simplifiée : la méthode est respectée jusqu'au bout.
+\end{exoresolu}
+
+\begin{exercice}[Jeu de 52 cartes]
+On tire une carte au hasard dans un jeu de 52 cartes. Calculer la probabilité de tirer : (a) le roi de pique ; (b) un roi ; (c) un trèfle ; (d) une carte rouge (cœur ou carreau). Vérifier que la somme des probabilités \og carte rouge \fg{} et \og carte noire \fg{} vaut $1$.
+\end{exercice}
+
+\begin{corrige}[Jeu de 52 cartes]
+Les 52 cartes sont équiprobables, $\mathrm{Card}(\Omega) = 52$.
+(a) Une seule carte favorable : $P = \dfrac{1}{52}$.
+(b) 4 rois : $P = \dfrac{4}{52} = \dfrac{1}{13}$.
+(c) 13 trèfles : $P = \dfrac{13}{52} = \dfrac{1}{4}$.
+(d) 26 cartes rouges : $P = \dfrac{26}{52} = \dfrac{1}{2}$.
+Vérification : $P(\text{rouge}) + P(\text{noire}) = \dfrac{1}{2} + \dfrac{1}{2} = 1$.
+\end{corrige}
+
+\begin{savaistu}[Pourquoi la loterie enrichit l'organisateur, pas le joueur]
+Les loteries et jeux de hasard sont \emph{conçus mathématiquement} pour que la probabilité de gagner le gros lot soit extrêmement faible. Par exemple, dans une loterie où il faut choisir 6 bons numéros parmi 49, le nombre de grilles possibles se compte en millions : la probabilité de décrocher le jackpot est de l'ordre de $\frac{1}{14\,000\,000}$ ! Comme les mises de millions de joueurs financent les gains, l'organisateur est assuré de réaliser un bénéfice à long terme : c'est la loi des grands nombres qui travaille pour lui. Au Cameroun comme ailleurs, les jeux de hasard doivent donc rester un divertissement, jamais une stratégie pour gagner sa vie. Les mathématiques te donnent ici un véritable \emph{savoir-être} : comprendre les probabilités, c'est se protéger des illusions.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item En situation d'\cle{équiprobabilité} (dé équilibré, pièce équilibrée, boules indiscernables au toucher, tirage au sort) :
+\[
+P(A) = \frac{\text{cas favorables}}{\text{cas possibles}} = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)}.
+\]
+\item Chaque issue a alors pour probabilité $\dfrac{1}{\mathrm{Card}(\Omega)}$, et la somme des probabilités de toutes les issues vaut $1$ : vérifie-la systématiquement.
+\item Pour dénombrer sans erreur, utilise un \textbf{tableau à double entrée} ou un \textbf{arbre}, et raisonne toujours sur des issues \emph{équiprobables} (distingue $PF$ et $FP$).
+\item Ne jamais appliquer la formule sans avoir justifié l'équiprobabilité.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Événement contraire}
+
+Dans la section précédente, tu as appris à calculer une probabilité en situation d'équiprobabilité : il suffit de compter les cas favorables et les cas possibles, puis de faire le rapport. Mais voici une question qui va tout changer : \emph{et si compter les cas favorables était plus difficile que compter les cas défavorables ?} Imagine un jeu télévisé où tu gagnes si tu obtiens « au moins un six » en lançant un dé quatre fois. Compter directement toutes les issues gagnantes (un six, deux six, trois six, quatre six, et toutes leurs positions possibles) est un vrai casse-tête. En revanche, il n'y a qu'\emph{une seule} manière de perdre : n'obtenir \emph{aucun} six. Cette idée lumineuse — calculer la probabilité du contraire quand le direct est compliqué — est l'objet de cette section. C'est l'une des stratégies les plus rentables au Baccalauréat.
+
+\courssub{Notion d'événement contraire}
+
+\courssub{Définition et intuition}
+
+Reprenons une situation concrète. Une coopérative de Nkongsamba conditionne des sacs de maïs. On prélève un sac au hasard pour le contrôle qualité, et on considère l'événement $A$ : « le sac est conforme à la norme ». Deux choses, et deux choses seulement, peuvent arriver : soit le sac est conforme ($A$ est réalisé), soit il ne l'est pas ($A$ n'est pas réalisé). Il n'y a pas de troisième voie, et les deux ne peuvent pas arriver en même temps. L'événement « $A$ n'est pas réalisé » porte un nom : c'est l'\cle{événement contraire} de $A$.
+
+\begin{definition}[Événement contraire]
+Soit $\Omega$ l'univers d'une expérience aléatoire et $A$ un événement. On appelle \cle{événement contraire} de $A$, noté $\bar{A}$ (lire « A barre »), l'événement constitué de toutes les issues de $\Omega$ qui \textbf{n'appartiennent pas} à $A$ :
+\[ \bar{A} = \{\omega \in \Omega \mid \omega \notin A\}. \]
+Autrement dit, $\bar{A}$ est réalisé si et seulement si $A$ n'est \emph{pas} réalisé.
+\end{definition}
+
+De cette définition découlent immédiatement deux faits essentiels, qu'il faut savoir énoncer sans hésiter :
+
+\begin{propriete}[Caractérisation de l'événement contraire]
+Pour tout événement $A$ d'un univers $\Omega$ :
+\begin{itemize}
+\item $A$ et $\bar{A}$ sont \cle{incompatibles} : $A \cap \bar{A} = \emptyset$ (ils ne peuvent pas se réaliser en même temps) ;
+\item leur réunion est l'univers tout entier : $A \cup \bar{A} = \Omega$ (l'un des deux se réalise toujours).
+\end{itemize}
+On dit que $A$ et $\bar{A}$ forment une \cle{partition} de l'univers.
+\end{propriete}
+
+\begin{exemplebox}[Premiers exemples d'événements contraires]
+\begin{itemize}
+\item On lance un dé : si $A$ = « obtenir un six » $= \{6\}$, alors $\bar{A}$ = « ne pas obtenir de six » $= \{1, 2, 3, 4, 5\}$.
+\item On tire une carte dans un jeu de 32 cartes : si $B$ = « tirer un cœur », alors $\bar{B}$ = « tirer un carreau, un pique ou un trèfle ».
+\item On interroge un élève de Terminale A au hasard : si $C$ = « l'élève pratique un sport », alors $\bar{C}$ = « l'élève ne pratique aucun sport ».
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Le contraire n'est pas « n'importe quoi d'autre »]
+Le contraire de « obtenir un nombre pair » au dé n'est pas « obtenir un 1 » ni « obtenir un 3 » : c'est « obtenir un nombre \emph{impair} », c'est-à-dire $\{1, 3, 5\}$. Le contraire doit contenir \textbf{toutes} les issues qui ne sont pas dans $A$, sans en oublier aucune. De même, le contraire de « obtenir au moins un Pile » n'est pas « obtenir un Face » : c'est « n'obtenir \emph{aucun} Pile », c'est-à-dire « obtenir Face à tous les lancers ».
+\end{attention}
+
+La figure suivante visualise la situation : l'univers $\Omega$ est coupé en deux morceaux disjoints, $A$ et $\bar{A}$, qui le recouvrent entièrement.
+
+\begin{popfigure}
+\begin{tikzpicture}
+% Univers
+\draw[thick, popdark, rounded corners=6pt, fill=popcream] (0,0) rectangle (8,4.6);
+\node[popdark, font=\bfseries] at (0.55,4.2) {$\Omega$};
+% Événement A
+\draw[thick, popblue, fill=popblueL] (3.1,2.2) ellipse (2.3 and 1.5);
+\node[popblue, font=\bfseries\large] at (3.1,2.2) {$A$};
+\node[popblue] at (3.1,1.55) {$P(A)$};
+% Événement contraire
+\node[poporange, font=\bfseries\large] at (6.6,2.2) {$\bar{A}$};
+\node[poporange] at (6.6,1.55) {$P(\bar{A})$};
+% Formule
+\node[popdark, font=\bfseries] at (4,-0.7) {$P(A) + P(\bar{A}) = 1$};
+\end{tikzpicture}
+\legende{L'univers $\Omega$ est partitionné en $A$ et $\bar{A}$ : les deux zones sont disjointes et recouvrent tout le rectangle. Les probabilités se répartissent donc en totalisant $1$.}
+\end{popfigure}
+
+\courssub{Théorème fondamental : $P(\bar{A}) = 1 - P(A)$}
+
+Voici le résultat central de cette section. Il est simple à énoncer, simple à démontrer, et d'une puissance redoutable dans les exercices.
+
+\begin{propriete}[Probabilité de l'événement contraire]
+Pour tout événement $A$ d'un univers $\Omega$ muni d'une probabilité $P$ :
+\[ \boxed{P(\bar{A}) = 1 - P(A)} \]
+\emph{Démonstration exigible.} On sait que $A$ et $\bar{A}$ sont incompatibles, c'est-à-dire $A \cap \bar{A} = \emptyset$. Or la probabilité de la réunion de deux événements incompatibles est la somme de leurs probabilités :
+\[ P(A \cup \bar{A}) = P(A) + P(\bar{A}). \]
+Mais $A \cup \bar{A} = \Omega$, et par définition d'une probabilité, $P(\Omega) = 1$. On obtient donc :
+\[ P(A) + P(\bar{A}) = P(\Omega) = 1, \]
+d'où, en retranchant $P(A)$ aux deux membres :
+\[ P(\bar{A}) = 1 - P(A). \qquad \blacksquare \]
+\end{propriete}
+
+\begin{aretenir}[À retenir absolument]
+Un événement et son contraire se partagent la totalité de la probabilité :
+\[ P(A) + P(\bar{A}) = 1 \qquad \text{et donc} \qquad P(\bar{A}) = 1 - P(A). \]
+Connaître l'une des deux probabilités, c'est connaître l'autre gratuitement.
+\end{aretenir}
+
+\begin{exemplebox}[Exemple chiffré : l'urne de boules]
+Une urne contient $3$ boules rouges et $7$ boules noires, indiscernables au toucher. On tire une boule au hasard. Soit $R$ l'événement « la boule tirée est rouge ».
+
+\textbf{Calcul direct de $P(\bar{R})$.} L'événement $\bar{R}$ est « la boule tirée n'est pas rouge », c'est-à-dire « la boule est noire ». Il y a $7$ cas favorables sur $10$ cas possibles :
+\[ P(\bar{R}) = \frac{7}{10}. \]
+
+\textbf{Vérification par le théorème.} On a $P(R) = \dfrac{3}{10}$, donc :
+\[ P(\bar{R}) = 1 - P(R) = 1 - \frac{3}{10} = \frac{10}{10} - \frac{3}{10} = \frac{7}{10}. \]
+Les deux méthodes donnent le même résultat, comme prévu.
+\end{exemplebox}
+
+\begin{attention}[Erreurs fréquentes à bannir]
+\begin{itemize}
+\item \textbf{Croire que $P(\bar{A}) = P(A)$.} C'est faux en général ! Ce n'est vrai que si $P(A) = \dfrac{1}{2}$. Dans l'exemple de l'urne, $P(R) = \dfrac{3}{10}$ et $P(\bar{R}) = \dfrac{7}{10}$ : rien à voir.
+\item \textbf{Écrire $P(\bar{A}) = -P(A)$.} Une probabilité est toujours comprise entre $0$ et $1$ : elle ne peut jamais être négative. La bonne formule est $P(\bar{A}) = 1 - P(A)$ : c'est bien « $1$ \emph{moins} $P(A)$ », pas « l'opposé de $P(A)$ ».
+\item \textbf{Oublier de simplifier.} Au Bac, présente le résultat sous forme de fraction irréductible : $\dfrac{11}{36}$ et non $\dfrac{22}{72}$.
+\end{itemize}
+\end{attention}
+
+\courssub{L'intérêt stratégique : passer par le contraire}
+
+\courssub{Quand le direct est difficile, le contraire est facile}
+
+Voici maintenant la grande idée de cette section. Dans de nombreux problèmes, l'événement $A$ qui t'intéresse regroupe \emph{beaucoup} de cas différents, difficiles à dénombrer un par un, alors que son contraire $\bar{A}$ ne regroupe qu'\emph{un seul} cas, facile à traiter. La stratégie est alors :
+
+\begin{methode}[Traiter un événement « au moins un » par le contraire]
+Pour calculer la probabilité d'un événement du type « obtenir \textbf{au moins un} succès en $n$ essais » :
+\begin{enumerate}
+\item \textbf{Nommer} l'événement : $A$ = « obtenir au moins un succès ».
+\item \textbf{Identifier le contraire} : $\bar{A}$ = « n'obtenir \emph{aucun} succès », c'est-à-dire « échouer à \emph{tous} les essais ».
+\item \textbf{Calculer $P(\bar{A})$} : si chaque essai a une probabilité d'échec $q$, et que les essais sont indépendants (lancers successifs d'un dé, d'une pièce, tirages avec remise...), alors $P(\bar{A}) = q^n$ (on multiplie les probabilités d'échec le long des branches de l'arbre).
+\item \textbf{Conclure} par le théorème : $P(A) = 1 - P(\bar{A}) = 1 - q^n$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Au moins un six en deux lancers — le classique du Bac]
+On lance un dé équilibré à six faces \textbf{deux fois de suite}. Quelle est la probabilité d'obtenir \emph{au moins un six} ?
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Étape 1.} Soit $A$ l'événement « obtenir au moins un six en deux lancers ». Un calcul direct demanderait de compter : un six au premier lancer seulement, un six au deuxième seulement, un six aux deux lancers... Fastidieux.
+
+\textbf{Étape 2.} Le contraire est bien plus simple : $\bar{A}$ = « n'obtenir \emph{aucun} six », c'est-à-dire « ne pas obtenir de six au premier lancer \emph{et} ne pas obtenir de six au deuxième ».
+
+\textbf{Étape 3.} À chaque lancer, la probabilité de ne pas obtenir de six est $\dfrac{5}{6}$ (cinq faces défavorables sur six). Les deux lancers étant indépendants :
+\[ P(\bar{A}) = \frac{5}{6} \times \frac{5}{6} = \left(\frac{5}{6}\right)^2 = \frac{25}{36}. \]
+
+\textbf{Étape 4.} On conclut par le théorème de l'événement contraire :
+\[ P(A) = 1 - P(\bar{A}) = 1 - \frac{25}{36} = \frac{36}{36} - \frac{25}{36} = \frac{11}{36}. \]
+
+\textbf{Vérification par dénombrement direct.} Il y a $6 \times 6 = 36$ issues possibles. Celles sans aucun six : $5 \times 5 = 25$. Celles avec au moins un six : $36 - 25 = 11$. On retrouve bien $P(A) = \dfrac{11}{36} \approx 0{,}31$.
+\end{exoresolu}
+
+L'arbre suivant résume le raisonnement : on réduit chaque lancer à deux issues, « six » (noté $S$) et « pas six » (noté $\bar{S}$), et le chemin tout en bas de l'arbre est le seul chemin perdant.
+
+\begin{popfigure}
+\begin{tikzpicture}[
+grow=right, level distance=3.4cm,
+level 1/.style={sibling distance=3.2cm},
+level 2/.style={sibling distance=1.6cm},
+every node/.style={font=\small},
+edge from parent/.style={draw=popmuted, thick}]
+\node[popdark, font=\bfseries] {Départ}
+  child { node[poporange] {$\bar{S}$}
+    child { node[poporange] {$\bar{S}$ \quad $\frac{25}{36}$ \; (perdu)}
+      edge from parent node[below, poporange] {$\frac{5}{6}$} }
+    child { node[popblue] {$S$ \quad $\frac{5}{36}$ \; (gagné)}
+      edge from parent node[above, popblue] {$\frac{1}{6}$} }
+    edge from parent node[below, poporange] {$\frac{5}{6}$} }
+  child { node[popblue] {$S$}
+    child { node[popblue] {$\bar{S}$ \quad $\frac{5}{36}$ \; (gagné)}
+      edge from parent node[below, poporange] {$\frac{5}{6}$} }
+    child { node[popblue] {$S$ \quad $\frac{1}{36}$ \; (gagné)}
+      edge from parent node[above, popblue] {$\frac{1}{6}$} }
+    edge from parent node[above, popblue] {$\frac{1}{6}$} };
+\end{tikzpicture}
+\legende{Arbre des deux lancers réduit à « six ($S$) / pas six ($\bar{S}$) ». Trois chemins sur quatre sont gagnants ; le seul chemin perdant est $\bar{S}$ puis $\bar{S}$, de probabilité $\frac{5}{6}\times\frac{5}{6}=\frac{25}{36}$. D'où $P(A) = 1 - \frac{25}{36} = \frac{11}{36}$.}
+\end{popfigure}
+
+\courssub{Lire un énoncé : les mots qui appellent le contraire}
+
+Un bon élève de Terminale ne se contente pas de connaître la formule : il \emph{repère} dans l'énoncé les formulations qui signalent qu'un passage par le contraire sera payant. Voici le dictionnaire de traduction à garder en tête.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Expression de l'énoncé} & \textbf{Événement $A$} & \textbf{Contraire $\bar{A}$ (souvent plus simple)} \\
+\hline
+« au moins un » & au moins un succès & \textbf{aucun} succès \\
+\hline
+« au moins deux » & deux succès ou plus & zéro \textbf{ou} un succès \\
+\hline
+« au plus un » & zéro ou un succès & au moins deux succès \\
+\hline
+« jamais », « aucun » & déjà un contraire ! & « au moins un » \\
+\hline
+« au moins une fois » & une fois ou plus & \textbf{jamais} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Attention au sens de « au moins » et « au plus »]
+« Au moins un » signifie « un, deux, trois... ou plus » : le mot \emph{un} est \textbf{inclus}. « Au plus deux » signifie « zéro, un ou deux » : le mot \emph{deux} est \textbf{inclus}. Ne confonds pas avec « plus de deux » (strictement) qui signifie « trois ou plus ». Une erreur d'interprétation à ce niveau fausse tout l'exercice.
+\end{attention}
+
+\courssub{Exemples variés d'application}
+
+\begin{exoresolu}[Au moins un Pile en trois lancers]
+On lance une pièce équilibrée \textbf{trois fois de suite}. Quelle est la probabilité d'obtenir \emph{au moins un Pile} ?
+\tcblower
+\textbf{Solution détaillée.}
+
+Soit $A$ = « obtenir au moins un Pile en trois lancers ». Le contraire est $\bar{A}$ = « n'obtenir aucun Pile », c'est-à-dire « obtenir Face aux trois lancers », soit l'unique issue $(F, F, F)$.
+
+À chaque lancer, $P(\text{Face}) = \dfrac{1}{2}$, et les lancers sont indépendants :
+\[ P(\bar{A}) = \frac{1}{2} \times \frac{1}{2} \times \frac{1}{2} = \left(\frac{1}{2}\right)^3 = \frac{1}{8}. \]
+Par le théorème de l'événement contraire :
+\[ P(A) = 1 - \frac{1}{8} = \frac{7}{8}. \]
+
+\textbf{Vérification.} Il y a $2^3 = 8$ issues équiprobables ; une seule est perdante ($(F,F,F)$), donc $7$ sont gagnantes : $P(A) = \dfrac{7}{8}$. Remarque comme la probabilité est élevée : avec trois essais, il est très probable d'obtenir au moins une fois Pile.
+\end{exoresolu}
+
+\begin{exemplebox}[Ne pas tirer de boule rouge, avec remise]
+Une urne contient $4$ boules rouges et $6$ boules vertes. On tire une boule, on la remet, puis on en tire une seconde. Quelle est la probabilité de ne tirer \emph{aucune} boule rouge ?
+
+Ici, l'événement demandé est déjà un « contraire » : « aucune rouge » est le contraire de « au moins une rouge ». À chaque tirage, la probabilité de ne pas tirer de rouge (donc de tirer verte) est $\dfrac{6}{10} = \dfrac{3}{5}$. Comme le tirage est avec remise, les deux tirages sont indépendants :
+\[ P(\text{aucune rouge}) = \frac{3}{5} \times \frac{3}{5} = \frac{9}{25}. \]
+Et si l'énoncé avait demandé « au moins une rouge », on aurait conclu immédiatement : $1 - \dfrac{9}{25} = \dfrac{16}{25}$.
+\end{exemplebox}
+
+\begin{exercice}[À toi de jouer]
+Un opérateur téléphonique organise une tombola à Yaoundé. On estime que la probabilité qu'un client tiré au sort soit abonné au forfait premium est $\dfrac{1}{5}$. On interroge trois clients au hasard (les choix sont indépendants). Quelle est la probabilité qu'\emph{au moins un} des trois soit abonné au forfait premium ?
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+Soit $A$ = « au moins un des trois clients est abonné premium ». Le contraire est $\bar{A}$ = « aucun des trois n'est abonné premium ». Pour un client, la probabilité de ne pas être abonné premium est $1 - \dfrac{1}{5} = \dfrac{4}{5}$. Par indépendance :
+\[ P(\bar{A}) = \left(\frac{4}{5}\right)^3 = \frac{64}{125}, \qquad \text{donc} \qquad P(A) = 1 - \frac{64}{125} = \frac{125}{125} - \frac{64}{125} = \frac{61}{125} = 0{,}488. \]
+Il y a donc presque une chance sur deux qu'au moins un des trois clients soit abonné premium.
+\end{corrige}
+
+\courssub{Un peu d'histoire : le problème qui a fait naître les probabilités}
+
+\begin{savaistu}[Le chevalier de Méré et la naissance du calcul des probabilités]
+En 1654, un gentilhomme français passionné de jeux de dés, le \textbf{chevalier de Méré}, soumet à Blaise \textbf{Pascal} un problème qui le turlupine. D'après son expérience de joueur, parier sur « obtenir au moins un six en quatre lancers d'un dé » est légèrement gagnant, alors que parier sur « obtenir au moins un double-six en vingt-quatre lancers de deux dés » est légèrement perdant — alors que les deux paris semblaient proportionnellement équivalents ($4$ lancers pour $6$ issues, $24$ lancers pour $36$ issues).
+
+Pascal échange avec Pierre de \textbf{Fermat}, et ensemble ils résolvent l'énigme... précisément grâce à l'événement contraire :
+\[ P(\text{au moins un six en 4 lancers}) = 1 - \left(\frac{5}{6}\right)^4 = 1 - \frac{625}{1296} = \frac{671}{1296} \approx 0{,}518 \;>\; \frac{1}{2}, \]
+\[ P(\text{au moins un double-six en 24 lancers}) = 1 - \left(\frac{35}{36}\right)^{24} \approx 0{,}491 \;<\; \frac{1}{2}. \]
+Le premier pari est bien gagnant (probabilité supérieure à $\frac{1}{2}$), le second perdant : l'expérience du chevalier était juste ! Cette correspondance entre Pascal et Fermat est considérée comme l'acte de naissance du \textbf{calcul des probabilités}. La prochaine fois que tu écris $1 - \left(\frac{5}{6}\right)^n$, souviens-toi que tu marches dans les pas de deux génies.
+\end{savaistu}
+
+\begin{aretenir}[Bilan de la section]
+\begin{itemize}
+\item L'événement contraire $\bar{A}$ est l'événement « $A$ n'est pas réalisé » : $A \cap \bar{A} = \emptyset$ et $A \cup \bar{A} = \Omega$.
+\item Théorème fondamental : $P(\bar{A}) = 1 - P(A)$, démontré à partir de $P(A) + P(\bar{A}) = P(\Omega) = 1$.
+\item Stratégie reine : face à « \textbf{au moins un} », passer par le contraire « \textbf{aucun} » : $P(\text{au moins un}) = 1 - q^n$, où $q$ est la probabilité d'échec à chaque essai et où les $n$ essais sont indépendants.
+\item Les mots « au moins », « au plus », « jamais », « aucun » dans un énoncé sont des signaux : pense immédiatement à l'événement contraire.
+\end{itemize}
+\end{aretenir}
+
+Dans la section suivante, nous généraliserons cette idée de « combiner des événements » en étudiant la \textbf{réunion de deux événements quelconques} — qui ne sont plus nécessairement contraires ni incompatibles — et la célèbre formule $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.
+
+\coursec{Réunion de deux événements}
+
+Dans la section précédente, nous avons appris à calculer la probabilité de l'événement contraire : $P(\bar{A}) = 1 - P(A)$. Cet outil est précieux, mais il ne suffit pas. Dans la vie courante, on s'intéresse souvent à des événements composés avec le mot \og ou \fg{} : \emph{quelle est la probabilité qu'un élève choisi au hasard pratique le football \textbf{ou} la musique ?} \emph{Quelle est la probabilité de tirer un roi \textbf{ou} un cœur dans un jeu de cartes ?} Répondre à ces questions exige de comprendre la \cle{réunion} de deux événements, et c'est l'objet de cette section. Tu vas découvrir l'une des formules les plus utiles (et les plus mal utilisées !) de tout le programme.
+
+\courssub{Le vocabulaire : réunion et intersection}
+
+\begin{definition}[Réunion et intersection de deux événements]
+Soit $A$ et $B$ deux événements d'un univers $\Omega$.
+\begin{itemize}
+\item La \cle{réunion} de $A$ et $B$, notée $A \cup B$ (lire \og $A$ \textbf{ou} $B$ \fg), est l'événement qui est réalisé lorsque $A$ est réalisé, \textbf{ou} $B$ est réalisé, \textbf{ou les deux en même temps}.
+\item L'\cle{intersection} de $A$ et $B$, notée $A \cap B$ (lire \og $A$ \textbf{et} $B$ \fg), est l'événement qui est réalisé lorsque $A$ et $B$ sont réalisés \textbf{simultanément}.
+\item On dit que $A$ et $B$ sont \cle{incompatibles} (ou disjoints) lorsqu'ils ne peuvent pas se réaliser en même temps, c'est-à-dire lorsque $A \cap B = \emptyset$.
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Le \og ou \fg{} des mathématiques est inclusif]
+En français courant, \og fromage ou dessert \fg{} signifie souvent \og l'un ou l'autre, mais pas les deux \fg. En mathématiques, c'est le contraire : le \og ou \fg{} de $A \cup B$ est \textbf{inclusif}. Si un résultat réalise à la fois $A$ et $B$, alors il réalise $A \cup B$. Retenir : $A \cup B$ contient trois types d'issues : celles de $A$ seul, celles de $B$ seul, et celles communes aux deux.
+\end{attention}
+
+\begin{exemplebox}[Lecture sur un dé]
+On lance un dé équilibré à six faces : $\Omega = \{1 ; 2 ; 3 ; 4 ; 5 ; 6\}$. On considère $A = $ \og obtenir un nombre pair \fg{} $= \{2 ; 4 ; 6\}$ et $B = $ \og obtenir un multiple de 3 \fg{} $= \{3 ; 6\}$. Alors :
+\[ A \cup B = \{2 ; 3 ; 4 ; 6\} \qquad \text{et} \qquad A \cap B = \{6\}. \]
+L'issue 6 réalise les deux événements à la fois : elle appartient à l'intersection, donc aussi à la réunion. Les événements $A$ et $B$ ne sont \textbf{pas} incompatibles.
+\end{exemplebox}
+
+\courssub{Cas particulier : événements incompatibles}
+
+Commençons par le cas le plus simple. Imaginons une urne contenant 10 boules : 3 rouges, 2 vertes et 5 bleues. On tire une boule au hasard. Soit $R$ l'événement \og la boule est rouge \fg{} et $V$ l'événement \og la boule est verte \fg. Une boule ne peut pas être à la fois rouge et verte : $R$ et $V$ sont \cle{incompatibles}. Les cas favorables à $R \cup V$ sont simplement les 3 boules rouges et les 2 boules vertes, soit 5 cas. On obtient donc :
+\[ P(R \cup V) = \frac{5}{10} = \frac{3}{10} + \frac{2}{10} = P(R) + P(V). \]
+Cette intuition se généralise : quand deux événements n'ont \textbf{aucune issue en commun}, les cas favorables à leur réunion s'obtiennent en additionnant les cas favorables de chacun.
+
+\begin{propriete}[Probabilité de la réunion de deux événements incompatibles]
+Si $A$ et $B$ sont deux événements \cle{incompatibles} (c'est-à-dire $A \cap B = \emptyset$), alors :
+\[ P(A \cup B) = P(A) + P(B). \]
+\end{propriete}
+
+\textbf{Justification par le dénombrement} (en situation d'équiprobabilité). Puisque $A$ et $B$ n'ont aucune issue commune, compter les issues de $A \cup B$ revient à compter celles de $A$ puis celles de $B$, sans risque de compter deux fois la même issue :
+\[ \mathrm{Card}(A \cup B) = \mathrm{Card}(A) + \mathrm{Card}(B). \]
+En divisant les deux membres par $\mathrm{Card}(\Omega)$, on obtient :
+\[ \frac{\mathrm{Card}(A \cup B)}{\mathrm{Card}(\Omega)} = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)} + \frac{\mathrm{Card}(B)}{\mathrm{Card}(\Omega)}, \quad \text{c'est-à-dire} \quad P(A \cup B) = P(A) + P(B). \]
+
+\begin{exemplebox}[Application immédiate]
+Dans une classe de Terminale A de 40 élèves, 12 élèves ont choisi l'option espagnol et 8 l'option allemand (un seul vivant 2 par élève). On choisit un élève au hasard. Les événements $E$ \og l'élève fait espagnol \fg{} et $D$ \og l'élève fait allemand \fg{} sont incompatibles, donc :
+\[ P(E \cup D) = \frac{12}{40} + \frac{8}{40} = \frac{20}{40} = \frac{1}{2}. \]
+\end{exemplebox}
+
+\courssub{Le cas général : pourquoi faut-il retrancher l'intersection ?}
+
+Que se passe-t-il si $A$ et $B$ \textbf{peuvent} se réaliser en même temps ? Reprenons le dé : $A = \{2 ; 4 ; 6\}$ (3 issues) et $B = \{3 ; 6\}$ (2 issues). Si l'on additionne naïvement, on compte $3 + 2 = 5$ issues... mais $A \cup B = \{2 ; 3 ; 4 ; 6\}$ n'en contient que 4 ! L'erreur vient de l'issue 6, qui appartient aux deux événements et a été \textbf{comptée deux fois}. Pour corriger, il faut retrancher une fois les issues de l'intersection. C'est exactement ce que montre le diagramme de Venn ci-dessous.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05]
+\draw[rounded corners, thick, popdark] (-3.6,-2.3) rectangle (5.4,2.6);
+\node[popdark, font=\bfseries] at (4.9,2.2) {$\Omega$};
+\draw[fill=popblue!35, draw=popblue, thick] (-0.9,0) circle (1.8);
+\draw[fill=poporange!35, draw=poporange, thick] (1.7,0) circle (1.8);
+\node[font=\bfseries\large, popblue] at (-2.2,1.35) {$A$};
+\node[font=\bfseries\large, poporange] at (3.0,1.35) {$B$};
+\node[align=center, font=\small] at (-1.5,0) {\textbf{Zone 1}\\ $A$ seul};
+\node[align=center, font=\small] at (0.4,0) {\textbf{Zone 2}\\ $A \cap B$};
+\node[align=center, font=\small] at (2.3,0) {\textbf{Zone 3}\\ $B$ seul};
+\node[align=center, font=\small, popmuted] at (4.3,-1.6) {ni $A$\\ ni $B$};
+\end{tikzpicture}
+\end{center}
+\legende{Diagramme de Venn : $A \cup B$ est formé des zones 1, 2 et 3. Quand on additionne $\mathrm{Card}(A)$ (zones 1 et 2) et $\mathrm{Card}(B)$ (zones 2 et 3), la zone 2 est comptée deux fois : il faut la retrancher une fois.}
+\end{popfigure}
+
+\begin{experience}[Démonstration guidée de la formule de la réunion]
+On se place en situation d'\cle{équiprobabilité} sur un univers fini $\Omega$. On veut démontrer que $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.
+\begin{enumerate}
+\item \textbf{Découper.} D'après le diagramme de Venn, l'ensemble $A \cup B$ est la réunion de trois zones \textbf{deux à deux disjointes} : la zone 1 ($A$ sans $B$), la zone 2 ($A \cap B$) et la zone 3 ($B$ sans $A$).
+\item \textbf{Compter $A$ et $B$.} L'ensemble $A$ est formé des zones 1 et 2 ; l'ensemble $B$ est formé des zones 2 et 3. Donc :
+\[ \mathrm{Card}(A) + \mathrm{Card}(B) = \big(\text{zone 1} + \text{zone 2}\big) + \big(\text{zone 2} + \text{zone 3}\big). \]
+La zone 2 apparaît \textbf{deux fois} dans cette somme.
+\item \textbf{Corriger le double comptage.} Pour obtenir le cardinal de la réunion, on retranche une fois la zone 2, c'est-à-dire $\mathrm{Card}(A \cap B)$ :
+\[ \mathrm{Card}(A \cup B) = \mathrm{Card}(A) + \mathrm{Card}(B) - \mathrm{Card}(A \cap B). \]
+\item \textbf{Passer aux probabilités.} On divise chaque terme par $\mathrm{Card}(\Omega)$ :
+\[ \frac{\mathrm{Card}(A \cup B)}{\mathrm{Card}(\Omega)} = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)} + \frac{\mathrm{Card}(B)}{\mathrm{Card}(\Omega)} - \frac{\mathrm{Card}(A \cap B)}{\mathrm{Card}(\Omega)}. \]
+Par définition de la probabilité en équiprobabilité, on conclut :
+\[ P(A \cup B) = P(A) + P(B) - P(A \cap B). \]
+\end{enumerate}
+\end{experience}
+
+\begin{propriete}[Théorème : probabilité de la réunion de deux événements quelconques]
+Pour deux événements \textbf{quelconques} $A$ et $B$ d'un univers $\Omega$ :
+\[ \boxed{P(A \cup B) = P(A) + P(B) - P(A \cap B)} \]
+\textbf{Remarque.} Si $A$ et $B$ sont incompatibles, alors $A \cap B = \emptyset$, donc $P(A \cap B) = 0$ et l'on retrouve la formule du cas particulier : la formule générale contient l'autre.
+\end{propriete}
+
+\begin{aretenir}[Une seule formule à retenir]
+Retiens uniquement la formule générale $P(A \cup B) = P(A) + P(B) - P(A \cap B)$. Elle fonctionne \textbf{toujours}. Le cas des événements incompatibles n'en est qu'un cas particulier où le dernier terme vaut zéro.
+\end{aretenir}
+
+\courssub{Exemples chiffrés détaillés}
+
+\begin{exemplebox}[Roi ou cœur dans un jeu de 32 cartes]
+Un jeu de 32 cartes contient 4 rois et 8 cœurs (dont le roi de cœur). On tire une carte au hasard et l'on considère $R$ \og tirer un roi \fg{} et $C$ \og tirer un cœur \fg. Toutes les cartes sont équiprobables.
+\begin{itemize}
+\item $P(R) = \dfrac{4}{32}$ (il y a 4 rois) ;
+\item $P(C) = \dfrac{8}{32}$ (il y a 8 cœurs) ;
+\item $R \cap C$ = \og tirer le roi de cœur \fg, donc $P(R \cap C) = \dfrac{1}{32}$.
+\end{itemize}
+Les événements ne sont pas incompatibles (le roi de cœur réalise les deux). La formule générale donne :
+\[ P(R \cup C) = \frac{4}{32} + \frac{8}{32} - \frac{1}{32} = \frac{11}{32}. \]
+\textbf{Vérification par dénombrement direct} : les cartes favorables sont les 8 cœurs plus les 3 rois qui ne sont pas de cœur, soit 11 cartes. On retrouve bien $\dfrac{11}{32}$.
+\end{exemplebox}
+
+\begin{exoresolu}[Football ou musique dans une classe]
+Dans une classe de Terminale A de 50 élèves, 28 élèves pratiquent le football, 20 pratiquent la musique, et 10 pratiquent les deux activités. On choisit un élève au hasard. On note $F$ \og l'élève pratique le football \fg{} et $M$ \og l'élève pratique la musique \fg.
+\begin{enumerate}
+\item Compléter le tableau des effectifs.
+\item Calculer $P(F \cup M)$.
+\item Calculer la probabilité que l'élève ne pratique \textbf{ni} football \textbf{ni} musique.
+\end{enumerate}
+\tcblower
+\textbf{1. Tableau des effectifs.} Les élèves qui pratiquent le football \emph{seul} sont $28 - 10 = 18$ ; ceux qui pratiquent la musique \emph{seule} sont $20 - 10 = 10$. Les élèves sans activité sont $50 - (18 + 10 + 10) = 12$.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\rowcolor{popblueL} & Musique & Pas musique & Total \\
+\hline
+Football & 10 & 18 & 28 \\
+\hline
+Pas football & 10 & 12 & 22 \\
+\hline
+Total & 20 & 22 & 50 \\
+\hline
+\end{tabularx}
+\end{center}
+\textbf{2. Probabilité de la réunion.} On a $P(F) = \dfrac{28}{50}$, $P(M) = \dfrac{20}{50}$ et $P(F \cap M) = \dfrac{10}{50}$. Donc :
+\[ P(F \cup M) = \frac{28}{50} + \frac{20}{50} - \frac{10}{50} = \frac{38}{50} = \frac{19}{25} = 0{,}76. \]
+\textbf{Vérification} : les élèves concernés sont $18 + 10 + 10 = 38$, d'où $\dfrac{38}{50}$. Cohérent.
+\textbf{3. Ni football ni musique.} L'événement \og ni $F$ ni $M$ \fg{} est le \textbf{contraire} de $F \cup M$. D'après la section précédente :
+\[ P(\text{ni } F \text{ ni } M) = 1 - P(F \cup M) = 1 - \frac{38}{50} = \frac{12}{50} = \frac{6}{25} = 0{,}24. \]
+On retrouve directement les 12 élèves sans activité du tableau.
+\end{exoresolu}
+
+\courssub{Utiliser la formule dans l'autre sens}
+
+La formule $P(A \cup B) = P(A) + P(B) - P(A \cap B)$ relie \textbf{quatre} quantités. Si l'on en connaît trois, on peut calculer la quatrième. En particulier, on peut retrouver la probabilité de l'intersection :
+\[ P(A \cap B) = P(A) + P(B) - P(A \cup B). \]
+
+\begin{exemplebox}[Retrouver l'intersection]
+Au marché de Mokolo, on interroge des clients au hasard. On sait que $60\,\%$ des clients achètent des légumes (événement $L$), $45\,\%$ achètent des fruits (événement $F$), et $80\,\%$ achètent des légumes \textbf{ou} des fruits (ou les deux). Quelle est la probabilité qu'un client achète les deux ?
+\[ P(L \cap F) = P(L) + P(F) - P(L \cup F) = 0{,}60 + 0{,}45 - 0{,}80 = 0{,}25. \]
+Un client sur quatre achète donc à la fois des légumes et des fruits.
+\end{exemplebox}
+
+\courssub{Méthode, pièges et lien avec l'événement contraire}
+
+\begin{methode}[Choisir la bonne formule]
+Face à un exercice demandant $P(A \cup B)$, suis toujours la même démarche :
+\begin{enumerate}
+\item \textbf{Poser la question clé} : \og $A$ et $B$ peuvent-ils se réaliser \textbf{en même temps} ? \fg
+\item \textbf{Si non} (événements incompatibles) : applique $P(A \cup B) = P(A) + P(B)$.
+\item \textbf{Si oui} : identifie l'intersection $A \cap B$, calcule sa probabilité, puis applique la formule générale $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.
+\item \textbf{Vérifier} le résultat : il doit être compris entre 0 et 1, et être supérieur ou égal à $\max\big(P(A), P(B)\big)$ puisque $A \cup B$ contient $A$ et contient $B$.
+\item En cas de doute, \textbf{dénombrer directement} les issues de $A \cup B$ (ou dresser un tableau d'effectifs) pour contrôler le calcul.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[L'erreur classique : additionner sans réfléchir]
+L'erreur la plus fréquente au Baccalauréat consiste à écrire systématiquement $P(A \cup B) = P(A) + P(B)$ \textbf{sans vérifier} si $A$ et $B$ sont incompatibles. Cette erreur peut produire des résultats absurdes : par exemple, si $P(A) = 0{,}7$ et $P(B) = 0{,}6$, l'addition naïve donne $1{,}3$, ce qui est \textbf{impossible} car une probabilité ne dépasse jamais 1. Un résultat supérieur à 1 est un signal d'alarme : tu as certainement oublié de retrancher $P(A \cap B)$. Autre piège de rédaction : ne jamais écrire \og les événements sont indépendants donc incompatibles \fg{} — ces deux notions sont différentes et la confusion est sanctionnée.
+\end{attention}
+
+\begin{aretenir}[Le trio à connaître par cœur]
+Pour deux événements $A$ et $B$ quelconques :
+\begin{itemize}
+\item \textbf{Réunion} : $P(A \cup B) = P(A) + P(B) - P(A \cap B)$ ;
+\item \textbf{Cas incompatible} : si $A \cap B = \emptyset$, alors $P(A \cup B) = P(A) + P(B)$ ;
+\item \textbf{Lien avec le contraire} : l'événement \og ni $A$ ni $B$ \fg{} est le contraire de $A \cup B$, donc
+\[ P(\text{ni } A \text{ ni } B) = 1 - P(A \cup B). \]
+\end{itemize}
+Ce dernier point est redoutablement efficace : dans de nombreux problèmes concrets (jeux, loteries, sondages), la question \og aucun des deux \fg{} se traite en passant par la réunion puis par l'événement contraire.
+\end{aretenir}
+
+\begin{savaistu}[Le principe d'inclusion-exclusion]
+La formule $\mathrm{Card}(A \cup B) = \mathrm{Card}(A) + \mathrm{Card}(B) - \mathrm{Card}(A \cap B)$ porte le nom de \emph{principe d'inclusion-exclusion}. Elle se généralise à trois événements ou plus, et elle est utilisée partout : en informatique pour dédupliquer des bases de données, en démographie pour éviter de compter deux fois les mêmes personnes lors d'un recensement (un enjeu réel pour les statistiques nationales du Cameroun !), et même par les opérateurs de téléphonie pour estimer le nombre de clients ayant au moins l'un de deux forfaits. Les plus grands problèmes de comptage du monde reposent sur cette idée toute simple : quand on additionne, on compte deux fois ce qui est commun.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+Dans un lycée de Yaoundé, on choisit au hasard un élève de Terminale. La probabilité qu'il soit inscrit au club informatique est $0{,}35$, celle qu'il soit inscrit au club théâtre est $0{,}25$, et celle qu'il soit inscrit aux deux clubs est $0{,}10$.
+\begin{enumerate}
+\item Les deux événements sont-ils incompatibles ? Justifier.
+\item Calculer la probabilité qu'il soit inscrit à au moins l'un des deux clubs.
+\item Calculer la probabilité qu'il ne soit inscrit à aucun des deux clubs.
+\item Calculer la probabilité qu'il soit inscrit au club informatique mais pas au club théâtre.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : clubs du lycée]
+Notons $I$ \og inscrit au club informatique \fg{} et $T$ \og inscrit au club théâtre \fg.
+\textbf{1.} $P(I \cap T) = 0{,}10 \neq 0$, donc les événements ne sont \textbf{pas} incompatibles : un élève peut être inscrit aux deux clubs.
+\textbf{2.} \og Au moins l'un des deux \fg{} est l'événement $I \cup T$ :
+\[ P(I \cup T) = P(I) + P(T) - P(I \cap T) = 0{,}35 + 0{,}25 - 0{,}10 = 0{,}50. \]
+\textbf{3.} \og Aucun des deux \fg{} est le contraire de $I \cup T$ :
+\[ P(\text{ni } I \text{ ni } T) = 1 - 0{,}50 = 0{,}50. \]
+\textbf{4.} L'événement \og informatique seul \fg{} est formé des issues de $I$ qui ne sont pas dans $T$ :
+\[ P(I \text{ seul}) = P(I) - P(I \cap T) = 0{,}35 - 0{,}10 = 0{,}25. \]
+\end{corrige}
+
+\coursec{Problèmes concrets : jeux, tirages et loteries}
+
+Dans les sections précédentes, tu as acquis les outils fondamentaux : définition de l'univers $\Omega$, identification des événements, calcul en situation d'équiprobabilité, utilisation de l'événement contraire ($P(\overline{A}) = 1 - P(A)$) et de la réunion ($P(A \cup B) = P(A) + P(B) - P(A \cap B)$). Au Baccalauréat, ces notions ne sont jamais posées de manière abstraite : elles s'habillent de situations concrètes — tombola du comité de développement, urne d'une kermesse, lancers de dés, enquête clients chez MTN ou Orange. Cette section t'apprend à \cle{résoudre} ces problèmes de bout en bout avec une méthode rigoureuse, celle qui rapporte tous les points.
+
+\courssub{La méthode générale de résolution en six étapes}
+
+Face à un énoncé, l'erreur fatale est de se précipiter sur les calculs. L'élève qui réussit \cle{modélise} d'abord : il traduit le texte en langage mathématique précis. Voici la démarche complète, validée par les jurys du Bac.
+
+\begin{methode}[Résoudre un problème de probabilités type Bac en 6 étapes]
+\begin{enumerate}
+\item \textbf{Lire} attentivement l'énoncé et identifier l'expérience aléatoire : que fait-on ? (tirer un ticket, lancer un dé, interroger une personne). Une fois ou plusieurs fois ? Avec ou sans remise ?
+\item \textbf{Modéliser} : définir l'univers $\Omega$ (ensemble des issues possibles), nommer les événements utiles par des lettres ($A$, $B$, \dots) et les rédiger en toutes lettres (ex. : « $G$ : le joueur gagne le gros lot »).
+\item \textbf{Vérifier l'équiprobabilité} : les issues de $\Omega$ sont-elles également probables ? (dé non truqué, tirage au sort effectif, pièce équilibrée). Si oui, on pourra utiliser $P(A) = \frac{\text{cas favorables}}{\text{cas possibles}}$.
+\item \textbf{Choisir la formule adaptée} :
+      \begin{itemize}
+      \item Cas simples : $P(A) = \frac{\text{card}(A)}{\text{card}(\Omega)}$.
+      \item Événement contraire : $P(\overline{A}) = 1 - P(A)$ (souvent plus simple pour « au moins un »).
+      \item Réunion : $P(A \cup B) = P(A) + P(B) - P(A \cap B)$ (simplifié en $P(A)+P(B)$ si $A$ et $B$ incompatibles).
+      \end{itemize}
+\item \textbf{Calculer} avec soin, simplifier les fractions, donner une valeur décimale si pertinent, et \textbf{vérifier} que $0 \le P \le 1$.
+\item \textbf{Conclure en français} par une phrase complète qui répond exactement à la question posée.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  node distance=0.5cm,
+  etape/.style={rectangle, rounded corners=3pt, draw=popblue, fill=popblueL, text width=0.92\linewidth, align=center, font=\small, inner sep=5pt},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, poporange}
+]
+\node[etape] (e1) {\textbf{Étape 1 : Lire} --- Identifier l'expérience aléatoire (une ou plusieurs fois, remise ou non)};
+\node[etape, below=of e1] (e2) {\textbf{Étape 2 : Modéliser} --- Définir $\Omega$, nommer et rédiger les événements ($A$, $B$, \dots)};
+\node[etape, below=of e2] (e3) {\textbf{Étape 3 : Vérifier} l'équiprobabilité des issues élémentaires};
+\node[etape, below=of e3] (e4) {\textbf{Étape 4 : Choisir la formule} --- Cas favorables/possibles, contraire, réunion (avec ou sans intersection)};
+\node[etape, below=of e4] (e5) {\textbf{Étape 5 : Calculer} et vérifier que $0 \le P \le 1$};
+\node[etape, below=of e5] (e6) {\textbf{Étape 6 : Conclure} par une phrase en français répondant à la question};
+\draw[fleche] (e1) -- (e2);
+\draw[fleche] (e2) -- (e3);
+\draw[fleche] (e3) -- (e4);
+\draw[fleche] (e4) -- (e5);
+\draw[fleche] (e5) -- (e6);
+\end{tikzpicture}
+\legende{Organigramme de la démarche de résolution : la modélisation (étapes 1--3) précède tout calcul.}
+\end{popfigure}
+
+\begin{attention}[Conclure sans rédiger : l'erreur qui coûte cher au Bac]
+Beaucoup d'élèves écrivent seulement « $P = \frac{5}{500} = 0{,}01$ » et passent à la suite. \textbf{Insuffisant !} Le correcteur attend trois éléments pour la totalité des points :
+\begin{itemize}
+\item Les \cle{événements nommés et rédigés} : « Soit $G$ l'événement : le joueur gagne le gros lot. »
+\item La \cle{formule citée et justifiée} : « Les 500 tickets étant équiprobables, $P(G) = \frac{\text{cas favorables}}{\text{cas possibles}}$. »
+\item L'\cle{interprétation} du résultat : « La probabilité de gagner est $0{,}01$, soit $1\,\%$. »
+\end{itemize}
+Une probabilité sans phrase de conclusion, c'est souvent la moitié des points perdue.
+\end{attention}
+
+\courssub{Tombolas et loteries : gagner avec un ou plusieurs tickets}
+
+La tombola est le problème archétypal : $N$ tickets vendus, $G$ tickets gagnants, un tirage au sort. Si un joueur achète $k$ tickets, il possède $k$ « cas favorables » parmi les $N$ « cas possibles » \textbf{seulement s'il y a un unique ticket gagnant} ($G=1$). S'il y a plusieurs lots, les événements « ticket $i$ est gagnant » ne sont pas incompatibles (plusieurs de ses tickets peuvent gagner), et l'addition simple $k \times \frac{G}{N}$ donne l'\textbf{espérance mathématique} du nombre de lots gagnés, \textbf{pas} la probabilité d'en gagner au moins un. Pour « au moins un », on utilise l'événement contraire.
+
+\begin{exemplebox}[La tombola du quartier (un seul lot)]
+Le comité de développement de ton quartier à Yaoundé organise une tombola de $500$ tickets, avec \textbf{un seul ticket gagnant} (une moto). Chaque ticket coûte $200$ FCFA.
+\begin{itemize}
+\item Avec \textbf{un seul ticket} : $P(G) = \dfrac{1}{500} = 0{,}002 = 0{,}2\,\%$.
+\item Avec \textbf{cinq tickets} : les 5 tickets sont 5 cas favorables distincts (un seul lot $\Rightarrow$ incompatibilité), $P(G) = \dfrac{5}{500} = \dfrac{1}{100} = 0{,}01 = 1\,\%$.
+\item Probabilité de \textbf{ne pas gagner} avec un ticket (événement contraire) : $P(\overline{G}) = 1 - \dfrac{1}{500} = \dfrac{499}{500} = 0{,}998 = 99{,}8\,\%$.
+\end{itemize}
+Acheter 5 tickets multiplie la chance par 5, mais elle reste minime : on perd encore à $99\,\%$ !
+\end{exemplebox}
+
+\begin{exoresolu}[Tombola à plusieurs lots : le piège de l'addition]
+Pour financer la salle des fêtes de Bafoussam, une association vend $800$ tickets. Il y a $3$ tickets « gros lot » et $12$ tickets « lot de consolation » (total $15$ gagnants). Amina achète $4$ tickets.
+\begin{enumerate}
+\item Quelle est la probabilité qu'Amina gagne \textbf{au moins un} gros lot ?
+\item Quelle est la probabilité qu'elle gagne \textbf{au moins un} lot (gros ou consolation) ?
+\end{enumerate}
+\tcblower
+\textbf{Étape 1--2 (Modélisation).} L'expérience : on tire les tickets gagnants parmi les $800$ (ou équivalent : les $4$ tickets d'Amina forment un échantillon de $4$ parmi $800$). L'univers $\Omega$ est l'ensemble des $\binom{800}{4}$ groupes de $4$ tickets possibles pour Amina. Toutes ces combinaisons sont équiprobables.
+Soit $G$ = « Amina gagne au moins un gros lot » et $L$ = « Amina gagne au moins un lot (gros ou consolation) ».
+
+\textbf{Étape 3.} Tirage au sort $\Rightarrow$ équiprobabilité des $\binom{800}{4}$ combinaisons.
+
+\textbf{Étape 4--5 (Calculs par l'événement contraire).}
+\begin{itemize}
+\item \textbf{Question 1 (Gros lot).} Il y a $3$ gros lots et $797$ tickets non-gros-lot.
+      $P(\text{aucun gros lot}) = \dfrac{\text{nbre de choix de 4 tickets parmi les 797 non-gagnants}}{\text{nbre total de choix de 4 tickets}} = \dfrac{\binom{797}{4}}{\binom{800}{4}}$.
+      \[
+      P(G) = 1 - \frac{\binom{797}{4}}{\binom{800}{4}}
+           = 1 - \frac{797 \times 796 \times 795 \times 794}{800 \times 799 \times 798 \times 797}
+           = 1 - \frac{796 \times 795 \times 794}{800 \times 799 \times 798}
+           \approx 1 - 0{,}9851 = 0{,}0149.
+      \]
+      \textit{Remarque :} L'addition naïve $4 \times \frac{3}{800} = 0{,}015$ donne une valeur très proche (c'est l'espérance du nombre de gros lots), mais ce n'est \textbf{pas} la probabilité exacte car deux tickets d'Amina pourraient gagner (les événements ne sont pas incompatibles).
+\item \textbf{Question 2 (Au moins un lot).} Il y a $15$ tickets gagnants au total et $785$ perdants.
+      $P(\text{aucun lot}) = \dfrac{\binom{785}{4}}{\binom{800}{4}} = \dfrac{785 \times 784 \times 783 \times 782}{800 \times 799 \times 798 \times 797} \approx 0{,}927$.
+      \[
+      P(L) = 1 - \frac{\binom{785}{4}}{\binom{800}{4}} \approx 1 - 0{,}927 = 0{,}073.
+      \]
+      \textit{Remarque :} $4 \times \frac{15}{800} = 0{,}075$ est à nouveau l'espérance, pas la probabilité exacte.
+\end{itemize}
+
+\textbf{Étape 6 (Conclusion).} La probabilité qu'Amina gagne au moins un gros lot est d'environ $0{,}0149$ ($1{,}49\,\%$). Celle qu'elle gagne au moins un lot (quel qu'il soit) est d'environ $0{,}073$ ($7{,}3\,\%$). Dans les deux cas, elle a plus de $92\,\%$ de chances de ne rien gagner.
+\end{exoresolu}
+
+\begin{attention}[Le piège « plusieurs tickets, plusieurs lots »]
+Si un joueur achète $k$ tickets et qu'il y a $G \ge 2$ tickets gagnants au total, les événements « ticket $i$ est gagnant » ne sont \textbf{pas incompatibles} (plusieurs de ses tickets peuvent gagner). \textbf{On ne peut pas additionner} $k \times \frac{G}{N}$ pour obtenir $P(\text{au moins un gain})$.
+\begin{itemize}
+\item $k \times \frac{G}{N}$ est l'\textbf{espérance} (nombre moyen de lots gagnés).
+\item La probabilité exacte « au moins un » se calcule par l'événement contraire : $1 - \frac{\binom{N-G}{k}}{\binom{N}{k}}$ (ou produit séquentiel sans remise).
+\end{itemize}
+Au Bac, si $N$ est grand et $k$ petit, l'addition est parfois acceptée comme \textbf{estimation}, mais la méthode rigoureuse (événement contraire) est toujours attendue pour la réponse exacte.
+\end{attention}
+
+\courssub{Urnes à plusieurs couleurs : combiner réunion et événement contraire}
+
+Les problèmes d'urnes mobilisent souvent \textbf{les deux formules} : la réunion pour « au moins une couleur parmi plusieurs », et l'événement contraire pour éviter les calculs fastidieux.
+
+\begin{exemplebox}[L'urne de la kermesse]
+Une urne contient $10$ boules indiscernables au toucher : $4$ rouges, $3$ vertes et $3$ blanches. On tire une boule au hasard. Soit $R$ : « la boule est rouge » et $V$ : « la boule est verte ».
+\begin{itemize}
+\item $P(R) = \dfrac{4}{10} = 0{,}4$ ; $P(V) = \dfrac{3}{10} = 0{,}3$.
+\item $R$ et $V$ sont \cle{incompatibles} (une boule ne peut être rouge et verte) $\Rightarrow P(R \cap V) = 0$.
+      \[ P(R \cup V) = P(R) + P(V) = \frac{4}{10} + \frac{3}{10} = \frac{7}{10} = 0{,}7. \]
+\item La probabilité que la boule soit blanche s'obtient par l'événement contraire de $R \cup V$ :
+      \[ P(\text{blanche}) = P(\overline{R \cup V}) = 1 - P(R \cup V) = 1 - \frac{7}{10} = \frac{3}{10}. \]
+      On retrouve le calcul direct $\frac{3}{10}$ : la cohérence est vérifiée.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Incompatibilité : la condition à ne jamais oublier]
+La formule simplifiée $P(A \cup B) = P(A) + P(B)$ n'est valable \textbf{que si $A$ et $B$ sont incompatibles} ($A \cap B = \varnothing$). Si deux événements peuvent se réaliser ensemble (ex. : « tirer une carte rouge » et « tirer un roi » dans un jeu de 32 cartes : le roi de cœur et le roi de carreau sont les deux), il faut \textbf{retrancher l'intersection} :
+\[ P(A \cup B) = P(A) + P(B) - P(A \cap B). \]
+Oublier $-P(A \cap B)$, c'est compter deux fois les issues communes : erreur majeure, points perdus.
+\end{attention}
+
+\courssub{Lancers répétés : tableaux et arbres de dénombrement}
+
+Quand on répète l'expérience (deux dés, deux pièces, tirage avec remise), l'univers grandit : $6 \times 6 = 36$ issues pour deux dés, $2 \times 2 = 4$ pour deux pièces. Pour ne rien oublier, on utilise un \cle{tableau à double entrée} (dés) ou un \cle{arbre de probabilités} (pièces, tirages avec remise).
+
+\begin{exemplebox}[Deux lancers d'une pièce équilibrée]
+On lance deux fois une pièce. L'arbre ci-dessous donne l'univers : $\Omega = \{PP ; PF ; FP ; FF\}$, $4$ issues équiprobables (probabilité $\frac{1}{4}$ chacune).
+La probabilité d'obtenir \textbf{au moins une fois Face} se calcule élégamment par l'événement contraire « deux Piles » :
+\[ P(\text{au moins un Face}) = 1 - P(PP) = 1 - \frac{1}{4} = \frac{3}{4}. \]
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  grow=right, level distance=2.8cm,
+  level 1/.style={sibling distance=2.5cm},
+  level 2/.style={sibling distance=1.2cm},
+  every node/.style={font=\small},
+  branche/.style={draw=popblue, thick},
+  feuille/.style={rectangle, rounded corners=2pt, draw=poporange, fill=poporangeL, inner sep=3pt}
+]
+\node{Départ}
+  child { node {F}
+    child { node[feuille] {FF} edge from parent[branche] }
+    child { node[feuille] {FP} edge from parent[branche] }
+    edge from parent[branche]
+  }
+  child { node {P}
+    child { node[feuille] {PF} edge from parent[branche] }
+    child { node[feuille] {PP} edge from parent[branche] }
+    edge from parent[branche]
+  };
+\end{tikzpicture}
+\legende{Arbre de dénombrement de deux lancers de pièce : $4$ issues équiprobables.}
+\end{popfigure}
+
+Pour deux dés, le tableau à double entrée est irremplaçable. Chaque case est un couple $(i ; j)$ ($i$ = résultat dé 1, $j$ = résultat dé 2). On compte les cases favorables.
+\textbf{Exemple :} Somme égale à $7$. Les couples favorables : $(1;6), (2;5), (3;4), (4;3), (5;2), (6;1)$ soit $6$ cases sur $36$.
+\[ P(\text{somme} = 7) = \frac{6}{36} = \frac{1}{6}. \]
+
+\begin{exemplebox}[Deux dés : somme paire ou multiple de 3]
+On lance deux dés. Soit $A$ : « la somme est paire », $B$ : « la somme est un multiple de 3 ».
+\begin{itemize}
+\item $P(A) = \frac{18}{36} = \frac{1}{2}$ (18 sommes paires sur 36).
+\item $P(B) = \frac{12}{36} = \frac{1}{3}$ (sommes 3, 6, 9, 12 : $2+4+4+2 = 12$ cases).
+\item $A \cap B$ : somme paire \textbf{et} multiple de 3 $\Leftrightarrow$ multiple de 6 (sommes 6 et 12). Cases : $(1;5),(2;4),(3;3),(4;2),(5;1)$ pour 6 (5 cases) + $(6;6)$ pour 12 (1 case) = 6 cases. $P(A \cap B) = \frac{6}{36} = \frac{1}{6}$.
+\item Réunion : $P(A \cup B) = \frac{1}{2} + \frac{1}{3} - \frac{1}{6} = \frac{3+2-1}{6} = \frac{4}{6} = \frac{2}{3}$.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Des données statistiques aux probabilités : le lien fréquence-probabilité}
+
+Dans la vie réelle, on ne connaît pas toujours la composition de l'urne. On utilise alors les \cle{fréquences observées} sur un grand échantillon comme probabilités : si une enquête porte sur une population, la fréquence d'une caractéristique estime la probabilité qu'un individu choisi au hasard la possède.
+
+\begin{exoresolu}[Enquête dans une agence de téléphonie]
+Une agence à Douala a enregistré les opérateurs de ses $2\,000$ derniers clients : $1\,150$ chez M, $650$ chez O, $200$ chez un autre. On choisit un client au hasard dans ce fichier.
+\begin{enumerate}
+\item Probabilité qu'il soit client de l'opérateur M ?
+\item Probabilité qu'il ne soit pas client de M ?
+\end{enumerate}
+\tcblower
+\textbf{Modélisation.} Univers $\Omega$ = ensemble des $2\,000$ clients (choix au hasard $\Rightarrow$ équiprobabilité). Soit $M$ : « le client est chez M ».
+
+\textbf{Calculs.} Par équiprobabilité, la probabilité vaut la fréquence observée :
+\[ P(M) = \frac{1\,150}{2\,000} = \frac{23}{40} = 0{,}575. \]
+Par l'événement contraire :
+\[ P(\overline{M}) = 1 - P(M) = 1 - 0{,}575 = 0{,}425. \]
+
+\textbf{Conclusion.} La probabilité que le client choisi soit chez M est $0{,}575$ ($57{,}5\,\%$), et celle qu'il ne le soit pas est $0{,}425$ ($42{,}5\,\%$).
+\end{exoresolu}
+
+\begin{aretenir}[Fréquence et probabilité]
+Quand on choisit un individu \textbf{au hasard} dans une population dont on connaît les effectifs, la probabilité qu'il possède une caractéristique est égale à la \cle{fréquence} de cette caractéristique :
+\[ P = \frac{\text{effectif de la caractéristique}}{\text{effectif total}}. \]
+C'est le pont fondamental entre les statistiques (données observées) et les probabilités (modélisation).
+\end{aretenir}
+
+\courssub{Comparaison de jeux : quel jeu est le plus favorable ?}
+
+Un classique du Bac : comparer deux jeux de hasard pour déterminer lequel offre la \textbf{meilleure chance de gain}. Démarche : calculer $P(\text{gain})$ pour chaque jeu, puis comparer les valeurs (décimales ou fractions au même dénominateur).
+
+\begin{exemplebox}[Tombola ou urne : que choisir à la fête de la jeunesse ?]
+Deux jeux coûtent $100$ FCFA la partie.
+\begin{itemize}
+\item \textbf{Jeu 1 (Tombola)} : $250$ tickets, $5$ gagnants. $P_1 = \dfrac{5}{250} = \dfrac{1}{50} = 0{,}02$.
+\item \textbf{Jeu 2 (Urnes)} : $20$ boules dont $3$ gagnantes, on en tire une. $P_2 = \dfrac{3}{20} = 0{,}15$.
+\end{itemize}
+Comparaison : $0{,}15 > 0{,}02$, donc $P_2 > P_1$. Le jeu de l'urne est \textbf{$7{,}5$ fois plus favorable} ($0{,}15 / 0{,}02 = 7{,}5$). À mise égale, mieux vaut choisir l'urne !
+\end{exemplebox}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Jeu 1 : Tombola} & \textbf{Jeu 2 : Urne} \\
+\hline
+Mise par partie & $100$ FCFA & $100$ FCFA \\
+\hline
+Cas possibles & $250$ tickets & $20$ boules \\
+\hline
+Cas favorables & $5$ tickets gagnants & $3$ boules gagnantes \\
+\hline
+Probabilité de gain & $\dfrac{5}{250} = 0{,}02$ & $\dfrac{3}{20} = 0{,}15$ \\
+\hline
+Probabilité de perdre & $0{,}98$ & $0{,}85$ \\
+\hline
+\rowcolor{popgreenL} \textbf{Conclusion} & \multicolumn{2}{l|}{Le Jeu 2 (urne) est le plus favorable : $0{,}15 > 0{,}02$.} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Comparer des fractions : justifier, ne pas deviner]
+Pour comparer $\dfrac{1}{50}$ et $\dfrac{3}{20}$, n'écris jamais « $3 > 1$ donc le jeu 2 gagne » sans justification. Il faut comparer les \textbf{valeurs} :
+\begin{itemize}
+\item Soit en décimal : $0{,}02$ et $0{,}15$ (le plus sûr).
+\item Soit au même dénominateur : $\dfrac{2}{100}$ et $\dfrac{15}{100}$.
+\end{itemize}
+Une comparaison non justifiée est une faute de raisonnement sanctionnée.
+\end{attention}
+
+\courssub{Complément utile au Bac : l'idée d'espérance de gain}
+
+Ce point dépasse légèrement le programme officiel (qui s'arrête au calcul de probabilités), mais il est \textbf{très fréquent dans les sujets ouverts} de comparaison de jeux d'argent et parfaitement accessible avec tes connaissances.
+
+L'\cle{espérance de gain} (ou gain moyen) répond à : « Si je joue un très grand nombre de fois, combien puis-je espérer gagner \emph{en moyenne} par partie ? » On multiplie chaque gain net possible par sa probabilité, et on additionne.
+
+\begin{exemplebox}[Espérance d'un petit jeu]
+Un jeu coûte $100$ FCFA. Urne de $10$ boules : $1$ boule fait gagner $500$ FCFA (gain net $+400$), $9$ boules ne rapportent rien (gain net $-100$).
+\[
+\text{Espérance} = \frac{1}{10} \times 400 + \frac{9}{10} \times (-100) = 40 - 90 = -50 \text{ FCFA}.
+\]
+En moyenne, le joueur \textbf{perd $50$ FCFA par partie}. Le jeu est \textbf{défavorable au joueur} (avantage à l'organisateur). C'est le principe de toutes les loteries commerciales !
+\end{exemplebox}
+
+\begin{savaistu}[Probabilités et assurances : le prix du risque]
+Les compagnies d'assurance sont de grandes consommatrices de probabilités ! Pour fixer la prime d'une assurance auto, elles estiment la probabilité d'accident selon l'âge, la ville (Douala vs zone rurale), le type de véhicule. \textbf{Plus le risque est probable, plus la prime est élevée.} C'est pourquoi un jeune conducteur à Douala paie souvent plus cher : les statistiques (fréquences) montrent une sinistralité plus forte dans sa catégorie. Les probabilités décident littéralement du prix que tu paieras demain.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer : La loterie de la coopérative]
+Une coopérative agricole de l'Ouest organise une loterie de $1\,000$ tickets à $500$ FCFA : $1$ ticket gagne une moto, $9$ tickets gagnent un sac de $50$ kg de riz. Ngong achète $2$ tickets.
+\begin{enumerate}
+\item Décris l'univers de l'expérience et vérifie l'équiprobabilité.
+\item Calcule la probabilité que Ngong gagne la moto.
+\item Calcule la probabilité qu'il gagne un lot (moto \textbf{ou} riz).
+\item Calcule la probabilité qu'il ne gagne rien.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : La loterie de la coopérative]
+\begin{enumerate}
+\item \textbf{Univers et équiprobabilité.} L'expérience consiste à tirer les tickets gagnants parmi les $1\,000$ vendus. Les $2$ tickets de Ngong forment un échantillon de $2$ parmi $1\,000$. L'univers $\Omega$ est l'ensemble des $\binom{1000}{2}$ paires de tickets possibles. Le tirage étant au hasard, toutes ces paires sont équiprobables.
+      Soit $M$ : « Ngong gagne la moto » et $R$ : « Ngong gagne au moins un sac de riz ».
+\item \textbf{Probabilité de gagner la moto.} Il n'y a qu'\textbf{un seul} ticket « moto ». Les événements « ticket 1 est la moto » et « ticket 2 est la moto » sont \textbf{incompatibles} (un seul ticket moto existe). On peut additionner :
+      \[ P(M) = \frac{1}{1000} + \frac{1}{1000} = \frac{2}{1000} = 0{,}002 \quad (0{,}2\,\%). \]
+      \textit{(Équivalent à $1 - \frac{999}{1000} \times \frac{998}{999} = \frac{2}{1000}$).}
+\item \textbf{Probabilité de gagner un lot (moto ou riz).} Il y a $1 + 9 = 10$ tickets gagnants au total. Les événements « ticket 1 gagne » et « ticket 2 gagne » ne sont \textbf{pas incompatibles} (les deux tickets pourraient gagner, ex. un riz chacun). \textbf{On ne doit pas additionner} $2 \times \frac{10}{1000}$.
+      On utilise l'événement contraire « aucun des deux tickets n'est gagnant » (les deux sont parmi les $990$ perdants) :
+      \[
+      P(\text{aucun gain}) = \frac{990}{1000} \times \frac{989}{999} = \frac{990 \times 989}{1000 \times 999} \approx 0{,}98009.
+      \]
+      \[
+      P(\text{au moins un lot}) = 1 - P(\text{aucun gain}) \approx 1 - 0{,}98009 = 0{,}01991 \quad (\approx 1{,}99\,\%).
+      \]
+      \textit{Remarque :} L'addition naïve $2 \times \frac{10}{1000} = 0{,}02$ donne l'espérance du nombre de lots (très proche car $N$ grand), mais la valeur exacte est $0{,}01991$.
+\item \textbf{Probabilité de ne rien gagner.} C'est l'événement contraire de la question 3 :
+      \[ P(\text{rien}) = 1 - 0{,}01991 = 0{,}98009 \quad (98{,}0\,\%). \]
+      Ngong a $98\,\%$ de chances de ne rien gagner.
+\end{enumerate}
+\end{corrige}
+
+Tu sais désormais transformer n'importe quelle situation concrète — tombola, urne, lancers répétés, enquête statistique — en un problème de probabilités rigoureusement résolu. Retiens la démarche en six étapes : \textbf{Lire, Modéliser, Vérifier l'équiprobabilité, Choisir la formule, Calculer, Conclure}. C'est elle qui fera la différence le jour du Bac !
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu seras capable de mobiliser \emph{simultanément} tous les savoir-faire de la leçon pour analyser une situation réelle de jeux de hasard et prendre une décision argumentée. Concrètement, tu devras :
+
+\begin{itemize}
+\item décrire l'\cle{univers} de plusieurs expériences aléatoires concrètes ;
+\item calculer des probabilités dans des situations d'\cle{équiprobabilité} (cas favorables sur cas possibles) ;
+\item utiliser l'\cle{événement contraire} pour calculer la probabilité de perdre ;
+\item calculer la probabilité de la \cle{réunion} de deux événements, en distinguant événements incompatibles et non incompatibles ;
+\item comparer plusieurs jeux, rédiger un avis argumenté et expliquer pourquoi l'organisateur d'un jeu de hasard reste gagnant à long terme.
+\end{itemize}
+
+Cette activité se déroule en groupes de 4 élèves, avec restitution orale et correction collective au tableau. Durée prévue : 1 h 30.
+
+\courssub{Situation}
+
+\textbf{La tombola du quartier : jeu équitable ou arnaque ?}
+
+C'est la grande fête annuelle du quartier Bonabéri, à Douala. Pour financer la réfection du terrain de football du quartier, le comité d'organisation, présidé par M. Etoundi, a installé trois stands de jeux de hasard. Ton groupe de camarades de Terminale, intrigué, décide d'étudier mathématiquement chaque jeu avant de dépenser le moindre franc.
+
+\textbf{Jeu 1 : la tombola du quartier.} Le comité vend exactement $200$ tickets numérotés de $1$ à $200$, au prix de $100$~FCFA l'unité. Au moment du tirage, un ticket est tiré au hasard dans une urne contenant les $200$ numéros. Il y a $3$ numéros gagnants : le numéro tiré s'il appartient à la liste $\{7\,;\,77\,;\,177\}$ (autrement dit, $3$ tickets parmi les $200$ sont gagnants). Le gain est un sac de riz de $25$~kg.
+
+\textbf{Jeu 2 : le sac de boules de Maman Ngo Bell.} Un sac opaque contient $20$ boules indiscernables au toucher : $5$ boules blanches et $15$ boules noires. Pour $50$~FCFA, le joueur tire une boule au hasard. S'il tire une boule blanche, il gagne une boisson ; sinon, il perd sa mise.
+
+\textbf{Jeu 3 : les deux dés de Papa Kamdem.} Pour $100$~FCFA, le joueur lance simultanément deux dés cubiques équilibrés, dont les faces sont numérotées de $1$ à $6$. Il gagne un téléphone reconditionné si la somme des deux faces obtenues est égale à $7$ ou à $11$.
+
+Avant de jouer, ton groupe veut répondre à la question que tout le quartier se pose : \emph{quel jeu est le plus favorable au joueur, et l'organisateur risque-t-il vraiment de perdre de l'argent ?}
+
+\courssub{Consignes}
+
+Travail en groupes de 4. Chaque groupe rédige un rapport écrit, puis un rapporteur présente les résultats à la classe.
+
+\begin{enumerate}
+\item \textbf{Univers.} Pour chacun des trois jeux, décrire précisément l'univers $\Omega$ de l'expérience aléatoire et donner son cardinal. Pour le jeu 3, on présentera l'univers sous forme d'un tableau à double entrée.
+\item \textbf{Probabilités de gagner.} Justifier que chaque jeu relève de l'équiprobabilité, puis calculer la probabilité de gagner à chacun des trois jeux. On donnera les résultats sous forme de fraction irréductible, puis de valeur approchée en pourcentage à $0,1\,\%$ près.
+\item \textbf{Probabilités de perdre.} Pour chaque jeu, définir par une phrase l'événement contraire de « gagner » et calculer sa probabilité de deux façons : directement (dénombrement) et à l'aide de la formule de l'événement contraire. Vérifier que les deux méthodes donnent le même résultat.
+\item \textbf{Réunion (jeu 3 uniquement).} On considère les événements $A$ : « la somme des deux dés est paire » et $B$ : « la somme des deux dés est supérieure ou égale à $8$ ». Calculer $P(A)$, $P(B)$, $P(A\cap B)$, puis $P(A\cup B)$. Les événements $A$ et $B$ sont-ils incompatibles ? Justifier.
+\item \textbf{Comparaison et avis argumenté.} Classer les trois jeux du plus favorable au moins favorable pour le joueur. Rédiger un court texte (8 à 12 lignes) désignant le jeu le plus favorable et expliquant, à l'aide des probabilités calculées, pourquoi le comité d'organisation est quand même quasiment certain de financer son terrain de football.
+\item \textbf{Pour aller plus loin.} Au jeu 1, combien de tickets un joueur devrait-il acheter pour que sa probabilité de gagner dépasse $10\,\%$ ? Combien aurait-il alors dépensé ?
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item \textbf{Univers} : ensemble $\Omega$ de toutes les issues possibles de l'expérience aléatoire ; un événement est une partie de $\Omega$.
+\item \textbf{Équiprobabilité} : si toutes les issues ont la même chance d'apparaître, alors pour tout événement $E$ :
+\[ P(E)=\dfrac{\text{nombre de cas favorables}}{\text{nombre de cas possibles}}=\dfrac{\mathrm{Card}(E)}{\mathrm{Card}(\Omega)}. \]
+\item \textbf{Événement contraire} : $P(\overline{E})=1-P(E)$.
+\item \textbf{Réunion} : pour deux événements quelconques $A$ et $B$ :
+\[ P(A\cup B)=P(A)+P(B)-P(A\cap B). \]
+Si $A$ et $B$ sont incompatibles ($A\cap B=\varnothing$), alors $P(A\cup B)=P(A)+P(B)$.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges à éviter]
+\begin{itemize}
+\item Au jeu 3, les issues sont les \textbf{couples} $(a\,;\,b)$ : il y a $36$ issues équiprobables, et non $11$ sommes équiprobables. La somme $7$ est plus probable que la somme $2$ !
+\item Ne jamais additionner $P(A)$ et $P(B)$ sans vérifier si $A$ et $B$ sont incompatibles : on compterait deux fois les issues de $A\cap B$.
+\item Une probabilité est toujours comprise entre $0$ et $1$ : un résultat supérieur à $1$ signale forcément une erreur.
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[La tombola du quartier : corrigé complet]
+\textbf{Énoncé.} Reprendre les trois jeux de la fête de Bonabéri et répondre aux six consignes.
+\tcblower
+\textbf{1. Description des univers.}
+
+\emph{Jeu 1.} On tire un ticket parmi $200$ : $\Omega_1=\{1\,;\,2\,;\,\ldots\,;\,200\}$, donc $\mathrm{Card}(\Omega_1)=200$.
+
+\emph{Jeu 2.} On tire une boule parmi $20$ boules distinguables (on peut imaginer les boules numérotées) : $\mathrm{Card}(\Omega_2)=20$.
+
+\emph{Jeu 3.} On lance deux dés ; chaque issue est un couple $(a\,;\,b)$ avec $a$ et $b$ dans $\{1\,;\,\ldots\,;\,6\}$ :
+\[ \Omega_3=\{(a\,;\,b)\ ;\ 1\le a\le 6,\ 1\le b\le 6\},\qquad \mathrm{Card}(\Omega_3)=6\times 6=36. \]
+On visualise ces $36$ issues dans un tableau à double entrée donnant les sommes :
+
+\begin{center}
+\begin{tabular}{|c|cccccc|}
+\hline
+\rowcolor{popblueL} \textbf{Dé 1 $\backslash$ Dé 2} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} \\
+\hline
+\textbf{1} & 2 & 3 & 4 & 5 & 6 & \cellcolor{popgreenL}7 \\
+\textbf{2} & 3 & 4 & 5 & 6 & \cellcolor{popgreenL}7 & 8 \\
+\textbf{3} & 4 & 5 & 6 & \cellcolor{popgreenL}7 & 8 & 9 \\
+\textbf{4} & 5 & 6 & \cellcolor{popgreenL}7 & 8 & 9 & 10 \\
+\textbf{5} & 6 & \cellcolor{popgreenL}7 & 8 & 9 & 10 & \cellcolor{popgreenL}11 \\
+\textbf{6} & \cellcolor{popgreenL}7 & 8 & 9 & 10 & \cellcolor{popgreenL}11 & 12 \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{2. Probabilités de gagner.}
+
+Dans les trois jeux, les issues sont équiprobables (tickets mélangés, boules indiscernables au toucher, dés équilibrés). On applique donc la formule des cas favorables sur cas possibles.
+
+\emph{Jeu 1.} Soit $G_1$ : « gagner à la tombola ». Il y a $3$ tickets gagnants sur $200$ :
+\[ P(G_1)=\dfrac{3}{200}=\num{0,015} \quad\text{soit } \num{1,5}\,\%. \]
+
+\emph{Jeu 2.} Soit $G_2$ : « tirer une boule blanche ». Il y a $5$ boules blanches sur $20$ :
+\[ P(G_2)=\dfrac{5}{20}=\dfrac{1}{4}=\num{0,25} \quad\text{soit } \num{25}\,\%. \]
+
+\emph{Jeu 3.} Soit $G_3$ : « obtenir une somme de $7$ ou $11$ ». Les événements $S_7$ : « somme égale à $7$ » et $S_{11}$ : « somme égale à $11$ » sont \textbf{incompatibles} (la somme ne peut valoir à la fois $7$ et $11$). D'après le tableau : $S_7=\{(1;6),(2;5),(3;4),(4;3),(5;2),(6;1)\}$, soit $6$ issues, et $S_{11}=\{(5;6),(6;5)\}$, soit $2$ issues. Donc :
+\[ P(G_3)=P(S_7\cup S_{11})=P(S_7)+P(S_{11})=\dfrac{6}{36}+\dfrac{2}{36}=\dfrac{8}{36}=\dfrac{2}{9}\approx \num{0,222} \quad\text{soit environ } \num{22,2}\,\%. \]
+
+\textbf{3. Probabilités de perdre.}
+
+Perdre est l'événement contraire de gagner : $P(\overline{G})=1-P(G)$.
+
+\emph{Jeu 1.} $\overline{G_1}$ : « le ticket tiré n'est pas gagnant ».
+\[ P(\overline{G_1})=1-\dfrac{3}{200}=\dfrac{197}{200}=\num{0,985}. \]
+Vérification directe : $197$ tickets perdants sur $200$, d'où $\frac{197}{200}$. \checkmark
+
+\emph{Jeu 2.} $\overline{G_2}$ : « tirer une boule noire ».
+\[ P(\overline{G_2})=1-\dfrac{1}{4}=\dfrac{3}{4}=\num{0,75}. \]
+Vérification directe : $15$ boules noires sur $20$, d'où $\frac{15}{20}=\frac{3}{4}$. \checkmark
+
+\emph{Jeu 3.} $\overline{G_3}$ : « la somme n'est ni $7$ ni $11$ ».
+\[ P(\overline{G_3})=1-\dfrac{2}{9}=\dfrac{7}{9}\approx \num{0,778}. \]
+Vérification directe : $36-8=28$ issues perdantes sur $36$, d'où $\frac{28}{36}=\frac{7}{9}$. \checkmark
+
+\textbf{4. Réunion d'événements (jeu 3).}
+
+$A$ : « somme paire » ; $B$ : « somme supérieure ou égale à $8$ ».
+
+\emph{Calcul de $P(A)$.} Dans le tableau, les sommes paires ($2,4,6,8,10,12$) occupent $18$ cases sur $36$ :
+\[ P(A)=\dfrac{18}{36}=\dfrac{1}{2}. \]
+
+\emph{Calcul de $P(B)$.} Les sommes $\ge 8$ sont : $8$ ($5$ issues), $9$ ($4$ issues), $10$ ($3$ issues), $11$ ($2$ issues), $12$ ($1$ issue), soit $5+4+3+2+1=15$ issues :
+\[ P(B)=\dfrac{15}{36}=\dfrac{5}{12}. \]
+
+\emph{Calcul de $P(A\cap B)$.} $A\cap B$ : « somme paire \textbf{et} $\ge 8$ », c'est-à-dire somme égale à $8$, $10$ ou $12$ : $5+3+1=9$ issues :
+\[ P(A\cap B)=\dfrac{9}{36}=\dfrac{1}{4}. \]
+
+\emph{Calcul de $P(A\cup B)$.} Les événements ne sont \textbf{pas} incompatibles (par exemple $(4\,;\,4)$ donne une somme de $8$, paire et $\ge 8$). On applique la formule générale :
+\[ P(A\cup B)=P(A)+P(B)-P(A\cap B)=\dfrac{18}{36}+\dfrac{15}{36}-\dfrac{9}{36}=\dfrac{24}{36}=\dfrac{2}{3}\approx \num{0,667}. \]
+Vérification directe : le tableau confirme $24$ cases favorables sur $36$. \checkmark
+
+\textbf{5. Comparaison et avis argumenté.}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\rowcolor{popblueL} \textbf{Jeu} & \textbf{Mise} & \textbf{$P(\text{gagner})$} & \textbf{$P(\text{perdre})$} \\
+\hline
+1. Tombola & $100$ FCFA & $\frac{3}{200}=\num{1,5}\,\%$ & $\num{98,5}\,\%$ \\
+\hline
+2. Sac de boules & $50$ FCFA & $\frac{1}{4}=\num{25}\,\%$ & $\num{75}\,\%$ \\
+\hline
+3. Deux dés & $100$ FCFA & $\frac{2}{9}\approx \num{22,2}\,\%$ & $\num{77,8}\,\%$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\emph{Avis rédigé.} Le jeu le plus favorable au joueur est le \textbf{jeu 2 (sac de boules)} : avec une chance sur quatre de gagner, c'est celui où la probabilité de gain est la plus élevée, et de surcroît le moins cher. Le jeu 3 arrive juste derrière ($\num{22,2}\,\%$), tandis que la tombola est de très loin la moins favorable ($\num{1,5}\,\%$). Pourtant, l'organisateur reste gagnant dans \emph{tous} les cas : à chaque jeu, la probabilité de perdre pour le joueur dépasse largement $75\,\%$. À la tombola par exemple, si les $200$ tickets sont vendus, le comité encaisse $200\times 100=\num{20000}$~FCFA à coup sûr, quels que soient les tickets gagnants : la recette ne dépend pas du hasard, seule l'identité des gagnants en dépend. Sur un grand nombre de parties aux jeux 2 et 3, la fréquence des gains du joueur se rapprochera de $\num{25}\,\%$ et $\num{22,2}\,\%$ : les mises encaissées dépasseront donc durablement la valeur des lots distribués. Le hasard décide du sort de chaque joueur, mais les probabilités garantissent le bénéfice de l'organisateur : aucun de ces jeux n'est une « arnaque » au sens où les règles sont connues, mais aucun n'est équitable non plus.
+
+\textbf{6. Pour aller plus loin.}
+
+Au jeu 1, un seul ticket est tiré au sort parmi les $200$. Il n'existe que $3$ tickets gagnants (numéros $7$, $77$, $177$). Si un joueur achète $n$ tickets distincts, il gagne si le ticket tiré est l'un de ses tickets \emph{gagnants}. Au mieux, il peut acheter les $3$ tickets gagnants (pour $n\ge 3$), ce qui lui donne une probabilité de gagner de $\frac{3}{200}=\num{1,5}\,\%$. 
+
+\textbf{Il est donc impossible de dépasser $10\,\%$ de chance de gagner à ce jeu}, quel que soit le nombre de tickets achetés (la probabilité maximale est $1,5\,\%$). 
+
+L'erreur fréquente consiste à écrire $P(\text{gagner})=\frac{3n}{200}$ : cette formule serait valable s'il y avait $3$ tirages indépendants (avec remise) ou si le joueur participait à $n$ tombolas distinctes. Ici, un seul tirage a lieu : les événements « le ticket $k$ est tiré » sont incompatibles, et la probabilité de gagner est simplement $\frac{\text{nombre de tickets gagnants possédés}}{200} \le \frac{3}{200}$.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence plusieurs idées essentielles de la leçon :
+
+\begin{itemize}
+\item \textbf{Décrire l'univers est la première étape de tout calcul.} L'erreur classique du jeu 3 (croire que les sommes $2$ à $12$ sont équiprobables) montre qu'un univers mal choisi fausse tous les résultats : ce sont les $36$ couples qui sont équiprobables, pas les $11$ sommes.
+\item \textbf{L'équiprobabilité rend le calcul accessible} : une fois l'équiprobabilité justifiée (dés équilibrés, boules indiscernables, tickets mélangés), tout se ramène à un dénombrement de cas favorables et de cas possibles.
+\item \textbf{L'événement contraire est un outil d'économie de calcul} : il est souvent plus rapide de calculer $1-P(E)$ que de dénombrer directement $\overline{E}$, et la double méthode offre un moyen de vérification.
+\item \textbf{La formule de la réunion exige de la vigilance} : on soustrait $P(A\cap B)$ dès que les événements ont des issues communes ; l'addition directe n'est valable que pour des événements incompatibles.
+\item \textbf{Les probabilités éclairent les décisions de la vie quotidienne} : comparer des jeux de hasard, comprendre pourquoi un organisateur de tombola, de loterie ou de pari ne joue pas, lui, avec le hasard, est une compétence de citoyen autant que de mathématicien. À long terme, c'est toujours celui qui fixe les règles qui gagne.
+\end{itemize}
+
+\begin{savaistu}[Et au-delà du quartier...]
+Les grandes loteries nationales et les jeux de paris sportifs, très populaires au Cameroun, fonctionnent exactement sur le même principe : la probabilité de gain du joueur est calculée pour rester inférieure à ce que rapportent les mises. Les mathématiciens parlent d'\emph{espérance de gain négative} pour le joueur — une notion que tu rencontreras si tu poursuis les mathématiques après le baccalauréat. Comprendre les probabilités élémentaires, c'est déjà se protéger des illusions du « coup sûr ».
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Décrire l'univers d'une expérience aléatoire}
+
+\begin{methode}[Décrire l'univers $\Omega$ d'une expérience aléatoire]
+\begin{enumerate}
+\item \textbf{Identifier l'expérience} : préciser ce qu'on fait (lancer, tirer, choisir) et ce qu'on observe (la face, le numéro, la couleur).
+\item \textbf{Énumérer toutes les issues possibles} : chaque résultat possible est une \cle{issue} (ou événement élémentaire). Utiliser un tableau à double entrée, un arbre ou une liste systématique pour ne rien oublier.
+\item \textbf{Écrire l'univers en extension} : $\Omega = \{\ldots\}$, puis donner son cardinal $\mathrm{Card}(\Omega)$.
+\item \textbf{Traduire les événements demandés} en sous-ensembles de $\Omega$ (en extension si possible).
+\end{enumerate}
+\textbf{Réflexes :} pour deux dés, $\mathrm{Card}(\Omega) = 6 \times 6 = 36$ ; pour deux pièces, $\mathrm{Card}(\Omega) = 2 \times 2 = 4$ ; pour un tirage de plusieurs objets, bien préciser si l'ordre compte ou non selon l'énoncé.
+\end{methode}
+
+\begin{exoresolu}[Univers d'un lancer de deux dés]
+On lance simultanément deux dés cubiques équilibrés, l'un rouge et l'autre bleu, et on note les numéros obtenus.
+\begin{enumerate}
+\item Décrire l'univers $\Omega$ et donner son cardinal.
+\item Écrire en extension les événements : $A$ : « la somme des numéros est égale à 7 » ; $B$ : « les deux dés donnent le même numéro ».
+\end{enumerate}
+\tcblower
+\textbf{1.} Chaque issue est un couple $(a ; b)$ où $a$ est le résultat du dé rouge et $b$ celui du dé bleu, avec $a \in \{1;2;3;4;5;6\}$ et $b \in \{1;2;3;4;5;6\}$. Comme les deux dés sont distinguables (l'un est rouge, l'autre bleu), le couple $(2;5)$ est différent du couple $(5;2)$. Donc :
+\[ \Omega = \{(a;b) \mid a \in \{1;\ldots;6\},\ b \in \{1;\ldots;6\}\}, \qquad \mathrm{Card}(\Omega) = 6 \times 6 = 36. \]
+\textbf{2.} On cherche les couples dont la somme vaut 7 :
+\[ A = \{(1;6)\,;\,(2;5)\,;\,(3;4)\,;\,(4;3)\,;\,(5;2)\,;\,(6;1)\}, \qquad \mathrm{Card}(A) = 6. \]
+Les doubles :
+\[ B = \{(1;1)\,;\,(2;2)\,;\,(3;3)\,;\,(4;4)\,;\,(5;5)\,;\,(6;6)\}, \qquad \mathrm{Card}(B) = 6. \]
+\textbf{Conclusion :} l'univers comporte 36 issues, $A$ en contient 6 et $B$ en contient 6.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.62]
+\draw[popline] (0,0) grid (6,6);
+\foreach \i in {1,...,6} {
+  \node at (\i-0.5,6.4) {\small \i};
+  \node at (-0.4,\i-0.5) {\small \i};
+}
+\node at (3,7.1) {\small dé bleu};
+\node at (-1.3,3) {\small \rotatebox{90}{dé rouge}};
+% Diagonale somme = 7 : cases (a,b) avec a+b=7, a ligne (y), b colonne (x)
+\foreach \p in {(0.5,5.5),(1.5,4.5),(2.5,3.5),(3.5,2.5),(4.5,1.5),(5.5,0.5)} {
+  \fill[poporange!45] \p circle (0.28);
+}
+\end{tikzpicture}
+\end{center}
+\legende{Tableau à double entrée du lancer de deux dés : les 36 cases représentent les 36 issues. Les cases marquées correspondent à l'événement $A$ : « la somme est égale à 7 » (diagonale).}
+\end{popfigure}
+
+\courssub{Calculer une probabilité dans un cas d'équiprobabilité}
+
+\begin{methode}[Probabilité en situation d'équiprobabilité]
+\begin{enumerate}
+\item \textbf{Justifier l'équiprobabilité} : le dé est équilibré, la pièce non truquée, le tirage au hasard... Sans cette hypothèse, la formule ne s'applique pas !
+\item \textbf{Dénombrer les cas possibles} : calculer $\mathrm{Card}(\Omega)$.
+\item \textbf{Dénombrer les cas favorables} : calculer $\mathrm{Card}(A)$ pour l'événement $A$ étudié (liste, tableau, arbre).
+\item \textbf{Appliquer la formule} :
+\[ P(A) = \frac{\text{nombre de cas favorables}}{\text{nombre de cas possibles}} = \frac{\mathrm{Card}(A)}{\mathrm{Card}(\Omega)}. \]
+\item \textbf{Simplifier la fraction} et vérifier que $0 \leq P(A) \leq 1$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Tirage dans une urne]
+Une urne contient 5 boules rouges, 3 boules vertes et 2 boules noires, indiscernables au toucher. On tire une boule au hasard. Calculer la probabilité des événements :
+\begin{enumerate}
+\item $R$ : « la boule tirée est rouge » ;
+\item $V$ : « la boule tirée est verte » ;
+\item $C$ : « la boule tirée est rouge ou noire ».
+\end{enumerate}
+\tcblower
+Le tirage se fait \textbf{au hasard} et les boules sont \textbf{indiscernables au toucher} : il y a équiprobabilité. Le nombre de cas possibles est le nombre total de boules :
+\[ \mathrm{Card}(\Omega) = 5 + 3 + 2 = 10. \]
+\textbf{1.} Il y a 5 boules rouges, donc 5 cas favorables :
+\[ P(R) = \frac{5}{10} = \frac{1}{2}. \]
+\textbf{2.} Il y a 3 boules vertes :
+\[ P(V) = \frac{3}{10}. \]
+\textbf{3.} Les cas favorables à $C$ sont les boules rouges et les boules noires : $5 + 2 = 7$ cas favorables.
+\[ P(C) = \frac{7}{10}. \]
+\textbf{Conclusion :} $P(R) = \dfrac{1}{2}$, $P(V) = \dfrac{3}{10}$ et $P(C) = \dfrac{7}{10}$. On vérifie au passage que $P(R) + P(V) + P(N) = \dfrac{5}{10} + \dfrac{3}{10} + \dfrac{2}{10} = 1$, où $N$ est l'événement « la boule est noire » : la somme des probabilités de toutes les issues vaut 1, ce qui est cohérent.
+\end{exoresolu}
+
+\courssub{Calculer la probabilité de l'événement contraire}
+
+\begin{methode}[Utiliser l'événement contraire]
+\begin{enumerate}
+\item \textbf{Identifier l'événement contraire} $\bar{A}$ : c'est l'événement « $A$ n'est pas réalisé ». Pour « au moins un », le contraire est « aucun » ; pour « tous », le contraire est « au moins un ne... pas ».
+\item \textbf{Choisir le calcul le plus simple} : souvent, dénombrer $\bar{A}$ est plus facile que dénombrer $A$ directement.
+\item \textbf{Appliquer la formule} :
+\[ P(\bar{A}) = 1 - P(A) \qquad \text{ou} \qquad P(A) = 1 - P(\bar{A}). \]
+\item \textbf{Rédiger proprement} : annoncer clairement quel est l'événement contraire avant de calculer.
+\end{enumerate}
+\textbf{Réflexe Bac :} dès qu'on lit « \cle{au moins un} », penser immédiatement à passer par l'événement contraire « aucun ».
+\end{methode}
+
+\begin{exoresolu}[Le problème du « au moins un »]
+Un candidat au Baccalauréat lance une pièce équilibrée 3 fois de suite. Quelle est la probabilité qu'il obtienne \textbf{au moins une fois} « Face » ?
+\tcblower
+Notons $A$ l'événement « obtenir au moins une fois Face ». Le dénombrement direct de $A$ est fastidieux (1 fois, 2 fois ou 3 fois Face...). Passons par l'événement contraire :
+\[ \bar{A} : \text{« n'obtenir aucune Face », c'est-à-dire obtenir 3 fois Pile.} \]
+L'univers est l'ensemble des triplets de résultats : chaque lancer a 2 issues, donc
+\[ \mathrm{Card}(\Omega) = 2 \times 2 \times 2 = 8. \]
+Il n'y a qu'\textbf{un seul} triplet sans Face : $(P ; P ; P)$. Donc :
+\[ P(\bar{A}) = \frac{1}{8}. \]
+Par la formule de l'événement contraire :
+\[ P(A) = 1 - P(\bar{A}) = 1 - \frac{1}{8} = \frac{7}{8}. \]
+\textbf{Conclusion :} la probabilité d'obtenir au moins une fois Face est $\dfrac{7}{8} = 0,875$.
+\end{exoresolu}
+
+\courssub{Calculer la probabilité de la réunion de deux événements}
+
+\begin{methode}[Probabilité de la réunion $A \cup B$]
+\begin{enumerate}
+\item \textbf{Traduire} : $A \cup B$ signifie « $A$ \cle{ou} $B$ est réalisé » (le « ou » est inclusif : les deux peuvent être réalisés en même temps).
+\item \textbf{Vérifier si les événements sont incompatibles} : si $A \cap B = \emptyset$ (ils ne peuvent pas se réaliser en même temps), alors
+\[ P(A \cup B) = P(A) + P(B). \]
+\item \textbf{Sinon, appliquer la formule générale} :
+\[ P(A \cup B) = P(A) + P(B) - P(A \cap B). \]
+\item \textbf{Contrôler} le résultat : il doit être compris entre 0 et 1, et supérieur ou égal à chacune des probabilités $P(A)$ et $P(B)$.
+\end{enumerate}
+\textbf{Attention :} oublier de soustraire $P(A \cap B)$ quand les événements ne sont pas incompatibles est l'erreur la plus fréquente.
+\end{methode}
+
+\begin{exoresolu}[Réunion avec une carte à jouer]
+On tire une carte au hasard dans un jeu de 32 cartes. On considère les événements :
+$A$ : « la carte tirée est un cœur » ; $B$ : « la carte tirée est un roi ».
+Calculer $P(A \cup B)$.
+\tcblower
+Le tirage est équiprobable : $\mathrm{Card}(\Omega) = 32$.
+\begin{itemize}
+\item Il y a 8 cœurs dans le jeu : $P(A) = \dfrac{8}{32}$.
+\item Il y a 4 rois dans le jeu : $P(B) = \dfrac{4}{32}$.
+\item $A \cap B$ : « la carte est le roi de cœur » : une seule carte, donc $P(A \cap B) = \dfrac{1}{32}$.
+\end{itemize}
+Les événements $A$ et $B$ \textbf{ne sont pas incompatibles} (le roi de cœur réalise les deux). On applique la formule générale :
+\[ P(A \cup B) = P(A) + P(B) - P(A \cap B) = \frac{8}{32} + \frac{4}{32} - \frac{1}{32} = \frac{11}{32}. \]
+\textbf{Conclusion :} la probabilité de tirer un cœur ou un roi est $\dfrac{11}{32}$. Vérification par dénombrement direct : les cartes favorables sont les 8 cœurs plus les 3 rois qui ne sont pas de cœur, soit 11 cartes : on retrouve bien $\dfrac{11}{32}$.
+\end{exoresolu}
+
+\courssub{Résoudre un problème concret : jeux, tirages et loteries}
+
+\begin{methode}[Problème concret de probabilités (type Bac)]
+\begin{enumerate}
+\item \textbf{Modéliser} : identifier l'expérience aléatoire, définir clairement l'univers $\Omega$ et justifier l'équiprobabilité.
+\item \textbf{Nommer les événements} par des lettres ($A$, $B$...) et traduire chaque question en langage ensembliste (contraire, réunion, intersection).
+\item \textbf{Dénombrer avec soin} : tableau à double entrée pour deux dés ou deux tirages successifs, arbre pour les expériences en plusieurs étapes, liste systématique pour les petits univers.
+\item \textbf{Calculer} avec les formules du cours : cas favorables sur cas possibles, événement contraire, réunion.
+\item \textbf{Interpréter le résultat} dans le contexte (gain, chance de gagner...) et conclure par une phrase rédigée en français.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Tombola d'une fête de quartier à Yaoundé]
+Lors d'une tombola organisée à Mvog-Ada, on vend 100 billets numérotés de 1 à 100. Un seul billet est tiré au sort. On gagne un sac de riz si le numéro tiré est un multiple de 10, et un téléphone si le numéro tiré est un multiple de 7.
+\begin{enumerate}
+\item Quelle est la probabilité de gagner le sac de riz ?
+\item Quelle est la probabilité de gagner le téléphone ?
+\item Quelle est la probabilité de gagner au moins un des deux lots ?
+\item Quelle est la probabilité de ne rien gagner ?
+\end{enumerate}
+\tcblower
+Le tirage est équiprobable : $\mathrm{Card}(\Omega) = 100$.
+
+\textbf{1.} Soit $A$ : « le numéro est un multiple de 10 ». Les multiples de 10 entre 1 et 100 sont : $10, 20, \ldots, 100$, soit 10 numéros.
+\[ P(A) = \frac{10}{100} = \frac{1}{10}. \]
+
+\textbf{2.} Soit $B$ : « le numéro est un multiple de 7 ». Les multiples de 7 entre 1 et 100 sont $7, 14, \ldots, 98$ : comme $98 = 7 \times 14$, il y en a 14.
+\[ P(B) = \frac{14}{100} = \frac{7}{50}. \]
+
+\textbf{3.} « Gagner au moins un des deux lots » est l'événement $A \cup B$. L'événement $A \cap B$ correspond aux multiples de 10 \emph{et} de 7, c'est-à-dire aux multiples de $10 \times 7 = 70$ (car 10 et 7 n'ont aucun facteur commun) : seul 70 convient entre 1 et 100, donc $\mathrm{Card}(A \cap B) = 1$.
+\[ P(A \cup B) = P(A) + P(B) - P(A \cap B) = \frac{10}{100} + \frac{14}{100} - \frac{1}{100} = \frac{23}{100}. \]
+
+\textbf{4.} « Ne rien gagner » est l'événement contraire de $A \cup B$ :
+\[ P\left(\overline{A \cup B}\right) = 1 - P(A \cup B) = 1 - \frac{23}{100} = \frac{77}{100}. \]
+\textbf{Conclusion :} un acheteur a une chance sur dix de gagner le riz, et une probabilité de $\dfrac{77}{100} = 0,77$ de ne rien gagner : la tombola reste surtout profitable aux organisateurs !
+\end{exoresolu}
+
+\courssub{Exploiter un tableau ou un arbre pour dénombrer}
+
+\begin{methode}[Dénombrer avec un tableau ou un arbre]
+\begin{enumerate}
+\item \textbf{Expérience à deux étapes} (deux dés, deux tirages successifs) : construire un tableau à double entrée (lignes = 1\ier{} tirage, colonnes = 2\ieme{} tirage) ou un arbre.
+\item \textbf{Repérer les cases favorables} à l'événement étudié : les marquer ou les compter ligne par ligne.
+\item \textbf{Conclure} par la formule d'équiprobabilité : $P(A) = \dfrac{\text{cases marquées}}{\text{cases totales}}$.
+\end{enumerate}
+\textbf{Réflexe :} dans un tableau $6 \times 6$, les cases d'une même diagonale correspondent souvent aux événements « somme constante » : c'est un dénombrement rapide.
+\end{methode}
+
+\begin{exoresolu}[Somme de deux dés]
+On lance deux dés équilibrés et on note la somme des numéros obtenus.
+\begin{enumerate}
+\item Quelle est la probabilité d'obtenir une somme égale à 9 ?
+\item Quelle est la probabilité d'obtenir une somme strictement supérieure à 9 ?
+\end{enumerate}
+\tcblower
+L'univers comporte $6 \times 6 = 36$ couples équiprobables.
+
+\textbf{1.} Les couples dont la somme vaut 9 sont : $(3;6)$, $(4;5)$, $(5;4)$, $(6;3)$, soit 4 cas favorables.
+\[ P(\text{somme} = 9) = \frac{4}{36} = \frac{1}{9}. \]
+
+\textbf{2.} Une somme strictement supérieure à 9 signifie une somme de 10, 11 ou 12.
+\begin{itemize}
+\item Somme 10 : $(4;6)$, $(5;5)$, $(6;4)$ : 3 cas ;
+\item Somme 11 : $(5;6)$, $(6;5)$ : 2 cas ;
+\item Somme 12 : $(6;6)$ : 1 cas.
+\end{itemize}
+Total : $3 + 2 + 1 = 6$ cas favorables.
+\[ P(\text{somme} > 9) = \frac{6}{36} = \frac{1}{6}. \]
+\textbf{Conclusion :} $P(\text{somme} = 9) = \dfrac{1}{9}$ et $P(\text{somme} > 9) = \dfrac{1}{6}$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Bac]
+\begin{enumerate}
+\item \textbf{Appliquer « cas favorables sur cas possibles » sans équiprobabilité.} Cette formule exige que toutes les issues aient la même chance. Écris toujours une phrase du type : « le dé est équilibré, donc les issues sont équiprobables ». Sans cette justification, le calcul n'est pas valide.
+\item \textbf{Oublier de soustraire $P(A \cap B)$ dans la réunion.} La formule $P(A \cup B) = P(A) + P(B)$ n'est correcte que si $A$ et $B$ sont \cle{incompatibles}. Sinon, les cas communs sont comptés deux fois : il faut écrire $P(A \cup B) = P(A) + P(B) - P(A \cap B)$.
+\item \textbf{Se tromper d'événement contraire.} Le contraire de « au moins un » est « \cle{aucun} » (et non « un seul ») ; le contraire de « tous » est « au moins un ne l'est pas ». Une mauvaise traduction fausse tout l'exercice.
+\item \textbf{Mal dénombrer l'univers.} Avec deux dés, il y a 36 issues et non 12 : le couple $(2;5)$ est différent du couple $(5;2)$. Prends le temps de construire un tableau ou une liste systématique avant de compter.
+\item \textbf{Donner une probabilité supérieure à 1 ou non simplifiée.} Une probabilité est toujours comprise entre 0 et 1. Si tu obtiens $P(A) = \dfrac{12}{10}$ ou $1,4$, c'est le signal d'une erreur de dénombrement. Termine toujours par une fraction irréductible et une phrase de conclusion rédigée.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Probabilités élémentaires}
+
+\courssub{Expériences aléatoires et vocabulaire des événements}
+
+\begin{definition}[Expérience aléatoire]
+Une \cle{expérience aléatoire} est une expérience dont on ne peut pas prédire avec certitude le résultat, mais dont on connaît l'ensemble de tous les résultats possibles. 
+\end{definition}
+
+\begin{definition}[Univers et événements]
+L'ensemble de tous les résultats possibles d'une expérience aléatoire s'appelle l'\cle{univers} et se note $\Omega$. Un \cle{événement} est une partie de $\Omega$ (un sous-ensemble de $\Omega$). Un \cle{événement élémentaire} est un événement qui ne contient qu'un seul résultat possible (un singleton de $\Omega$).
+\end{definition}
+
+\begin{exemplebox}[Lancer d'un dé]
+On lance un dé équilibré à six faces numérotées de 1 à 6.
+\begin{itemize}
+\item L'univers est $\Omega = \{1; 2; 3; 4; 5; 6\}$.
+\item L'événement $A$ : « obtenir un nombre pair » est $A = \{2; 4; 6\}$.
+\item L'événement élémentaire « obtenir un 3 » est $\{3\}$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{definition}[Événements incompatibles et contraires]
+Deux événements $A$ et $B$ sont \cle{incompatibles} (ou disjoints) s'ils ne peuvent pas se réaliser simultanément : $A \cap B = \emptyset$.
+L'\cle{événement contraire} de $A$, noté $\overline{A}$ (ou $A^c$), est l'ensemble des résultats de $\Omega$ qui ne sont pas dans $A$ : $\overline{A} = \Omega \setminus A$. On a toujours $A \cap \overline{A} = \emptyset$ et $A \cup \overline{A} = \Omega$.
+\end{definition}
+
+\courssub{Probabilité d'un événement}
+
+\begin{propriete}[Axiomes de la probabilité (rappel)]
+Une probabilité $P$ est une application qui associe à tout événement $A$ de $\Omega$ un nombre réel $P(A)$ tel que :
+\begin{enumerate}
+\item $0 \leqslant P(A) \leqslant 1$ ;
+\item $P(\Omega) = 1$ (l'événement certain a probabilité 1) ;
+\item $P(\emptyset) = 0$ (l'événement impossible a probabilité 0) ;
+\item Si $A$ et $B$ sont incompatibles, $P(A \cup B) = P(A) + P(B)$.
+\end{enumerate}
+\end{propriete}
+
+\courssub{Équiprobabilité : cas favorables sur cas possibles}
+
+\begin{definition}[Situation d'équiprobabilité]
+On dit qu'il y a \cle{équiprobabilité} lorsque tous les résultats élémentaires de $\Omega$ ont la même probabilité de se produire. Si $\Omega$ contient $n$ éléments, chacun a une probabilité $\frac{1}{n}$.
+\end{definition}
+
+\begin{propriete}[Probabilité en situation d'équiprobabilité]
+Si $\Omega$ est fini et muni d'une équiprobabilité, pour tout événement $A \subset \Omega$ :
+\[
+P(A) = \frac{\text{Nombre de cas favorables à } A}{\text{Nombre de cas possibles}} = \frac{\text{Card}(A)}{\text{Card}(\Omega)}.
+\]
+\end{propriete}
+
+\begin{methode}[Calculer une probabilité en équiprobabilité]
+\begin{enumerate}
+\item Décrire l'univers $\Omega$ et compter son nombre d'éléments $N = \text{Card}(\Omega)$.
+\item Identifier l'événement $A$ étudié et compter son nombre d'éléments $n = \text{Card}(A)$.
+\item Appliquer la formule $P(A) = \frac{n}{N}$.
+\item Simplifier la fraction si possible et donner une valeur décimale approchée si nécessaire.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Tirage dans un jeu de 32 cartes]
+On tire une carte au hasard dans un jeu de 32 cartes. $\text{Card}(\Omega) = 32$.
+Événement $R$ : « tirer un roi ». Il y a 4 rois. $P(R) = \frac{4}{32} = \frac{1}{8}$.
+\end{exemplebox}
+
+\courssub{Événement contraire}
+
+\begin{propriete}[Probabilité de l'événement contraire]
+Pour tout événement $A$, $P(\overline{A}) = 1 - P(A)$.
+\end{propriete}
+
+\begin{methode}[Utiliser l'événement contraire]
+Lorsque la question porte sur « au moins un... », « au plus... », « différent de... », il est souvent plus simple de calculer la probabilité de l'événement contraire (qui est « aucun », « tous », « égal à... ») et de faire $1 - P(\text{contraire})$.
+\end{methode}
+
+\begin{exemplebox}[Au moins un 6 en deux lancers de dé]
+On lance deux dés. $P(\text{au moins un 6}) = 1 - P(\text{aucun 6}) = 1 - \left(\frac{5}{6}\right)^2 = 1 - \frac{25}{36} = \frac{11}{36}$.
+\end{exemplebox}
+
+\courssub{Réunion de deux événements}
+
+\begin{propriete}[Formule de la réunion -- Exigible au Bac]
+Pour quels que soient deux événements $A$ et $B$ :
+\[
+P(A \cup B) = P(A) + P(B) - P(A \cap B).
+\]
+Si $A$ et $B$ sont incompatibles ($A \cap B = \emptyset$), alors $P(A \cup B) = P(A) + P(B)$.
+\end{propriete}
+
+\begin{attention}[Piège fréquent : oublier l'intersection]
+Ne jamais écrire $P(A \cup B) = P(A) + P(B)$ sans vérifier que $A$ et $B$ sont incompatibles. Si ils ne le sont pas, on compte deux fois l'intersection $A \cap B$ ; il faut la soustraire une fois.
+\end{attention}
+
+\begin{experience}[Découverte visuelle de la formule de la réunion]
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2]
+% Ensemble Omega
+\draw[popdark, thick] (0,0) rectangle (5,3.5);
+\node[popdark, above left] at (0,3.5) {$\Omega$};
+% Ensemble A
+\draw[popblue, thick, fill=popblue!20] (1,1) circle (1.2);
+\node[popblue] at (1,2.3) {$A$};
+% Ensemble B
+\draw[poporange, thick, fill=poporange!20] (3,1) circle (1.2);
+\node[poporange] at (3,2.3) {$B$};
+% Intersection label
+\node[poppurple] at (2,1) {$A \cap B$};
+% Union label
+\node[popgreen] at (2,0.3) {$A \cup B$};
+% Arrows for explanation
+\draw[->, popmuted] (5.5,2.5) -- (4.5,2.5) node[right, align=left] {Si on additionne \\ les aires de $A$ et $B$};
+\draw[->, popmuted] (5.5,1.5) -- (4.5,1.5) node[right, align=left] {l'intersection est \\ comptée deux fois};
+\draw[->, popmuted] (5.5,0.5) -- (4.5,0.5) node[right, align=left] {On soustrait une fois \\ $P(A \cap B)$};
+\end{tikzpicture}
+\legende{Illustration de la formule $P(A \cup B) = P(A) + P(B) - P(A \cap B)$}
+\end{popfigure}
+\end{experience}
+
+\courssub{Problèmes concrets : jeux, tirages et loteries}
+
+\begin{methode}[Résoudre un problème de probabilité concret]
+\begin{enumerate}
+\item \textbf{Modéliser} : Identifier l'expérience aléatoire, décrire $\Omega$ (liste, arbre, tableau à double entrée). Vérifier l'équiprobabilité.
+\item \textbf{Traduire} : Écrire les événements en langage ensembliste ($A$, $B$, $\overline{A}$, $A \cup B$, $A \cap B$).
+\item \textbf{Choisir les outils} : Équiprobabilité ($\frac{\text{Card}(A)}{\text{Card}(\Omega)}$), Contraire ($1-P(A)$), Réunion ($P(A)+P(B)-P(A\cap B)$).
+\item \textbf{Calculer} : Effectuer les calculs exacts (fractions) et éventuellement des approximations décimales.
+\item \textbf{Conclure} : Rédiger une phrase réponse dans le contexte de l'exercice.
+\end{enumerate}
+\end{methode}
+
+\begin{savaistu}[Les origines du calcul des probabilités]
+Le calcul des probabilités est né au XVII\textsuperscript{e} siècle d'une correspondance entre \textbf{Pascal} et \textbf{Fermat} à propos de problèmes de jeux de hasard (le « problème des partis »). Au Cameroun, les jeux traditionnels comme le \emph{Nsolo} (jeu de mancala) ou les paris sur les courses de pirogues sur le Wouri font intuitivement appel à ces notions. Aujourd'hui, les probabilités modélisent la fiabilité des réseaux MTN/Orange, la prévision des rendements agricoles à la SODECOTON, ou l'épidémiologie au MINSANTE.
+\end{savaistu}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : vocabulaire et premiers calculs]
+Pour chaque question, une seule réponse est exacte. Recopie la bonne réponse sur ta copie.
+\begin{enumerate}
+\item On lance un dé équilibré à six faces numérotées de 1 à 6. L'univers de cette expérience est :
+\begin{enumerate}
+\item $\Omega = \{1 ; 2 ; 3 ; 4 ; 5\}$
+\item $\Omega = \{1 ; 2 ; 3 ; 4 ; 5 ; 6\}$
+\item $\Omega = \{6\}$
+\end{enumerate}
+\item Dans un jeu de 32 cartes, la probabilité de tirer un roi est :
+\begin{enumerate}
+\item $\dfrac{1}{32}$
+\item $\dfrac{1}{8}$
+\item $\dfrac{1}{4}$
+\end{enumerate}
+\item Si $P(A) = 0{,}35$, alors la probabilité de l'événement contraire $\overline{A}$ est :
+\begin{enumerate}
+\item $0{,}35$
+\item $1{,}35$
+\item $0{,}65$
+\end{enumerate}
+\item $A$ et $B$ sont deux événements tels que $P(A) = 0{,}4$, $P(B) = 0{,}5$ et $P(A \cap B) = 0{,}2$. Alors $P(A \cup B)$ vaut :
+\begin{enumerate}
+\item $0{,}9$
+\item $0{,}7$
+\item $0{,}3$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+On tire une boule au hasard dans une urne contenant 5 boules blanches et 3 boules rouges, indiscernables au toucher. Pour chacune des affirmations suivantes, dire si elle est vraie ou fausse, puis justifier par un calcul ou une définition.
+\begin{enumerate}
+\item « La probabilité de tirer une boule blanche est $\dfrac{5}{8}$. »
+\item « L'événement "tirer une boule noire" est l'événement contraire de "tirer une boule blanche". »
+\item « La probabilité de ne pas tirer de boule rouge est $\dfrac{5}{8}$. »
+\item « L'événement "tirer une boule blanche ou une boule rouge" a pour probabilité 1. »
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[À toi de définir]
+\begin{enumerate}
+\item Donne la définition d'une \cle{expérience aléatoire} et celle de son \cle{univers}.
+\item Qu'appelle-t-on \cle{événement élémentaire} ? Donne un exemple en t'appuyant sur le lancer d'une pièce de monnaie.
+\item Énonce la formule donnant la probabilité d'un événement $A$ dans une situation d'\cle{équiprobabilité}.
+\item Énonce la formule donnant $P(A \cup B)$ en fonction de $P(A)$, $P(B)$ et $P(A \cap B)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Un sac contient 10 jetons numérotés de 1 à 10. On tire un jeton au hasard.
+\begin{enumerate}
+\item Décris l'univers $\Omega$ de cette expérience.
+\item Calcule la probabilité des événements suivants :
+\begin{enumerate}
+\item $A$ : « le numéro tiré est pair » ;
+\item $B$ : « le numéro tiré est un multiple de 3 » ;
+\item $C$ : « le numéro tiré est strictement supérieur à 7 » ;
+\item $D$ : « le numéro tiré est 12 ».
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[La roue de la foire de Yaoundé]
+À la foire de Yaoundé, une roue est partagée en 12 secteurs identiques : 5 secteurs jaunes, 4 secteurs bleus et 3 secteurs verts. Un joueur fait tourner la roue et gagne le lot associé à la couleur du secteur désigné.
+\begin{enumerate}
+\item Justifie que l'on est en situation d'équiprobabilité.
+\item Calcule la probabilité que la roue s'arrête sur un secteur jaune.
+\item Calcule la probabilité que la roue s'arrête sur un secteur bleu ou vert.
+\item Calcule la probabilité que la roue ne s'arrête pas sur un secteur jaune, de deux manières différentes.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Trois lancers d'une pièce]
+On lance trois fois de suite une pièce de monnaie équilibrée (Pile noté P, Face noté F).
+\begin{enumerate}
+\item Décris l'univers $\Omega$ à l'aide d'un arbre, puis donne le nombre total d'issues.
+\item Calcule la probabilité d'obtenir exactement deux Piles.
+\item Calcule la probabilité d'obtenir au moins un Pile (on pourra utiliser l'événement contraire).
+\item Calcule la probabilité d'obtenir trois résultats identiques.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Le jeu de 32 cartes]
+On tire une carte au hasard dans un jeu de 32 cartes (chaque couleur — cœur, carreau, trèfle, pique — comporte les hauteurs 7, 8, 9, 10, valet, dame, roi, as).
+\begin{enumerate}
+\item Calcule la probabilité de tirer un as.
+\item Calcule la probabilité de tirer un cœur.
+\item Calcule la probabilité de tirer un as ou un cœur.
+\item Calcule la probabilité de ne tirer ni un as ni un cœur.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[La tombola du quartier]
+Une tombola organisée à Douala comporte 300 tickets numérotés de 1 à 300. Gagnent les tickets dont le numéro est un multiple de 10 ou un multiple de 15. Mme Etoundi achète un ticket au hasard.
+\begin{enumerate}
+\item Détermine le nombre de tickets dont le numéro est un multiple de 10.
+\item Détermine le nombre de tickets dont le numéro est un multiple de 15.
+\item Détermine le nombre de tickets dont le numéro est un multiple de 10 \textbf{et} de 15 (on pourra remarquer qu'il s'agit des multiples de 30).
+\item En déduis la probabilité que Mme Etoundi gagne un lot.
+\item Calcule la probabilité qu'elle ne gagne rien.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Type Bac : l'urne de la kermesse]
+Une urne contient 12 boules indiscernables au toucher : 4 boules rouges, 3 boules vertes et 5 boules noires. On tire une boule au hasard dans l'urne.
+\begin{enumerate}
+\item Décris l'univers $\Omega$ de cette expérience aléatoire et précise son nombre d'éléments.
+\item On considère les événements :
+\begin{itemize}
+\item $R$ : « la boule tirée est rouge » ;
+\item $V$ : « la boule tirée est verte » ;
+\item $N$ : « la boule tirée est noire ».
+\end{itemize}
+Calcule $P(R)$, $P(V)$ et $P(N)$.
+\item Les événements $V$ et $N$ sont-ils incompatibles ? Justifie ta réponse.
+\item Calcule la probabilité de tirer une boule noire ou verte.
+\item Calcule la probabilité de ne pas tirer de boule noire, de deux manières différentes.
+\item L'organisateur annonce : « Tu gagnes si tu tires une boule rouge. » Un joueur prétend qu'il a une chance sur trois de gagner. A-t-il raison ? Justifie.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Bac : le lancer de deux dés]
+On lance simultanément deux dés cubiques équilibrés, l'un rouge et l'un bleu, dont les faces sont numérotées de 1 à 6. On note la somme des deux nombres obtenus.
+\begin{enumerate}
+\item Recopie et complète le tableau à double entrée ci-dessous donnant la somme des deux dés, puis déduis-en le nombre total d'issues.
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\rowcolor{popblueL} Dé rouge $\backslash$ Dé bleu & 1 & 2 & 3 & 4 & 5 & 6 \\
+\hline
+1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+\hline
+2 & 3 & 4 & 5 & 6 & 7 & 8 \\
+\hline
+3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+\hline
+4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline
+5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+\hline
+6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+\hline
+\end{tabular}
+\end{center}
+\item On considère les événements :
+\begin{itemize}
+\item $S$ : « la somme obtenue est égale à 7 » ;
+\item $P$ : « la somme obtenue est paire ».
+\end{itemize}
+\begin{enumerate}
+\item Calcule $P(S)$ et $P(P)$.
+\item Décris par une phrase l'événement $S \cap P$ et calcule sa probabilité.
+\item En déduis la probabilité de l'événement « la somme est 7 ou est paire ».
+\end{enumerate}
+\item On considère l'événement $M$ : « au moins un des deux dés montre un 6 ».
+\begin{enumerate}
+\item Décris par une phrase l'événement contraire $\overline{M}$ et calcule sa probabilité.
+\item En déduis $P(M)$.
+\end{enumerate}
+\item Un jeu consiste à parier 100 FCFA : on gagne 500 FCFA si la somme est 7, sinon on perd sa mise. Calcule la probabilité de gagner à ce jeu et commente le résultat obtenu.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Bac : les activités d'une classe de Terminale]
+Dans une classe de Terminale A de 50 élèves d'un lycée de Bafoussam, 28 élèves pratiquent le football, 20 élèves pratiquent la musique et 8 élèves pratiquent les deux activités. On choisit un élève au hasard dans cette classe. On considère les événements :
+\begin{itemize}
+\item $F$ : « l'élève choisi pratique le football » ;
+\item $M$ : « l'élève choisi pratique la musique ».
+\end{itemize}
+\begin{enumerate}
+\item Calcule $P(F)$, $P(M)$ et $P(F \cap M)$.
+\item Calcule la probabilité que l'élève choisi pratique le football ou la musique.
+\item Calcule la probabilité que l'élève choisi ne pratique ni le football ni la musique.
+\item Calcule la probabilité que l'élève choisi pratique le football mais pas la musique.
+\item Le chef d'établissement souhaite récompenser un élève pratiquant au moins une de ces deux activités. Il affirme : « En choisissant un élève au hasard, j'ai plus de 7 chances sur 10 de tomber sur un élève à récompenser. » Cette affirmation est-elle exacte ? Justifie par un calcul.
+\item \textbf{Problème de synthèse.} Deux jeux de hasard sont proposés lors de la fête de fin d'année :
+\begin{itemize}
+\item \textbf{Jeu 1} : on tire une boule dans une urne contenant 3 boules gagnantes et 7 boules perdantes ;
+\item \textbf{Jeu 2} : on lance deux dés équilibrés et l'on gagne si la somme obtenue est strictement supérieure à 8.
+\end{itemize}
+Calcule la probabilité de gain de chacun des deux jeux, compare-les, puis rédige une conclusion argumentée indiquant le jeu le plus judicieux pour un élève qui veut maximiser ses chances de gagner.
+\end{enumerate}
+\end{exercice}
+
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : vocabulaire et premiers calculs]
+\begin{enumerate}
+\item \textbf{Réponse b.} Le dé a six faces numérotées de 1 à 6, donc l'univers est $\Omega = \{1 ; 2 ; 3 ; 4 ; 5 ; 6\}$. La réponse a oublie la face 6 ; la réponse c ne contient qu'un seul résultat, alors que l'univers doit contenir \emph{tous} les résultats possibles.
+\item \textbf{Réponse b.} Un jeu de 32 cartes contient 4 rois (un par couleur : cœur, carreau, trèfle, pique). La carte étant tirée au hasard, on est en situation d'équiprobabilité : $P(\text{roi}) = \dfrac{\text{cas favorables}}{\text{cas possibles}} = \dfrac{4}{32} = \dfrac{1}{8}$.
+\item \textbf{Réponse c.} La probabilité de l'événement contraire est $P(\overline{A}) = 1 - P(A) = 1 - 0{,}35 = 0{,}65$.
+\item \textbf{Réponse b.} Les événements n'étant pas incompatibles ($P(A \cap B) = 0{,}2 \neq 0$), on applique la formule de la réunion : $P(A \cup B) = P(A) + P(B) - P(A \cap B) = 0{,}4 + 0{,}5 - 0{,}2 = 0{,}7$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, en justifiant]
+L'urne contient $5 + 3 = 8$ boules indiscernables au toucher : on est en situation d'équiprobabilité avec $\text{Card}(\Omega) = 8$.
+\begin{enumerate}
+\item \textbf{Vrai.} Il y a 5 boules blanches, donc $P(\text{blanche}) = \dfrac{5}{8}$.
+\item \textbf{Faux.} L'événement contraire de « tirer une boule blanche » est « ne pas tirer une boule blanche », c'est-à-dire ici « tirer une boule rouge » (l'urne ne contient que des boules blanches et rouges). Comme il n'y a aucune boule noire dans l'urne, « tirer une boule noire » est l'événement \emph{impossible} $\emptyset$, de probabilité $0$, et non le contraire de « tirer une boule blanche ».
+\item \textbf{Vrai.} « Ne pas tirer de boule rouge » est le contraire de « tirer une boule rouge » : $P = 1 - \dfrac{3}{8} = \dfrac{5}{8}$. (C'est d'ailleurs le même événement que « tirer une boule blanche ».)
+\item \textbf{Vrai.} Toute boule de l'urne est blanche ou rouge : l'événement « blanche ou rouge » est l'événement certain $\Omega$, donc sa probabilité vaut $1$. Vérification : les deux événements sont incompatibles, donc $\dfrac{5}{8} + \dfrac{3}{8} = \dfrac{8}{8} = 1$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — À toi de définir]
+\begin{enumerate}
+\item Une \cle{expérience aléatoire} est une expérience dont on ne peut pas prévoir le résultat avec certitude, mais dont on connaît l'ensemble de tous les résultats possibles. Son \cle{univers}, noté $\Omega$, est l'ensemble de tous ces résultats possibles.
+\item Un \cle{événement élémentaire} est un événement qui ne contient qu'un seul résultat (un singleton de $\Omega$). Exemple : on lance une pièce équilibrée, $\Omega = \{P ; F\}$ ; l'événement « obtenir Pile », c'est-à-dire $\{P\}$, est un événement élémentaire.
+\item En situation d'équiprobabilité sur un univers fini : $P(A) = \dfrac{\text{nombre de cas favorables à } A}{\text{nombre de cas possibles}} = \dfrac{\text{Card}(A)}{\text{Card}(\Omega)}$.
+\item Pour deux événements quelconques $A$ et $B$ : $P(A \cup B) = P(A) + P(B) - P(A \cap B)$. En particulier, si $A$ et $B$ sont incompatibles ($A \cap B = \emptyset$), alors $P(A \cup B) = P(A) + P(B)$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item $\Omega = \{1 ; 2 ; 3 ; 4 ; 5 ; 6 ; 7 ; 8 ; 9 ; 10\}$, donc $\text{Card}(\Omega) = 10$. Le jeton est tiré au hasard : les dix issues sont équiprobables.
+\item 
+\begin{enumerate}
+\item $A = \{2 ; 4 ; 6 ; 8 ; 10\}$, $\text{Card}(A) = 5$, donc $P(A) = \dfrac{5}{10} = \dfrac{1}{2}$.
+\item $B = \{3 ; 6 ; 9\}$, $\text{Card}(B) = 3$, donc $P(B) = \dfrac{3}{10}$.
+\item $C = \{8 ; 9 ; 10\}$ (numéro strictement supérieur à 7), $\text{Card}(C) = 3$, donc $P(C) = \dfrac{3}{10}$.
+\item Aucun jeton ne porte le numéro 12 : $D = \emptyset$, donc $P(D) = 0$ (événement impossible).
+\end{enumerate}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — La roue de la foire de Yaoundé]
+\begin{enumerate}
+\item Les 12 secteurs sont identiques (même surface, même angle au centre) : la roue a donc la même chance de s'arrêter sur chacun d'eux. On est bien en situation d'équiprobabilité, avec $\text{Card}(\Omega) = 12$.
+\item Il y a 5 secteurs jaunes : $P(\text{jaune}) = \dfrac{5}{12}$.
+\item Les événements « bleu » et « vert » sont incompatibles (un secteur n'a qu'une seule couleur) :
+\[P(\text{bleu ou vert}) = P(\text{bleu}) + P(\text{vert}) = \frac{4}{12} + \frac{3}{12} = \frac{7}{12}.\]
+\item \textbf{Première manière (événement contraire) :} $P(\text{pas jaune}) = 1 - P(\text{jaune}) = 1 - \dfrac{5}{12} = \dfrac{7}{12}$.
+\textbf{Deuxième manière (dénombrement direct) :} « pas jaune » signifie « bleu ou vert », soit $4 + 3 = 7$ secteurs favorables : $P = \dfrac{7}{12}$. Les deux méthodes donnent le même résultat, ce qui conforte le calcul.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Trois lancers d'une pièce]
+\begin{enumerate}
+\item L'arbre comporte 3 niveaux (un par lancer), chaque nœud se divisant en 2 branches (P ou F). Les issues sont :
+\[\Omega = \{PPP ; PPF ; PFP ; FPP ; PFF ; FPF ; FFP ; FFF\}, \qquad \text{Card}(\Omega) = 2^3 = 8.\]
+La pièce est équilibrée : chaque issue a la même probabilité $\dfrac{1}{8}$.
+\item « Exactement deux Piles » $= \{PPF ; PFP ; FPP\}$ : 3 cas favorables, donc $P = \dfrac{3}{8}$.
+\item L'événement contraire de « au moins un Pile » est « aucun Pile », c'est-à-dire $\{FFF\}$, de probabilité $\dfrac{1}{8}$. Donc :
+\[P(\text{au moins un Pile}) = 1 - \frac{1}{8} = \frac{7}{8}.\]
+\item « Trois résultats identiques » $= \{PPP ; FFF\}$ : 2 cas favorables, donc $P = \dfrac{2}{8} = \dfrac{1}{4}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Le jeu de 32 cartes]
+On a $\text{Card}(\Omega) = 32$ (carte tirée au hasard : équiprobabilité), 4 as, 8 cœurs, et un seul as de cœur.
+\begin{enumerate}
+\item $P(\text{as}) = \dfrac{4}{32} = \dfrac{1}{8}$.
+\item $P(\text{cœur}) = \dfrac{8}{32} = \dfrac{1}{4}$.
+\item Les événements « as » et « cœur » ne sont \textbf{pas} incompatibles : l'as de cœur appartient aux deux. On applique la formule de la réunion :
+\[P(\text{as} \cup \text{cœur}) = P(\text{as}) + P(\text{cœur}) - P(\text{as de cœur}) = \frac{4}{32} + \frac{8}{32} - \frac{1}{32} = \frac{11}{32}.\]
+\item « Ni as ni cœur » est le contraire de « as ou cœur » :
+\[P = 1 - \frac{11}{32} = \frac{21}{32}.\]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — La tombola du quartier]
+\begin{enumerate}
+\item Les multiples de 10 entre 1 et 300 sont $10, 20, \dots, 300$ : il y en a $\dfrac{300}{10} = 30$.
+\item Les multiples de 15 sont $15, 30, \dots, 300$ : il y en a $\dfrac{300}{15} = 20$.
+\item Un nombre multiple de 10 \textbf{et} de 15 est un multiple de $\text{PPCM}(10 ; 15) = 30$. Il y en a $\dfrac{300}{30} = 10$.
+\item Notons $D$ : « multiple de 10 » et $Q$ : « multiple de 15 ». Ces événements ne sont pas incompatibles (les multiples de 30 leur sont communs) :
+\[P(\text{gagner}) = P(D \cup Q) = \frac{30}{300} + \frac{20}{300} - \frac{10}{300} = \frac{40}{300} = \frac{2}{15}.\]
+\item $P(\text{ne rien gagner}) = 1 - \dfrac{2}{15} = \dfrac{13}{15}$.
+\end{enumerate}
+\textbf{Point de vigilance :} sans la soustraction des 10 multiples de 30, on les compterait deux fois et l'on obtiendrait $\frac{50}{300}$, ce qui est faux.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type Bac : l'urne de la kermesse]
+\begin{enumerate}
+\item En distinguant les boules : $\Omega = \{R_1, R_2, R_3, R_4, V_1, V_2, V_3, N_1, N_2, N_3, N_4, N_5\}$, donc $\text{Card}(\Omega) = 12$. Les boules sont indiscernables au toucher : équiprobabilité.
+\item $P(R) = \dfrac{4}{12} = \dfrac{1}{3}$ ; \quad $P(V) = \dfrac{3}{12} = \dfrac{1}{4}$ ; \quad $P(N) = \dfrac{5}{12}$.
+\item Oui, $V$ et $N$ sont incompatibles : une boule ne peut pas être à la fois verte et noire, donc $V \cap N = \emptyset$.
+\item Comme $V$ et $N$ sont incompatibles : $P(N \cup V) = P(N) + P(V) = \dfrac{5}{12} + \dfrac{3}{12} = \dfrac{8}{12} = \dfrac{2}{3}$.
+\item \textbf{Première manière (contraire) :} $P(\overline{N}) = 1 - P(N) = 1 - \dfrac{5}{12} = \dfrac{7}{12}$.
+\textbf{Deuxième manière (réunion) :} « pas noire » = « rouge ou verte », événements incompatibles : $P(R \cup V) = \dfrac{4}{12} + \dfrac{3}{12} = \dfrac{7}{12}$.
+\item $P(R) = \dfrac{1}{3}$ : le joueur a \textbf{raison}, il a exactement une chance sur trois de gagner.
+\end{enumerate}
+\textbf{Barème indicatif (6 pts) :} 1 pt pour l'univers et l'équiprobabilité ; 1 pt pour les trois probabilités ; 0,5 pt pour l'incompatibilité justifiée ; 1 pt pour la réunion ; 1,5 pt pour les deux méthodes de la question 5 ; 1 pt pour la conclusion argumentée.
+\textbf{Points de vigilance :} citer l'équiprobabilité avant d'utiliser la formule des cas favorables ; justifier l'incompatibilité par $V \cap N = \emptyset$ avant d'additionner ; simplifier les fractions.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type Bac : le lancer de deux dés]
+\begin{enumerate}
+\item Le tableau complété comporte $6 \times 6 = 36$ cases : l'univers $\Omega$ contient 36 issues équiprobables (dés équilibrés et distinguables, par exemple un dé rouge et un dé bleu).
+\item 
+\begin{enumerate}
+\item $S = \{(1,6) ; (2,5) ; (3,4) ; (4,3) ; (5,2) ; (6,1)\}$, donc $P(S) = \dfrac{6}{36} = \dfrac{1}{6}$.
+Les sommes paires sont 2, 4, 6, 8, 10, 12, d'effectifs respectifs $1, 3, 5, 5, 3, 1$, soit $1+3+5+5+3+1 = 18$ cas : $P(P) = \dfrac{18}{36} = \dfrac{1}{2}$.
+\item $S \cap P$ : « la somme est égale à 7 \textbf{et} est paire ». Or 7 est impair : $S \cap P = \emptyset$, donc $P(S \cap P) = 0$.
+\item $P(S \cup P) = P(S) + P(P) - P(S \cap P) = \dfrac{1}{6} + \dfrac{1}{2} - 0 = \dfrac{2}{3}$.
+\end{enumerate}
+\item 
+\begin{enumerate}
+\item $\overline{M}$ : « aucun des deux dés ne montre un 6 », c'est-à-dire que chaque dé affiche une face entre 1 et 5 : $\text{Card}(\overline{M}) = 5 \times 5 = 25$, donc $P(\overline{M}) = \dfrac{25}{36}$.
+\item $P(M) = 1 - P(\overline{M}) = 1 - \dfrac{25}{36} = \dfrac{11}{36} \approx 0{,}31$.
+\end{enumerate}
+\item La probabilité de gagner est $P(S) = \dfrac{1}{6} \approx 0{,}167$, soit environ $16{,}7\%$. La chance de gagner est faible : en jouant un grand nombre de fois, on perd sa mise dans environ 5 cas sur 6. Même avec un gain de 500 FCFA pour une mise de 100 FCFA, le jeu reste défavorable au joueur sur le long terme.
+\end{enumerate}
+\textbf{Barème indicatif (8 pts) :} 1 pt pour le tableau et les 36 issues ; 2 pts pour $P(S)$ et $P(P)$ ; 1 pt pour $S \cap P$ ; 1 pt pour la réunion ; 2 pts pour l'événement contraire et $P(M)$ ; 1 pt pour le commentaire argumenté.
+\textbf{Points de vigilance :} les deux dés étant distinguables, $(2,5)$ et $(5,2)$ sont deux issues différentes ; pour « au moins un 6 », passer par l'événement contraire est la méthode attendue ; dans le commentaire, appuyer l'argumentation sur la valeur de la probabilité.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Type Bac : les activités d'une classe de Terminale]
+\begin{enumerate}
+\item $\text{Card}(\Omega) = 50$ (choix d'un élève au hasard : équiprobabilité).
+\[P(F) = \frac{28}{50} = 0{,}56 ; \qquad P(M) = \frac{20}{50} = 0{,}4 ; \qquad P(F \cap M) = \frac{8}{50} = 0{,}16.\]
+\item $P(F \cup M) = P(F) + P(M) - P(F \cap M) = 0{,}56 + 0{,}4 - 0{,}16 = 0{,}8 = \dfrac{4}{5}$.
+\item « Ni football ni musique » est le contraire de $F \cup M$ : $P = 1 - 0{,}8 = 0{,}2 = \dfrac{1}{5}$.
+\item « Football mais pas musique » : $P(F \setminus M) = P(F) - P(F \cap M) = 0{,}56 - 0{,}16 = 0{,}4 = \dfrac{2}{5}$. (Vérification par dénombrement : $28 - 8 = 20$ élèves, et $\frac{20}{50} = 0{,}4$.)
+\item « Plus de 7 chances sur 10 » signifie une probabilité strictement supérieure à $0{,}7$. Or $P(F \cup M) = 0{,}8 > 0{,}7$ : l'affirmation du chef d'établissement est \textbf{exacte}.
+\item \textbf{Jeu 1 :} 3 boules gagnantes parmi 10 : $P_1 = \dfrac{3}{10} = 0{,}3$.
+\textbf{Jeu 2 :} 36 issues équiprobables. « Somme strictement supérieure à 8 » correspond aux sommes 9, 10, 11, 12, d'effectifs respectifs $4, 3, 2, 1$, soit $4+3+2+1 = 10$ cas favorables : $P_2 = \dfrac{10}{36} = \dfrac{5}{18} \approx 0{,}278$.
+\textbf{Comparaison :} $0{,}3 > 0{,}278$, donc $P_1 > P_2$.
+\textbf{Conclusion :} le Jeu 1 offre la plus grande probabilité de gain ($30\%$ contre environ $27{,}8\%$) : un élève qui veut maximiser ses chances de gagner doit choisir le \textbf{Jeu 1}.
+\end{enumerate}
+\textbf{Barème indicatif (10 pts) :} 1,5 pt pour les trois probabilités ; 1,5 pt pour la réunion ; 1 pt pour le contraire ; 1 pt pour $F \setminus M$ ; 1 pt pour la validation de l'affirmation ; 4 pts pour le problème de synthèse (1 pt par probabilité, 1 pt pour la comparaison, 1 pt pour la conclusion rédigée).
+\textbf{Points de vigilance :} ne pas oublier de soustraire $P(F \cap M)$ dans la réunion ; pour « football mais pas musique », bien retirer les 8 élèves pratiquant les deux activités ; la conclusion du problème de synthèse doit être rédigée en une phrase complète et appuyée sur la comparaison chiffrée.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept}, concept color=popblue!80,
+  level 1/.append style={level distance=3.6cm, sibling angle=51.43},
+  level 2/.append style={level distance=2.1cm, sibling angle=40},
+  text=white, font=\small]
+\node[concept color=popdark, font=\bfseries] {Probabilités élémentaires}
+  child[concept color=popblue] { node {Expérience aléatoire}
+    child { node {Univers $\Omega$} }
+    child { node {Événement, événement élémentaire} }
+  }
+  child[concept color=poporange] { node {Probabilité $P(A)$}
+    child { node {$0 \le P(A) \le 1$} }
+    child { node {$P(\Omega)=1$, $P(\emptyset)=0$} }
+  }
+  child[concept color=popgreen] { node {Équiprobabilité}
+    child { node {$P(A)=\dfrac{\text{favorables}}{\text{possibles}}$} }
+  }
+  child[concept color=popink] { node {Événement contraire}
+    child { node {$P(\bar{A})=1-P(A)$} }
+  }
+  child[concept color=poppurple] { node {Réunion $A\cup B$}
+    child { node {$P(A)+P(B)-P(A\cap B)$} }
+    child { node {Incompatibles : $P(A)+P(B)$} }
+  }
+  child[concept color=popgold] { node {Dénombrement}
+    child { node {Listes, arbres, tableaux} }
+  }
+  child[concept color=poppink] { node {Applications}
+    child { node {Jeux, tirages, loteries} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : les sept idées forces des probabilités élémentaires.}
+\end{popfigure}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\textbf{Définitions clés.}
+\begin{itemize}
+  \item Une \cle{expérience aléatoire} est une expérience dont le résultat dépend du hasard, mais dont on connaît tous les résultats possibles.
+  \item L'\cle{univers} $\Omega$ est l'ensemble de tous les résultats possibles.
+  \item Un \cle{événement} est une partie de $\Omega$ ; un \cle{événement élémentaire} ne contient qu'un seul résultat.
+  \item $\emptyset$ est l'événement \cle{impossible}, $\Omega$ l'événement \cle{certain}.
+  \item L'\cle{événement contraire} de $A$, noté $\bar{A}$, est réalisé quand $A$ ne l'est pas.
+  \item $A\cup B$ : « $A$ \textbf{ou} $B$ » ; $A\cap B$ : « $A$ \textbf{et} $B$ ». Si $A\cap B=\emptyset$, $A$ et $B$ sont \cle{incompatibles}.
+\end{itemize}
+
+\textbf{Formules à connaître par cœur.}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Situation} & \textbf{Formule} \\
+\hline
+Tout événement $A$ & $0 \le P(A) \le 1$ ; \quad $P(\Omega)=1$ ; \quad $P(\emptyset)=0$ \\
+\hline
+Équiprobabilité & $P(A)=\dfrac{\text{nombre de cas favorables}}{\text{nombre de cas possibles}}=\dfrac{\operatorname{Card}(A)}{\operatorname{Card}(\Omega)}$ \\
+\hline
+Événement contraire & $P(\bar{A})=1-P(A)$ \\
+\hline
+Réunion (cas général) & $P(A\cup B)=P(A)+P(B)-P(A\cap B)$ \\
+\hline
+Événements incompatibles & $P(A\cup B)=P(A)+P(B)$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthodes express.}
+\begin{enumerate}
+  \item \textbf{Décrire l'univers} : lister tous les résultats possibles (arbre, tableau à double entrée, liste) et vérifier qu'aucun n'est oublié.
+  \item \textbf{Calculer une probabilité} : vérifier l'équiprobabilité, compter les cas possibles, compter les cas favorables, faire le rapport, simplifier la fraction.
+  \item \textbf{Passer par le contraire} : dès que l'énoncé dit « au moins un », calculer $P(\text{aucun})$ puis $1-P(\text{aucun})$.
+  \item \textbf{Réunion} : se demander si les événements sont incompatibles ; si non, retrancher $P(A\cap B)$ pour ne pas compter deux fois.
+\end{enumerate}
+\end{aretenir}
+
+\begin{attention}[Pièges à éviter absolument]
+\begin{itemize}
+  \item La formule « cas favorables sur cas possibles » n'est valable \textbf{que sous équiprobabilité} : dé non truqué, urne bien mélangée, tirage au hasard. Toujours le justifier dans la rédaction.
+  \item Une probabilité est un nombre compris entre $0$ et $1$ : si tu trouves $P(A)=\dfrac{7}{5}$ ou un nombre négatif, il y a forcément une erreur de dénombrement.
+  \item $P(A\cup B)=P(A)+P(B)$ n'est vraie que si $A$ et $B$ sont \textbf{incompatibles}. Sinon, il faut retrancher $P(A\cap B)$.
+  \item Ne pas confondre $\bar{A}$ (contraire de $A$) avec un événement simplement différent de $A$ : $A$ et $\bar{A}$ doivent vérifier $A\cup\bar{A}=\Omega$ et $A\cap\bar{A}=\emptyset$.
+  \item Dans un tableau à double entrée (deux dés, deux tirages), les couples $(1;2)$ et $(2;1)$ sont \textbf{deux cas distincts}.
+\end{itemize}
+\end{attention}
+
+\begin{exoresolu}[Contrôle rapide : tirage dans une urne]
+Une urne contient 5 boules rouges et 3 boules vertes, indiscernables au toucher. On tire une boule au hasard. On note $R$ : « la boule est rouge » et $V$ : « la boule est verte ». Calculer $P(R)$, $P(V)$ et vérifier que $P(R)+P(V)=1$.
+\tcblower
+Les boules sont indiscernables au toucher et le tirage est au hasard : il y a équiprobabilité. L'univers contient $\operatorname{Card}(\Omega)=5+3=8$ cas possibles.
+\begin{align*}
+P(R) &= \dfrac{\operatorname{Card}(R)}{\operatorname{Card}(\Omega)} = \dfrac{5}{8}, \\
+P(V) &= \dfrac{\operatorname{Card}(V)}{\operatorname{Card}(\Omega)} = \dfrac{3}{8}.
+\end{align*}
+Vérification : $P(R)+P(V)=\dfrac{5}{8}+\dfrac{3}{8}=\dfrac{8}{8}=1$. C'est normal : $V$ est l'événement contraire de $R$, donc $P(V)=P(\bar{R})=1-P(R)$.
+\end{exoresolu}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+  \item[$\square$] Je sais définir une expérience aléatoire et décrire son univers $\Omega$.
+  \item[$\square$] Je distingue événement, événement élémentaire, événement certain et événement impossible.
+  \item[$\square$] Je vérifie toujours l'équiprobabilité avant d'appliquer « cas favorables sur cas possibles ».
+  \item[$\square$] Je sais dénombrer avec un arbre ou un tableau sans oublier ni répéter de cas.
+  \item[$\square$] Je sais que $0 \le P(A) \le 1$ et je contrôle la cohérence de mes résultats.
+  \item[$\square$] Je maîtrise $P(\bar{A})=1-P(A)$ et je pense au contraire pour « au moins un ».
+  \item[$\square$] Je sais calculer $P(A\cup B)$ dans le cas général et dans le cas incompatible.
+  \item[$\square$] Je n'oublie pas de retrancher $P(A\cap B)$ quand $A$ et $B$ ne sont pas incompatibles.
+  \item[$\square$] Je simplifie mes fractions et je sais les traduire en décimal ou en pourcentage.
+  \item[$\square$] Je sais rédiger : nommer l'événement, écrire la formule, puis conclure par une phrase.
+  \item[$\square$] Je sais résoudre un problème concret (dés, urnes, cartes, loterie) en identifiant clairement $\Omega$.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
