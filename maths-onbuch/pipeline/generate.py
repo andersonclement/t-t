@@ -264,6 +264,8 @@ def autofix(body):
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
+    # calc TikZ : le coefficient précède le point, ($(U)*0.55$) -> ($0.55*(U)$)
+    body = re.sub(r"\(\$\s*\(([^()$]+)\)\s*\*\s*(-?[\d.]+)\s*\$\)", r"($\2*(\1)$)", body)
     body = _align_close(body)
     body = _fill_const(body)
     body = _safe_sqrt(body)
