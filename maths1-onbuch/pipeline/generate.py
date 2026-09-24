@@ -295,6 +295,8 @@ def autofix(body):
             t = t[:i] + "\\end{center}\n" * k + t[i:]
         return t
     body = re.sub(r"\\begin\{popfigure\}.*?\\end\{popfigure\}", _fig, body, flags=re.S)
+    # TikZ : font=\small\textbf -> \bfseries (\textbf attend un argument)
+    body = re.sub(r"(font\s*=\s*\{?[^,\]}]*?)\\textbf\b", r"\1\\bfseries", body)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
