@@ -1,0 +1,2776 @@
+% Limites et continuité d'une fonction — Mathématiques 1ère TI — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N05-limites-continuite.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1ère TI}
+\newcommand{\DOCMODULE}{Relations et opérations fondamentales dans l'ensemble des nombres réels}
+\newcommand{\DOCLECON}{N05}
+\newcommand{\DOCTITRE}{Limites et continuité d'une fonction}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\providecommand{\llbracket}{\lBrack}\providecommand{\rrbracket}{\rBrack}} % intervalles d'entiers
+
+\begin{document}
+
+\pagegarde{Limites et continuité d'une fonction}{Mathématiques}{1ère TI}{Relations et opérations fondamentales dans l'ensemble des nombres réels}{N05}{9 h}{Cette leçon introduit de manière intuitive puis rigoureuse la notion de limite d'une fonction en un réel et à l'infini, ainsi que la continuité. Elle fournit les outils de calcul (opérations, comparaison, formes indéterminées) indispensables pour l'étude des fonctions en Première et en Terminale.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais conjecturer graphiquement ou algébriquement la limite d'une fonction en un réel ou à l'infini
+\item À la fin de cette leçon, je sais calculer les limites à gauche et à droite d'une fonction en un réel, en particulier pour x ↦ a/x et les fonctions homographiques
+\item À la fin de cette leçon, je sais lever une forme indéterminée du type 0/0 par factorisation
+\item À la fin de cette leçon, je sais déterminer la limite à l'infini d'une fonction polynôme ou rationnelle
+\item À la fin de cette leçon, je sais appliquer les théorèmes d'opérations sur les limites et reconnaître les formes indéterminées
+\item À la fin de cette leçon, je sais utiliser les théorèmes de comparaison et d'encadrement pour calculer des limites
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Approche intuitive de la notion de limite
+\item Limites à gauche, limites à droite en un réel
+\item Opérations sur les limites et formes indéterminées
+\item Limites à l'infini
+\item Comparaison et limites
+\item Continuité en un réel et sur un intervalle
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais conjecturer graphiquement ou algébriquement la limite d'une fonction en un réel ou à l'infini
+\item À la fin de cette leçon, je sais calculer les limites à gauche et à droite d'une fonction en un réel, en particulier pour x ↦ a/x et les fonctions homographiques
+\item À la fin de cette leçon, je sais lever une forme indéterminée du type 0/0 par factorisation
+\item À la fin de cette leçon, je sais déterminer la limite à l'infini d'une fonction polynôme ou rationnelle
+\item À la fin de cette leçon, je sais appliquer les théorèmes d'opérations sur les limites et reconnaître les formes indéterminées
+\item À la fin de cette leçon, je sais utiliser les théorèmes de comparaison et d'encadrement pour calculer des limites
+\item À la fin de cette leçon, je sais vérifier la continuité d'une fonction en un réel, à gauche ou à droite, et sur un intervalle
+\item À la fin de cette leçon, je sais reconnaître graphiquement si une fonction est continue en un réel donné
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion de fonction, ensemble de définition, image d'un réel (Seconde)
+\item Fonctions de référence : x ↦ x², x ↦ 1/x, x ↦ √x, fonctions affines et polynômes
+\item Lecture et interprétation de représentations graphiques
+\item Factorisation d'expressions algébriques et identités remarquables
+\item Valeur absolue et intervalles de ℝ (début d'année de Première)
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Approche intuitive de la notion de limite}
+
+\courssub{Situation d'accroche : la borne de recharge de Moussa}
+
+Moussa gère une petite borne de recharge de téléphones au marché Mokolo, à Yaoundé. Sa tarification est simple : \SI{100}{FCFA} la demi-heure \emph{entamée}. Concrètement, un client qui reste 29 minutes paie \SI{100}{FCFA} ; un client qui reste exactement 30 minutes paie déjà \SI{200}{FCFA}, car il a entamé une deuxième demi-heure. Le prix $P(t)$, en fonction du temps $t$ (en minutes), « saute » donc brutalement au voisinage de 30 minutes : quand $t$ s'approche de 30 par valeurs inférieures (29 ; 29,5 ; 29,9 ; \dots), le prix reste collé à \SI{100}{FCFA} ; quand $t$ s'approche de 30 par valeurs supérieures (31 ; 30,5 ; 30,1 ; \dots), le prix vaut \SI{200}{FCFA}. En revanche, la consommation d'électricité du téléphone, elle, augmente de façon parfaitement régulière, sans aucun saut.
+
+Deux comportements radicalement différents « tout près » de 30 minutes ! Et une autre question se pose : que devient la facture mensuelle de Moussa, ou le niveau d'un réservoir qu'on remplit à débit constant, quand le temps devient \emph{très grand} ?
+
+\textbf{Problématique.} Comment décrire mathématiquement le comportement d'une fonction $f$ quand la variable $x$ s'approche d'un réel $a$ (par la gauche, par la droite), ou quand $x$ devient infiniment grand ? C'est toute l'ambition de la notion de \cle{limite}, qui est le socle de l'analyse au Probatoire.
+
+\courssub{L'idée intuitive : « s'approcher de »}
+
+Considérons la fonction $f$ définie sur $\mathbb{R}\setminus\{1\}$ par
+\[ f(x)=\frac{x^{2}-1}{x-1}. \]
+Cette fonction n'est \textbf{pas définie en $1$} : le dénominateur s'annule. Pourtant, rien n'empêche de calculer $f(x)$ pour des valeurs de $x$ de plus en plus proches de $1$. Remarquons que, pour $x\neq 1$ :
+\[ f(x)=\frac{(x-1)(x+1)}{x-1}=x+1. \]
+Ainsi, dès que $x$ est proche de $1$ (mais différent de $1$), $f(x)$ est proche de $2$. On dit que $f(x)$ \emph{tend vers} $2$ quand $x$ \emph{tend vers} $1$.
+
+\begin{definition}[Limite finie en un réel (approche intuitive)]
+Soit $f$ une fonction définie au voisinage d'un réel $a$ (sauf éventuellement en $a$ lui-même) et $\ell$ un réel. On dit que $f(x)$ a pour \cle{limite} $\ell$ quand $x$ tend vers $a$ lorsque $f(x)$ devient aussi proche de $\ell$ que l'on veut, dès que $x$ est suffisamment proche de $a$ (tout en restant différent de $a$). On écrit :
+\[ \lim_{x\to a} f(x)=\ell \qquad \text{ou encore} \qquad f(x)\xrightarrow[x\to a]{} \ell. \]
+On lit : « la limite de $f$ de $x$ quand $x$ tend vers $a$ est égale à $\ell$ ».
+\end{definition}
+
+\begin{attention}[Limite et image : deux notions distinctes]
+La limite en $a$ décrit ce qui se passe \emph{autour} de $a$, jamais \emph{en} $a$. Trois situations sont possibles :
+\begin{itemize}
+\item $f(a)$ existe et $\lim\limits_{x\to a}f(x)=f(a)$ (cas « régulier », celui des fonctions continues) ;
+\item $f(a)$ n'existe pas, et pourtant la limite existe : c'est le cas de $f(x)=\dfrac{x^{2}-1}{x-1}$ en $1$ ;
+\item $f(a)$ existe mais est différente de la limite (cas d'un « saut »).
+\end{itemize}
+Ne confonds jamais « calculer $f(a)$ » et « calculer $\lim\limits_{x\to a}f(x)$ » : ce sont deux questions différentes.
+\end{attention}
+
+\courssub{Conjecturer une limite à l'aide d'un tableau de valeurs}
+
+\begin{methode}[Conjecturer une limite par calculs d'images]
+Pour conjecturer $\lim\limits_{x\to a}f(x)$ :
+\begin{enumerate}
+\item Calculer $f(x)$ pour des valeurs de $x$ de plus en plus proches de $a$, \textbf{par valeurs inférieures} : $a-0{,}1$ ; $a-0{,}01$ ; $a-0{,}001$ ; \dots
+\item Calculer $f(x)$ pour des valeurs de plus en plus proches de $a$, \textbf{par valeurs supérieures} : $a+0{,}1$ ; $a+0{,}01$ ; $a+0{,}001$ ; \dots
+\item Comparer les résultats : si les deux suites de valeurs se rapprochent d'un même nombre $\ell$, on conjecture que $\lim\limits_{x\to a}f(x)=\ell$. Si elles se rapprochent de deux nombres différents, ou deviennent infiniment grandes, la conclusion est différente.
+\end{enumerate}
+Une conjecture n'est pas une preuve : elle guide, elle ne démontre pas.
+\end{methode}
+
+\begin{exemplebox}[Conjecture algébrique pour $f(x)=\dfrac{x^{2}-1}{x-1}$ en $1$]
+Calculons des images de plus en plus proches de $1$ (rappel : pour $x\neq1$, $f(x)=x+1$) :
+\begin{center}
+\begin{tabular}{|l|*{6}{c|}}
+\hline
+\rowcolor{popblueL} $x$ & $0{,}9$ & $0{,}99$ & $0{,}999$ & $1{,}001$ & $1{,}01$ & $1{,}1$ \\
+\hline $f(x)$ & $1{,}9$ & $1{,}99$ & $1{,}999$ & $2{,}001$ & $2{,}01$ & $2{,}1$ \\
+\hline
+\end{tabular}
+\end{center}
+Que $x$ approche $1$ par la gauche ou par la droite, $f(x)$ se rapproche de $2$. On conjecture donc :
+\[ \lim_{x\to 1}\frac{x^{2}-1}{x-1}=2, \]
+alors même que $f(1)$ n'existe pas.
+\end{exemplebox}
+
+\courssub{Conjecturer une limite à partir d'une courbe représentative}
+
+Sur un graphique, conjecturer $\lim\limits_{x\to a}f(x)$ revient à suivre la courbe des yeux lorsque l'abscisse $x$ se rapproche de $a$, et à observer vers quelle ordonnée la courbe se dirige.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6.5cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-1.5, xmax=3.5, ymin=-0.5, ymax=4.5,
+  xtick={1}, ytick={2},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small},
+]
+\addplot[popcurve,domain=-1.2:3.2,samples=200]{x+1};
+\addplot[only marks,mark=*,mark size=2pt,color=popink,fill=white] coordinates {(1,2)};
+\draw[dashed,popmuted] (axis cs:1,0) -- (axis cs:1,2) -- (axis cs:0,2);
+\node[popink,anchor=south west,font=\small] at (axis cs:1.05,2.05) {trou en $(1\,;\,2)$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x)=\dfrac{x^{2}-1}{x-1}$ : c'est la droite d'équation $y=x+1$, privée du point d'abscisse $1$ (le « trou », représenté par un rond vide). Quand $x$ tend vers $1$, la courbe se dirige vers l'ordonnée $2$ : $\lim\limits_{x\to1}f(x)=2$, bien que $f(1)$ n'existe pas.}
+\end{popfigure}
+
+\begin{methode}[Conjecturer une limite graphiquement]
+\begin{enumerate}
+\item Repérer sur l'axe des abscisses le réel $a$.
+\item Suivre la courbe en s'approchant de $a$ par la gauche, puis par la droite.
+\item Lire l'ordonnée $\ell$ vers laquelle la courbe se dirige : c'est la limite conjecturée. Si la courbe « monte » ou « descend » sans se stabiliser, la limite est infinie ; si les deux côtés mènent à des ordonnées différentes, il n'y a pas de limite en $a$ (mais il peut y avoir une limite à gauche et une limite à droite, étudiées à la section suivante).
+\end{enumerate}
+\end{methode}
+
+\courssub{Cas où la limite est infinie}
+
+Il arrive que $f(x)$ ne se rapproche d'aucun nombre fini, mais devienne \emph{arbitrairement grand}. C'est le cas de la fonction $g:x\longmapsto \dfrac{1}{x^{2}}$ au voisinage de $0$ :
+\begin{center}
+\begin{tabular}{|l|*{5}{c|}}
+\hline
+\rowcolor{popblueL} $x$ & $\pm 0{,}5$ & $\pm 0{,}1$ & $\pm 0{,}01$ & $\pm 0{,}001$ & $\pm 0{,}0001$ \\
+\hline $g(x)=\dfrac{1}{x^{2}}$ & $4$ & $100$ & $\num{10000}$ & $\num{1000000}$ & $\num{100000000}$ \\
+\hline
+\end{tabular}
+\end{center}
+Plus $x$ est proche de $0$, plus $g(x)$ est grand : $g(x)$ finit par dépasser n'importe quel nombre fixé à l'avance ($10^{6}$, $10^{12}$, \dots). On dit que $g(x)$ tend vers $+\infty$.
+
+\begin{definition}[Limite infinie en un réel (approche intuitive)]
+On dit que $f(x)$ a pour limite $+\infty$ quand $x$ tend vers $a$ lorsque $f(x)$ devient aussi grand que l'on veut (il dépasse toute valeur fixée à l'avance) dès que $x$ est suffisamment proche de $a$. On écrit :
+\[ \lim_{x\to a}f(x)=+\infty. \]
+On définit de même $\lim\limits_{x\to a}f(x)=-\infty$ lorsque $f(x)$ devient inférieur à tout nombre fixé. Graphiquement, la droite d'équation $x=a$ est alors une \cle{asymptote verticale} à la courbe.
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-2.2, xmax=2.2, ymin=-0.5, ymax=8,
+  xtick={-2,-1,1,2}, ytick={2,4,6},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small},
+]
+\addplot[popcurve,domain=-2:-0.354,samples=150]{1/(x^2)};
+\addplot[popcurve,domain=0.354:2,samples=150]{1/(x^2)};
+\draw[dashed,poporange,thick] (axis cs:0,-0.5) -- (axis cs:0,8);
+\draw[-{Stealth},poporange,thick] (axis cs:0.55,3.3) -- (axis cs:0.12,7.3);
+\draw[-{Stealth},poporange,thick] (axis cs:-0.55,3.3) -- (axis cs:-0.12,7.3);
+\node[poporange,font=\small,anchor=west] at (axis cs:0.6,5.6) {$f(x)\to+\infty$};
+\node[popink,font=\small,anchor=south east] at (axis cs:-1.9,7.6) {$y=\dfrac{1}{x^{2}}$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $x\mapsto \dfrac{1}{x^{2}}$ au voisinage de $0$ : quand $x$ s'approche de $0$, la courbe « monte » indéfiniment le long de l'axe des ordonnées, qui est asymptote verticale. On écrit $\lim\limits_{x\to 0}\dfrac{1}{x^{2}}=+\infty$.}
+\end{popfigure}
+
+\courssub{Limite finie, limite infinie, absence de limite : le triptyque à maîtriser}
+
+Au voisinage d'un réel $a$, trois grandes situations peuvent se présenter :
+
+\begin{aretenir}[Les trois comportements possibles en un réel $a$]
+\begin{itemize}
+\item \textbf{Limite finie $\ell$ :} $f(x)$ se rapproche d'un nombre $\ell$ quand $x$ se rapproche de $a$. Exemple : $\lim\limits_{x\to1}\dfrac{x^{2}-1}{x-1}=2$.
+\item \textbf{Limite infinie :} $f(x)$ devient arbitrairement grand ($+\infty$) ou arbitrairement petit ($-\infty$). Exemple : $\lim\limits_{x\to0}\dfrac{1}{x^{2}}=+\infty$.
+\item \textbf{Absence de limite :} $f(x)$ ne se stabilise vers aucune valeur, finie ou infinie. C'est le cas du prix facturé par Moussa en $t=30$ (les valeurs à gauche et à droite ne se rapprochent pas du même nombre), ou de fonctions qui oscillent indéfiniment.
+\end{itemize}
+\end{aretenir}
+
+\begin{exoresolu}[Conjecturer puis vérifier une limite]
+\textbf{Énoncé.} Soit $h$ la fonction définie sur $\mathbb{R}\setminus\{2\}$ par $h(x)=\dfrac{x^{2}-4}{x-2}$.
+\begin{enumerate}
+\item Pourquoi $h(2)$ n'existe-t-il pas ?
+\item À l'aide d'un tableau de valeurs, conjecturer $\lim\limits_{x\to 2}h(x)$.
+\item Confirmer algébriquement cette conjecture.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Pour $x=2$, le dénominateur $x-2$ s'annule : $h(2)$ n'existe pas, $2$ est une valeur interdite.
+\item Calculons des images proches de $2$ :
+\begin{center}
+\begin{tabular}{|l|*{6}{c|}}
+\hline
+\rowcolor{popblueL} $x$ & $1{,}9$ & $1{,}99$ & $1{,}999$ & $2{,}001$ & $2{,}01$ & $2{,}1$ \\
+\hline $h(x)$ & $3{,}9$ & $3{,}99$ & $3{,}999$ & $4{,}001$ & $4{,}01$ & $4{,}1$ \\
+\hline
+\end{tabular}
+\end{center}
+Par la gauche comme par la droite, $h(x)$ se rapproche de $4$. On conjecture $\lim\limits_{x\to2}h(x)=4$.
+\item Pour tout $x\neq 2$, on factorise le numérateur :
+\[ h(x)=\frac{x^{2}-4}{x-2}=\frac{(x-2)(x+2)}{x-2}=x+2. \]
+Quand $x$ tend vers $2$, $x+2$ tend vers $4$ : la conjecture est confirmée, $\lim\limits_{x\to2}h(x)=4$, alors que $h(2)$ n'existe pas.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item Ne jamais écrire « $f(1)=2$ » pour la fonction $f(x)=\dfrac{x^{2}-1}{x-1}$ : c'est $\lim\limits_{x\to1}f(x)=2$ qui est vrai, et $f(1)$ n'existe pas.
+\item Simplifier $\dfrac{x^{2}-1}{x-1}$ en $x+1$ n'est licite que pour $x\neq 1$ : toujours préciser cette condition.
+\item Un tableau de valeurs donne une \emph{conjecture}, pas une certitude : il faut ensuite un argument algébrique (factorisation, opérations sur les limites) pour conclure rigoureusement.
+\item Écris toujours la notation complète $\lim\limits_{x\to a}f(x)$ : écrire « $\lim f(x)$ » sans préciser vers quoi tend $x$ est une erreur de rédaction sanctionnée au Probatoire.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Weierstrass et la naissance de la rigueur]
+L'idée de limite a été utilisée dès le XVII\textsuperscript{e} siècle par Newton et Leibniz pour inventer le calcul différentiel, mais de façon intuitive, presque « magique ». Il a fallu attendre le XIX\textsuperscript{e} siècle et le mathématicien allemand Karl Weierstrass (1815--1897) pour obtenir une définition entièrement rigoureuse, dite « en epsilon--delta », que tu rencontreras peut-être à l'université. Cette notion de limite est le fondement de toute l'analyse moderne : sans elle, pas de dérivées, pas d'intégrales, pas d'équations de la physique. Et c'est elle qui permet aujourd'hui, par exemple, à Orange ou MTN de modéliser l'évolution du trafic de leurs réseaux quand le nombre d'abonnés devient très grand !
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+Soit $f$ la fonction définie sur $\mathbb{R}\setminus\{3\}$ par $f(x)=\dfrac{x^{2}-9}{x-3}$.
+\begin{enumerate}
+\item Construire un tableau de valeurs de $f(x)$ pour $x\in\{2{,}9\,;\,2{,}99\,;\,2{,}999\,;\,3{,}001\,;\,3{,}01\,;\,3{,}1\}$.
+\item Conjecturer $\lim\limits_{x\to3}f(x)$, puis confirmer par une factorisation.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Pour $x\neq 3$, $f(x)=\dfrac{(x-3)(x+3)}{x-3}=x+3$, d'où le tableau :
+\begin{center}
+\begin{tabular}{|l|*{6}{c|}}
+\hline
+\rowcolor{popblueL} $x$ & $2{,}9$ & $2{,}99$ & $2{,}999$ & $3{,}001$ & $3{,}01$ & $3{,}1$ \\
+\hline $f(x)$ & $5{,}9$ & $5{,}99$ & $5{,}999$ & $6{,}001$ & $6{,}01$ & $6{,}1$ \\
+\hline
+\end{tabular}
+\end{center}
+\item Les valeurs se rapprochent de $6$ des deux côtés : on conjecture $\lim\limits_{x\to3}f(x)=6$. Comme $f(x)=x+3$ pour $x\neq3$ et que $x+3$ tend vers $6$ quand $x$ tend vers $3$, la conjecture est confirmée.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Limites à gauche, limites à droite en un réel}
+
+Dans la section précédente, nous avons découvert l'idée intuitive de limite : « lorsque $x$ se rapproche de $a$, $f(x)$ se rapproche de $\ell$ ». Mais nous n'avons pas précisé \emph{comment} $x$ s'approche de $a$. Vient-il de valeurs plus petites (à gauche sur l'axe des abscisses) ou de valeurs plus grandes (à droite) ? Cette distinction est cruciale : une fonction peut avoir un comportement radicalement différent selon le côté par lequel on approche $a$. C'est tout l'objet de cette section : formaliser les \cle{limites unilatérales} (à gauche et à droite) et comprendre comment elles gouvernent l'existence de la \cle{limite bilatérale}.
+
+\courssub{Définitions : limite à gauche et limite à droite}
+
+Imaginons un élève qui marche vers le tableau noir (position $a$) depuis le fond de la classe ($x < a$) : il approche $a$ \textbf{par valeurs inférieures}. C'est l'approche \textbf{à gauche}, notée $x \to a^{-}$ (se lit « $x$ tend vers $a$ par valeurs inférieures à $a$ » ou « $x$ tend vers $a$ moins »).
+Inversement, s'il vient de devant le tableau ($x > a$), il approche $a$ \textbf{par valeurs supérieures} : c'est l'approche \textbf{à droite}, notée $x \to a^{+}$.
+
+\begin{definition}[Limite à gauche et limite à droite en un réel $a$]
+Soit $f$ une fonction définie sur un intervalle $I$ et $a \in \mathbb{R}$ (ou $a$ valeur d'adhérence de $I$).
+\begin{itemize}
+    \item On dit que $f$ admet la limite \textbf{à gauche} $\ell \in \mathbb{R}$ en $a$ si, lorsque $x$ tend vers $a$ \textbf{par valeurs strictement inférieures à $a$} ($x \to a^{-}$, $x < a$), $f(x)$ se rapproche arbitrairement de $\ell$. On note :
+    \[ \lim_{x \to a^{-}} f(x) = \ell \]
+    \item On dit que $f$ admet la limite \textbf{à droite} $\ell \in \mathbb{R}$ en $a$ si, lorsque $x$ tend vers $a$ \textbf{par valeurs strictement supérieures à $a$} ($x \to a^{+}$, $x > a$), $f(x)$ se rapproche arbitrairement de $\ell$. On note :
+    \[ \lim_{x \to a^{+}} f(x) = \ell \]
+\end{itemize}
+Ces définitions s'étendent naturellement aux limites infinies ($+\infty$ ou $-\infty$).
+\end{definition}
+
+\begin{attention}[Notation $a^{-}$ et $a^{+}$ : ne pas confondre avec des nombres !]
+Les symboles $a^{-}$ et $a^{+}$ \textbf{ne sont pas des nombres réels}. $a^{-}$ ne signifie pas « $a$ moins un petit peu » comme une valeur numérique, mais \emph{le processus} d'approche de $a$ par la gauche. On n'écrit jamais $f(a^{-})$ (cela n'a pas de sens), on écrit $\lim_{x \to a^{-}} f(x)$.
+\end{attention}
+
+\courssub{Lecture graphique des limites unilatérales}
+
+Sur le graphique d'une fonction, la limite à gauche en $a$ est la valeur (ou la direction) vers laquelle la courbe « pointe » quand on la suit \textbf{en venant de la gauche} (abscisses croissantes vers $a$). La limite à droite est ce vers quoi elle pointe \textbf{en venant de la droite} (abscisses décroissantes vers $a$).
+
+\begin{exemplebox}[Fonction en escalier : tarification par paliers (contexte Cameroun)]
+Considérons le coût $C(x)$ en francs CFA d'un appel téléphonique de durée $x$ minutes chez un opérateur (type MTN/Orange) qui facture \textbf{par minute entamée} :
+\[ C(x) = \begin{cases} 50 & \text{si } 0 < x \le 1 \\ 100 & \text{si } 1 < x \le 2 \\ 150 & \text{si } 2 < x \le 3 \\ \vdots \end{cases} \]
+Étudions les limites en $a = 1$.
+\begin{itemize}
+    \item \textbf{À gauche ($x \to 1^{-}$) :} Pour $x < 1$ (ex: 0,9 min), on est dans le premier palier, $C(x) = 50$. La courbe est un segment horizontal à l'ordonnée 50. Donc $\lim_{x \to 1^{-}} C(x) = 50$.
+    \item \textbf{À droite ($x \to 1^{+}$) :} Pour $x > 1$ (ex: 1,1 min), on bascule dans le deuxième palier, $C(x) = 100$. La courbe est un segment horizontal à l'ordonnée 100. Donc $\lim_{x \to 1^{+}} C(x) = 100$.
+\end{itemize}
+Les deux limites sont \textbf{différentes}. La fonction a un \cle{saut} en $x=1$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+    % Axes
+    \draw[->] (-0.5,0) -- (5,0) node[right] {$x$ (min)};
+    \draw[->] (0,-10) -- (0,400) node[above] {$C(x)$ (FCFA)};
+    % Graduations
+    \foreach \x/\label in {1/1, 2/2, 3/3, 4/4} \draw (\x,2pt) -- (\x,-2pt) node[below] {\label};
+    \foreach \y/\label in {50/50, 100/100, 150/150, 200/200, 250/250, 300/300, 350/350} \draw (2pt,\y) -- (-2pt,\y) node[left] {\label};
+    
+    % Palier 1 : 0 < x <= 1, y=50. Point plein à (1,50), vide à (0,50) mais x>0.
+    \draw[popblue, very thick] (0.05,50) -- (1,50);
+    \fill[popblue] (1,50) circle (2.5pt); % Point plein à droite du segment (x=1 inclus)
+    \draw[popblue, fill=white, thick] (0.05,50) circle (2.5pt); % Point vide à gauche (x=0 exclu, mais on commence à 0.05)
+    
+    % Palier 2 : 1 < x <= 2, y=100. Point vide à (1,100), plein à (2,100)
+    \draw[poporange, very thick] (1,100) -- (2,100);
+    \draw[poporange, fill=white, thick] (1,100) circle (2.5pt); % Vide à gauche (x=1 exclu)
+    \fill[poporange] (2,100) circle (2.5pt); % Plein à droite (x=2 inclus)
+    
+    % Palier 3 : 2 < x <= 3, y=150
+    \draw[popgreen, very thick] (2,150) -- (3,150);
+    \draw[popgreen, fill=white, thick] (2,150) circle (2.5pt);
+    \fill[popgreen] (3,150) circle (2.5pt);
+    
+    % Palier 4 : 3 < x <= 4, y=200
+    \draw[poppurple, very thick] (3,200) -- (4,200);
+    \draw[poppurple, fill=white, thick] (3,200) circle (2.5pt);
+    \fill[poppurple] (4,200) circle (2.5pt);
+    
+    % Flèches limites en 1
+    \draw[popmuted, dashed] (1,0) -- (1,380);
+    \node[popmuted, rotate=90] at (1.3,200) {$x=1$};
+    \draw[<->, popdark] (0.5,50) -- (0.5,45) node[midway, below] {$\lim_{x\to 1^-} = 50$};
+    \draw[<->, popdark] (1.5,100) -- (1.5,105) node[midway, above] {$\lim_{x\to 1^+} = 100$};
+\end{tikzpicture}
+\legende{Graphique d'une fonction en escalier (tarification par minute entamée). En $x=1$, la limite à gauche (50) diffère de la limite à droite (100). Points pleins = valeur prise ; points vides = valeur non prise.}
+\end{popfigure}
+
+\courssub{Théorème fondamental : existence de la limite bilatérale}
+
+La limite « classique » (bilatérale) $\lim_{x \to a} f(x)$ existe \textbf{si et seulement si} les deux limites unilatérales existent et sont égales.
+
+\begin{propriete}[Théorème : Caractérisation de la limite en un réel]
+Soit $f$ une fonction et $a \in \mathbb{R}$.
+\[ \lim_{x \to a} f(x) = \ell \quad \Longleftrightarrow \quad \begin{cases} \lim_{x \to a^{-}} f(x) = \ell \\ \lim_{x \to a^{+}} f(x) = \ell \end{cases} \]
+En mots : $f$ admet une limite (finie ou infinie) en $a$ \textbf{si et seulement si} les limites à gauche et à droite en $a$ existent et sont \textbf{égales}.
+\end{propriete}
+
+\begin{aretenir}[Conséquence immédiate]
+Si $\lim_{x \to a^{-}} f(x) \neq \lim_{x \to a^{+}} f(x)$ (ou si l'une n'existe pas), alors \textbf{$f$ n'a pas de limite en $a$}.
+\end{aretenir}
+
+\begin{savaistu}[Pourquoi « si et seulement si » ?]
+C'est la définition même de la proximité sans privilège de côté. Si tu dois être « arbitrairement proche » de $\ell$ pour \emph{tout} $x$ assez proche de $a$, cela impose forcément le même comportement à gauche et à droite. Réciproquement, si les deux côtés convergent vers la même $\ell$, alors globalement on converge vers $\ell$. Ce théorème est \textbf{admis} au programme de Première, mais il est la clé de presque tous les exercices de limites en un réel.
+\end{savaistu}
+
+\courssub{Étude de la fonction inverse $x \mapsto \frac{a}{x}$ au voisinage de $0$}
+
+C'est l'exemple archétypal où les limites à gauche et à droite sont infinies et \textbf{de signes opposés}. Comprenons-le par le signe du quotient.
+
+\begin{experience}[Découverte : signe de $\frac{a}{x}$ près de $0$]
+Soit $a \in \mathbb{R}^*$ (non nul). On étudie $f(x) = \frac{a}{x}$ quand $x \to 0$.
+\begin{enumerate}
+    \item \textbf{Cas $a > 0$ (ex: $a=2$).}
+    \begin{itemize}
+        \item $x \to 0^{-}$ ($x$ négatif, ex: $-0,001$) : $\frac{(+)}{(-)} = (-)$. Le quotient est négatif et sa valeur absolue explose. $\Rightarrow \lim_{x \to 0^{-}} \frac{a}{x} = -\infty$.
+        \item $x \to 0^{+}$ ($x$ positif, ex: $0,001$) : $\frac{(+)}{(+)} = (+)$. Le quotient est positif et explose. $\Rightarrow \lim_{x \to 0^{+}} \frac{a}{x} = +\infty$.
+    \end{itemize}
+    \item \textbf{Cas $a < 0$ (ex: $a=-3$).}
+    \begin{itemize}
+        \item $x \to 0^{-}$ ($x$ négatif) : $\frac{(-)}{(-)} = (+)$. $\Rightarrow \lim_{x \to 0^{-}} \frac{a}{x} = +\infty$.
+        \item $x \to 0^{+}$ ($x$ positif) : $\frac{(-)}{(+)} = (-)$. $\Rightarrow \lim_{x \to 0^{+}} \frac{a}{x} = -\infty$.
+    \end{itemize}
+\end{enumerate}
+\textbf{Conclusion :} Dans tous les cas, $\lim_{x \to 0^{-}} \frac{a}{x} = -\lim_{x \to 0^{+}} \frac{a}{x}$. Les limites sont infinies, de signes contraires $\Rightarrow$ \textbf{pas de limite en $0$}.
+\end{experience}
+
+\begin{propriete}[Limites de la fonction inverse en $0$]
+Pour tout $a \in \mathbb{R}^*$ :
+\[
+\begin{array}{c|cc}
+ & \lim\limits_{x \to 0^{-}} \dfrac{a}{x} & \lim\limits_{x \to 0^{+}} \dfrac{a}{x} \\ \hline
+a > 0 & -\infty & +\infty \\
+a < 0 & +\infty & -\infty
+\end{array}
+\]
+La fonction $x \mapsto \frac{a}{x}$ n'admet \textbf{pas de limite} en $0$ (les limites à gauche et à droite sont différentes).
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-3, xmax=3, ymin=-6, ymax=6,
+    xtick={-2,-1,1,2}, ytick={-4,-2,2,4},
+    tick label style={font=\footnotesize},
+    clip=false,
+    domain=-3:-0.3, samples=100,
+    restrict y to domain=-6:6,
+]
+% Branche gauche (x<0) pour a=2 : y=2/x, négative
+\addplot[popblue, very thick, domain=-3:-0.35] {2/x};
+% Branche droite (x>0) pour a=2 : y=2/x, positive
+\addplot[popblue, very thick, domain=0.35:3] {2/x};
+% Asymptotes
+\draw[dashed, popmuted] (0,-6) -- (0,6);
+\draw[dashed, popmuted] (-3,0) -- (3,0);
+% Flèches limites
+\draw[->, popdark, thick] (-0.5, -5) -- (-0.2, -5.5) node[left, font=\small] {$-\infty$};
+\draw[->, popdark, thick] (0.5, 5) -- (0.2, 5.5) node[right, font=\small] {$+\infty$};
+\node[popblue, anchor=south west] at (0.5, 5.5) {$y=\frac{2}{x}$};
+\end{axis}
+\end{tikzpicture}
+\legende{Graphique de $x \mapsto \frac{2}{x}$ ($a>0$). Branche gauche (quadrant III) : $\lim_{x\to 0^-} = -\infty$. Branche droite (quadrant I) : $\lim_{x\to 0^+} = +\infty$. Pas de limite en $0$.}
+\end{popfigure}
+
+\begin{attention}[Piège classique : « La limite de $1/x$ en $0$ est l'infini » $\rightarrow$ \textbf{FAUX} !]
+On ne dit \textbf{JAMAIS} : « $\lim_{x \to 0} \frac{1}{x} = \infty$ » ou « $= \pm \infty$ ».
+\emph{Pourquoi ?} Parce que $\infty$ n'est pas un nombre et surtout parce que les deux côtés donnent des infinis de \textbf{signes opposés}.
+\textbf{La seule rédaction correcte} est :
+\[ \lim_{x \to 0^{-}} \frac{1}{x} = -\infty \quad \text{et} \quad \lim_{x \to 0^{+}} \frac{1}{x} = +\infty \quad \text{donc} \quad \lim_{x \to 0} \frac{1}{x} \text{ n'existe pas.} \]
+Au Probatoire, l'oubli de la précision $0^{-}$ ou $0^{+}$ pour $1/x$ (ou $a/x$) coûte souvent la moitié des points, voire la note entière si la conclusion « pas de limite » manque.
+\end{attention}
+
+\courssub{Étude de la fonction homographique $x \mapsto \frac{ax+b}{cx+d}$ au voisinage de $-\frac{d}{c}$}
+
+C'est la généralisation directe du cas précédent. Une fonction homographique $f(x) = \frac{ax+b}{cx+d}$ (avec $c \neq 0$) n'est pas définie en $x_0 = -\frac{d}{c}$ car le dénominateur s'annule. Le numérateur vaut alors $a(-\frac{d}{c})+b = \frac{-ad+bc}{c} = \frac{\Delta}{c}$ où $\Delta = bc-ad$ (le déterminant).
+
+\begin{methode}[Déterminer les limites d'une homographie en son point d'exclusion $x_0 = -d/c$]
+Soit $f(x) = \frac{ax+b}{cx+d}$ avec $c \neq 0$ et $x_0 = -\frac{d}{c}$.
+\begin{enumerate}
+    \item \textbf{Calculer le numérateur en $x_0$ :} $N_0 = ax_0 + b = \frac{bc-ad}{c} = \frac{\Delta}{c}$.
+    \item \textbf{Étudier le signe du dénominateur $D(x) = cx+d$ de part et d'autre de $x_0$ :}
+    \begin{itemize}
+        \item Si $c > 0$ : $D(x) < 0$ pour $x < x_0$ (donc $x \to x_0^{-}$) et $D(x) > 0$ pour $x > x_0$ ($x \to x_0^{+}$).
+        \item Si $c < 0$ : $D(x) > 0$ pour $x < x_0$ et $D(x) < 0$ pour $x > x_0$.
+    \end{itemize}
+    \item \textbf{Combiner les signes (Règle des signes) :} $\text{signe}(f(x)) = \text{signe}(N_0) \times \text{signe}(D(x))$ au voisinage de $x_0$.
+    \item \textbf{Conclure :} Les limites sont $\pm \infty$ selon le signe obtenu. Si les signes diffèrent à gauche et à droite $\Rightarrow$ pas de limite en $x_0$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Limites de $f(x) = \frac{3x-2}{x+1}$ en $-1^{-}$ et $-1^{+}$]
+On a $f(x) = \frac{3x-2}{x+1}$. Le dénominateur s'annule pour $x_0 = -1$ ($c=1, d=1$).
+\begin{enumerate}
+    \item \textbf{Numérateur en $-1$ :} $N_0 = 3(-1) - 2 = -5 < 0$. (Le numérateur ne s'annule pas, $\Delta \neq 0$).
+    \item \textbf{Signe du dénominateur $D(x) = x+1$ :} $c=1 > 0$.
+    \begin{itemize}
+        \item Pour $x \to -1^{-}$ ($x < -1$, ex: $-1,1$) : $D(x) = x+1 < 0$.
+        \item Pour $x \to -1^{+}$ ($x > -1$, ex: $-0,9$) : $D(x) = x+1 > 0$.
+    \end{itemize}
+    \item \textbf{Signes du quotient $f(x) = \frac{N_0}{D(x)}$ :}
+    \begin{itemize}
+        \item $x \to -1^{-}$ : $\frac{(-)}{(-)} = (+)$ $\Rightarrow \lim_{x \to -1^{-}} f(x) = +\infty$.
+        \item $x \to -1^{+}$ : $\frac{(-)}{(+)} = (-)$ $\Rightarrow \lim_{x \to -1^{+}} f(x) = -\infty$.
+    \end{itemize}
+\end{enumerate}
+\textbf{Conclusion :} $\lim_{x \to -1^{-}} \frac{3x-2}{x+1} = +\infty$, $\lim_{x \to -1^{+}} \frac{3x-2}{x+1} = -\infty$. Les limites sont infinies de signes contraires, donc \textbf{$f$ n'a pas de limite en $-1$}.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-4, xmax=2, ymin=-10, ymax=10,
+    xtick={-3,-2,-1,1}, ytick={-5,5},
+    tick label style={font=\footnotesize},
+    clip=false,
+    restrict y to domain=-12:12,
+]
+% Asymptote verticale x = -1
+\draw[dashed, popmuted, thick] (-1,-12) -- (-1,12) node[above, font=\small, popmuted] {$x=-1$};
+% Asymptote horizontale y = 3 (limite à l'infini, pour info)
+\draw[dashed, popmuted] (-4,3) -- (2,3) node[right, font=\small, popmuted] {$y=3$};
+
+% Branche gauche : x < -1
+\addplot[popblue, very thick, domain=-4:-1.15, samples=100] {(3*x-2)/(x+1)};
+% Branche droite : x > -1
+\addplot[popblue, very thick, domain=-0.85:2, samples=100] {(3*x-2)/(x+1)};
+
+% Tableau de signes du dénominateur (annotation)
+\node[popdark, anchor=north east, font=\small] at (-1.2, 9) {$x+1 < 0$};
+\node[popdark, anchor=north west, font=\small] at (-0.8, 9) {$x+1 > 0$};
+% Flèches limites
+\draw[->, popdark, thick] (-1.5, 8) -- (-1.1, 9) node[left, font=\small] {$+\infty$};
+\draw[->, popdark, thick] (-0.5, -8) -- (-0.9, -9) node[right, font=\small] {$-\infty$};
+\node[popblue, anchor=south west] at (1.5, 5) {$y=\frac{3x-2}{x+1}$};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f(x)=\frac{3x-2}{x+1}$. Asymptote verticale $x=-1$. À gauche : $+\infty$ ; à droite : $-\infty$. Pas de limite en $-1$.}
+\end{popfigure}
+
+\courssub{Cas particulier : forme indéterminée $\frac{0}{0}$ (numérateur aussi nul)}
+
+Si en $x_0 = -d/c$ le numérateur \textbf{s'annule aussi} ($\Delta = bc-ad = 0$), on a une forme $\frac{0}{0}$. La fonction se simplifie alors par $(x-x_0)$ (factorisation) et la limite devient \textbf{finie}. C'est le cas des fonctions homographiques « simplifiables » (ex: $f(x) = \frac{x^2-1}{x-1} = x+1$ pour $x \neq 1$).
+
+\begin{exemplebox}[Cas $\frac{0}{0}$ : $f(x) = \frac{x^2-4}{x-2}$ en $2$]
+$f(x) = \frac{(x-2)(x+2)}{x-2}$. Pour $x \neq 2$, $f(x) = x+2$.
+\begin{itemize}
+    \item $\lim_{x \to 2^{-}} f(x) = \lim_{x \to 2^{-}} (x+2) = 4$.
+    \item $\lim_{x \to 2^{+}} f(x) = \lim_{x \to 2^{+}} (x+2) = 4$.
+\end{itemize}
+Les limites à gauche et à droite sont égales (finies). Donc $\lim_{x \to 2} f(x) = 4$.
+\textbf{Attention :} $f(2)$ n'existe pas (division par 0), mais la limite existe. C'est un \cle{trou} dans le graphique (point vide en $(2,4)$), pas une asymptote verticale.
+\end{exemplebox}
+
+\courssub{Synthèse et entraînement}
+
+\begin{aretenir}[Résumé : Comment trouver les limites à gauche et à droite en $a$ ?]
+\begin{enumerate}
+    \item \textbf{Identifie $a$ :} Est-ce une valeur interdite (dénominateur nul) ? Une borne d'intervalle de définition ? Un point de changement de formule (fonction par morceaux) ?
+    \item \textbf{Sépare les deux cas :} Étudie $x \to a^{-}$ ($x < a$) et $x \to a^{+}$ ($x > a$) \textbf{séparément}.
+    \item \textbf{Calcule :}
+    \begin{itemize}
+        \item Si expression polynôme/rationnelle sans forme indéterminée : remplace $x$ par $a$ (en respectant le signe pour les puissances impaires, racine carrée, etc.).
+        \item Si forme $\frac{\text{non nul}}{0}$ : \textbf{Étudie le signe du dénominateur} de part et d'autre de $a$ (tableau de signes ou raisonnement rapide : $cx+d$ change de signe en $-d/c$). Applique la règle des signes.
+        \item Si forme $\frac{0}{0}$ : \textbf{Simplifie} (factorisation, conjugués, identité remarquable) avant de calculer.
+    \end{itemize}
+    \item \textbf{Conclus :} Donne $\lim_{x \to a^{-}} f(x)$ et $\lim_{x \to a^{+}} f(x)$. Si égales $\Rightarrow$ limite bilatérale existe. Si différentes $\Rightarrow$ pas de limite en $a$.
+\end{enumerate}
+\end{aretenir}
+
+\begin{exercice}[Entraînement : Limites unilatérales]
+Déterminer, le cas échéant, les limites à gauche et à droite en la valeur indiquée. Conclure sur l'existence de la limite bilatérale.
+\begin{enumerate}
+    \item $f(x) = \frac{5}{x-3}$ en $3$.
+    \item $g(x) = \frac{x+2}{2x-1}$ en $\frac{1}{2}$.
+    \item $h(x) = \begin{cases} x^2 & \text{si } x \le 1 \\ 2x+1 & \text{si } x > 1 \end{cases}$ en $1$.
+    \item $k(x) = \frac{x^2-9}{x-3}$ en $3$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+    \item $f(x)=\frac{5}{x-3}$, $a=3$. Numérateur $5>0$. Dénominateur $x-3$ : $c=1>0$.
+    $x\to 3^{-} \Rightarrow x-3<0 \Rightarrow \frac{(+)}{(-)}=- \Rightarrow \lim_{x\to 3^{-}} f(x)=-\infty$.
+    $x\to 3^{+} \Rightarrow x-3>0 \Rightarrow \frac{(+)}{(+)}=+ \Rightarrow \lim_{x\to 3^{+}} f(x)=+\infty$.
+    \textbf{Pas de limite en $3$.}
+    \item $g(x)=\frac{x+2}{2x-1}$, $a=1/2$. Numérateur en $1/2$ : $1/2+2 = 2,5 > 0$. Dénominateur $2x-1$ : $c=2>0$.
+    $x\to (1/2)^{-} \Rightarrow 2x-1<0 \Rightarrow \frac{(+)}{(-)}=- \Rightarrow \lim_{x\to (1/2)^{-}} g(x)=-\infty$.
+    $x\to (1/2)^{+} \Rightarrow 2x-1>0 \Rightarrow \frac{(+)}{(+)}=+ \Rightarrow \lim_{x\to (1/2)^{+}} g(x)=+\infty$.
+    \textbf{Pas de limite en $1/2$.}
+    \item $h$ fonction par morceaux.
+    $x\to 1^{-}$ ($x<1$) : $h(x)=x^2 \to 1$. $\lim_{x\to 1^{-}} h(x) = 1$.
+    $x\to 1^{+}$ ($x>1$) : $h(x)=2x+1 \to 3$. $\lim_{x\to 1^{+}} h(x) = 3$.
+    $1 \neq 3 \Rightarrow$ \textbf{Pas de limite en $1$} (saut).
+    \item $k(x)=\frac{x^2-9}{x-3}=\frac{(x-3)(x+3)}{x-3}=x+3$ pour $x\neq 3$.
+    $\lim_{x\to 3^{-}} k(x) = \lim_{x\to 3^{-}} (x+3) = 6$.
+    $\lim_{x\to 3^{+}} k(x) = \lim_{x\to 3^{+}} (x+3) = 6$.
+    Limites égales $\Rightarrow \lim_{x\to 3} k(x) = 6$.
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Check-list avant de rendre ta copie (Probatoire)]
+\begin{itemize}
+    \item [ ] Ai-je écrit \textbf{$x \to a^{-}$} et \textbf{$x \to a^{+}$} explicitement pour chaque calcul unilatéral ?
+    \item [ ] Pour une asymptote verticale (forme $\frac{\text{non nul}}{0}$), ai-je \textbf{justifié le signe} du dénominateur (tableau de signes ou phrase « car $x<a \Rightarrow cx+d<0$ ») ?
+    \item [ ] Ai-je écrit la conclusion finale : « Donc $\lim_{x\to a} f(x)$ n'existe pas » ou « Donc $\lim_{x\to a} f(x) = \ell$ » ?
+    \item [ ] Pour $1/x$ ou $a/x$ en $0$, ai-je évité d'écrire « $\lim_{x\to 0} 1/x = \infty$ » ?
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Application : Les seuils de rupture en mécanique et en économie]
+La notion de limite à gauche/droite modélise les \textbf{seuils de rupture}. Exemple : la résistance d'un câble électrique (CAMTEL, ENEO). Tant que la tension $U$ est inférieure au seuil critique $U_c$, le courant $I$ suit la loi d'Ohm ($I=U/R$). Au-delà ($U > U_c$), l'isolant claque, le courant devient brutalement énorme (court-circuit). La fonction $I(U)$ a une limite à gauche finie en $U_c$ et une limite à droite infinie (ou très grande). L'ingénieur \textbf{doit} connaître la limite à gauche (fonctionnement normal) et redouter la limite à droite (destruction). C'est exactement la différence entre $U_c^{-}$ et $U_c^{+}$.
+\end{savaistu}
+
+\coursec{Opérations sur les limites et formes indéterminées}
+
+Dans la section précédente, tu as appris à lire et à calculer des limites à gauche et à droite en un réel, en particulier pour les fonctions de type $x \mapsto \dfrac{a}{x}$ et $x \mapsto \dfrac{ax+b}{cx+d}$. Tu as remarqué que ces calculs reposaient souvent sur la combinaison de plusieurs fonctions simples : une somme, un produit, un quotient. La question naturelle est alors la suivante : \emph{si je connais les limites de deux fonctions $u$ et $v$ en un point, puis-je en déduire la limite de $u+v$, de $u \times v$, de $\dfrac{u}{v}$ ?}
+
+C'est l'objet de cette section. Nous allons d'abord énoncer les règles opératoires (admises), puis découvrir les situations où ces règles \emph{ne répondent pas} : les fameuses \cle{formes indéterminées}, véritable cœur du calcul de limites au Probatoire.
+
+\courssub{Limites de la somme, du produit et du quotient}
+
+\textbf{Intuition.}\par
+Imagine que deux grandeurs évoluent : la recette journalière d'un vendeur de beignets à Mokolo tend vers $\SI{15000}{F}$, et celle de sa voisine vendeuse de bouillons tend vers $\SI{8000}{F}$. Il est naturel d'affirmer que la somme des deux recettes tend vers $\SI{23000}{F}$, et le produit vers $15000 \times 8000$. Les théorèmes qui suivent officialisent cette intuition — avec quelques subtilités lorsque l'infini s'en mêle.
+
+\begin{propriete}[Opérations sur les limites (admis)]
+Soient $u$ et $v$ deux fonctions définies au voisinage d'un réel $a$ (ou de $+\infty$, $-\infty$), admettant chacune une limite en $a$. Alors, sous réserve que l'opération ait un sens, $u+v$, $u \times v$ et $\dfrac{u}{v}$ admettent une limite en $a$, donnée par les tableaux ci-dessous. Ce théorème est \textbf{admis} : sa démonstration n'est pas exigible au Probatoire, mais son utilisation rigoureuse, oui.
+\end{propriete}
+
+\textbf{Limite d'une somme $u + v$.}\par
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\rowcolor{popblueL} $\lim u$ & $\ell$ & $\ell$ & $\ell$ & $+\infty$ & $-\infty$ & $+\infty$ \\
+\hline
+$\lim v$ & $\ell'$ & $+\infty$ & $-\infty$ & $+\infty$ & $-\infty$ & $-\infty$ \\
+\hline
+$\lim (u+v)$ & $\ell+\ell'$ & $+\infty$ & $-\infty$ & $+\infty$ & $-\infty$ & \textbf{F.I.} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Limite d'un produit $u \times v$.}\par
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\rowcolor{popblueL} $\lim u$ & $\ell$ & $\ell \neq 0$ & $+\infty$ ou $-\infty$ & $0$ & $0$ \\
+\hline
+$\lim v$ & $\ell'$ & $+\infty$ ou $-\infty$ & $+\infty$ ou $-\infty$ & $\ell'$ & $+\infty$ ou $-\infty$ \\
+\hline
+$\lim (u \times v)$ & $\ell \times \ell'$ & $\infty$ (règle des signes) & $\infty$ (règle des signes) & $0$ & \textbf{F.I.} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Limite d'un quotient $\dfrac{u}{v}$.}\par
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\rowcolor{popblueL} $\lim u$ & $\ell$ & $\ell \neq 0$ & $\ell \neq 0$ & $+\infty$ ou $-\infty$ & $0$ & $+\infty$ ou $-\infty$ \\
+\hline
+$\lim v$ & $\ell' \neq 0$ & $0^+$ ou $0^-$ & $+\infty$ ou $-\infty$ & $\ell'$ (finie) & $0$ & $+\infty$ ou $-\infty$ \\
+\hline
+$\lim \dfrac{u}{v}$ & $\dfrac{\ell}{\ell'}$ & $\infty$ (règle des signes) & $0$ & $\infty$ (règle des signes) & \textbf{F.I.} & \textbf{F.I.} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Le cas $\dfrac{\ell}{0}$ n'est pas une forme indéterminée]
+Si $u$ tend vers $\ell \neq 0$ et $v$ tend vers $0$, le quotient n'est \textbf{pas} indéterminé : il tend vers l'infini, et le \emph{signe} de cet infini dépend du signe de $v$ au voisinage de $a$ (d'où l'importance des limites à gauche et à droite vues à la section précédente). Par exemple $\displaystyle\lim_{x \to 0^+} \frac{3}{x} = +\infty$ mais $\displaystyle\lim_{x \to 0^-} \frac{3}{x} = -\infty$.
+\end{attention}
+
+\begin{exemplebox}[Application directe des théorèmes]
+Calculons $\displaystyle\lim_{x \to 1} \left( (x^2 + 3x) \times \frac{1}{x+1} \right)$.
+\begin{itemize}
+\item $\displaystyle\lim_{x \to 1} (x^2 + 3x) = 1 + 3 = 4$ (somme de limites finies) ;
+\item $\displaystyle\lim_{x \to 1} \frac{1}{x+1} = \frac{1}{2}$ (quotient de limites finies, dénominateur non nul).
+\end{itemize}
+Par produit : $\displaystyle\lim_{x \to 1} \left( (x^2+3x) \times \frac{1}{x+1} \right) = 4 \times \frac{1}{2} = 2$.
+\end{exemplebox}
+
+\courssub{Les formes indéterminées}
+
+\textbf{Intuition.}\par
+Dans les tableaux précédents, quatre cases portent la mention \textbf{F.I.} Prenons le cas $\dfrac{\infty}{\infty}$ : le numérateur « tire » le quotient vers $+\infty$, le dénominateur le « tire » vers $0$. Qui gagne ? Tout dépend de la \emph{vitesse} à laquelle chacun tend vers l'infini. C'est une course dont on ne peut pas prédire l'issue sans analyse supplémentaire.
+
+\begin{definition}[Forme indéterminée]
+On dit qu'un calcul de limite conduit à une \cle{forme indéterminée} (F.I.) lorsque les théorèmes sur les opérations ne permettent pas de conclure directement. Il existe exactement \textbf{quatre formes indéterminées} :
+\[ \infty - \infty \qquad ; \qquad 0 \times \infty \qquad ; \qquad \frac{0}{0} \qquad ; \qquad \frac{\infty}{\infty}. \]
+\end{definition}
+
+\begin{attention}[Une F.I. ne veut pas dire « pas de limite »]
+Rencontrer une forme indéterminée ne signifie \textbf{ni} que la limite n'existe pas, \textbf{ni} qu'elle vaut $0$ ou $1$. Cela signifie simplement : \emph{« un calcul supplémentaire est nécessaire »}. Chaque forme indéterminée peut, selon les fonctions en jeu, donner une limite finie, infinie, ou ne pas exister. \textbf{Erreurs graves à bannir :}
+\begin{itemize}
+\item écrire $\dfrac{0}{0} = 1$ ou $\dfrac{0}{0} = 0$ « parce que c'est le même nombre » : c'est \textbf{faux}, $\dfrac{0}{0}$ n'a aucun sens arithmétique ;
+\item écrire $\dfrac{\infty}{\infty} = 1$ : \textbf{faux} pour la même raison ;
+\item écrire $(+\infty) + (-\infty) = 0$ : \textbf{faux}, l'infini n'est pas un nombre.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Pourquoi « indéterminée » ?]
+Le mot vient du latin \emph{indeterminatus} : « non déterminé ». Les mathématiciens du \textsc{xvii}\textsuperscript{e} siècle comme l'Hôpital (qui donna son nom à une règle célèbre étudiée à l'université) ont mis des décennies à dompter ces situations. Retiens l'image : face à une F.I., la fonction te dit « je ne peux pas te répondre sous cette forme, réécris-moi autrement ».
+\end{savaistu}
+
+\courssub{Levée d'indétermination : le cas $\dfrac{u}{v}$ en $a$ avec $u(a) = v(a) = 0$}
+
+\textbf{Situation.}\par
+C'est le cas le plus fréquent au Probatoire : on cherche la limite en $a$ d'un quotient de polynômes $\dfrac{u(x)}{v(x)}$, et le calcul direct donne $\dfrac{u(a)}{v(a)} = \dfrac{0}{0}$. La clé est un résultat d'algèbre que tu connais déjà : si un polynôme $P$ vérifie $P(a) = 0$, alors $P$ est \cle{factorisable par $(x-a)$}, c'est-à-dire qu'il existe un polynôme $Q$ tel que $P(x) = (x-a)\,Q(x)$.
+
+\begin{methode}[Lever une indétermination $\dfrac{0}{0}$ par factorisation]
+Pour calculer $\displaystyle\lim_{x \to a} \frac{u(x)}{v(x)}$ lorsque $u(a) = v(a) = 0$ :
+\begin{enumerate}
+\item \textbf{Constater} la forme indéterminée : remplacer $x$ par $a$ au numérateur et au dénominateur, écrire « F.I. de type $\dfrac{0}{0}$ ».
+\item \textbf{Factoriser} le numérateur $u(x)$ par $(x-a)$ : identifier les racines, utiliser les identités remarquables, ou poser la division euclidienne.
+\item \textbf{Factoriser} le dénominateur $v(x)$ par $(x-a)$ de la même manière.
+\item \textbf{Simplifier} par $(x-a)$, ce qui est licite car dans un calcul de limite en $a$, on a $x \neq a$ (on s'approche de $a$ sans jamais l'atteindre).
+\item \textbf{Calculer} la limite du quotient simplifié, qui n'est plus indéterminé.
+\end{enumerate}
+\end{methode}
+
+\begin{experience}[Découverte guidée : pourquoi la simplification est-elle légitime ?]
+Considérons $f(x) = \dfrac{x^2 - 4}{x - 2}$ en $a = 2$.
+\begin{enumerate}
+\item Calcule $f(1{,}9)$, $f(1{,}99)$, $f(2{,}01)$, $f(2{,}1)$. Que conjectures-tu ?
+\item La fonction $f$ est-elle définie en $2$ ? Cela empêche-t-il de chercher sa limite en $2$ ?
+\item Pour $x \neq 2$, factorise $x^2 - 4$ et simplifie $f(x)$. Retrouve ta conjecture.
+\end{enumerate}
+\emph{Bilan :} la limite en $a$ ne dépend jamais de la valeur en $a$ (qui peut même ne pas exister) ; elle ne dépend que des valeurs \emph{autour} de $a$. C'est pourquoi on peut simplifier par $(x-a)$, non nul dès que $x \neq a$.
+\end{experience}
+
+\begin{exoresolu}[Limite de $\dfrac{x^2-4}{x-2}$ en $2$]
+\textbf{Énoncé.} Calculer $\displaystyle\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Forme indéterminée :} en remplaçant $x$ par $2$, le numérateur vaut $2^2 - 4 = 0$ et le dénominateur vaut $2 - 2 = 0$. C'est une F.I. de type $\dfrac{0}{0}$.
+\item \textbf{Factorisation :} $x^2 - 4 = x^2 - 2^2 = (x-2)(x+2)$ (identité remarquable $a^2 - b^2 = (a-b)(a+b)$).
+\item \textbf{Simplification :} pour tout $x \neq 2$,
+\[ \frac{x^2 - 4}{x - 2} = \frac{(x-2)(x+2)}{x-2} = x + 2. \]
+\item \textbf{Conclusion :} $\displaystyle\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x+2) = 4$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Limite de $\dfrac{x^2-5x+6}{x-3}$ en $3$]
+\textbf{Énoncé.} Calculer $\displaystyle\lim_{x \to 3} \frac{x^2 - 5x + 6}{x - 3}$.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Forme indéterminée :} numérateur en $3$ : $9 - 15 + 6 = 0$ ; dénominateur en $3$ : $0$. F.I. de type $\dfrac{0}{0}$.
+\item \textbf{Factorisation du numérateur :} $x^2 - 5x + 6$ est un trinôme. Son discriminant est $\Delta = 25 - 24 = 1$, ses racines sont $x_1 = \dfrac{5-1}{2} = 2$ et $x_2 = \dfrac{5+1}{2} = 3$. Donc
+\[ x^2 - 5x + 6 = (x-2)(x-3). \]
+\item \textbf{Simplification :} pour tout $x \neq 3$,
+\[ \frac{x^2 - 5x + 6}{x - 3} = \frac{(x-2)(x-3)}{x-3} = x - 2. \]
+\item \textbf{Conclusion :} $\displaystyle\lim_{x \to 3} \frac{x^2 - 5x + 6}{x - 3} = \lim_{x \to 3} (x-2) = 1$.
+\end{enumerate}
+Remarque que la limite vaut $1$ alors que le calcul direct donnait $\dfrac{0}{0}$ : preuve éclatante que $\dfrac{0}{0}$ ne vaut ni $0$ ni $1$ !
+\end{exoresolu}
+
+\begin{attention}[Erreurs fréquentes dans la levée d'indétermination]
+\begin{itemize}
+\item \textbf{Conclure trop vite :} écrire « $\dfrac{0}{0} = 0$ » ou « $\dfrac{0}{0} = 1$ » sans factoriser est une erreur éliminatoire au Probatoire. La factorisation est \textbf{obligatoire} et doit apparaître dans la copie.
+\item \textbf{Simplifier sans préciser $x \neq a$ :} la simplification par $(x-a)$ n'est valable que parce que $x \neq a$ ; mentionne-le au moins une fois.
+\item \textbf{Se tromper de facteur :} on factorise par $(x - a)$ où $a$ est le point où l'on cherche la limite, pas par n'importe quel facteur. En $3$, on factorise par $(x-3)$.
+\item \textbf{Oublier de vérifier la F.I. :} si $v(a) \neq 0$, il n'y a pas d'indétermination ; appliquer la méthode serait absurde. Toujours commencer par remplacer.
+\end{itemize}
+\end{attention}
+
+\courssub{Complément utile : identités remarquables et quantité conjuguée}
+
+\begin{methode}[Boîte à outils algébrique pour lever les F.I.]
+Selon la forme de l'expression, plusieurs techniques sont disponibles :
+\begin{enumerate}
+\item \textbf{Identités remarquables :} $a^2 - b^2 = (a-b)(a+b)$ ; $a^3 - b^3 = (a-b)(a^2+ab+b^2)$. Exemple : $\dfrac{x^3 - 8}{x - 2} = \dfrac{(x-2)(x^2+2x+4)}{x-2} \xrightarrow[x \to 2]{} 12$.
+\item \textbf{Quantité conjuguée} (pour les expressions avec radicaux, très utile en Terminale) : multiplier numérateur et dénominateur par l'expression conjuguée. Pour $\sqrt{x} - 1$, le conjugué est $\sqrt{x} + 1$, car $(\sqrt{x}-1)(\sqrt{x}+1) = x - 1$.
+\item \textbf{Factorisation par le terme dominant} (pour les F.I. $\dfrac{\infty}{\infty}$ et $\infty - \infty$ à l'infini) : nous y reviendrons en détail à la section 4.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Aperçu de la quantité conjuguée (complément pour la Terminale)]
+Calculons $\displaystyle\lim_{x \to 1} \frac{\sqrt{x} - 1}{x - 1}$. Le calcul direct donne $\dfrac{0}{0}$. Multiplions par la quantité conjuguée :
+\[ \frac{\sqrt{x} - 1}{x - 1} = \frac{(\sqrt{x} - 1)(\sqrt{x} + 1)}{(x-1)(\sqrt{x}+1)} = \frac{x - 1}{(x-1)(\sqrt{x}+1)} = \frac{1}{\sqrt{x}+1} \quad (x \neq 1). \]
+Donc $\displaystyle\lim_{x \to 1} \frac{\sqrt{x} - 1}{x - 1} = \frac{1}{2}$. Cette technique sera approfondie en Terminale ; retiens simplement l'idée : \emph{faire disparaître le radical du numérateur grâce à $a^2 - b^2$}.
+\end{exemplebox}
+
+\courssub{Synthèse visuelle : quel calcul mener face à un quotient ?}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.55cm and 0.9cm,
+  every node/.style={font=\small},
+  startstop/.style={rectangle, rounded corners, draw=popblue, fill=popblueL, text width=3.6cm, align=center, inner sep=5pt},
+  decision/.style={diamond, draw=poporange, fill=poporangeL, aspect=2.2, text width=2.6cm, align=center, inner sep=1pt},
+  action/.style={rectangle, draw=popgreen, fill=popgreenL, text width=3.4cm, align=center, inner sep=5pt},
+  arrow/.style={-{Stealth}, thick, popdark}
+]
+\node[startstop] (start) {On cherche $\displaystyle\lim_{x \to a} \frac{u(x)}{v(x)}$};
+\node[decision, below=of start] (q1) {$v(a) \neq 0$ ?};
+\node[action, right=of q1] (r1) {Limite directe : $\dfrac{u(a)}{v(a)}$};
+\node[decision, below=of q1] (q2) {$u(a) \neq 0$ ?};
+\node[action, right=of q2] (r2) {Limite infinie : étudier le signe de $v$ à gauche et à droite de $a$};
+\node[action, below=of q2] (r3) {F.I. $\dfrac{0}{0}$ : factoriser par $(x-a)$, simplifier, puis conclure};
+\draw[arrow] (start) -- (q1);
+\draw[arrow] (q1) -- node[above, font=\footnotesize]{oui} (r1);
+\draw[arrow] (q1) -- node[right, font=\footnotesize]{non} (q2);
+\draw[arrow] (q2) -- node[above, font=\footnotesize]{oui} (r2);
+\draw[arrow] (q2) -- node[right, font=\footnotesize]{non} (r3);
+\end{tikzpicture}
+\end{center}
+\legende{Arbre de décision : stratégie de calcul pour la limite d'un quotient en un réel $a$.}
+\end{popfigure}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Les limites se comportent bien vis-à-vis de la somme, du produit et du quotient, \textbf{sauf} dans quatre cas : les formes indéterminées $\infty - \infty$, $0 \times \infty$, $\dfrac{0}{0}$, $\dfrac{\infty}{\infty}$.
+\item Une forme indéterminée exige un \textbf{travail algébrique supplémentaire} ; elle ne préjuge en rien du résultat final.
+\item Face à $\dfrac{0}{0}$ en $a$ avec des polynômes : \textbf{factoriser} numérateur et dénominateur par $(x-a)$, \textbf{simplifier} (licite car $x \neq a$), puis calculer.
+\item Ne jamais écrire $\dfrac{0}{0} = 1$, $\dfrac{0}{0} = 0$, $\dfrac{\infty}{\infty} = 1$ ou $(+\infty) - (+\infty) = 0$.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Calculer $\displaystyle\lim_{x \to -1} \frac{x^2 - 1}{x + 1}$.
+\item Calculer $\displaystyle\lim_{x \to 4} \frac{x^2 - 3x - 4}{x^2 - 16}$.
+\item Calculer $\displaystyle\lim_{x \to 1} \frac{x^3 - 1}{x - 1}$ (utiliser $a^3 - b^3$).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Corrigé des exercices]
+\begin{enumerate}
+\item F.I. $\dfrac{0}{0}$. On factorise : $x^2 - 1 = (x-1)(x+1)$. Pour $x \neq -1$ : $\dfrac{x^2-1}{x+1} = x - 1 \xrightarrow[x \to -1]{} -2$.
+\item F.I. $\dfrac{0}{0}$. Numérateur : $\Delta = 9 + 16 = 25$, racines $-1$ et $4$, donc $x^2 - 3x - 4 = (x-4)(x+1)$. Dénominateur : $x^2 - 16 = (x-4)(x+4)$. Pour $x \neq 4$ : $\dfrac{(x-4)(x+1)}{(x-4)(x+4)} = \dfrac{x+1}{x+4} \xrightarrow[x \to 4]{} \dfrac{5}{8}$.
+\item F.I. $\dfrac{0}{0}$. $x^3 - 1 = (x-1)(x^2 + x + 1)$. Pour $x \neq 1$ : $\dfrac{x^3-1}{x-1} = x^2 + x + 1 \xrightarrow[x \to 1]{} 3$.
+\end{enumerate}
+\end{corrige}
+
+Tu maîtrises désormais les opérations sur les limites en un réel et la technique reine de levée d'indétermination par factorisation. Dans la section suivante, nous quitterons le voisinage des réels pour explorer le comportement des fonctions \emph{à l'infini}, où de nouvelles formes indéterminées — et de nouvelles stratégies — t'attendent.
+
+\coursec{Limites à l'infini}
+
+Dans la section précédente, nous avons appris à calculer des limites en un réel $a$, y compris lorsque les opérations conduisent à des formes indéterminées. Mais il reste une question naturelle : que devient une fonction lorsque $x$ devient \emph{arbitrairement grand}, par exemple lorsqu'on s'intéresse au coût d'une connexion Orange après des heures de navigation, ou à la distance parcourue par un car de l'agence Musango après un très long trajet ? C'est l'objet de cette section : étudier le comportement d'une fonction \cle{à l'infini}.
+
+\courssub{Approche intuitive et définitions}
+
+Imaginons la fonction $f : x \mapsto \dfrac{1}{x}$. Lorsque $x$ prend les valeurs $10$, $100$, $1\,000$, $1\,000\,000$, les images valent $0{,}1$ ; $0{,}01$ ; $0{,}001$ ; $0{,}000\,001$ : elles se rapprochent de $0$ sans jamais l'atteindre. On dit que $f(x)$ \cle{tend vers} $0$ lorsque $x$ tend vers $+\infty$.
+
+\begin{definition}[Limite en $+\infty$ ou en $-\infty$ (approche intuitive)]
+Soit $f$ une fonction définie sur un intervalle de la forme $[A ; +\infty[$ (resp. $]-\infty ; A]$).
+\begin{itemize}
+\item On dit que $f(x)$ tend vers un réel $\ell$ quand $x$ tend vers $+\infty$, et on note $\lim\limits_{x \to +\infty} f(x) = \ell$, lorsque $f(x)$ devient aussi proche de $\ell$ qu'on veut, dès que $x$ est suffisamment grand.
+\item On dit que $f(x)$ tend vers $+\infty$ quand $x$ tend vers $+\infty$, et on note $\lim\limits_{x \to +\infty} f(x) = +\infty$, lorsque $f(x)$ devient aussi grand qu'on veut, dès que $x$ est suffisamment grand.
+\item On définit de même les limites quand $x$ tend vers $-\infty$ ($x$ négatif, de valeur absolue de plus en plus grande), et les limites égales à $-\infty$.
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Bien lire les notations]
+Dans $\lim\limits_{x \to -\infty} f(x)$, c'est $x$ qui tend vers $-\infty$, c'est-à-dire que $x$ prend des valeurs \emph{négatives} de plus en plus grandes en valeur absolue : $-10$, $-100$, $-1\,000$\dots Ne confonds pas avec $x \to +\infty$ !
+\end{attention}
+
+\courssub{Limites de référence}
+
+\begin{propriete}[Limite de $x \mapsto \dfrac{a}{x}$ à l'infini (admise)]
+Pour tout réel $a \neq 0$ :
+\[ \lim_{x \to +\infty} \frac{a}{x} = 0 \qquad \text{et} \qquad \lim_{x \to -\infty} \frac{a}{x} = 0. \]
+\end{propriete}
+
+Cette propriété est illustrée graphiquement : la courbe de $x \mapsto \dfrac{2x+1}{x-1}$ ci-dessous se rapproche de la droite d'équation $y = 2$ quand $x$ devient grand, car $\dfrac{2x+1}{x-1} = 2 + \dfrac{3}{x-1}$ et $\dfrac{3}{x-1}$ tend vers $0$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.9\linewidth, height=6.5cm, axis lines=middle, xlabel={$x$}, ylabel={$y$}, xmin=-6, xmax=8, ymin=-4, ymax=8, xtick={-4,-2,2,4,6}, ytick={-2,2,4,6}, samples=200, clip=true]
+\addplot[popcurve, domain=-6:0.85] {(2*x+1)/(x-1)};
+\addplot[popcurve, domain=1.15:8] {(2*x+1)/(x-1)};
+\addplot[dashed, poporange, thick, domain=-6:8] {2};
+\addplot[dashed, popmuted, domain=-4:8, samples=2] {0};
+\draw[dashed, popmuted] (axis cs:1,-4) -- (axis cs:1,8);
+\node[poporange, anchor=south west] at (axis cs:4.2,2.1) {\small $y=2$};
+\node[popink, anchor=west] at (axis cs:3.2,5.4) {\small $y=\dfrac{2x+1}{x-1}$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La courbe se rapproche de la droite $y=2$ quand $x \to \pm\infty$ : c'est une asymptote horizontale.}
+\end{popfigure}
+
+\begin{propriete}[Limites de $x^n$ à l'infini (admise)]
+Soit $n$ un entier naturel non nul.
+\begin{itemize}
+\item En $+\infty$ : $\lim\limits_{x \to +\infty} x^n = +\infty$.
+\item En $-\infty$ : si $n$ est \textbf{pair}, $\lim\limits_{x \to -\infty} x^n = +\infty$ ; si $n$ est \textbf{impair}, $\lim\limits_{x \to -\infty} x^n = -\infty$.
+\end{itemize}
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.85\linewidth, height=6.5cm, axis lines=middle, xlabel={$x$}, ylabel={$y$}, xmin=-5, xmax=5, ymin=-30, ymax=30, xtick={-4,-2,2,4}, ytick={-20,20}, samples=200]
+\addplot[popcurve, domain=-5:5] {x};
+\addplot[popcurve, poporange, domain=-5:5] {x^2};
+\addplot[popcurve, popgreen, domain=-3.1:3.1] {x^3};
+\node[popblue, anchor=west] at (axis cs:2.6,3.2) {\small $y=x$};
+\node[poporange, anchor=south] at (axis cs:3.4,11) {\small $y=x^2$};
+\node[popgreen, anchor=west] at (axis cs:1.9,15) {\small $y=x^3$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{En $-\infty$, $x^2$ (exposant pair) monte vers $+\infty$ tandis que $x$ et $x^3$ (exposants impairs) descendent vers $-\infty$.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\node[draw=popblue, fill=popblueL, rounded corners, thick, minimum width=4.2cm, minimum height=1.1cm, align=center] (pair) at (0,0) {\textbf{$n$ pair}\\ $x^n \geq 0$ pour $x<0$};
+\node[draw=poppurple, fill=poppurpleL, rounded corners, thick, minimum width=4.2cm, minimum height=1.1cm, align=center] (impair) at (7,0) {\textbf{$n$ impair}\\ $x^n < 0$ pour $x<0$};
+\node[draw=popgreen, fill=popgreenL, rounded corners, thick, minimum width=4.2cm, align=center] (cpair) at (0,-2.2) {$\lim\limits_{x\to-\infty} x^n = +\infty$};
+\node[draw=poporange, fill=poporangeL, rounded corners, thick, minimum width=4.2cm, align=center] (cimpair) at (7,-2.2) {$\lim\limits_{x\to-\infty} x^n = -\infty$};
+\draw[-{Stealth}, thick, popdark] (pair) -- (cpair);
+\draw[-{Stealth}, thick, popdark] (impair) -- (cimpair);
+\node[align=center, popmuted] at (3.5,1.2) {\small Signe de $x^n$ quand $x \to -\infty$};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma récapitulatif : la parité de $n$ détermine la limite de $x^n$ en $-\infty$.}
+\end{popfigure}
+
+\begin{aretenir}[Limites de référence à connaître par cœur]
+\[ \lim_{x \to \pm\infty} \frac{a}{x} = 0 \ (a \neq 0) \ ; \quad \lim_{x \to +\infty} x^n = +\infty \ ; \quad \lim_{x \to -\infty} x^n = \begin{cases} +\infty & \text{si } n \text{ pair} \\ -\infty & \text{si } n \text{ impair} \end{cases} \]
+\end{aretenir}
+
+\courssub{Limite d'une fonction polynôme à l'infini}
+
+Prenons $P(x) = 3x^2 - 5x + 1$. En $+\infty$, le terme $3x^2$ tend vers $+\infty$ et $-5x$ tend vers $-\infty$ : c'est une forme indéterminée « $+\infty - \infty$ ». L'astuce consiste à \cle{factoriser par le terme de plus haut degré}.
+
+\begin{propriete}[Limite d'un polynôme à l'infini]
+La limite d'une fonction polynôme en $+\infty$ ou en $-\infty$ est égale à la limite de son \cle{terme de plus haut degré}.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée sur un exemple]
+Montrons que $\lim\limits_{x \to +\infty} (3x^2 - 5x + 1) = \lim\limits_{x \to +\infty} 3x^2 = +\infty$.
+\begin{enumerate}
+\item Pour $x \neq 0$, factorisons par $x^2$, la plus grande puissance de $x$ :
+\[ P(x) = x^2\left(3 - \frac{5}{x} + \frac{1}{x^2}\right). \]
+\item Étudions chaque morceau : $\lim\limits_{x \to +\infty} \dfrac{5}{x} = 0$ et $\lim\limits_{x \to +\infty} \dfrac{1}{x^2} = 0$ (limites de référence).
+\item Par somme : $\lim\limits_{x \to +\infty} \left(3 - \dfrac{5}{x} + \dfrac{1}{x^2}\right) = 3$.
+\item Par produit : $\lim\limits_{x \to +\infty} x^2 \times 3 = +\infty$. D'où $\lim\limits_{x \to +\infty} P(x) = +\infty$.
+\end{enumerate}
+Le même raisonnement fonctionne pour tout polynôme : après factorisation par $x^n$, la parenthèse tend vers le coefficient dominant $a_n \neq 0$, et $x^n$ tend vers l'infini.
+\end{experience}
+
+\begin{exemplebox}[Le polynôme $3x^2 - 5x + 1$ en $\pm\infty$]
+Le terme de plus haut degré est $3x^2$.
+\begin{itemize}
+\item En $+\infty$ : $\lim\limits_{x \to +\infty} 3x^2 = +\infty$, donc $\lim\limits_{x \to +\infty} (3x^2-5x+1) = +\infty$.
+\item En $-\infty$ : $x^2$ a un exposant \textbf{pair}, donc $\lim\limits_{x \to -\infty} 3x^2 = +\infty$, d'où $\lim\limits_{x \to -\infty} (3x^2-5x+1) = +\infty$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Piège classique]
+N'écris jamais « $\lim (3x^2 - 5x + 1) = +\infty - \infty + 1$, donc c'est indéterminé » et ne t'arrête pas là ! La règle du terme de plus haut degré lève \emph{toujours} l'indétermination pour un polynôme à l'infini. En $-\infty$, vérifie bien la \textbf{parité} de l'exposant dominant : pour $-2x^3 + x$, la limite en $-\infty$ est $+\infty$ (car $-2 \times (-\infty) = +\infty$).
+\end{attention}
+
+\courssub{Limite d'une fonction rationnelle à l'infini}
+
+Une \cle{fonction rationnelle} est un quotient de deux polynômes. À l'infini, numérateur et dénominateur tendent souvent tous deux vers l'infini : forme indéterminée « $\dfrac{\infty}{\infty}$ ».
+
+\begin{propriete}[Limite d'une fraction rationnelle à l'infini]
+La limite d'une fonction rationnelle en $+\infty$ ou en $-\infty$ est égale à la limite du \cle{quotient des termes de plus haut degré} du numérateur et du dénominateur.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée]
+Soit $f(x) = \dfrac{2x^2 + 1}{x^2 - 3}$ pour $x$ assez grand. Factorisons numérateur et dénominateur par $x^2$ :
+\[ f(x) = \frac{x^2\left(2 + \dfrac{1}{x^2}\right)}{x^2\left(1 - \dfrac{3}{x^2}\right)} = \frac{2 + \dfrac{1}{x^2}}{1 - \dfrac{3}{x^2}} \quad (x \neq 0). \]
+Or $\lim\limits_{x \to \pm\infty} \dfrac{1}{x^2} = 0$ et $\lim\limits_{x \to \pm\infty} \dfrac{3}{x^2} = 0$. Par quotient :
+\[ \lim_{x \to \pm\infty} f(x) = \frac{2}{1} = 2, \]
+qui est bien la limite de $\dfrac{2x^2}{x^2}$, quotient des termes dominants. Le raisonnement est identique dans le cas général : après simplification par $x^p$ (plus grande puissance commune), il ne reste que des termes tendant vers $0$ et les coefficients dominants.
+\end{experience}
+
+\begin{methode}[Limite d'une fonction rationnelle en $\pm\infty$]
+\begin{enumerate}
+\item Repérer le terme de plus haut degré au numérateur et au dénominateur.
+\item Factoriser numérateur et dénominateur par la plus grande puissance de $x$ présente dans le dénominateur (ou la plus grande puissance globale).
+\item Simplifier par $x^p$, puis faire tendre $x$ vers $\pm\infty$ : tous les termes en $\dfrac{1}{x^k}$ tendent vers $0$.
+\item Conclure : si les degrés sont égaux, la limite est le quotient des coefficients dominants ; si le degré du numérateur est plus grand, la limite est infinie (signe à déterminer) ; s'il est plus petit, la limite est $0$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Limite de $\dfrac{3x^2 - x}{x^2 + 4}$ en $+\infty$ et en $-\infty$]
+Soit $f(x) = \dfrac{3x^2 - x}{x^2 + 4}$. Déterminer les limites de $f$ en $+\infty$ et en $-\infty$.
+\tcblower
+\textbf{Solution détaillée.} Le terme dominant du numérateur est $3x^2$, celui du dénominateur est $x^2$. Pour $x \neq 0$, factorisons par $x^2$ :
+\[ f(x) = \frac{x^2\left(3 - \dfrac{1}{x}\right)}{x^2\left(1 + \dfrac{4}{x^2}\right)} = \frac{3 - \dfrac{1}{x}}{1 + \dfrac{4}{x^2}}. \]
+Or $\lim\limits_{x \to \pm\infty} \dfrac{1}{x} = 0$ et $\lim\limits_{x \to \pm\infty} \dfrac{4}{x^2} = 0$. Par quotient de limites :
+\[ \lim_{x \to +\infty} f(x) = \frac{3}{1} = 3 \qquad \text{et} \qquad \lim_{x \to -\infty} f(x) = 3. \]
+Graphiquement, la droite d'équation $y = 3$ est asymptote horizontale à la courbe de $f$ en $+\infty$ et en $-\infty$.
+\end{exoresolu}
+
+\begin{exoresolu}[Limite de $\dfrac{x^3 + 1}{x + 2}$ en $+\infty$]
+Soit $g(x) = \dfrac{x^3 + 1}{x + 2}$. Déterminer $\lim\limits_{x \to +\infty} g(x)$.
+\tcblower
+\textbf{Solution détaillée.} Le quotient des termes dominants est $\dfrac{x^3}{x} = x^2$. Vérifions par factorisation, pour $x \neq 0$ :
+\[ g(x) = \frac{x^3\left(1 + \dfrac{1}{x^3}\right)}{x\left(1 + \dfrac{2}{x}\right)} = x^2 \times \frac{1 + \dfrac{1}{x^3}}{1 + \dfrac{2}{x}}. \]
+La fraction tend vers $\dfrac{1}{1} = 1$ et $x^2$ tend vers $+\infty$. Par produit :
+\[ \lim_{x \to +\infty} g(x) = +\infty. \]
+Ici le degré du numérateur (3) dépasse celui du dénominateur (1) : la limite est infinie.
+\end{exoresolu}
+
+\courssub{Comparaison et limites (Théorèmes de comparaison et des gendarmes)}
+
+Lorsque la factorisation ne suffit pas directement, ou pour encadrer une fonction oscillante, on utilise des théorèmes de comparaison. Ils sont indispensables pour traiter des cas comme $\frac{\sin x}{x}$ à l'infini.
+
+\begin{propriete}[Théorème de comparaison]
+Soient $f$ et $g$ deux fonctions définies sur un intervalle $[A ; +\infty[$ (ou $]-\infty ; A]$) telles que $f(x) \le g(x)$ pour tout $x$ assez grand.
+Si les limites $\lim\limits_{x \to +\infty} f(x)$ et $\lim\limits_{x \to +\infty} g(x)$ existent (finies ou infinies), alors :
+\[ \lim_{x \to +\infty} f(x) \le \lim_{x \to +\infty} g(x). \]
+\end{propriete}
+
+\begin{attention}[Condition d'existence]
+Ce théorème ne s'applique que si \textbf{les deux limites existent}. On ne peut pas comparer $+\infty$ et une limite qui n'existe pas.
+\end{attention}
+
+\begin{propriete}[Théorème des gendarmes (ou du sandwich)]
+Soient $f$, $g$, $h$ trois fonctions définies sur un intervalle $[A ; +\infty[$ telles que $g(x) \le f(x) \le h(x)$ pour tout $x$ assez grand.
+Si $\lim\limits_{x \to +\infty} g(x) = \lim\limits_{x \to +\infty} h(x) = \ell$ (réel fini), alors :
+\[ \lim_{x \to +\infty} f(x) = \ell. \]
+\end{propriete}
+
+\begin{exemplebox}[Application : $\dfrac{\sin x}{x}$ en $+\infty$]
+On sait que $-1 \le \sin x \le 1$ pour tout $x$. Pour $x > 0$, en divisant par $x$ :
+\[ -\frac{1}{x} \le \frac{\sin x}{x} \le \frac{1}{x}. \]
+Or $\lim\limits_{x \to +\infty} \left(-\frac{1}{x}\right) = 0$ et $\lim\limits_{x \to +\infty} \frac{1}{x} = 0$.
+Par le théorème des gendarmes : $\lim\limits_{x \to +\infty} \frac{\sin x}{x} = 0$.
+\end{exemplebox}
+
+\begin{exemplebox}[Comparaison de croissance : $\dfrac{2 + \sin x}{x}$]
+Pour $x > 0$, $1 \le 2 + \sin x \le 3$, donc $\dfrac{1}{x} \le \dfrac{2 + \sin x}{x} \le \dfrac{3}{x}$.
+Les bornes tendent vers $0$, donc $\lim\limits_{x \to +\infty} \dfrac{2 + \sin x}{x} = 0$.
+Plus généralement, toute fonction bornée divisée par $x^n$ ($n \ge 1$) tend vers $0$ à l'infini.
+\end{exemplebox}
+
+\courssub{Interprétation graphique : asymptote horizontale et branche infinie}
+
+\begin{definition}[Asymptote horizontale]
+Si $\lim\limits_{x \to +\infty} f(x) = \ell$ (réel fini), on dit que la droite d'équation $y = \ell$ est \cle{asymptote horizontale} à la courbe de $f$ en $+\infty$ (idem en $-\infty$). La courbe se rapproche indéfiniment de cette droite.
+\end{definition}
+
+Lorsque la limite est infinie, on dit que la courbe admet une \cle{branche infinie} : elle « s'échappe » vers le haut ou vers le bas. Ce vocabulaire sera précisé dans la leçon sur les asymptotes et branches infinies.
+
+\begin{savaistu}[Pourquoi c'est utile au Cameroun ?]
+Les ingénieurs de CAMTEL ou d'Orange qui modélisent l'évolution du nombre d'abonnés, ou les agronomes qui étudient le rendement d'une plantation de cacao en fonction de l'engrais utilisé, s'intéressent souvent au \emph{comportement à long terme} : le rendement se stabilise-t-il vers une valeur limite (asymptote horizontale) ou croît-il sans borne ? C'est exactement un problème de limite à l'infini !
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+Déterminer les limites en $+\infty$ et en $-\infty$ des fonctions suivantes :
+\begin{enumerate}
+\item $f(x) = -2x^3 + 7x - 5$ ;
+\item $g(x) = \dfrac{4x - 1}{2x + 3}$ ;
+\item $h(x) = \dfrac{x^2 + x}{x^3 - 2}$ ;
+\item $k(x) = \dfrac{3 + \cos x}{x}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Terme dominant : $-2x^3$. En $+\infty$ : $\lim = -\infty$ (car $-2 \times (+\infty)$). En $-\infty$ : $x^3 \to -\infty$ (exposant impair), donc $-2x^3 \to +\infty$.
+\item Quotient des termes dominants : $\dfrac{4x}{2x} = 2$. Donc $\lim\limits_{x \to \pm\infty} g(x) = 2$ : la droite $y = 2$ est asymptote horizontale.
+\item Quotient des termes dominants : $\dfrac{x^2}{x^3} = \dfrac{1}{x}$. Donc $\lim\limits_{x \to \pm\infty} h(x) = 0$ : l'axe des abscisses est asymptote horizontale.
+\item $-1 \le \cos x \le 1 \implies 2 \le 3+\cos x \le 4$. Pour $x>0$, $\frac{2}{x} \le k(x) \le \frac{4}{x}$. Les bornes tendent vers $0$, donc par les gendarmes $\lim\limits_{x\to+\infty} k(x)=0$. De même en $-\infty$ (attention au signe de $x$ pour l'inégalité, mais les bornes $\frac{2}{x}$ et $\frac{4}{x}$ tendent aussi vers $0$). Donc $\lim\limits_{x\to\pm\infty} k(x)=0$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $\lim\limits_{x \to \pm\infty} \dfrac{a}{x} = 0$ ; $\lim\limits_{x \to +\infty} x^n = +\infty$ ; en $-\infty$, $x^n \to +\infty$ si $n$ pair, $-\infty$ si $n$ impair.
+\item Polynôme à l'infini : on garde le \cle{terme de plus haut degré}.
+\item Fraction rationnelle à l'infini : on garde le \cle{quotient des termes de plus haut degré}, en factorisant par la plus grande puissance de $x$.
+\item Théorème des gendarmes : si $g \le f \le h$ et $g,h \to \ell$ (fini), alors $f \to \ell$.
+\item Limite finie $\ell$ $\Rightarrow$ asymptote horizontale $y = \ell$ ; limite infinie $\Rightarrow$ branche infinie.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Comparaison et limites}
+
+Dans la section précédente, nous avons appris à calculer les limites à l'infini des fonctions de référence (puissances, fonctions rationnelles). Mais que faire lorsque la fonction étudiée n'est ni un polynôme, ni une fraction rationnelle ? Par exemple, comment déterminer la limite en $+\infty$ de $f(x) = x + \sin x$ ou de $g(x) = \dfrac{2+\sin x}{x}$ ? Le terme $\sin x$ oscille sans cesse entre $-1$ et $1$ : il n'a \emph{aucune limite} en $+\infty$. Faut-il renoncer ? Non ! L'idée géniale de cette section consiste à \textbf{comparer} la fonction étudiée à des fonctions plus simples dont on connaît la limite. C'est exactement ce que fait un commerçant du marché Mokolo qui, ne pouvant peser directement un sac d'oignons, le compare à des sacs de poids connus : « il est plus lourd que celui de \SI{40}{kg}, mais plus léger que celui de \SI{50}{kg} ». Deux théorèmes vont formaliser cette idée : le \cle{théorème de comparaison} et le \cle{théorème d'encadrement}, surnommé « théorème des gendarmes ».
+
+\courssub{Le théorème de comparaison : pousser vers l'infini}
+
+\textbf{Intuition.} Imagine deux cyclistes sur la route Yaoundé--Bafoussam. Le second roule \emph{toujours devant} le premier. Si le premier (le plus lent) s'éloigne indéfiniment vers l'horizon, alors le second, qui est devant lui, s'éloigne aussi indéfiniment, et même « plus vite ». Traduisons : si une fonction $f$ est \emph{au-dessus} d'une fonction $g$ qui tend vers $+\infty$, alors $f$ est « poussée » vers $+\infty$ elle aussi.
+
+\begin{propriete}[Théorème de comparaison (admis)]
+Soit $f$ et $g$ deux fonctions définies sur un intervalle $[A\;;\;+\infty[$.
+\begin{enumerate}
+\item Si, pour tout $x$ assez grand, $f(x) \geq g(x)$ et si $\displaystyle\lim_{x\to+\infty} g(x) = +\infty$, alors $\displaystyle\lim_{x\to+\infty} f(x) = +\infty$.
+\item Si, pour tout $x$ assez grand, $f(x) \leq g(x)$ et si $\displaystyle\lim_{x\to+\infty} g(x) = -\infty$, alors $\displaystyle\lim_{x\to+\infty} f(x) = -\infty$.
+\end{enumerate}
+Des énoncés analogues valent en $-\infty$ et au voisinage d'un réel $a$.
+\end{propriete}
+
+Ce théorème est \textbf{admis} au niveau Première (sa démonstration n'est pas exigible au Probatoire), mais il est très facile à justifier graphiquement : la courbe de $f$ étant située au-dessus de celle de $g$, si la courbe de $g$ « monte sans fin », celle de $f$ ne peut pas faire autrement que de monter sans fin également.
+
+\begin{attention}[Une seule inégalité ne suffit pas toujours]
+Le théorème de comparaison ne permet de conclure que vers une \textbf{limite infinie}. Si $f(x) \geq g(x)$ et $\displaystyle\lim_{x\to+\infty} g(x) = 5$, on ne peut \emph{rien} conclure sur $f$ : elle peut tendre vers $7$, vers $+\infty$, ou ne pas avoir de limite du tout. Pour obtenir une limite \emph{finie}, il faudra le théorème d'encadrement (voir plus loin).
+\end{attention}
+
+\begin{exemplebox}[Minoration par une fonction de référence]
+Déterminons $\displaystyle\lim_{x\to+\infty} f(x)$ où $f(x) = x + \sin x$.
+
+Pour tout réel $x$, on sait que $\sin x \geq -1$, donc :
+\[ f(x) = x + \sin x \geq x - 1. \]
+Posons $g(x) = x - 1$. C'est une fonction affine de coefficient directeur positif, donc $\displaystyle\lim_{x\to+\infty} g(x) = +\infty$.
+
+Comme $f(x) \geq g(x)$ pour tout $x$ et que $g$ tend vers $+\infty$, le théorème de comparaison donne :
+\[ \lim_{x\to+\infty} \bigl(x + \sin x\bigr) = +\infty. \]
+Remarque : $f$ n'est pas croissante (elle « tremble » à cause du sinus), mais elle finit quand même par dépasser n'importe quelle valeur, car elle reste au-dessus de la droite d'équation $y = x - 1$.
+\end{exemplebox}
+
+\begin{methode}[Utiliser le théorème de comparaison]
+Pour montrer qu'une fonction $f$ tend vers $+\infty$ en $+\infty$ :
+\begin{enumerate}
+\item Chercher une fonction $g$ \emph{plus simple} telle que $f(x) \geq g(x)$ pour $x$ assez grand (souvent en minorant les termes gênants, par exemple $\sin x \geq -1$ ou $\cos x \geq -1$).
+\item Vérifier que $\displaystyle\lim_{x\to+\infty} g(x) = +\infty$.
+\item Conclure en citant le théorème de comparaison : $\displaystyle\lim_{x\to+\infty} f(x) = +\infty$.
+\end{enumerate}
+Pour une limite en $-\infty$, on majore : $f(x) \leq g(x)$ avec $\displaystyle\lim g = -\infty$.
+\end{methode}
+
+\courssub{Le théorème d'encadrement, dit « théorème des gendarmes »}
+
+\textbf{Intuition.} Deux gendarmes escortent un prisonnier. Le prisonnier marche \emph{entre} les deux gendarmes : il ne peut ni les dépasser, ni rester derrière. Si les deux gendarmes arrivent tous les deux au commissariat, alors le prisonnier, coincé entre eux, arrive lui aussi au commissariat, quoi qu'il fasse en chemin. C'est exactement le contenu du théorème suivant.
+
+\begin{propriete}[Théorème d'encadrement ou « théorème des gendarmes » (admis)]
+Soit $f$, $g$ et $h$ trois fonctions et $\ell$ un nombre réel. Si, au voisinage d'un point $a$ (fini ou infini), on a :
+\[ g(x) \leq f(x) \leq h(x) \qquad \text{et} \qquad \lim_{x\to a} g(x) = \lim_{x\to a} h(x) = \ell, \]
+alors $f$ admet une limite en $a$ et :
+\[ \lim_{x\to a} f(x) = \ell. \]
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+\draw[->, thick, popmuted] (-0.3,0) -- (7.2,0) node[below] {$x$};
+\draw[->, thick, popmuted] (0,-1.2) -- (0,3.6) node[left] {$y$};
+\draw[dashed, popmuted] (0,1.5) node[left] {$\ell$} -- (7.0,1.5);
+\draw[very thick, popblue, domain=0.4:6.8, samples=100] plot (\x, {1.5 - 1.8*exp(-0.55*\x)});
+\node[popblue] at (1.2,0.15) {$g$};
+\draw[very thick, poporange, domain=0.4:6.8, samples=100] plot (\x, {1.5 + 1.8*exp(-0.55*\x)});
+\node[poporange] at (1.2,3.05) {$h$};
+\draw[very thick, popgreen, domain=0.4:6.8, samples=200] plot (\x, {1.5 + 1.6*exp(-0.55*\x)*sin(deg(3*\x))});
+\node[popgreen] at (3.6,2.35) {$f$};
+\draw[fill=popdark] (6.8,1.5) circle (1.5pt);
+\node[popdark, right] at (6.85,1.5) {même limite $\ell$};
+\end{tikzpicture}
+\end{center}
+\legende{Le théorème des gendarmes : $f$ (en vert) est coincée entre $g$ (en bleu) et $h$ (en orange). Comme $g$ et $h$ tendent toutes les deux vers $\ell$, $f$ est obligée de tendre vers $\ell$ aussi, même si elle oscille en chemin.}
+\end{popfigure}
+
+\begin{attention}[Les deux gendarmes doivent aller au MÊME endroit]
+Le théorème des gendarmes exige que les deux fonctions encadrantes aient \textbf{la même limite}. Si $g(x) \leq f(x) \leq h(x)$ avec $g \to 2$ et $h \to 5$, on ne peut \textbf{rien conclure} : $f$ est simplement coincée quelque part entre $2$ et $5$, et peut même ne pas avoir de limite. C'est l'erreur la plus fréquente au Probatoire : vérifie toujours que les deux limites sont égales avant de conclure !
+\end{attention}
+
+\courssub{La technique fondamentale : encadrer une fonction bornée}
+
+Les fonctions $\sin$ et $\cos$ n'ont pas de limite en $+\infty$, mais elles ont une propriété précieuse : elles sont \cle{bornées}. Pour tout réel $x$ :
+\[ -1 \leq \sin x \leq 1 \qquad \text{et} \qquad -1 \leq \cos x \leq 1. \]
+
+\begin{methode}[Encadrer une expression contenant $\sin x$ ou $\cos x$]
+Pour trouver la limite en $+\infty$ d'une expression du type $\dfrac{a + \sin x}{x}$ ou $\dfrac{\cos x}{x}$ :
+\begin{enumerate}
+\item Partir de l'encadrement $-1 \leq \sin x \leq 1$.
+\item Effectuer les mêmes opérations que dans l'expression étudiée (ajouter $a$, etc.).
+\item \textbf{Diviser par $x$}. Attention : comme on travaille au voisinage de $+\infty$, on a $x > 0$, donc la division par $x$ \emph{conserve le sens des inégalités}.
+\item Calculer les limites des deux bornes (souvent $\dfrac{\text{constante}}{x} \to 0$).
+\item Appliquer le théorème des gendarmes et conclure.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Limite de $\dfrac{2+\sin x}{x}$ en $+\infty$]
+\textbf{Énoncé.} Déterminer $\displaystyle\lim_{x\to+\infty} \dfrac{2 + \sin x}{x}$.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Étape 1 : encadrer le numérateur.} Pour tout réel $x$ :
+\[ -1 \leq \sin x \leq 1 \quad\Longrightarrow\quad 2 - 1 \leq 2 + \sin x \leq 2 + 1 \quad\Longrightarrow\quad 1 \leq 2 + \sin x \leq 3. \]
+
+\textbf{Étape 2 : diviser par $x$.} Pour $x > 0$, la division par $x$ conserve l'ordre :
+\[ \frac{1}{x} \leq \frac{2 + \sin x}{x} \leq \frac{3}{x}. \]
+
+\textbf{Étape 3 : limites des gendarmes.} Ce sont des fonctions de référence :
+\[ \lim_{x\to+\infty} \frac{1}{x} = 0 \qquad \text{et} \qquad \lim_{x\to+\infty} \frac{3}{x} = 0. \]
+
+\textbf{Étape 4 : conclusion.} Les deux fonctions encadrantes ont la \emph{même} limite $0$. D'après le théorème des gendarmes :
+\[ \lim_{x\to+\infty} \frac{2 + \sin x}{x} = 0. \]
+Interprétation : le numérateur reste coincé entre $1$ et $3$ (il est borné), tandis que le dénominateur devient infiniment grand. Le quotient devient donc infiniment petit.
+\end{exoresolu}
+
+\courssub{Application classique : la limite de $\dfrac{\sin x}{x}$ en $+\infty$ et en $-\infty$}
+
+Ce résultat n'est pas exigible en Première, mais il constitue un \textbf{complément très utile pour la Terminale}, où la fonction $x \mapsto \dfrac{\sin x}{x}$ joue un rôle important. Le raisonnement est un modèle du genre.
+
+Pour tout réel $x$, $-1 \leq \sin x \leq 1$. Pour $x > 0$, en divisant par $x$ (qui est positif) :
+\[ -\frac{1}{x} \leq \frac{\sin x}{x} \leq \frac{1}{x}. \]
+Or $\displaystyle\lim_{x\to+\infty} \left(-\frac{1}{x}\right) = \lim_{x\to+\infty} \frac{1}{x} = 0$. Par le théorème des gendarmes :
+\[ \lim_{x\to+\infty} \frac{\sin x}{x} = 0. \]
+En $-\infty$, on a $x < 0$ : la division par $x$ \emph{renverse} les inégalités, ce qui donne $\dfrac{1}{x} \leq \dfrac{\sin x}{x} \leq -\dfrac{1}{x}$, et les deux bornes tendent encore vers $0$. Donc :
+\[ \lim_{x\to-\infty} \frac{\sin x}{x} = 0. \]
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.95\linewidth, height=6.2cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=0.4, xmax=20, ymin=-0.9, ymax=1.3,
+  xtick={5,10,15,20}, ytick={-0.5,0.5,1},
+  tick label style={font=\small},
+  legend style={font=\small, at={(0.98,0.97)}, anchor=north east, draw=popmuted}
+]
+\addplot[poporange, very thick, domain=0.5:20, samples=120] {1/x};
+\addlegendentry{$y=\dfrac{1}{x}$}
+\addplot[popblue, very thick, domain=0.5:20, samples=120] {-1/x};
+\addlegendentry{$y=-\dfrac{1}{x}$}
+\addplot[popgreen, very thick, domain=0.5:20, samples=300] {sin(deg(x))/x};
+\addlegendentry{$y=\dfrac{\sin x}{x}$}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La courbe de $x \mapsto \dfrac{\sin x}{x}$ (en vert) oscille en restant prisonnière des deux hyperboles $y = \dfrac{1}{x}$ et $y = -\dfrac{1}{x}$. Comme celles-ci tendent vers $0$, la courbe verte est écrasée vers $0$ : c'est le théorème des gendarmes en action.}
+\end{popfigure}
+
+\begin{attention}[Division par $x$ : le signe compte !]
+Quand on divise un encadrement par $x$, il faut \textbf{toujours se demander si $x$ est positif ou négatif}. Au voisinage de $+\infty$, $x > 0$ et le sens des inégalités est conservé. Au voisinage de $-\infty$, $x < 0$ et le sens est \emph{renversé}. Oublier ce renversement est une erreur classique qui fausse toute la conclusion.
+\end{attention}
+
+\courssub{Passage à la limite dans une inégalité}
+
+Terminons par une propriété simple mais très utile, que nous admettons.
+
+\begin{propriete}[Passage à la limite dans une inégalité (admis)]
+Soit $f$ et $g$ deux fonctions admettant des limites \emph{finies} en un point $a$ (fini ou infini). Si, au voisinage de $a$, on a $f(x) \leq g(x)$, alors :
+\[ \lim_{x\to a} f(x) \leq \lim_{x\to a} g(x). \]
+Autrement dit : \textbf{une inégalité large se conserve par passage à la limite}.
+\end{propriete}
+
+\begin{attention}[Une inégalité stricte devient large à la limite]
+Même si $f(x) < g(x)$ pour tout $x$, on ne peut conclure que $\lim f \leq \lim g$, avec une inégalité \emph{large}. Contre-exemple : pour $x > 0$, on a $0 < \dfrac{1}{x}$, mais à la limite en $+\infty$, $0 = 0$ : les deux limites sont \emph{égales}. Retenir : \og à la limite, le strict devient large \fg.
+\end{attention}
+
+\begin{exoresolu}[Synthèse : comparaison et encadrement]
+\textbf{Énoncé.} Soit $f$ la fonction définie sur $]0\;;\;+\infty[$ par $f(x) = \dfrac{x + \cos x}{x}$.
+\begin{enumerate}
+\item Montrer que pour tout $x > 0$ : $\dfrac{x-1}{x} \leq f(x) \leq \dfrac{x+1}{x}$.
+\item En déduire la limite de $f$ en $+\infty$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{1.} Pour tout réel $x$, $-1 \leq \cos x \leq 1$, donc $x - 1 \leq x + \cos x \leq x + 1$. Comme $x > 0$, on divise par $x$ sans changer le sens des inégalités :
+\[ \frac{x-1}{x} \leq f(x) \leq \frac{x+1}{x}. \]
+
+\textbf{2.} Transformons les deux bornes :
+\[ \frac{x-1}{x} = 1 - \frac{1}{x} \xrightarrow[x\to+\infty]{} 1 - 0 = 1 \qquad \text{et} \qquad \frac{x+1}{x} = 1 + \frac{1}{x} \xrightarrow[x\to+\infty]{} 1 + 0 = 1. \]
+Les deux fonctions encadrantes ont la \emph{même} limite $1$. D'après le théorème des gendarmes :
+\[ \lim_{x\to+\infty} \frac{x + \cos x}{x} = 1. \]
+Interprétation : quand $x$ devient immense, le terme $\cos x$ (compris entre $-1$ et $1$) devient négligeable devant $x$, et la fraction se comporte comme $\dfrac{x}{x} = 1$.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Déterminer $\displaystyle\lim_{x\to+\infty} \bigl(x^2 + \sin x\bigr)$ à l'aide du théorème de comparaison.
+\item Déterminer $\displaystyle\lim_{x\to+\infty} \dfrac{3 - \cos x}{x}$ à l'aide du théorème des gendarmes.
+\item Soit $f$ une fonction telle que, pour tout $x > 1$ : $\dfrac{2x}{x+1} \leq f(x) \leq \dfrac{2x+3}{x}$. Déterminer $\displaystyle\lim_{x\to+\infty} f(x)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\textbf{1.} Pour tout $x$, $\sin x \geq -1$, donc $x^2 + \sin x \geq x^2 - 1$. Or $\displaystyle\lim_{x\to+\infty} (x^2 - 1) = +\infty$ (fonction polynôme dont le terme de plus haut degré est $x^2$). Par le théorème de comparaison, $\displaystyle\lim_{x\to+\infty} (x^2 + \sin x) = +\infty$.
+
+\textbf{2.} De $-1 \leq \cos x \leq 1$, on tire $-1 \leq -\cos x \leq 1$, puis $2 \leq 3 - \cos x \leq 4$. Pour $x > 0$ : $\dfrac{2}{x} \leq \dfrac{3-\cos x}{x} \leq \dfrac{4}{x}$. Les deux bornes tendent vers $0$ en $+\infty$. Par le théorème des gendarmes, la limite cherchée est $0$.
+
+\textbf{3.} On calcule : $\dfrac{2x}{x+1} = \dfrac{2}{1+\frac{1}{x}} \xrightarrow[x\to+\infty]{} 2$ et $\dfrac{2x+3}{x} = 2 + \dfrac{3}{x} \xrightarrow[x\to+\infty]{} 2$. Les deux gendarmes tendent vers la même limite $2$, donc $\displaystyle\lim_{x\to+\infty} f(x) = 2$.
+\end{corrige}
+
+\begin{savaistu}[Pourquoi « théorème des gendarmes » ?]
+Le nom pittoresque de ce théorème vient d'une image très parlante : deux gendarmes (les fonctions $g$ et $h$) escortent un prisonnier (la fonction $f$) en marchant de part et d'autre de lui. Si les deux gendarmes se dirigent vers la même destination (la limite $\ell$), le prisonnier, incapable de s'échapper, arrive forcément au même endroit ! Ce théorème porte d'autres noms selon les pays : « théorème du sandwich » dans le monde anglo-saxon, « teorema dei carabinieri » en Italie. Il s'inscrit dans la grande tradition de l'analyse rigoureuse bâtie au XIX\textsuperscript{e} siècle, notamment grâce aux travaux du mathématicien français Augustin-Louis Cauchy, père de la notion moderne de limite. Une preuve que les mathématiciens, eux aussi, aiment les bonnes histoires !
+\end{savaistu}
+
+\coursec{Continuité en un réel et sur un intervalle}
+
+Dans la section précédente, nous avons appris à comparer des fonctions pour lever des indéterminations et calculer des limites délicates. Nous savons donc désormais répondre à la question : « vers quelle valeur $f(x)$ se rapproche-t-il lorsque $x$ se rapproche de $a$ ? ». Mais une question toute aussi naturelle reste en suspens : la valeur vers laquelle $f(x)$ se rapproche est-elle bien la valeur que prend réellement la fonction en $a$ ? Autrement dit, y a-t-il une « couture » en $a$, ou bien la courbe passe-t-elle sans rupture par le point attendu ? C'est exactement l'objet de la \cle{continuité}, notion centrale de l'analyse et grande absente... de nos dessins d'enfants : quand tu traces une courbe sans lever le crayon, tu dessines une fonction continue !
+
+\courssub{Continuité d'une fonction en un réel}
+
+\textbf{Intuition.} Imagine le compteur d'une moto-taxi (« bendskin ») qui affiche la distance parcourue en fonction du temps. À chaque instant $t$, la distance affichée est exactement celle que prévoit la tendance : il n'y a pas de « saut » brutal de kilométrage. En revanche, le prix d'une course en fonction de la distance peut sauter brutalement d'un palier à l'autre : la fonction prix n'est pas continue partout. Mathématiquement, une fonction est continue en $a$ lorsque ce que la fonction « promet » en s'approchant de $a$ (la limite) coïncide avec ce qu'elle « fait » réellement en $a$ (l'image $f(a)$).
+
+\begin{definition}[Continuité d'une fonction en un réel]
+Soit $f$ une fonction définie sur un intervalle contenant le réel $a$ (ou au moins sur un intervalle de la forme $]a-r\,;\,a+r[$ avec $r>0$). On dit que $f$ est \cle{continue en $a$} lorsque :
+\[ \lim_{x \to a} f(x) = f(a). \]
+Autrement dit : $f$ est définie en $a$, $f$ admet une limite finie en $a$, et cette limite est exactement $f(a)$.
+\end{definition}
+
+\begin{aretenir}[Les trois conditions de la continuité en $a$]
+Pour que $f$ soit continue en $a$, il faut et il suffit que :
+\begin{enumerate}
+\item $f(a)$ \textbf{existe} ($a$ appartient à l'ensemble de définition) ;
+\item $\displaystyle\lim_{x\to a} f(x)$ \textbf{existe} et est finie (limites à gauche et à droite égales et finies) ;
+\item cette limite est \textbf{égale} à $f(a)$.
+\end{enumerate}
+Si l'une de ces trois conditions fait défaut, $f$ est \cle{discontinue en $a$}.
+\end{aretenir}
+
+\begin{exemplebox}[Une fonction continue : la parabole]
+Soit $f(x) = x^2 - 2x + 1$ définie sur $\mathbb{R}$. Étudions la continuité en $a = 3$.
+\begin{itemize}
+\item $f(3) = 9 - 6 + 1 = 4$ : $f$ est définie en $3$.
+\item $\displaystyle\lim_{x\to 3} f(x) = \lim_{x\to 3}(x^2-2x+1) = 9-6+1 = 4$ (limite d'un polynôme : on substitue directement).
+\item On a bien $\displaystyle\lim_{x\to 3} f(x) = f(3) = 4$.
+\end{itemize}
+Donc $f$ est continue en $3$. Graphiquement, la parabole se trace d'un seul tenant, sans lever le crayon.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.8\linewidth, height=6cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-1.5, xmax=4.5, ymin=-1.5, ymax=5.5,
+  xtick={1,2,3}, ytick={1,2,3,4},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small}
+]
+\addplot[popcurve, domain=-1.2:4.2, samples=200]{x^2-2*x+1};
+\addplot[only marks, mark=*, mark size=2pt, poporange] coordinates {(3,4)};
+\node[poporange, anchor=south west, font=\small] at (axis cs:3,4) {$(3\,;\,f(3))$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La parabole d'équation $y = x^2-2x+1$ : la courbe passe sans rupture par le point $(3\,;\,4)$ ; la fonction est continue en $3$.}
+\end{popfigure}
+
+\begin{attention}[Avoir une limite ne suffit pas !]
+Une fonction peut admettre une limite en $a$ \textbf{sans être continue en $a$}. Deux situations pièges :
+\begin{itemize}
+\item la limite existe mais $f(a)$ \textbf{n'existe pas} : par exemple $g(x) = \dfrac{x^2-1}{x-1}$ vérifie $\displaystyle\lim_{x\to 1} g(x) = 2$, mais $g(1)$ n'est pas défini, donc $g$ n'est pas continue en $1$ ;
+\item la limite existe mais \textbf{diffère de} $f(a)$ : par exemple la fonction $h$ définie par $h(x) = x+1$ si $x \neq 2$ et $h(2) = 5$. On a $\displaystyle\lim_{x\to 2} h(x) = 3 \neq 5 = h(2)$ : $h$ n'est pas continue en $2$.
+\end{itemize}
+La continuité exige la \emph{coïncidence} des trois quantités : valeur, limite à gauche, limite à droite.
+\end{attention}
+
+\courssub{Continuité à gauche, continuité à droite}
+
+Pour les fonctions définies par morceaux, il est souvent plus commode d'examiner séparément ce qui se passe de chaque côté de $a$, exactement comme nous l'avons fait pour les limites.
+
+\begin{definition}[Continuité à gauche et à droite]
+Soit $f$ une fonction et $a$ un réel.
+\begin{itemize}
+\item On dit que $f$ est \cle{continue à gauche en $a$} si $f$ est définie en $a$ et $\displaystyle\lim_{\substack{x \to a \\ x < a}} f(x) = f(a)$, noté $\displaystyle\lim_{x \to a^-} f(x) = f(a)$.
+\item On dit que $f$ est \cle{continue à droite en $a$} si $f$ est définie en $a$ et $\displaystyle\lim_{\substack{x \to a \\ x > a}} f(x) = f(a)$, noté $\displaystyle\lim_{x \to a^+} f(x) = f(a)$.
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Lien entre continuité et continuités latérales]
+$f$ est continue en $a$ \textbf{si et seulement si} $f$ est continue à gauche en $a$ \emph{et} continue à droite en $a$, c'est-à-dire :
+\[ f \text{ continue en } a \iff \lim_{x \to a^-} f(x) = \lim_{x \to a^+} f(x) = f(a). \]
+Cette propriété découle directement du fait qu'une fonction admet une limite en $a$ si et seulement si ses limites à gauche et à droite existent et sont égales.
+\end{propriete}
+
+\begin{exemplebox}[La fonction partie entière : discontinuités en escalier]
+La fonction \cle{partie entière}, notée $E$ (ou $\lfloor \cdot \rfloor$), associe à tout réel $x$ le plus grand entier inférieur ou égal à $x$ : $E(2{,}7) = 2$, $E(2) = 2$, $E(-1{,}3) = -2$.
+Étudions la continuité en $a = 2$ :
+\begin{itemize}
+\item $E(2) = 2$ ;
+\item pour $x \in [1\,;\,2[$, $E(x) = 1$, donc $\displaystyle\lim_{x\to 2^-} E(x) = 1 \neq E(2)$ : $E$ n'est \textbf{pas continue à gauche} en $2$ ;
+\item pour $x \in [2\,;\,3[$, $E(x) = 2$, donc $\displaystyle\lim_{x\to 2^+} E(x) = 2 = E(2)$ : $E$ \textbf{est continue à droite} en $2$.
+\end{itemize}
+Conclusion : $E$ est discontinue en $2$ (et plus généralement en tout entier), mais continue à droite en tout entier. Sa courbe est un « escalier » : impossible de la tracer sans lever le crayon à chaque entier.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.8\linewidth, height=6cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-2.5, xmax=3.5, ymin=-2.5, ymax=3.5,
+  xtick={-2,-1,1,2,3}, ytick={-2,-1,1,2,3},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small}
+]
+\addplot[popblue, very thick, domain=-2:-1, samples=2]{-2};
+\addplot[popblue, very thick, domain=-1:0, samples=2]{-1};
+\addplot[popblue, very thick, domain=0:1, samples=2]{0};
+\addplot[popblue, very thick, domain=1:2, samples=2]{1};
+\addplot[popblue, very thick, domain=2:3, samples=2]{2};
+\addplot[popblue, very thick, domain=3:3.3, samples=2]{3};
+\addplot[only marks, mark=*, mark size=2pt, popblue] coordinates {(-2,-2) (-1,-1) (0,0) (1,1) (2,2) (3,3)};
+\addplot[only marks, mark=o, mark size=2pt, popblue, thick] coordinates {(-1,-2) (0,-1) (1,0) (2,1) (3,2)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de la fonction partie entière : points pleins à gauche de chaque marche, points creux à droite. La fonction est continue à droite mais pas à gauche en chaque entier.}
+\end{popfigure}
+
+\courssub{Reconnaissance graphique de la continuité}
+
+\begin{aretenir}[Critère graphique : « sans lever le crayon »]
+Sur un graphique, une fonction est continue en $a$ si sa courbe passe par le point $(a\,;\,f(a))$ \textbf{sans interruption} : on peut tracer la courbe au voisinage de $a$ sans lever le crayon. On reconnaît une discontinuité en $a$ par :
+\begin{itemize}
+\item un \textbf{saut} (limites à gauche et à droite finies mais différentes) : points plein et creux décalés ;
+\item un \textbf{trou} (limite finie mais $f(a)$ absent ou différent) ;
+\item une \textbf{branche infinie} (asymptote verticale $x = a$).
+\end{itemize}
+\end{aretenir}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.8\linewidth, height=6.5cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-1.5, xmax=5, ymin=-1.5, ymax=5.5,
+  xtick={1,2,3,4}, ytick={1,2,3,4,5},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small}
+]
+\addplot[poppurple, very thick, domain=-1:2, samples=100]{x+1};
+\addplot[poppurple, very thick, domain=2:4.8, samples=100]{x-1};
+\addplot[only marks, mark=*, mark size=2pt, poppurple] coordinates {(2,3)};
+\addplot[only marks, mark=o, mark size=2pt, poppurple, thick] coordinates {(2,1)};
+\node[poppurple, anchor=west, font=\small] at (axis cs:2.1,3) {point plein : $f(2)=3$};
+\node[poppurple, anchor=west, font=\small] at (axis cs:2.1,1) {point creux};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Fonction définie par morceaux avec un saut en $x=2$ : $\displaystyle\lim_{x\to 2^-}f(x)=3=f(2)$ mais $\displaystyle\lim_{x\to 2^+}f(x)=1$. La fonction est continue à gauche en $2$, mais discontinue en $2$.}
+\end{popfigure}
+
+\courssub{Continuité sur un intervalle}
+
+\begin{definition}[Continuité sur un intervalle]
+Soit $I$ un intervalle de $\mathbb{R}$. On dit que $f$ est \cle{continue sur $I$} si $f$ est continue en \textbf{tout} point de $I$ (avec continuité à droite en la borne gauche et continuité à gauche en la borne droite si celles-ci appartiennent à $I$).
+Graphiquement : la courbe de $f$ sur $I$ se trace entièrement sans lever le crayon.
+\end{definition}
+
+\begin{propriete}[Continuité des fonctions de référence (admis)]
+Les fonctions suivantes sont continues sur tout intervalle de leur ensemble de définition :
+\begin{itemize}
+\item les fonctions \textbf{polynômes} (en particulier les fonctions affines $x \mapsto ax+b$), continues sur $\mathbb{R}$ ;
+\item les fonctions \textbf{rationnelles} (quotients de polynômes), continues sur tout intervalle où le dénominateur ne s'annule pas ;
+\item la fonction \textbf{inverse} $x \mapsto \dfrac{1}{x}$, continue sur $]-\infty\,;\,0[$ et sur $]0\,;\,+\infty[$ ;
+\item la fonction \textbf{racine carrée} $x \mapsto \sqrt{x}$, continue sur $[0\,;\,+\infty[$ ;
+\item la fonction \textbf{valeur absolue} $x \mapsto |x|$, continue sur $\mathbb{R}$.
+\end{itemize}
+Ce théorème est admis au niveau Première ; il sera utilisé constamment au Probatoire pour justifier la continuité sans revenir à la définition.
+\end{propriete}
+
+\begin{propriete}[Opérations sur les fonctions continues (admis)]
+Soient $f$ et $g$ deux fonctions continues en $a$ (respectivement sur un intervalle $I$). Alors :
+\begin{itemize}
+\item la \textbf{somme} $f + g$ est continue en $a$ (resp. sur $I$) ;
+\item le \textbf{produit} $f \times g$ est continu en $a$ (resp. sur $I$), ainsi que $k\,f$ pour tout réel $k$ ;
+\item le \textbf{quotient} $\dfrac{f}{g}$ est continu en tout point où $g$ \textbf{ne s'annule pas}.
+\end{itemize}
+Ces résultats sont des conséquences directes des théorèmes sur les opérations sur les limites vus dans la section 3.
+\end{propriete}
+
+\begin{exemplebox}[Justifier une continuité sur un intervalle]
+Soit $f(x) = \dfrac{x^2 + \sqrt{x}}{x + 3}$ définie sur $[0\,;\,+\infty[$.
+\begin{itemize}
+\item $x \mapsto x^2$ est un polynôme, $x \mapsto \sqrt{x}$ est continue sur $[0\,;\,+\infty[$ : le numérateur est continu sur $[0\,;\,+\infty[$ comme somme de fonctions continues.
+\item Le dénominateur $x \mapsto x+3$ est un polynôme, continu sur $\mathbb{R}$, et il ne s'annule pas sur $[0\,;\,+\infty[$ (car $x+3 \geq 3 > 0$).
+\item Par quotient, $f$ est continue sur $[0\,;\,+\infty[$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{savaistu}[Pourquoi la continuité est-elle si importante ?]
+La continuité est l'hypothèse clé du \emph{théorème des valeurs intermédiaires} (étudié en Terminale) : si $f$ est continue sur $[a\,;\,b]$, alors $f$ prend \textbf{toutes} les valeurs comprises entre $f(a)$ et $f(b)$. C'est ce théorème qui garantit, par exemple, qu'une équation comme $x^3 + x - 1 = 0$ possède une solution, ou que la température à Yaoundé, passant de \SI{18}{\degreeCelsius} la nuit à \SI{29}{\degreeCelsius} l'après-midi, est nécessairement passée par \SI{25}{\degreeCelsius}. Une fonction discontinue, elle, peut « sauter » par-dessus des valeurs !
+\end{savaistu}
+
+\courssub{Étudier la continuité d'une fonction définie par morceaux}
+
+\begin{methode}[Continuité en $a$ d'une fonction définie par morceaux : trois étapes]
+Pour étudier la continuité en $a$ d'une fonction dont l'expression change en $a$ :
+\begin{enumerate}
+\item \textbf{Calculer $f(a)$} en utilisant le morceau qui contient $a$ (celui avec l'inégalité large $\leq$ ou $\geq$). Si $f(a)$ n'existe pas, conclure immédiatement : $f$ n'est pas continue en $a$.
+\item \textbf{Calculer les deux limites latérales} : $\displaystyle\lim_{x\to a^-} f(x)$ avec l'expression valable pour $x < a$, et $\displaystyle\lim_{x\to a^+} f(x)$ avec l'expression valable pour $x > a$.
+\item \textbf{Comparer} les trois valeurs :
+\begin{itemize}
+\item si $\displaystyle\lim_{x\to a^-} f(x) = \lim_{x\to a^+} f(x) = f(a)$, alors $f$ est continue en $a$ ;
+\item sinon, $f$ est discontinue en $a$ (préciser si elle est tout de même continue à gauche ou à droite).
+\end{itemize}
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Continuité en $1$ d'une fonction définie par morceaux]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par :
+\[ f(x) = \begin{cases} x^2 + 1 & \text{si } x \leq 1 \\ 3x - 1 & \text{si } x > 1 \end{cases} \]
+Étudier la continuité de $f$ en $1$.
+\tcblower
+\textbf{Étape 1 : calcul de $f(1)$.} Le réel $1$ appartient au premier morceau ($x \leq 1$) :
+\[ f(1) = 1^2 + 1 = 2. \]
+\textbf{Étape 2 : limites latérales.}
+\begin{align*}
+\lim_{x \to 1^-} f(x) &= \lim_{x \to 1^-} (x^2 + 1) = 1 + 1 = 2, \\
+\lim_{x \to 1^+} f(x) &= \lim_{x \to 1^+} (3x - 1) = 3 - 1 = 2.
+\end{align*}
+\textbf{Étape 3 : comparaison.} On a :
+\[ \lim_{x \to 1^-} f(x) = \lim_{x \to 1^+} f(x) = f(1) = 2. \]
+Les trois valeurs coïncident : $f$ est \textbf{continue en $1$}. De plus, sur $]-\infty\,;\,1[$ et $]1\,;\,+\infty[$, $f$ coïncide avec des polynômes, donc $f$ est continue sur $\mathbb{R}$ tout entier : sa courbe se trace sans lever le crayon, le raccord en $x = 1$ se faisant au point $(1\,;\,2)$.
+\end{exoresolu}
+
+\begin{exoresolu}[Un cas de discontinuité]
+Soit $g$ la fonction définie sur $\mathbb{R}$ par :
+\[ g(x) = \begin{cases} 2x + 1 & \text{si } x < 2 \\ x^2 & \text{si } x \geq 2 \end{cases} \]
+Étudier la continuité de $g$ en $2$.
+\tcblower
+\textbf{Étape 1 :} $g(2) = 2^2 = 4$ (second morceau, car $x \geq 2$).
+
+\textbf{Étape 2 :}
+\[ \lim_{x \to 2^-} g(x) = \lim_{x \to 2^-} (2x+1) = 5 \qquad ; \qquad \lim_{x \to 2^+} g(x) = \lim_{x \to 2^+} x^2 = 4. \]
+\textbf{Étape 3 :} $\displaystyle\lim_{x\to 2^-} g(x) = 5 \neq 4 = \lim_{x\to 2^+} g(x)$. Les limites latérales sont différentes : $g$ n'admet pas de limite en $2$, donc $g$ est \textbf{discontinue en $2$} (discontinuité par saut). Remarquons que $\displaystyle\lim_{x\to 2^+} g(x) = 4 = g(2)$ : $g$ est tout de même \textbf{continue à droite} en $2$.
+\end{exoresolu}
+
+\begin{attention}[Pièges de rédaction au Probatoire]
+\begin{itemize}
+\item Ne jamais conclure après avoir calculé \textbf{une seule} limite latérale : il faut les deux, plus $f(a)$, soit \textbf{trois valeurs} à comparer.
+\item Pour calculer $\displaystyle\lim_{x\to a^-} f(x)$, utilise l'expression valable pour $x < a$ \emph{même si} $a$ lui-même relève de l'autre morceau : la limite à gauche ne regarde jamais la valeur en $a$.
+\item Écris la conclusion complète : « $\displaystyle\lim_{x\to a^-} f(x) = \lim_{x\to a^+} f(x) = f(a)$, donc $f$ est continue en $a$ ». Une conclusion sans comparaison explicite des trois quantités est sanctionnée.
+\item Attention à la fonction partie entière : $E(x)$ « saute » en chaque entier ; elle est continue sur tout intervalle $[n\,;\,n+1[$ ($n \in \mathbb{Z}$) mais pas sur $\mathbb{R}$.
+\end{itemize}
+\end{attention}
+
+\begin{exercice}[À toi de jouer]
+Soit $h$ la fonction définie sur $\mathbb{R}$ par :
+\[ h(x) = \begin{cases} \dfrac{x^2 - 4}{x - 2} & \text{si } x \neq 2 \\[4pt] k & \text{si } x = 2 \end{cases} \]
+Déterminer le réel $k$ pour que $h$ soit continue en $2$.
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de jouer]
+Pour $x \neq 2$, on factorise : $h(x) = \dfrac{(x-2)(x+2)}{x-2} = x + 2$. Donc :
+\[ \lim_{x \to 2} h(x) = \lim_{x \to 2} (x+2) = 4. \]
+Pour que $h$ soit continue en $2$, il faut $h(2) = \displaystyle\lim_{x\to 2} h(x)$, c'est-à-dire $k = 4$. Avec $k = 4$, la fonction $h$ n'est autre que la fonction affine $x \mapsto x+2$, continue sur $\mathbb{R}$ : on dit qu'on a \emph{prolongé $h$ par continuité} en $2$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $f$ est \cle{continue en $a$} si et seulement si $\displaystyle\lim_{x\to a} f(x) = f(a)$ : la valeur, la limite à gauche et la limite à droite doivent coïncider.
+\item Continuité en $a$ $\iff$ continuité à gauche \emph{et} à droite en $a$.
+\item Graphiquement, la continuité se reconnaît à une courbe tracée « sans lever le crayon » ; les sauts, trous et asymptotes verticales signalent des discontinuités.
+\item Polynômes, fonctions rationnelles, inverse, racine carrée et valeur absolue sont continues sur tout intervalle de leur ensemble de définition ; sommes, produits et quotients (dénominateur non nul) de fonctions continues sont continus.
+\item Pour une fonction définie par morceaux : calculer $f(a)$, puis les deux limites latérales, puis comparer les trois valeurs.
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu seras capable de :
+\begin{itemize}
+\item modéliser une situation concrète de tarification par tranches à l'aide d'une fonction définie par morceaux ;
+\item représenter graphiquement une fonction affine par intervalles ;
+\item calculer des limites à gauche et à droite en un réel, et conjecturer ces limites à partir d'un graphique ;
+\item discuter la continuité d'une fonction en un point à l'aide des limites latérales ;
+\item calculer la limite en $0^+$ d'une fonction constante et la limite en $+\infty$ d'une fonction de type $x \mapsto a - \dfrac{b}{x}$ ;
+\item interpréter économiquement des résultats mathématiques (coût moyen, comportement asymptotique).
+\end{itemize}
+
+\courssub{Situation}
+
+Monsieur Etoundi gère une petite maison de retraite à Obala, dans la région du Centre. Chaque mois, il reçoit la facture d'eau de la \textbf{CAMWATER} (Cameroon Water Utilities). En lisant attentivement le détail de sa facture, il remarque que le prix du mètre cube d'eau n'est pas constant : il augmente par \emph{tranches de consommation}, selon le barème suivant :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL} \textbf{Tranche} & \textbf{Consommation mensuelle} & \textbf{Prix unitaire} \\ \hline
+Tranche 1 & de $0$ à $10$ m$^3$ inclus & $300$ FCFA/m$^3$ \\ \hline
+Tranche 2 & de $10$ m$^3$ exclus à $20$ m$^3$ inclus & $400$ FCFA/m$^3$ \\ \hline
+Tranche 3 & au-delà de $20$ m$^3$ & $550$ FCFA/m$^3$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Règle de facturation :} chaque mètre cube consommé est facturé au tarif de la tranche dans laquelle il se situe. Ainsi, pour une consommation de $15$ m$^3$, les $10$ premiers m$^3$ coûtent $300$ FCFA chacun et les $5$ m$^3$ suivants coûtent $400$ FCFA chacun, soit au total :
+\[ 10 \times 300 + 5 \times 400 = 3000 + 2000 = 5000 \text{ FCFA.} \]
+
+Monsieur Etoundi se pose plusieurs questions :
+\begin{itemize}
+\item Le montant de la facture fait-il des « sauts » brutaux lorsque la consommation franchit une tranche ? Autrement dit, une toute petite augmentation de consommation autour de $10$ m$^3$ ou de $20$ m$^3$ provoque-t-elle une variation brutale du montant à payer ?
+\item Quel est le \textbf{coût moyen} d'un mètre cube d'eau, c'est-à-dire le montant total divisé par le nombre de mètres cubes consommés ? Vers quelle valeur ce coût moyen se rapproche-t-il lorsque la consommation devient très grande (par exemple si la maison de retraite s'agrandit) ?
+\end{itemize}
+
+On note $x$ la consommation mensuelle en m$^3$ ($x \geq 0$) et $C(x)$ le montant total de la facture en FCFA.
+
+\courssub{Consignes}
+
+\textbf{Partie A : Construction et représentation de la fonction coût}
+
+\begin{enumerate}
+\item Calculer $C(5)$, $C(10)$, $C(15)$ et $C(25)$.
+\item Montrer que la fonction $C$ est définie sur $[0\,;+\infty[$ par :
+\[ C(x) = \begin{cases} 300x & \text{si } 0 \leq x \leq 10 \\ 400x - 1000 & \text{si } 10 < x \leq 20 \\ 550x - 4000 & \text{si } x > 20 \end{cases} \]
+\item Représenter graphiquement la fonction $C$ dans un repère orthogonal (unités : $1$ cm pour $4$ m$^3$ en abscisse, $1$ cm pour $2000$ FCFA en ordonnée).
+\end{enumerate}
+
+\textbf{Partie B : Limites et continuité aux bornes des tranches}
+
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item À l'aide du graphique, conjecturer les limites de $C(x)$ lorsque $x$ tend vers $10$ par valeurs inférieures, puis par valeurs supérieures.
+\item Calculer algébriquement $\displaystyle\lim_{\substack{x \to 10 \\ x < 10}} C(x)$ et $\displaystyle\lim_{\substack{x \to 10 \\ x > 10}} C(x)$. La fonction $C$ est-elle continue en $10$ ?
+\item Faire de même en $20$ : calculer les limites à gauche et à droite de $C$ en $20$ et conclure sur la continuité de $C$ en ce point.
+\item Interpréter concrètement ces résultats pour Monsieur Etoundi : la facture fait-elle des sauts brutaux ?
+\end{enumerate}
+
+\textbf{Partie C : Étude du coût moyen}
+
+On définit, pour $x > 0$, le coût moyen d'un mètre cube : $M(x) = \dfrac{C(x)}{x}$.
+\begin{enumerate}
+\setcounter{enumi}{7}
+\item Donner l'expression de $M(x)$ sur chacun des intervalles $]0\,;10]$, $]10\,;20]$ et $]20\,;+\infty[$.
+\item Calculer $\displaystyle\lim_{\substack{x \to 0 \\ x > 0}} M(x)$. Interpréter.
+\item Calculer $\displaystyle\lim_{x \to +\infty} M(x)$ en utilisant les opérations sur les limites. Interpréter économiquement le résultat.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item \textbf{Limite à gauche / à droite :} $\displaystyle\lim_{\substack{x \to a \\ x < a}} f(x)$ se calcule en utilisant l'expression de $f$ valable pour $x < a$, et de même à droite avec l'expression valable pour $x > a$.
+\item \textbf{Continuité en $a$ :} $f$ est continue en $a$ si et seulement si $f$ est définie en $a$ et
+\[ \lim_{\substack{x \to a \\ x < a}} f(x) = \lim_{\substack{x \to a \\ x > a}} f(x) = f(a). \]
+\item \textbf{Limite d'une fonction polynôme en un réel :} on obtient la limite par simple substitution de $x$ par $a$.
+\item \textbf{Limite de $\dfrac{b}{x}$ en $+\infty$ :} pour tout réel $b$, $\displaystyle\lim_{x \to +\infty} \frac{b}{x} = 0$. Par conséquent $\displaystyle\lim_{x \to +\infty} \left(a - \frac{b}{x}\right) = a$.
+\item \textbf{Limite de $\dfrac{a}{x}$ en $0^+$ :} si $a > 0$, alors $\displaystyle\lim_{\substack{x \to 0 \\ x > 0}} \frac{a}{x} = +\infty$.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item Pour calculer une limite à gauche en $a$, on utilise \emph{uniquement} l'expression valable à gauche de $a$, même si $f(a)$ est définie par une autre formule. Ici, $C(10) = 3000$ se calcule avec la \emph{première} expression ($300x$), car $10 \in [0\,;10]$.
+\item Ne pas confondre « le prix unitaire change brutalement » (vrai : il passe de $300$ à $400$ FCFA) et « le montant total change brutalement » (faux : il varie de façon continue). Ce sont deux grandeurs différentes.
+\item La continuité en $a$ exige la vérification de \emph{trois} égalités : limite à gauche, limite à droite, et valeur $f(a)$. En oublier une rend la conclusion non justifiée au Probatoire.
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[La facture d'eau de la CAMWATER — corrigé complet]
+\textbf{Partie A. 1.} Calculs directs, en décomposant la consommation tranche par tranche :
+\begin{align*}
+C(5) &= 5 \times 300 = 1500 \text{ FCFA} \\
+C(10) &= 10 \times 300 = 3000 \text{ FCFA} \\
+C(15) &= 10 \times 300 + 5 \times 400 = 3000 + 2000 = 5000 \text{ FCFA} \\
+C(25) &= 10 \times 300 + 10 \times 400 + 5 \times 550 = 3000 + 4000 + 2750 = 9750 \text{ FCFA.}
+\end{align*}
+
+\textbf{2.} Pour $10 < x \leq 20$ : les $10$ premiers m$^3$ coûtent $10 \times 300 = 3000$ FCFA et les $(x-10)$ m$^3$ suivants coûtent $400(x-10)$ FCFA, d'où
+\[ C(x) = 3000 + 400(x-10) = 3000 + 400x - 4000 = 400x - 1000. \]
+Pour $x > 20$ : les $20$ premiers m$^3$ coûtent $3000 + 10 \times 400 = 7000$ FCFA et les $(x-20)$ m$^3$ suivants coûtent $550(x-20)$ FCFA, d'où
+\[ C(x) = 7000 + 550(x-20) = 7000 + 550x - 11000 = 550x - 4000. \]
+\textbf{Vérification de cohérence :} $C(25) = 550 \times 25 - 4000 = 13750 - 4000 = 9750$ FCFA, conforme à la question 1. \tcblower
+\textbf{3.} La représentation graphique est constituée de deux segments et d'une demi-droite, qui se raccordent aux points $(10\,;3000)$ et $(20\,;7000)$ :
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.95]
+\draw[->,thick] (0,0) -- (7,0) node[below left]{$x$ (m$^3$)};
+\draw[->,thick] (0,0) -- (0,5.5) node[below left]{$C(x)$ (FCFA)};
+\draw[popblue,very thick] (0,0) -- (2.5,1.5);
+\draw[poporange,very thick] (2.5,1.5) -- (5,3.5);
+\draw[popgreen,very thick] (5,3.5) -- (6.6,4.94);
+\fill[popblue] (2.5,1.5) circle (1.5pt);
+\fill[poporange] (5,3.5) circle (1.5pt);
+\draw[dashed,popmuted] (2.5,0) node[below]{$10$} -- (2.5,1.5);
+\draw[dashed,popmuted] (5,0) node[below]{$20$} -- (5,3.5);
+\draw[dashed,popmuted] (0,1.5) node[left]{$3000$} -- (2.5,1.5);
+\draw[dashed,popmuted] (0,3.5) node[left]{$7000$} -- (5,3.5);
+\end{tikzpicture}
+\legende{La courbe de $C$ est formée de trois morceaux de droites qui se raccordent sans saut : cela annonce la continuité (échelles : $0{,}25$ cm pour $1$ m$^3$ ; $1$ cm pour $2000$ FCFA).}
+\end{popfigure}
+
+\textbf{Partie B. 4.} Graphiquement, lorsque $x$ s'approche de $10$ par la gauche (en restant sur le segment bleu) ou par la droite (en restant sur le segment orange), les ordonnées se rapprochent toutes de $3000$. On conjecture donc :
+\[ \lim_{\substack{x \to 10 \\ x < 10}} C(x) = \lim_{\substack{x \to 10 \\ x > 10}} C(x) = 3000. \]
+
+\textbf{5.} Algébriquement, en utilisant l'expression adaptée à chaque côté de $10$ :
+\[ \lim_{\substack{x \to 10 \\ x < 10}} C(x) = \lim_{x \to 10} 300x = 300 \times 10 = 3000 \quad ; \quad \lim_{\substack{x \to 10 \\ x > 10}} C(x) = \lim_{x \to 10} (400x - 1000) = 4000 - 1000 = 3000. \]
+De plus $C(10) = 300 \times 10 = 3000$. Les trois valeurs sont égales : $C$ est \textbf{continue en $10$}.
+
+\textbf{6.} De même en $20$ :
+\[ \lim_{\substack{x \to 20 \\ x < 20}} C(x) = 400 \times 20 - 1000 = 7000 \quad ; \quad \lim_{\substack{x \to 20 \\ x > 20}} C(x) = 550 \times 20 - 4000 = 7000. \]
+Et $C(20) = 400 \times 20 - 1000 = 7000$ (car $20 \in \left]10\,;20\right]$). Donc $C$ est \textbf{continue en $20$}.
+
+\textbf{7.} Interprétation : la facture ne fait \emph{aucun saut} aux frontières des tranches. Consommer $10{,}01$ m$^3$ au lieu de $9{,}99$ m$^3$ ne provoque qu'une variation infime du montant (environ $4$ FCFA d'écart). Seul le \emph{prix du mètre cube supplémentaire} change ; le montant total varie de façon continue. C'est une propriété rassurante du barème CAMWATER.
+
+\textbf{Partie C. 8.} On divise chaque expression de $C(x)$ par $x$ (licite car $x > 0$) :
+\[ M(x) = \begin{cases} 300 & \text{si } 0 < x \leq 10 \\[4pt] 400 - \dfrac{1000}{x} & \text{si } 10 < x \leq 20 \\[6pt] 550 - \dfrac{4000}{x} & \text{si } x > 20 \end{cases} \]
+
+\textbf{9.} Pour tout $x \in \left]0\,;10\right]$, $M(x) = 300$ : la fonction $M$ est constante au voisinage de $0$ à droite, donc
+\[ \lim_{\substack{x \to 0 \\ x > 0}} M(x) = 300. \]
+\textbf{Interprétation :} pour une toute petite consommation, le coût moyen est exactement le tarif de la première tranche, $300$ FCFA/m$^3$.
+
+\textbf{10.} Pour $x > 20$, $M(x) = 550 - \dfrac{4000}{x}$. Or $\displaystyle\lim_{x \to +\infty} \frac{4000}{x} = 0$, donc par somme de limites :
+\[ \lim_{x \to +\infty} M(x) = 550 - 0 = 550. \]
+\textbf{Interprétation :} quand la consommation devient très grande, le poids des mètres cubes bon marché des premières tranches devient négligeable, et le coût moyen se rapproche du tarif le plus élevé, $550$ FCFA/m$^3$, sans jamais l'atteindre (car $\dfrac{4000}{x} > 0$). Graphiquement, la droite d'équation $y = 550$ est \textbf{asymptote horizontale} à la courbe de $M$ en $+\infty$.
+\end{exoresolu}
+
+\begin{methode}[Étudier la continuité d'une fonction définie par morceaux en un point de raccordement $a$]
+\begin{enumerate}
+\item Identifier l'expression de $f$ valable \emph{à gauche} de $a$ et calculer $\displaystyle\lim_{\substack{x \to a \\ x < a}} f(x)$.
+\item Identifier l'expression de $f$ valable \emph{à droite} de $a$ et calculer $\displaystyle\lim_{\substack{x \to a \\ x > a}} f(x)$.
+\item Calculer $f(a)$ avec l'expression dont l'intervalle contient $a$ (attention aux inégalités strictes ou larges).
+\item Conclure : $f$ est continue en $a$ si et seulement si les trois valeurs sont égales ; sinon, $f$ est discontinue en $a$ (on précise alors si elle est continue à gauche ou à droite).
+\end{enumerate}
+\end{methode}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence plusieurs idées fondamentales de la leçon :
+\begin{itemize}
+\item une fonction définie \textbf{par morceaux} peut être \textbf{continue} aux points de raccordement : il suffit que les limites à gauche et à droite y soient égales à la valeur de la fonction ;
+\item la continuité se \emph{lit} sur le graphique (la courbe se trace sans lever le crayon) et se \emph{prouve} par le calcul des limites latérales ;
+\item les limites à l'infini ont un sens concret : ici, le coût moyen tend vers le tarif de la dernière tranche, ce qui se traduit graphiquement par une \textbf{asymptote horizontale} ;
+\item les mathématiques éclairent des décisions de la vie courante : Monsieur Etoundi comprend désormais que plus il consomme, plus son mètre cube « moyen » devient cher, ce qui l'encourage à maîtriser sa consommation d'eau.
+\end{itemize}
+
+\begin{exercice}[Pour t'entraîner]
+On considère la fonction $g$ définie sur $[0\,;+\infty[$ par :
+\[ g(x) = \begin{cases} 2x + 1 & \text{si } 0 \leq x \leq 3 \\ 10 - x & \text{si } x > 3 \end{cases} \]
+\begin{enumerate}
+\item Calculer $\displaystyle\lim_{\substack{x \to 3 \\ x < 3}} g(x)$, $\displaystyle\lim_{\substack{x \to 3 \\ x > 3}} g(x)$ et $g(3)$.
+\item La fonction $g$ est-elle continue en $3$ ? Justifier.
+\item Calculer $\displaystyle\lim_{x \to +\infty} \dfrac{g(x)}{x}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Pour t'entraîner]
+\begin{enumerate}
+\item À gauche de $3$ : $\displaystyle\lim_{\substack{x \to 3 \\ x < 3}} g(x) = 2 \times 3 + 1 = 7$. À droite de $3$ : $\displaystyle\lim_{\substack{x \to 3 \\ x > 3}} g(x) = 10 - 3 = 7$. Et $g(3) = 2 \times 3 + 1 = 7$ (car $3 \in [0\,;3]$).
+\item Les trois valeurs sont égales à $7$ : $g$ est \textbf{continue en $3$}.
+\item Pour $x > 3$, $\dfrac{g(x)}{x} = \dfrac{10 - x}{x} = \dfrac{10}{x} - 1$. Comme $\displaystyle\lim_{x \to +\infty} \frac{10}{x} = 0$, on obtient $\displaystyle\lim_{x \to +\infty} \frac{g(x)}{x} = -1$.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Pour aller plus loin]
+La tarification par tranches est utilisée au Cameroun aussi bien pour l'eau (CAMWATER) que pour l'électricité (ENEO). Les fonctions coûts associées sont continues, mais leur \emph{taux d'accroissement} change brutalement aux bornes des tranches : la courbe y présente un « point anguleux ». On dit que ces fonctions ne sont pas \emph{dérivables} en ces points. Tu découvriras cette notion dans la leçon sur la dérivation, où tu apprendras qu'une fonction dérivable en un point est toujours continue en ce point, mais que la réciproque est fausse — la fonction coût de Monsieur Etoundi en est un exemple parfait.
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Conjecturer graphiquement la limite d'une fonction en un réel}
+
+\begin{methode}[Lire une limite sur une courbe]
+Pour conjecturer la limite d'une fonction $f$ en un réel $a$ à partir de sa courbe représentative $\mathcal{C}_f$ :
+\begin{enumerate}
+\item Repérer le point d'abscisse $a$ sur l'axe des abscisses, même si $f$ n'est pas définie en $a$ (la limite ne dépend pas de la valeur en $a$).
+\item Suivre la courbe en s'approchant de $a$ par la gauche ($x<a$) puis par la droite ($x>a$), et observer vers quelle valeur se rapprochent les ordonnées.
+\item Si les ordonnées se rapprochent d'un même réel $\ell$ des deux côtés, on conjecture $\lim_{x\to a}f(x)=\ell$.
+\item Si les ordonnées deviennent arbitrairement grandes (resp. petites), on conjecture une limite infinie $+\infty$ (resp. $-\infty$), ce qui signale une \cle{asymptote verticale} d'équation $x=a$.
+\item Si les deux côtés donnent des résultats différents, la limite en $a$ n'existe pas, mais il existe une limite à gauche et une limite à droite distinctes.
+\end{enumerate}
+\textbf{Réflexe :} la limite en $a$ se lit sur les \emph{ordonnées}, jamais sur les abscisses.
+\end{methode}
+
+\begin{exoresolu}[Lecture graphique en un point]
+On donne ci-dessous la courbe d'une fonction $f$ définie sur $\mathbb{R}\setminus\{1\}$.
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+\draw[->,popmuted] (-2.5,0)--(4,0) node[below]{$x$};
+\draw[->,popmuted] (0,-4)--(0,4.5) node[left]{$y$};
+\draw[popblue,thick,domain=-2:0.72,samples=100] plot(\x,{(\x+1)/(\x-1)});
+\draw[popblue,thick,domain=1.28:3.8,samples=100] plot(\x,{(\x+1)/(\x-1)});
+\draw[poporange,dashed] (1,-4)--(1,4.5);
+\node[poporange,below right] at (1,0){$1$};
+\node[below left] at (0,0){$0$};
+\foreach \y in {-2,2}{\node[left,popmuted] at (0,\y){\scriptsize $\y$};}
+\end{tikzpicture}
+\end{center}
+Conjecturer $\lim_{x\to 1^-}f(x)$, $\lim_{x\to 1^+}f(x)$ et la limite éventuelle de $f$ en $1$.
+\tcblower
+\textbf{Observation à gauche de $1$.} Lorsque $x$ s'approche de $1$ par valeurs inférieures ($x=0{,}9$ ; $0{,}99$ ; $0{,}999$\ldots), la branche de courbe descend : les ordonnées deviennent négatives et arbitrairement grandes en valeur absolue. On conjecture :
+\[ \lim_{x\to 1^-}f(x)=-\infty. \]
+\textbf{Observation à droite de $1$.} Lorsque $x$ s'approche de $1$ par valeurs supérieures ($x=1{,}1$ ; $1{,}01$ ; $1{,}001$\ldots), la branche de courbe monte : les ordonnées deviennent positives et arbitrairement grandes. On conjecture :
+\[ \lim_{x\to 1^+}f(x)=+\infty. \]
+\textbf{Conclusion.} Les deux limites latérales existent mais sont différentes : la fonction $f$ \textbf{n'admet pas de limite en $1$}. La droite d'équation $x=1$ est une asymptote verticale à la courbe.
+
+\emph{Vérification algébrique (pour confirmer la lecture).} La courbe tracée est celle de $f(x)=\dfrac{x+1}{x-1}$. En $1$, le numérateur tend vers $2\neq 0$ et le dénominateur tend vers $0$ : négatif à gauche de $1$, positif à droite. La règle des signes redonne bien $\dfrac{2}{0^-}=-\infty$ et $\dfrac{2}{0^+}=+\infty$ : la lecture graphique est cohérente avec le calcul.
+\end{exoresolu}
+
+\courssub{Calculer une limite à gauche ou à droite : le cas de $\dfrac{a}{x}$ et des quotients simples}
+
+\begin{methode}[Limite de $\dfrac{a}{x}$ en $0$ et de $\dfrac{ax+b}{cx+d}$ en $-\dfrac{d}{c}$]
+\begin{enumerate}
+\item \textbf{Identifier la valeur qui annule le dénominateur} : pour $x\mapsto\dfrac{a}{x}$ c'est $0$ ; pour $x\mapsto\dfrac{ax+b}{cx+d}$ ($c\neq 0$) c'est $x_0=-\dfrac{d}{c}$.
+\item \textbf{Étudier le signe du dénominateur} de chaque côté de $x_0$ (tableau de signes si nécessaire).
+\item \textbf{Appliquer la règle fondamentale} : si le numérateur tend vers un réel \emph{non nul} $L$ et le dénominateur tend vers $0$ en gardant un signe constant, alors le quotient tend vers l'infini, avec la règle des signes :
+\[ \frac{L}{0^+}=+\infty\ \text{si } L>0,\quad -\infty\ \text{si } L<0 ;\qquad \frac{L}{0^-}=-\infty\ \text{si } L>0,\quad +\infty\ \text{si } L<0. \]
+\item \textbf{Conclure en distinguant} limite à gauche et limite à droite, puis dire si la limite globale existe.
+\end{enumerate}
+\textbf{À retenir :} pour $a>0$, $\lim_{x\to 0^+}\dfrac{a}{x}=+\infty$ et $\lim_{x\to 0^-}\dfrac{a}{x}=-\infty$ ; les rôles s'inversent si $a<0$.
+\end{methode}
+
+\begin{exoresolu}[Limite d'un quotient homographique]
+Soit $g$ la fonction définie par $g(x)=\dfrac{3x-1}{2x+4}$.
+\begin{enumerate}
+\item Déterminer l'ensemble de définition de $g$.
+\item Calculer $\lim_{x\to -2^-}g(x)$ et $\lim_{x\to -2^+}g(x)$. La fonction $g$ admet-elle une limite en $-2$ ?
+\end{enumerate}
+\tcblower
+\textbf{1. Ensemble de définition.} $g(x)$ existe si et seulement si $2x+4\neq 0$, c'est-à-dire $x\neq -2$. Donc $D_g=\mathbb{R}\setminus\{-2\}$.
+
+\textbf{2. Limites latérales en $-2$.} C'est ici $x_0=-\dfrac{d}{c}=-\dfrac{4}{2}=-2$.
+
+\emph{Étape 1 : limite du numérateur.} $\lim_{x\to -2}(3x-1)=3\times(-2)-1=-7\neq 0$.
+
+\emph{Étape 2 : signe du dénominateur.} $2x+4$ est une fonction affine de coefficient directeur $2>0$, nulle en $-2$ :
+\begin{center}
+\begin{tabular}{|c|ccc|}\hline
+$x$ & $-\infty$ & $-2$ & $+\infty$ \\ \hline
+$2x+4$ & $-$ & $0$ & $+$ \\ \hline
+\end{tabular}
+\end{center}
+
+\emph{Étape 3 : application de la règle.}
+\begin{itemize}
+\item À gauche de $-2$ : le numérateur tend vers $-7$ et le dénominateur tend vers $0$ par valeurs négatives ($0^-$). Par la règle des signes, $\dfrac{-7}{0^-}=+\infty$ :
+\[ \lim_{x\to -2^-}g(x)=+\infty. \]
+\item À droite de $-2$ : le dénominateur tend vers $0$ par valeurs positives ($0^+$), d'où $\dfrac{-7}{0^+}=-\infty$ :
+\[ \lim_{x\to -2^+}g(x)=-\infty. \]
+\end{itemize}
+
+\emph{Conclusion.} Les limites à gauche et à droite sont différentes : $g$ \textbf{n'admet pas de limite en $-2$}. La droite d'équation $x=-2$ est asymptote verticale à la courbe de $g$.
+\end{exoresolu}
+
+\courssub{Lever une indétermination $\dfrac{0}{0}$ en un réel}
+
+\begin{methode}[Limite de $\dfrac{u}{v}$ en $a$ lorsque $u(a)=v(a)=0$]
+La forme $\dfrac{0}{0}$ est une \cle{forme indéterminée} : il faut transformer l'écriture.
+\begin{enumerate}
+\item \textbf{Factoriser numérateur et dénominateur par $(x-a)$} : si $u$ et $v$ sont polynômes avec $u(a)=v(a)=0$, alors $(x-a)$ est un facteur commun (utiliser les identités remarquables, la factorisation d'un trinôme dont $a$ est racine, ou la division euclidienne).
+\item \textbf{Simplifier} par $(x-a)$, ce qui est licite car on étudie la limite pour $x\neq a$.
+\item \textbf{Calculer la limite} de l'expression simplifiée par substitution.
+\item Cas particulier des \textbf{radicaux} : multiplier par la \cle{quantité conjuguée}, par exemple $\sqrt{u}-\sqrt{v}$ par $\sqrt{u}+\sqrt{v}$, pour faire apparaître $u-v$.
+\end{enumerate}
+\textbf{Réflexe :} ne jamais écrire $\dfrac{0}{0}$ comme résultat final ; une forme indéterminée appelle toujours une transformation.
+\end{methode}
+
+\begin{exoresolu}[Deux indéterminations classiques]
+\begin{enumerate}
+\item Calculer $\lim_{x\to 2}\dfrac{x^2-5x+6}{x^2-4}$.
+\item Calculer $\lim_{x\to 3}\dfrac{\sqrt{x+1}-2}{x-3}$.
+\end{enumerate}
+\tcblower
+\textbf{1.} En $x=2$ : numérateur $=4-10+6=0$ et dénominateur $=4-4=0$ : forme indéterminée $\dfrac{0}{0}$.
+
+\emph{Factorisation.} $2$ est racine de $x^2-5x+6$ ; le produit des racines vaut $6$, donc l'autre racine est $3$ : $x^2-5x+6=(x-2)(x-3)$. Par ailleurs $x^2-4=(x-2)(x+2)$ (identité remarquable).
+
+\emph{Simplification et calcul.} Pour $x\neq 2$ :
+\[ \frac{x^2-5x+6}{x^2-4}=\frac{(x-2)(x-3)}{(x-2)(x+2)}=\frac{x-3}{x+2}. \]
+Donc $\lim_{x\to 2}\dfrac{x^2-5x+6}{x^2-4}=\lim_{x\to 2}\dfrac{x-3}{x+2}=\dfrac{2-3}{2+2}=-\dfrac{1}{4}$.
+
+\textbf{2.} En $x=3$ : $\sqrt{4}-2=0$ et $3-3=0$ : forme indéterminée $\dfrac{0}{0}$.
+
+\emph{Multiplication par la quantité conjuguée} $\sqrt{x+1}+2$ :
+\begin{align*}
+\frac{\sqrt{x+1}-2}{x-3} &= \frac{(\sqrt{x+1}-2)(\sqrt{x+1}+2)}{(x-3)(\sqrt{x+1}+2)} = \frac{(x+1)-4}{(x-3)(\sqrt{x+1}+2)} = \frac{x-3}{(x-3)(\sqrt{x+1}+2)}.
+\end{align*}
+Pour $x\neq 3$, on simplifie par $(x-3)$ : l'expression vaut $\dfrac{1}{\sqrt{x+1}+2}$.
+
+\emph{Conclusion.} $\lim_{x\to 3}\dfrac{\sqrt{x+1}-2}{x-3}=\dfrac{1}{\sqrt{3+1}+2}=\dfrac{1}{4}$.
+\end{exoresolu}
+
+\courssub{Calculer une limite à l'infini : puissances, polynômes et fractions rationnelles}
+
+\begin{methode}[Limites à l'infini des fonctions polynômes et rationnelles]
+\begin{enumerate}
+\item \textbf{Limites de référence} : pour tout entier $n\geq 1$, $\lim_{x\to +\infty}x^n=+\infty$ ; en $-\infty$, $\lim_{x\to -\infty}x^n=+\infty$ si $n$ est pair, $-\infty$ si $n$ est impair. Pour $a\neq 0$, $\lim_{x\to\pm\infty}\dfrac{a}{x}=0$.
+\item \textbf{Polynôme} : factoriser par le \cle{terme de plus haut degré} et conclure : la limite d'un polynôme à l'infini est celle de son monôme de plus haut degré.
+\item \textbf{Fraction rationnelle} : factoriser numérateur et dénominateur par leur terme de plus haut degré, simplifier, puis conclure : la limite est celle du \emph{quotient des termes de plus haut degré}.
+\item \textbf{Interprétation graphique} : si la limite est un réel $\ell$, la droite $y=\ell$ est \cle{asymptote horizontale} ; si elle est infinie, il n'y a pas d'asymptote horizontale.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Limites à l'infini d'une fraction rationnelle]
+Soit $f$ la fonction définie sur $\mathbb{R}\setminus\{0\,;1\}$ par $f(x)=\dfrac{2x^2-3x+1}{x^2-x}$.
+\begin{enumerate}
+\item Calculer $\lim_{x\to +\infty}f(x)$ et interpréter graphiquement le résultat.
+\item Calculer $\lim_{x\to -\infty}f(x)$.
+\end{enumerate}
+\tcblower
+\textbf{1.} La substitution directe donne $\dfrac{+\infty}{+\infty}$ : forme indéterminée. On factorise par le terme de plus haut degré, $x^2$, au numérateur et au dénominateur. Pour $x\neq 0$ :
+\[ f(x)=\frac{x^2\left(2-\dfrac{3}{x}+\dfrac{1}{x^2}\right)}{x^2\left(1-\dfrac{1}{x}\right)}=\frac{2-\dfrac{3}{x}+\dfrac{1}{x^2}}{1-\dfrac{1}{x}}. \]
+Or $\lim_{x\to +\infty}\dfrac{3}{x}=0$, $\lim_{x\to +\infty}\dfrac{1}{x^2}=0$ et $\lim_{x\to +\infty}\dfrac{1}{x}=0$. Par opérations sur les limites (somme et quotient, le dénominateur tendant vers $1\neq 0$) :
+\[ \lim_{x\to +\infty}f(x)=\frac{2-0+0}{1-0}=2. \]
+\emph{Interprétation :} la droite d'équation $y=2$ est asymptote horizontale à la courbe de $f$ en $+\infty$.
+
+\textbf{2.} La même écriture factorisée est valable pour $x\to -\infty$, et les limites de $\dfrac{1}{x}$ et $\dfrac{1}{x^2}$ en $-\infty$ sont également nulles. Donc :
+\[ \lim_{x\to -\infty}f(x)=2. \]
+La droite $y=2$ est aussi asymptote horizontale en $-\infty$.
+\end{exoresolu}
+
+\courssub{Utiliser les théorèmes de comparaison}
+
+\begin{methode}[Comparaison, encadrement et minoration]
+Soient $f$, $g$, $h$ définies au voisinage de $a$ (réel ou infini).
+\begin{enumerate}
+\item \textbf{Théorème des gendarmes} : si $g(x)\leq f(x)\leq h(x)$ au voisinage de $a$ et si $\lim_{a}g=\lim_{a}h=\ell$, alors $\lim_{a}f=\ell$.
+\item \textbf{Minoration} : si $f(x)\geq g(x)$ au voisinage de $a$ et $\lim_{a}g=+\infty$, alors $\lim_{a}f=+\infty$.
+\item \textbf{Majoration} : si $f(x)\leq g(x)$ au voisinage de $a$ et $\lim_{a}g=-\infty$, alors $\lim_{a}f=-\infty$.
+\end{enumerate}
+\textbf{Réflexes :} pour les fonctions trigonométriques, utiliser $-1\leq\sin x\leq 1$ et $-1\leq\cos x\leq 1$ pour construire l'encadrement ; toujours préciser \emph{sur quel voisinage} l'inégalité est valable et vérifier que les deux « gendarmes » ont la \emph{même} limite.
+\end{methode}
+
+\begin{exoresolu}[Limite par encadrement]
+Soit $f$ la fonction définie sur $]0\,;+\infty[$ par $f(x)=\dfrac{2+\sin x}{x}$.
+\begin{enumerate}
+\item Démontrer que pour tout $x>0$, $\dfrac{1}{x}\leq f(x)\leq \dfrac{3}{x}$.
+\item En déduire $\lim_{x\to +\infty}f(x)$.
+\end{enumerate}
+\tcblower
+\textbf{1.} Pour tout réel $x$, on sait que $-1\leq \sin x\leq 1$. En ajoutant $2$ aux trois membres :
+\[ 1\leq 2+\sin x\leq 3. \]
+Comme $x>0$, la division par $x$ conserve le sens des inégalités :
+\[ \frac{1}{x}\leq \frac{2+\sin x}{x}\leq \frac{3}{x},\quad\text{c'est-à-dire}\quad \frac{1}{x}\leq f(x)\leq \frac{3}{x}. \]
+
+\textbf{2.} On a $\lim_{x\to +\infty}\dfrac{1}{x}=0$ et $\lim_{x\to +\infty}\dfrac{3}{x}=3\times 0=0$. Les deux fonctions qui encadrent $f$ ont la même limite $0$ en $+\infty$ : d'après le théorème des gendarmes,
+\[ \lim_{x\to +\infty}f(x)=0. \]
+\emph{Interprétation :} la courbe de $f$ admet l'axe des abscisses ($y=0$) comme asymptote horizontale en $+\infty$.
+\end{exoresolu}
+
+\courssub{Étudier la continuité d'une fonction en un réel et sur un intervalle}
+
+\begin{methode}[Montrer qu'une fonction est continue en $a$]
+\begin{enumerate}
+\item \textbf{Vérifier que $f$ est définie en $a$} : $f(a)$ existe. C'est la condition souvent oubliée !
+\item \textbf{Calculer les limites latérales} $\lim_{x\to a^-}f(x)$ et $\lim_{x\to a^+}f(x)$ (ou la limite globale si l'expression est la même des deux côtés).
+\item \textbf{Comparer} : $f$ est continue en $a$ si et seulement si
+\[ \lim_{x\to a^-}f(x)=\lim_{x\to a^+}f(x)=f(a). \]
+\item Si seule l'égalité à gauche (resp. à droite) avec $f(a)$ est vérifiée, $f$ est \cle{continue à gauche} (resp. \cle{à droite}) en $a$.
+\item \textbf{Sur un intervalle} : $f$ est continue sur $I$ si elle est continue en tout point de $I$. Les fonctions polynômes, rationnelles (sur leur ensemble de définition), racine carrée, valeur absolue, sinus et cosinus sont continues sur leur ensemble de définition ; les sommes, produits, quotients (dénominateur non nul) et composées de fonctions continues le sont aussi.
+\item \textbf{Graphiquement} : $f$ est continue en $a$ si la courbe se trace « sans lever le crayon » au voisinage de $a$ ; un saut ou un trou signale une discontinuité.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Continuité d'une fonction définie par morceaux]
+Une société de transport de Yaoundé facture la course selon la distance $x$ (en km) par
+\[ f(x)=\begin{cases} 500x & \text{si } 0\leq x\leq 4 \\ 1500+250x & \text{si } x>4 \end{cases} \quad \text{(en FCFA).} \]
+\begin{enumerate}
+\item Calculer $f(4)$, $\lim_{x\to 4^-}f(x)$ et $\lim_{x\to 4^+}f(x)$.
+\item La fonction $f$ est-elle continue en $4$ ? Interpréter le résultat.
+\end{enumerate}
+\tcblower
+\textbf{1.} \emph{Valeur en $4$.} Le point $x=4$ relève du premier morceau ($0\leq x\leq 4$) : $f(4)=500\times 4=2000$ FCFA.
+
+\emph{Limite à gauche.} Pour $x<4$, $f(x)=500x$, donc
+\[ \lim_{x\to 4^-}f(x)=\lim_{x\to 4^-}500x=500\times 4=2000. \]
+
+\emph{Limite à droite.} Pour $x>4$, $f(x)=1500+250x$, donc
+\[ \lim_{x\to 4^+}f(x)=\lim_{x\to 4^+}(1500+250x)=1500+250\times 4=1500+1000=2500. \]
+
+\textbf{2.} On a $\lim_{x\to 4^-}f(x)=2000=f(4)$ : la fonction $f$ est \textbf{continue à gauche en $4$}. En revanche $\lim_{x\to 4^+}f(x)=2500\neq f(4)$ : les limites latérales étant différentes, $f$ \textbf{n'est pas continue en $4$}.
+
+\emph{Interprétation.} Le prix subit un « saut » de $500$ FCFA au passage de $4$ km : dès que l'on dépasse $4$ km, même de très peu, la facture passe brutalement d'environ $2000$ à environ $2500$ FCFA. Graphiquement, la courbe présente une discontinuité au point d'abscisse $4$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Conclure « limite $=\frac{0}{0}$ » ou « $\frac{\infty}{\infty}$ ».} Ce ne sont pas des résultats : ce sont des \emph{formes indéterminées} qui exigent une transformation (factorisation, quantité conjuguée, mise en facteur du terme dominant). Écrire $\frac{0}{0}=1$ ou $\frac{\infty}{\infty}=1$ est une faute grave.
+\item \textbf{Oublier de distinguer gauche et droite} quand le dénominateur tend vers $0$ : $\lim_{x\to 0}\frac{1}{x}$ n'existe pas, car $\lim_{x\to 0^-}\frac{1}{x}=-\infty$ et $\lim_{x\to 0^+}\frac{1}{x}=+\infty$. Toujours étudier le \emph{signe} du dénominateur de chaque côté avant d'appliquer la règle des signes.
+\item \textbf{Confondre $f(a)$ et $\lim_{x\to a}f(x)$.} La limite en $a$ ne dépend pas de la valeur en $a$ (la fonction peut même ne pas y être définie). Pour la continuité, il faut vérifier les \emph{trois} conditions : $f(a)$ existe, la limite existe, et les deux sont égales.
+\item \textbf{Appliquer les théorèmes de comparaison sans vérifier les hypothèses} : pour le théorème des gendarmes, les deux fonctions encadrantes doivent avoir la \emph{même} limite, et l'encadrement doit être valable \emph{au voisinage} du point étudié. Préciser « pour $x>0$ » ou « pour $x$ assez grand » dans la rédaction.
+\item \textbf{Erreurs de calcul dans la factorisation} : signe faux dans $(x-a)$, terme de plus haut degré mal identifié (pour $-3x^2+x$, le terme dominant est $-3x^2$, avec son signe !), ou simplification par $(x-a)$ oubliée avant la substitution. Refaire mentalement le produit pour vérifier chaque factorisation.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Entraînement et préparation au Probatoire}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : limites et continuité]
+Pour chaque question, une seule réponse est exacte. Recopie la lettre correspondante.
+\begin{enumerate}
+\item $\displaystyle\lim_{x\to 0^+}\dfrac{3}{x}$ est égale à :
+\begin{enumerate}
+\item[(A)] $3$ \qquad (B) $+\infty$ \qquad (C) $-\infty$ \qquad (D) $0$
+\end{enumerate}
+\item Si $\displaystyle\lim_{x\to 2^-}f(x)=5$ et $\displaystyle\lim_{x\to 2^+}f(x)=5$, alors :
+\begin{enumerate}
+\item[(A)] $f$ est nécessairement continue en $2$ ;
+\item[(B)] $f$ admet une limite en $2$, égale à $5$ ;
+\item[(C)] $f(2)=5$ obligatoirement ;
+\item[(D)] $f$ n'est pas définie en $2$.
+\end{enumerate}
+\item $\displaystyle\lim_{x\to+\infty}\left(-2x^3+5x^2-7\right)$ est égale à :
+\begin{enumerate}
+\item[(A)] $+\infty$ \qquad (B) $-2$ \qquad (C) $-\infty$ \qquad (D) $-7$
+\end{enumerate}
+\item La fonction $x\mapsto\dfrac{2x-5}{x-3}$ est continue sur :
+\begin{enumerate}
+\item[(A)] $\mathbb{R}$ \qquad (B) $\mathbb{R}\setminus\{3\}$ \qquad (C) $[3\,;\,+\infty[$ \qquad (D)] $\mathbb{R}\setminus\{0\}$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+Réponds par Vrai ou Faux et justifie ta réponse par une propriété du cours ou un contre-exemple.
+\begin{enumerate}
+\item Si $\displaystyle\lim_{x\to 1^-}f(x)\neq\lim_{x\to 1^+}f(x)$, alors $f$ n'admet pas de limite en $1$.
+\item Toute fonction polynôme est continue sur $\mathbb{R}$.
+\item Si $f(x)\leq g(x)$ pour tout $x$ assez grand et si $\displaystyle\lim_{x\to+\infty}f(x)=+\infty$, alors $\displaystyle\lim_{x\to+\infty}g(x)=+\infty$.
+\item Si $f$ est continue en $a$, alors $\displaystyle\lim_{x\to a}f(x)=f(a)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Compléter les définitions]
+Recopie et complète les phrases suivantes.
+\begin{enumerate}
+\item On dit que $f$ admet pour limite le réel $\ell$ en $a$ si les limites de $f$ à \cle{gauche} et à \cle{droite} en $a$ existent et sont \ldots
+\item On dit que $f$ est \cle{continue} en $a$ si $f$ est définie en $a$ et si $\displaystyle\lim_{x\to a}f(x)=\ldots$
+\item Les quatre formes indéterminées rencontrées dans les calculs de limites sont : \ldots
+\item La limite en $+\infty$ d'une fonction polynôme est égale à la limite en $+\infty$ de son \ldots
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Calcule les limites suivantes en justifiant chaque étape.
+\begin{enumerate}
+\item $\displaystyle\lim_{x\to 0^-}\dfrac{3}{x}$ et $\displaystyle\lim_{x\to 0^+}\dfrac{3}{x}$. La fonction $x\mapsto\dfrac{3}{x}$ admet-elle une limite en $0$ ?
+\item $\displaystyle\lim_{x\to+\infty}x^4$ puis $\displaystyle\lim_{x\to-\infty}x^3$.
+\item $\displaystyle\lim_{x\to+\infty}\dfrac{5}{x}$.
+\item $\displaystyle\lim_{x\to 1}\left(3x^2-2x+4\right)$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Limites d'une fonction homographique]
+Soit $f$ la fonction définie par $f(x)=\dfrac{2x-5}{x-3}$.
+\begin{enumerate}
+\item Détermine l'ensemble de définition de $f$.
+\item Étudie le signe de $x-3$ et calcule $\displaystyle\lim_{x\to 3^-}f(x)$ et $\displaystyle\lim_{x\to 3^+}f(x)$.
+\item Calcule $\displaystyle\lim_{x\to+\infty}f(x)$ et $\displaystyle\lim_{x\to-\infty}f(x)$.
+\item Interprète graphiquement les résultats des questions 2 et 3 (asymptotes).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Lever une indétermination en un réel]
+Soit $f$ la fonction définie par $f(x)=\dfrac{x^2+x-6}{x^2-4}$.
+\begin{enumerate}
+\item Vérifie que le calcul direct de la limite de $f$ en $2$ conduit à une forme indéterminée.
+\item Factorise le numérateur et le dénominateur.
+\item Calcule alors $\displaystyle\lim_{x\to 2}f(x)$.
+\item La fonction $f$ est-elle continue en $2$ ? Justifie.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Limites à l'infini de polynômes et de fractions rationnelles]
+\begin{enumerate}
+\item Détermine $\displaystyle\lim_{x\to+\infty}P(x)$ et $\displaystyle\lim_{x\to-\infty}P(x)$ où $P(x)=-2x^3+5x^2-7$.
+\item Détermine $\displaystyle\lim_{x\to+\infty}R(x)$ et $\displaystyle\lim_{x\to-\infty}R(x)$ où $R(x)=\dfrac{4x^2-1}{2x^2+3x}$.
+\item Interprète graphiquement le résultat de la question 2 pour la courbe de $R$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Théorème des gendarmes]
+Soit $f$ la fonction définie sur $]0\,;\,+\infty[$ par $f(x)=\dfrac{3+\cos x}{x}$.
+\begin{enumerate}
+\item Justifie que pour tout $x>0$ : $\dfrac{2}{x}\leq f(x)\leq\dfrac{4}{x}$.
+\item En déduire $\displaystyle\lim_{x\to+\infty}f(x)$ en citant le théorème utilisé.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Étude complète d'une fonction rationnelle]
+On considère la fonction $f$ définie par $f(x)=\dfrac{x^2-3x+2}{x^2-1}$ et on note $(\mathcal{C})$ sa courbe représentative dans un repère orthonormé.
+\begin{enumerate}
+\item Détermine l'ensemble de définition $D_f$ de $f$.
+\item Calcule les limites de $f$ en $-1$ à gauche et à droite. Interprète graphiquement.
+\item \begin{enumerate}
+\item Factorise $x^2-3x+2$ et $x^2-1$.
+\item Calcule $\displaystyle\lim_{x\to 1}f(x)$.
+\item La fonction $f$ est-elle continue en $1$ ? Justifie ta réponse.
+\end{enumerate}
+\item Calcule les limites de $f$ en $+\infty$ et en $-\infty$. Interprète graphiquement.
+\item Soit $g$ la fonction définie par $g(x)=f(x)$ si $x\neq 1$ et $g(1)=-\dfrac{1}{2}$. Montre que $g$ est continue en $1$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Location d'une machine : coût et coût horaire moyen]
+Une entreprise de BTP à Douala facture la location d'une pelleteuse à \SI{50000}{FCFA} de frais fixes, plus \SI{2000}{FCFA} par heure d'utilisation. On note $x$ la durée d'utilisation en heures ($x>0$).
+\begin{enumerate}
+\item Exprime le coût total $C(x)$ en fonction de $x$.
+\item Justifie que la fonction $C$ est continue sur $]0\,;\,+\infty[$.
+\item On appelle coût horaire moyen la fonction $M$ définie par $M(x)=\dfrac{C(x)}{x}$.
+\begin{enumerate}
+\item Donne l'expression de $M(x)$.
+\item Calcule $\displaystyle\lim_{x\to 0^+}M(x)$. Interprète ce résultat pour l'entreprise.
+\item Calcule $\displaystyle\lim_{x\to+\infty}M(x)$. Interprète ce résultat et donne son sens économique.
+\end{enumerate}
+\item L'entreprise souhaite que le coût horaire moyen soit inférieur à \SI{2500}{FCFA}. Détermine la durée minimale d'utilisation nécessaire.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Fonction définie par morceaux et continuité]
+Une coopérative agricole de l'Ouest facture le transport de sacs d'engrais selon le barème suivant : pour une distance $x$ en kilomètres, le prix en milliers de FCFA est donné par
+\[ f(x)=\begin{cases} x^2-2x+6 & \text{si } x\leq 2\\ ax-4 & \text{si } x>2\end{cases} \]
+où $a$ est un réel à déterminer.
+\begin{enumerate}
+\item Calcule $f(2)$ et $\displaystyle\lim_{x\to 2^-}f(x)$.
+\item Exprime $\displaystyle\lim_{x\to 2^+}f(x)$ en fonction de $a$.
+\item Détermine la valeur de $a$ pour que $f$ soit continue en $2$.
+\item On prend désormais $a=3$.
+\begin{enumerate}
+\item Calcule $\displaystyle\lim_{x\to+\infty}f(x)$.
+\item La fonction $f$ est-elle continue sur $\mathbb{R}$ ? Justifie.
+\item Un client parcourt $10$ km. Calcule le prix payé, en FCFA.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 -- QCM : limites et continuité]
+\begin{enumerate}
+\item \textbf{Réponse (B) :} $+\infty$. Pour $x>0$ proche de $0$, $x$ est un nombre \emph{positif très petit} ; diviser $3$ par un nombre positif très petit donne un nombre positif très grand. D'où $\displaystyle\lim_{x\to 0^+}\dfrac{3}{x}=+\infty$.
+\item \textbf{Réponse (B) :} $f$ admet une limite en $2$, égale à $5$. En effet, $f$ admet une limite en $a$ si et seulement si les limites à gauche et à droite existent et sont égales. La continuité exigerait \emph{en plus} que $f(2)=5$, ce qui n'est pas garanti : $f$ pourrait valoir $7$ en $2$, ou ne pas y être définie.
+\item \textbf{Réponse (C) :} $-\infty$. La limite d'un polynôme à l'infini est celle de son terme de plus haut degré, ici $-2x^3$. Or $\displaystyle\lim_{x\to+\infty}x^3=+\infty$ et le coefficient $-2$ est négatif, donc la limite vaut $-\infty$.
+\item \textbf{Réponse (B) :} $\mathbb{R}\setminus\{3\}$. Une fonction rationnelle est continue sur son ensemble de définition ; ici le dénominateur s'annule en $x=3$, donc $D_f=\mathbb{R}\setminus\{3\}$ et $f$ y est continue.
+\end{enumerate}
+\textbf{Point de vigilance :} ne confonds pas \og $f$ admet une limite en $a$ \fg{} et \og $f$ est continue en $a$ \fg{} : la continuité est la propriété la plus forte.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 -- Vrai ou faux]
+\begin{enumerate}
+\item \textbf{Vrai.} Propriété du cours : $f$ admet une limite en $a$ si et seulement si $\displaystyle\lim_{x\to a^-}f(x)$ et $\displaystyle\lim_{x\to a^+}f(x)$ existent et sont égales. Si elles diffèrent, il n'y a pas de limite en $1$.
+\item \textbf{Vrai.} Les fonctions $x\mapsto x^n$ sont continues sur $\mathbb{R}$, et toute somme de produits de fonctions continues est continue : toute fonction polynôme est donc continue sur $\mathbb{R}$.
+\item \textbf{Vrai.} C'est le théorème de comparaison (cas des limites infinies) : si $f(x)\leq g(x)$ au voisinage de $+\infty$ et $\displaystyle\lim_{x\to+\infty}f(x)=+\infty$, alors $\displaystyle\lim_{x\to+\infty}g(x)=+\infty$.
+\item \textbf{Vrai.} C'est exactement la définition de la continuité en $a$ : $f$ est définie en $a$ et $\displaystyle\lim_{x\to a}f(x)=f(a)$.
+\end{enumerate}
+\textbf{Point de vigilance :} dans un Vrai/Faux, une réponse sans justification ne rapporte aucun point. Cite toujours la propriété utilisée ou donne un contre-exemple.
+\end{corrige}
+
+\begin{corrige}[Exercice 3 -- Compléter les définitions]
+\begin{enumerate}
+\item \ldots existent et sont \textbf{égales} (à $\ell$).
+\item \ldots $\displaystyle\lim_{x\to a}f(x)=$ \textbf{$f(a)$}.
+\item Les quatre formes indéterminées sont : \textbf{$\dfrac{0}{0}$ ; $\dfrac{\infty}{\infty}$ ; $0\times\infty$ ; $+\infty-\infty$}.
+\item \ldots de son \textbf{terme de plus haut degré} (monôme dominant).
+\end{enumerate}
+\textbf{Point de vigilance :} \og forme indéterminée \fg{} ne signifie pas \og pas de limite \fg{} : cela signifie que le calcul direct ne permet pas de conclure et qu'il faut transformer l'expression (factoriser, simplifier, comparer).
+\end{corrige}
+
+\begin{corrige}[Exercice 4 -- Calculs directs]
+\begin{enumerate}
+\item Pour $x\to 0^-$, $x<0$ et $|x|$ très petit, donc $\dfrac{3}{x}$ est négatif et très grand en valeur absolue : $\displaystyle\lim_{x\to 0^-}\dfrac{3}{x}=-\infty$. Pour $x\to 0^+$, $x>0$ très petit, donc $\dfrac{3}{x}$ est positif très grand : $\displaystyle\lim_{x\to 0^+}\dfrac{3}{x}=+\infty$. Les limites latérales étant différentes, \textbf{la fonction $x\mapsto\dfrac{3}{x}$ n'admet pas de limite en $0$}.
+\item $\displaystyle\lim_{x\to+\infty}x^4=+\infty$ (puissance paire). \quad $\displaystyle\lim_{x\to-\infty}x^3=-\infty$ (puissance impaire : le signe de $x$ est conservé).
+\item $\displaystyle\lim_{x\to+\infty}\dfrac{5}{x}=0$ (numérateur constant, dénominateur qui tend vers $+\infty$).
+\item $P(x)=3x^2-2x+4$ est un polynôme, donc continu sur $\mathbb{R}$ : $\displaystyle\lim_{x\to 1}P(x)=P(1)=3-2+4=5$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 -- Limites d'une fonction homographique]
+\begin{enumerate}
+\item $f$ est définie lorsque $x-3\neq 0$, donc $D_f=\mathbb{R}\setminus\{3\}$.
+\item Quand $x\to 3$, le numérateur tend vers $2\times 3-5=1>0$. Le dénominateur tend vers $0$ :
+\begin{itemize}
+\item si $x\to 3^-$, alors $x<3$ donc $x-3\to 0^-$ : $\displaystyle\lim_{x\to 3^-}f(x)=\dfrac{1}{0^-}=-\infty$ ;
+\item si $x\to 3^+$, alors $x>3$ donc $x-3\to 0^+$ : $\displaystyle\lim_{x\to 3^+}f(x)=\dfrac{1}{0^+}=+\infty$.
+\end{itemize}
+\item Pour $x\neq 0$, $f(x)=\dfrac{x\left(2-\frac{5}{x}\right)}{x\left(1-\frac{3}{x}\right)}=\dfrac{2-\frac{5}{x}}{1-\frac{3}{x}}$. Comme $\displaystyle\lim_{x\to\pm\infty}\dfrac{5}{x}=\lim_{x\to\pm\infty}\dfrac{3}{x}=0$, on obtient
+\[ \lim_{x\to+\infty}f(x)=2 \qquad\text{et}\qquad \lim_{x\to-\infty}f(x)=2. \]
+\item La droite d'équation $x=3$ est \textbf{asymptote verticale} à $(\mathcal{C}_f)$ (branches infinies en $3$). La droite d'équation $y=2$ est \textbf{asymptote horizontale} à $(\mathcal{C}_f)$ en $+\infty$ et en $-\infty$.
+\end{enumerate}
+\textbf{Point de vigilance :} pour une limite du type $\dfrac{\ell}{0}$ avec $\ell\neq 0$, il est \emph{indispensable} de préciser le signe du dénominateur ($0^+$ ou $0^-$) : c'est lui qui fixe le signe de l'infini.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 -- Lever une indétermination en un réel]
+\begin{enumerate}
+\item $\displaystyle\lim_{x\to 2}(x^2+x-6)=4+2-6=0$ et $\displaystyle\lim_{x\to 2}(x^2-4)=4-4=0$ : on obtient la forme indéterminée $\dfrac{0}{0}$.
+\item Le numérateur admet $2$ pour racine : $x^2+x-6=(x-2)(x+3)$. Le dénominateur est une identité remarquable : $x^2-4=(x-2)(x+2)$.
+\item Pour tout $x\neq 2$, on peut simplifier par $x-2\neq 0$ :
+\[ f(x)=\dfrac{(x-2)(x+3)}{(x-2)(x+2)}=\dfrac{x+3}{x+2}, \qquad\text{donc}\qquad \lim_{x\to 2}f(x)=\lim_{x\to 2}\dfrac{x+3}{x+2}=\dfrac{5}{4}. \]
+\item $f$ n'est \textbf{pas continue en $2$} car $2\notin D_f$ : $f(2)$ n'existe pas. Cependant la limite en $2$ existe et est finie : la discontinuité est dite \emph{évitable}. On peut prolonger $f$ par continuité en posant $\tilde{f}(2)=\dfrac{5}{4}$.
+\end{enumerate}
+\textbf{Point de vigilance :} la simplification par $x-2$ n'est licite que parce que $x\neq 2$ lorsqu'on cherche une limite en $2$ ; précise-le dans ta rédaction.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 -- Limites à l'infini de polynômes et fractions rationnelles]
+\begin{enumerate}
+\item La limite d'un polynôme à l'infini est celle de son terme de plus haut degré :
+\[ \lim_{x\to+\infty}P(x)=\lim_{x\to+\infty}(-2x^3)=-\infty \quad\text{car } -2<0 ; \qquad \lim_{x\to-\infty}P(x)=\lim_{x\to-\infty}(-2x^3)=+\infty \quad\text{car } x^3\to-\infty. \]
+\item La limite d'une fraction rationnelle à l'infini est celle du quotient des termes de plus haut degré :
+\[ \lim_{x\to+\infty}R(x)=\lim_{x\to+\infty}\dfrac{4x^2}{2x^2}=2 \qquad\text{et de même}\qquad \lim_{x\to-\infty}R(x)=2. \]
+\item La droite d'équation $y=2$ est \textbf{asymptote horizontale} à la courbe de $R$, en $+\infty$ comme en $-\infty$.
+\end{enumerate}
+\textbf{Point de vigilance :} au brouillon, factorise par le terme dominant pour vérifier ; à la rédaction, la phrase \og la limite est celle du quotient des termes de plus haut degré \fg{} suffit, à condition de la justifier une fois.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 -- Théorème des gendarmes]
+\begin{enumerate}
+\item Pour tout réel $x$, $-1\leq\cos x\leq 1$, donc en ajoutant $3$ : $2\leq 3+\cos x\leq 4$. Comme $x>0$, la division par $x$ conserve le sens des inégalités :
+\[ \dfrac{2}{x}\leq \dfrac{3+\cos x}{x}\leq \dfrac{4}{x}, \qquad\text{c'est-à-dire}\qquad \dfrac{2}{x}\leq f(x)\leq\dfrac{4}{x}. \]
+\item On a $\displaystyle\lim_{x\to+\infty}\dfrac{2}{x}=0$ et $\displaystyle\lim_{x\to+\infty}\dfrac{4}{x}=0$. D'après le \textbf{théorème des gendarmes} (théorème d'encadrement), $\displaystyle\lim_{x\to+\infty}f(x)=0$.
+\end{enumerate}
+\textbf{Point de vigilance :} le théorème des gendarmes exige \emph{deux} fonctions encadrantes ayant la \emph{même} limite. Ici, l'encadrement par $\frac{2}{x}$ et $\frac{4}{x}$ fonctionne car les deux tendent vers $0$. Un encadrement par $\frac{1}{x}$ et $\frac{5}{x}$ conviendrait aussi ; mais un encadrement dont les bornes ont des limites différentes ne permet pas de conclure.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 -- Étude complète d'une fonction rationnelle (type Probatoire)]
+\begin{enumerate}
+\item $f$ est définie lorsque $x^2-1\neq 0$, c'est-à-dire $x\neq -1$ et $x\neq 1$ : $D_f=\mathbb{R}\setminus\{-1\,;\,1\}$.
+\item Quand $x\to -1$, le numérateur tend vers $(-1)^2-3(-1)+2=1+3+2=6\neq 0$ et le dénominateur $x^2-1=(x-1)(x+1)$ tend vers $0$. Étude du signe du dénominateur :
+\begin{itemize}
+\item si $x\to -1^-$, alors $x<-1$, donc $x+1<0$ et $x-1<0$ : le produit est positif, $x^2-1\to 0^+$, d'où $\displaystyle\lim_{x\to -1^-}f(x)=\dfrac{6}{0^+}=+\infty$ ;
+\item si $x\to -1^+$, alors $-1<x<1$, donc $x+1>0$ et $x-1<0$ : le produit est négatif, $x^2-1\to 0^-$, d'où $\displaystyle\lim_{x\to -1^+}f(x)=\dfrac{6}{0^-}=-\infty$.
+\end{itemize}
+\textbf{Interprétation graphique :} la droite d'équation $x=-1$ est asymptote verticale à $(\mathcal{C})$ ; la courbe s'élève vers $+\infty$ à gauche de $-1$ et descend vers $-\infty$ à droite de $-1$.
+\item \begin{enumerate}
+\item $1$ est racine de $x^2-3x+2$ : $x^2-3x+2=(x-1)(x-2)$. Et $x^2-1=(x-1)(x+1)$.
+\item Pour $x\neq 1$ : $f(x)=\dfrac{(x-1)(x-2)}{(x-1)(x+1)}=\dfrac{x-2}{x+1}$, donc
+\[ \lim_{x\to 1}f(x)=\lim_{x\to 1}\dfrac{x-2}{x+1}=\dfrac{1-2}{1+1}=-\dfrac{1}{2}. \]
+\item $f$ n'est pas continue en $1$ car $1\notin D_f$ : $f(1)$ n'existe pas. La limite en $1$ étant finie, la discontinuité est évitable (la courbe présente un \og trou \fg{} au point $\left(1\,;\,-\frac{1}{2}\right)$).
+\end{enumerate}
+\item La limite d'une fraction rationnelle à l'infini est celle du quotient des termes dominants :
+\[ \lim_{x\to+\infty}f(x)=\lim_{x\to+\infty}\dfrac{x^2}{x^2}=1 \qquad\text{et}\qquad \lim_{x\to-\infty}f(x)=1. \]
+\textbf{Interprétation graphique :} la droite d'équation $y=1$ est asymptote horizontale à $(\mathcal{C})$ en $+\infty$ et en $-\infty$.
+\item La fonction $g$ est définie en $1$ par $g(1)=-\dfrac{1}{2}$, et pour $x\neq 1$, $g(x)=f(x)$, donc
+\[ \lim_{x\to 1}g(x)=\lim_{x\to 1}f(x)=-\dfrac{1}{2}=g(1). \]
+La limite de $g$ en $1$ existe et est égale à $g(1)$ : \textbf{$g$ est continue en $1$}. On dit que $g$ est le \emph{prolongement par continuité} de $f$ en $1$.
+\end{enumerate}
+\textbf{Barème indicatif (sur 6 pts) :} ensemble de définition : 0,5 pt ; limites en $-1$ avec signe du dénominateur : 1,5 pt ; factorisations : 0,5 pt ; limite en $1$ : 1 pt ; continuité en $1$ justifiée : 0,5 pt ; limites à l'infini : 0,5 pt ; interprétations graphiques : 1 pt ; continuité de $g$ : 0,5 pt.\\
+\textbf{Points de vigilance :} (1) pour les limites en $-1$, le tableau de signes de $x^2-1$ est attendu ; (2) distingue clairement le cas $x=-1$ (asymptote verticale, numérateur non nul) du cas $x=1$ (forme $\frac{0}{0}$, à lever par factorisation) ; (3) toute interprétation graphique demandée non rédigée fait perdre des points.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 -- Location d'une machine : coût et coût horaire moyen]
+\begin{enumerate}
+\item Le coût total est la somme des frais fixes et du coût variable : $C(x)=50000+2000x$ (en FCFA), pour $x>0$.
+\item $C$ est une fonction affine, donc une fonction polynôme : elle est continue sur $\mathbb{R}$, et en particulier sur $]0\,;\,+\infty[$.
+\item \begin{enumerate}
+\item $M(x)=\dfrac{C(x)}{x}=\dfrac{50000+2000x}{x}=\dfrac{50000}{x}+2000$ pour tout $x>0$.
+\item $\displaystyle\lim_{x\to 0^+}\dfrac{50000}{x}=+\infty$ (numérateur positif, dénominateur $\to 0^+$), donc $\displaystyle\lim_{x\to 0^+}M(x)=+\infty$.\\
+\textbf{Interprétation :} si la pelleteuse est louée pour une durée très courte, les $50000$ FCFA de frais fixes sont répartis sur très peu d'heures : le coût horaire moyen devient prohibitif.
+\item $\displaystyle\lim_{x\to+\infty}\dfrac{50000}{x}=0$, donc $\displaystyle\lim_{x\to+\infty}M(x)=2000$.\\
+\textbf{Interprétation :} pour une très longue durée de location, les frais fixes sont totalement amortis et le coût horaire moyen se rapproche du coût horaire variable de $2000$ FCFA. Économiquement, $2000$ est le coût d'une heure supplémentaire (coût marginal) : la droite $y=2000$ est asymptote horizontale à la courbe de $M$.
+\end{enumerate}
+\item On résout, pour $x>0$ :
+\begin{align*}
+M(x)<2500 &\iff \dfrac{50000}{x}+2000<2500 \iff \dfrac{50000}{x}<500 \\
+&\iff 50000<500x \quad(\text{car } x>0) \iff x>100.
+\end{align*}
+Il faut donc utiliser la pelleteuse \textbf{strictement plus de $100$ heures} pour que le coût horaire moyen devienne inférieur à $2500$ FCFA.
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} expression de $C$ : 0,5 pt ; continuité de $C$ : 0,5 pt ; expression de $M$ : 0,5 pt ; limite en $0^+$ et interprétation : 1 pt ; limite en $+\infty$ et interprétation : 1 pt ; inéquation et conclusion : 1,5 pt.\\
+\textbf{Points de vigilance :} (1) le domaine est $x>0$ : on ne calcule la limite en $0$ qu'\emph{à droite} ; (2) dans l'inéquation, la multiplication par $x$ ne change le sens de l'inégalité que parce que $x>0$ : cite cette condition ; (3) une interprétation économique en langage clair est exigée, pas seulement le résultat numérique.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 -- Fonction définie par morceaux et continuité]
+\begin{enumerate}
+\item Comme $2\leq 2$, on utilise la première formule : $f(2)=2^2-2\times 2+6=4-4+6=6$. Sur $]-\infty\,;\,2]$, $f$ coïncide avec le polynôme $x^2-2x+6$, continu en $2$ : $\displaystyle\lim_{x\to 2^-}f(x)=f(2)=6$.
+\item Sur $]2\,;\,+\infty[$, $f(x)=ax-4$ (fonction affine, continue) : $\displaystyle\lim_{x\to 2^+}f(x)=2a-4$.
+\item $f$ est continue en $2$ si et seulement si $\displaystyle\lim_{x\to 2^-}f(x)=\lim_{x\to 2^+}f(x)=f(2)$, c'est-à-dire :
+\[ 2a-4=6 \iff 2a=10 \iff a=5. \]
+La fonction $f$ est continue en $2$ si et seulement si \textbf{$a=5$}.
+\item On prend désormais $a=3$.
+\begin{enumerate}
+\item Pour $x>2$, $f(x)=3x-4$, donc $\displaystyle\lim_{x\to+\infty}f(x)=\lim_{x\to+\infty}(3x-4)=+\infty$.
+\item Avec $a=3$ : $\displaystyle\lim_{x\to 2^+}f(x)=3\times 2-4=2$, alors que $\displaystyle\lim_{x\to 2^-}f(x)=6$. Les limites latérales sont finies mais \emph{différentes} : $f$ n'admet pas de limite en $2$, donc \textbf{$f$ n'est pas continue en $2$}, et par conséquent pas continue sur $\mathbb{R}$. (Il s'agit d'une discontinuité de \emph{première espèce}, ou \og saut \fg{} : graphiquement, la courbe saute de $6$ à $2$ en $x=2$.) En revanche, $f$ est continue sur $]-\infty\,;\,2]$ et sur $]2\,;\,+\infty[$ comme fonction polynôme sur chacun de ces intervalles.
+\item Comme $10>2$, on utilise la seconde formule : $f(10)=3\times 10-4=26$. Le prix est exprimé en milliers de FCFA : le client paie donc \textbf{$26000$ FCFA}.
+\end{enumerate}
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} $f(2)$ et limite à gauche : 1 pt ; limite à droite en fonction de $a$ : 0,5 pt ; valeur de $a$ avec condition de continuité citée : 1 pt ; limite en $+\infty$ : 0,5 pt ; non-continuité justifiée par les limites latérales : 1 pt ; prix en FCFA : 1 pt.\\
+\textbf{Points de vigilance :} (1) la condition de continuité en $2$ comporte \emph{trois} termes : limite à gauche, limite à droite, et $f(2)$ ; (2) attention à l'unité de l'énoncé : $f(x)$ est en \emph{milliers} de FCFA, la réponse finale doit être convertie ; (3) ne conclus jamais \og continue \fg{} en comparant seulement les deux formules sans vérifier $f(2)$.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, font=\small},
+  root concept/.append style={concept color=popblue, font=\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=60},
+  level 2/.append style={level distance=2.2cm, font=\scriptsize}]
+\node[root concept]{Limites et continuit\'e}
+  child[concept color=poporange]{ node {Approche intuitive}
+    child { node {valeurs proches de $a$} }
+    child { node {conjecture graphique} }
+  }
+  child[concept color=popgreen]{ node {Limite \`a gauche / \`a droite}
+    child { node {$\lim\limits_{x\to a^-}$, $\lim\limits_{x\to a^+}$} }
+    child { node {existence : gauche = droite} }
+  }
+  child[concept color=poppurple]{ node {Op\'erations}
+    child { node {somme, produit, quotient} }
+    child { node {formes ind\'etermin\'ees} }
+  }
+  child[concept color=poppink]{ node {Limites \`a l'infini}
+    child { node {$x^n$, $\dfrac{a}{x}$} }
+    child { node {polyn\^omes, rationnelles} }
+  }
+  child[concept color=popgold]{ node {Comparaison}
+    child { node {encadrement} }
+    child { node {th. des gendarmes} }
+  }
+  child[concept color=popblue!70]{ node {Continuit\'e}
+    child { node {en un r\'eel, sur $I$} }
+    child { node {\`a gauche, \`a droite} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la le\c{c}on : les six grandes id\'ees autour des limites et de la continuit\'e.}
+\end{popfigure}
+
+\begin{aretenir}[L'essentiel de la le\c{c}on]
+\textbf{D\'efinitions cl\'es.}
+\begin{itemize}
+  \item \cle{Limite en $a$} : $f(x)$ se rapproche d'un r\'eel $\ell$ quand $x$ se rapproche de $a$ (en restant diff\'erent de $a$) ; on \'ecrit $\lim\limits_{x\to a}f(x)=\ell$.
+  \item \cle{Limite \`a gauche} ($x<a$) : $\lim\limits_{x\to a^-}f(x)$ ; \cle{limite \`a droite} ($x>a$) : $\lim\limits_{x\to a^+}f(x)$.
+  \item $\lim\limits_{x\to a}f(x)$ existe et vaut $\ell$ \textbf{si et seulement si} $\lim\limits_{x\to a^-}f(x)=\lim\limits_{x\to a^+}f(x)=\ell$.
+  \item \cle{Continuit\'e en $a$} : $f$ est d\'efinie en $a$ et $\lim\limits_{x\to a}f(x)=f(a)$.
+  \item \cle{Continuit\'e sur un intervalle} : $f$ est continue en tout point de cet intervalle (courbe trac\'ee \og sans lever le crayon \fg).
+\end{itemize}
+
+\textbf{Limites de r\'ef\'erence \`a conna\^itre par c\oe ur.}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Fonction} & \textbf{En $0$ (ou en la valeur interdite)} & \textbf{\`A l'infini} \\
+\hline
+$x\mapsto \dfrac{a}{x}$ ($a\neq 0$) & $\lim\limits_{x\to 0^+}\dfrac{a}{x}=+\infty$ si $a>0$, $-\infty$ si $a<0$ ; $\lim\limits_{x\to 0^-}\dfrac{a}{x}=-\infty$ si $a>0$, $+\infty$ si $a<0$ & $\lim\limits_{x\to\pm\infty}\dfrac{a}{x}=0$ \\
+\hline
+$x\mapsto x^n$ ($n\in\mathbb{N}^*$) & $\lim\limits_{x\to 0}x^n=0$ & si $n$ pair : $+\infty$ en $-\infty$ et en $+\infty$ ; si $n$ impair : $-\infty$ en $-\infty$ et $+\infty$ en $+\infty$ \\
+\hline
+$x\mapsto \dfrac{ax+b}{cx+d}$ ($c\neq 0$) & en $-\dfrac{d}{c}$ : limite infinie, dont le signe d\'epend du c\^ot\'e (tableau de signes du d\'enominateur) & $\lim\limits_{x\to\pm\infty}\dfrac{ax+b}{cx+d}=\dfrac{a}{c}$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Th\'eor\`emes et r\`egles.}
+\begin{itemize}
+  \item \cle{Op\'erations} : les limites se combinent par somme, produit et quotient (pour le quotient, la limite du d\'enominateur doit \^etre non nulle ; si elle est nulle, on \'etudie le signe pour conclure \`a une limite infinie).
+  \item \cle{Formes ind\'etermin\'ees} : $\dfrac{0}{0}$, $\dfrac{\infty}{\infty}$, $\infty-\infty$, $0\times\infty$ : il faut \textbf{lever l'ind\'etermination} (factoriser, simplifier, mettre en facteur la plus grande puissance).
+  \item \cle{Polyn\^ome \`a l'infini} : m\^eme limite que son mon\^ome de plus haut degr\'e. \cle{Fraction rationnelle \`a l'infini} : m\^eme limite que le quotient des mon\^omes de plus haut degr\'e.
+  \item \cle{Comparaison} : si $f(x)\geq g(x)$ au voisinage de $a$ et $\lim\limits_{x\to a} g(x)=+\infty$, alors $\lim\limits_{x\to a} f(x)=+\infty$ (r\'esultat analogue avec $\leq$ et $-\infty$).
+  \item \cle{Th\'eor\`eme des gendarmes} : si $g(x)\leq f(x)\leq h(x)$ au voisinage de $a$ et si $g$ et $h$ ont la m\^eme limite $\ell$ en $a$, alors $\lim\limits_{x\to a} f(x)=\ell$.
+  \item \cle{Op\'erations sur la continuit\'e} : somme, produit, quotient (d\'enominateur non nul) et compos\'ee de fonctions continues sont continues. Les fonctions polyn\^omes sont continues sur $\mathbb{R}$ ; les fonctions rationnelles sont continues sur tout intervalle de leur ensemble de d\'efinition.
+\end{itemize}
+
+\textbf{M\'ethodes express.}
+\begin{enumerate}
+  \item Limite en $a$ : remplacer $x$ par $a$ ; si l'on obtient $\dfrac{0}{0}$, factoriser $(x-a)$ au num\'erateur et au d\'enominateur, simplifier, puis remplacer \`a nouveau.
+  \item Limite infinie en un r\'eel : \'etudier le \textbf{signe du d\'enominateur} \`a gauche et \`a droite de la valeur interdite (tableau de signes), puis conclure s\'epar\'ement pour $\lim\limits_{x\to a^-}$ et $\lim\limits_{x\to a^+}$.
+  \item Limite \`a l'infini : factoriser par la plus grande puissance de $x$ pr\'esente, puis utiliser $\lim\limits_{x\to\pm\infty}\dfrac{1}{x^n}=0$.
+  \item Continuit\'e en $a$ : v\'erifier les trois conditions : $f(a)$ existe ; les limites \`a gauche et \`a droite en $a$ existent et sont \'egales ; cette limite commune vaut $f(a)$.
+\end{enumerate}
+\end{aretenir}
+
+\begin{attention}[Pi\`eges fr\'equents au Probatoire]
+\begin{itemize}
+  \item Ne jamais \'ecrire $\lim\limits_{x\to a}f(x)$ avant d'avoir v\'erifi\'e que les limites \`a gauche et \`a droite sont \'egales : si $\lim\limits_{x\to a^-}f(x)\neq\lim\limits_{x\to a^+}f(x)$, la limite en $a$ \textbf{n'existe pas}.
+  \item $\dfrac{0}{0}$ n'est pas une r\'eponse : c'est une forme ind\'etermin\'ee qui impose de transformer l'\'ecriture.
+  \item Pour $\dfrac{a}{x}$ en $0$, le signe de la limite infinie d\'epend \`a la fois du signe de $a$ et du c\^ot\'e ($0^+$ ou $0^-$) : ne pas les confondre.
+  \item Une fonction peut avoir une limite en $a$ sans \^etre d\'efinie en $a$ ; mais pour \^etre \textbf{continue} en $a$, elle doit n\'ecessairement \^etre d\'efinie en $a$.
+  \item Le quotient de deux fonctions continues n'est continu que l\`a o\`u le d\'enominateur ne s'annule pas.
+\end{itemize}
+\end{attention}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais lire graphiquement une limite en un r\'eel, \`a gauche et \`a droite.
+  \item[$\square$] Je sais que la limite en $a$ existe seulement si les limites \`a gauche et \`a droite sont \'egales.
+  \item[$\square$] Je connais par c\oe ur les limites de $\dfrac{a}{x}$ en $0^+$, $0^-$ et \`a l'infini.
+  \item[$\square$] Je sais calculer la limite de $\dfrac{ax+b}{cx+d}$ \`a gauche et \`a droite de $-\dfrac{d}{c}$ gr\^ace \`a un tableau de signes.
+  \item[$\square$] Je sais lever l'ind\'etermination $\dfrac{0}{0}$ en factorisant par $(x-a)$.
+  \item[$\square$] Je sais que la limite d'un polyn\^ome \`a l'infini est celle de son mon\^ome de plus haut degr\'e.
+  \item[$\square$] Je sais que la limite d'une fraction rationnelle \`a l'infini est celle du quotient des termes de plus haut degr\'e.
+  \item[$\square$] Je reconnais les quatre formes ind\'etermin\'ees : $\dfrac{0}{0}$, $\dfrac{\infty}{\infty}$, $\infty-\infty$, $0\times\infty$.
+  \item[$\square$] Je sais utiliser le th\'eor\`eme des gendarmes et les th\'eor\`emes de comparaison.
+  \item[$\square$] Je sais v\'erifier la continuit\'e de $f$ en $a$ : $f(a)$ d\'efini et $\lim\limits_{x\to a}f(x)=f(a)$.
+  \item[$\square$] Je sais reconna\^itre sur un graphique un point de discontinuit\'e (saut, trou, limite infinie).
+  \item[$\square$] Je r\'edige proprement : j'\'ecris $\lim\limits_{x\to a^-}$ ou $\lim\limits_{x\to a^+}$ avant de conclure sur $\lim\limits_{x\to a}$.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
