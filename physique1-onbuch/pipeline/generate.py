@@ -289,6 +289,10 @@ def autofix(body):
     body = body.replace("\\not\\implies", "\\nRightarrow").replace("\\not\\iff", "\\nLeftrightarrow").replace("\\not\\Longrightarrow", "\\nRightarrow")
     # unité de vergence : orthographe anglaise \diopter -> \dioptre (déclarée dans le préambule)
     body = re.sub(r"\\diopter\b", r"\\dioptre", body)
+    # unité de vitesse de rotation : orthographe anglaise \revolution -> \tr (déclarée dans le préambule)
+    body = re.sub(r"\\revolution\b", r"\\tr", body)
+    # franc CFA : \franc\cfa (deux macros non déclarées) -> \franccfa (une unité)
+    body = re.sub(r"\\franc\\cfa\b", r"\\franccfa", body)
     # popfigure : \begin{center} non refermé -> \end{center} avant la légende
     def _fig(m):
         t = m.group(0)
@@ -322,6 +326,12 @@ def autofix(body):
             return "(" + a2 + ", " + b2 + ")" if changed[0] else m.group(0)
         return pat.sub(repl, body)
     body = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", lambda m: _brace_trig_coords(m.group(0)), body, flags=re.S)
+    # TikZ : \textbf{X\\Y} dans un nœud align=center -> "Undefined control sequence"
+    # (le \\ imbriqué dans \textbf{} n'est pas vu par le mécanisme d'alignement du
+    # nœud) -> on sort le \\ de \textbf{} : \textbf{X}\\\textbf{Y}.
+    def _split_textbf_linebreak(pic):
+        return re.sub(r"\\textbf\{([^{}]*)\\\\([^{}]*)\}", r"\\textbf{\1}\\\\\\textbf{\2}", pic)
+    body = re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}", lambda m: _split_textbf_linebreak(m.group(0)), body, flags=re.S)
     # environnement inventé "erreur" -> attention (boîte prévue par le contrat)
     body = body.replace("\\begin{erreur}", "\\begin{attention}").replace("\\end{erreur}", "\\end{attention}")
     body = body.replace("\\begin{astuce}", "\\begin{methode}").replace("\\end{astuce}", "\\end{methode}")
