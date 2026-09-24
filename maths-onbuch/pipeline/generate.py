@@ -276,8 +276,9 @@ def autofix(body):
     body = _safe_sqrt(body)
     body = _close_lists(body)
     # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
-    body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
-                  lambda m: m.group(1) + re.sub(r"\$(-?\d+),(\d+)\$", r"$\1{,}\2$", m.group(2)) + m.group(3), body)
+    # (virgule entre deux chiffres DANS un $...$ de la liste, même suivie de \\,E ou \\tau)
+    body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)(\})",
+                  lambda m: m.group(1) + re.sub(r"\$[^$]*\$", lambda k: re.sub(r"(\d),(\d)", r"\1{,}\2", k.group(0)), m.group(2)) + m.group(3), body)
     return body
 
 
