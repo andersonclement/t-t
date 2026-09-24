@@ -255,7 +255,36 @@ def autofix(body):
     body = _tabularx_sans_x(body)
     # \tcblower est un séparateur, pas un environnement
     body = body.replace("\\begin{tcblower}", "\\tcblower").replace("\\end{tcblower}", "")
+    # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
+    body = _node_align(body)
     return body
+
+
+_NODE_RE = re.compile(r"\\node\[([^\]]*)\]([^{;\n]*\{)")
+
+
+def _node_align(body):
+    out, last = [], 0
+    for m in _NODE_RE.finditer(body):
+        # contenu du nœud : de l'accolade ouvrante à sa fermante appariée
+        start = m.end() - 1
+        depth, j = 0, start
+        while j < len(body):
+            if body[j] == "{":
+                depth += 1
+            elif body[j] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            j += 1
+        text, opts = body[start:j + 1], m.group(1)
+        if "\\\\" in text and "align" not in opts and "text width" not in opts:
+            out.append(body[last:m.start()])
+            out.append("\\node[" + (opts + ", " if opts.strip() else "") + "align=center]" + m.group(2))
+            last = m.end()
+    out.append(body[last:])
+    return "".join(out)
+
 
 
 def _tabularx_sans_x(body):
