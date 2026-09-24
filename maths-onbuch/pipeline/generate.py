@@ -289,24 +289,35 @@ def _node_align(body):
 
 
 def _tabularx_sans_x(body):
-    """tabularx sans aucune colonne X : bande vide à droite du tableau. On le
-    remplace par un tabular simple (fin appariée par une pile)."""
-    tok = re.compile(r"\\begin\{tabularx\}\{[^{}]*\}\{((?:[^{}]|\{[^{}]*\})*)\}|\\end\{tabularx\}")
+    """Met en cohérence tabular / tabularx (fin appariée par une pile) :
+    - tabularx sans colonne X -> tabular (sinon bande vide à droite) ;
+    - tabular avec des colonnes X -> tabularx{\\linewidth} (sinon erreur)."""
+    tok = re.compile(r"\\begin\{(tabularx?)\}(\{[^{}]*\})?\{((?:[^{}]|\{[^{}]*\})*)\}|\\end\{(tabularx?)\}")
     out, last, stack = [], 0, []
     for m in tok.finditer(body):
         out.append(body[last:m.start()])
         if m.group(0).startswith("\\begin"):
-            spec = m.group(1)
-            sans_x = "X" not in spec
-            stack.append(sans_x)
-            out.append(f"\\begin{{tabular}}{{{spec}}}" if sans_x else m.group(0))
+            env, width, spec = m.group(1), m.group(2), m.group(3)
+            if env == "tabularx" and not width:
+                # \\begin{tabularx}{spec} sans largeur : le 1er groupe était la spec
+                env_out = m.group(0)
+                target = "tabularx"
+            else:
+                has_x = "X" in spec
+                target = "tabularx" if has_x else "tabular"
+                if target == "tabularx":
+                    w = width[1:-1] if width else "\\linewidth"
+                    env_out = "\\begin{tabularx}{" + w + "}{" + spec + "}"
+                else:
+                    env_out = f"\\begin{{tabular}}{{{spec}}}"
+            stack.append(target)
+            out.append(env_out)
         else:
-            sans_x = stack.pop() if stack else False
-            out.append("\\end{tabular}" if sans_x else m.group(0))
+            target = stack.pop() if stack else m.group(4)
+            out.append(f"\\end{{{target}}}")
         last = m.end()
     out.append(body[last:])
     return "".join(out)
-
 
 def compile_check(body):
     """Compile le bloc seul. Renvoie (ok, extrait_du_log, ligne_fautive_ou_None)."""

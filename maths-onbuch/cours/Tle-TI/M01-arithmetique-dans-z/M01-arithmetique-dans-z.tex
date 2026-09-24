@@ -1,0 +1,2830 @@
+% Arithmétique dans ℤ — Mathématiques Tle TI — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic M01-arithmetique-dans-z.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle TI}
+\newcommand{\DOCMODULE}{Relations et opérations fondamentales dans l'ensemble des nombres réels}
+\newcommand{\DOCLECON}{01}
+\newcommand{\DOCTITRE}{Arithmétique dans ℤ}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+
+\begin{document}
+
+\pagegarde{Arithmétique dans ℤ}{Mathématiques}{Tle TI}{Relations et opérations fondamentales dans l'ensemble des nombres réels}{01}{8 h}{Cette leçon fonde l'arithmétique des entiers : division euclidienne, congruences, nombres premiers, PGCD et PPCM. Elle fournit les outils de calcul et de raisonnement indispensables pour résoudre les problèmes de partage, de périodicité et de codage rencontrés au Bac et dans la vie courante.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais effectuer une division euclidienne dans ℤ et déterminer quotient et reste, y compris avec un dividende ou un diviseur négatif
+\item À la fin de cette leçon, je sais caractériser les multiples d'un entier n comme l'ensemble nℤ et reconnaître la divisibilité
+\item À la fin de cette leçon, je sais utiliser les congruences modulo n et leur compatibilité avec l'addition et la multiplication pour déterminer des restes
+\item À la fin de cette leçon, je sais appliquer les critères de divisibilité usuels en base dix (par 2, 3, 4, 5, 9, 11, 25)
+\item À la fin de cette leçon, je sais reconnaître un nombre premier et décomposer un entier en produit de facteurs premiers (crible d'Ératosthène)
+\item À la fin de cette leçon, je sais calculer le PGCD et le PPCM de deux entiers par décomposition en facteurs premiers et par l'algorithme d'Euclide
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Divisibilité et division euclidienne dans ℤ
+\item Congruences modulo n
+\item Critères de divisibilité en base dix
+\item Nombres premiers et décomposition en facteurs premiers
+\item PGCD, PPCM et algorithme d'Euclide
+\item Nombres premiers entre eux et problèmes d'application
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais effectuer une division euclidienne dans ℤ et déterminer quotient et reste, y compris avec un dividende ou un diviseur négatif
+\item À la fin de cette leçon, je sais caractériser les multiples d'un entier n comme l'ensemble nℤ et reconnaître la divisibilité
+\item À la fin de cette leçon, je sais utiliser les congruences modulo n et leur compatibilité avec l'addition et la multiplication pour déterminer des restes
+\item À la fin de cette leçon, je sais appliquer les critères de divisibilité usuels en base dix (par 2, 3, 4, 5, 9, 11, 25)
+\item À la fin de cette leçon, je sais reconnaître un nombre premier et décomposer un entier en produit de facteurs premiers (crible d'Ératosthène)
+\item À la fin de cette leçon, je sais calculer le PGCD et le PPCM de deux entiers par décomposition en facteurs premiers et par l'algorithme d'Euclide
+\item À la fin de cette leçon, je sais déterminer si deux entiers sont premiers entre eux et simplifier une fraction ou un problème en conséquence
+\item À la fin de cette leçon, je sais résoudre des problèmes concrets faisant intervenir restes, calendriers, périodicités et clés de contrôle
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Ensembles ℕ et ℤ, opérations sur les entiers relatifs (Seconde)
+\item Notion de multiple et de diviseur d'un entier naturel (collège, revue en Première)
+\item Factorisation d'entiers simples et puissances d'un entier
+\item Raisonnement par récurrence simple et manipulation d'égalités algébriques (Première C/TI)
+\item Résolution d'équations simples dans ℤ et notion de valeur absolue
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Divisibilité et division euclidienne dans $\mathbb{Z}$}
+
+Mme Ngo Bell gère un cybercafé à Douala. Ce matin, trois problèmes l'attendent. D'abord, elle vient de recevoir 156 clés USB et souhaite les regrouper en lots identiques, sans reste : quelles tailles de lots sont possibles ? Ensuite, elle planifie la maintenance de ses ordinateurs tous les 12 jours et celle de son onduleur tous les 18 jours : quand les deux maintenances tomberont-elles le même jour ? Enfin, son fournisseur lui remet des factures dont le numéro contient une « clé de contrôle » calculée à partir de restes de division : comment vérifier qu'un numéro n'est pas faux ?
+
+Partages sans reste, calendriers qui se recoupent, codes de vérification : toutes ces questions de la vie quotidienne relèvent de l'\cle{arithmétique} dans $\mathbb{Z}$. Cette leçon va te donner les outils rigoureux pour y répondre. Tout commence par une idée simple : quand un partage « tombe juste », on dit qu'un entier en \emph{divise} un autre. Et quand il ne tombe pas juste, la \emph{division euclidienne} mesure précisément ce qui reste.
+
+\courssub{La relation de divisibilité dans $\mathbb{Z}$}
+
+\textbf{Intuition.}\par
+Partager 156 clés USB en 12 lots égaux, c'est possible car $156 = 12 \times 13$ : on dit que 12 divise 156. En revanche, $156 = 11 \times 14 + 2$ : un partage en 11 lots laisse 2 clés de côté, donc 11 ne divise pas 156. Formalisons.
+
+\begin{definition}[Divisibilité dans $\mathbb{Z}$]
+Soient $a$ et $b$ deux entiers relatifs. On dit que $a$ \cle{divise} $b$, et on note $a \mid b$, s'il existe un entier $k \in \mathbb{Z}$ tel que :
+\[ b = ka. \]
+On dit alors que $a$ est un \cle{diviseur} de $b$, ou que $b$ est un \cle{multiple} de $a$.
+\end{definition}
+
+\begin{attention}[Convention sur le diviseur nul]
+La définition formelle autorise $a=0$ : $0 \mid 0$ car $0 = k \times 0$ pour tout $k$, mais $0 \nmid b$ si $b \neq 0$. Dans la suite de ce chapitre, et pour la division euclidienne, nous ne manipulerons que des diviseurs \emph{strictement positifs} ($b \in \mathbb{N}^*$).
+\end{attention}
+
+\begin{exemplebox}[Lecture de la définition]
+\begin{itemize}
+\item $7 \mid 91$ car $91 = 13 \times 7$ (ici $k = 13$).
+\item $-4 \mid 20$ car $20 = (-5) \times (-4)$.
+\item $5 \nmid 23$ : il n'existe aucun entier $k$ tel que $23 = 5k$.
+\item Tout entier $a$ divise $0$, car $0 = 0 \times a$.
+\item $1$ et $-1$ divisent tout entier.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Diviseurs et signes]
+Dans $\mathbb{Z}$, les diviseurs peuvent être négatifs : les diviseurs de $6$ sont $-6, -3, -2, -1, 1, 2, 3, 6$. Quand on demande « les diviseurs de $n$ » sans précision, on liste en général les diviseurs \emph{positifs}. Autre piège : $a \mid b$ ne signifie pas « $b/a$ est un entier naturel » mais « il existe $k \in \mathbb{Z}$ avec $b = ka$ » ; c'est cette formulation par une égalité qu'il faut utiliser dans les démonstrations.
+\end{attention}
+
+\begin{propriete}[Propriétés élémentaires de la divisibilité]
+Pour tous entiers $a$, $b$, $c$ :
+\begin{enumerate}
+\item \textbf{Réflexivité :} $a \mid a$.
+\item \textbf{Transitivité :} si $a \mid b$ et $b \mid c$, alors $a \mid c$.
+\item \textbf{Combinaisons linéaires :} si $d \mid a$ et $d \mid b$, alors pour tous entiers $u, v \in \mathbb{Z}$, $d \mid au + bv$. En particulier $d \mid a+b$ et $d \mid a-b$.
+\item Si $a \mid b$ et $b \neq 0$, alors $|a| \leq |b|$.
+\item Si $a \mid b$ et $b \mid a$, alors $a = b$ ou $a = -b$.
+\end{enumerate}
+\end{propriete}
+
+\begin{experience}[Démonstration : un diviseur commun divise toute combinaison linéaire]
+Démontrons le point 3, résultat fondamental de toute l'arithmétique.
+
+\textbf{Hypothèses.} $d \mid a$ et $d \mid b$ ; $u, v \in \mathbb{Z}$.
+
+\textbf{Étape 1 : traduire les hypothèses.} Dire $d \mid a$ signifie qu'il existe $k \in \mathbb{Z}$ tel que $a = kd$. Dire $d \mid b$ signifie qu'il existe $k' \in \mathbb{Z}$ tel que $b = k'd$.
+
+\textbf{Étape 2 : calculer la combinaison linéaire.}
+\begin{align*}
+au + bv &= (kd)u + (k'd)v \\
+&= d(ku) + d(k'v) \\
+&= d(ku + k'v).
+\end{align*}
+
+\textbf{Étape 3 : conclure.} Le nombre $ku + k'v$ est un entier (somme et produits d'entiers). Donc $au + bv$ s'écrit $d \times (\text{un entier})$ : par définition, $d \mid au + bv$. $\blacksquare$
+
+\emph{Exemple numérique :} $3 \mid 12$ et $3 \mid 45$, donc $3 \mid 2 \times 12 - 45 = -21$. Effectivement $-21 = 3 \times (-7)$.
+\end{experience}
+
+\courssub{L'ensemble $n\mathbb{Z}$ des multiples de $n$}
+
+\textbf{Intuition.}\par
+Les jours de maintenance de l'onduleur de Mme Ngo Bell forment la liste $0, 18, 36, 54, \ldots$ : ce sont les multiples de 18. L'ensemble de \emph{tous} les multiples d'un entier $n$ (y compris négatifs) joue un rôle central : notons-le $n\mathbb{Z}$.
+
+\begin{definition}[Ensemble $n\mathbb{Z}$]
+Pour $n \in \mathbb{Z}$, on note
+\[ n\mathbb{Z} = \{ kn \mid k \in \mathbb{Z} \} \]
+l'ensemble des multiples de $n$. Ainsi $b \in n\mathbb{Z} \iff n \mid b$.
+On s'intéressera principalement au cas $n \in \mathbb{N}^*$.
+\end{definition}
+
+\begin{exemplebox}[Quelques ensembles $n\mathbb{Z}$]
+\begin{itemize}
+\item $2\mathbb{Z} = \{\ldots, -4, -2, 0, 2, 4, \ldots\}$ : les entiers \cle{pairs}.
+\item $7\mathbb{Z} = \{\ldots, -14, -7, 0, 7, 14, \ldots\}$.
+\item $1\mathbb{Z} = \mathbb{Z}$ et $0\mathbb{Z} = \{0\}$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{propriete}[Stabilité de $n\mathbb{Z}$]
+Soit $n \in \mathbb{Z}$. L'ensemble $n\mathbb{Z}$ est stable par addition et par multiplication par un entier quelconque : pour tous $x, y \in n\mathbb{Z}$ et tout $m \in \mathbb{Z}$,
+\[ x + y \in n\mathbb{Z} \qquad \text{et} \qquad mx \in n\mathbb{Z}. \]
+En effet, si $x = kn$ et $y = k'n$, alors $x + y = (k+k')n$ et $mx = (mk)n$.
+\end{propriete}
+
+\begin{propriete}[Inclusions entre ensembles $n\mathbb{Z}$]
+Pour $a, b \in \mathbb{Z}$ : \quad $b\mathbb{Z} \subset a\mathbb{Z} \iff a \mid b$.
+
+Autrement dit, plus le nombre est « gros » (en divisibilité), plus son ensemble de multiples est « petit ». Par exemple $6\mathbb{Z} \subset 2\mathbb{Z}$ car tout multiple de 6 est pair, et $6\mathbb{Z} = 2\mathbb{Z} \cap 3\mathbb{Z}$ car être multiple de 6, c'est être multiple de 2 \emph{et} de 3.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+% Patate Z
+\draw[fill=popblueL, draw=popblue, thick] (0,0) ellipse (5.6 and 3.4);
+\node[popdark, font=\bfseries] at (-4.4,2.7) {$\mathbb{Z}$};
+% Patate 2Z
+\draw[fill=popgreenL, draw=popgreen, thick] (-1.6,0.4) ellipse (3.1 and 2.2);
+\node[popdark, font=\bfseries] at (-3.6,1.9) {$2\mathbb{Z}$};
+% Patate 3Z
+\draw[fill=poporangeL, draw=poporange, thick] (1.6,0.4) ellipse (3.1 and 2.2);
+\node[popdark, font=\bfseries] at (3.6,1.9) {$3\mathbb{Z}$};
+% Intersection 6Z
+\draw[fill=popgoldL, draw=popgold, thick] (0,0.4) ellipse (1.15 and 1.15);
+\node[popdark, font=\bfseries] at (0,0.4) {$6\mathbb{Z}$};
+% Points
+\fill[popdark] (-4.2,-1.6) circle (1.5pt) node[below left, font=\small] {$5$};
+\fill[popdark] (4.3,-1.5) circle (1.5pt) node[below right, font=\small] {$7$};
+\fill[popdark] (-2.9,-0.9) circle (1.5pt) node[below, font=\small] {$4$};
+\fill[popdark] (2.9,-0.9) circle (1.5pt) node[below, font=\small] {$9$};
+\fill[popdark] (0,-1.3) circle (1.5pt) node[below, font=\small] {$12$};
+\end{tikzpicture}
+\legende{Les ensembles $n\mathbb{Z}$ emboîtés : $6\mathbb{Z} = 2\mathbb{Z} \cap 3\mathbb{Z}$, et $6\mathbb{Z} \subset 2\mathbb{Z} \subset \mathbb{Z}$. L'entier 12 est multiple de 6, donc de 2 et de 3 ; 4 est pair sans être multiple de 3 ; 9 est multiple de 3 sans être pair.}
+\end{popfigure}
+
+\courssub{Le théorème de la division euclidienne}
+
+\textbf{Intuition.}\par
+Revenons aux 156 clés USB à ranger dans des cartons de 12. On remplit un carton, puis un deuxième... Après 13 cartons, tout est rangé : $156 = 12 \times 13 + 0$. Avec des cartons de 10, on remplit 15 cartons et il reste 6 clés : $156 = 10 \times 15 + 6$. L'idée est universelle : étant donné un entier $a$ et un « calibre » $b \geq 1$, on peut toujours écrire $a$ comme un certain nombre de fois $b$, plus un reste \emph{strictement plus petit que} $b$. Et cette écriture est unique.
+
+\begin{propriete}[Théorème de la division euclidienne — démonstration exigible]
+Soient $a \in \mathbb{Z}$ et $b \in \mathbb{N}^{*}$. Il existe un \textbf{unique} couple $(q, r) \in \mathbb{Z} \times \mathbb{N}$ tel que :
+\[ a = bq + r \qquad \text{avec} \qquad 0 \leq r < b. \]
+L'entier $q$ s'appelle le \cle{quotient}, $r$ le \cle{reste} de la division euclidienne de $a$ par $b$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée du théorème]
+\textbf{Partie A : existence.} Considérons tous les multiples de $b$ : $\ldots, -2b, -b, 0, b, 2b, \ldots$ Ils jalonnent la droite réelle en la découpant en intervalles de longueur $b$. L'entier $a$ tombe forcément dans l'un de ces intervalles. Plus précisément, soit $q$ le plus grand entier tel que $bq \leq a$ (un tel entier existe : les multiples de $b$ dépassent $a$ vers le haut et vers le bas). Posons $r = a - bq$.
+
+\textbf{Étape 1 :} par choix de $q$, $bq \leq a$, donc $r = a - bq \geq 0$.
+
+\textbf{Étape 2 :} comme $q$ est le \emph{plus grand} entier vérifiant $bq \leq a$, on a $b(q+1) > a$, c'est-à-dire $a - bq < b$, donc $r < b$.
+
+Ainsi $a = bq + r$ avec $0 \leq r < b$ : l'existence est prouvée.
+
+\textbf{Partie B : unicité.} Supposons deux écritures $a = bq + r = bq' + r'$ avec $0 \leq r < b$ et $0 \leq r' < b$.
+
+\textbf{Étape 1 :} en soustrayant, $b(q - q') = r' - r$.
+
+\textbf{Étape 2 :} or $-b < r' - r < b$ (chaque reste est dans $[0 ; b[$), donc $-b < b(q - q') < b$, puis $-1 < q - q' < 1$.
+
+\textbf{Étape 3 :} $q - q'$ est un entier strictement compris entre $-1$ et $1$ : c'est $0$. Donc $q = q'$, puis $r = r'$. $\blacksquare$
+\end{experience}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.82]
+% Droite
+\draw[->, thick, popdark] (-6.5,0) -- (6.8,0);
+% Multiples de b=5 : graduations
+\foreach \x/\lab in {-5/{-5},0/{0},5/{5},10/{10},15/{15}} {
+  \draw[thick, popblue] (\x*0.75, -0.12) -- (\x*0.75, 0.12);
+  \node[below, popblue, font=\small] at (\x*0.75, -0.12) {$\lab$};
+}
+\node[below, popmuted, font=\small] at (-5.9, -0.1) {$\ldots$};
+\node[below, popmuted, font=\small] at (6.2, -0.1) {$\ldots$};
+% Point a = 17 entre 15 et 20
+\draw[thick, poporange] (15*0.75, -0.12) -- (15*0.75, 0.12);
+\draw[thick, popblue] (20*0.75, -0.12) -- (20*0.75, 0.12);
+\node[below, popblue, font=\small] at (20*0.75, -0.12) {$20$};
+% a
+\fill[popink] (17*0.75, 0) circle (2.5pt);
+\node[above, popink, font=\bfseries] at (17*0.75, 0.15) {$a = 17$};
+% Accolades q et r
+\draw[<->, popgreen, thick] (0, 0.9) -- (15*0.75, 0.9);
+\node[above, popgreen, font=\small] at (7.5*0.75, 0.95) {$3$ sauts de $b = 5$ : \ $bq = 15$};
+\draw[<->, poporange, thick] (15*0.75, 0.55) -- (17*0.75, 0.55);
+\node[above, poporange, font=\small] at (16*0.75, 0.6) {$r = 2$};
+\end{tikzpicture}
+\legende{Division euclidienne de $17$ par $5$ : le plus grand multiple de $5$ inférieur ou égal à $17$ est $15 = 5 \times 3$, et le reste est $r = 17 - 15 = 2$, avec $0 \leq 2 < 5$. Donc $17 = 5 \times 3 + 2$.}
+\end{popfigure}
+
+\begin{methode}[Effectuer la division euclidienne, même avec un dividende négatif]
+Pour trouver le quotient et le reste de $a$ par $b$ ($b \geq 1$) :
+\begin{enumerate}
+\item Encadrer $a$ entre deux multiples \textbf{consécutifs} de $b$ : $bq \leq a < b(q+1)$.
+\item Le quotient est $q$ (le multiple de \emph{gauche}).
+\item Le reste est $r = a - bq$ : vérifier impérativement que $0 \leq r < b$.
+\end{enumerate}
+Pour $a < 0$, le quotient est \emph{négatif ou nul} : on descend jusqu'au multiple de $b$ situé \emph{en dessous} de $a$, jamais au-dessus.
+\end{methode}
+
+\begin{exemplebox}[Divisions euclidiennes de $2024$ et de $-2024$ par $7$]
+\textbf{Dividende positif.} Les multiples de 7 autour de 2024 : $7 \times 289 = 2023$ et $7 \times 290 = 2030$. Donc $7 \times 289 \leq 2024 < 7 \times 290$, d'où
+\[ 2024 = 7 \times 289 + 1, \qquad 0 \leq 1 < 7. \]
+\textbf{Dividende négatif.} Attention : $-2024 = 7 \times (-289) - 1$ est \emph{faux} au sens euclidien car $-1 < 0$. On encadre : $7 \times (-290) = -2030 \leq -2024 < -2023 = 7 \times (-289)$. Donc
+\[ -2024 = 7 \times (-290) + 6, \qquad 0 \leq 6 < 7. \]
+Vérification : $7 \times (-290) + 6 = -2030 + 6 = -2024$. \checkmark
+\end{exemplebox}
+
+\begin{attention}[Le reste doit vérifier $0 \leq r < b$]
+L'erreur la plus fréquente : écrire $-17 = 5 \times (-3) + (-2)$. L'égalité est vraie arithmétiquement, mais ce \textbf{n'est pas} une division euclidienne car le reste $-2$ est négatif. La bonne écriture est $-17 = 5 \times (-4) + 3$, avec $0 \leq 3 < 5$. Règle d'or : le reste est \emph{toujours} positif ou nul, et \emph{strictement} inférieur au diviseur. Sans la condition $0 \leq r < b$, l'unicité disparaît : $17 = 5 \times 2 + 7 = 5 \times 3 + 2$ seraient deux « divisions » différentes !
+\end{attention}
+
+\begin{propriete}[Divisibilité et reste nul]
+Soient $a \in \mathbb{Z}$ et $b \in \mathbb{N}^{*}$. Alors :
+\[ b \mid a \iff \text{le reste de la division euclidienne de } a \text{ par } b \text{ est } 0. \]
+\end{propriete}
+
+En effet, si $a = bq + 0$, alors $b \mid a$ par définition. Réciproquement, si $b \mid a$, alors $a = bk$ pour un $k \in \mathbb{Z}$, et l'écriture $a = bk + 0$ (avec $0 \leq 0 < b$) est une division euclidienne valide ; par unicité, le reste est $0$.
+
+\courssub{Applications directes : parité et restes}
+
+La division euclidienne classe les entiers selon leurs restes. C'est l'embryon des congruences, que nous étudierons dans la prochaine section.
+
+\textbf{Parité.} Diviser par 2 ne laisse que deux restes possibles : $0$ ou $1$. Tout entier $n$ s'écrit donc de manière \emph{exclusive} :
+\[ n = 2q \quad (\text{$n$ pair, c.-à-d. } n \in 2\mathbb{Z}) \qquad \text{ou} \qquad n = 2q + 1 \quad (\text{$n$ impair}). \]
+L'ensemble des impairs se note $2\mathbb{Z} + 1$.
+
+\textbf{Restes modulo 3 et 4.} Tout entier s'écrit $3q$, $3q+1$ ou $3q+2$ ; et aussi $4q$, $4q+1$, $4q+2$ ou $4q+3$. Ces formes permettent de démontrer des propriétés par disjonction de cas.
+
+\begin{exoresolu}[Le carré d'un entier impair est de la forme $8m + 1$]
+\textbf{Énoncé.} Montrer que pour tout entier $n$ impair, $n^2 - 1$ est divisible par 8. Application : vérifier avec $n = 27$.
+\tcblower
+\textbf{Solution.} $n$ est impair, donc il existe $q \in \mathbb{Z}$ tel que $n = 2q + 1$. Alors :
+\begin{align*}
+n^2 - 1 &= (2q+1)^2 - 1 = 4q^2 + 4q = 4q(q+1).
+\end{align*}
+Or $q$ et $q+1$ sont deux entiers consécutifs : l'un des deux est pair, donc $q(q+1) = 2m$ pour un $m \in \mathbb{Z}$. D'où $n^2 - 1 = 4 \times 2m = 8m$ : $8 \mid n^2 - 1$. $\blacksquare$
+
+\textbf{Vérification} avec $n = 27$ : $27^2 - 1 = 729 - 1 = 728 = 8 \times 91$. \checkmark
+\end{exoresolu}
+
+\begin{exoresolu}[Les lots de clés USB de Mme Ngo Bell]
+\textbf{Énoncé.} Mme Ngo Bell veut répartir ses 156 clés USB en lots de 12, puis en lots de 14. Dans chaque cas, effectuer la division euclidienne et conclure.
+\tcblower
+\textbf{Solution.} Lots de 12 : $156 = 12 \times 13 + 0$. Le reste est nul, donc $12 \mid 156$ : elle peut faire exactement 13 lots de 12 clés, sans reste.
+
+Lots de 14 : $14 \times 11 = 154 \leq 156 < 168 = 14 \times 12$, donc $156 = 14 \times 11 + 2$ avec $0 \leq 2 < 14$. Le reste est non nul : 11 lots de 14 laissent 2 clés de côté ; le partage en lots de 14 est impossible sans reste.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Effectuer la division euclidienne de $-357$ par $11$.
+\item Montrer que le produit de trois entiers consécutifs est divisible par 6.
+\item Déterminer tous les entiers $n$ tels que $n - 3$ divise $n + 5$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item On encadre : $11 \times (-33) = -363 \leq -357 < -352 = 11 \times (-32)$. Donc $-357 = 11 \times (-33) + 6$, avec $0 \leq 6 < 11$.
+\item Parmi trois entiers consécutifs, l'un au moins est pair (donc $2$ divise le produit) et exactement un est multiple de $3$. Le produit est donc divisible par $2$ et par $3$ ; comme on le justifiera plus tard (nombres premiers entre eux), il est divisible par $6$. Rédaction directe : si $n$ est pair, $n = 2k$ et le produit $2k(n+1)(n+2)$ est pair ; pour le facteur 3, écrire $n = 3q$, $3q+1$ ou $3q+2$ : dans chaque cas l'un des trois facteurs est dans $3\mathbb{Z}$.
+\item $n + 5 = (n - 3) + 8$. Si $d = n - 3$ divise $n + 5$, alors $d$ divise $(n+5) - (n-3) = 8$ (combinaison linéaire). Donc $n - 3 \in \{-8, -4, -2, -1, 1, 2, 4, 8\}$, soit $n \in \{-5, -1, 1, 2, 4, 5, 7, 11\}$. Réciproquement, toutes ces valeurs conviennent.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $a \mid b \iff \exists k \in \mathbb{Z},\ b = ka$. Un diviseur commun à $a$ et $b$ divise toute combinaison $au + bv$.
+\item $n\mathbb{Z} = \{kn,\ k \in \mathbb{Z}\}$ est stable par addition et par multiplication ; $b\mathbb{Z} \subset a\mathbb{Z} \iff a \mid b$.
+\item \textbf{Division euclidienne :} pour $a \in \mathbb{Z}$, $b \in \mathbb{N}^*$, il existe un unique couple $(q,r)$ avec $a = bq + r$ et $\boxed{0 \leq r < b}$.
+\item $b \mid a \iff r = 0$. Tout entier est de la forme $2q$ ou $2q+1$ (parité), $3q$, $3q+1$ ou $3q+2$, etc.
+\end{itemize}
+\end{aretenir}
+
+\begin{savaistu}[Des restes qui protègent ton argent]
+La « clé de contrôle » des factures de Mme Ngo Bell n'est pas une invention : le numéro de ton compte bancaire (clé RIB), ton numéro de carte SIM, le code-barres d'un produit ou le numéro ISBN d'un livre contiennent tous un chiffre calculé à partir des \emph{restes de divisions euclidiennes} des autres chiffres. Si tu tapes un chiffre faux, le reste ne correspond plus et l'erreur est détectée instantanément. L'arithmétique dans $\mathbb{Z}$ est ainsi, sans qu'on le sache, l'une des gardiennes de la vie numérique camerounaise et mondiale.
+\end{savaistu}
+
+\coursec{Congruences modulo n}
+
+Dans la section précédente, nous avons appris à effectuer la \cle{division euclidienne} d'un entier $a$ par un entier $b \geq 2$ : il existe un unique couple $(q, r)$ tel que $a = bq + r$ avec $0 \leq r < b$. Ce reste $r$ contient une information précieuse : il résume « ce qui reste » de $a$ une fois qu'on a retiré tous les paquets de $b$. Dans de nombreuses situations — les heures d'une horloge, les jours de la semaine, les clés de contrôle des factures —, seul ce reste nous intéresse, et non le quotient. La notion de \cle{congruence}, introduite par Carl Friedrich Gauss en 1801, est précisément l'outil qui permet de raisonner \emph{uniquement sur les restes}. C'est l'un des savoirs les plus rentables du programme de Terminale : rapide à utiliser, puissant, et très apprécié des correcteurs du Baccalauréat.
+
+\courssub{Une intuition : l'arithmétique de l'horloge}
+
+Imaginons une horloge traditionnelle à Douala. S'il est 9 h et qu'un car de l'agence de voyage part dans 5 heures, à quelle heure partira-t-il ? Personne ne répond « 14 h » sur le cadran : on répond 2 h, car $9 + 5 = 14$ et $14 = 12 \times 1 + 2$. Sur une horloge, les nombres $2, 14, 26, 38$ sont indiscernables : ils désignent la même position de l'aiguille. Autrement dit, deux heures sont « équivalentes » lorsque leur différence est un multiple de 12, c'est-à-dire lorsqu'elles ont le même reste dans la division euclidienne par 12.
+
+Cette idée toute simple se généralise en remplaçant 12 par n'importe quel entier naturel $n \geq 2$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.6]
+  \draw[popline, thick] (0,0) circle (2);
+  \foreach \k in {0,...,11} {
+    \pgfmathsetmacro{\angle}{90 - \k*30}
+    \draw[popmuted] (\angle:1.85) -- (\angle:2);
+    \node[popdark, font=\small] at (\angle:1.6) {\pgfmathprintnumber{\k}};
+  }
+  \foreach \k in {0,3,6,9} {
+    \pgfmathsetmacro{\angle}{90 - \k*30}
+    \draw[poporange, very thick] (\angle:1.85) -- (\angle:2.05);
+  }
+  \draw[-{Stealth}, popblue, very thick] (0,0) -- (90:1.35);
+  \draw[-{Stealth}, poppink, very thick] (0,0) -- (60:1.35);
+  \node[popblue, font=\footnotesize] at (90:2.35) {$0 \equiv 12 \equiv 24$};
+  \node[poppink, font=\footnotesize] at (55:2.45) {$1 \equiv 13 \equiv 25$};
+  \node[popmuted, font=\footnotesize, align=center] at (0,-2.5) {Modulo 12, les entiers $1, 13, 25, 37, \dots$ occupent la même position.};
+\end{tikzpicture}
+\end{center}
+\legende{Cadran d'horloge modulo 12 : chaque position du cadran représente une classe de restes.}
+\end{popfigure}
+
+\courssub{Définition et premières propriétés}
+
+\begin{definition}[Congruence modulo n]
+Soit $n$ un entier naturel supérieur ou égal à $2$, et soient $a$ et $b$ deux entiers relatifs. On dit que $a$ est \cle{congru} à $b$ \cle{modulo} $n$, et on note
+\[ a \equiv b \ [n] \quad \text{ou encore} \quad a \equiv b \pmod{n}, \]
+lorsque $n$ divise $a - b$, c'est-à-dire lorsqu'il existe un entier $k \in \mathbb{Z}$ tel que $a - b = kn$.
+\end{definition}
+
+\begin{propriete}[Lien avec la division euclidienne]
+Soit $n \geq 2$ et $a, b \in \mathbb{Z}$. On a l'équivalence :
+\[ a \equiv b \ [n] \iff a \text{ et } b \text{ ont le même reste dans la division euclidienne par } n. \]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de l'équivalence]
+Montrons les deux implications.
+\begin{enumerate}
+\item \textbf{Sens direct.} Supposons $a \equiv b \ [n]$, c'est-à-dire $a - b = kn$ avec $k \in \mathbb{Z}$. Écrivons les divisions euclidiennes : $a = nq + r$ et $b = nq' + r'$ avec $0 \leq r < n$ et $0 \leq r' < n$. Alors
+\[ a - b = n(q - q') + (r - r') = kn, \quad \text{donc} \quad r - r' = n(k - q + q'). \]
+Ainsi $n$ divise $r - r'$. Or $-n < r - r' < n$, et le seul multiple de $n$ strictement compris entre $-n$ et $n$ est $0$. Donc $r = r'$.
+\item \textbf{Sens réciproque.} Si $r = r'$, alors $a - b = n(q - q')$, donc $n$ divise $a - b$, c'est-à-dire $a \equiv b \ [n]$. \hfill $\square$
+\end{enumerate}
+\end{experience}
+
+\begin{exemplebox}[Lecture de congruences]
+\begin{itemize}
+\item $38 \equiv 14 \ [12]$ car $38 - 14 = 24 = 2 \times 12$. Vérification par les restes : $38 = 12 \times 3 + 2$ et $14 = 12 \times 1 + 2$ : même reste $2$.
+\item $-7 \equiv 3 \ [5]$ car $-7 - 3 = -10 = (-2) \times 5$. Attention : la division euclidienne de $-7$ par $5$ s'écrit $-7 = 5 \times (-2) + 3$ : le reste est bien $3$, positif.
+\item $2025 \equiv 1 \ [4]$ car $2025 = 4 \times 506 + 1$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{propriete}[La congruence est une relation d'équivalence]
+Pour tout entier $n \geq 2$ et tous entiers $a, b, c \in \mathbb{Z}$ :
+\begin{itemize}
+\item \textbf{Réflexivité :} $a \equiv a \ [n]$ ;
+\item \textbf{Symétrie :} si $a \equiv b \ [n]$, alors $b \equiv a \ [n]$ ;
+\item \textbf{Transitivité :} si $a \equiv b \ [n]$ et $b \equiv c \ [n]$, alors $a \equiv c \ [n]$.
+\end{itemize}
+On dit que la congruence modulo $n$ est une \cle{relation d'équivalence} sur $\mathbb{Z}$.
+\end{propriete}
+
+Vérifions ces propriétés sur un exemple, modulo $5$ : $17 \equiv 17 \ [5]$ (réflexivité) ; $17 \equiv 2 \ [5]$ et donc aussi $2 \equiv 17 \ [5]$ (symétrie) ; enfin $17 \equiv 2 \ [5]$ et $2 \equiv -13 \ [5]$, et l'on a bien $17 \equiv -13 \ [5]$ car $17 - (-13) = 30 = 6 \times 5$ (transitivité). La démonstration générale est immédiate : pour la transitivité par exemple, si $a - b = kn$ et $b - c = k'n$, alors $a - c = (k + k')n$.
+
+\courssub{La table des restes modulo n}
+
+\begin{propriete}[Représentant canonique]
+Soit $n \geq 2$. Tout entier relatif $a$ est congru modulo $n$ à un \textbf{unique} élément de l'ensemble $\{0, 1, 2, \dots, n-1\}$ : c'est le reste de sa division euclidienne par $n$.
+\end{propriete}
+
+En effet, la division euclidienne donne $a = nq + r$ avec $0 \leq r \leq n-1$, donc $a \equiv r \ [n]$, et l'unicité du reste garantit l'unicité de ce représentant. Ainsi, pour calculer modulo $n$, on peut toujours \emph{remplacer} un entier, même énorme, par un nombre compris entre $0$ et $n-1$. C'est tout l'intérêt pratique des congruences : \textbf{travailler avec des petits nombres à la place des grands}.
+
+\begin{exemplebox}[Réduction modulo 7]
+$1000 = 7 \times 142 + 6$, donc $1000 \equiv 6 \ [7]$. Plutôt que de manipuler $1000$, on manipulera $6$. De même $-3 \equiv 4 \ [7]$ car $-3 = 7 \times (-1) + 4$.
+\end{exemplebox}
+
+\courssub{Compatibilité avec l'addition et la multiplication}
+
+Voici le théorème central de cette section : les congruences se comportent bien avec les opérations. On peut additionner et multiplier des congruences membre à membre, comme des égalités.
+
+\begin{propriete}[Compatibilité avec l'addition et la multiplication — démonstration exigible]
+Soit $n \geq 2$ et $a, b, c, d \in \mathbb{Z}$. Si $a \equiv b \ [n]$ et $c \equiv d \ [n]$, alors :
+\[ a + c \equiv b + d \ [n] \qquad \text{et} \qquad ac \equiv bd \ [n]. \]
+\textbf{Conséquence :} si $a \equiv b \ [n]$, alors pour tout entier naturel $k$, $a^k \equiv b^k \ [n]$.
+\end{propriete}
+
+\begin{experience}[Démonstrations pas à pas]
+Par hypothèse, il existe $k, k' \in \mathbb{Z}$ tels que $a - b = kn$ et $c - d = k'n$.
+
+\textbf{Addition.} On calcule :
+\[ (a + c) - (b + d) = (a - b) + (c - d) = kn + k'n = (k + k')n. \]
+Donc $n$ divise $(a+c) - (b+d)$, c'est-à-dire $a + c \equiv b + d \ [n]$. \hfill $\square$
+
+\textbf{Multiplication.} Écrivons $a = b + kn$ et $c = d + k'n$, puis développons :
+\[ ac = (b + kn)(d + k'n) = bd + bk'n + knd + kk'n^2 = bd + n(bk' + kd + kk'n). \]
+Ainsi $ac - bd = n(bk' + kd + kk'n)$, qui est un multiple de $n$. Donc $ac \equiv bd \ [n]$. \hfill $\square$
+
+\textbf{Puissances.} On applique la compatibilité avec la multiplication $k$ fois de suite (récurrence immédiate) : de $a \equiv b \ [n]$ on tire $a^2 \equiv b^2 \ [n]$, puis $a^3 \equiv b^3 \ [n]$, et ainsi de suite jusqu'à $a^k \equiv b^k \ [n]$. \hfill $\square$
+\end{experience}
+
+\begin{exemplebox}[Calculs rapides avec les congruences]
+Modulo $9$ : $58 \equiv 4 \ [9]$ (car $58 = 6 \times 9 + 4$) et $74 \equiv 2 \ [9]$. Alors, sans calculer $58 \times 74 = 4292$ :
+\[ 58 \times 74 \equiv 4 \times 2 \equiv 8 \ [9]. \]
+Vérification : $4292 = 9 \times 476 + 8$. Le reste est bien $8$. C'est le principe de la célèbre \emph{preuve par 9} utilisée jadis par les commerçants pour vérifier leurs multiplications.
+\end{exemplebox}
+
+\begin{attention}[On ne divise pas une congruence comme une égalité]
+La compatibilité fonctionne pour l'addition et la multiplication, \textbf{mais pas pour la division}. En général :
+\[ ac \equiv bc \ [n] \quad \textbf{n'implique pas} \quad a \equiv b \ [n]. \]
+Contre-exemple : $6 \times 2 \equiv 4 \times 2 \ [4]$, c'est-à-dire $12 \equiv 8 \ [4]$ (vrai, car $12 - 8 = 4$), pourtant $6 \not\equiv 4 \ [4]$ (car $6 - 4 = 2$ n'est pas divisible par $4$). Simplifier par $2$ était interdit car $\text{PGCD}(2, 4) = 2 \neq 1$. On ne peut simplifier par $c$ que si $\text{PGCD}(c, n) = 1$ — ce sera justifié dans la section sur les nombres premiers entre eux.
+\end{attention}
+
+\courssub{Application fondamentale : reste d'une grande puissance}
+
+Comment trouver le reste de $7^{2024}$ dans la division par $5$ ? Il est hors de question de calculer ce nombre (il possède plus de 1700 chiffres !). La stratégie consiste à chercher un \cle{cycle} dans les puissances successives, idéalement un exposant donnant $1$ ou $-1$ modulo $n$.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} $k$ & $0$ & $1$ & $2$ & $3$ & $4$ & $5$ \\
+\hline
+$7^k \pmod{5}$ & $1$ & $2$ & $4$ & $3$ & $1$ & $2$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+En effet : $7 \equiv 2 \ [5]$ ; $7^2 \equiv 4 \ [5]$ ; $7^3 \equiv 8 \equiv 3 \ [5]$ ; $7^4 \equiv 16 \equiv 1 \ [5]$. À partir de $7^4 \equiv 1 \ [5]$, le cycle recommence : les restes $1, 2, 4, 3$ se répètent avec une période de $4$. Comme $2024 = 4 \times 506$, on obtient :
+\[ 7^{2024} = \left(7^4\right)^{506} \equiv 1^{506} \equiv 1 \ [5]. \]
+Le reste cherché est $\boxed{1}$.
+
+\begin{methode}[Trouver le reste de $a^m$ dans la division par $n$]
+\begin{enumerate}
+\item \textbf{Réduire la base} : remplacer $a$ par son reste $r$ modulo $n$ (on peut même utiliser un représentant négatif si cela simplifie, par exemple $-1$ au lieu de $n-1$).
+\item \textbf{Chercher un cycle} : calculer $r, r^2, r^3, \dots$ modulo $n$ jusqu'à obtenir $1$ (idéalement) ou $-1$, ou repérer une répétition. Noter $p$ la plus petite puissance telle que $r^p \equiv 1 \ [n]$.
+\item \textbf{Réduire l'exposant} : écrire la division euclidienne $m = pq + s$ avec $0 \leq s < p$.
+\item \textbf{Conclure} : $a^m \equiv (r^p)^q \times r^s \equiv r^s \ [n]$, et $r^s$ se calcule à la main.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Reste de $13^{100}$ dans la division par 7]
+Déterminer le reste de la division euclidienne de $13^{100}$ par $7$.
+\tcblower
+\textbf{Étape 1 — Réduction de la base.} $13 = 7 \times 1 + 6$, donc $13 \equiv 6 \ [7]$. Mieux : $6 \equiv -1 \ [7]$, ce qui évite toute recherche de cycle !
+\medskip
+
+\textbf{Étape 2 — Élévation à la puissance.} Par compatibilité avec la multiplication :
+\[ 13^{100} \equiv (-1)^{100} \equiv 1 \ [7], \]
+car $100$ est pair.
+\medskip
+
+\textbf{Conclusion.} Le reste de la division de $13^{100}$ par $7$ est $\boxed{1}$. Note l'élégance de la méthode : un représentant négatif bien choisi a transformé un calcul impossible en une ligne.
+\end{exoresolu}
+
+\begin{exoresolu}[Un problème de calendrier]
+Le 1\textsuperscript{er} janvier 2025 est un mercredi. Quel jour de la semaine sera le 1\textsuperscript{er} janvier 2026 ? (L'année 2025 n'est pas bissextile.)
+\tcblower
+Une année non bissextile compte $365$ jours. Travaillons modulo $7$, puisque la semaine compte $7$ jours :
+\[ 365 = 7 \times 52 + 1, \quad \text{donc} \quad 365 \equiv 1 \ [7]. \]
+Le 1\textsuperscript{er} janvier 2026 tombe donc $1$ jour après un mercredi : ce sera un \textbf{jeudi}. Plus généralement, chaque année « décale » le calendrier de $1$ jour ($2$ jours pour une année bissextile, car $366 \equiv 2 \ [7]$).
+\end{exoresolu}
+
+\begin{exercice}[Pour t'entraîner]
+\begin{enumerate}
+\item Déterminer le reste de $3^{2025}$ dans la division par $7$.
+\item Déterminer le reste de $2^{50} + 5^{20}$ dans la division par $3$.
+\item Un grossiste de Marché Central reçoit $10^{6}$ FCFA en billets et veut les répartir en parts égales entre $9$ succursales. Montrer, sans calculatrice, qu'il restera exactement $1$ FCFA.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice « Pour t'entraîner »]
+\textbf{1.} $3^1 \equiv 3 \ [7]$ ; $3^2 \equiv 2 \ [7]$ ; $3^3 \equiv 6 \equiv -1 \ [7]$. Donc $3^6 \equiv 1 \ [7]$. Or $2025 = 6 \times 337 + 3$, d'où $3^{2025} \equiv 3^3 \equiv 6 \ [7]$. Le reste est $6$.
+
+\textbf{2.} Modulo $3$ : $2 \equiv -1 \ [3]$ donc $2^{50} \equiv (-1)^{50} \equiv 1 \ [3]$ ; et $5 \equiv 2 \equiv -1 \ [3]$ donc $5^{20} \equiv 1 \ [3]$. Par compatibilité avec l'addition : $2^{50} + 5^{20} \equiv 2 \ [3]$. Le reste est $2$.
+
+\textbf{3.} $10 \equiv 1 \ [9]$, donc $10^{6} \equiv 1^{6} \equiv 1 \ [9]$. Le reste de la division de $10^{6}$ par $9$ est $1$ : il restera exactement $1$ FCFA.
+\end{corrige}
+
+\begin{savaistu}[Les congruences protègent ton argent]
+Les calculs de congruences sont partout dans la vie quotidienne camerounaise. Le \textbf{RIB} de ton compte bancaire se termine par une \emph{clé de contrôle} à deux chiffres, calculée à partir des autres numéros par une formule de congruence modulo $97$ : si un guichetier se trompe d'un chiffre en saisissant ton numéro, la clé ne correspond plus et l'erreur est détectée immédiatement. De même, le dernier chiffre d'un \textbf{code-barres} (sur un paquet de savon ou une bouteille au supermarché) est une clé modulo $10$ : la douane et la caissière vérifient ainsi que le code a été bien scanné. Les numéros de carte SIM, les identifiants de transactions Mobile Money de MTN ou Orange, reposent sur le même principe : une petite congruence qui garantit que personne ne s'est trompé.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item $a \equiv b \ [n] \iff n \mid (a - b) \iff a$ et $b$ ont le même reste modulo $n$.
+\item Tout entier est congru modulo $n$ à un unique élément de $\{0, 1, \dots, n-1\}$.
+\item Les congruences sont compatibles avec l'addition, la multiplication et les puissances : on peut remplacer chaque nombre par son reste à tout moment du calcul.
+\item Pour une grande puissance $a^m$ : réduire la base, chercher un exposant $p$ tel que $a^p \equiv \pm 1 \ [n]$, puis réduire l'exposant $m$ modulo $p$.
+\item \textbf{Jamais} de simplification par un facteur non premier avec le module.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Critères de divisibilité en base dix}
+
+Dans la section précédente, nous avons appris à calculer avec les congruences : additionner, multiplier, élever à une puissance des classes modulo $n$. Nous allons maintenant récolter les fruits de ce travail dans un domaine très concret : reconnaître \emph{à l'œil}, sans poser de division, si un grand entier est divisible par $2$, $3$, $4$, $5$, $9$, $11$ ou $25$. Ces \cle{critères de divisibilité} ne sont pas des recettes magiques : ce sont des conséquences directes et élégantes des congruences. Comprendre leur démonstration, c'est comprendre une bonne fois pour toutes pourquoi ils fonctionnent — et c'est exactement le type de raisonnement attendu au Baccalauréat.
+
+\courssub{Écriture décimale d'un entier et idée-clé}
+
+Tout entier naturel $N$ s'écrit en base dix à l'aide de ses chiffres $a_0, a_1, \dots, a_k$ (avec $a_k \neq 0$ et chaque $a_i \in \{0, 1, \dots, 9\}$) :
+\[ N = a_k \times 10^k + a_{k-1} \times 10^{k-1} + \cdots + a_1 \times 10 + a_0. \]
+Par exemple, $857\,412 = 8 \times 10^5 + 5 \times 10^4 + 7 \times 10^3 + 4 \times 10^2 + 1 \times 10 + 2$. Le chiffre $a_0$ est le chiffre des unités, $a_1$ celui des dizaines, etc.
+
+L'idée-clé est la suivante : pour étudier la divisibilité de $N$ par un entier $d$, il suffit de connaître les \cle{puissances de $10$ modulo $d$}, puisque
+\[ N \equiv a_k \times 10^k + a_{k-1} \times 10^{k-1} + \cdots + 10 a_1 + a_0 \pmod{d}. \]
+Or ces puissances sont remarquablement simples pour les diviseurs usuels :
+\begin{itemize}
+\item $10 \equiv 1 \pmod{9}$ et $10 \equiv 1 \pmod{3}$, donc $10^i \equiv 1 \pmod{9}$ (resp. $\pmod{3}$) pour tout $i \geq 0$ ;
+\item $10 \equiv 0 \pmod{2}$ et $10 \equiv 0 \pmod{5}$, donc $10^i \equiv 0$ dès que $i \geq 1$ ;
+\item $100 = 10^2 \equiv 0 \pmod{4}$ et $100 \equiv 0 \pmod{25}$, donc $10^i \equiv 0$ dès que $i \geq 2$ ;
+\item $10 \equiv -1 \pmod{11}$, donc $10^i \equiv (-1)^i \pmod{11}$.
+\end{itemize}
+
+\begin{methode}[Justifier un critère de divisibilité]
+Pour établir (ou retrouver) un critère de divisibilité par un entier $d$ :
+\begin{enumerate}
+\item Écrire $N$ sous sa forme décimale $N = \sum_{i=0}^{k} a_i \times 10^i$.
+\item Déterminer le reste de $10$ modulo $d$, puis celui de chaque puissance $10^i$ modulo $d$.
+\item Remplacer, par compatibilité des congruences avec l'addition et la multiplication, chaque $10^i$ par son reste.
+\item Conclure : $N$ est divisible par $d$ si et seulement si l'expression obtenue (souvent bien plus simple) l'est.
+\end{enumerate}
+C'est exactement la démarche que nous allons appliquer à chaque diviseur ci-dessous.
+\end{methode}
+
+\courssub{Divisibilité par 3 et par 9 : la somme des chiffres}
+
+\begin{propriete}[Critères de divisibilité par 3 et par 9 — démonstration exigible]
+Un entier naturel est divisible par $9$ (respectivement par $3$) si et seulement si la \cle{somme de ses chiffres} est divisible par $9$ (respectivement par $3$).
+\end{propriete}
+
+\begin{experience}[Démonstration par les congruences]
+Soit $N = a_k \times 10^k + \cdots + 10 a_1 + a_0$ un entier naturel.
+\begin{enumerate}
+\item Comme $10 \equiv 1 \pmod{9}$, la compatibilité avec les puissances donne $10^i \equiv 1^i = 1 \pmod{9}$ pour tout entier $i \geq 0$.
+\item Par compatibilité avec la multiplication, $a_i \times 10^i \equiv a_i \pmod{9}$.
+\item Par compatibilité avec l'addition, en sommant toutes ces congruences :
+\[ N \equiv a_k + a_{k-1} + \cdots + a_1 + a_0 \pmod{9}. \]
+\item Or $N$ est divisible par $9$ si et seulement si $N \equiv 0 \pmod{9}$, c'est-à-dire si et seulement si la somme des chiffres est congrue à $0$ modulo $9$, donc divisible par $9$.
+\item Le raisonnement est \emph{identique} modulo $3$, car $10 \equiv 1 \pmod{3}$ également.
+\end{enumerate}
+Le critère est donc démontré, et il repose entièrement sur le fait que $10 - 1 = 9$ : notre système de numération décimal est « ami » avec $9$ et $3$.
+\end{experience}
+
+\begin{exemplebox}[Application immédiate]
+Le nombre $857\,412$ a pour somme des chiffres $8 + 5 + 7 + 4 + 1 + 2 = 27$. Comme $27 = 3 \times 9$ est divisible par $9$ (et donc par $3$), $857\,412$ est divisible par $9$ et par $3$. En revanche, pour $45\,217$ : $4+5+2+1+7 = 19$, qui n'est divisible ni par $3$ ni par $9$, donc $45\,217$ ne l'est pas non plus.
+\end{exemplebox}
+
+\courssub{Divisibilité par 2, 5, 25 et 4 : les derniers chiffres}
+
+Pour $2$ et $5$, on a $10 \equiv 0$ modulo $2$ et modulo $5$. Ainsi, dans l'écriture décimale, tous les termes $a_i \times 10^i$ avec $i \geq 1$ sont congrus à $0$, et il ne reste que :
+\[ N \equiv a_0 \pmod{2} \quad \text{et} \quad N \equiv a_0 \pmod{5}. \]
+Autrement dit, seul le \cle{chiffre des unités} compte : $N$ est divisible par $2$ si et seulement si $a_0 \in \{0, 2, 4, 6, 8\}$ ; $N$ est divisible par $5$ si et seulement si $a_0 \in \{0, 5\}$.
+
+Pour $4$ et $25$, c'est $100 = 10^2$ qui est divisible par $4$ et par $25$. Tous les termes $a_i \times 10^i$ avec $i \geq 2$ disparaissent modulo $4$ et modulo $25$ :
+\[ N \equiv 10 a_1 + a_0 \pmod{4} \quad \text{et} \quad N \equiv 10 a_1 + a_0 \pmod{25}. \]
+Il suffit donc d'examiner le nombre formé par les \cle{deux derniers chiffres} : $N$ est divisible par $4$ (resp. par $25$) si et seulement si $\overline{a_1 a_0}$ l'est. Pour $25$, cela signifie concrètement que le nombre se termine par $00$, $25$, $50$ ou $75$.
+
+\begin{attention}[Ne pas confondre les critères par 3 et par 4]
+C'est l'erreur la plus fréquente en classe et au Baccalauréat :
+\begin{itemize}
+\item Divisibilité par \textbf{3} : on additionne \emph{tous} les chiffres (somme des chiffres).
+\item Divisibilité par \textbf{4} : on ne regarde \emph{que} le nombre formé par les \emph{deux derniers} chiffres.
+\end{itemize}
+Par exemple, $1\,112$ a une somme de chiffres égale à $5$ (non divisible par $3$), mais ses deux derniers chiffres forment $12 = 4 \times 3$, donc $1\,112$ est divisible par $4$ et pas par $3$. Inversement, $3\,333$ a une somme de chiffres égale à $12$ (divisible par $3$) mais se termine par $33$, non divisible par $4$. Les deux critères sont indépendants : ne les mélangez jamais.
+\end{attention}
+
+\courssub{Divisibilité par 11 : la somme alternée}
+
+Le cas de $11$ est le plus subtil et le plus beau. La clé est la congruence $10 \equiv -1 \pmod{11}$, qui donne $10^i \equiv (-1)^i \pmod{11}$ : les puissances de $10$ valent alternativement $+1$ et $-1$ modulo $11$.
+
+\begin{propriete}[Critère de divisibilité par 11]
+Un entier naturel $N = a_k \times 10^k + \cdots + 10 a_1 + a_0$ est divisible par $11$ si et seulement si sa \cle{somme alternée des chiffres}
+\[ S = a_0 - a_1 + a_2 - a_3 + \cdots + (-1)^k a_k \]
+est divisible par $11$ (c'est-à-dire vaut $0$, $\pm 11$, $\pm 22$, \dots).
+\end{propriete}
+
+\begin{experience}[Démonstration guidée]
+\begin{enumerate}
+\item Justifier que $10 \equiv -1 \pmod{11}$ (car $10 - (-1) = 11$).
+\item En déduire que pour tout $i \geq 0$, $10^i \equiv (-1)^i \pmod{11}$.
+\item En remplaçant dans l'écriture décimale de $N$, montrer que
+\[ N \equiv a_0 - a_1 + a_2 - \cdots + (-1)^k a_k \pmod{11}. \]
+\item Conclure que $11$ divise $N$ si et seulement si $11$ divise la somme alternée $S$.
+\end{enumerate}
+Concrètement : on additionne les chiffres de rang pair (unités, centaines, dizaines de mille, \dots) et on soustrait la somme des chiffres de rang impair (dizaines, milliers, \dots).
+\end{experience}
+
+\begin{exemplebox}[Test sur 857 412]
+Pour $N = 857\,412$, les chiffres de rang pair (à partir des unités) sont $2$, $4$, $5$ et ceux de rang impair sont $1$, $7$, $8$ :
+\[ S = (2 + 4 + 5) - (1 + 7 + 8) = 11 - 16 = -5. \]
+Comme $-5$ n'est pas divisible par $11$, $857\,412$ n'est pas divisible par $11$.
+\end{exemplebox}
+
+\courssub{Tableau de synthèse et utilisation combinée}
+
+\begin{propriete}[Critères de divisibilité usuels en base dix]
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|X|}
+\hline
+\rowcolor{popblueL} \textbf{Diviseur} & \textbf{Critère} \\
+\hline
+$2$ & Le chiffre des unités est $0$, $2$, $4$, $6$ ou $8$. \\
+\hline
+$3$ & La somme des chiffres est divisible par $3$. \\
+\hline
+$4$ & Le nombre formé par les deux derniers chiffres est divisible par $4$. \\
+\hline
+$5$ & Le chiffre des unités est $0$ ou $5$. \\
+\hline
+$9$ & La somme des chiffres est divisible par $9$. \\
+\hline
+$11$ & La somme alternée des chiffres est divisible par $11$. \\
+\hline
+$25$ & Le nombre se termine par $00$, $25$, $50$ ou $75$. \\
+\hline
+\end{tabularx}
+\end{center}
+\end{propriete}
+
+\begin{aretenir}[Stratégie de test combiné]
+Pour tester rapidement la divisibilité d'un grand entier, on procède dans l'ordre de coût croissant :
+\begin{enumerate}
+\item Regarder le dernier chiffre (tests par $2$ et $5$, immédiats).
+\item Regarder les deux derniers chiffres (tests par $4$ et $25$).
+\item Calculer la somme des chiffres (tests par $3$ et $9$ simultanément).
+\item Calculer la somme alternée (test par $11$) si nécessaire.
+\end{enumerate}
+Ce pré-tri est précieux pour la \cle{décomposition en facteurs premiers} : avant de factoriser un entier, on détecte immédiatement les facteurs $2$, $3$, $5$ et $11$, ce qui réduit considérablement le nombre de divisions à effectuer. Par exemple, $857\,412$ étant divisible par $4$ et par $9$, on sait d'emblée qu'il contient les facteurs $2^2$ et $3^2$.
+\end{aretenir}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  grow=down,
+  level distance=1.35cm,
+  level 1/.style={sibling distance=6.2cm},
+  level 2/.style={sibling distance=3.1cm},
+  every node/.style={draw=popblue, rounded corners=2pt, fill=popblueL, font=\small, align=center, inner sep=3pt},
+  edge from parent/.style={draw=popmuted, -{Stealth}},
+  lab/.style={draw=none, fill=none, font=\footnotesize\itshape, text=popdark}
+]
+\node[fill=poporangeL, draw=poporange] {$N = 857\,412$}
+  child { node {Dernier chiffre $2$\\ $\Rightarrow$ divisible par $2$}
+    child { node {Deux derniers : $12$\\ $12 = 4 \times 3$\\ $\Rightarrow$ divisible par $4$}
+      edge from parent node[lab, left] {oui} }
+    child { node {Somme : $27$\\ $27 = 9 \times 3$\\ $\Rightarrow$ divisible par $3$ et $9$}
+      edge from parent node[lab, right] {oui} } }
+  child { node {Somme alternée\\ $(2+4+5)-(1+7+8) = -5$\\ $\Rightarrow$ pas divisible par $11$}
+    edge from parent node[lab, right] {test par $11$} };
+\end{tikzpicture}
+\legende{Arbre de décision pour tester la divisibilité de $857\,412$ par les diviseurs usuels.}
+\end{popfigure}
+
+\begin{exoresolu}[Étude complète de la divisibilité de 857 412]
+Énoncé. Sans poser de division, déterminer si $857\,412$ est divisible par $2$, $3$, $4$, $5$, $9$, $11$ et $25$.
+\tcblower
+Solution détaillée. On applique les critères dans l'ordre stratégique.
+
+\textbf{Par 2 et par 5.} Le chiffre des unités est $2$ : divisible par $2$, non divisible par $5$.
+
+\textbf{Par 4 et par 25.} Les deux derniers chiffres forment $12$. Or $12 = 4 \times 3$, donc divisible par $4$ ; mais $12 \notin \{00, 25, 50, 75\}$, donc non divisible par $25$.
+
+\textbf{Par 3 et par 9.} Somme des chiffres : $8+5+7+4+1+2 = 27$. Comme $27 = 9 \times 3$, le nombre est divisible par $9$, et donc aussi par $3$.
+
+\textbf{Par 11.} Somme alternée : $(2+4+5) - (1+7+8) = 11 - 16 = -5$, non divisible par $11$. Donc $857\,412$ n'est pas divisible par $11$.
+
+\textbf{Conclusion.} $857\,412$ est divisible par $2$, $3$, $4$ et $9$, mais pas par $5$, $11$ ni $25$. On en déduit que sa décomposition en facteurs premiers contient au moins $2^2 \times 3^2$ ; en effet $857\,412 = 2^2 \times 3^2 \times 23\,817 = 2^2 \times 3^3 \times 7\,939$, ce que le pré-tri par les critères avait permis d'amorcer efficacement.
+\end{exoresolu}
+
+\begin{savaistu}[Les clés de contrôle autour de nous]
+Les critères de divisibilité sont à la base des \cle{clés de contrôle} utilisées partout : le dernier chiffre d'un numéro de compte bancaire, d'un code-barres de produit ou d'un numéro de carte SIM est calculé pour que le numéro complet vérifie une congruence (souvent modulo $9$, $10$ ou $11$). Si un opérateur saisit un chiffre faux en tapant un numéro de transaction Mobile Money, la congruence n'est plus vérifiée et l'erreur est détectée instantanément. Les mathématiques des congruences veillent ainsi, en silence, sur des millions de transactions chaque jour au Cameroun.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+Sans poser de division, déterminer si les entiers $1\,234\,560$ et $271\,828$ sont divisibles par $3$, $4$, $9$ et $11$. Justifier chaque réponse par le critère adapté.
+\end{exercice}
+
+\begin{corrige}[Exercice]
+Pour $N = 1\,234\,560$ : somme des chiffres $1+2+3+4+5+6+0 = 21$, divisible par $3$ mais pas par $9$ ; deux derniers chiffres $60 = 4 \times 15$, divisible par $4$ ; somme alternée $(0+5+3+1) - (6+4+2) = 9 - 12 = -3$, non divisible par $11$. Donc $1\,234\,560$ est divisible par $3$ et $4$, pas par $9$ ni $11$.
+
+Pour $N = 271\,828$ : somme des chiffres $2+7+1+8+2+8 = 28$, non divisible par $3$ ni par $9$ ; deux derniers chiffres $28 = 4 \times 7$, divisible par $4$ ; somme alternée $(8+8+7) - (2+1+2) = 23 - 5 = 18$, non divisible par $11$. Donc $271\,828$ est divisible par $4$ uniquement.
+\end{corrige}
+
+\coursec{Nombres premiers et décomposition en facteurs premiers}
+
+Dans la section précédente, nous avons appris à reconnaître rapidement, grâce aux critères de divisibilité, si un entier est divisible par $2$, $3$, $5$, $9$, $11$\dots\ Ces critères nous ont permis de « casser » certains nombres en facteurs plus petits. Mais une question fondamentale demeure : jusqu'où peut-on pousser cette casse ? Existe-t-il des nombres \emph{incassables}, des briques élémentaires à partir desquelles tous les entiers seraient construits ? La réponse est oui : ce sont les \cle{nombres premiers}, et ils jouent en arithmétique le rôle que jouent les atomes en chimie. Cette section leur est entièrement consacrée.
+
+\courssub{Nombres premiers : définition et premiers exemples}
+
+\textbf{Intuition.} Prenons l'entier $12$. On peut l'écrire $12 = 2 \times 6 = 3 \times 4 = 2 \times 2 \times 3$ : il possède de nombreux diviseurs. Prenons maintenant $13$. Cherchons deux entiers supérieurs ou égaux à $2$ dont le produit vaut $13$ : impossible. Les seuls diviseurs positifs de $13$ sont $1$ et $13$ lui-même. Le nombre $13$ est une « brique élémentaire » : on dit qu'il est \cle{premier}.
+
+\begin{definition}[Nombre premier]
+Un entier naturel $p \geq 2$ est dit \cle{premier} si ses seuls diviseurs positifs sont $1$ et $p$.
+
+Un entier $n \geq 2$ qui n'est pas premier est dit \cle{composé} : il admet alors au moins un diviseur $d$ avec $1 < d < n$.
+\end{definition}
+
+\begin{attention}[Le nombre 1 n'est pas premier]
+L'entier $1$ n'a qu'\emph{un seul} diviseur positif (lui-même), alors qu'un nombre premier en a exactement \emph{deux}. Par convention, et pour de bonnes raisons (notamment l'unicité de la décomposition en facteurs premiers, voir plus loin), \textbf{$1$ n'est pas premier}. C'est l'erreur la plus fréquente au Baccalauréat : le plus petit nombre premier est $2$, et c'est le \emph{seul} nombre premier pair.
+\end{attention}
+
+\begin{exemplebox}[Premiers ou composés ?]
+\begin{itemize}
+\item $17$ est premier : ses diviseurs positifs sont $1$ et $17$.
+\item $51$ est composé : $51 = 3 \times 17$ (penser au critère de divisibilité par $3$ : $5+1=6$).
+\item $91$ est composé : $91 = 7 \times 13$. Ce piège est classique : $91$ n'est divisible ni par $2$, ni par $3$, ni par $5$, ce qui le fait paraître premier à tort.
+\item $2$ est premier ; tout nombre pair $n \geq 4$ est composé car divisible par $2$.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Test de primalité : le critère de la racine carrée}
+
+\textbf{Intuition.} Pour vérifier qu'un entier $n$ est premier, faut-il tester sa divisibilité par \emph{tous} les entiers de $2$ à $n-1$ ? Heureusement non. Observons : si $n = a \times b$ avec $a \leq b$, alors $a^2 \leq a \times b = n$, donc $a \leq \sqrt{n}$. Autrement dit, toute factorisation non triviale de $n$ fait apparaître un « petit » facteur, inférieur ou égal à $\sqrt{n}$. Il suffit donc de chercher les diviseurs jusqu'à $\sqrt{n}$.
+
+\begin{propriete}[Critère d'arrêt pour le test de primalité]
+Soit $n \geq 2$ un entier. Si $n$ n'est pas premier, alors $n$ admet un diviseur \emph{premier} $p$ tel que $p \leq \sqrt{n}$.
+
+Conséquence pratique : pour prouver que $n$ est premier, il suffit de vérifier qu'il n'est divisible par \textbf{aucun nombre premier} $p \leq \sqrt{n}$.
+\end{propriete}
+
+\begin{experience}[Démonstration par l'absurde (à savoir refaire)]
+Raisonnons par l'absurde. Supposons que $n$ est composé et que $n$ n'admet \emph{aucun} diviseur premier $p \leq \sqrt{n}$.
+
+\textbf{Étape 1.} Puisque $n$ est composé, il s'écrit $n = a \times b$ avec $1 < a \leq b < n$.
+
+\textbf{Étape 2.} Considérons un diviseur premier $p$ de $a$ (un tel diviseur existe : le plus petit diviseur de $a$ supérieur à $1$ est nécessairement premier). Alors $p \leq a$ et $p$ divise aussi $n$.
+
+\textbf{Étape 3.} De $a \leq b$ et $n = ab$, on tire $a^2 \leq ab = n$, donc $a \leq \sqrt{n}$, puis $p \leq a \leq \sqrt{n}$.
+
+\textbf{Étape 4.} Nous avons exhibé un diviseur premier $p \leq \sqrt{n}$ de $n$ : cela contredit notre hypothèse. L'hypothèse est donc fausse, et la propriété est démontrée. \hfill$\blacksquare$
+\end{experience}
+
+\begin{exemplebox}[Le nombre 157 est-il premier ?]
+On calcule $\sqrt{157} \approx 12,5$. Les nombres premiers inférieurs ou égaux à $12$ sont : $2$, $3$, $5$, $7$, $11$.
+\begin{itemize}
+\item $157$ est impair : non divisible par $2$.
+\item $1+5+7 = 13$, non divisible par $3$ : donc $157$ non divisible par $3$.
+\item $157$ ne se termine ni par $0$ ni par $5$ : non divisible par $5$.
+\item $157 = 7 \times 22 + 3$ : non divisible par $7$.
+\item $157 = 11 \times 14 + 3$ : non divisible par $11$.
+\end{itemize}
+Aucun nombre premier $\leq \sqrt{157}$ ne divise $157$ : \textbf{$157$ est premier}.
+\end{exemplebox}
+
+\begin{methode}[Tester la primalité d'un entier $n$]
+\begin{enumerate}
+\item Calculer (ou encadrer) $\sqrt{n}$.
+\item Lister les nombres premiers $2, 3, 5, 7, 11, \dots$ jusqu'à $\sqrt{n}$.
+\item Tester la divisibilité de $n$ par chacun d'eux (les critères de divisibilité accélèrent le travail).
+\item Conclure : si aucun ne divise $n$, alors $n$ est premier ; sinon $n$ est composé et on exhibe un facteur.
+\end{enumerate}
+\end{methode}
+
+\courssub{Le crible d'Ératosthène}
+
+\textbf{Intuition.} Comment obtenir la liste de \emph{tous} les nombres premiers jusqu'à $100$ sans tester chaque nombre un par un ? L'idée du mathématicien grec Ératosthène (III\textsuperscript{e} siècle av. J.-C.) est géniale de simplicité : au lieu de chercher les premiers, \emph{éliminons les composés}. On raye les multiples de $2$ (sauf $2$), puis les multiples de $3$ (sauf $3$), puis de $5$, puis de $7$. Grâce au critère de la racine carrée ($\sqrt{100} = 10$), on peut s'arrêter à $7$ : tout ce qui n'est pas rayé est premier.
+
+\begin{methode}[Crible d'Ératosthène jusqu'à 100]
+\begin{enumerate}
+\item Écrire les entiers de $1$ à $100$ dans une grille ; rayer $1$ (non premier).
+\item Entourer $2$ et rayer tous ses multiples stricts (en bleu ci-dessous).
+\item Entourer le premier nombre non rayé ($3$) et rayer ses multiples stricts (en orange).
+\item Recommencer avec $5$ (en vert), puis $7$ (en violet).
+\item S'arrêter car $7$ est le plus grand premier $\leq \sqrt{100} = 10$. Les nombres restants sont premiers.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.52]
+\foreach \i in {0,...,9}{
+  \foreach \j in {0,...,9}{
+    \pgfmathtruncatemacro{\n}{\i*10+\j+1}
+    \draw[popline] (\j,-\i) rectangle (\j+1,-\i-1);
+  }
+}
+% 1 rayé
+\node[popmuted] at (0.5,-0.5) {1};
+% premiers
+\foreach \p/\x/\y in {2/1/0, 3/2/0, 5/4/0, 7/6/0, 11/0/1, 13/2/1, 17/6/1, 19/8/1, 23/2/2, 29/8/2, 31/0/3, 37/6/3, 41/0/4, 43/2/4, 47/6/4, 53/2/5, 59/8/5, 61/0/6, 67/6/6, 71/0/7, 73/2/7, 79/8/7, 83/2/8, 89/8/8, 97/6/9}
+  \node[popdark,font=\bfseries] at (\x+0.5,-\y-0.5) {\p};
+% multiples de 2 (hors premiers)
+\foreach \n/\x/\y in {4/3/0, 6/5/0, 8/7/0, 10/9/0, 12/1/1, 14/3/1, 16/5/1, 18/7/1, 20/9/1, 22/1/2, 24/3/2, 26/5/2, 28/7/2, 30/9/2, 32/1/3, 34/3/3, 36/5/3, 38/7/3, 40/9/3, 42/1/4, 44/3/4, 46/5/4, 48/7/4, 50/9/4, 52/1/5, 54/3/5, 56/5/5, 58/7/5, 60/9/5, 62/1/6, 64/3/6, 66/5/6, 68/7/6, 70/9/6, 72/1/7, 74/3/7, 76/5/7, 78/7/7, 80/9/7, 82/1/8, 84/3/8, 86/5/8, 88/7/8, 90/9/8, 92/1/9, 94/3/9, 96/5/9, 98/7/9, 100/9/9}
+  \node[popblue] at (\x+0.5,-\y-0.5) {\n};
+% multiples impairs de 3
+\foreach \n/\x/\y in {9/8/0, 15/4/1, 21/0/2, 27/6/2, 33/2/3, 39/8/3, 45/4/4, 51/0/5, 57/6/5, 63/2/6, 69/8/6, 75/4/7, 81/0/8, 87/6/8, 93/2/9, 99/8/9}
+  \node[poporange] at (\x+0.5,-\y-0.5) {\n};
+% multiples de 5 non déjà rayés
+\foreach \n/\x/\y in {25/4/2, 35/4/3, 55/4/5, 65/4/6, 85/4/8, 95/4/9}
+  \node[popgreen] at (\x+0.5,-\y-0.5) {\n};
+% multiples de 7 non déjà rayés
+\foreach \n/\x/\y in {49/8/4, 77/6/7, 91/0/9}
+  \node[poppurple] at (\x+0.5,-\y-0.5) {\n};
+\end{tikzpicture}
+\end{center}
+\legende{Crible d'Ératosthène de $1$ à $100$ : en bleu les multiples de $2$, en orange les multiples de $3$, en vert ceux de $5$, en violet ceux de $7$. En gras : les $25$ nombres premiers inférieurs à $100$.}
+\end{popfigure}
+
+\begin{aretenir}[Les 25 nombres premiers inférieurs à 100 (à connaître par cœur)]
+\[
+2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19,\ 23,\ 29,\ 31,\ 37,\ 41,\ 43,\ 47,\ 53,\ 59,\ 61,\ 67,\ 71,\ 73,\ 79,\ 83,\ 89,\ 97.
+\]
+\end{aretenir}
+
+\courssub{Théorème fondamental de l'arithmétique}
+
+\textbf{Intuition.} Décomposons $360$ : $360 = 36 \times 10 = (4 \times 9) \times (2 \times 5) = 2^3 \times 3^2 \times 5$. Quel que soit le chemin suivi ($360 = 12 \times 30$, etc.), on aboutit \emph{toujours} aux mêmes facteurs premiers, avec les mêmes exposants. Ce fait, en apparence évident, est l'un des théorèmes les plus importants de toutes les mathématiques.
+
+\begin{propriete}[Théorème fondamental de l'arithmétique]
+Tout entier $n \geq 2$ s'écrit de manière \textbf{unique} (à l'ordre des facteurs près) sous la forme
+\[
+n = p_1^{\alpha_1} \times p_2^{\alpha_2} \times \cdots \times p_r^{\alpha_r},
+\]
+où $p_1 < p_2 < \cdots < p_r$ sont des nombres premiers et $\alpha_1, \dots, \alpha_r$ des entiers naturels non nuls. Cette écriture est appelée \cle{décomposition en produit de facteurs premiers} de $n$.
+\end{propriete}
+
+\begin{experience}[Démonstration de l'existence, par récurrence forte]
+Montrons par récurrence forte sur $n \geq 2$ la propriété $P(n)$ : « $n$ s'écrit comme un produit de nombres premiers ».
+
+\textbf{Initialisation.} $n = 2$ est premier : c'est un produit d'un seul facteur premier. $P(2)$ est vraie.
+
+\textbf{Hérédité.} Soit $n \geq 3$. Supposons $P(k)$ vraie pour tout entier $k$ tel que $2 \leq k < n$ (hypothèse de récurrence forte). Deux cas se présentent :
+\begin{itemize}
+\item Si $n$ est premier, alors $n$ est un produit d'un seul facteur premier : $P(n)$ est vraie.
+\item Si $n$ est composé, alors $n = a \times b$ avec $2 \leq a < n$ et $2 \leq b < n$. Par hypothèse de récurrence, $a$ et $b$ sont chacun un produit de nombres premiers ; leur produit $n = ab$ est donc aussi un produit de nombres premiers : $P(n)$ est vraie.
+\end{itemize}
+\textbf{Conclusion.} Par récurrence forte, tout entier $n \geq 2$ est un produit de nombres premiers. \hfill$\blacksquare$
+
+\emph{L'unicité de la décomposition est admise} (sa démonstration repose sur le lemme d'Euclide, qui sera vu avec le théorème de Gauss) : on la signale, on l'utilise, mais elle n'est pas exigible au Baccalauréat.
+\end{experience}
+
+\begin{methode}[Décomposer un entier en produit de facteurs premiers]
+\begin{enumerate}
+\item Diviser $n$ par le plus petit nombre premier possible ($2$, puis $3$, puis $5$\dots) autant de fois que possible.
+\item Recommencer avec le quotient obtenu et le nombre premier suivant.
+\item S'arrêter lorsque le quotient vaut $1$.
+\item Présenter les divisions \emph{en colonne} et regrouper les facteurs égaux sous forme de puissances.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Décomposition de 360 en colonne]
+\[
+\begin{array}{r|l}
+360 & 2\\
+180 & 2\\
+90 & 2\\
+45 & 3\\
+15 & 3\\
+5 & 5\\
+1 &
+\end{array}
+\qquad\Longrightarrow\qquad 360 = 2^3 \times 3^2 \times 5.
+\]
+On divise par $2$ tant que c'est possible (trois fois), puis par $3$ (deux fois), puis par $5$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  every node/.style={font=\small},
+  level 1/.style={sibling distance=52mm, level distance=13mm},
+  level 2/.style={sibling distance=30mm, level distance=13mm},
+  level 3/.style={sibling distance=22mm, level distance=13mm},
+  level 4/.style={sibling distance=16mm, level distance=13mm},
+  edge from parent/.style={draw=popmuted, thick}
+]
+\node[draw=popdark, fill=popblueL, rounded corners, thick, inner sep=3pt] {$360$}
+  child { node[draw=popblue, fill=white, rounded corners, thick, inner sep=2pt] {$2$} }
+  child { node[draw=popdark, fill=popblueL, rounded corners, thick, inner sep=3pt] {$180$}
+    child { node[draw=popblue, fill=white, rounded corners, thick, inner sep=2pt] {$2$} }
+    child { node[draw=popdark, fill=popblueL, rounded corners, thick, inner sep=3pt] {$90$}
+      child { node[draw=popblue, fill=white, rounded corners, thick, inner sep=2pt] {$2$} }
+      child { node[draw=popdark, fill=popblueL, rounded corners, thick, inner sep=3pt] {$45$}
+        child { node[draw=poporange, fill=white, rounded corners, thick, inner sep=2pt] {$3$} }
+        child { node[draw=popdark, fill=poporangeL, rounded corners, thick, inner sep=3pt] {$15$}
+          child { node[draw=poporange, fill=white, rounded corners, thick, inner sep=2pt] {$3$} }
+          child { node[draw=popgreen, fill=white, rounded corners, thick, inner sep=2pt] {$5$} }
+        }
+      }
+    }
+  };
+\end{tikzpicture}
+\end{center}
+\legende{Arbre de factorisation de $360$ : les feuilles sont toutes premières, et $360 = 2^3 \times 3^2 \times 5$.}
+\end{popfigure}
+
+\courssub{Lecture des diviseurs à partir de la décomposition}
+
+\textbf{Intuition.} La décomposition en facteurs premiers est la « carte d'identité » d'un entier : elle permet de lire \emph{tous} ses diviseurs sans en oublier aucun. Un diviseur de $n$ ne peut utiliser que les facteurs premiers de $n$, avec des exposants au plus égaux à ceux de $n$.
+
+\begin{propriete}[Diviseurs d'un entier et nombre de diviseurs]
+Soit $n = p_1^{\alpha_1} \times p_2^{\alpha_2} \times \cdots \times p_r^{\alpha_r}$ la décomposition en facteurs premiers de $n \geq 2$.
+\begin{itemize}
+\item Les diviseurs positifs de $n$ sont exactement les nombres de la forme
+\[
+d = p_1^{\beta_1} \times p_2^{\beta_2} \times \cdots \times p_r^{\beta_r}
+\quad \text{avec } 0 \leq \beta_i \leq \alpha_i \text{ pour tout } i.
+\]
+\item Le nombre de diviseurs positifs de $n$ est
+\[
+(\alpha_1 + 1)(\alpha_2 + 1) \cdots (\alpha_r + 1).
+\]
+\end{itemize}
+\emph{(Complément très utile au Baccalauréat, signalé : ce résultat est souvent demandé dans les exercices.)}
+\end{propriete}
+
+La formule du nombre de diviseurs se comprend par le dénombrement : pour chaque facteur premier $p_i$, l'exposant $\beta_i$ peut prendre les $\alpha_i + 1$ valeurs $0, 1, \dots, \alpha_i$, et ces choix sont indépendants.
+
+\begin{exoresolu}[Diviseurs de 360]
+Énoncé. Déterminer le nombre de diviseurs positifs de $360$, puis écrire la liste complète des diviseurs de $12$ à partir de sa décomposition.
+\tcblower
+Solution détaillée. On a établi que $360 = 2^3 \times 3^2 \times 5^1$. Le nombre de diviseurs positifs est donc
+\[
+(3+1)(2+1)(1+1) = 4 \times 3 \times 2 = 24.
+\]
+Pour $12 = 2^2 \times 3$, les diviseurs sont les $2^{\beta_1} \times 3^{\beta_2}$ avec $0 \leq \beta_1 \leq 2$ et $0 \leq \beta_2 \leq 1$, soit $(2+1)(1+1) = 6$ diviseurs :
+\[
+2^0 3^0 = 1,\quad 2^1 3^0 = 2,\quad 2^2 3^0 = 4,\quad 2^0 3^1 = 3,\quad 2^1 3^1 = 6,\quad 2^2 3^1 = 12.
+\]
+La liste des diviseurs de $12$ est donc $\{1 ; 2 ; 3 ; 4 ; 6 ; 12\}$ : aucun n'est oublié, aucun n'est en trop.
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents autour des nombres premiers]
+\begin{itemize}
+\item Croire que $1$ est premier : il ne l'est pas, par définition.
+\item Croire que $51$ et $91$ sont premiers : $51 = 3 \times 17$ et $91 = 7 \times 13$. Toujours pousser le test de primalité jusqu'à $\sqrt{n}$.
+\item Oublier le facteur $p_i^0 = 1$ dans la liste des diviseurs : c'est ce choix d'exposant nul qui donne le diviseur $1$.
+\item Arrêter une décomposition trop tôt : dans $360 = 2^3 \times 45$, le facteur $45$ n'est pas premier ; il faut continuer jusqu'à n'avoir \emph{que} des facteurs premiers.
+\end{itemize}
+\end{attention}
+
+\courssub{Il existe une infinité de nombres premiers}
+
+Une question naturelle se pose : la liste des nombres premiers s'arrête-t-elle quelque part ? Euclide a répondu par la négative il y a plus de deux mille ans, avec l'une des plus belles démonstrations de l'histoire des mathématiques.
+
+\begin{propriete}[Infinitude des nombres premiers]
+L'ensemble des nombres premiers est infini.
+\end{propriete}
+
+\begin{experience}[Démonstration d'Euclide, par l'absurde (complément culturel formateur)]
+Supposons, par l'absurde, qu'il n'existe qu'un nombre \emph{fini} de nombres premiers : $p_1, p_2, \dots, p_r$. Formons alors l'entier
+\[
+N = p_1 \times p_2 \times \cdots \times p_r + 1.
+\]
+Comme $N \geq 2$, le théorème fondamental garantit que $N$ admet un diviseur premier $q$. Par hypothèse, $q$ est l'un des $p_i$. Mais alors $q$ divise le produit $p_1 p_2 \cdots p_r$ et divise aussi $N$ ; donc $q$ divise la différence $N - p_1 p_2 \cdots p_r = 1$. Or aucun nombre premier ne divise $1$ : contradiction. L'hypothèse de départ est fausse : il existe une infinité de nombres premiers. \hfill$\blacksquare$
+\end{experience}
+
+\begin{attention}[Subtilité de la preuve d'Euclide]
+Le nombre $N = p_1 p_2 \cdots p_r + 1$ n'est \emph{pas nécessairement premier} ! Par exemple $2 \times 3 \times 5 \times 7 \times 11 \times 13 + 1 = \num{30031} = 59 \times 509$. La preuve affirme seulement que tout diviseur premier de $N$ est un \emph{nouveau} nombre premier, absent de la liste.
+\end{attention}
+
+\begin{savaistu}[Les nombres premiers protègent ton argent]
+Chaque fois qu'un Camerounais effectue un transfert par Mobile Money (MTN MoMo, Orange Money) ou un paiement bancaire en ligne, la transaction est sécurisée par le système de cryptographie \emph{RSA}. Son principe repose directement sur cette leçon : il est très facile de \emph{multiplier} deux très grands nombres premiers (de plusieurs centaines de chiffres), mais pratiquement impossible, même pour les ordinateurs les plus puissants, de \emph{retrouver} ces deux facteurs à partir de leur produit. La sécurité de tes transactions repose donc sur la difficulté de la factorisation des grands entiers — une application concrète et quotidienne du théorème fondamental de l'arithmétique !
+\end{savaistu}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Les nombres $211$ et $221$ sont-ils premiers ? Justifier soigneusement.
+\item Décomposer en produit de facteurs premiers les entiers $756$ et $\num{1225}$.
+\item Déterminer le nombre de diviseurs positifs de $756$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Pour $211$ : $\sqrt{211} \approx 14,5$ ; on teste $2, 3, 5, 7, 11, 13$. Aucun ne divise $211$ (par exemple $211 = 7 \times 30 + 1$, $211 = 13 \times 16 + 3$) : $211$ est premier. Pour $221$ : $\sqrt{221} \approx 14,9$ et $221 = 13 \times 17$ : $221$ est composé.
+\item $756 = 2^2 \times 3^3 \times 7$ (divisions successives : $756, 378, 189, 63, 21, 7, 1$) et $\num{1225} = 5^2 \times 7^2$.
+\item $756 = 2^2 \times 3^3 \times 7^1$ possède $(2+1)(3+1)(1+1) = 24$ diviseurs positifs.
+\end{enumerate}
+\end{corrige}
+
+En résumé, les nombres premiers sont les briques élémentaires de $\mathbb{Z}$, le crible et le test de la racine carrée permettent de les identifier, et le théorème fondamental assure que tout entier possède une « carte d'identité » unique en facteurs premiers. C'est précisément cette carte d'identité que nous exploiterons dans la prochaine section pour calculer efficacement le PGCD et le PPCM de deux entiers.
+
+\coursec{PGCD, PPCM et algorithme d'Euclide}
+
+Dans la section précédente, tu as appris que tout entier naturel supérieur ou égal à 2 se décompose de manière unique en produit de facteurs premiers. Cette décomposition est une véritable \emph{carte d'identité} de l'entier. Nous allons maintenant l'exploiter pour comparer deux entiers entre eux : quels diviseurs ont-ils en commun ? Quels multiples ont-ils en commun ? Ces deux questions, en apparence anodines, sont au cœur de situations très concrètes : simplifier une fraction, paver une cour rectangulaire avec les plus grands carreaux possibles, synchroniser deux événements périodiques (par exemple deux lignes de bus qui partent ensemble de la gare routière de Yaoundé). Les outils qui répondent à ces questions s'appellent le \cle{PGCD} et le \cle{PPCM}, et le calcul du PGCD repose sur un algorithme vieux de plus de vingt-trois siècles : l'\cle{algorithme d'Euclide}.
+
+\courssub{PGCD de deux entiers}
+
+\textbf{Intuition.} Considère deux entiers, par exemple 156 et 84. Les diviseurs positifs de 156 sont nombreux, ceux de 84 aussi. Certains sont communs aux deux listes : 1, 2, 3, 4, 6, 12. Le plus grand d'entre eux est 12 : c'est le PGCD de 156 et 84. L'idée est donc très simple : parmi les diviseurs communs, on retient le plus grand.
+
+\begin{definition}[PGCD de deux entiers]
+Soient $a$ et $b$ deux entiers relatifs non tous les deux nuls. L'ensemble des diviseurs communs à $a$ et $b$ est une partie non vide (elle contient 1) et majorée de $\mathbb{Z}$ : elle admet donc un plus grand élément, appelé \cle{plus grand commun diviseur} de $a$ et $b$, noté
+\[
+\mathrm{PGCD}(a, b) \quad \text{ou encore} \quad a \wedge b.
+\]
+Par convention, $\mathrm{PGCD}(a, 0) = |a|$ pour $a \neq 0$.
+\end{definition}
+
+\begin{aretenir}[Existence et unicité]
+L'existence du PGCD vient de ce que l'ensemble des diviseurs communs est fini (tout diviseur commun $d$ vérifie $|d| \leqslant \min(|a|, |b|)$ quand $a$ et $b$ sont non nuls) et non vide. Son unicité est immédiate : un ensemble fini d'entiers possède un seul plus grand élément. De plus, comme les diviseurs de $a$ sont les mêmes que ceux de $|a|$, on a toujours
+\[
+\mathrm{PGCD}(a, b) = \mathrm{PGCD}(|a|, |b|).
+\]
+On peut donc, sans perdre de généralité, travailler avec des entiers naturels.
+\end{aretenir}
+
+\begin{exemplebox}[Lecture directe sur les listes de diviseurs]
+Les diviseurs positifs de 18 sont : 1, 2, 3, 6, 9, 18. Ceux de 24 sont : 1, 2, 3, 4, 6, 8, 12, 24. Les diviseurs communs sont 1, 2, 3, 6, donc $\mathrm{PGCD}(18, 24) = 6$, c'est-à-dire $18 \wedge 24 = 6$.
+\end{exemplebox}
+
+\courssub{Calcul du PGCD par décomposition en facteurs premiers}
+
+Grâce à la décomposition en produit de facteurs premiers vue dans la section précédente, on obtient une première méthode de calcul du PGCD.
+
+\begin{propriete}[PGCD et décomposition en facteurs premiers]
+Soient $a$ et $b$ deux entiers naturels supérieurs ou égaux à 2, décomposés en produits de facteurs premiers. Le PGCD de $a$ et $b$ est le produit des facteurs premiers \textbf{communs} aux deux décompositions, chacun étant affecté du \textbf{plus petit} des deux exposants.
+\end{propriete}
+
+\begin{exemplebox}[PGCD par décomposition]
+Calculons $\mathrm{PGCD}(360, 756)$. On a :
+\[
+360 = 2^3 \times 3^2 \times 5 \qquad \text{et} \qquad 756 = 2^2 \times 3^3 \times 7.
+\]
+Les facteurs premiers communs sont 2 et 3, affectés des plus petits exposants :
+\[
+\mathrm{PGCD}(360, 756) = 2^2 \times 3^2 = 4 \times 9 = 36.
+\]
+\end{exemplebox}
+
+\begin{attention}[Le piège classique : le mauvais exposant]
+Dans la décomposition, c'est le \textbf{plus petit} exposant qui sert au PGCD, et le \textbf{plus grand} qui servira au PPCM. Beaucoup d'élèves inversent les deux au Baccalauréat. Moyen mnémotechnique : le PGCD est le \emph{plus petit} des deux « gros » objets (il divise $a$ et $b$, donc il est plus petit qu'eux), il prend donc les \emph{petits} exposants ; le PPCM est un \emph{grand} objet (il est multiple de $a$ et de $b$), il prend les \emph{grands} exposants.
+\end{attention}
+
+Cette méthode est efficace pour des entiers de taille modeste, mais elle exige de décomposer entièrement $a$ et $b$, ce qui devient très coûteux pour de grands nombres. L'algorithme d'Euclide, que nous allons construire maintenant, évite totalement la décomposition.
+
+\courssub{Le lemme d'Euclide et l'algorithme d'Euclide}
+
+\textbf{Intuition.} Supposons que $d$ divise à la fois $a$ et $b$. Alors $d$ divise toute combinaison de $a$ et $b$, en particulier le reste $r = a - bq$ de la division euclidienne de $a$ par $b$. Réciproquement, un diviseur commun à $b$ et $r$ divise $a = bq + r$. Les couples $(a, b)$ et $(b, r)$ ont donc \emph{exactement les mêmes diviseurs communs}, et en particulier le même PGCD. Voilà l'idée, formalisons-la.
+
+\begin{propriete}[Lemme d'Euclide pour le PGCD]
+Soient $a$ et $b$ deux entiers naturels avec $b > 0$, et soit $r$ le reste de la division euclidienne de $a$ par $b$ : $a = bq + r$ avec $0 \leqslant r < b$. Alors
+\[
+\mathrm{PGCD}(a, b) = \mathrm{PGCD}(b, r).
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration du lemme d'Euclide]
+Notons $\mathcal{D}(a, b)$ l'ensemble des diviseurs communs à $a$ et $b$, et $\mathcal{D}(b, r)$ celui des diviseurs communs à $b$ et $r$. Montrons que ces deux ensembles sont égaux, par double inclusion.
+
+\textbf{Étape 1 : $\mathcal{D}(a, b) \subseteq \mathcal{D}(b, r)$.} Soit $d \in \mathcal{D}(a, b)$. Alors $d \mid a$ et $d \mid b$, donc $d$ divise toute combinaison linéaire de $a$ et $b$, en particulier $r = a - bq$. Ainsi $d \mid b$ et $d \mid r$, donc $d \in \mathcal{D}(b, r)$.
+
+\textbf{Étape 2 : $\mathcal{D}(b, r) \subseteq \mathcal{D}(a, b)$.} Soit $d \in \mathcal{D}(b, r)$. Alors $d \mid b$ et $d \mid r$, donc $d$ divise $bq + r = a$. Ainsi $d \mid a$ et $d \mid b$, donc $d \in \mathcal{D}(a, b)$.
+
+\textbf{Conclusion.} $\mathcal{D}(a, b) = \mathcal{D}(b, r)$ : les deux ensembles ont les mêmes éléments, donc le même plus grand élément, c'est-à-dire $\mathrm{PGCD}(a, b) = \mathrm{PGCD}(b, r)$. $\blacksquare$
+\end{experience}
+
+Pourquoi ce lemme est-il si puissant ? Parce qu'il remplace le couple $(a, b)$ par le couple $(b, r)$ dont les termes sont \emph{strictement plus petits}. En répétant l'opération, les restes forment une suite strictement décroissante d'entiers naturels : elle finit nécessairement par atteindre 0. Et $\mathrm{PGCD}(r_k, 0) = r_k$ : le dernier reste non nul est le PGCD cherché.
+
+\begin{methode}[Algorithme d'Euclide]
+Pour calculer $\mathrm{PGCD}(a, b)$ avec $a \geqslant b > 0$ :
+\begin{enumerate}
+\item Effectue la division euclidienne de $a$ par $b$ : $a = bq_1 + r_1$.
+\item Si $r_1 = 0$, alors $\mathrm{PGCD}(a, b) = b$. Sinon, effectue la division de $b$ par $r_1$ : $b = r_1 q_2 + r_2$.
+\item Recommence : chaque étape divise le diviseur précédent par le reste précédent.
+\item La suite des restes $r_1 > r_2 > r_3 > \cdots \geqslant 0$ est strictement décroissante : un reste finit par être nul. Le \cle{PGCD est le dernier reste non nul}.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[PGCD(1078, 322) par l'algorithme d'Euclide]
+Appliquons l'algorithme au couple $(1078, 322)$. Les divisions successives sont :
+\[
+1078 = 322 \times 3 + 112 \;;\quad 322 = 112 \times 2 + 98 \;;\quad 112 = 98 \times 1 + 14 \;;\quad 98 = 14 \times 7 + 0.
+\]
+Le dernier reste non nul est 14, donc $\mathrm{PGCD}(1078, 322) = 14$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\rowcolor{popblueL} Étape & Dividende $a$ & Diviseur $b$ & Quotient $q$ & Reste $r$ \\
+\hline
+1 & 1078 & 322 & 3 & 112 \\
+\hline
+2 & 322 & 112 & 2 & 98 \\
+\hline
+3 & 112 & 98 & 1 & \cellcolor{popgoldL}\textbf{14} \\
+\hline
+4 & 98 & 14 & 7 & 0 \\
+\hline
+\end{tabular}
+\end{center}
+\legende{Mise en œuvre de l'algorithme d'Euclide pour $\mathrm{PGCD}(1078, 322)$. Le dernier reste non nul, 14, est le PGCD.}
+\end{popfigure}
+
+\begin{attention}[Rédaction et erreurs fréquentes]
+\begin{itemize}
+\item Le PGCD est le \textbf{dernier reste non nul}, pas le dernier quotient, ni le reste nul.
+\item On commence toujours par diviser le \textbf{plus grand} par le \textbf{plus petit}. Si on te donne $\mathrm{PGCD}(322, 1078)$, la première division donne $322 = 1078 \times 0 + 322$, ce qui ne fait qu'échanger les rôles : autant réordonner dès le départ pour avoir $a \geqslant b$.
+\item Vérifie chaque division euclidienne : le reste doit satisfaire $0 \leqslant r < b$. Un reste supérieur au diviseur signale une erreur de calcul.
+\end{itemize}
+\end{attention}
+
+\courssub{PPCM de deux entiers}
+
+\textbf{Intuition.} Deux cars partent ensemble de la gare de Bafoussam à 6 h : l'un effectue son trajet aller-retour en 12 heures, l'autre en 18 heures. À quel moment se retrouveront-ils à nouveau ensemble à la gare ? Il faut un instant qui soit à la fois un multiple de 12 et de 18 : le plus petit est 36, donc à 6 h + 36 h, soit 18 h le lendemain. Ce nombre 36 est le PPCM de 12 et 18.
+
+\begin{definition}[PPCM de deux entiers]
+Soient $a$ et $b$ deux entiers relatifs non nuls. L'ensemble des multiples communs \textbf{strictement positifs} de $a$ et $b$ est une partie non vide de $\mathbb{N}$ (elle contient $|ab|$) : elle admet un plus petit élément, appelé \cle{plus petit commun multiple} de $a$ et $b$, noté
+\[
+\mathrm{PPCM}(a, b) \quad \text{ou encore} \quad a \vee b.
+\]
+\end{definition}
+
+\begin{propriete}[PPCM et décomposition en facteurs premiers]
+Le PPCM de deux entiers naturels $a$ et $b$ supérieurs ou égaux à 2 est le produit de \textbf{tous} les facteurs premiers apparaissant dans l'une au moins des deux décompositions (communs ou non), chacun étant affecté du \textbf{plus grand} des deux exposants.
+\end{propriete}
+
+\begin{exemplebox}[PPCM par décomposition]
+Avec $360 = 2^3 \times 3^2 \times 5$ et $756 = 2^2 \times 3^3 \times 7$ :
+\[
+\mathrm{PPCM}(360, 756) = 2^3 \times 3^3 \times 5 \times 7 = 8 \times 27 \times 35 = 7560.
+\]
+On retient tous les facteurs (2, 3, 5, 7) avec les plus grands exposants ($3, 3, 1, 1$).
+\end{exemplebox}
+
+\courssub{La relation fondamentale entre PGCD et PPCM}
+
+\begin{propriete}[Relation fondamentale (admise)]
+Pour tous entiers relatifs $a$ et $b$ non nuls :
+\[
+\mathrm{PGCD}(a, b) \times \mathrm{PPCM}(a, b) = |a \times b|.
+\]
+Cette propriété est \textbf{admise} (non exigible en démonstration au Baccalauréat), mais tu dois savoir l'utiliser.
+\end{propriete}
+
+\begin{exemplebox}[Vérification sur un exemple]
+Avec $a = 360$ et $b = 756$ : $\mathrm{PGCD}(360, 756) = 36$ et $\mathrm{PPCM}(360, 756) = 7560$. Or
+\[
+36 \times 7560 = 272\,160 \qquad \text{et} \qquad 360 \times 756 = 272\,160. \quad \checkmark
+\]
+L'égalité est bien vérifiée. Intuitivement, dans le produit $a \times b$, chaque facteur premier $p$ apparaît avec l'exposant somme $\alpha + \beta$, tandis que le PGCD prend $\min(\alpha, \beta)$ et le PPCM $\max(\alpha, \beta)$ ; or $\min + \max = \alpha + \beta$.
+\end{exemplebox}
+
+Cette relation est d'une grande utilité pratique : une fois le PGCD obtenu par l'algorithme d'Euclide (sans décomposition !), le PPCM s'en déduit par une simple division.
+
+\begin{exoresolu}[PGCD puis PPCM de 1078 et 322]
+\textbf{Énoncé.} (1) Déterminer $\mathrm{PGCD}(1078, 322)$ par l'algorithme d'Euclide. (2) En déduire $\mathrm{PPCM}(1078, 322)$. (3) Rendre irréductible la fraction $\dfrac{322}{1078}$.
+\tcblower
+\textbf{Solution.} (1) Les divisions euclidiennes successives (voir le tableau de la figure précédente) donnent :
+\begin{align*}
+1078 &= 322 \times 3 + 112 \\
+322 &= 112 \times 2 + 98 \\
+112 &= 98 \times 1 + 14 \\
+98 &= 14 \times 7 + 0.
+\end{align*}
+Le dernier reste non nul est 14, donc $\mathrm{PGCD}(1078, 322) = 14$.
+
+(2) D'après la relation fondamentale :
+\[
+\mathrm{PPCM}(1078, 322) = \frac{1078 \times 322}{\mathrm{PGCD}(1078, 322)} = \frac{347\,116}{14} = 24\,794.
+\]
+
+(3) On divise numérateur et dénominateur par le PGCD : $322 = 14 \times 23$ et $1078 = 14 \times 77$. Donc
+\[
+\frac{322}{1078} = \frac{14 \times 23}{14 \times 77} = \frac{23}{77},
+\]
+fraction irréductible car $\mathrm{PGCD}(23, 77) = 1$ (23 est premier et ne divise pas 77).
+\end{exoresolu}
+
+\courssub{Propriétés opératoires du PGCD}
+
+\begin{propriete}[Homogénéité du PGCD]
+Pour tout entier naturel $k$ non nul et tous entiers $a$, $b$ :
+\[
+\mathrm{PGCD}(ka, kb) = k \times \mathrm{PGCD}(a, b).
+\]
+\end{propriete}
+
+\begin{propriete}[Réduction par le PGCD]
+Soient $a$ et $b$ deux entiers non tous nuls, et $d = \mathrm{PGCD}(a, b)$. Alors il existe deux entiers $a'$ et $b'$ tels que
+\[
+a = d a', \qquad b = d b', \qquad \mathrm{PGCD}(a', b') = 1.
+\]
+Autrement dit, diviser deux entiers par leur PGCD donne toujours deux entiers \cle{premiers entre eux}.
+\end{propriete}
+
+\begin{experience}[Démonstration de la propriété de réduction]
+Comme $d = \mathrm{PGCD}(a, b)$ divise $a$ et $b$, il existe des entiers $a'$ et $b'$ avec $a = da'$ et $b = db'$. Posons $\delta = \mathrm{PGCD}(a', b')$ et montrons que $\delta = 1$.
+
+Puisque $\delta \mid a'$ et $\delta \mid b'$, l'entier $d\delta$ divise $da' = a$ et $db' = b$ : c'est donc un diviseur \emph{commun} à $a$ et $b$. Or $d$ est le \emph{plus grand} diviseur commun, donc $d\delta \leqslant d$. Comme $d > 0$, on en tire $\delta \leqslant 1$, et puisque $\delta \geqslant 1$ (1 divise toujours $a'$ et $b'$), on conclut $\delta = 1$. $\blacksquare$
+\end{experience}
+
+\begin{aretenir}[Conséquence immédiate : fractions irréductibles]
+Rendre une fraction $\dfrac{a}{b}$ irréductible revient exactement à diviser $a$ et $b$ par leur PGCD : la fraction $\dfrac{a'}{b'}$ obtenue a un numérateur et un dénominateur premiers entre eux, elle ne peut plus être simplifiée.
+\end{aretenir}
+
+\courssub{Applications : pavage, lots et périodicités}
+
+Le PGCD et le PPCM répondent à deux grandes familles de problèmes concrets :
+\begin{itemize}
+\item \textbf{PGCD} : découper en morceaux identiques les \emph{plus grands possibles} (pavage par carrés, constitution de lots identiques, nombre maximal de groupes) ;
+\item \textbf{PPCM} : retrouver une \emph{coïncidence} entre événements périodiques (rencontres, alignements, cycles communs).
+\end{itemize}
+
+\begin{exoresolu}[Pavage d'une cour rectangulaire]
+\textbf{Énoncé.} Un commerçant de Douala veut carreler entièrement sa cour rectangulaire de \SI{156}{cm} sur \SI{84}{cm} avec des carreaux carrés identiques, dont le côté est un nombre entier de centimètres, sans aucune découpe. (1) Quelle est la plus grande dimension possible des carreaux ? (2) Combien de carreaux faudra-t-il alors ?
+\tcblower
+\textbf{Solution.} (1) Le côté $c$ du carreau doit diviser à la fois 156 et 84 (pour paver sans découpe les deux dimensions). La plus grande valeur possible est donc $c = \mathrm{PGCD}(156, 84)$. Par l'algorithme d'Euclide :
+\begin{align*}
+156 &= 84 \times 1 + 72 \\
+84 &= 72 \times 1 + 12 \\
+72 &= 12 \times 6 + 0.
+\end{align*}
+Donc $c = \mathrm{PGCD}(156, 84) = 12$ cm.
+
+(2) Le long de la longueur : $156 = 12 \times 13$, soit 13 carreaux. Le long de la largeur : $84 = 12 \times 7$, soit 7 carreaux. Il faudra donc $13 \times 7 = 91$ carreaux.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.055]
+\fill[popcream] (0,0) rectangle (156,84);
+\draw[popline, thin] (0,0) grid[step=12] (156,84);
+\draw[popdark, very thick] (0,0) rectangle (156,84);
+\draw[popblue, thick, <->] (0,-8) -- (156,-8) node[midway, below, popdark] {\SI{156}{cm} $= 13 \times 12$};
+\draw[popblue, thick, <->] (-8,0) -- (-8,84) node[midway, above, rotate=90, popdark] {\SI{84}{cm} $= 7 \times 12$};
+\draw[poporange, thick, <->] (0,90) -- (12,90) node[midway, above, popdark] {\SI{12}{cm}};
+\fill[poppink!40] (0,72) rectangle (12,84);
+\draw[popdark] (0,72) rectangle (12,84);
+\end{tikzpicture}
+\end{center}
+\legende{Pavage du rectangle $156 \times 84$ par des carrés de côté $\mathrm{PGCD}(156, 84) = 12$ : 13 colonnes et 7 rangées, soit 91 carreaux, sans aucune découpe.}
+\end{popfigure}
+
+\begin{exoresolu}[Lots identiques et périodicité commune]
+\textbf{Énoncé.} (a) Une coopérative de l'Ouest dispose de 1078 kg de café et 322 kg de cacao. Elle veut constituer des lots identiques contenant chacun du café et du cacao, en utilisant intégralement les stocks. Quel est le nombre maximal de lots, et que contient chaque lot ? (b) Deux lignes de transport urbain quittent ensemble l'agence à 5 h 30 ; les rotations durent respectivement 42 min et 70 min. À quelle heure les deux véhicules repartiront-ils à nouveau ensemble ?
+\tcblower
+\textbf{Solution.} (a) Le nombre de lots doit diviser 1078 et 322 : le nombre maximal est $\mathrm{PGCD}(1078, 322) = 14$ lots (calculé plus haut). Chaque lot contient $1078 \div 14 = 77$ kg de café et $322 \div 14 = 23$ kg de cacao.
+
+(b) Il faut un multiple commun de 42 et 70, le plus petit possible : $\mathrm{PPCM}(42, 70)$. Or $42 = 2 \times 3 \times 7$ et $70 = 2 \times 5 \times 7$, donc $\mathrm{PPCM}(42, 70) = 2 \times 3 \times 5 \times 7 = 210$ min $= 3$ h $30$. Les deux véhicules repartiront ensemble à $5\text{ h }30 + 3\text{ h }30 = 9$ h.
+\end{exoresolu}
+
+\begin{methode}[Choisir entre PGCD et PPCM dans un problème]
+\begin{enumerate}
+\item Si l'énoncé demande de \textbf{partager, découper, grouper} en parts identiques les plus grandes possibles (ou en nombre maximal), c'est un problème de \cle{PGCD}.
+\item Si l'énoncé demande quand deux événements périodiques \textbf{coïncident à nouveau}, ou le plus petit contenant commun, c'est un problème de \cle{PPCM}.
+\item Identifie les grandeurs en jeu, calcule par Euclide ou par décomposition, puis \textbf{conclus par une phrase} dans le contexte de l'énoncé (indispensable au Baccalauréat).
+\end{enumerate}
+\end{methode}
+
+\begin{savaistu}[Euclide, un algorithme de 2300 ans toujours vivant]
+L'algorithme que tu viens d'apprendre figure dans le livre VII des \emph{Éléments} d'Euclide, rédigés vers 300 av. J.-C. : c'est l'un des plus anciens algorithmes encore utilisés aujourd'hui sous sa forme originelle. Il est au cœur de l'informatique moderne : le chiffrement RSA, qui sécurise tes transactions Mobile Money (MTN MoMo, Orange Money), repose sur l'arithmétique des grands entiers, où le PGCD et l'algorithme d'Euclide étendu jouent un rôle central. Un calcul que tu fais à la main en une minute protège chaque jour des milliards de francs CFA de transactions au Cameroun et dans le monde.
+\end{savaistu}
+
+\begin{exercice}[Pour t'entraîner]
+\begin{enumerate}
+\item Calculer $\mathrm{PGCD}(1632, 714)$ par l'algorithme d'Euclide, puis $\mathrm{PPCM}(1632, 714)$.
+\item Rendre irréductible la fraction $\dfrac{1632}{714}$.
+\item Un fleuriste dispose de 126 roses et 210 œillets. Il veut composer des bouquets identiques en utilisant toutes les fleurs. Quel est le nombre maximal de bouquets et leur composition ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercices proposés]
+(1) $1632 = 714 \times 2 + 204$ ; $714 = 204 \times 3 + 102$ ; $204 = 102 \times 2 + 0$. Donc $\mathrm{PGCD}(1632, 714) = 102$. Puis $\mathrm{PPCM}(1632, 714) = \dfrac{1632 \times 714}{102} = 16 \times 714 = 11\,424$.
+
+(2) $1632 = 102 \times 16$ et $714 = 102 \times 7$, donc $\dfrac{1632}{714} = \dfrac{16}{7}$, irréductible car $\mathrm{PGCD}(16, 7) = 1$.
+
+(3) $\mathrm{PGCD}(126, 210)$ : $210 = 126 \times 1 + 84$ ; $126 = 84 \times 1 + 42$ ; $84 = 42 \times 2 + 0$. Donc 42 bouquets, chacun composé de $126 \div 42 = 3$ roses et $210 \div 42 = 5$ œillets.
+\end{corrige}
+
+\coursec{Nombres premiers entre eux et problèmes d'application}
+
+Dans la section précédente, tu as appris à calculer le PGCD de deux entiers par l'algorithme d'Euclide ou par décomposition en facteurs premiers. Une question naturelle se pose alors : que se passe-t-il lorsque ce PGCD vaut $1$, c'est-à-dire lorsque deux entiers n'ont \emph{aucun} diviseur commun autre que $1$ ? Ce cas, en apparence banal, est en réalité l'un des plus féconds de toute l'arithmétique : il est à la base des fractions irréductibles, du théorème de Gauss, de la cryptographie (le système RSA qui sécurise tes transactions Mobile Money repose dessus !) et de la résolution de nombreux problèmes concrets du Baccalauréat. Cette dernière section te donne les outils pour reconnaître, utiliser et exploiter cette situation, puis pour traduire en langage arithmétique les problèmes concrets de partage, de calendrier et de clés de contrôle.
+
+\courssub{Nombres premiers entre eux : définition et caractérisations}
+
+\textbf{Intuition.} Imagine deux engrenages : l'un a $9$ dents, l'autre $16$. Aucun diviseur commun (autre que $1$) ne permet de les « synchroniser » partiellement : on dit qu'ils sont \emph{premiers entre eux}. Attention à l'intuition trompeuse : ni $9$ ni $16$ n'est un nombre premier !
+
+\begin{definition}[Nombres premiers entre eux]
+Soient $a$ et $b$ deux entiers relatifs non tous deux nuls. On dit que $a$ et $b$ sont \cle{premiers entre eux} (ou \emph{étrangers}) lorsque :
+\[ \operatorname{PGCD}(a, b) = 1. \]
+Autrement dit, les seuls diviseurs communs de $a$ et $b$ sont $1$ et $-1$.
+\end{definition}
+
+\begin{exemplebox}[Exemples et contre-exemples]
+\begin{itemize}
+\item $9$ et $16$ : $\operatorname{PGCD}(9,16)=1$, donc $9$ et $16$ sont premiers entre eux, bien qu'aucun des deux ne soit premier.
+\item $15$ et $28$ : $15 = 3 \times 5$ et $28 = 2^2 \times 7$ : premiers entre eux.
+\item $12$ et $18$ : $\operatorname{PGCD}(12,18)=6 \neq 1$ : ils ne sont \textbf{pas} premiers entre eux.
+\item Tout nombre premier $p$ est premier avec tout entier qu'il ne divise pas : par exemple $7$ et $30$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Premier entre eux $\neq$ nombre premier]
+C'est \textbf{l'erreur la plus fréquente} au Bac. « Être premier » est une propriété d'\emph{un seul} entier ; « être premiers entre eux » est une propriété d'\emph{un couple} d'entiers. Ainsi $9$ et $16$ sont premiers entre eux sans qu'aucun des deux ne soit premier. Rédige toujours : « $\operatorname{PGCD}(9,16)=1$, donc $9$ et $16$ sont premiers entre eux », et jamais « $9$ et $16$ sont premiers ».
+\end{attention}
+
+\begin{propriete}[Caractérisations équivalentes]
+Soient $a$ et $b$ deux entiers non nuls. Les affirmations suivantes sont équivalentes :
+\begin{enumerate}
+\item $a$ et $b$ sont premiers entre eux ;
+\item $a$ et $b$ n'ont \textbf{aucun facteur premier commun} dans leurs décompositions ;
+\item la fraction $\dfrac{a}{b}$ est \cle{irréductible} (on ne peut plus la simplifier).
+\end{enumerate}
+\end{propriete}
+
+\begin{propriete}[Réduction par le PGCD]
+Soient $a$ et $b$ deux entiers non nuls et $d = \operatorname{PGCD}(a,b)$. Alors il existe deux entiers $a'$ et $b'$ \textbf{premiers entre eux} tels que :
+\[ a = d\,a' \quad \text{et} \quad b = d\,b', \qquad \operatorname{PGCD}(a',b') = 1. \]
+Autrement dit : $\dfrac{a}{d}$ et $\dfrac{b}{d}$ sont premiers entre eux. C'est exactement le procédé qui rend une fraction irréductible.
+\end{propriete}
+
+\begin{exemplebox}[Application systématique]
+$\operatorname{PGCD}(156, 84) = 12$ (vu à la section précédente). Alors $156 = 12 \times 13$ et $84 = 12 \times 7$, et $\operatorname{PGCD}(13,7)=1$ : la fraction $\dfrac{156}{84} = \dfrac{13}{7}$ est irréductible. Ce réflexe — \emph{diviser par le PGCD pour obtenir un couple premier entre eux} — est la clé de voûte de la plupart des exercices d'arithmétique du Bac.
+\end{exemplebox}
+
+\courssub{Le théorème de Gauss}
+
+\begin{propriete}[Théorème de Gauss — admis]
+Soient $a$, $b$, $c$ trois entiers. Si $a$ divise le produit $bc$ et si $a$ et $b$ sont premiers entre eux, alors $a$ divise $c$ :
+\[ a \mid bc \ \text{et}\ \operatorname{PGCD}(a,b)=1 \ \Longrightarrow\ a \mid c. \]
+\emph{Ce théorème est admis en Terminale ; c'est un complément très utile au Bac, signalé comme tel par le programme. Sa démonstration repose sur le théorème de Bézout (hors programme).}
+\end{propriete}
+
+\textbf{Idée intuitive.} Si $a$ divise $bc$ sans partager aucun facteur premier avec $b$, alors tous les facteurs premiers de $a$ doivent se trouver dans $c$ : donc $a$ divise $c$.
+
+\begin{exemplebox}[Utilisation typique du théorème de Gauss]
+On cherche les entiers $n$ tels que $7$ divise $5n$. Comme $\operatorname{PGCD}(7,5)=1$, le théorème de Gauss donne : $7 \mid n$. Les solutions sont donc les multiples de $7$.
+
+Autre usage classique : montrer qu'un entier est divisible par $15$. Si $3 \mid n$ et $5 \mid n$, alors $n = 3k$ et $5 \mid 3k$ ; or $\operatorname{PGCD}(5,3)=1$, donc par Gauss $5 \mid k$, d'où $n = 15k'$ : $15 \mid n$.
+\end{exemplebox}
+
+\begin{attention}[Hypothèse indispensable]
+L'hypothèse $\operatorname{PGCD}(a,b)=1$ est \textbf{indispensable}. Contre-exemple : $6 \mid 4 \times 9 = 36$, mais $6$ ne divise ni $4$ ni $9$. Ici $\operatorname{PGCD}(6,4)=2 \neq 1$, donc Gauss ne s'applique pas. Cite toujours l'hypothèse dans ta rédaction : « or $\operatorname{PGCD}(a,b)=1$, donc d'après le théorème de Gauss... ».
+\end{attention}
+
+\courssub{Problèmes de partage en lots identiques : penser PGCD}
+
+\textbf{Situation.} Une entreprise de Douala veut distribuer $156$ clés USB et $84$ câbles à ses techniciens, en constituant des lots \emph{tous identiques} (même nombre de clés et même nombre de câbles dans chaque lot), sans reste. Quel est le nombre maximal de lots ?
+
+Chaque lot contient $k$ clés et $c$ câbles ; le nombre $n$ de lots doit diviser à la fois $156$ et $84$ : c'est un \emph{diviseur commun}. Le nombre maximal de lots est donc $\operatorname{PGCD}(156,84) = 12$.
+
+\begin{methode}[Problème de lots, de pavage ou de partage maximal]
+\begin{enumerate}
+\item Repérer la contrainte : « lots identiques », « paquets identiques », « carreaux carrés les plus grands possibles », « aucun reste ».
+\item Traduire : le nombre cherché doit \textbf{diviser chacune} des quantités données.
+\item Conclure que la valeur maximale est le \cle{PGCD} des quantités.
+\item Calculer le PGCD (algorithme d'Euclide), puis donner la composition d'un lot en divisant chaque quantité par ce PGCD.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.92]
+% Titre
+\node[font=\bfseries, popdark] at (5.5,3.1) {156 clés USB et 84 câbles : 12 lots identiques};
+% Paquets
+\foreach \i in {0,...,5}{
+  \pgfmathsetmacro{\x}{1.1*\i}
+  \draw[fill=popblueL, draw=popblue, rounded corners=2pt] (\x,1.4) rectangle (\x+0.9,2.5);
+  \node[font=\scriptsize, popdark] at (\x+0.45,2.15) {13 clés};
+  \node[font=\scriptsize, popdark] at (\x+0.45,1.7) {7 câbles};
+}
+\foreach \i in {6,...,11}{
+  \pgfmathsetmacro{\x}{1.1*(\i-6)}
+  \draw[fill=poporangeL, draw=poporange, rounded corners=2pt] (\x,-0.2) rectangle (\x+0.9,0.9);
+  \node[font=\scriptsize, popdark] at (\x+0.45,0.55) {13 clés};
+  \node[font=\scriptsize, popdark] at (\x+0.45,0.1) {7 câbles};
+}
+\node[font=\scriptsize, popmuted] at (2.75,-0.75) {$156 = 12 \times 13$ \quad ; \quad $84 = 12 \times 7$ \quad ; \quad $\operatorname{PGCD}(156,84)=12$};
+\end{tikzpicture}
+\end{center}
+\legende{Partage de $156$ clés USB et $84$ câbles en $12$ lots identiques : chaque lot contient $13$ clés et $7$ câbles. Le nombre de lots est le PGCD des deux quantités.}
+\end{popfigure}
+
+\courssub{Coïncidences périodiques : penser PPCM}
+
+\textbf{Situation.} À Yaoundé, un contrôleur CAMTEL passe dans un quartier tous les $12$ jours, et un agent ENEO tous les $18$ jours. Ils se rencontrent aujourd'hui. Dans combien de jours se rencontreront-ils à nouveau ?
+
+Les passages du premier ont lieu aux jours multiples de $12$, ceux du second aux jours multiples de $18$. La prochaine rencontre a lieu au plus petit multiple commun strictement positif : $\operatorname{PPCM}(12,18) = 36$ jours.
+
+\begin{methode}[Problème de coïncidence de cycles]
+\begin{enumerate}
+\item Repérer la situation périodique : « tous les ... jours », « se reproduisent en même temps », « à nouveau simultanément ».
+\item Traduire : l'instant cherché est un \textbf{multiple commun} des périodes.
+\item Conclure que la première coïncidence a lieu au \cle{PPCM} des périodes.
+\item Calculer le PPCM, par exemple via $\operatorname{PPCM}(a,b) = \dfrac{a \times b}{\operatorname{PGCD}(a,b)}$.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+% Frise des jours
+\draw[->, thick, popdark] (0,0) -- (12.6,0);
+\foreach \j in {0,...,12}{
+  \pgfmathsetmacro{\x}{\j}
+  \draw[popdark] (\x,0) -- (\x,-0.12);
+  \node[below, font=\scriptsize, popmuted] at (\x,-0.12) {\the\numexpr\j*3\relax};
+}
+% Multiples de 12 (en unités de 3 jours : 0,4,8,12)
+\foreach \p in {0,4,8,12}{
+  \draw[popblue, very thick] (\p,0.15) -- (\p,0.55);
+  \fill[popblue] (\p,0.6) circle (0.09);
+}
+\node[above, font=\scriptsize, popblue] at (6,0.65) {CAMTEL : tous les 12 jours};
+% Multiples de 18 (0,6,12)
+\foreach \p in {0,6,12}{
+  \draw[poporange, very thick] (\p,-0.35) -- (\p,-0.75);
+  \fill[poporange] (\p,-0.8) circle (0.09);
+}
+\node[below, font=\scriptsize, poporange] at (6,-0.95) {ENEO : tous les 18 jours};
+% Coïncidences
+\foreach \p in {0,12}{
+  \draw[popgreen, very thick, dashed] (\p,0.75) -- (\p,-1.0);
+  \node[font=\scriptsize\bfseries, popgreen, rotate=90, anchor=south] at (\p-0.18,0.15) {rencontre};
+}
+\end{tikzpicture}
+\end{center}
+\legende{Frise calendaire (en jours) : les passages de périodes $12$ et $18$ coïncident aux jours $0$ et $36 = \operatorname{PPCM}(12,18)$.}
+\end{popfigure}
+
+\begin{exoresolu}[Deux robinets qui gouttent]
+Un robinet $A$ laisse tomber une goutte toutes les $45$ secondes, un robinet $B$ toutes les $60$ secondes. À l'instant $t=0$, les deux gouttes tombent en même temps. Au bout de combien de temps deux gouttes tomberont-elles à nouveau simultanément ?
+\tcblower
+Les instants de chute de $A$ sont les multiples de $45$, ceux de $B$ les multiples de $60$. L'instant cherché est $\operatorname{PPCM}(45,60)$.
+\[ 45 = 3^2 \times 5, \qquad 60 = 2^2 \times 3 \times 5. \]
+En prenant chaque facteur premier avec son plus grand exposant :
+\[ \operatorname{PPCM}(45,60) = 2^2 \times 3^2 \times 5 = 180. \]
+Les deux gouttes tomberont à nouveau ensemble au bout de $180$ secondes, soit $3$ minutes.
+\end{exoresolu}
+
+\courssub{Problèmes de congruences : restes, calendriers et clés de contrôle}
+
+\textbf{Restes dans une division.} De nombreux problèmes se ramènent à chercher un entier connaissant ses restes modulo plusieurs nombres. La traduction systématique est : « $n$ a pour reste $r$ dans la division par $m$ » $\Longleftrightarrow$ $n \equiv r \pmod{m}$.
+
+\begin{methode}[Problème de calendrier : jour de la semaine d'une date]
+\begin{enumerate}
+\item Compter le nombre $N$ de jours écoulés entre une date de référence dont on connaît le jour et la date visée (attention aux années bissextiles : $366$ jours, soit un jour de plus).
+\item Réduire $N$ modulo $7$ : seul le reste compte, car la semaine a $7$ jours.
+\item Avancer du reste obtenu à partir du jour de référence.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Quel jour étions-nous ?]
+Le 1\ier{} janvier 2024 était un lundi. Quel jour de la semaine était le 20 mai 2024 (fête nationale) ?
+\tcblower
+Comptons les jours écoulés du 1\ier{} janvier au 20 mai 2024 (année bissextile) :
+\[ N = 31 + 29 + 31 + 30 + 19 = 140 \text{ jours}. \]
+Réduction modulo $7$ : $140 = 7 \times 20$, donc $140 \equiv 0 \pmod{7}$. Le 20 mai 2024 tombe le même jour que le 1\ier{} janvier : un \textbf{lundi}. (Vérification : $140$ jours, c'est exactement $20$ semaines.)
+\end{exoresolu}
+
+\textbf{Clés de contrôle.} Les numéros de compte bancaire (RIB), les codes-barres et bien des identifiants comportent une \emph{clé} calculée par congruence, qui permet de détecter les erreurs de saisie. Principe simplifié d'une clé modulo $97$ : on forme un nombre $N$ à partir des chiffres du document, et la clé $k$ est choisie pour que $N + k \equiv 0 \pmod{97}$, c'est-à-dire $k \equiv -N \pmod{97}$ avec $1 \le k \le 97$.
+
+\begin{exemplebox}[Vérification d'une clé de contrôle de facture (principe simplifié)]
+Une facture porte le numéro de corps $N = 123456$ et la clé $k = 76$. Pour vérifier, on calcule $N + k$ modulo $97$ :
+\[ 123456 + 76 = 123532. \]
+Division euclidienne : $123532 = 97 \times 1273 + 51$. Le reste est $51 \neq 0$ : la facture est \textbf{invalide} (erreur de saisie probable). La clé correcte aurait été $k'$ telle que $123456 + k' \equiv 0 \pmod{97}$. Or $123456 = 97 \times 1272 + 72$, donc $123456 \equiv 72 \pmod{97}$ et $k' \equiv -72 \equiv 25 \pmod{97}$ : la clé correcte est $25$.
+\end{exemplebox}
+
+\begin{exercice}[Pour t'entraîner]
+\begin{enumerate}
+\item Montrer que $35$ et $12$ sont premiers entre eux, puis en déduire les entiers $n$ tels que $12$ divise $35n$.
+\item Un fleuriste de Bafoussam dispose de $126$ roses et $90$ œillets. Il veut composer des bouquets identiques en utilisant toutes les fleurs. Quel est le nombre maximal de bouquets et leur composition ?
+\item Le 1\ier{} janvier 2025 est un mercredi. Quel jour de la semaine sera le 1\ier{} janvier 2026 ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $35 = 5 \times 7$ et $12 = 2^2 \times 3$ : aucun facteur premier commun, donc $\operatorname{PGCD}(35,12)=1$. Si $12 \mid 35n$ avec $\operatorname{PGCD}(12,35)=1$, le théorème de Gauss donne $12 \mid n$ : les solutions sont les multiples de $12$.
+\item Le nombre de bouquets divise $126$ et $90$ ; le maximum est $\operatorname{PGCD}(126,90) = 18$ bouquets. Chaque bouquet contient $126/18 = 7$ roses et $90/18 = 5$ œillets.
+\item 2025 n'est pas bissextile : $365$ jours s'écoulent, et $365 = 7 \times 52 + 1 \equiv 1 \pmod{7}$. Le 1\ier{} janvier 2026 sera un \textbf{jeudi}.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Synthèse : traduire un énoncé concret en langage arithmétique}
+
+\begin{aretenir}[Le dictionnaire de l'arithmétique]
+Face à un problème concret, pose-toi la bonne question :
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|l|}
+\hline
+\rowcolor{popblueL} \textbf{Situation de l'énoncé} & \textbf{Outil} \\
+\hline
+« reste de la division », « jour de la semaine », « clé de contrôle » & Congruence modulo $n$ \\
+\hline
+« lots identiques », « paquets identiques », « plus grand carreau possible », « sans reste » & $\operatorname{PGCD}$ \\
+\hline
+« en même temps », « à nouveau simultanément », « tous les ... jours » & $\operatorname{PPCM}$ \\
+\hline
+« fraction irréductible », « simplifier au maximum » & Diviser par le $\operatorname{PGCD}$ \\
+\hline
+« $a$ divise $bc$ » avec $a$ et $b$ premiers entre eux & Théorème de Gauss : $a$ divise $c$ \\
+\hline
+\end{tabularx}
+\end{center}
+Et retiens le réflexe fondamental : si $d = \operatorname{PGCD}(a,b)$, alors $a = da'$ et $b = db'$ avec $a'$ et $b'$ premiers entre eux — c'est presque toujours le premier pas de la solution.
+\end{aretenir}
+
+\begin{savaistu}[L'arithmétique protège ton argent]
+Le chiffrement RSA, qui sécurise les transactions bancaires et les paiements Mobile Money (MTN MoMo, Orange Money) au Cameroun et dans le monde, repose entièrement sur les notions de cette leçon : nombres premiers, PGCD, nombres premiers entre eux et congruences. La sécurité du système vient du fait qu'il est facile de multiplier deux grands nombres premiers, mais extrêmement difficile de retrouver ces facteurs à partir du produit. L'arithmétique, longtemps considérée comme la plus abstraite des mathématiques, est devenue la gardienne de l'économie numérique !
+\end{savaistu}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu devras être capable de :
+\begin{itemize}
+\item mobiliser \emph{simultanément} la division euclidienne, le PGCD, le PPCM, les congruences et les critères de divisibilité dans une situation authentique de gestion ;
+\item choisir, parmi plusieurs méthodes (algorithme d'Euclide, décomposition en facteurs premiers), celle qui est la plus efficace, et \emph{vérifier} un résultat par une méthode différente ;
+\item rédiger une justification complète et rigoureuse de chaque étape, comme on l'exige au Baccalauréat ;
+\item travailler en groupe, répartir les tâches et présenter une restitution orale argumentée.
+\end{itemize}
+
+\courssub{Situation}
+
+La \textbf{Coopérative des Planteurs de Njombé} (département du Moungo, région du Littoral) regroupe \num{84} producteurs de cacao et de café. En cette fin de campagne, le magasin de la coopérative a enregistré les entrées suivantes : \SI{1260}{\kg} de cacao marchand et \SI{1008}{\kg} de café arabica.
+
+Le gérant, M.~Etoundi, doit organiser la commercialisation et la logistique. Il te sollicite, toi et ton groupe, en qualité de stagiaires comptables, pour résoudre quatre problèmes.
+
+\textbf{Problème 1 : constitution des lots.} Pour une vente groupée à un exportateur de Douala, M.~Etoundi veut répartir la totalité du cacao et la totalité du café en \emph{lots identiques}, chaque lot contenant la même masse de cacao et la même masse de café, sans aucun reste. Il souhaite constituer le \textbf{plus grand nombre possible} de lots.
+
+\textbf{Problème 2 : calendrier de collecte.} Le camion de la société de transport passe à la coopérative \textbf{tous les 14 jours}. Le contrôleur qualité de l'Office National du Cacao et du Café passe, lui, \textbf{tous les 21 jours}. Ce lundi 6 janvier, les deux sont passés le même jour. M.~Etoundi veut savoir au bout de combien de jours ils se présenteront à nouveau le même jour, et quel jour de la semaine ce sera, afin de bloquer cette date sur le calendrier mural.
+
+\textbf{Problème 3 : vérification d'une facture.} Le fournisseur d'engrais a envoyé la facture n$^{\text{o}}$~\num{4712835}. Le dernier chiffre est une \emph{clé de contrôle} : il doit être égal au reste de la division euclidienne par 9 de la somme des six premiers chiffres. Avant de payer, M.~Etoundi veut vérifier que la facture n'est pas fausse.
+
+\textbf{Problème 4 : stock et conditionnement.} La production totale de la campagne précédente s'écrit, en kilogrammes, sous la forme factorisée $N = 2^{10}\times 3^{3}\times 5\times 7$. La coopérative envisage de conditionner cette production en sacs de \SI{11}{\kg} exactement. M.~Etoundi demande : la production se répartit-elle exactement dans des sacs de \SI{11}{\kg} ? Sinon, quel sera le reste ?
+
+\courssub{Consignes}
+
+Travail en groupes de 4 élèves. Durée : 1~h~30, suivie d'une restitution orale de 5 minutes par groupe. Chaque réponse doit être accompagnée d'une \textbf{justification écrite} citant la propriété utilisée.
+
+\begin{enumerate}
+\item \textbf{Lots identiques.}
+\begin{enumerate}
+\item Traduire mathématiquement la contrainte « lots identiques, sans reste » par une propriété de divisibilité. Quel nombre faut-il calculer ?
+\item Calculer $\mathrm{PGCD}(\num{1260}\,;\,\num{1008})$ par l'\emph{algorithme d'Euclide}, en écrivant toutes les divisions euclidiennes.
+\item Vérifier le résultat par la \emph{décomposition en produits de facteurs premiers} de \num{1260} et de \num{1008}.
+\item Conclure : donner le nombre de lots et la composition de chaque lot (masse de cacao, masse de café).
+\end{enumerate}
+\item \textbf{Calendrier.}
+\begin{enumerate}
+\item Expliquer pourquoi le nombre de jours cherché est le PPCM de 14 et 21, puis le calculer (on pourra utiliser la relation $\mathrm{PGCD}(a;b)\times\mathrm{PPCM}(a;b)=a\times b$).
+\item À l'aide d'une congruence modulo 7, déterminer le jour de la semaine de la prochaine visite simultanée.
+\end{enumerate}
+\item \textbf{Facture.}
+\begin{enumerate}
+\item Calculer la somme des six premiers chiffres du numéro de facture, puis son reste modulo 9.
+\item La clé de contrôle est-elle correcte ? La facture est-elle valide ?
+\item Rappeler pourquoi « un nombre est congru modulo 9 à la somme de ses chiffres ».
+\end{enumerate}
+\item \textbf{Conditionnement en sacs de 11 kg.}
+\begin{enumerate}
+\item Déterminer, à l'aide des congruences, les restes de $2^{10}$, $3^{3}$, $5$ et $7$ modulo 11.
+\item En déduire le reste de $N$ modulo 11, puis répondre à la question de M.~Etoundi.
+\end{enumerate}
+\item \textbf{Restitution.} Préparer une affiche récapitulant les quatre réponses et les justifier oralement.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de l'activité]
+\begin{itemize}
+\item \textbf{Division euclidienne :} pour $a\in\mathbb{Z}$, $b\in\mathbb{N}^{*}$, il existe un unique couple $(q;r)$ tel que $a=bq+r$ avec $0\le r<b$.
+\item \textbf{PGCD :} $\mathrm{PGCD}(a;b)$ est le plus grand diviseur commun à $a$ et $b$ ; il se calcule par l'algorithme d'Euclide (le PGCD est le dernier reste non nul) ou par décomposition en facteurs premiers (facteurs communs affectés du plus petit exposant).
+\item \textbf{PPCM :} $\mathrm{PPCM}(a;b)$ est le plus petit multiple commun strictement positif ; $\mathrm{PGCD}(a;b)\times\mathrm{PPCM}(a;b)=a\times b$.
+\item \textbf{Congruences :} si $a\equiv a'\ [n]$ et $b\equiv b'\ [n]$, alors $a+b\equiv a'+b'\ [n]$, $ab\equiv a'b'\ [n]$ et $a^{k}\equiv a'^{k}\ [n]$.
+\item \textbf{Critère de divisibilité par 9 :} un entier est congru modulo 9 à la somme de ses chiffres (car $10\equiv 1\ [9]$).
+\item \textbf{Divisibilité par 11 :} $10\equiv -1\ [11]$, donc $10^{k}\equiv (-1)^{k}\ [11]$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé complet de l'activité]
+\textbf{1.} Nombre maximal de lots identiques de cacao et café à partir de \SI{1260}{\kg} et \SI{1008}{\kg}.
+\textbf{2.} Prochaine visite simultanée du camion (14 jours) et du contrôleur (21 jours).
+\textbf{3.} Validité de la facture \num{4712835} (clé = reste modulo 9).
+\textbf{4.} Reste de $N=2^{10}\times 3^{3}\times 5\times 7$ modulo 11.
+\tcblower
+\textbf{Problème 1 : les lots.}
+
+\textbf{(a)} Constituer des lots identiques sans reste signifie que le nombre de lots divise à la fois \num{1260} et \num{1008}. Le nombre \emph{maximal} de lots est donc $\mathrm{PGCD}(\num{1260}\,;\,\num{1008})$.
+
+\textbf{(b)} Algorithme d'Euclide :
+\begin{align*}
+\num{1260} &= \num{1008}\times 1 + 252\\
+\num{1008} &= 252\times 4 + 0
+\end{align*}
+Le dernier reste non nul est 252, donc $\mathrm{PGCD}(\num{1260}\,;\,\num{1008})=252$.
+
+\textbf{(c)} Vérification par décomposition :
+\[\num{1260}=2^{2}\times 3^{2}\times 5\times 7 \qquad ; \qquad \num{1008}=2^{4}\times 3^{2}\times 7.\]
+En retenant les facteurs communs avec le plus petit exposant :
+\[\mathrm{PGCD}=2^{2}\times 3^{2}\times 7=4\times 9\times 7=252.\ \checkmark\]
+
+\textbf{(d)} Conclusion : on constitue \textbf{252 lots}. Chaque lot contient $\num{1260}\div 252=\SI{5}{\kg}$ de cacao et $\num{1008}\div 252=\SI{4}{\kg}$ de café.
+
+\textbf{Problème 2 : le calendrier.}
+
+\textbf{(a)} Les passages communs ont lieu aux multiples communs de 14 et 21 ; la \emph{première} nouvelle coïncidence a lieu au bout de $\mathrm{PPCM}(14;21)$ jours. Or $\mathrm{PGCD}(14;21)=7$, donc :
+\[\mathrm{PPCM}(14;21)=\dfrac{14\times 21}{7}=42.\]
+La prochaine visite simultanée aura lieu dans \textbf{42 jours}.
+
+\textbf{(b)} Les jours de la semaine se répètent tous les 7 jours : on raisonne modulo 7. Comme $42=7\times 6$, on a $42\equiv 0\ [7]$. Le $42^{\text{ème}}$ jour après un lundi est donc un \textbf{lundi} (le lundi 17 février).
+
+\textbf{Problème 3 : la facture.}
+
+\textbf{(a)} Somme des six premiers chiffres : $4+7+1+2+8+3=25$. Reste de 25 modulo 9 : $25=9\times 2+7$, donc $25\equiv 7\ [9]$.
+
+\textbf{(b)} La clé annoncée est le dernier chiffre, 5. Or $7\neq 5$ : la clé est \textbf{incorrecte}, la facture est \textbf{invalide} (erreur de saisie ou fraude). M.~Etoundi ne doit pas payer avant vérification auprès du fournisseur.
+
+\textbf{(c)} Justification : $10\equiv 1\ [9]$, donc $10^{k}\equiv 1\ [9]$ pour tout $k\in\mathbb{N}$ ; un nombre écrit en base dix est donc congru à la somme de ses chiffres modulo 9.
+
+\textbf{Problème 4 : les sacs de 11 kg.}
+
+\textbf{(a)} Modulo 11 :
+\begin{itemize}
+\item $2^{10}=1024$. Comme $2^{5}=32\equiv -1\ [11]$ (car $32=33-1$), on obtient $2^{10}=(2^{5})^{2}\equiv (-1)^{2}\equiv 1\ [11]$ ;
+\item $3^{3}=27\equiv 5\ [11]$ (car $27=22+5$) ;
+\item $5\equiv 5\ [11]$ et $7\equiv 7\ [11]$.
+\end{itemize}
+
+\textbf{(b)} Par compatibilité avec la multiplication :
+\[N\equiv 1\times 5\times 5\times 7=175\ [11].\]
+Or $175=11\times 15+10$, donc $N\equiv 10\ [11]$.
+
+Conclusion : la production ne se répartit \textbf{pas} exactement dans des sacs de \SI{11}{\kg} ; il restera \textbf{\SI{10}{\kg}} (soit un sac incomplet). Vérification directe : $N=1024\times 27\times 35=\num{967680}=11\times \num{87970}+10$. $\checkmark$
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence plusieurs idées essentielles de la leçon :
+\begin{itemize}
+\item le \textbf{PGCD} est l'outil naturel des problèmes de \emph{partage en parts identiques} (lots, paquets, pavage), tandis que le \textbf{PPCM} gouverne les problèmes de \emph{coïncidences périodiques} (calendriers, passages, engrenages) ;
+\item l'\textbf{algorithme d'Euclide} et la \textbf{décomposition en facteurs premiers} donnent le même résultat : savoir vérifier un calcul par une seconde méthode est une compétence précieuse au Baccalauréat comme dans la vie professionnelle ;
+\item les \textbf{congruences} transforment des questions de calendrier (modulo 7), de clés de contrôle (modulo 9, comme pour les comptes bancaires et les numéros de téléphone) ou de conditionnement (modulo 11) en calculs simples sur de petits entiers ;
+\item la relation $a\times b=\mathrm{PGCD}(a;b)\times\mathrm{PPCM}(a;b)$ évite des décompositions fastidieuses ;
+\item enfin, une réponse mathématique n'a de valeur que si elle est \emph{justifiée} et \emph{interprétée} dans le contexte : dire « le reste est 10 » doit aboutir à la décision concrète « il restera 10 kg, prévoir un sac supplémentaire ».
+\end{itemize}
+
+\begin{savaistu}[Les clés de contrôle autour de nous]
+Les clés de contrôle fondées sur les congruences sont partout : le numéro de compte bancaire (clé RIB modulo 97), le code-barres des produits (clé modulo 10), le numéro de carte bancaire (algorithme de Luhn). Grâce à l'arithmétique modulaire, une simple erreur de frappe est détectée instantanément. Les planteurs de Njombé qui vérifient leurs factures utilisent, sans toujours le savoir, les mêmes mathématiques que les banques de Douala !
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Arithmétique dans $\mathbb{Z}$}
+
+\courssub{Divisibilité, division euclidienne et sous-ensembles $n\mathbb{Z}$}
+
+\begin{definition}[Divisibilité et multiples]
+Soient $a, b \in \mathbb{Z}$. On dit que $b$ \textbf{divise} $a$, ou que $a$ est un \textbf{multiple} de $b$, s'il existe un entier $k \in \mathbb{Z}$ tel que $a = bk$. On note $b \mid a$.
+Pour $n \in \mathbb{N}$, l'ensemble des multiples de $n$ est noté $n\mathbb{Z} = \{ nk \mid k \in \mathbb{Z} \}$.
+\end{definition}
+
+\begin{propriete}[Division euclidienne dans $\mathbb{Z}$]
+Pour tout $a \in \mathbb{Z}$ et tout $b \in \mathbb{N}^*$, il existe un \textbf{unique} couple $(q, r) \in \mathbb{Z} \times \mathbb{N}$ tel que :
+\[ a = bq + r \quad \text{avec} \quad 0 \leq r < b. \]
+$q$ est le \textbf{quotient}, $r$ le \textbf{reste}. On a $r = 0 \iff b \mid a$.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+\draw[<->, thick] (-5.5,0) -- (1.5,0);
+\foreach \x/\lab in {-364/-364, -351/-351, -338/-338, -357/-357}
+  \draw (\x/50,0.1) -- (\x/50,-0.1) node[below=2pt] {\small $\lab$};
+\draw[popblue, very thick, <->] (-364/50,0.5) -- (-351/50,0.5) node[midway, above] {$13$};
+\draw[poporange, very thick, <->] (-357/50,-0.5) -- (-351/50,-0.5) node[midway, below] {$r=7$};
+\draw[popgreen, very thick, <->] (-364/50,-0.5) -- (-357/50,-0.5) node[midway, below] {$13 \times 28$};
+\node[popblue] at (-357/50, 1) {$-357 = 13 \times (-28) + 7$};
+\end{tikzpicture}
+\legende{Division euclidienne de $-357$ par $13$ sur la droite graduée : le quotient est le multiple de $13$ immédiatement \emph{inférieur ou égal} à $-357$.}
+\end{popfigure}
+
+\begin{methode}[Division euclidienne dans $\mathbb{Z}$]
+Pour effectuer la division euclidienne de $a \in \mathbb{Z}$ par $b \in \mathbb{N}^*$ :
+\begin{enumerate}
+\item \textbf{Identifier} les données : dividende $a$, diviseur $b$ (avec $b \geq 1$).
+\item \textbf{Encadrer} $a$ entre deux multiples consécutifs de $b$ : trouver $q \in \mathbb{Z}$ tel que $bq \leq a < b(q+1)$. (Si $a < 0$, $q$ est négatif ou nul).
+\item \textbf{Calculer} le reste $r = a - bq$ et \textbf{vérifier impérativement} la condition $0 \leq r < b$.
+\item \textbf{Conclure} par l'égalité encadrée : $a = bq + r$ avec $0 \leq r < b$.
+\end{enumerate}
+\textbf{Réflexes :} le reste est toujours positif ou nul, même si $a$ est négatif ; l'unicité du couple $(q, r)$ permet de conclure dès qu'on exhibe une écriture $a = bq + r$ avec $0 \leq r < b$.
+\end{methode}
+
+\begin{exoresolu}[Division euclidienne d'un entier négatif]
+\begin{enumerate}
+\item Effectuer la division euclidienne de $-357$ par $13$.
+\item En déduire le reste de la division euclidienne de $-357$ par $13$, puis le plus petit entier naturel $n$ tel que $-357 + n$ soit divisible par $13$.
+\end{enumerate}
+\tcblower
+\textbf{1.} On cherche $q \in \mathbb{Z}$ et $r \in \mathbb{N}$ tels que $-357 = 13q + r$ avec $0 \leq r < 13$.
+
+Commençons par la division de $357$ par $13$ : $13 \times 27 = 351$ et $357 - 351 = 6$, donc $357 = 13 \times 27 + 6$. En passant à l'opposé :
+\[ -357 = -13 \times 27 - 6. \]
+Mais $-6 < 0$ : ce n'est pas un reste valide. On « remonte » d'un multiple de $13$ :
+\[ -357 = 13 \times (-27) - 6 = 13 \times (-28) + 13 - 6 = 13 \times (-28) + 7. \]
+Or $0 \leq 7 < 13$ : la condition sur le reste est satisfaite. Par unicité de la division euclidienne :
+\[ \boxed{-357 = 13 \times (-28) + 7 \quad \text{avec} \quad 0 \leq 7 < 13.} \]
+
+\textbf{2.} Le reste est $r = 7$. On cherche le plus petit $n \in \mathbb{N}$ tel que $13 \mid (-357 + n)$. Comme $-357 \equiv 7 \pmod{13}$, on a $-357 + n \equiv 7 + n \pmod{13}$, et $7 + n \equiv 0 \pmod{13}$ pour $n = 6$ (car $7 + 6 = 13$). Le plus petit entier naturel convenant est donc $n = 6$. Vérification : $-357 + 6 = -351 = 13 \times (-27)$, divisible par $13$.
+\end{exoresolu}
+
+\courssub{Congruences modulo $n$ : définition, propriétés et calcul de restes}
+
+\begin{definition}[Congruence modulo $n$]
+Soit $n \in \mathbb{N}^*$. Pour $a, b \in \mathbb{Z}$, on dit que $a$ est \textbf{congru} à $b$ modulo $n$ si $n \mid (a-b)$, c'est-à-dire si $a$ et $b$ ont le même reste dans la division euclidienne par $n$. On note :
+\[ a \equiv b \pmod{n} \quad \Longleftrightarrow \quad a - b \in n\mathbb{Z} \quad \Longleftrightarrow \quad \exists k \in \mathbb{Z},\ a = b + kn. \]
+\end{definition}
+
+\begin{propriete}[Compatibilité des congruences]
+Les congruences modulo $n$ sont compatibles avec l'addition, la soustraction et la multiplication :
+\begin{align*}
+\text{Si } a \equiv a' \pmod{n} \text{ et } b \equiv b' \pmod{n}, \quad &\text{alors } a + b \equiv a' + b' \pmod{n}, \\
+&\text{alors } a - b \equiv a' - b' \pmod{n}, \\
+&\text{alors } a \times b \equiv a' \times b' \pmod{n}.
+\end{align*}
+Par récurrence, pour tout $k \in \mathbb{N}^*$ : $a \equiv b \pmod{n} \implies a^k \equiv b^k \pmod{n}$.
+\emph{(Démonstration exigible au Bac : écrire $a = a' + kn$, $b = b' + k'n$ et développer).}
+\end{propriete}
+
+\begin{methode}[Calculer un reste par congruences]
+Pour déterminer le reste de la division euclidienne de $a^m$ (ou d'une grande expression) par $n$ :
+\begin{enumerate}
+\item \textbf{Réduire la base} : remplacer $a$ par son reste modulo $n$ (ou par un représentant négatif astucieux, par exemple $a \equiv -1 \pmod{n}$).
+\item \textbf{Chercher un cycle (ordre)} : calculer les premières puissances $a^1, a^2, a^3, \ldots$ modulo $n$ jusqu'à obtenir $1$ ou $-1$ (ou une période).
+\item \textbf{Décomposer l'exposant} : si $a^k \equiv 1 \pmod{n}$, écrire $m = kq + r$ (division euclidienne) et conclure $a^m \equiv (a^k)^q \times a^r \equiv a^r \pmod{n}$.
+\item \textbf{Conclure} en donnant le reste $r'$ avec $0 \leq r' < n$, et justifier que c'est bien \emph{le} reste de la division euclidienne.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+\node[draw, circle, fill=popblueL, minimum width=1.2cm] (1) at (0,0) {$1$};
+\node[draw, circle, fill=poporangeL, minimum width=1.2cm] (2) at (2,1.5) {$2$};
+\node[draw, circle, fill=popgreenL, minimum width=1.2cm] (4) at (2,-1.5) {$4$};
+\draw[->, thick, popblue] (1) to[bend left=20] node[midway, above left] {$\times 2$} (2);
+\draw[->, thick, poporange] (2) to[bend left=20] node[midway, right] {$\times 2$} (4);
+\draw[->, thick, popgreen] (4) to[bend left=20] node[midway, below left] {$\times 2$} (1);
+\node at (0, -2.2) {Cycle des puissances de $2$ modulo $7$ : $2^3 \equiv 1$};
+\end{tikzpicture}
+\legende{Recherche de l'ordre de $2$ modulo $7$ : $2^1\equiv 2$, $2^2\equiv 4$, $2^3\equiv 8\equiv 1$.}
+\end{popfigure}
+
+\begin{exoresolu}[Reste de $2024^{2025}$ modulo $7$]
+Déterminer le reste de la division euclidienne de $2024^{2025}$ par $7$.
+\tcblower
+\textbf{Étape 1 : réduction de la base.} $2024 = 7 \times 289 + 1$, donc $2024 \equiv 1 \pmod{7}$.
+
+\textbf{Étape 2 : compatibilité avec la multiplication.} Par compatibilité des congruences avec le produit, pour tout entier $m \geq 1$ :
+\[ 2024^m \equiv 1^m \equiv 1 \pmod{7}. \]
+
+\textbf{Étape 3 : conclusion.} En particulier $2024^{2025} \equiv 1 \pmod{7}$. Ainsi il existe $k \in \mathbb{Z}$ tel que $2024^{2025} = 7k + 1$, et comme $0 \leq 1 < 7$, le reste cherché est $\boxed{1}$.
+
+\emph{Remarque :} si l'on avait eu $2025^{2025}$ (base $2025 \equiv 2 \pmod{7}$), on aurait étudié le cycle des puissances de $2$ modulo $7$ : $2^1 \equiv 2$, $2^2 \equiv 4$, $2^3 \equiv 1 \pmod{7}$, cycle de longueur $3$. Comme $2025 = 3 \times 675$, on aurait $2025^{2025} \equiv (2^3)^{675} \equiv 1 \pmod{7}$.
+\end{exoresolu}
+
+\courssub{Critères de divisibilité en base dix}
+
+\begin{methode}[Critères de divisibilité usuels]
+Soit $N$ un entier naturel écrit en base dix : $N = \overline{a_k a_{k-1} \dots a_1 a_0} = \sum_{i=0}^k a_i 10^i$.
+\begin{enumerate}
+\item \textbf{Par 2 ou 5 :} regarder le chiffre des unités $a_0$ ($0, 2, 4, 6, 8$ pour 2 ; $0$ ou $5$ pour 5).
+\item \textbf{Par 4 ou 25 :} regarder le nombre formé par les deux derniers chiffres $\overline{a_1 a_0}$.
+\item \textbf{Par 3 ou 9 :} calculer la somme des chiffres $S = \sum a_i$ et tester sa divisibilité par 3 ou 9.
+\item \textbf{Par 11 :} calculer la somme alternée des chiffres $T = a_0 - a_1 + a_2 - a_3 + \cdots$ (en partant des unités) et tester si elle est multiple de $11$.
+\end{enumerate}
+\textbf{Justification par congruences :} $10 \equiv 1 \pmod{3}$ et $\pmod{9}$ donc $N \equiv S$ ; $10 \equiv -1 \pmod{11}$ donc $N \equiv T$ ; $10 \equiv 0 \pmod{2,5}$ et $10^2 \equiv 0 \pmod{4,25}$.
+\end{methode}
+
+\begin{exoresolu}[Trouver un chiffre pour assurer la divisibilité]
+Un opérateur téléphonique attribue des numéros de série à six chiffres de la forme $\overline{45a723}$ (où $a$ est un chiffre). Déterminer toutes les valeurs de $a$ pour lesquelles ce numéro est divisible par $9$, puis celles pour lesquelles il est divisible par $11$.
+\tcblower
+\textbf{Divisibilité par 9.} La somme des chiffres vaut :
+\[ S = 4 + 5 + a + 7 + 2 + 3 = 21 + a. \]
+$N$ est divisible par $9$ si et seulement si $9 \mid (21 + a)$. Comme $a$ est un chiffre, $0 \leq a \leq 9$, donc $21 \leq 21 + a \leq 30$. Le seul multiple de $9$ dans cet intervalle est $27$, d'où $21 + a = 27$, soit $\boxed{a = 6}$.
+
+\textbf{Divisibilité par 11.} La somme alternée (en partant des unités) vaut :
+\[ T = 3 - 2 + 7 - a + 5 - 4 = 9 - a. \]
+$N$ est divisible par $11$ si et seulement si $11 \mid (9 - a)$. Or $0 \leq a \leq 9$ donc $0 \leq 9 - a \leq 9$ : le seul multiple de $11$ possible est $0$, d'où $9 - a = 0$, soit $\boxed{a = 9}$.
+
+Vérification : $459723 = 11 \times 41793$. La condition est bien nécessaire et suffisante car le critère repose sur une congruence modulo $11$.
+\end{exoresolu}
+
+\courssub{Nombres premiers et décomposition en facteurs premiers}
+
+\begin{savaistu}[Crible d'Ératosthène]
+Pour lister les nombres premiers $\leq N$ (ex: $N=100$), on écrit les entiers de $2$ à $N$. On barre les multiples de $2$ (sauf $2$), puis le premier non barré ($3$) et ses multiples, puis $5$, etc. On s'arrête quand le premier non barré dépasse $\sqrt{N}$. Les nombres non barrés sont les premiers. C'est l'algorithme historique pour « tamiser » les composés.
+\end{savaistu}
+
+\begin{methode}[Décomposition en facteurs premiers]
+Pour décomposer un entier $n \geq 2$ en produit de facteurs premiers :
+\begin{enumerate}
+\item \textbf{Tester} la divisibilité de $n$ par les nombres premiers successifs $2, 3, 5, 7, 11, \ldots$ (utiliser les critères de divisibilité pour gagner du temps).
+\item \textbf{Diviser} autant de fois que possible par chaque premier trouvé, en écrivant les quotients successifs en colonne (ou en arbre).
+\item \textbf{S'arrêter} dès que le quotient vaut $1$, ou dès que le premier testé dépasse $\sqrt{n}$ (alors le quotient restant est premier).
+\item \textbf{Écrire} la décomposition sous forme condensée : $n = p_1^{\alpha_1} p_2^{\alpha_2} \cdots p_k^{\alpha_k}$ avec $p_1 < p_2 < \dots < p_k$ premiers et $\alpha_i \geq 1$.
+\end{enumerate}
+\textbf{Réflexe :} pour tester si $n$ est premier, il suffit de vérifier qu'aucun nombre premier $p \leq \sqrt{n}$ ne divise $n$.
+\end{methode}
+
+\begin{exoresolu}[Décomposition et nombre de diviseurs]
+\begin{enumerate}
+\item Décomposer $1260$ en produit de facteurs premiers.
+\item En déduire le nombre de diviseurs positifs de $1260$.
+\end{enumerate}
+\tcblower
+\textbf{1.} On divise successivement par les nombres premiers :
+\begin{align*}
+1260 &= 2 \times 630 = 2^2 \times 315 \\
+315 &= 3 \times 105 = 3^2 \times 35 \\
+35 &= 5 \times 7.
+\end{align*}
+$7$ est premier. D'où la décomposition :
+\[ \boxed{1260 = 2^2 \times 3^2 \times 5 \times 7.} \]
+
+\textbf{2.} Tout diviseur positif de $1260$ s'écrit $2^a \times 3^b \times 5^c \times 7^d$ avec $0 \leq a \leq 2$, $0 \leq b \leq 2$, $0 \leq c \leq 1$, $0 \leq d \leq 1$. Le nombre de choix est donc :
+\[ (2+1)(2+1)(1+1)(1+1) = 3 \times 3 \times 2 \times 2 = 36. \]
+$1260$ admet exactement $\boxed{36}$ diviseurs positifs.
+\end{exoresolu}
+
+\courssub{PGCD, PPCM et algorithme d'Euclide}
+
+\begin{propriete}[PGCD et PPCM par décomposition]
+Soient $a = \prod p_i^{\alpha_i}$ et $b = \prod p_i^{\beta_i}$ (exposants nuls si le premier n'apparaît pas).
+\begin{itemize}
+\item $\mathrm{PGCD}(a,b) = \prod p_i^{\min(\alpha_i, \beta_i)}$ (facteurs \textbf{communs} au \textbf{plus petit} exposant).
+\item $\mathrm{PPCM}(a,b) = \prod p_i^{\max(\alpha_i, \beta_i)}$ (\textbf{tous} les facteurs au \textbf{plus grand} exposant).
+\end{itemize}
+Relation fondamentale : $\mathrm{PGCD}(a,b) \times \mathrm{PPCM}(a,b) = a \times b$ (pour $a, b \geq 1$).
+\end{propriete}
+
+\begin{methode}[PGCD par l'algorithme d'Euclide]
+Pour calculer $\mathrm{PGCD}(a, b)$ avec $a \geq b \geq 1$ :
+\begin{enumerate}
+\item \textbf{Effectuer} la division euclidienne de $a$ par $b$ : $a = bq_1 + r_1$ ($0 \leq r_1 < b$).
+\item \textbf{Utiliser} la propriété $\mathrm{PGCD}(a, b) = \mathrm{PGCD}(b, r_1)$.
+\item \textbf{Itérer} : diviser $b$ par $r_1$, puis $r_1$ par $r_2$, etc., jusqu'à obtenir un reste nul $r_{k+1}=0$.
+\item \textbf{Conclure} : le PGCD est le \textbf{dernier reste non nul} $r_k$. Le souligner dans la présentation.
+\end{enumerate}
+\textbf{PPCM :} deux méthodes au choix :
+\begin{itemize}
+\item par les décompositions (facteurs au plus grand exposant) ;
+\item par la formule $\mathrm{PGCD}(a,b) \times \mathrm{PPCM}(a,b) = a \times b$.
+\end{itemize}
+\end{methode}
+
+\begin{exoresolu}[PGCD par Euclide, puis PPCM]
+\begin{enumerate}
+\item À l'aide de l'algorithme d'Euclide, déterminer $\mathrm{PGCD}(1638, 546)$.
+\item En déduire $\mathrm{PPCM}(1638, 546)$.
+\item Un commerçant de Douala veut partager $1638$ savons et $546$ sachets de lessive en lots identiques, les plus grands possibles, sans reste. Combien de lots obtiendra-t-il et que contiendra chaque lot ?
+\end{enumerate}
+\tcblower
+\textbf{1.} Algorithme d'Euclide :
+\begin{align*}
+1638 &= 546 \times 3 + \mathbf{0}.
+\end{align*}
+Le reste est nul dès la première étape : $546$ divise $1638$. Le dernier reste non nul est donc $546$ lui-même :
+\[ \boxed{\mathrm{PGCD}(1638, 546) = 546.} \]
+
+\textbf{2.} On applique la formule $\mathrm{PGCD}(a,b) \times \mathrm{PPCM}(a,b) = a \times b$ :
+\[ \mathrm{PPCM}(1638, 546) = \frac{1638 \times 546}{546} = 1638. \]
+Donc $\boxed{\mathrm{PPCM}(1638, 546) = 1638}$ (cohérent : $546 \mid 1638$, donc le PPCM est le plus grand des deux nombres).
+\textit{Vérification par décomposition :} $1638 = 2 \times 3^2 \times 7 \times 13$, $546 = 2 \times 3 \times 7 \times 13$. PGCD $= 2 \times 3 \times 7 \times 13 = 546$. PPCM $= 2 \times 3^2 \times 7 \times 13 = 1638$.
+
+\textbf{3.} Le nombre de lots doit diviser à la fois $1638$ et $546$, et être maximal : c'est exactement $\mathrm{PGCD}(1638, 546) = 546$. Le commerçant obtiendra $\boxed{546}$ lots, chacun contenant $\dfrac{1638}{546} = 3$ savons et $\dfrac{546}{546} = 1$ sachet de lessive.
+\end{exoresolu}
+
+\courssub{Nombres premiers entre eux et combinaison de Bézout}
+
+\begin{definition}[Entiers premiers entre eux]
+Deux entiers $a$ et $b$ sont \textbf{premiers entre eux} si leur PGCD vaut $1$ : $\mathrm{PGCD}(a,b)=1$. Équivalentement, ils n'ont aucun diviseur commun strictement supérieur à $1$.
+\end{definition}
+
+\begin{methode}[Montrer que deux entiers sont premiers entre eux]
+Trois stratégies principales :
+\begin{enumerate}
+\item \textbf{Algorithme d'Euclide} : montrer que le dernier reste non nul est $1$.
+\item \textbf{Décompositions en facteurs premiers} : vérifier que $a$ et $b$ n'ont \emph{aucun} facteur premier commun.
+\item \textbf{Combinaison linéaire (identité de Bézout)} : exhiber des entiers $u, v$ tels que $au + bv = 1$. Alors tout diviseur commun divise $1$, donc $\mathrm{PGCD}(a,b)=1$.
+\end{enumerate}
+\textbf{Propriété utile :} pour tout $n \in \mathbb{Z}$, $\mathrm{PGCD}(n, n+1) = 1$ : deux entiers consécutifs sont toujours premiers entre eux (tout diviseur commun divise leur différence $1$).
+\end{methode}
+
+\begin{exoresolu}[Deux entiers premiers entre eux]
+Soit $n$ un entier naturel. On pose $a = 3n + 4$ et $b = 2n + 3$.
+\begin{enumerate}
+\item Montrer que tout diviseur commun à $a$ et $b$ divise $1$.
+\item Conclure.
+\end{enumerate}
+\tcblower
+\textbf{1.} Soit $d$ un diviseur commun à $a$ et $b$ : $d \mid a$ et $d \mid b$. Alors $d$ divise toute combinaison linéaire de $a$ et $b$ à coefficients entiers. Cherchons à éliminer $n$ :
+\[ 2a - 3b = 2(3n + 4) - 3(2n + 3) = 6n + 8 - 6n - 9 = -1. \]
+Donc $d \mid (-1)$, c'est-à-dire $d \mid 1$.
+
+\textbf{2.} Les seuls diviseurs positifs de $1$ sont $1$ lui-même, donc $\mathrm{PGCD}(a, b) = 1$ : les entiers $3n + 4$ et $2n + 3$ sont premiers entre eux pour tout entier naturel $n$. $\blacksquare$
+
+\emph{Vérification numérique :} pour $n = 5$, $a = 19$ et $b = 13$, tous deux premiers, donc premiers entre eux ; pour $n = 2$, $a = 10$ et $b = 7$, $\mathrm{PGCD}(10, 7) = 1$.
+\end{exoresolu}
+
+\courssub{Résoudre un problème concret avec les congruences}
+
+\begin{methode}[Problèmes de restes, calendriers, clés de contrôle]
+Face à un problème concret :
+\begin{enumerate}
+\item \textbf{Traduire} l'énoncé en congruence : « reste $r$ dans la division par $n$ » devient $x \equiv r \pmod{n}$.
+\item \textbf{Résoudre} la congruence en testant les restes possibles ($0$ à $n-1$) ou en manipulant les compatibilités (addition, multiplication, puissances).
+\item \textbf{Filtrer} les solutions avec les contraintes de l'énoncé (bornes, conditions supplémentaires, ensemble des solutions).
+\item \textbf{Rédiger la conclusion} en langage courant, en vérifiant la cohérence avec le contexte.
+\end{enumerate}
+\textbf{Réflexe calendrier :} une semaine = $7$ jours, donc on raisonne modulo $7$ ; $365 = 7 \times 52 + 1$, donc une année non bissextile décale le jour de la semaine de $1$ ; année bissextile ($366$ jours) : décalage de $2$.
+\end{methode}
+
+\begin{exoresolu}[Problème de calendrier]
+Le 1\ier{} janvier 2025 est un mercredi.
+\begin{enumerate}
+\item À quelle congruence modulo $7$ correspond le fait que le $k$-ième jour de l'année 2025 tombe un mercredi ?
+\item Le lycée organise sa fête le 100\ieme{} jour de l'année 2025. Quel jour de la semaine sera-ce ?
+\end{enumerate}
+\tcblower
+\textbf{1.} Le 1\ier{} janvier (jour numéro $1$) est un mercredi. Les mercredis suivants sont les jours $1 + 7, 1 + 14, \ldots$ Le jour numéro $k$ est un mercredi si et seulement si :
+\[ k \equiv 1 \pmod{7}. \]
+
+\textbf{2.} On calcule $100$ modulo $7$ : $100 = 7 \times 14 + 2$, donc $100 \equiv 2 \pmod{7}$. Le jour $100$ a le même rang dans la semaine que le jour $2$, c'est-à-dire le lendemain du mercredi : un \textbf{jeudi}.
+
+Vérification directe : le jour $1$ est mercredi, le jour $2$ est jeudi. $100 - 1 = 99 = 7 \times 14 + 1$, donc le jour $100$ est décalé de $1$ jour par rapport à un mercredi : c'est bien un jeudi. La fête aura lieu un $\boxed{\text{jeudi}}$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Bac]
+\begin{enumerate}
+\item \textbf{Oublier la condition sur le reste.} Écrire $-357 = 13 \times (-27) - 6$ et conclure « reste $-6$ » est faux : le reste doit vérifier $0 \leq r < b$. Toujours écrire et vérifier explicitement cette double inégalité.
+\item \textbf{Confondre PGCD et PPCM dans les décompositions.} PGCD = facteurs \emph{communs} au \emph{plus petit} exposant ; PPCM = \emph{tous} les facteurs au \emph{plus grand} exposant. Une inversion des deux règles fausse tout l'exercice.
+\item \textbf{Mal conclure l'algorithme d'Euclide.} Le PGCD est le \emph{dernier reste non nul}, pas le dernier quotient, ni le reste nul. Souligne-le dans ta liste de divisions.
+\item \textbf{Appliquer un critère de divisibilité à moitié.} Pour la divisibilité par $4$, regarder seulement le dernier chiffre ne suffit pas : il faut les \emph{deux} derniers chiffres. De même, « somme des chiffres paire » ne prouve rien pour la divisibilité par $6$ : il faut tester $2$ \emph{et} $3$ (car $6=2\times3$ avec $2$ et $3$ premiers entre eux).
+\item \textbf{Conclure une congruence sans vérifier l'encadrement.} Dire « $2024^{2025} \equiv 1 \pmod{7}$ donc le reste est $1$ » n'est acceptable que si l'on précise $0 \leq 1 < 7$. Si tu obtiens $a^n \equiv -2 \pmod{7}$, le reste n'est pas $-2$ mais $5$ : pense à ramener le résultat dans $\{0, 1, \ldots, n-1\}$.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Arithmétique dans $\mathbb{Z}$}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : divisibilité et congruences]
+Pour chaque question, une seule réponse est exacte. Entoure la bonne lettre.
+\begin{enumerate}
+\item Le reste de la division euclidienne de $-37$ par $5$ est :
+\begin{enumerate}
+\item[(A)] $-2$ \qquad (B) $2$ \qquad (C) $3$ \qquad (D) $7$
+\end{enumerate}
+\item $2\,024 \equiv 2 \pmod{7}$. Alors $2\,024^2 \equiv \dots \pmod{7}$ :
+\begin{enumerate}
+\item[(A)] $2$ \qquad (B) $3$ \qquad (C) $4$ \qquad (D)] $5$
+\end{enumerate}
+\item Le nombre $2\,3\mathbf{4}\,6$ est divisible par :
+\begin{enumerate}
+\item[(A)] $3$ mais pas par $9$ \qquad (B) $9$ \qquad (C) $4$ \qquad (D) $25$
+\end{enumerate}
+\item Si $\mathrm{PGCD}(a\,;b) = 6$ et $\mathrm{PPCM}(a\,;b) = 72$, alors $a \times b$ vaut :
+\begin{enumerate}
+\item[(A)] $432$ \qquad (B) $12$ \qquad (C) $78$ \qquad (D) $66$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, avec justification]
+Réponds par Vrai ou Faux, en justifiant chaque réponse par une propriété du cours ou un contre-exemple.
+\begin{enumerate}
+\item Si $a \equiv b \pmod{n}$, alors $a^2 \equiv b^2 \pmod{n}$.
+\item Si $n$ divise $ab$, alors $n$ divise $a$ ou $n$ divise $b$.
+\item Tout nombre impair est premier.
+\item Deux entiers consécutifs $n$ et $n+1$ sont toujours premiers entre eux.
+\item $1\,000 \equiv 1 \pmod{9}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions à compléter]
+Recopie et complète les phrases suivantes.
+\begin{enumerate}
+\item Soient $a \in \mathbb{Z}$ et $b \in \mathbb{N}^*$. Il existe un unique couple $(q\,;r) \in \mathbb{Z} \times \mathbb{N}$ tel que $a = \ldots$ avec $\ldots \leq r < \ldots$.
+\item On dit que $a$ est congru à $b$ modulo $n$, et on note $a \equiv b \pmod{n}$, lorsque $n$ divise $\ldots$.
+\item Deux entiers $a$ et $b$ sont dits premiers entre eux lorsque $\mathrm{PGCD}(a\,;b) = \ldots$.
+\item Un entier naturel $p \geq 2$ est dit premier lorsque ses seuls diviseurs positifs sont $\ldots$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exoresolu}[Calculs directs : division, critères, PGCD, nombres premiers]
+\begin{enumerate}
+\item \textbf{Division euclidienne.} \\
+$527 = 13 \times 40 + 7$ \quad (quotient $40$, reste $7$). \\
+$-527 = 13 \times (-41) + 6$ \quad (quotient $-41$, reste $6$ car $0 \le 6 < 13$).
+\item \textbf{Critères de divisibilité pour $8\,514$.} \\
+Somme des chiffres : $8+5+1+4 = 18$. \\
+Divisible par $2$ (chiffre des unités pair), par $3$ ($18$ multiple de $3$), par $9$ ($18$ multiple de $9$). \\
+Non divisible par $4$ ($14$ non multiple de $4$), par $5$ (ne se termine pas par $0$ ou $5$). \\
+Test de $11$ : $(8+1) - (5+4) = 0$, multiple de $11$ $\Rightarrow$ divisible par $11$.
+\item \textbf{Algorithme d'Euclide pour $\mathrm{PGCD}(252\,;105)$.} \\
+$252 = 2 \times 105 + 42$ \\
+$105 = 2 \times 42 + 21$ \\
+$42 = 2 \times 21 + 0$ \\
+Le dernier reste non nul est $21$, donc $\mathrm{PGCD}(252\,;105) = 21$.
+\item \textbf{Nombres premiers inférieurs à $30$.} \\
+$2,\ 3,\ 5,\ 7,\ 11,\ 13,\ 17,\ 19,\ 23,\ 29$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Division euclidienne et restes]
+\begin{enumerate}
+\item Effectuer la division euclidienne de $4\,913$ par $1\,837$.
+\item Un commerçant du marché Mokolo répartit $1\,247$ savons dans des cartons de $24$ savons. Combien de cartons complets obtient-il ? Combien de savons restent-ils ?
+\item Déterminer tous les entiers $n$ tels que la division euclidienne de $n$ par $7$ donne un quotient égal au reste.
+\end{enumerate}
+\end{exercice}
+
+\begin{exoresolu}[Congruences : premiers calculs et puissances]
+\begin{enumerate}
+\item $47 = 9 \times 5 + 2 \Rightarrow 47 \equiv 2 \pmod{5}$. \\
+$-13 = (-2) \times 8 + 3 \Rightarrow -13 \equiv 3 \pmod{8}$. \\
+$10 \equiv 1 \pmod{9} \Rightarrow 10^3 \equiv 1^3 \equiv 1 \pmod{9}$.
+\item $2^5 = 32 = 3 \times 11 - 1 \equiv -1 \pmod{11}$. \\
+$2^{10} = (2^5)^2 \equiv (-1)^2 \equiv 1 \pmod{11}$.
+\item $2^{100} = (2^{10})^{10} \equiv 1^{10} \equiv 1 \pmod{11}$. Le reste est $1$.
+\item $7 \equiv 2 \pmod{5}$. $2^4 = 16 \equiv 1 \pmod{5}$. \\
+$2024 = 4 \times 506 \Rightarrow 7^{2024} \equiv 2^{2024} \equiv (2^4)^{506} \equiv 1^{506} \equiv 1 \pmod{5}$. Le reste est $1$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Décomposition, PGCD, PPCM et diviseurs]
+\begin{enumerate}
+\item $360 = 2^3 \times 3^2 \times 5$. \quad $756 = 2^2 \times 3^3 \times 7$.
+\item $\mathrm{PGCD}(360\,;756) = 2^2 \times 3^2 = 36$. \\
+$\mathrm{PPCM}(360\,;756) = 2^3 \times 3^3 \times 5 \times 7 = 7\,560$.
+\item $36 \times 7\,560 = 272\,160 = 360 \times 756$. \quad \checkmark
+\item $360 = 2^3 \times 3^2 \times 5^1$. Nombre de diviseurs : $(3+1)(2+1)(1+1) = 4 \times 3 \times 2 = 24$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Nombres premiers entre eux et identité de Bézout]
+\begin{enumerate}
+\item À l'aide de l'algorithme d'Euclide, montrer que $221$ et $87$ sont premiers entre eux.
+\item Les entiers $455$ et $182$ sont-ils premiers entre eux ? Justifier.
+\item Trouver deux entiers $u$ et $v$ tels que $221u + 87v = 1$ (on remontera les divisions de l'algorithme d'Euclide).
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Type Bac — Algorithme d'Euclide et pavage d'une salle]
+La salle polyvalente d'un lycée de Douala est un rectangle de longueur $4\,913$ cm et de largeur $1\,837$ cm. Le proviseur souhaite la paver entièrement avec des carreaux carrés identiques, dont le côté $c$ (en cm) est un nombre entier, sans aucune découpe.
+
+\textbf{Partie A : recherche du PGCD}
+\begin{enumerate}
+\item En détaillant toutes les étapes de l'algorithme d'Euclide, déterminer $\mathrm{PGCD}(4\,913\,;1\,837)$.
+\item En déduire la forme irréductible de la fraction $\dfrac{1\,837}{4\,913}$.
+\end{enumerate}
+
+\textbf{Partie B : le pavage}
+\begin{enumerate}
+\item Expliquer pourquoi le côté $c$ d'un carreau doit être un diviseur commun de $4\,913$ et $1\,837$.
+\item Quelle est la plus grande valeur possible de $c$ ?
+\item Combien de carreaux faut-il alors pour paver toute la salle ?
+\item Un carreau de ce modèle coûte $650$ FCFA et la pose est estimée à $1\,500$ FCFA par mètre carré (la salle a une aire de $902,52$ m$^2$, arrondie au centième). Calculer le coût total des travaux.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Bac — Congruences, restes et calendrier]
+On rappelle que le 1\textsuperscript{er} janvier 2025 est un mercredi. L'année 2025 compte $365$ jours.
+
+\textbf{Partie A : puissances et restes}
+\begin{enumerate}
+\item Calculer $3^1$, $3^2$, $3^3$ modulo $7$ et conjecturer le reste de $3^n$ modulo $7$ selon les valeurs de $n$.
+\item Démontrer que $3^3 \equiv -1 \pmod{7}$, puis déterminer le reste de la division euclidienne de $3^{2024}$ par $7$.
+\item Montrer que $3^5 \equiv 1 \pmod{11}$ et en déduire le reste de $3^{2024}$ modulo $11$.
+\item Déterminer le chiffre des unités de $3^{2024}$ (on travaillera modulo $10$).
+\end{enumerate}
+
+\textbf{Partie B : calendrier}
+\begin{enumerate}
+\item Justifier que le jour de la semaine d'une date dépend du nombre de jours écoulés modulo $7$.
+\item Déterminer le jour de la semaine du 1\textsuperscript{er} janvier 2026.
+\item Le 26 mai 2025, les élèves de Terminale C du lycée commencent leurs épreuves pratiques. Sachant que le 26 mai 2025 est le 146\textsuperscript{e} jour de l'année, déterminer le jour de la semaine correspondant.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Bac — Décomposition, diviseurs et conditionnement en lots]
+Un commerçant du quartier Briqueterie à Yaoundé reçoit $1\,155$ sachets de piment séché et $1\,980$ sachets d'épices mélangées. Il veut les conditionner en lots \emph{identiques} (même nombre de lots, même contenu par lot), en utilisant tous les sachets.
+
+\textbf{Partie A : décompositions}
+\begin{enumerate}
+\item Décomposer $1\,155$ et $1\,980$ en produits de facteurs premiers.
+\item En déduire $\mathrm{PGCD}(1\,155\,;1\,980)$ et $\mathrm{PPCM}(1\,155\,;1\,980)$.
+\item Déterminer le nombre de diviseurs positifs de $1\,980$.
+\end{enumerate}
+
+\textbf{Partie B : les lots}
+\begin{enumerate}
+\item Quel est le nombre maximal de lots identiques que le commerçant peut réaliser ? Préciser la composition de chaque lot.
+\item Chaque lot est vendu $2\,500$ FCFA. Quelle recette maximale le commerçant peut-il espérer ?
+\end{enumerate}
+
+\textbf{Partie C : les livreurs}
+Deux livreurs approvisionnent la boutique : le premier passe tous les $8$ jours, le second tous les $12$ jours. Ils sont passés ensemble le lundi 6 janvier 2025.
+\begin{enumerate}
+\item Au bout de combien de jours passeront-ils de nouveau le même jour ? Justifier à l'aide d'un PPCM.
+\item En utilisant une congruence modulo $7$, déterminer le jour de la semaine de cette prochaine visite commune.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : divisibilité et congruences]
+\begin{enumerate}
+\item \textbf{Réponse (C) : $3$.} On cherche $q$ et $r$ avec $-37 = 5q + r$ et $0 \le r < 5$. Comme $-37 = 5 \times (-8) + 3$, le quotient est $-8$ et le reste est $3$. \textbf{Point de vigilance :} le reste est \emph{toujours} positif ou nul, même quand le dividende est négatif ; la réponse $-2$ (A) est le piège classique (elle correspondrait à l'égalité $-37 = 5 \times (-7) - 2$, qui n'est \emph{pas} une division euclidienne car $-2 < 0$).
+\item \textbf{Réponse : $1$.} On commence par réduire la base modulo $7$ : $2\,024 = 7 \times 289 + 1$, donc $2\,024 \equiv 1 \pmod{7}$. Par compatibilité de la congruence avec la multiplication (et donc avec les puissances) :
+\[ 2\,024^2 \equiv 1^2 \equiv 1 \pmod{7} \]
+\textbf{Point de vigilance :} la première étape est \emph{toujours} de réduire la base ; ne jamais chercher à calculer $2\,024^2$ (qui vaut $4\,096\,576$) avant de conclure.
+\item \textbf{Réponse (A).} Somme des chiffres : $2+3+4+6 = 15$. Or $15$ est multiple de $3$ mais pas de $9$, donc $2\,346$ est divisible par $3$ mais pas par $9$. Vérifions les autres critères : le nombre formé par les deux derniers chiffres est $46$, qui n'est pas multiple de $4$ ; et le nombre ne se termine ni par $00$, $25$, $50$ ni $75$, donc il n'est pas divisible par $25$.
+\item \textbf{Réponse (A) : $432$.} Pour tous entiers naturels non nuls : $\mathrm{PGCD}(a\,;b) \times \mathrm{PPCM}(a\,;b) = a \times b$. Donc $a \times b = 6 \times 72 = 432$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, avec justification]
+\begin{enumerate}
+\item \textbf{Vrai.} C'est la compatibilité des congruences avec la multiplication : si $a \equiv b \pmod{n}$, alors en multipliant membre à membre la congruence par elle-même, $a \times a \equiv b \times b \pmod{n}$, c'est-à-dire $a^2 \equiv b^2 \pmod{n}$.
+\item \textbf{Faux.} Contre-exemple : $n = 6$, $a = 2$, $b = 3$. Alors $6$ divise $ab = 6$, mais $6$ ne divise ni $2$ ni $3$. La propriété n'est vraie que si $n$ est \cle{premier} (lemme d'Euclide) ou si $n$ est premier avec l'un des facteurs (théorème de Gauss).
+\item \textbf{Faux.} Contre-exemple : $9$ est impair mais $9 = 3 \times 3$ n'est pas premier. De même $15$, $21$, $25$, $27$\dots{} Le seul nombre premier pair est $2$ ; la réciproque « impair $\Rightarrow$ premier » n'a aucune raison d'être vraie.
+\item \textbf{Vrai.} Soit $d$ un diviseur commun positif de $n$ et $n+1$. Alors $d$ divise toute combinaison linéaire de $n$ et $n+1$, en particulier $(n+1) - n = 1$. Le seul diviseur positif de $1$ est $1$, donc $d = 1$ et $\mathrm{PGCD}(n\,;n+1) = 1$ : deux entiers consécutifs sont toujours premiers entre eux.
+\item \textbf{Vrai.} $1\,000 - 1 = 999 = 9 \times 111$, donc $9$ divise $1\,000 - 1$, c'est-à-dire $1\,000 \equiv 1 \pmod{9}$. (C'est d'ailleurs le fondement du critère de divisibilité par $9$ : $10 \equiv 1 \pmod{9}$ entraîne $10^k \equiv 1 \pmod{9}$ pour tout entier $k \ge 0$, donc un nombre est congru modulo $9$ à la somme de ses chiffres.)
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions à compléter]
+\begin{enumerate}
+\item Il existe un unique couple $(q\,;r) \in \mathbb{Z} \times \mathbb{N}$ tel que $a = \mathbf{bq + r}$ avec $\mathbf{0} \le r < \mathbf{b}$.
+\item On note $a \equiv b \pmod{n}$ lorsque $n$ divise $\mathbf{a - b}$ (ou $b - a$, c'est équivalent, car $n \mid (a-b) \Leftrightarrow n \mid (b-a)$).
+\item Deux entiers $a$ et $b$ sont premiers entre eux lorsque $\mathrm{PGCD}(a\,;b) = \mathbf{1}$.
+\item Un entier $p \ge 2$ est premier lorsque ses seuls diviseurs positifs sont $\mathbf{1}$ \textbf{et} $\mathbf{p}$ \textbf{lui-même}. (Le nombre $1$ n'est \emph{pas} premier : il n'a qu'un seul diviseur positif.)
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Division euclidienne et restes]
+\begin{enumerate}
+\item On effectue : $1\,837 \times 2 = 3\,674$ et $4\,913 - 3\,674 = 1\,239$. Comme $0 \le 1\,239 < 1\,837$ :
+\[ 4\,913 = 1\,837 \times 2 + 1\,239 \]
+Le quotient est $2$ et le reste est $1\,239$.
+\item On effectue la division euclidienne de $1\,247$ par $24$ : $24 \times 51 = 1\,224$ et $1\,247 - 1\,224 = 23$, avec $0 \le 23 < 24$.
+\[ 1\,247 = 24 \times 51 + 23 \]
+Le commerçant obtient \textbf{51 cartons complets} et il reste \textbf{23 savons}.
+\item La division euclidienne de $n$ par $7$ s'écrit $n = 7q + r$ avec $0 \le r < 7$. La condition « quotient égal au reste » donne $q = r$, d'où :
+\[ n = 7r + r = 8r, \qquad r \in \{0\,;1\,;2\,;3\,;4\,;5\,;6\} \]
+Les entiers cherchés sont donc : $n \in \{0\,;8\,;16\,;24\,;32\,;40\,;48\}$ (multiples de $8$ inférieurs ou égaux à $48$). Vérification pour $n = 40$ : $40 = 7 \times 5 + 5$, quotient $5$ et reste $5$. \checkmark
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Nombres premiers entre eux et identité de Bézout]
+\begin{enumerate}
+\item Appliquons l'algorithme d'Euclide :
+\begin{align*}
+221 &= 2 \times 87 + 47\\
+87 &= 1 \times 47 + 40\\
+47 &= 1 \times 40 + 7\\
+40 &= 5 \times 7 + 5\\
+7 &= 1 \times 5 + 2\\
+5 &= 2 \times 2 + 1\\
+2 &= 2 \times 1 + 0
+\end{align*}
+Le dernier reste non nul est $1$, donc $\mathrm{PGCD}(221\,;87) = 1$ : les entiers $221$ et $87$ sont \textbf{premiers entre eux}.
+\item Décomposons : $455 = 5 \times 91 = 5 \times 7 \times 13$ et $182 = 2 \times 91 = 2 \times 7 \times 13$. Ils admettent $7 \times 13 = 91$ comme diviseur commun : $\mathrm{PGCD}(455\,;182) = 91 \neq 1$. Donc $455$ et $182$ \textbf{ne sont pas premiers entre eux}.
+\item On remonte les divisions de l'algorithme d'Euclide en isolant chaque reste :
+\begin{align*}
+1 &= 5 - 2 \times 2 = 5 - 2 \times (7 - 1 \times 5) = 3 \times 5 - 2 \times 7\\
+&= 3 \times (40 - 5 \times 7) - 2 \times 7 = 3 \times 40 - 17 \times 7\\
+&= 3 \times 40 - 17 \times (47 - 1 \times 40) = 20 \times 40 - 17 \times 47\\
+&= 20 \times (87 - 1 \times 47) - 17 \times 47 = 20 \times 87 - 37 \times 47\\
+&= 20 \times 87 - 37 \times (221 - 2 \times 87) = 94 \times 87 - 37 \times 221
+\end{align*}
+D'où $221 \times (-37) + 87 \times 94 = 1$. Une solution est $\boxed{u = -37 \ ;\ v = 94}$. Vérification : $221 \times 37 = 8\,177$ et $87 \times 94 = 8\,178$, et $8\,178 - 8\,177 = 1$. \checkmark
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type Bac : algorithme d'Euclide et pavage d'une salle]
+\textbf{Partie A : recherche du PGCD}
+\begin{enumerate}
+\item Algorithme d'Euclide appliqué à $4\,913$ et $1\,837$ :
+\begin{align*}
+4\,913 &= 2 \times 1\,837 + 1\,239\\
+1\,837 &= 1 \times 1\,239 + 598\\
+1\,239 &= 2 \times 598 + 43\\
+598 &= 13 \times 43 + 39\\
+43 &= 1 \times 39 + 4\\
+39 &= 9 \times 4 + 3\\
+4 &= 1 \times 3 + 1\\
+3 &= 3 \times 1 + 0
+\end{align*}
+Le dernier reste non nul est $1$, donc $\mathrm{PGCD}(4\,913\,;1\,837) = 1$ : les deux dimensions sont \textbf{premières entre elles}.
+\item Le PGCD valant $1$, la fraction $\dfrac{1\,837}{4\,913}$ est \textbf{déjà irréductible} : on ne peut pas la simplifier.
+\end{enumerate}
+
+\textbf{Partie B : le pavage}
+\begin{enumerate}
+\item Pour paver sans découpe, le côté $c$ doit diviser exactement la longueur $4\,913$ (nombre entier de carreaux sur la longueur) \emph{et} la largeur $1\,837$. Donc $c$ est un \textbf{diviseur commun} de $4\,913$ et $1\,837$.
+\item La plus grande valeur possible de $c$ est le PGCD des deux dimensions : $c = \mathrm{PGCD}(4\,913\,;1\,837) = 1$ cm. Les deux nombres étant premiers entre eux, le seul pavage théorique possible utilise des carreaux de $1$ cm de côté.
+\item Il faut alors $\dfrac{4\,913}{1} \times \dfrac{1\,837}{1} = 4\,913 \times 1\,837 = 9\,025\,181$ carreaux.
+\item Coût des carreaux : $9\,025\,181 \times 650 = 5\,866\,367\,650$ FCFA. \\
+L'aire de la salle est $9\,025\,181$ cm$^2 = 902,5181$ m$^2 \approx 902,52$ m$^2$. Coût de la pose : $902,52 \times 1\,500 = 1\,353\,780$ FCFA. \\
+Coût total : $5\,866\,367\,650 + 1\,353\,780 = 5\,867\,721\,430$ FCFA. \\
+\emph{Remarque :} ce résultat astronomique montre concrètement qu'avec des dimensions premières entre elles, le pavage en carreaux entiers est mathématiquement possible mais pratiquement absurde ; en réalité, on choisit un côté $c$ non entier ou on accepte des découpes en bordure.
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 4 pts) :} A.1 : 1 pt (étapes complètes et restes corrects) ; A.2 : 0.5pt ; B.1 : 0.5pt ; B.2 : 0.5pt ; B.3 : 0.5pt ; B.4 : 1 pt.
+
+\textbf{Points de vigilance :} citer à chaque division la condition $0 \le r < b$ ; justifier B.1 par la définition d'un diviseur commun ; dans B.3, bien multiplier les nombres de carreaux en longueur et en largeur (et non les additionner) ; dans B.4, ne pas oublier la pose et convertir correctement l'aire en m$^2$ ($1$ m$^2 = 10\,000$ cm$^2$).
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type Bac : congruences, restes et calendrier]
+\textbf{Partie A : puissances et restes}
+\begin{enumerate}
+\item $3^1 = 3 \equiv 3 \pmod{7}$ ; $3^2 = 9 \equiv 2 \pmod{7}$ ; $3^3 = 27 = 3 \times 7 + 6 \equiv 6 \equiv -1 \pmod{7}$. \\
+En poursuivant : $3^4 \equiv -3 \equiv 4$, $3^5 \equiv 12 \equiv 5$, $3^6 \equiv 15 \equiv 1 \pmod{7}$. \\
+\textbf{Conjecture :} les restes sont périodiques de période $6$ : $3^n \equiv 3, 2, 6, 4, 5, 1 \pmod{7}$ selon que $n \equiv 1, 2, 3, 4, 5, 0 \pmod{6}$.
+\item $3^3 = 27 = 4 \times 7 - 1$, donc $3^3 \equiv -1 \pmod{7}$. \\
+Division euclidienne de l'exposant : $2\,024 = 3 \times 674 + 2$. Alors, par compatibilité des congruences avec les puissances :
+\[ 3^{2024} = (3^3)^{674} \times 3^2 \equiv (-1)^{674} \times 9 \equiv 1 \times 2 \equiv 2 \pmod{7} \]
+Le reste de la division de $3^{2024}$ par $7$ est $\mathbf{2}$.
+\item $3^5 = 243 = 11 \times 22 + 1$, donc $3^5 \equiv 1 \pmod{11}$. \\
+Or $2\,024 = 5 \times 404 + 4$, donc :
+\[ 3^{2024} = (3^5)^{404} \times 3^4 \equiv 1^{404} \times 81 \equiv 81 \equiv 4 \pmod{11} \quad (81 = 7 \times 11 + 4) \]
+Le reste modulo $11$ est $\mathbf{4}$.
+\item Modulo $10$ : $3^1 \equiv 3$, $3^2 \equiv 9$, $3^3 \equiv 27 \equiv 7$, $3^4 = 81 \equiv 1 \pmod{10}$. Le cycle est de longueur $4$. Comme $2\,024 = 4 \times 506$ :
+\[ 3^{2024} = (3^4)^{506} \equiv 1^{506} \equiv 1 \pmod{10} \]
+Le chiffre des unités de $3^{2024}$ est $\mathbf{1}$.
+\end{enumerate}
+
+\textbf{Partie B : calendrier}
+\begin{enumerate}
+\item La semaine compte $7$ jours et les jours se répètent cycliquement : deux dates séparées par un nombre de jours multiple de $7$ tombent le même jour de la semaine. Le jour d'une date ne dépend donc que du \textbf{reste modulo $7$} du nombre de jours écoulés depuis une date de référence.
+\item L'année 2025 compte $365$ jours et $365 = 7 \times 52 + 1$, donc $365 \equiv 1 \pmod{7}$. Le 1\textsuperscript{er} janvier 2026 tombe $1$ jour après un mercredi : c'est un \textbf{jeudi}.
+\item Le 26 mai 2025 est le 146\textsuperscript{e} jour de l'année ($31 + 28 + 31 + 30 + 26 = 146$) : il s'est écoulé $146 - 1 = 145$ jours depuis le 1\textsuperscript{er} janvier. Or $145 = 7 \times 20 + 5$, donc $145 \equiv 5 \pmod{7}$. On avance de $5$ jours à partir du mercredi : jeudi ($1$), vendredi ($2$), samedi ($3$), dimanche ($4$), \textbf{lundi} ($5$). Le 26 mai 2025 est un \textbf{lundi}.
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 5 pts) :} A.1 : 0.75pt ; A.2 : 0.75pt ; A.3 : 0.75pt ; A.4 : 0.75pt ; B.1 : 0.5pt ; B.2 : 0.75pt ; B.3 : 0.75pt.
+
+\textbf{Points de vigilance :} annoncer la compatibilité des congruences avec les puissances avant de l'utiliser ; écrire la division euclidienne de l'exposant ($2\,024 = 3 \times 674 + 2$) ; en B.3, bien compter $145$ jours \emph{écoulés} et non $146$ (le 1\textsuperscript{er} janvier est le jour de référence, décalage de $0$ jour) ; conclure par une phrase donnant explicitement le reste ou le jour demandé.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Type Bac : décomposition, diviseurs et conditionnement en lots]
+\textbf{Partie A : décompositions}
+\begin{enumerate}
+\item $1\,155 = 5 \times 231 = 5 \times 3 \times 77 = 3 \times 5 \times 7 \times 11$. \\
+$1\,980 = 10 \times 198 = 2 \times 5 \times 2 \times 99 = 2^2 \times 3^2 \times 5 \times 11$.
+\item Le PGCD prend chaque facteur premier commun avec le plus petit exposant :
+\[ \mathrm{PGCD}(1\,155\,;1\,980) = 3 \times 5 \times 11 = 165 \]
+Le PPCM prend chaque facteur premier (commun ou non) avec le plus grand exposant :
+\[ \mathrm{PPCM}(1\,155\,;1\,980) = 2^2 \times 3^2 \times 5 \times 7 \times 11 = 13\,860 \]
+Vérification : $165 \times 13\,860 = 2\,286\,900 = 1\,155 \times 1\,980$. \checkmark
+\item $1\,980 = 2^2 \times 3^2 \times 5^1 \times 11^1$. Le nombre de diviseurs positifs est :
+\[ (2+1)(2+1)(1+1)(1+1) = 3 \times 3 \times 2 \times 2 = 36 \]
+\end{enumerate}
+
+\textbf{Partie B : les lots}
+\begin{enumerate}
+\item Le nombre de lots doit diviser à la fois $1\,155$ et $1\,980$ (tous les sachets utilisés, lots identiques). Le nombre maximal de lots est donc $\mathrm{PGCD}(1\,155\,;1\,980) = \mathbf{165}$ \textbf{lots}. \\
+Composition de chaque lot : $\dfrac{1\,155}{165} = 7$ sachets de piment et $\dfrac{1\,980}{165} = 12$ sachets d'épices mélangées.
+\item Recette maximale : $165 \times 2\,500 = \mathbf{412\,500}$ \textbf{FCFA}.
+\end{enumerate}
+
+\textbf{Partie C : les livreurs}
+\begin{enumerate}
+\item Le premier livreur passe aux jours multiples de $8$, le second aux jours multiples de $12$. Ils passent ensemble aux jours multiples communs de $8$ et $12$ ; la première coïncidence a lieu au bout de :
+\[ \mathrm{PPCM}(8\,;12) = \mathrm{PPCM}(2^3\,;2^2 \times 3) = 2^3 \times 3 = 24 \text{ jours} \]
+Ils passeront de nouveau ensemble au bout de $\mathbf{24}$ \textbf{jours}, soit le 30 janvier 2025.
+\item $24 = 7 \times 3 + 3$, donc $24 \equiv 3 \pmod{7}$. En partant du lundi, on avance de $3$ jours : mardi ($1$), mercredi ($2$), \textbf{jeudi} ($3$). La prochaine visite commune aura lieu un \textbf{jeudi} (le jeudi 30 janvier 2025).
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 5 pts) :} A.1 : 1 pt ; A.2 : 1 pt ; A.3 : 0.5pt ; B.1 : 1 pt ; B.2 : 0.5pt ; C.1 : 0.5pt ; C.2 : 0.5pt.
+
+\textbf{Points de vigilance :} justifier « nombre maximal de lots $=$ PGCD » et « prochaine coïncidence $=$ PPCM » par une phrase (diviseur commun / multiple commun) ; dans A.3, ajouter $1$ à chaque exposant ; en C.2, expliciter la congruence $24 \equiv 3 \pmod{7}$ avant de conclure sur le jour ; soigner les unités (FCFA, jours).
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+root concept/.append style={concept color=popdark, font=\normalsize\bfseries},
+level 1/.append style={level distance=3.6cm, sibling angle=60},
+level 2/.append style={level distance=2.2cm, sibling angle=45, font=\scriptsize}]
+\node[root concept]{Arithmétique dans $\mathbb{Z}$}
+child[concept color=popblue]{ node{Divisibilité}
+  child{ node{$a=bq+r$, $0\le r<|b|$} }
+  child{ node{$n\mathbb{Z}$ : multiples de $n$} }
+}
+child[concept color=poporange]{ node{Congruences}
+  child{ node{$a\equiv b\ [n] \Leftrightarrow n\mid(a-b)$} }
+  child{ node{Compatibles $+$ et $\times$} }
+}
+child[concept color=popgreen]{ node{Critères de divisibilité}
+  child{ node{par 2, 3, 4, 5, 9, 10, 11} }
+}
+child[concept color=poppurple]{ node{Nombres premiers}
+  child{ node{Crible d'Ératosthène} }
+  child{ node{Décomposition unique} }
+}
+child[concept color=poppink]{ node{PGCD et PPCM}
+  child{ node{Algorithme d'Euclide} }
+  child{ node{$\mathrm{PGCD}\times\mathrm{PPCM}=|ab|$} }
+}
+child[concept color=popgold]{ node{Premiers entre eux}
+  child{ node{$\mathrm{PGCD}(a,b)=1$} }
+  child{ node{Fractions irréductibles} }
+};
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : les six piliers de l'arithmétique dans $\mathbb{Z}$.}
+\end{popfigure}
+
+\begin{propriete}[L'essentiel de la leçon]
+\textbf{Définitions clés.}
+\begin{itemize}
+\item \cle{Divisibilité} : $a\mid b$ ($a$ divise $b$) s'il existe $k\in\mathbb{Z}$ tel que $b=ka$.
+\item \cle{Division euclidienne} : pour $a\in\mathbb{Z}$, $b\in\mathbb{Z}^*$, il existe un \textbf{unique} couple $(q,r)\in\mathbb{Z}^2$ tel que $a=bq+r$ avec $0\le r<|b|$.
+\item \cle{Congruence} : $a\equiv b\ [n] \Leftrightarrow n\mid(a-b) \Leftrightarrow a$ et $b$ ont le même reste dans la division euclidienne par $n$ ($n\ge 2$).
+\item \cle{Nombre premier} : entier $p\ge 2$ dont les seuls diviseurs positifs sont $1$ et $p$.
+\item \cle{PGCD} : plus grand diviseur commun ; \cle{PPCM} : plus petit multiple commun strictement positif.
+\item \cle{Premiers entre eux} : $a$ et $b$ sont premiers entre eux si $\mathrm{PGCD}(a,b)=1$.
+\end{itemize}
+
+\textbf{Théorèmes et formules à connaître par cœur.}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Notion} & \textbf{Résultat} \\
+\hline
+Division euclidienne & $a=bq+r$, \ $0\le r<|b|$ (existence et unicité) \\
+\hline
+Congruences & $a\equiv b\ [n]$ et $c\equiv d\ [n]$ $\Rightarrow$ $a+c\equiv b+d\ [n]$ et $ac\equiv bd\ [n]$ \\
+\hline
+Puissances & $a\equiv b\ [n] \Rightarrow a^k\equiv b^k\ [n]$ pour tout $k\in\mathbb{N}$ \\
+\hline
+Décomposition & Tout entier $n\ge 2$ s'écrit de façon \textbf{unique} $n=p_1^{\alpha_1}p_2^{\alpha_2}\cdots p_k^{\alpha_k}$ ($p_i$ premiers, $\alpha_i\ge 1$) \\
+\hline
+Test de primalité & $n$ non premier $\Rightarrow$ $n$ admet un diviseur premier $p\le\sqrt{n}$ \\
+\hline
+PGCD via décomposition & Produit des facteurs premiers \textbf{communs} affectés du \textbf{plus petit} exposant \\
+\hline
+PPCM via décomposition & Produit de \textbf{tous} les facteurs premiers affectés du \textbf{plus grand} exposant \\
+\hline
+Relation fondamentale & $\mathrm{PGCD}(a,b)\times\mathrm{PPCM}(a,b)=|a\times b|$ \\
+\hline
+Algorithme d'Euclide & $\mathrm{PGCD}(a,b)=\mathrm{PGCD}(b,r)$ où $r$ est le reste de $a$ par $b$ ; le PGCD est le \textbf{dernier reste non nul} \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Critères de divisibilité usuels (base dix).}
+\begin{itemize}
+\item Par \textbf{2} (resp. \textbf{5}, \textbf{10}) : le chiffre des unités est pair (resp. $0$ ou $5$, resp. $0$).
+\item Par \textbf{3} ou \textbf{9} : la somme des chiffres est divisible par $3$ ou $9$.
+\item Par \textbf{4} : le nombre formé par les deux derniers chiffres est divisible par $4$.
+\item Par \textbf{11} : la différence alternée des chiffres (somme des rangs pairs $-$ somme des rangs impairs) est un multiple de $11$.
+\end{itemize}
+
+\textbf{Méthodes express.}
+\begin{enumerate}
+\item \textbf{Reste d'une puissance modulo $n$} : réduire la base modulo $n$, chercher un cycle dans les puissances ($a^k\equiv 1\ [n]$ si possible, ordre de $a$), puis réduire l'exposant modulo la période.
+\item \textbf{PGCD par Euclide} : divisions euclidiennes en chaîne jusqu'à un reste nul ; le PGCD est le dernier reste non nul.
+\item \textbf{PPCM} : calculer le PGCD puis $\mathrm{PPCM}(a,b)=\dfrac{|ab|}{\mathrm{PGCD}(a,b)}$.
+\item \textbf{Fraction irréductible} : diviser numérateur et dénominateur par leur PGCD.
+\item \textbf{Primalité de $n$} : tester la divisibilité par les nombres premiers $\le\sqrt{n}$ uniquement.
+\end{enumerate}
+\end{propriete}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+\item[$\square$] Je sais écrire une division euclidienne avec la condition $0\le r<|b|$ (même avec $a$ ou $b$ négatifs).
+\item[$\square$] Je sais déterminer les diviseurs d'un entier à partir de sa décomposition en facteurs premiers.
+\item[$\square$] Je sais prouver qu'un entier est premier en ne testant que les premiers $p\le\sqrt{n}$.
+\item[$\square$] Je maîtrise le crible d'Ératosthène et la liste des premiers inférieurs à $100$.
+\item[$\square$] Je sais calculer un PGCD par l'algorithme d'Euclide et par décomposition.
+\item[$\square$] Je sais calculer un PPCM grâce à $\mathrm{PGCD}\times\mathrm{PPCM}=|ab|$.
+\item[$\square$] Je sais justifier que deux entiers sont premiers entre eux (PGCD égal à $1$).
+\item[$\square$] Je sais rendre une fraction irréductible et résoudre des problèmes de partage (PGCD) ou de coïncidence d'événements périodiques (PPCM).
+\item[$\square$] Je sais utiliser la compatibilité des congruences avec $+$ et $\times$ pour trouver un reste.
+\item[$\square$] Je sais déterminer le reste de $a^k$ modulo $n$ en repérant un cycle dans les puissances.
+\item[$\square$] Je sais appliquer les critères de divisibilité par $2, 3, 4, 5, 9, 10, 11$ sans poser la division.
+\item[$\square$] Je pense à vérifier mes conditions d'application : $n\ge 2$ pour les congruences, exposants corrects dans les décompositions, $b\neq 0$ pour la division euclidienne.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
