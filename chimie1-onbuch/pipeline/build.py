@@ -65,7 +65,7 @@ def assemble(L, serie):
         f"\\item {esc(s['titre'])}" for s in plan["sections"]) + "\n" + "\n".join(
         f"\\item {t}" for t, _ in extras) + "\n\\end{enumerate}"
     body = [
-        f"\\pagegarde{{{esc(L['titre'])}}}{{Chimie}}{{{niveau}}}{{{esc(L['module'])}}}{{{num}}}{{{esc(L['duree'])}}}{{{objectifs_cover}}}",
+        f"\\pagegarde{{{esc(L['titre'])}}}{{Chimie}}{{{niveau}}}{{{esc(L['module'])}}}{{{num}}}{{{esc(L['duree'][serie])}}}{{{objectifs_cover}}}",
         "\\begin{sommaire}\n\\begin{multicols}{2}\n" + sommaire + "\n\\end{multicols}\n\\end{sommaire}",
         "\\begin{objectifs}\n" + items(plan["objectifs"]) + "\n\\end{objectifs}",
         "\\begin{prerequis}\n" + items(plan["prerequis"]) + "\n\\end{prerequis}",
