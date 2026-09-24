@@ -265,6 +265,8 @@ def autofix(body):
     body = _node_align(body)
     body = _cases_math(body)
     body = _lonely_items(body)
+    # la boîte bilan n'a pas de titre optionnel : [..] s'imprimerait tel quel
+    body = re.sub(r"\\begin\{bilan\}\[[^\]\n]*\]", r"\\begin{bilan}", body)
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
@@ -698,6 +700,11 @@ Ne raccourcis pas le contenu : la version finale doit être au moins aussi riche
         # garde-fou : une relecture qui ampute le texte est rejetée
         if len(rev) < 0.7 * len(raw):
             log(f"[{L['id']}] relecture {what} trop courte ({len(rev)} < {len(raw)}), version initiale conservée")
+            rev = raw
+        elif len(rev) > 2.5 * len(raw) or (name == "bilan" and len(rev) > 1.6 * len(raw)):
+            # Le relecteur réécrit parfois tout un second cours (fiche bilan
+            # gonflée, sections dupliquées) : on garde la version du rédacteur.
+            log(f"[{L['id']}] relecture {what} gonflée ({len(rev)} > {len(raw)}), version initiale conservée")
             rev = raw
         rev_f.write_text(rev)
     body = autofix(rev_f.read_text())

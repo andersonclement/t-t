@@ -51,6 +51,10 @@ def assemble(L, serie):
     n = len(plan["sections"])
     sections = [(d / f"s{i+1:02d}.ok.tex").read_text() for i in range(n)]
     extras = [(title, (d / f"{k}.ok.tex").read_text()) for k, title in EXTRAS]
+    # Certains modèles corrigent les exercices directement dans la partie
+    # « Exercices » : la partie « Corrigés » existe déjà, on retire ce doublon.
+    extras = [(t, re.sub(r"\\begin\{corrige\}.*?\\end\{corrige\}\s*", "", c, flags=re.S) if t == "Exercices" else c)
+              for t, c in extras]
     rel_fonts = os.path.relpath(ROOT / "fonts", OUT / f"Tle-{serie}" / f"{L['id']}-{L['slug']}") + "/"
     preamble = (ROOT / "preamble.tex").read_text().replace("Path=fonts/", f"Path={rel_fonts}")
     niveau = f"Tle {serie}"
