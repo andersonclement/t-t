@@ -264,11 +264,41 @@ def autofix(body):
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
     body = re.sub(r"\\begin\{([a-zA-Z*]+)\]\[", r"\\begin{\1}[", body)
     body = re.sub(r"\\begin\{(tabularx|tabular|array|minipage)\{", r"\\begin{\1}{", body)
+    body = _safe_sqrt(body)
     body = _close_lists(body)
     # Libellés de graduations : $0,05$ dans une liste {…} coupe à la virgule -> $0{,}05$
     body = re.sub(r"((?:x|y)ticklabels\s*=\s*\{)((?:[^{}]|\{[^{}]*\})*)(\})",
                   lambda m: m.group(1) + re.sub(r"\$(-?\d+),(\d+)\$", r"$\1{,}\2$", m.group(2)) + m.group(3), body)
     return body
+
+
+def _safe_sqrt(body):
+    """Dans les tracés TikZ/pgfplots, sqrt(x) avec x négatif par arrondi aux
+    bornes (ellipses, hyperboles) fait échouer la compilation : on protège
+    par sqrt(max(0, x)), sans effet là où x est positif. Hors tracés (texte,
+    formules LaTeX), rien n'est modifié."""
+    lines = body.split("\n")
+    for i, l in enumerate(lines):
+        if "sqrt(" not in l or not re.search(r"plot|\\addplot|domain|declare function|\\draw", l):
+            continue
+        out, k = [], 0
+        while True:
+            j = l.find("sqrt(", k)
+            if j < 0:
+                out.append(l[k:])
+                break
+            start = j + len("sqrt(")
+            depth, e = 1, start
+            while e < len(l) and depth:
+                depth += (l[e] == "(") - (l[e] == ")")
+                e += 1
+            inner = l[start:e - 1]
+            out.append(l[k:start])
+            out.append(inner if inner.startswith("max(0,") else f"max(0,{inner})")
+            out.append(")")
+            k = e
+        lines[i] = "".join(out)
+    return "\n".join(lines)
 
 
 _ENV_RE = re.compile(r"\\(begin|end)\{([^}]+)\}")
