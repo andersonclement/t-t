@@ -282,6 +282,8 @@ def autofix(body):
     # \textbf{3x^2+...} dans une formule : \textbf n'accepte pas ^ et _ -> \boldsymbol
     body = re.sub(r"(\$[^$]*?)\\textbf\{([^{}$]*[\^_][^{}$]*)\}([^$]*\$)",
                   lambda m: m.group(1) + "\\boldsymbol{" + m.group(2) + "}" + m.group(3), body)
+    # calc TikZ : ($(2)*(U)$) -> ($2*(U)$) (un nombre entre parenthèses est pris pour un nœud)
+    body = re.sub(r"\(\$\s*\((-?[\d.]+)\)\s*\*", r"($\1*", body)
     body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
