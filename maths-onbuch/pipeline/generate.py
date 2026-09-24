@@ -262,6 +262,7 @@ def autofix(body):
     # \node[...]{texte avec \\} sans align= : TikZ refuse le saut de ligne
     body = _node_align(body)
     body = _cases_math(body)
+    body = _box_as_command(body)
     body = _lonely_items(body)
     # circuitikz : étiquette l=$...$ non protégée (virgule, parenthèses) -> l={$...$}
     body = re.sub(r"(to\[[^\]]*?\b(?:l|l_|l\^|v|v_|v\^|i|i_|i\^|a|a_|a\^)=)\$([^$]*)\$",
@@ -463,6 +464,29 @@ def _lonely_items(body):
             inner = "\n\\begin{itemize}" + inner.rstrip() + "\n\\end{itemize}\n"
         return m.group(1) + inner + m.group(4)
     return re.sub(r"(\\begin\{(" + _BOX + r")\}(?:\[(?:[^\[\]]|\{[^{}]*\})*\])?)(.*?)(\\end\{\2\})", fix, body, flags=re.S)
+
+
+def _box_as_command(body):
+    """\\aretenir[Titre]{contenu} (boîte écrite comme une commande) -> environnement."""
+    pat = re.compile(r"\\(" + _BOX + r")(\[(?:[^\[\]]|\{[^{}]*\})*\])?\{")
+    out, pos = [], 0
+    while True:
+        m = pat.search(body, pos)
+        if not m:
+            break
+        depth, j = 0, m.end() - 1
+        while j < len(body):
+            depth += (body[j] == "{") - (body[j] == "}")
+            if depth == 0:
+                break
+            j += 1
+        if j >= len(body):
+            break
+        out.append(body[pos:m.start()])
+        out.append("\\begin{" + m.group(1) + "}" + (m.group(2) or "") + body[m.end():j] + "\\end{" + m.group(1) + "}")
+        pos = j + 1
+    out.append(body[pos:])
+    return "".join(out)
 
 
 def _node_align(body):
