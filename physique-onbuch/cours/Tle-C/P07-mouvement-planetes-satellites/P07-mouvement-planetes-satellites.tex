@@ -54,6 +54,7 @@
 \usepackage{siunitx}
 % parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
 \sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
 \usepackage{qrcode}
 % \degree : commande fréquemment utilisée par les modèles pour un angle ou une
 % température en dehors de \SI{}{} (non fournie par les paquets chargés).
@@ -207,6 +208,7 @@
 }
 % Même style disponible dans un \draw TikZ simple (hors pgfplots)
 \tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
 
 % ============================================================
 % Pill / squiggle
@@ -479,7 +481,7 @@ Toute la réponse repose sur deux piliers : le choix d'un bon \cle{référentiel
 
 \courssub{La notion de référentiel : un rappel indispensable}
 
-Imaginons un voyageur assis dans le bus Yaoundé--Douala roulant à \SI{80}{km/h}. Pour son voisin de siège, il est immobile ; pour un piéton au bord de la route, il file à \SI{80}{km/h}. Qui a raison ? Les deux ! La description d'un mouvement dépend de l'objet par rapport auquel on l'observe. Cet objet de référence s'appelle un \cle{référentiel}.
+Imaginons un voyageur assis dans le bus Yaoundé--Douala roulant à \SI{80}{km.h^{-1}}. Pour son voisin de siège, il est immobile ; pour un piéton au bord de la route, il file à \SI{80}{km.h^{-1}}. Qui a raison ? Les deux ! La description d'un mouvement dépend de l'objet par rapport auquel on l'observe. Cet objet de référence s'appelle un \cle{référentiel}.
 
 \begin{definition}[Référentiel]
 Un \cle{référentiel} est un solide de référence par rapport auquel on décrit le mouvement d'un corps. On lui associe un repère d'espace (origine et trois axes) et une horloge pour mesurer le temps. Toute étude de mouvement doit commencer par la phrase : \og le mouvement est étudié dans le référentiel \ldots \fg{}.
@@ -688,482 +690,6 @@ soit $T \approx 6{,}72\times 10^{-2} \times 24 \approx \SI{1,6}{h}$. Le satellit
 \end{aretenir}
 
 Dans la section suivante, nous quitterons le terrain de l'observation pour celui de la démonstration : armés de la loi de gravitation universelle et de la deuxième loi de Newton, nous établirons les expressions de la vitesse et de la période d'un satellite en orbite circulaire, et nous retrouverons la troisième loi de Kepler comme une conséquence de la physique newtonienne.
-
-\coursec{Mouvement circulaire uniforme d'un satellite}
-
-Nous savons maintenant que les orbites sont des ellipses (1\textsuperscript{re} loi) et que sur un cercle la vitesse est constante (2\textsuperscript{e} loi). Mais \emph{pourquoi} le satellite reste-t-il en orbite ? Quelle force maintient ce mouvement circulaire ? C'est ici qu'intervient la gravitation newtonienne.
-
-\courssub{La force gravitationnelle : le moteur invisible}
-
-Rappelons la loi fondamentale qui régit l'attraction entre deux masses.
-
-\begin{propriete}[Loi de la gravitation universelle (rappel)]
-Deux masses ponctuelles $M_A$ (astre attracteur) et $m$ (satellite) séparées d'une distance $r$ s'attirent avec une force de module :
-\[ F = G\,\frac{M_A\,m}{r^2} \]
-où $G = \SI{6,67e-11}{N.m^2.kg^{-2}}$ est la \cle{constante de gravitation universelle}. La force est attractive, dirigée le long de la droite joignant les deux centres, \emph{vers} l'astre attracteur.
-\end{propriete}
-
-\begin{attention}[Conditions d'application]
-Cette loi s'applique strictement pour des masses \emph{ponctuelles} ou des sphères de répartition de masse \emph{sphériquement symétrique}. Pour la Terre et les satellites artificiels, c'est une excellente approximation. Le champ de gravitation $\vec{g} = \vec{F}/m$ a pour module $g = GM_A/r^2$.
-\end{attention}
-
-\courssub{Mise en équation du mouvement : bilan des forces}
-
-Considérons un satellite de masse $m$ en orbite \textbf{circulaire} de rayon $r$ autour d'un astre de masse $M_A$ ($M_A \gg m$). Nous nous plaçons dans le référentiel héliocentrique (planètes) ou géocentrique (satellites terrestres), supposés galiléens.
-
-\begin{experience}[Modélisation du mouvement circulaire]
-\textbf{Matériel :} Schéma de forces.
-\textbf{Protocole :}
-\begin{enumerate}
-\item Isoler le satellite.
-\item Inventorier les forces : seule la force gravitationnelle $\vec{F}_g$ agit (pas de contact, pas de frottements dans l'espace).
-\item Choisir un repère polaire $(\vec{u}_r, \vec{u}_\theta)$ origine centre de l'astre, $\vec{u}_r$ dirigé vers l'extérieur.
-\item Écrire le vecteur accélération pour un mouvement circulaire uniforme : $\vec{a} = -\dfrac{v^2}{r}\,\vec{u}_r$ (accélération centripète, dirigée vers le centre).
-\item Appliquer la 2\textsuperscript{e} loi de Newton : $\vec{F}_g = m\,\vec{a}$.
-\end{enumerate}
-\textbf{Interprétation :} La gravitation \emph{est} la force centripète. Pas de force centrifuge dans un référentiel galiléen !
-\end{experience}
-
-\begin{center}
-\begin{tikzpicture}[scale=1.2]
-% Astre
-\shade[ball color=popblue] (0,0) circle (0.6);
-\node[popdark] at (0,0) {\small Astre $M_A$};
-% Satellite
-\coordinate (S) at (3.5,0);
-\shade[ball color=poporange] (S) circle (0.15);
-\node[right=0.2cm of S, popdark] {\small Satellite $m$};
-% Force gravitation
-\draw[-{Stealth}, poppink, very thick] (S) -- ++(-1.2,0) node[midway, above] {\small $\vec{F}_g$};
-% Vitesse
-\draw[-{Stealth}, popgreen, very thick] (S) -- ++(0,1.0) node[above right] {\small $\vec{v}$};
-% Repère polaire
-\draw[-{Stealth}, popmuted] (S) -- ++(0.5,0) node[right] {\small $\vec{u}_r$};
-\draw[-{Stealth}, popmuted] (S) -- ++(0,0.5) node[above] {\small $\vec{u}_\theta$};
-% Rayon
-\draw[popline, dashed] (0,0) -- (S) node[midway, below] {\small $r$};
-\end{tikzpicture}
-\end{center}
-
-\courssub{Expression de la vitesse orbitale}
-
-Projetons la relation fondamentale sur l'axe radial $\vec{u}_r$ (orienté vers l'extérieur) :
-\[ -G\,\frac{M_A\,m}{r^2} = m\left(-\frac{v^2}{r}\right) \]
-La masse du satellite $m$ se simplifie (principe d'équivalence) : \emph{la trajectoire ne dépend pas de la masse du satellite}.
-\[ \frac{v^2}{r} = G\,\frac{M_A}{r^2} \quad\Rightarrow\quad v^2 = \frac{G\,M_A}{r} \]
-
-\begin{propriete}[Vitesse orbitale circulaire]
-Pour un satellite en orbite circulaire de rayon $r$ autour d'un astre de masse $M_A$ :
-\[ v = \sqrt{\frac{G\,M_A}{r}} \]
-\begin{itemize}
-\item $v$ ne dépend \textbf{pas} de la masse $m$ du satellite.
-\item $v$ \textbf{diminue} quand $r$ augmente ($\propto 1/\sqrt{r}$) : plus on est loin, plus on va lentement.
-\item \textbf{Analyse dimensionnelle :} $[G] = \si{m^3.kg^{-1}.s^{-2}}$, $[M_A] = \si{kg}$, $[r] = \si{m}$ $\Rightarrow$ $[GM_A/r] = \si{m^2.s^{-2}}$ $\Rightarrow$ $\sqrt{\cdot} = \si{m.s^{-1}}$. \checkmark
-\end{itemize}
-\end{propriete}
-
-\courssub{Expression de la période de révolution}
-
-La période $T$ est le temps pour parcourir la circonférence $2\pi r$ à la vitesse $v$ :
-\[ T = \frac{2\pi r}{v} = 2\pi r \sqrt{\frac{r}{G\,M_A}} = 2\pi \sqrt{\frac{r^3}{G\,M_A}} \]
-
-\begin{propriete}[Période de révolution circulaire (3\textsuperscript{e} loi de Kepler démontrée)]
-\[ T = 2\pi \sqrt{\frac{r^3}{G\,M_A}} \qquad\text{ou}\qquad T^2 = \frac{4\pi^2}{G\,M_A}\,r^3 \]
-On retrouve la forme de Kepler $\dfrac{T^2}{r^3} = k$ avec la constante théorique :
-\[ k = \frac{4\pi^2}{G\,M_A} \]
-Cette constante ne dépend \textbf{que de la masse $M_A$ de l'astre attracteur}.
-\end{propriete}
-
-\begin{aretenir}[Formules clés du mouvement circulaire]
-\begin{center}
-\begin{tabular}{|c|c|c|}\hline
-Grandeurs & Expression & Unité SI \\ \hline
-Vitesse orbitale & $v = \sqrt{\dfrac{G M_A}{r}}$ & \si{m/s} \\ \hline
-Période & $T = 2\pi \sqrt{\dfrac{r^3}{G M_A}}$ & \si{s} \\ \hline
-Constante de Kepler & $k = \dfrac{T^2}{r^3} = \dfrac{4\pi^2}{G M_A}$ & \si{s^2.m^{-3}} \\ \hline
-Masse de l'astre & $M_A = \dfrac{4\pi^2 r^3}{G T^2}$ & \si{kg} \\ \hline
-\end{tabular}
-\end{center}
-\end{aretenir}
-
-\begin{methode}[Déterminer la masse d'un astre à partir d'un satellite]
-\textbf{Objectif :} Calculer $M_A$ (masse du Soleil, de la Terre, de Jupiter, etc.).
-\begin{enumerate}
-\item Identifier un satellite (planète, lune, satellite artificiel) dont on connaît le rayon orbital $r$ (ou demi-grand axe $a$) et la période $T$.
-\item Vérifier que l'orbite est quasi circulaire ($e \approx 0$) ou utiliser $a$ pour une ellipse.
-\item Appliquer la formule $M_A = \dfrac{4\pi^2 r^3}{G T^2}$ (ou $a^3$).
-\item Exprimer $r$ en \si{m}, $T$ en \si{s}, $G = \SI{6,67e-11}{SI}$.
-\item Vérifier l'ordre de grandeur : $M_{\text{Terre}} \approx \SI{6,0e24}{kg}$, $M_{\text{Soleil}} \approx \SI{2,0e30}{kg}$.
-\end{enumerate}
-\end{methode}
-
-\begin{exemplebox}[Masse de la Terre à partir de la Lune]
-Données : $r_L = \SI{3,84e8}{m}$, $T_L = \SI{27,3}{jours} = \SI{2,36e6}{s}$.
-\[ M_T = \frac{4\pi^2 (3,84\times 10^8)^3}{6,67\times 10^{-11} \times (2,36\times 10^6)^2} \approx \frac{4\pi^2 \times 5,66\times 10^{25}}{6,67\times 10^{-11} \times 5,57\times 10^{12}} \approx \frac{2,24\times 10^{27}}{3,71\times 10^2} \approx \SI{6,04e24}{kg} \]
-Valeur acceptée : \SI{5,97e24}{kg}. L'accord est excellent (orbite légèrement elliptique, perturbations solaires).
-\end{exemplebox}
-
-\begin{exoresolu}[Satellite d'observation en orbite basse (LEO)]
-Un satellite camerounais d'observation agricole orbite à une altitude $h = \SI{600}{km}$ au-dessus de la surface terrestre ($R_T = \SI{6370}{km}$, $M_T = \SI{5,97e24}{kg}$).
-\begin{enumerate}
-\item Calculer sa vitesse orbitale $v$ et sa période $T$.
-\item Comparer $v$ à la vitesse de rotation de la Terre à l'équateur ($v_{\text{rot}} \approx \SI{465}{m/s}$). Pourquoi lance-t-on les satellites vers l'Est ?
-\end{enumerate}
-\tcblower
-\textbf{1.} Rayon orbital $r = R_T + h = \SI{6970}{km} = \SI{6,97e6}{m}$.
-\begin{align*}
-v &= \sqrt{\frac{G M_T}{r}} = \sqrt{\frac{6,67\times 10^{-11} \times 5,97\times 10^{24}}{6,97\times 10^6}} = \sqrt{\frac{3,98\times 10^{14}}{6,97\times 10^6}} \approx \sqrt{5,71\times 10^7} \approx \SI{7550}{m/s} \\
-T &= \frac{2\pi r}{v} = \frac{2\pi \times 6,97\times 10^6}{7550} \approx \SI{5800}{s} \approx \SI{1,61}{h} \approx \SI{96,7}{min}
-\end{align*}
-\textbf{2.} $v_{\text{orbite}} \approx \SI{7,55}{km/s}$ vs $v_{\text{rot}} \approx \SI{0,465}{km/s}$. La rotation terrestre apporte un "coup de pouce" de \SI{0,465}{km/s} si on lance vers l'Est (dans le sens de la rotation). Cela représente une économie de carburant non négligeable (environ 6\% de la vitesse orbitale). C'est pourquoi la base de lancement de Kourou (Guyane, \SI{5}{\degree} Nord) est idéale : vitesse de rotation maximale et large ouverture vers l'Est (océan Atlantique).
-\end{exoresolu}
-
-\begin{attention}[Erreurs fréquentes à ne pas commettre]
-\begin{itemize}
-\item Confondre $r$ (distance centre-centre) et $h$ (altitude). Toujours $r = R_A + h$.
-\item Oublier de convertir $T$ en \textbf{secondes} et $r$ en \textbf{mètres} avant d'utiliser $G = \SI{6,67e-11}{SI}$.
-\item Croire que la masse du satellite $m$ intervient dans $v$ ou $T$ : elle se simplifie !
-\item Écrire $F = mv^2/r$ sans le signe moins en coordonnées polaires (radial entrant).
-\end{itemize}
-\end{attention}
-
-\coursec{Le satellite géostationnaire}
-
-Un satellite géostationnaire est un satellite qui, vu depuis la Terre, \emph{ne bouge pas}. C'est le "Saint Graal" des télécommunications : pas besoin de moteur pour suivre la parabole, elle reste fixée sur le mur. Analysons les conditions physiques strictes.
-
-\courssub{Conditions d'un satellite géostationnaire}
-
-Pour qu'un satellite paraisse immobile dans le référentiel terrestre (lié au sol), il doit satisfaire \textbf{trois conditions simultanées} :
-
-\begin{enumerate}
-\item \textbf{Orbite circulaire} : vitesse constante (sinon il avancerait/reculerait).
-\item \textbf{Orbite équatoriale} (inclinaison $i = 0^\circ$) : le plan de l'orbite contient l'équateur. Sinon, le satellite oscillerait Nord-Sud (analemme).
-\item \textbf{Période de révolution $T = T_{\text{sidéral}}$} : le satellite doit tourner dans le même sens que la rotation terrestre (Ouest $\to$ Est) avec la même période angulaire. $T_{\text{sidéral}} = \SI{23}{h}\,\SI{56}{min}\,\SI{4}{s} = \SI{86164}{s}$.
-\end{enumerate}
-
-\begin{attention}[Jour solaire vs Jour sidéral]
-Le jour solaire (\SI{24}{h}) est le temps entre deux passages du Soleil au méridien. Le jour sidéral (\SI{23}{h}\,\SI{56}{min}\,\SI{4}{s}) est le temps d'une rotation complète de la Terre par rapport aux étoiles fixes. C'est \textbf{le jour sidéral} qui est la période de rotation de la Terre dans le référentiel géocentrique (galiléen), donc la période orbitale requise. Ne pas confondre !
-\end{attention}
-
-\courssub{Calcul de l'altitude géostationnaire}
-
-On utilise la 3\textsuperscript{e} loi de Kepler (démontrée) : $T^2 = \dfrac{4\pi^2}{G M_T} r^3$.
-\[ r_{\text{geo}} = \sqrt[3]{\frac{G M_T T^2}{4\pi^2}} \]
-
-\begin{exemplebox}[Altitude du satellite géostationnaire]
-Données : $M_T = \SI{5,97e24}{kg}$, $T = \SI{86164}{s}$, $G = \SI{6,67e-11}{SI}$.
-\begin{align*}
-r_{\text{geo}}^3 &= \frac{6,67\times 10^{-11} \times 5,97\times 10^{24} \times (8,6164\times 10^4)^2}{4\pi^2} \\
-&= \frac{3,98\times 10^{14} \times 7,42\times 10^9}{39,48} \approx \frac{2,95\times 10^{24}}{39,48} \approx 7,48\times 10^{22}\ \si{m^3} \\
-r_{\text{geo}} &\approx \sqrt[3]{7,48\times 10^{22}} \approx \SI{4,22e7}{m} = \SI{42200}{km}
-\end{align*}
-Altitude $h_{\text{geo}} = r_{\text{geo}} - R_T = 42200 - 6370 \approx \SI{35830}{km}$.
-La valeur usuelle admise est \textbf{\SI{35786}{km}} au-dessus du niveau de la mer (différence due aux valeurs précises de $GM_T$ et $T$).
-\end{exemplebox}
-
-\begin{propriete}[Caractéristiques de l'orbite géostationnaire]
-\begin{itemize}
-\item Altitude : $h \approx \SI{35786}{km}$.
-\item Rayon orbital : $r \approx \SI{42164}{km}$ ($\approx 6,6\,R_T$).
-\item Vitesse orbitale : $v = \dfrac{2\pi r}{T} \approx \SI{3075}{m/s}$.
-\item Zone de couverture : environ \SI{42}{\%} de la surface terrestre (hémisphère visible). Les pôles ne sont pas couverts (angle d'élévation nul ou négatif).
-\item Latence aller-retour (ping) : $\dfrac{2h}{c} \approx \dfrac{2\times 3,58\times 10^7}{3,00\times 10^8} \approx \SI{240}{ms}$. Sensible pour la voix/jeux vidéo, acceptable pour TV/données.
-\end{itemize}
-\end{propriete}
-
-\begin{savaistu}[L'orbite de Clarke et le Cameroun]
-L'idée d'utiliser des satellites géostationnaires pour les télécommunications mondiales a été popularisée par l'écrivain et scientifique Arthur C. Clarke en 1945 (\emph{Wireless World}). Aujourd'hui, la ceinture de Clarke (orbite géostationnaire) est saturée : plus de 500 satellites actifs s'y partagent les positions orbitales (appelées "slots"), gérées par l'UIT (Union Internationale des Télécommunications). Le Cameroun, via l'ART (Agence de Régulation des Télécommunications), utilise des slots pour les satellites opérant pour MTN, Orange, CAMTEL, et la diffusion TV (Canal+, CRTV). La position orbitale est une ressource naturelle limitée, comme les fréquences radio !
-\end{savaistu}
-
-\begin{exoresolu}[Perturbations d'un satellite géostationnaire]
-En réalité, un satellite géostationnaire ne reste pas parfaitement fixe. Citez deux causes principales de dérive et la manœuvre de correction.
-\tcblower
-\begin{enumerate}
-\item \textbf{Asymétrie terrestre (aplatissement $J_2$) :} La Terre n'est pas une sphère parfaite (équateur bombé). Cela crée une composante de force tangentielle qui fait dériver le satellite en longitude vers des points stables (\SI{75}{\degree}E et \SI{105}{\degree}W) ou instables. \textbf{Correction :} Propulsion Nord-Sud/Est-Ouest (station-keeping) pour maintenir la longitude assignée.
-\item \textbf{Attraction du Soleil et de la Lune :} Leur marée gravitationnelle incline le plan de l'orbite (dérive d'inclinaison $\approx \SI{0,85}{\degree}/\text{an}$). \textbf{Correction :} Manœuvres d'inclinaison (coûteuses en ergols). En fin de vie, on laisse l'inclinaison dériver (orbite "inclinée") pour économiser le carburant, la parabole au sol doit alors suivre un petit huit (tracking).
-\end{enumerate}
-\end{exoresolu}
-
-\coursec{Énergie mécanique d'un satellite (complément Bac)}
-
-Le programme de Terminale C prévoit en complément l'étude de l'énergie mécanique. C'est un outil puissant pour comprendre les transferts d'orbite, la vitesse de libération et l'énergie nécessaire pour placer un satellite en orbite.
-
-\courssub{Énergie potentielle de pesanteur (rappel et extension)}
-
-Au voisinage de la Terre ($h \ll R_T$), on approxime $E_p = mgh$ avec $g$ constant. En orbite, $g$ varie comme $1/r^2$. Il faut une expression valable partout, qui se nullifie à l'infini (référence universelle).
-
-\begin{definition}[Énergie potentielle de gravitation]
-L'énergie potentielle d'un satellite de masse $m$ à une distance $r$ du centre d'un astre de masse $M_A$ (choix de la référence $E_p(\infty) = 0$) est :
-\[ E_p(r) = -G\,\frac{M_A\,m}{r} \]
-\begin{itemize}
-\item $E_p < 0$ : le satellite est \emph{lié} (gravitationnellement captif).
-\item $E_p \to 0^-$ quand $r \to +\infty$ : énergie nulle à l'infini (satellite libéré, vitesse nulle).
-\item $E_p \to -\infty$ quand $r \to 0$ : puits de potentiel.
-\end{itemize}
-\end{definition}
-
-\begin{attention}[Zéro de l'énergie potentielle]
-Au Bac, si le sujet impose $E_p=0$ au niveau du sol, utilisez $E_p = mg(h-R_T)$ ou l'approximation $mgh$. Si rien n'est dit ou pour des calculs orbitaux, utilisez \textbf{impérativement} $E_p = -GMm/r$ (zéro à l'infini). Ne mélangez jamais les deux conventions dans un même exercice !
-\end{attention}
-
-\courssub{Énergie cinétique et énergie mécanique en orbite circulaire}
-
-Pour une orbite circulaire de rayon $r$, nous avons établi $v^2 = GM_A/r$.
-\[ E_c = \frac{1}{2} m v^2 = \frac{1}{2} \frac{G M_A m}{r} \]
-L'énergie mécanique $E_m = E_c + E_p$ :
-\[ E_m = \frac{1}{2}\frac{G M_A m}{r} - \frac{G M_A m}{r} = -\frac{1}{2}\frac{G M_A m}{r} \]
-
-\begin{propriete}[Relations énergétiques en orbite circulaire (Théorème du viriel)]
-\[ E_c = -E_m = \frac{1}{2}|E_p| \quad;\quad E_p = 2 E_m = -2 E_c \quad;\quad E_m = -\frac{G M_A m}{2r} \]
-\begin{itemize}
-\item $E_m < 0$ : le système est \textbf{lié} (orbite fermée).
-\item $|E_m|$ diminue quand $r$ augmente (l'énergie mécanique est \emph{moins négative} en orbite haute).
-\item Pour monter d'orbite ($r \uparrow$), $E_m$ doit \textbf{augmenter} (devenir moins négatif) : il faut \textbf{apporter de l'énergie} (moteurs).
-\item Paradoxe apparent : en montant, $v$ diminue ($E_c \downarrow$) mais $E_p$ augmente plus vite ($E_p \uparrow$), donc $E_m \uparrow$.
-\end{itemize}
-\end{propriete}
-
-\begin{popfigure}
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[
-width=0.9\linewidth, height=7cm,
-xlabel={$r$ (km)}, ylabel={Énergie (J/kg)},
-xmin=6370, xmax=50000,
-ymin=-6.5e7, ymax=0.5e7,
-grid=both, grid style={popline!30},
-legend style={at={(0.97,0.97)}, anchor=north east, font=\small},
-domain=6370:50000, samples=200,
-]
-% Constantes pour Terre : GM = 3.986e14 m3/s2 = 3.986e5 km3/s2
-% E_p = -GM/r (J/kg) -> -3.986e14 / (r*1000) = -3.986e11 / r(km)
-% E_c = +GM/2r
-% E_m = -GM/2r
-\addplot[poporange, thick] {-3.986e11/x};
-\addlegendentry{$E_p/m = -GM/r$}
-\addplot[popgreen, thick] {1.993e11/x};
-\addlegendentry{$E_c/m = +GM/2r$}
-\addplot[popblue, thick] {-1.993e11/x};
-\addlegendentry{$E_m/m = -GM/2r$}
-\addplot[poppink, dashed, thick] {0};
-\addlegendentry{Zéro énergie}
-% Marqueur géostationnaire
-\draw[popmuted, dashed] (axis cs:42164,-6.5e7) -- (axis cs:42164,0.5e7);
-\node[popmuted, rotate=90, anchor=south] at (axis cs:42164, -2e7) {\small Orbite géostationnaire};
-\end{axis}
-\end{tikzpicture}
-\end{center}
-\legende{Variation des énergies massiques ($E/m$) en fonction du rayon orbital $r$ pour la Terre. $E_m$ est la somme de $E_c$ (positive) et $E_p$ (négative). Toute l'énergie est négative : le satellite est lié.}
-\end{popfigure}
-
-\courssub{Vitesse de libération (ou vitesse de fuite)}
-
-Quelle vitesse minimale $v_{\text{lib}}$ faut-il donner au satellite au sol ($r = R_A$) pour qu'il s'échappe à l'infini avec une vitesse résiduelle nulle ($E_m(\infty) = 0$) ?
-
-Conservation de l'énergie mécanique (pas de frottements atmosphériques dans le modèle) :
-\[ E_m(R_A) = E_m(\infty) = 0 \]
-\[ \frac{1}{2} m v_{\text{lib}}^2 - \frac{G M_A m}{R_A} = 0 \]
-\[ v_{\text{lib}} = \sqrt{\frac{2 G M_A}{R_A}} = \sqrt{2}\, v_{\text{circ}}(R_A) \]
-
-\begin{propriete}[Vitesse de libération]
-\[ v_{\text{lib}} = \sqrt{\frac{2 G M_A}{R_A}} = \sqrt{2 g R_A} \quad\text{(en utilisant } g = GM_A/R_A^2\text{)} \]
-\begin{itemize}
-\item Pour la Terre ($R_T = \SI{6370}{km}$, $g = \SI{9,81}{m/s^2}$) : $v_{\text{lib}} \approx \SI{11,2}{km/s}$.
-\item Pour la Lune ($R_L = \SI{1737}{km}$, $g_L = \SI{1,62}{m/s^2}$) : $v_{\text{lib}} \approx \SI{2,38}{km/s}$.
-\item Relation avec la vitesse circulaire au raz du sol : $v_{\text{lib}} = \sqrt{2}\, v_{\text{circ}} \approx 1,414\, v_{\text{circ}}$.
-\end{itemize}
-\end{propriete}
-
-\begin{attention}[Vitesse de libération vs Vitesse orbitale]
-Ne confonds pas :
-\begin{itemize}
-\item $v_{\text{circ}} = \sqrt{GM/r}$ : vitesse pour \emph{rester} en orbite circulaire.
-\item $v_{\text{lib}} = \sqrt{2GM/r}$ : vitesse pour \emph{partir} à l'infini (trajectoire parabolique).
-\end{itemize}
-Si $v_{\text{circ}} < v < v_{\text{lib}}$ : orbite elliptique (liée).
-Si $v = v_{\text{lib}}$ : trajectoire parabolique (frontière, $E_m = 0$).
-Si $v > v_{\text{lib}}$ : trajectoire hyperbolique ($E_m > 0$, non liée).
-\end{attention}
-
-\begin{exemplebox}[Énergie pour mettre un satellite en orbite géostationnaire]
-On veut placer un satellite de masse $m = \SI{1000}{kg}$ en orbite géostationnaire ($r_{\text{geo}} = \SI{4,22e7}{m}$) depuis le sol ($R_T = \SI{6,37e6}{m}$).
-Énergie mécanique au sol (en rotation avec la Terre, vitesse $v_{\text{rot}} = \SI{465}{m/s}$) :
-$E_{m,i} = \frac{1}{2}m v_{\text{rot}}^2 - \frac{GM_T m}{R_T}$.
-Énergie mécanique en orbite géostationnaire :
-$E_{m,f} = -\frac{GM_T m}{2 r_{\text{geo}}}$.
-Travail minimum du lanceur (énergie fournie) : $W = \Delta E_m = E_{m,f} - E_{m,i}$.
-Numériquement : $E_{m,i} \approx -6,25\times 10^{10}\,\si{J}$, $E_{m,f} \approx -4,72\times 10^9\,\si{J}$.
-$W \approx 5,78\times 10^{10}\,\si{J}$ (soit environ \SI{16}{MWh}).
-En réalité, les pertes (gravité, aérodynamique, rendement moteurs) font que l'énergie chimique nécessaire est \textbf{10 à 20 fois plus grande}. C'est pourquoi les lanceurs (Ariane, Falcon 9) sont gigantesques par rapport à la charge utile.
-\end{exemplebox}
-
-\coursec{Synthèse et méthodes de résolution}
-
-Cette section regroupe les outils méthodologiques pour réussir les exercices types du Baccalauréat sur ce chapitre.
-
-\courssub{Tableau récapitulatif des formules}
-
-\begin{center}
-\begin{tabular}{|l|c|c|}\hline
-\textbf{Situation} & \textbf{Formule clé} & \textbf{Variables} \\ \hline
-Gravitation (force) & $F = G\dfrac{M_A m}{r^2}$ & $M_A$ attracteur, $m$ satellite, $r$ distance centres \\ \hline
-Champ de gravitation & $g = \dfrac{GM_A}{r^2}$ & Indépendant de $m$ \\ \hline
-Vitesse circulaire & $v = \sqrt{\dfrac{GM_A}{r}}$ & $v \propto r^{-1/2}$ \\ \hline
-Période (3\textsuperscript{e} Kepler) & $T = 2\pi\sqrt{\dfrac{r^3}{GM_A}}$ & $T^2 \propto r^3$ \\ \hline
-Constante Kepler & $k = \dfrac{T^2}{r^3} = \dfrac{4\pi^2}{GM_A}$ & Dépend \textbf{seulement} de $M_A$ \\ \hline
-Masse attracteur & $M_A = \dfrac{4\pi^2 r^3}{G T^2}$ & "Peser" un astre \\ \hline
-Énergie potentielle & $E_p = -\dfrac{GM_A m}{r}$ & Zéro à l'infini \\ \hline
-Énergie mécanique (cercle) & $E_m = -\dfrac{GM_A m}{2r}$ & $E_m < 0$ (lié) \\ \hline
-Vitesse libération & $v_{\text{lib}} = \sqrt{\dfrac{2GM_A}{R_A}} = \sqrt{2gR_A}$ & $v_{\text{lib}} = \sqrt{2}\,v_{\text{circ}}$ \\ \hline
-\end{tabular}
-\end{center}
-
-\courssub{Méthode type : "Montrer que le mouvement est circulaire uniforme"}
-
-\begin{methode}[Démonstration MCU satellite]
-\textbf{Énoncé type :} "Montrer que le satellite décrit un mouvement circulaire uniforme de rayon $r$ et déterminer sa vitesse."
-\begin{enumerate}
-\item \textbf{Référentiel :} Préciser "Référentiel géocentrique (ou héliocentrique) supposé galiléen".
-\item \textbf{Bilan des forces :} Isoler le satellite. Une seule force : $\vec{F}_g = -\dfrac{GM_A m}{r^2}\vec{u}_r$ (attractive).
-\item \textbf{Cinématique :} Supposer le mouvement circulaire de rayon $r$ (donné ou à vérifier). Vecteur accélération $\vec{a} = -\dfrac{v^2}{r}\vec{u}_r$ (centripète).
-\item \textbf{2\textsuperscript{e} loi de Newton :} $\vec{F}_g = m\vec{a} \Rightarrow -\dfrac{GM_A m}{r^2}\vec{u}_r = -m\dfrac{v^2}{r}\vec{u}_r$.
-\item \textbf{Conclusion :} $v^2 = \dfrac{GM_A}{r}$. Comme $r$ constant, $v$ constant $\Rightarrow$ \textbf{Mouvement Circulaire Uniforme}. Q.E.D.
-\end{enumerate}
-\end{methode}
-
-\courssub{Méthode type : "Déterminer l'altitude d'un satellite géostationnaire"}
-
-\begin{methode}[Calcul altitude géostationnaire]
-\begin{enumerate}
-\item Écrire la condition de période : $T = T_{\text{sidéral}} = \SI{86164}{s}$.
-\item Utiliser $T^2 = \dfrac{4\pi^2}{GM_T} r^3$ (3\textsuperscript{e} loi Kepler/Newton).
-\item Isoler $r = \sqrt[3]{\dfrac{GM_T T^2}{4\pi^2}}$.
-\item Calculer $r$ en \si{m}, puis $h = r - R_T$ en \si{km}.
-\item Vérifier : $h \approx \SI{35800}{km}$.
-\end{enumerate}
-\end{methode}
-
-\courssub{Méthode type : "Exploiter la 3\textsuperscript{e} loi de Kepler (comparaison)"}
-
-\begin{methode}[Comparaison deux satellites même attracteur]
-\begin{enumerate}
-\item Identifier l'astre attracteur commun (Terre ou Soleil).
-\item Écrire $\dfrac{T_1^2}{a_1^3} = \dfrac{T_2^2}{a_2^3}$.
-\item Attention : $a$ = demi-grand axe (rayon $r$ si cercle). Unités cohérentes (m et s, ou u.a. et an).
-\item Isoler l'inconnue ($T_2$ ou $a_2$).
-\item Vérifier l'ordre de grandeur : plus loin $\Rightarrow$ plus lent ($T$ plus grand).
-\end{enumerate}
-\end{methode}
-
-\courssub{Méthode type : "Énergie et transfert d'orbite (Hohmann simplifié)"}
-
-\begin{methode}[Variation d'énergie mécanique]
-\begin{enumerate}
-\item Calculer $E_{m,i} = -\dfrac{GM_A m}{2r_i}$ (orbite initiale circulaire).
-\item Calculer $E_{m,f} = -\dfrac{GM_A m}{2r_f}$ (orbite finale circulaire).
-\item Travail moteur (énergie fournie) : $W = \Delta E_m = E_{m,f} - E_{m,i}$.
-\item Si $r_f > r_i$ (montée) : $W > 0$ (apport d'énergie).
-\item Si $r_f < r_i$ (descente) : $W < 0$ (il faut freiner, dissiper de l'énergie).
-\end{enumerate}
-\end{methode}
-
-\courssub{Check-list "Zéro faute" pour le Bac}
-
-\begin{attention}[Les 10 pièges à éviter absolument]
-\begin{enumerate}
-\item \textbf{Référentiel absent} : Toujours écrire "Dans le référentiel géocentrique/héliocentrique, supposé galiléen...".
-\item \textbf{Confusion $r$ / $h$} : $r = R_{\text{astre}} + h$. Ne jamais mettre $h$ dans $GM/r^2$ ou $v = \sqrt{GM/r}$.
-\item \textbf{Unités non SI} : $T$ en \textbf{secondes}, $r$ en \textbf{mètres}, $M$ en \textbf{kg} pour utiliser $G = \SI{6,67e-11}{SI}$. Convertir \textbf{avant} de calculer.
-\item \textbf{Masse du satellite} : Elle ne figure \textbf{jamais} dans $v$, $T$, $k$, $v_{\text{lib}}$. Elle ne figure que dans $E_c, E_p, E_m, F$.
-\item \textbf{Signe de $E_p$ et $E_m$} : Négatifs (zéro à l'infini). $E_c$ positif. $E_m = E_c + E_p = -E_c$.
-\item \textbf{Jour sidéral vs solaire} : Géostationnaire $\Rightarrow T = \SI{86164}{s}$ (23h56min4s), pas 86400 s.
-\item \textbf{Constante $k$} : Ne comparer que des satellites du \textbf{même} attracteur. $k_{\text{Soleil}} \neq k_{\text{Terre}}$.
-\item \textbf{Vecteurs} : $\vec{F}_g$ et $\vec{a}$ sont \textbf{centripètes} (vers le centre, $-\vec{u}_r$). $\vec{v}$ est tangent ($\vec{u}_\theta$). Pas de force centrifuge en référentiel galiléen.
-\item \textbf{Analyse dimensionnelle} : Vérifier systématiquement $[v] = \si{m/s}$, $[T] = \si{s}$, $[E] = \si{J}$, $[k] = \si{s^2/m^3}$.
-\item \textbf{Précision numérique} : Donner le résultat final avec 2 ou 3 chiffres significatifs et \textbf{l'unité SI}.
-\end{enumerate}
-\end{attention}
-
-\begin{exoresolu}[Examen Blanc : Satellite "AfriCom-1"]
-Le satellite de télécommunications \emph{AfriCom-1} (masse $m = \SI{1500}{kg}$) est placé sur une orbite circulaire géostationnaire.
-Données : $M_T = \SI{5,97e24}{kg}$, $R_T = \SI{6370}{km}$, $G = \SI{6,67e-11}{SI}$, $T_{\text{sid}} = \SI{86164}{s}$.
-\begin{enumerate}
-\item Rappeler les trois conditions pour qu'un satellite soit géostationnaire.
-\item Calculer le rayon $r_{\text{geo}}$ de l'orbite et l'altitude $h$.
-\item Calculer la vitesse orbitale $v$ et l'énergie mécanique $E_m$ du satellite.
-\item Le satellite doit être désorbité en fin de vie vers une "orbite cimetière" circulaire à $h' = \SI{36000}{km}$ (au-dessus de la ceinture géostationnaire). Calculer l'énergie $\Delta E$ que doivent fournir les moteurs pour ce transfert.
-\end{enumerate}
-\tcblower
-\textbf{1. Conditions :}
-\begin{itemize}
-\item Orbite \textbf{circulaire}.
-\item Orbite \textbf{équatoriale} (inclinaison $0^\circ$).
-\item Période $T = T_{\text{sidéral}} = \SI{23}{h}\,\SI{56}{min}\,\SI{4}{s}$, sens de rotation Ouest $\to$ Est.
-\end{itemize}
-
-\textbf{2. Rayon et altitude :}
-\[ r_{\text{geo}} = \sqrt[3]{\frac{G M_T T^2}{4\pi^2}} = \sqrt[3]{\frac{6,67\times 10^{-11} \times 5,97\times 10^{24} \times (8,6164\times 10^4)^2}{4\pi^2}} \]
-Numérateur $\approx 3,98\times 10^{14} \times 7,424\times 10^9 \approx 2,956\times 10^{24}$.
-Dénominateur $4\pi^2 \approx 39,48$.
-$r_{\text{geo}}^3 \approx 7,49\times 10^{22}\ \si{m^3} \Rightarrow r_{\text{geo}} \approx \SI{4,216e7}{m} = \SI{42160}{km}$.
-$h = r_{\text{geo}} - R_T = 42160 - 6370 = \SI{35790}{km}$.
-
-\textbf{3. Vitesse et énergie mécanique :}
-\[ v = \sqrt{\frac{GM_T}{r_{\text{geo}}}} = \sqrt{\frac{3,986\times 10^{14}}{4,216\times 10^7}} \approx \sqrt{9,45\times 10^6} \approx \SI{3074}{m/s} \]
-\[ E_m = -\frac{GM_T m}{2 r_{\text{geo}}} = -\frac{3,986\times 10^{14} \times 1500}{2 \times 4,216\times 10^7} \approx -\frac{5,98\times 10^{17}}{8,43\times 10^7} \approx \SI{-7,09e9}{J} \]
-
-\textbf{4. Transfert orbite cimetière :}
-$h' = \SI{36000}{km} \Rightarrow r' = R_T + h' = 6370 + 36000 = \SI{42370}{km} = \SI{4,237e7}{m}$.
-$E_m' = -\dfrac{GM_T m}{2 r'} = -\dfrac{5,98\times 10^{17}}{2 \times 4,237\times 10^7} \approx \SI{-7,05e9}{J}$.
-$\Delta E = E_m' - E_m = (-7,05 + 7,09)\times 10^9 = \SI{+0,04e9}{J} = \SI{4e7}{J}$.
-L'énergie mécanique augmente (devient moins négative), les moteurs doivent fournir un travail positif $\Delta E \approx \SI{40}{MJ}$ pour élever l'orbite de \SI{210}{km}.
-\end{exoresolu}
-
-\begin{exercice}[Entraînement Bac : Système de Jupiter]
-On étudie le système de Jupiter. La lune Io orbite à $r_{\text{Io}} = \SI{4,22e8}{m}$ avec une période $T_{\text{Io}} = \SI{1,77}{jours}$. La lune Europe orbite à $r_{\text{Eu}} = \SI{6,71e8}{m}$.
-\begin{enumerate}
-\item Déterminer la masse $M_J$ de Jupiter à partir des données d'Io.
-\item En déduire la période $T_{\text{Eu}}$ d'Europe (en jours) par deux méthodes : (a) 3\textsuperscript{e} loi de Kepler ; (b) Formule $T = 2\pi\sqrt{r^3/GM_J}$.
-\item Calculer la vitesse orbitale d'Europe.
-\item Un projet de sonde spatiale (type JUICE/Clipper) doit se mettre en orbite circulaire autour de Ganymède (lune de Jupiter, $M_G = \SI{1,48e23}{kg}$, $R_G = \SI{2630}{km}$) à une altitude de \SI{500}{km}. Calculer la vitesse orbitale nécessaire et la période.
-\end{enumerate}
-\end{exercice}
-
-\begin{corrige}[Exercice : Système de Jupiter]
-\textbf{1. Masse de Jupiter (via Io) :}
-$T_{\text{Io}} = 1,77 \times 24 \times 3600 = \SI{152928}{s}$.
-$M_J = \dfrac{4\pi^2 r_{\text{Io}}^3}{G T_{\text{Io}}^2} = \dfrac{4\pi^2 (4,22\times 10^8)^3}{6,67\times 10^{-11} \times (1,529\times 10^5)^2}$.
-$r^3 \approx 7,51\times 10^{25}$. Num $\approx 39,48 \times 7,51\times 10^{25} \approx 2,97\times 10^{27}$.
-Den $\approx 6,67\times 10^{-11} \times 2,34\times 10^{10} \approx 1,56$.
-$M_J \approx \SI{1,90e27}{kg}$. (Valeur acceptée : \SI{1,90e27}{kg}).
-
-\textbf{2. Période d'Europe :}
-(a) Kepler : $\dfrac{T_{\text{Eu}}^2}{r_{\text{Eu}}^3} = \dfrac{T_{\text{Io}}^2}{r_{\text{Io}}^3} \Rightarrow T_{\text{Eu}} = T_{\text{Io}} \left(\dfrac{r_{\text{Eu}}}{r_{\text{Io}}}\right)^{3/2}$.
-$\dfrac{r_{\text{Eu}}}{r_{\text{Io}}} = \dfrac{6,71}{4,22} \approx 1,59$. $(1,59)^{1,5} \approx 2,00$.
-$T_{\text{Eu}} \approx 1,77 \times 2,00 = \SI{3,54}{jours}$.
-(b) Formule directe : $T_{\text{Eu}} = 2\pi\sqrt{\dfrac{(6,71\times 10^8)^3}{6,67\times 10^{-11} \times 1,90\times 10^{27}}}$.
-$r^3 \approx 3,02\times 10^{26}$. $GM_J \approx 1,27\times 10^{17}$.
-$T \approx 2\pi\sqrt{2,38\times 10^9} \approx 6,28 \times 4,88\times 10^4 \approx \SI{3,06e5}{s} \approx \SI{3,54}{jours}$. \checkmark
-
-\textbf{3. Vitesse d'Europe :}
-$v_{\text{Eu}} = \sqrt{\dfrac{GM_J}{r_{\text{Eu}}}} = \sqrt{\dfrac{1,27\times 10^{17}}{6,71\times 10^8}} \approx \sqrt{1,89\times 10^8} \approx \SI{13750}{m/s} = \SI{13,75}{km/s}$.
-
-\textbf{4. Orbite autour de Ganymède :}
-$r = R_G + h = 2630 + 500 = \SI{3130}{km} = \SI{3,13e6}{m}$.
-$v = \sqrt{\dfrac{G M_G}{r}} = \sqrt{\dfrac{6,67\times 10^{-11} \times 1,48\times 10^{23}}{3,13\times 10^6}} = \sqrt{\dfrac{9,87\times 10^{12}}{3,13\times 10^6}} \approx \sqrt{3,15\times 10^6} \approx \SI{1775}{m/s}$.
-$T = \dfrac{2\pi r}{v} = \dfrac{2\pi \times 3,13\times 10^6}{1775} \approx \SI{11070}{s} \approx \SI{3,08}{h}$.
-\end{corrige}
-
-\begin{aretenir}[Synthèse finale du chapitre P07]
-\begin{itemize}
-\item \textbf{Référentiels :} Héliocentrique (planètes), Géocentrique (satellites Terre/Lune). Supposés galiléens.
-\item \textbf{Lois de Kepler :} 1. Ellipses (foyer attracteur). 2. Aires égales / temps égaux ($v$ variable sur ellipse, constante sur cercle). 3. $T^2/a^3 = k = 4\pi^2/(GM_A)$ (même attracteur).
-\item \textbf{Mouvement circulaire (Newton) :} $F_g = m a_c \Rightarrow v = \sqrt{GM_A/r},\quad T = 2\pi\sqrt{r^3/GM_A}$.
-\item \textbf{Géostationnaire :} Cercle + Équatorial + $T = \SI{86164}{s}$ (sidéral) $\Rightarrow h \approx \SI{35786}{km}$.
-\item \textbf{Énergie (complément) :} $E_p = -GMm/r$, $E_c = GMm/2r$, $E_m = -GMm/2r < 0$ (lié). $v_{\text{lib}} = \sqrt{2GM/R} = \sqrt{2}v_{\text{circ}}$.
-\item \textbf{Méthode Bac :} Référentiel $\to$ Bilan forces $\to$ 2\textsuperscript{e} loi $\to$ Projection radiale $\to$ Résultat. Unités SI. Analyse dimensionnelle. Signes énergétiques.
-\end{itemize}
-\end{aretenir}
 
 \coursec{Mouvement circulaire uniforme d'un satellite}
 
@@ -2853,83 +2379,39 @@ Numérique : $\Delta E = \frac{\num{3,98e14} \times 2000}{2 \times \num{4,216e7}
 
 \coursec{Exercices}
 
-\coursec{Leçon P07 : Mouvement des planètes et des satellites}
-
-\courssub{Référentiels d'étude et lois de Kepler}
-
-\begin{definition}[Référentiels géocentrique et héliocentrique]
-Le \textbf{référentiel géocentrique} $\mathcal{R}_G(O, \vec{x}, \vec{y}, \vec{z})$ a pour origine le centre de masse $O$ de la Terre ; ses axes sont orientés vers des étoiles lointaines (quasi fixes). Il est \emph{galiléen} à très bonne approximation pour l'étude des satellites artificiels et de la Lune.
-Le \textbf{référentiel héliocentrique} $\mathcal{R}_H(O_S, \vec{x}, \vec{y}, \vec{z})$ a pour origine le centre de masse $O_S$ du Soleil ; ses axes pointent vers des étoiles lointaines. Il est \emph{galiléen} pour l'étude du mouvement des planètes autour du Soleil.
-\end{definition}
-
-\begin{propriete}[Les trois lois de Kepler (énoncés)]
-\begin{enumerate}
-\item \textbf{Loi des orbites (1\textsuperscript{re} loi) :} La trajectoire d'une planète autour du Soleil (ou d'un satellite autour d'une planète) est une \emph{ellipse} dont le Soleil (ou la planète) occupe un \emph{foyer}.
-\item \textbf{Loi des aires (2\textsuperscript{de} loi) :} Le rayon vecteur reliant la planète au Soleil (ou le satellite à la planète) balaye des \emph{aires égales en temps égaux}. Conséquence : la vitesse aréolaire est constante ; la planète va plus vite au périhélie (au plus près) qu'à l'aphélie (au plus loin).
-\item \textbf{Loi des périodes (3\textsuperscript{e} loi) :} Pour tous les satellites d'un même astre central de masse $M$, le rapport $\dfrac{T^2}{a^3}$ est une \emph{constante} (constante de Kepler), où $T$ est la période de révolution et $a$ le grand axe de l'ellipse (rayon $r$ pour un cercle).
-\[
-\frac{T^2}{a^3} = \frac{4\pi^2}{GM} \quad \text{(valable pour orbite circulaire de rayon } r=a\text{)}
-\]
-\end{enumerate}
-\end{propriete}
-
-\begin{aretenir}[Formules clés du mouvement circulaire sous gravitation]
-Pour un satellite de masse $m$ en orbite \emph{circulaire} de rayon $r$ autour d'un astre de masse $M$ ($m \ll M$) :
-\begin{itemize}
-\item Vitesse orbitale : $v = \sqrt{\dfrac{GM}{r}}$ \quad (indépendante de $m$)
-\item Période de révolution : $T = \dfrac{2\pi r}{v} = 2\pi \sqrt{\dfrac{r^3}{GM}}$
-\item 3\textsuperscript{e} loi de Kepler : $\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{GM} = \text{cste}$
-\end{itemize}
-\textbf{Analyse dimensionnelle :} $[G] = \mathrm{M^{-1}L^3T^{-2}}$, $[M] = \mathrm{M}$, $[r] = \mathrm{L}$ $\Rightarrow$ $[GM/r] = \mathrm{L^2T^{-2}}$ $\Rightarrow$ $[\sqrt{GM/r}] = \mathrm{LT^{-1}}$ (vitesse). \quad \coche
-\end{aretenir}
-
-\begin{exemplebox}[Application : « Peser » le Soleil]
-On connaît $r_T = \SI{1,50e11}{m}$ (rayon orbite Terre), $T_T = \SI{365,25}{j} = \SI{3,156e7}{s}$, $G = \SI{6,67e-11}{SI}$.
-La 3\textsuperscript{e} loi de Kepler donne $M_S = \dfrac{4\pi^2 r_T^3}{G T_T^2} \approx \SI{2,00e30}{kg}$.
-\end{exemplebox}
-
 \courssub{Je vérifie mes connaissances}
 
-\begin{exoresolu}[QCM : référentiels et lois de Kepler]
+\begin{exercice}[QCM : référentiels et lois de Kepler]
 Pour chaque affirmation, choisir la (ou les) bonne(s) réponse(s). Justifier brièvement.
 \begin{enumerate}
 \item Le référentiel géocentrique est :
 \begin{enumerate}
 \item lié à la surface de la Terre ;
-\item \textbf{lié au centre de la Terre, ses axes pointant vers des étoiles lointaines} ;
+\item lié au centre de la Terre, ses axes pointant vers des étoiles lointaines ;
 \item lié au centre du Soleil.
 \end{enumerate}
-\emph{Justification :} (a) est le référentiel terrestre (non galiléen, rotation). (c) est le référentiel héliocentrique. (b) est la définition du référentiel géocentrique quasi-galiléen.
-
 \item Selon la première loi de Kepler, la trajectoire d'une planète autour du Soleil est :
 \begin{enumerate}
 \item un cercle centré sur le Soleil ;
-\item \textbf{une ellipse dont le Soleil est un foyer} ;
+\item une ellipse dont le Soleil est un foyer ;
 \item une ellipse dont le Soleil est le centre.
 \end{enumerate}
-\emph{Justification :} Le Soleil occupe un foyer de l'ellipse, pas le centre (sauf cas particulier du cercle).
-
 \item Pour un satellite terrestre en orbite circulaire de rayon $r$, la vitesse est :
 \begin{enumerate}
-\item \textbf{$v = \sqrt{\dfrac{G\,M_T}{r}}$} ;
+\item $v = \sqrt{\dfrac{G\,M_T}{r}}$ ;
 \item $v = \sqrt{\dfrac{G\,m}{r}}$ où $m$ est la masse du satellite ;
 \item $v = \sqrt{G\,M_T\,r}$.
 \end{enumerate}
-\emph{Justification :} Égalité force gravitation = force centripète : $\dfrac{GM_T m}{r^2} = \dfrac{m v^2}{r} \Rightarrow v = \sqrt{GM_T/r}$. La vitesse ne dépend pas de $m$. (c) est faux dimensionnellement.
-
 \item La troisième loi de Kepler s'écrit, pour les satellites d'un même astre de masse $M$ :
 \begin{enumerate}
-\item \textbf{$\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{GM}$} ;
+\item $\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{GM}$ ;
 \item $\dfrac{T^2}{r^3} = \dfrac{GM}{4\pi^2}$ ;
 \item $\dfrac{T}{r^3} = \dfrac{4\pi^2}{GM}$.
 \end{enumerate}
-\emph{Justification :} $T = 2\pi r/v$ et $v = \sqrt{GM/r} \Rightarrow T = 2\pi \sqrt{r^3/GM} \Rightarrow T^2 = 4\pi^2 r^3/(GM)$.
 \end{enumerate}
-\tcblower
-\textbf{Solutions :} 1.b \quad 2.b \quad 3.a \quad 4.a
-\end{exoresolu}
+\end{exercice}
 
-\begin{exoresolu}[Vrai ou faux justifié]
+\begin{exercice}[Vrai ou faux justifié]
 Répondre par vrai ou faux en justifiant chaque réponse par une phrase ou une formule.
 \begin{enumerate}
 \item La vitesse d'un satellite en orbite circulaire dépend de sa masse.
@@ -2938,77 +2420,37 @@ Répondre par vrai ou faux en justifiant chaque réponse par une phrase ou une f
 \item La force de gravitation exercée par la Terre sur un satellite en orbite circulaire ne travaille pas.
 \item Un satellite géostationnaire tourne dans le même sens que la rotation de la Terre.
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item \textbf{Faux.} $v = \sqrt{GM_T/r}$, indépendante de la masse $m$ du satellite.
-\item \textbf{Faux.} Un satellite géostationnaire doit se trouver dans le \emph{plan équatorial}. Douala est à environ $4^\circ$ de latitude Nord.
-\item \textbf{Vrai.} $T = 2\pi \sqrt{r^3/(GM_T)}$, fonction croissante de $r$ (donc de l'altitude $h = r - R_T$).
-\item \textbf{Vrai.} La force de gravitation est radiale (centripète), la vitesse est tangentielle. $\vec{F} \perp \vec{v} \Rightarrow \delta W = \vec{F} \cdot \vec{v}\,dt = 0$.
-\item \textbf{Vrai.} La Terre tourne d'Ouest en Est (sens trigonométrique vu du pôle Nord). Le satellite géostationnaire doit avoir le même sens de rotation pour rester au-dessus du même point.
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\begin{exoresolu}[Définitions et conditions]
+\begin{exercice}[Définitions et conditions]
 \begin{enumerate}
 \item Définir les référentiels héliocentrique et géocentrique. Préciser dans lequel on étudie le mouvement de la Lune et dans lequel on étudie le mouvement de Mars.
 \item Énoncer les trois lois de Kepler.
 \item Donner les trois conditions qu'un satellite doit remplir pour être géostationnaire (plan de la trajectoire, sens de rotation, période).
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item \textbf{Héliocentrique :} origine au centre du Soleil, axes fixes par rapport aux étoiles lointaines (quasi galiléen). \textbf{Géocentrique :} origine au centre de la Terre, axes fixes par rapport aux étoiles lointaines (quasi galiléen). \textbf{Lune :} référentiel géocentrique. \textbf{Mars :} référentiel héliocentrique.
-\item Voir \textbf{Propriété} ci-dessus (Lois des orbites, des aires, des périodes).
-\item 1. Orbite \emph{circulaire} dans le \emph{plan équatorial}. 2. Sens de rotation \emph{identique} à celui de la Terre (Ouest $\to$ Est). 3. Période de révolution \emph{égale} à la période de rotation propre de la Terre (jour sidéral) : $T_0 = \SI{23}{h}\ \SI{56}{min}\ \SI{4}{s} = \SI{86164}{s}$.
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\begin{exoresolu}[Calculs directs]
+\begin{exercice}[Calculs directs]
 On donne : $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$ ; masse de la Terre $M_T = \num{5,98}\times 10^{24}\ \mathrm{kg}$ ; rayon terrestre $R_T = \num{6,38}\times 10^{3}\ \mathrm{km}$.
 \begin{enumerate}
 \item Calculer la vitesse d'un satellite en orbite circulaire à l'altitude $h = \num{400}\ \mathrm{km}$ (orbite de la station spatiale internationale).
 \item En déduire sa période de révolution $T$, exprimée en minutes.
 \item Vérifier par analyse dimensionnelle que l'expression $v = \sqrt{GM_T/r}$ est bien homogène à une vitesse.
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item $r = R_T + h = \num{6380}\ \mathrm{km} + \num{400}\ \mathrm{km} = \num{6780}\ \mathrm{km} = \num{6,78}\times 10^{6}\ \mathrm{m}$.
-$v = \sqrt{\dfrac{G M_T}{r}} = \sqrt{\dfrac{\num{6,67e-11} \times \num{5,98e24}}{\num{6,78e6}}} = \sqrt{\num{5,88e7}} \approx \SI{7,67e3}{m.s^{-1}}$.
-\item $T = \dfrac{2\pi r}{v} = \dfrac{2\pi \times \num{6,78e6}}{\num{7,67e3}} \approx \SI{5550}{s} \approx \SI{92,5}{min}$.
-\item $[G] = \mathrm{M^{-1}L^3T^{-2}}$, $[M_T] = \mathrm{M}$, $[r] = \mathrm{L}$.
-$[GM_T/r] = \mathrm{L^2T^{-2}} \Rightarrow [\sqrt{GM_T/r}] = \mathrm{LT^{-1}}$ : dimension de vitesse. \quad \coche
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\courssub{Mouvement circulaire d'un satellite}
+\courssub{Je m'entraîne}
 
-\begin{methode}[Modélisation du mouvement circulaire d'un satellite]
-\begin{enumerate}
-\item \textbf{Choix du référentiel :} Géocentrique (satellite Terre) ou héliocentrique (planète Soleil), supposés galiléens.
-\item \textbf{Bilan des forces :} Seule la force de gravitation $\vec{F} = -\dfrac{GMm}{r^2}\,\vec{u}_r$ (attraction centrale).
-\item \textbf{Repère de Frenet :} Origine au satellite $S$, $\vec{u}_t$ tangent à la trajectoire (sens du mouvement), $\vec{u}_n$ normal principal orienté vers le centre $O$ ($\vec{u}_n = -\vec{u}_r$).
-\item \textbf{2\textsuperscript{e} loi de Newton :} $m\vec{a} = \vec{F}$.
-\item \textbf{Projection sur $\vec{u}_t$ :} $a_t = 0 \Rightarrow \dfrac{dv}{dt} = 0 \Rightarrow$ \textbf{mouvement circulaire uniforme} ($v = \text{cste}$).
-\item \textbf{Projection sur $\vec{u}_n$ :} $a_n = \dfrac{v^2}{r} = \dfrac{GM}{r^2} \Rightarrow v = \sqrt{\dfrac{GM}{r}}$.
-\item \textbf{Période :} $T = \dfrac{2\pi r}{v} = 2\pi\sqrt{\dfrac{r^3}{GM}}$.
-\end{enumerate}
-\end{methode}
-
-\begin{exoresolu}[Deux satellites d'un même astre]
+\begin{exercice}[Deux satellites d'un même astre]
 Deux satellites A et B évoluent sur des orbites circulaires autour d'un même astre, avec $r_B = 4\,r_A$.
 \begin{enumerate}
 \item À l'aide de la troisième loi de Kepler, déterminer sans calculatrice le rapport $\dfrac{T_B}{T_A}$.
 \item À l'aide de l'expression de la vitesse, déterminer le rapport $\dfrac{v_B}{v_A}$.
 \item Conclure : comment évoluent la période et la vitesse lorsque le rayon de l'orbite augmente ?
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item $\dfrac{T^2}{r^3} = \text{cste} \Rightarrow \dfrac{T_B^2}{T_A^2} = \dfrac{r_B^3}{r_A^3} = 4^3 = 64 \Rightarrow \dfrac{T_B}{T_A} = \sqrt{64} = 8$.
-\item $v = \sqrt{GM/r} \Rightarrow \dfrac{v_B}{v_A} = \sqrt{\dfrac{r_A}{r_B}} = \sqrt{\dfrac{1}{4}} = \dfrac{1}{2}$.
-\item Lorsque le rayon $r$ augmente : la \textbf{période $T$ augmente} ($T \propto r^{3/2}$) et la \textbf{vitesse $v$ diminue} ($v \propto 1/\sqrt{r}$). Le satellite « haut » met plus de temps à faire son tour et va moins vite.
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\begin{exoresolu}[La Lune et la constante de Kepler]
+\begin{exercice}[La Lune et la constante de Kepler]
 On donne pour la Lune : $r_L = \num{3,84}\times 10^{8}\ \mathrm{m}$, $T_L = \num{27,3}\ \mathrm{j}$ ; pour un satellite géostationnaire : $r_G = \num{4,22}\times 10^{7}\ \mathrm{m}$, $T_G = \num{23}\ \mathrm{h}\ \num{56}\ \mathrm{min}$.
 \begin{enumerate}
 \item Convertir les deux périodes en secondes.
@@ -3016,39 +2458,18 @@ On donne pour la Lune : $r_L = \num{3,84}\times 10^{8}\ \mathrm{m}$, $T_L = \num
 \item En déduire la valeur de la masse de la Terre. On donne $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$.
 \item Expliquer en quoi ce résultat constitue une vérification de la loi de gravitation universelle.
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item $T_L = \num{27,3} \times \num{86400} = \num{2,35872e6}\ \mathrm{s}$.
-$T_G = \num{23}\times 3600 + \num{56}\times 60 = \num{82800} + \num{3360} = \num{86160}\ \mathrm{s}$ (valeur exacte jour sidéral : $\SI{86164}{s}$).
-\item Lune : $\dfrac{T_L^2}{r_L^3} = \dfrac{(\num{2,35872e6})^2}{(\num{3,84e8})^3} = \dfrac{\num{5,563e12}}{\num{5,662e25}} = \num{9,82e-14}\ \mathrm{s^2.m^{-3}}$.
-Géo : $\dfrac{T_G^2}{r_G^3} = \dfrac{(\num{86160})^2}{(\num{4,22e7})^3} = \dfrac{\num{7,424e9}}{\num{7,515e22}} = \num{9,88e-14}\ \mathrm{s^2.m^{-3}}$.
-Les deux valeurs sont \emph{quasi égales} (différence $< 1\%$ due aux arrondis sur $r_G, T_G$), confirmant la 3\textsuperscript{e} loi.
-\item $K = \dfrac{T^2}{r^3} \approx \num{9,85e-14}\ \mathrm{s^2.m^{-3}}$ (moyenne).
-$M_T = \dfrac{4\pi^2}{G K} = \dfrac{4\pi^2}{\num{6,67e-11} \times \num{9,85e-14}} \approx \dfrac{39,48}{\num{6,57e-24}} \approx \num{6,01e24}\ \mathrm{kg}$.
-(Proche de la valeur admise $\num{5,98e24}\ \mathrm{kg}$).
-\item La loi de gravitation universelle ($F = GMm/r^2$) \emph{prédit} que $T^2/r^3 = 4\pi^2/(GM)$, constante pour tous les satellites d'un même astre. L'égalité expérimentale des constantes de Kepler pour la Lune (astre naturel) et un satellite artificiel (astre artificiel) valide l'universalité de la gravitation : la même loi régit la chute des corps (Newton) et le mouvement des astres (Kepler).
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\begin{exoresolu}[Masse du Soleil et masse de Jupiter]
+\begin{exercice}[Masse du Soleil et masse de Jupiter]
 On donne $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$.
 \begin{enumerate}
 \item La Terre décrit autour du Soleil une orbite quasi circulaire de rayon $r = \num{1,50}\times 10^{11}\ \mathrm{m}$ en $T = \num{365,25}\ \mathrm{j}$. Établir l'expression de la masse du Soleil $M_S$ en fonction de $G$, $r$ et $T$, puis la calculer.
 \item Le satellite Io de Jupiter a une période $T_{Io} = \num{1,77}\ \mathrm{j}$ et un rayon orbital $r_{Io} = \num{4,22}\times 10^{8}\ \mathrm{m}$. Calculer la masse de Jupiter $M_J$.
 \item Calculer le rapport $\dfrac{M_J}{M_S}$ et commenter.
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item $T = \num{365,25} \times \num{86400} = \num{3,15576e7}\ \mathrm{s}$.
-$M_S = \dfrac{4\pi^2 r^3}{G T^2} = \dfrac{4\pi^2 (\num{1,50e11})^3}{\num{6,67e-11} \times (\num{3,15576e7})^2} = \dfrac{39,48 \times \num{3,375e33}}{\num{6,67e-11} \times \num{9,959e14}} = \dfrac{\num{1,332e35}}{\num{6,64e4}} \approx \SI{2,00e30}{kg}$.
-\item $T_{Io} = \num{1,77} \times \num{86400} = \num{1,52928e5}\ \mathrm{s}$.
-$M_J = \dfrac{4\pi^2 r_{Io}^3}{G T_{Io}^2} = \dfrac{39,48 \times (\num{4,22e8})^3}{\num{6,67e-11} \times (\num{1,52928e5})^2} = \dfrac{39,48 \times \num{7,515e25}}{\num{6,67e-11} \times \num{2,339e10}} = \dfrac{\num{2,966e27}}{\num{1,560e0}} \approx \SI{1,90e27}{kg}$.
-\item $\dfrac{M_J}{M_S} = \dfrac{\num{1,90e27}}{\num{2,00e30}} = \num{9,5e-4} \approx \dfrac{1}{1050}$.
-\textbf{Commentaire :} La masse de Jupiter est environ $1/1000^{\text{ème}}$ de la masse du Soleil. Jupiter est la planète la plus massive du système solaire, mais le Soleil concentre $99,86\%$ de la masse totale du système.
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\begin{exoresolu}[Satellite météorologique]
+\begin{exercice}[Satellite météorologique]
 Un satellite météorologique de masse $m = \num{850}\ \mathrm{kg}$ décrit une orbite circulaire à l'altitude $h = \num{850}\ \mathrm{km}$. On donne $M_T = \num{5,98}\times 10^{24}\ \mathrm{kg}$, $R_T = \num{6,38}\times 10^{6}\ \mathrm{m}$, $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$.
 \begin{enumerate}
 \item Faire le bilan des forces et représenter la force sur un schéma.
@@ -3056,112 +2477,11 @@ Un satellite météorologique de masse $m = \num{850}\ \mathrm{kg}$ décrit une 
 \item Calculer sa vitesse $v$ et sa période $T$.
 \item Calculer la valeur de la force de gravitation qu'il subit et la comparer à son poids à la surface de la Terre ($g_0 = \num{9,8}\ \mathrm{N.kg^{-1}}$).
 \end{enumerate}
-\tcblower
-\begin{enumerate}
-\item \textbf{Bilan des forces :} Une seule force : l'attraction gravitationnelle (poids) $\vec{F}_g = \vec{P} = -\dfrac{GM_T m}{r^2}\,\vec{u}_r$, dirigée vers le centre $O$ de la Terre.
-\begin{popfigure}
-\begin{tikzpicture}[scale=0.8, >=Stealth]
-\draw[popblue, thick] (0,0) circle (1.5) node[below=0.2cm] {Terre ($O$)};
-\draw[poporange, thick] (0,0) circle (3);
-\node[poporange, circle, fill=poporange, inner sep=2pt, label=above right:{Satellite $S$ ($m$)}] at (3,0) {};
-\draw[->, thick, popdark] (3,0) -- (1.5,0) node[midway, above] {$\vec{P} = \vec{F}_g$};
-\draw[->, dashed, popmuted] (3,0) -- (4.5,0) node[right] {$\vec{u}_r$};
-\draw[->, popgreen] (3,0) -- (3,1.5) node[above] {$\vec{v}$};
-\draw[->, poppurple] (3,0) -- (2.2,0.8) node[above left] {$\vec{u}_n$};
-\end{tikzpicture}
-\legende{Bilan des forces sur un satellite en orbite circulaire. Repère de Frenet $(S, \vec{u}_t, \vec{u}_n)$ avec $\vec{u}_n = -\vec{u}_r$.}
-\end{popfigure}
-\item Dans le repère de Frenet : $\vec{a} = \dfrac{dv}{dt}\vec{u}_t + \dfrac{v^2}{r}\vec{u}_n$.
-2\textsuperscript{e} loi de Newton : $m\vec{a} = \vec{P}$.
-Projection sur $\vec{u}_t$ : $m \dfrac{dv}{dt} = 0 \Rightarrow v = \text{cste}$. Le mouvement est \textbf{circulaire uniforme}.
-\item $r = R_T + h = \num{6,38e6} + \num{0,85e6} = \num{7,23e6}\ \mathrm{m}$.
-$v = \sqrt{\dfrac{GM_T}{r}} = \sqrt{\dfrac{\num{6,67e-11} \times \num{5,98e24}}{\num{7,23e6}}} = \sqrt{\num{5,517e7}} \approx \SI{7428}{m.s^{-1}}$.
-$T = \dfrac{2\pi r}{v} = \dfrac{2\pi \times \num{7,23e6}}{\num{7428}} \approx \SI{6118}{s} \approx \SI{102,0}{min}$.
-\item $F_g = \dfrac{GM_T m}{r^2} = \dfrac{\num{6,67e-11} \times \num{5,98e24} \times \num{850}}{(\num{7,23e6})^2} = \dfrac{\num{3,389e17}}{\num{5,227e13}} \approx \SI{6480}{N}$.
-Poids au sol $P_0 = m g_0 = \num{850} \times \num{9,8} = \SI{8330}{N}$.
-Rapport : $\dfrac{F_g}{P_0} = \left(\dfrac{R_T}{r}\right)^2 = \left(\dfrac{6380}{7230}\right)^2 \approx 0,78$. La gravité à $\SI{850}{km}$ d'altitude est encore $78\%$ de sa valeur au sol.
-\end{enumerate}
-\end{exoresolu}
+\end{exercice}
 
-\courssub{Le satellite géostationnaire}
+\courssub{Je me prépare au Bac}
 
-\begin{definition}[Satellite géostationnaire]
-Un satellite est \textbf{géostationnaire} s'il paraît \emph{immobile} pour un observateur au sol. Cela impose trois conditions strictes :
-\begin{enumerate}
-\item Son orbite est \textbf{circulaire} et située dans le \textbf{plan équatorial} (inclinaison $0^\circ$).
-\item Son sens de rotation est \textbf{identique} à celui de la Terre (Ouest $\to$ Est, direct).
-\item Sa période de révolution $T$ est \textbf{égale} à la période de rotation propre de la Terre (jour sidéral) : $T_0 = \SI{23}{h}\ \SI{56}{min}\ \SI{4}{s} = \SI{86164}{s}$.
-\end{enumerate}
-\end{definition}
-
-\begin{propriete}[Altitude unique du satellite géostationnaire]
-D'après la 3\textsuperscript{e} loi de Kepler : $T_0^2 = \dfrac{4\pi^2 r^3}{GM_T} \Rightarrow r = \sqrt[3]{\dfrac{GM_T T_0^2}{4\pi^2}}$.
-L'altitude $h = r - R_T$ est donc \textbf{unique} (pour une Terre donnée).
-\textbf{Valeur numérique :} $r \approx \SI{4,22e7}{m} \Rightarrow h \approx \SI{3,58e7}{m} = \SI{35800}{km}$.
-\end{propriete}
-
-\begin{aretenir}[Caractéristiques de l'orbite géostationnaire]
-\begin{itemize}
-\item Rayon orbital : $r_G \approx \SI{4,22e7}{m}$ ($6,6\ R_T$).
-\item Altitude : $h_G \approx \SI{35800}{km}$.
-\item Vitesse orbitale : $v_G = \dfrac{2\pi r_G}{T_0} \approx \SI{3070}{m.s^{-1}}$ ($\approx \SI{11000}{km.h^{-1}}$).
-\item Zone de couverture : $\approx 1/3$ de la surface terrestre (hémisphère visible). Trois satellites espacés de $120^\circ$ couvrent quasi toute la Terre (sauf pôles).
-\end{itemize}
-\end{aretenir}
-
-\courssub{Énergie mécanique d'un satellite (complément Bac)}
-
-\begin{propriete}[Énergies en orbite circulaire]
-Pour un satellite de masse $m$ en orbite circulaire de rayon $r$ autour de la Terre (masse $M_T$) :
-\begin{itemize}
-\item Énergie potentielle de gravitation (référence nulle à l'infini) : $E_p(r) = -\dfrac{GM_T m}{r}$.
-\item Énergie cinétique : $E_c = \dfrac{1}{2}m v^2 = \dfrac{1}{2}m \dfrac{GM_T}{r} = \dfrac{GM_T m}{2r}$.
-\item Énergie mécanique : $E_m = E_c + E_p = \dfrac{GM_T m}{2r} - \dfrac{GM_T m}{r} = -\dfrac{GM_T m}{2r}$.
-\end{itemize}
-\textbf{Conséquences :}
-\begin{itemize}
-\item $E_m < 0$ : le satellite est \emph{lié} (orbite fermée).
-\item $|E_m| = E_c$ et $E_p = 2E_m = -2E_c$ (théorème du viriel pour $1/r^2$).
-\item Pour aller sur une orbite plus haute ($r$ augmente), $E_m$ \emph{augmente} (devient moins négatif) : il faut \emph{fournir de l'énergie} ($W = \Delta E_m > 0$).
-\item Paradoxe apparent : $v$ diminue quand $r$ augmente ($v \propto 1/\sqrt{r}$). L'énergie fournie sert surtout à augmenter l'énergie potentielle (s'éloigner de la Terre), la perte d'énergie cinétique étant compensée par le travail de la force gravitationnelle (négatif) lors de l'éloignement.
-\end{itemize}
-\end{propriete}
-
-\begin{propriete}[Vitesse de libération (ou de fuite)]
-C'est la vitesse minimale $v_l$ à communiquer à un corps au sol ($r = R_T$) pour qu'il s'éloigne indéfiniment ($r \to \infty$) avec une vitesse résiduelle nulle.
-Bilan d'énergie : $E_{m,\text{init}} = \dfrac{1}{2}m v_l^2 - \dfrac{GM_T m}{R_T} = E_{m,\text{final}} = 0$.
-\[
-v_l = \sqrt{\dfrac{2GM_T}{R_T}} = \sqrt{2}\, v_{\text{circ}}(R_T) \approx \sqrt{2} \times \SI{7,9}{km.s^{-1}} \approx \SI{11,2}{km.s^{-1}}
-\]
-\end{propriete}
-
-\begin{exemplebox}[Transfert orbite basse $\to$ géostationnaire (Hohmann simplifié)]
-Satellite $m = \SI{1200}{kg}$. $r_1 = R_T + \SI{300}{km} = \SI{6,68e6}{m}$. $r_2 = \SI{4,22e7}{m}$.
-$E_{m1} = -\dfrac{GM_T m}{2r_1} \approx \SI{-3,58e10}{J}$.
-$E_{m2} = -\dfrac{GM_T m}{2r_2} \approx \SI{-5,66e9}{J}$.
-Travail minimal des propulseurs : $W = \Delta E_m = E_{m2} - E_{m1} \approx \SI{3,01e10}{J} \approx \SI{8360}{kWh}$.
-Vitesses : $v_1 \approx \SI{7730}{m.s^{-1}}$, $v_2 \approx \SI{3070}{m.s^{-1}}$. Le satellite est \emph{plus lent} sur l'orbite haute.
-\end{exemplebox}
-
-\courssub{Synthèse et méthodes de résolution — Je me prépare au Bac}
-
-\begin{methode}[Résolution type Bac : Mouvement d'un satellite / Planète]
-\begin{enumerate}
-\item \textbf{Repérage :} Identifier le référentiel (géocentrique / héliocentrique), justifier le caractère galiléen. Dessiner la trajectoire, le repère de Frenet $(S, \vec{u}_t, \vec{u}_n)$.
-\item \textbf{Bilan des forces :} Seule la gravitation $\vec{F} = -\dfrac{GMm}{r^2}\vec{u}_r = \dfrac{GMm}{r^2}\vec{u}_n$.
-\item \textbf{2\textsuperscript{e} loi de Newton :} $m\vec{a} = \vec{F}$ avec $\vec{a} = \dot{v}\vec{u}_t + \dfrac{v^2}{r}\vec{u}_n$.
-\item \textbf{Projections :}
-\begin{itemize}
-\item Sur $\vec{u}_t$ : $m\dot{v} = 0 \Rightarrow v = \text{cste}$ (mouvement uniforme).
-\item Sur $\vec{u}_n$ : $m\dfrac{v^2}{r} = \dfrac{GMm}{r^2} \Rightarrow v = \sqrt{\dfrac{GM}{r}}$.
-\end{itemize}
-\item \textbf{Période / 3\textsuperscript{e} loi :} $T = \dfrac{2\pi r}{v} = 2\pi\sqrt{\dfrac{r^3}{GM}} \Rightarrow \dfrac{T^2}{r^3} = \dfrac{4\pi^2}{GM}$.
-\item \textbf{Géostationnaire :} Imposer $T = T_0$ (jour sidéral), calculer $r$ puis $h = r - R_T$.
-\item \textbf{Énergie (si demandé) :} $E_c = \dfrac{GMm}{2r}$, $E_p = -\dfrac{GMm}{r}$, $E_m = -\dfrac{GMm}{2r}$. Travail $W = \Delta E_m$. Vitesse de libération $v_l = \sqrt{2GM/R_T}$.
-\end{enumerate}
-\end{methode}
-
-\begin{exercice}[Type Bac : Satellite de télécommunications au service du Cameroun]
+\begin{exercice}[Type Bac : satellite de télécommunications au service du Cameroun]
 Pour acheminer les signaux de télévision et de téléphonie entre Yaoundé et les régions éloignées, on utilise un satellite de télécommunications $S$ de masse $m = \num{2,5}\times 10^{3}\ \mathrm{kg}$, assimilé à un point matériel, en orbite circulaire de rayon $r$ autour du centre $O$ de la Terre. On se place dans le référentiel géocentrique supposé galiléen.
 
 \textbf{Données :} $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$ ; $M_T = \num{5,98}\times 10^{24}\ \mathrm{kg}$ ; $R_T = \num{6,38}\times 10^{6}\ \mathrm{m}$ ; période de rotation propre de la Terre : $T_0 = \num{86164}\ \mathrm{s}$.
@@ -3181,7 +2501,7 @@ Pour acheminer les signaux de télévision et de téléphonie entre Yaoundé et 
 \end{enumerate}
 \end{exercice}
 
-\begin{exercice}[Type Bac : Peser le Soleil et vérifier Kepler]
+\begin{exercice}[Type Bac : peser le Soleil et vérifier Kepler]
 Un professeur de Terminale C propose à ses élèves de « peser » le Soleil sans jamais quitter la salle de classe.
 
 \textbf{Données :} $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$ ; orbite terrestre assimilée à un cercle de rayon $r_T = \num{1,50}\times 10^{11}\ \mathrm{m}$ ; $T_T = \num{365,25}\ \mathrm{j}$ ; $1\ \mathrm{j} = \num{86400}\ \mathrm{s}$.
@@ -3200,7 +2520,7 @@ Un professeur de Terminale C propose à ses élèves de « peser » le Soleil sa
 \end{enumerate}
 \end{exercice}
 
-\begin{exercice}[Type Bac : Mise sur orbite géostationnaire — étude énergétique]
+\begin{exercice}[Type Bac : mise sur orbite géostationnaire — étude énergétique]
 Une agence spatiale souhaite transférer un satellite de masse $m = \num{1,2}\times 10^{3}\ \mathrm{kg}$ depuis une orbite basse circulaire de rayon $r_1 = R_T + \num{300}\ \mathrm{km}$ jusqu'à l'orbite géostationnaire de rayon $r_2 = \num{4,22}\times 10^{7}\ \mathrm{m}$.
 
 \textbf{Données :} $G = \num{6,67}\times 10^{-11}\ \mathrm{SI}$ ; $M_T = \num{5,98}\times 10^{24}\ \mathrm{kg}$ ; $R_T = \num{6,38}\times 10^{6}\ \mathrm{m}$. On rappelle que l'énergie potentielle de gravitation du satellite est $E_p = -\dfrac{G\,M_T\,m}{r}$ (nulle à l'infini).
@@ -3214,227 +2534,226 @@ Une agence spatiale souhaite transférer un satellite de masse $m = \num{1,2}\ti
 \end{enumerate}
 \end{exercice}
 
-\begin{savaistu}[Le Cameroun et l'espace]
-Le Cameroun utilise intensivement les satellites géostationnaires pour ses télécommunications (MTN, Orange, CAMTEL, CRTV). Le satellite \emph{Intelsat} ou \emph{Eutelsat} positionné au-dessus de l'Atlantique (ex: $335,5^\circ$ Est ou $24,5^\circ$ Ouest) assure la liaison Yaoundé–Douala–régions reculées. L'altitude de $\approx \SI{36000}{km}$ impose un délai de propagation (aller-retour) d'environ $\SI{240}{ms}$, perceptible en téléphonie. Les futures constellations en orbite basse (Starlink, OneWeb, $\approx \SI{550}{km}$) réduiront cette latence à $\approx \SI{20}{ms}$, révolutionnant l'internet rural au Cameroun.
-\end{savaistu}
-
-\begin{aretenir}[Résumé Bac — Mouvement des planètes et satellites]
-\begin{itemize}
-\item \textbf{Referentiels :} Héliocentrique (planètes/Soleil), Géocentrique (satellites/Lune). Quasi galiléens.
-\item \textbf{Lois de Kepler :} 1. Ellipse (foyer). 2. Aires égales / temps égaux. 3. $T^2/a^3 = 4\pi^2/(GM) = \text{cste}$.
-\item \textbf{Orbite circulaire (rayon $r$) :} $v = \sqrt{GM/r}$, $T = 2\pi\sqrt{r^3/(GM)}$.
-\item \textbf{Géostationnaire :} Plan équatorial, sens direct, $T = T_0 = \SI{86164}{s} \Rightarrow h \approx \SI{35800}{km}$.
-\item \textbf{Énergies :} $E_c = GMm/(2r)$, $E_p = -GMm/r$, $E_m = -GMm/(2r) < 0$.
-\item \textbf{Vitesse de libération :} $v_l = \sqrt{2GM/R_T} \approx \SI{11,2}{km.s^{-1}}$.
-\end{itemize}
-\end{aretenir}
-
 \newpage
 
 \coursec{Corrigés des exercices}
 
-\begin{corrige}[Exercice 1 — Satellite de télécommunications au service du Cameroun]
-\textbf{Barème indicatif (sur 10 pts) :} Q1 : 1 pt ; Q2 : 1 pt ; Q3 : 1,5 pt ; Q4 : 1,5 pt ; Q5a : 1 pt ; Q5b : 1 pt ; Q5c : 1,5 pt ; Q6 : 0,75 pt ; Q7 : 0,75 pt.
+\courssub{Je vérifie mes connaissances}
 
+\begin{corrige}[Exercice 1 — QCM : référentiels et lois de Kepler]
 \begin{enumerate}
-\item \textbf{Référentiel géocentrique $\mathcal{R}_G$ :} repère dont l'origine est le centre de masse $O$ de la Terre et dont les trois axes pointent vers des étoiles lointaines considérées comme fixes. Il peut être considéré \emph{galiléen} pour cette étude car, sur la durée d'observation d'un satellite, le mouvement de la Terre autour du Soleil est quasi rectiligne uniforme (accélération centripète $\approx \SI{6e-3}{m.s^{-2}}$, négligeable devant celle du satellite) et le repère ne tourne pas avec la Terre (origine au centre, axes fixes).
+\item \textbf{Réponse b.} Le référentiel géocentrique a pour origine le centre de la Terre et ses axes pointent vers trois étoiles lointaines considérées comme fixes. Il ne tourne pas avec la Terre (contrairement au référentiel terrestre, réponse a) et n'est pas centré sur le Soleil (réponse c : c'est le référentiel héliocentrique).
+\item \textbf{Réponse b.} Première loi de Kepler (loi des ellipses) : la trajectoire d'une planète est une ellipse dont le Soleil occupe \emph{l'un des foyers}, et non le centre.
+\item \textbf{Réponse a.} L'application de la deuxième loi de Newton en projection normale donne $v = \sqrt{\dfrac{G\,M_T}{r}}$ : la vitesse ne dépend que de la masse $M_T$ de l'astre attracteur et du rayon $r$, jamais de la masse $m$ du satellite. La réponse c n'est pas homogène : $G\,M_T\,r$ a pour unité $\mathrm{m^4.kg^{-1}.s^{-2}}$, dont la racine carrée n'est pas une vitesse.
+\item \textbf{Réponse a.} Troisième loi de Kepler : $\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{GM}$. Vérification dimensionnelle : $[G] = \mathrm{m^3.kg^{-1}.s^{-2}}$, donc $\left[\dfrac{4\pi^2}{GM}\right] = \dfrac{\mathrm{m^3.kg^{-1}.s^{-2}}}{\mathrm{kg}} \times \mathrm{kg^0} = \mathrm{s^2.m^{-3}}$... reprenons proprement : $\dfrac{1}{GM}$ s'exprime en $\dfrac{\mathrm{kg}}{\mathrm{m^3.s^{-2}}} = \mathrm{s^2.m^{-3}}$, ce qui correspond bien à l'unité de $\dfrac{T^2}{r^3}$.
+\end{enumerate}
+\end{corrige}
 
-\item \textbf{Bilan des forces :} le satellite $S$ (masse $m$), supposé ponctuel et placé à la distance $r = OS$ du centre de la Terre, n'est soumis qu'à la force d'attraction gravitationnelle terrestre (son poids à l'altitude considérée) :
-\[
-\vec{P} = \vec{F}_g = -\frac{G\,M_T\,m}{r^2}\,\vec{u}_r = \frac{G\,M_T\,m}{r^2}\,\vec{u}_n
-\]
-dirigée vers le centre $O$ de la Terre (force radiale centripète), avec $\vec{u}_n = -\vec{u}_r$.
+\begin{corrige}[Exercice 2 — Vrai ou faux justifié]
+\begin{enumerate}
+\item \textbf{Faux.} $v = \sqrt{\dfrac{G\,M_T}{r}}$ : la masse $m$ du satellite n'intervient pas ; seule compte la masse de l'astre attracteur. Tous les satellites sur la même orbite ont la même vitesse.
+\item \textbf{Faux.} Un satellite géostationnaire évolue obligatoirement dans le plan équatorial. Or Douala (latitude $\approx 4^{\circ}$ N) n'est pas sur l'équateur : le satellite ne peut pas rester à sa verticale. Vu de Douala, il paraîtrait fixe mais décalé vers le sud, au-dessus d'un point de l'équateur.
+\item \textbf{Vrai.} D'après la troisième loi de Kepler, $T^2 = \dfrac{4\pi^2}{GM_T}\,r^3$ : $T$ est une fonction croissante de $r = R_T + h$, donc de l'altitude $h$.
+\item \textbf{Vrai.} Sur une orbite circulaire, la force de gravitation est radiale (centripète) alors que le déplacement élémentaire est tangentiel : $\vec{F} \perp d\vec{r}$, donc la puissance $\vec{F}\cdot\vec{v} = 0$ et le travail est nul. C'est cohérent avec le fait que la vitesse (et donc l'énergie cinétique) reste constante.
+\item \textbf{Vrai.} Le satellite géostationnaire tourne dans le sens de rotation propre de la Terre (d'ouest en est), avec la même période $T = T_0$ : c'est la condition pour qu'il paraisse immobile vu du sol.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions et conditions]
+\begin{enumerate}
+\item Le \textbf{référentiel héliocentrique} a pour origine le centre du Soleil et ses axes pointent vers trois étoiles lointaines fixes ; il est galiléen avec une excellente approximation. Le \textbf{référentiel géocentrique} a pour origine le centre de la Terre et des axes pointant vers des étoiles lointaines ; il est en translation quasi circulaire autour du Soleil et peut être considéré galiléen pour des durées courtes devant l'année. On étudie le mouvement de la \textbf{Lune} dans le référentiel géocentrique (elle tourne autour de la Terre) et celui de \textbf{Mars} dans le référentiel héliocentrique (elle tourne autour du Soleil).
+\item \textbf{Lois de Kepler :}
+\begin{itemize}
+\item \emph{Loi des orbites} : chaque planète décrit une ellipse dont le Soleil occupe l'un des foyers.
+\item \emph{Loi des aires} : le segment reliant le Soleil à la planète balaie des aires égales pendant des durées égales.
+\item \emph{Loi des périodes} : le rapport $\dfrac{T^2}{a^3}$ (où $a$ est le demi-grand axe) est le même pour toutes les planètes d'un même astre attracteur : $\dfrac{T^2}{a^3} = \dfrac{4\pi^2}{GM}$.
+\end{itemize}
+\item Un satellite est \textbf{géostationnaire} si et seulement si :
+\begin{itemize}
+\item sa trajectoire est un cercle situé dans le \textbf{plan équatorial} ;
+\item il tourne dans le \textbf{même sens} que la rotation propre de la Terre ;
+\item sa période de révolution est \textbf{égale à la période de rotation propre} de la Terre : $T = T_0 \approx \num{86164}\ \mathrm{s}$ (jour sidéral, soit environ 23 h 56 min 4 s).
+\end{itemize}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item Le rayon de l'orbite est $r = R_T + h = \num{6,38}\times 10^{6} + \num{0,400}\times 10^{6} = \num{6,78}\times 10^{6}\ \mathrm{m}$. On calcule d'abord $G\,M_T = \num{6,67}\times 10^{-11} \times \num{5,98}\times 10^{24} = \num{3,99}\times 10^{14}\ \mathrm{m^3.s^{-2}}$.
+\[ v = \sqrt{\dfrac{G\,M_T}{r}} = \sqrt{\dfrac{\num{3,99}\times 10^{14}}{\num{6,78}\times 10^{6}}} = \sqrt{\num{5,88}\times 10^{7}} \approx \num{7,67}\times 10^{3}\ \mathrm{m.s^{-1}} \]
+soit $v \approx \num{7,7}\ \mathrm{km.s^{-1}}$ (environ \num{27600} km/h !).
+\item La période est la durée d'un tour complet :
+\[ T = \dfrac{2\pi r}{v} = \dfrac{2\pi \times \num{6,78}\times 10^{6}}{\num{7,67}\times 10^{3}} \approx \num{5,55}\times 10^{3}\ \mathrm{s} \approx \num{92,5}\ \mathrm{min}. \]
+La station spatiale fait donc environ 16 tours de Terre par jour : ses occupants assistent à 16 levers de Soleil quotidiens !
+\item Analyse dimensionnelle : $[G] = \mathrm{m^3.kg^{-1}.s^{-2}}$, donc
+\[ \left[\dfrac{G\,M_T}{r}\right] = \dfrac{\mathrm{m^3.kg^{-1}.s^{-2}} \times \mathrm{kg}}{\mathrm{m}} = \mathrm{m^2.s^{-2}} \quad\Longrightarrow\quad \left[\sqrt{\dfrac{G\,M_T}{r}}\right] = \mathrm{m.s^{-1}}. \]
+L'expression est bien homogène à une vitesse.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je m'entraîne}
+
+\begin{corrige}[Exercice 5 — Deux satellites d'un même astre]
+\begin{enumerate}
+\item Troisième loi de Kepler pour le même astre attracteur : $\dfrac{T_A^2}{r_A^3} = \dfrac{T_B^2}{r_B^3}$, donc
+\[ \dfrac{T_B^2}{T_A^2} = \dfrac{r_B^3}{r_A^3} = 4^3 = 64 \quad\Longrightarrow\quad \dfrac{T_B}{T_A} = \sqrt{64} = 8. \]
+\item $v = \sqrt{\dfrac{GM}{r}}$, donc
+\[ \dfrac{v_B}{v_A} = \sqrt{\dfrac{r_A}{r_B}} = \sqrt{\dfrac{1}{4}} = \dfrac{1}{2}. \]
+\item \textbf{Conclusion :} lorsque le rayon de l'orbite augmente, la période \emph{augmente} (comme $r^{3/2}$) et la vitesse \emph{diminue} (comme $r^{-1/2}$). Les satellites lointains tournent plus lentement et mettent plus de temps à faire un tour.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — La Lune et la constante de Kepler]
+\begin{enumerate}
+\item $T_L = \num{27,3} \times \num{86400} = \num{2,36}\times 10^{6}\ \mathrm{s}$ ; \quad $T_G = 23\times 3600 + 56\times 60 = \num{86160}\ \mathrm{s}$.
+\item Pour la Lune :
+\[ \dfrac{T_L^2}{r_L^3} = \dfrac{(\num{2,36}\times 10^{6})^2}{(\num{3,84}\times 10^{8})^3} = \dfrac{\num{5,56}\times 10^{12}}{\num{5,66}\times 10^{25}} \approx \num{9,83}\times 10^{-14}\ \mathrm{s^2.m^{-3}}. \]
+Pour le satellite géostationnaire :
+\[ \dfrac{T_G^2}{r_G^3} = \dfrac{(\num{86160})^2}{(\num{4,22}\times 10^{7})^3} = \dfrac{\num{7,42}\times 10^{9}}{\num{7,52}\times 10^{22}} \approx \num{9,88}\times 10^{-14}\ \mathrm{s^2.m^{-3}}. \]
+Les deux rapports sont \textbf{égaux} (à moins de 1 \% près, écart dû aux arrondis des données) : la constante de Kepler est la même pour tous les satellites de la Terre, qu'il s'agisse d'un satellite artificiel ou de la Lune.
+\item De $\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{G\,M_T}$, on tire :
+\[ M_T = \dfrac{4\pi^2}{G \times \dfrac{T^2}{r^3}} = \dfrac{39,48}{\num{6,67}\times 10^{-11} \times \num{9,85}\times 10^{-14}} \approx \num{6,0}\times 10^{24}\ \mathrm{kg}. \]
+On retrouve la valeur admise $M_T \approx \num{5,98}\times 10^{24}\ \mathrm{kg}$.
+\item La loi de gravitation universelle, combinée à la deuxième loi de Newton, prédit que $\dfrac{T^2}{r^3}$ est une constante \emph{indépendante du satellite}. Le fait que la Lune (corps naturel) et un satellite artificiel (corps minuscule devant la Lune) vérifient la même constante montre que la même loi régit la chute des corps, les satellites et les astres : c'est une confirmation spectaculaire du caractère \emph{universel} de la gravitation.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Masse du Soleil et masse de Jupiter]
+\begin{enumerate}
+\item Troisième loi de Kepler appliquée à la Terre autour du Soleil : $\dfrac{T^2}{r^3} = \dfrac{4\pi^2}{G\,M_S}$, d'où
+\[ M_S = \dfrac{4\pi^2\,r^3}{G\,T^2}. \]
+Conversion : $T = \num{365,25} \times \num{86400} = \num{3,156}\times 10^{7}\ \mathrm{s}$, donc $T^2 = \num{9,96}\times 10^{14}\ \mathrm{s^2}$ et $r^3 = (\num{1,50}\times 10^{11})^3 = \num{3,375}\times 10^{33}\ \mathrm{m^3}$.
+\[ M_S = \dfrac{39,48 \times \num{3,375}\times 10^{33}}{\num{6,67}\times 10^{-11} \times \num{9,96}\times 10^{14}} = \dfrac{\num{1,332}\times 10^{35}}{\num{6,64}\times 10^{4}} \approx \num{2,0}\times 10^{30}\ \mathrm{kg}. \]
+\item Même formule avec Io, satellite de Jupiter : $T_{Io} = \num{1,77} \times \num{86400} = \num{1,529}\times 10^{5}\ \mathrm{s}$, $T_{Io}^2 = \num{2,34}\times 10^{10}\ \mathrm{s^2}$, $r_{Io}^3 = (\num{4,22}\times 10^{8})^3 = \num{7,52}\times 10^{25}\ \mathrm{m^3}$.
+\[ M_J = \dfrac{39,48 \times \num{7,52}\times 10^{25}}{\num{6,67}\times 10^{-11} \times \num{2,34}\times 10^{10}} = \dfrac{\num{2,97}\times 10^{27}}{\num{1,56}} \approx \num{1,9}\times 10^{27}\ \mathrm{kg}. \]
+\item $\dfrac{M_J}{M_S} = \dfrac{\num{1,9}\times 10^{27}}{\num{2,0}\times 10^{30}} \approx \num{9,5}\times 10^{-4} \approx \dfrac{1}{1050}$. Jupiter, la plus massive des planètes, ne pèse qu'environ un millième de la masse du Soleil : le Soleil concentre à lui seul plus de 99,8 \% de la masse du système solaire, ce qui justifie de le considérer comme immobile au centre du référentiel héliocentrique.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Satellite météorologique]
+\begin{enumerate}
+\item Dans le référentiel géocentrique supposé galiléen, le satellite n'est soumis qu'à la \textbf{force de gravitation terrestre} :
+\[ \vec{F} = -\dfrac{G\,M_T\,m}{r^2}\,\vec{u}_n \quad \text{avec } r = R_T + h, \]
+où $\vec{u}_n$ est le vecteur unitaire dirigé du satellite $S$ vers le centre $O$ de la Terre.
 \begin{popfigure}
-\begin{tikzpicture}[scale=0.7, >=Stealth]
-\draw[popblue, thick] (0,0) circle (1.2) node[below=0.2cm] {Terre ($O$)};
-\draw[poporange, thick] (0,0) circle (3.5);
-\node[poporange, circle, fill=poporange, inner sep=2pt, label=right:{$S$}] at (3.5,0) {};
-\draw[->, thick, popdark] (3.5,0) -- (1.2,0) node[midway, above] {$\vec{P}$};
-\draw[->, dashed, popmuted] (3.5,0) -- (5,0) node[right] {$\vec{u}_r$};
-\draw[->, popgreen, thick] (3.5,0) -- (3.5,1.8) node[above] {$\vec{v} = v\,\vec{u}_t$};
-\draw[->, poppurple, thick] (3.5,0) -- (2.5,0) node[midway, below] {$\vec{u}_n$};
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+\fill[poppink!60] (0,0) circle (0.9);
+\node at (0,0) {\small Terre};
+\draw[popmuted, dashed] (0,0) circle (2.2);
+\fill[popblue] (2.2,0) circle (0.09) node[right=2pt] {$S$};
+\draw[-{Stealth}, poporange, very thick] (2.2,0) -- (0.95,0) node[midway, above, poporange] {$\vec{F}$};
+\draw[-{Stealth}, popdark] (2.2,0) -- (2.2,0.9) node[above] {$\vec{u}_t$};
+\draw[-{Stealth}, popdark] (2.2,0) -- (1.3,0) node[midway, below] {$\vec{u}_n$};
+\draw[-{Stealth}, popgreen, thick] (2.2,0) -- (3.1,0.7) node[right] {$\vec{v}$};
 \end{tikzpicture}
-\legende{Force gravitationnelle $\vec{P}$ radiale centripète et repère de Frenet $(S, \vec{u}_t, \vec{u}_n)$.}
+\end{center}
+\legende{Bilan des forces : la seule force de gravitation est centripète.}
 \end{popfigure}
-
-\item \textbf{Deuxième loi de Newton} appliquée au satellite dans $\mathcal{R}_G$ supposé galiléen : $m\vec{a} = \vec{P}$.
-Dans le repère de Frenet, pour un mouvement circulaire de rayon $r$ : $\vec{a} = \dfrac{dv}{dt}\,\vec{u}_t + \dfrac{v^2}{r}\,\vec{u}_n$.
-Comme $\vec{P}$ n'a aucune composante tangentielle, la projection sur $\vec{u}_t$ donne :
-\[
-m\,\frac{dv}{dt} = 0 \quad\Rightarrow\quad \frac{dv}{dt} = 0 \quad\Rightarrow\quad v = \text{cste}.
-\]
-Le mouvement circulaire du satellite est donc nécessairement \textbf{uniforme}.
-
-\item Projection sur $\vec{u}_n$ (orienté vers $O$, donc dans le sens de $\vec{P}$) :
-\[
-m\,\frac{v^2}{r} = \frac{G\,M_T\,m}{r^2} \quad\Rightarrow\quad v^2 = \frac{G\,M_T}{r} \quad\Rightarrow\quad \boxed{v = \sqrt{\frac{G\,M_T}{r}}}.
-\]
-La vitesse ne dépend que de $M_T$ et de $r$ : elle est indépendante de la masse $m$ du satellite.
-
-\item \textbf{Satellite géostationnaire :}
-\begin{enumerate}
-\item Les trois conditions : (1) orbite \emph{circulaire} située dans le \emph{plan équatorial} ; (2) sens de rotation \emph{identique} à celui de la Terre (Ouest $\to$ Est) ; (3) période de révolution \emph{égale} à la période de rotation propre de la Terre (jour sidéral) : $T = T_0 = \SI{86164}{s}$.
-
-\item La distance parcourue en une période est le périmètre $2\pi r$, parcouru à vitesse constante :
-\[
-T = \frac{2\pi r}{v} = 2\pi\sqrt{\frac{r^3}{G\,M_T}} \;\Rightarrow\; T^2 = \frac{4\pi^2 r^3}{G\,M_T} \;\Rightarrow\; \boxed{\frac{T^2}{r^3} = \frac{4\pi^2}{G\,M_T}}.
-\]
-C'est la troisième loi de Kepler pour les satellites terrestres : le rapport $T^2/r^3$ est le même pour tous les satellites de la Terre.
-
-\item En imposant $T = T_0$ :
-\[
-r^3 = \frac{G\,M_T\,T_0^2}{4\pi^2} \quad\Rightarrow\quad r = \sqrt[3]{\frac{G\,M_T\,T_0^2}{4\pi^2}}.
-\]
-Application numérique : $G\,M_T = \num{6,67e-11} \times \num{5,98e24} = \num{3,9887e14}\ \mathrm{m^3.s^{-2}}$.
-\[
-r^3 = \frac{\num{3,9887e14} \times (\num{86164})^2}{4\pi^2} = \frac{\num{3,9887e14} \times \num{7,4242e9}}{39,478} = \frac{\num{2,961e24}}{39,478} = \num{7,50e22}\ \mathrm{m^3}.
-\]
-\[
-r = \sqrt[3]{\num{7,50e22}} \approx \num{4,22e7}\ \mathrm{m} = \SI{42200}{km}.
-\]
-Altitude : $h = r - R_T = \num{4,22e7} - \num{6,38e6} = \num{3,58e7}\ \mathrm{m} = \boxed{\SI{35800}{km}}$.
-L'altitude est \textbf{unique} car $r$ ne dépend que des constantes $G$, $M_T$ et $T_0$ : tous les satellites géostationnaires occupent le même « anneau » au-dessus de l'équateur.
+\item Appliquons la deuxième loi de Newton dans le repère de Frenet : $\vec{F} = m\,\vec{a}$. En projection sur $\vec{u}_t$ : $m\,\dfrac{dv}{dt} = 0$, car la force est purement normale. Donc $\dfrac{dv}{dt} = 0$ : la vitesse est constante, le mouvement circulaire est \textbf{uniforme}.
+\item $r = \num{6,38}\times 10^{6} + \num{0,85}\times 10^{6} = \num{7,23}\times 10^{6}\ \mathrm{m}$.
+\[ v = \sqrt{\dfrac{\num{3,99}\times 10^{14}}{\num{7,23}\times 10^{6}}} = \sqrt{\num{5,52}\times 10^{7}} \approx \num{7,43}\times 10^{3}\ \mathrm{m.s^{-1}}. \]
+\[ T = \dfrac{2\pi r}{v} = \dfrac{2\pi \times \num{7,23}\times 10^{6}}{\num{7,43}\times 10^{3}} \approx \num{6,11}\times 10^{3}\ \mathrm{s} \approx \num{102}\ \mathrm{min} \approx \num{1,7}\ \mathrm{h}. \]
+\item Force de gravitation subie sur orbite :
+\[ F = \dfrac{G\,M_T\,m}{r^2} = \dfrac{\num{3,99}\times 10^{14} \times 850}{(\num{7,23}\times 10^{6})^2} = \dfrac{\num{3,39}\times 10^{17}}{\num{5,23}\times 10^{13}} \approx \num{6,5}\times 10^{3}\ \mathrm{N}. \]
+Poids à la surface : $P_0 = m\,g_0 = 850 \times \num{9,8} \approx \num{8,3}\times 10^{3}\ \mathrm{N}$. La force en orbite vaut environ 78 \% du poids au sol : à \num{850} km d'altitude, la gravité n'a diminué que d'environ 22 \%. L'« impesanteur » des astronautes n'est donc pas due à l'absence de gravité, mais au fait que le satellite et son contenu sont en chute libre permanente autour de la Terre.
 \end{enumerate}
-
-\item Vitesse sur l'orbite géostationnaire :
-\[
-v = \frac{2\pi r}{T_0} = \frac{2\pi \times \num{4,22e7}}{\num{86164}} \approx \boxed{\SI{3075}{m.s^{-1}}} \approx \SI{3,08}{km.s^{-1}}.
-\]
-
-\item Vitesse d'un point de l'équateur (Kribi) entraîné par la rotation terrestre :
-\[
-v_D = \frac{2\pi R_T}{T_0} = \frac{2\pi \times \num{6,38e6}}{\num{86164}} \approx \boxed{\SI{465}{m.s^{-1}}}.
-\]
-\textbf{Comparaison :} $v \approx 6,6\,v_D$. Le satellite et le point au sol ont la \emph{même vitesse angulaire} $\omega = \dfrac{2\pi}{T_0}$ ; la vitesse linéaire $v = \omega r$ est d'autant plus grande que $r$ est grand ($r \approx 6,6\,R_T$). Dans le référentiel terrestre (qui tourne avec la Terre), la vitesse relative du satellite est nulle : il paraît \textbf{immobile} au-dessus du même point de l'équateur, ce qui permet aux antennes paraboliques de rester fixement pointées vers lui.
-\end{enumerate}
-
-\textbf{Points de vigilance :}
-\begin{itemize}
-\item Toujours préciser le référentiel et son caractère galiléen \emph{avant} d'appliquer la deuxième loi de Newton.
-\item Dans le repère de Frenet, $\vec{u}_n$ pointe \emph{vers le centre} : $\vec{u}_n = -\vec{u}_r$. Attention au signe dans la projection.
-\item Pour le géostationnaire, citer les \emph{trois} conditions (plan équatorial, sens, période $T_0 = \SI{86164}{s}$ et non $\SI{86400}{s}$ : c'est le jour \emph{sidéral}, durée de rotation de la Terre par rapport aux étoiles).
-\item Convertir toutes les distances en mètres avant le calcul ; $h = r - R_T$ (ne pas confondre rayon de l'orbite et altitude).
-\end{itemize}
 \end{corrige}
 
-\begin{corrige}[Exercice 2 — Peser le Soleil et vérifier Kepler]
-\textbf{Barème indicatif (sur 10 pts) :} Q1 : 1 pt ; Q2 : 1,5 pt ; Q3a : 1 pt ; Q3b : 1 pt ; Q3c : 1 pt ; Q4 : 1,5 pt ; Q5 : 1 pt ; Q6 : 2 pts.
+\courssub{Je me prépare au Bac}
+
+\begin{corrige}[Exercice 9 — Type Bac : satellite de télécommunications au service du Cameroun]
+\textbf{Barème indicatif (sur 10) :} 1 pt (q.1) ; 1 pt (q.2) ; 1,5 pt (q.3) ; 1,5 pt (q.4) ; 3 pts (q.5) ; 1 pt (q.6) ; 1 pt (q.7).
 
 \begin{enumerate}
-\item On étudie le mouvement de la Terre dans le \textbf{référentiel héliocentrique} $\mathcal{R}_H$ : origine au centre de masse du Soleil, axes dirigés vers des étoiles lointaines fixes. Il est galiléen à très bonne approximation car le Soleil est en translation quasi rectiligne uniforme dans la Galaxie.
-
-\item \textbf{Lois de Kepler pour le système solaire :}
+\item Le référentiel géocentrique a pour origine le centre $O$ de la Terre et ses axes pointent vers trois étoiles lointaines fixes. Il est en translation quasi circulaire autour du Soleil ; pour une étude de durée très inférieure à l'année, son accélération d'entraînement est négligeable : on peut le considérer \textbf{galiléen}.
+\item Le satellite n'est soumis qu'à la force de gravitation $\vec{F} = -\dfrac{G\,M_T\,m}{r^2}\,\vec{u}_n$, dirigée de $S$ vers $O$.
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+\fill[poppink!60] (0,0) circle (0.9);
+\node at (0,0) {\small Terre};
+\draw[popmuted, dashed] (0,0) circle (2.3);
+\fill[popblue] (2.3,0) circle (0.09) node[right=2pt] {$S$};
+\draw[-{Stealth}, poporange, very thick] (2.3,0) -- (0.95,0) node[midway, above, poporange] {$\vec{F}$};
+\draw[-{Stealth}, popdark] (2.3,0) -- (2.3,0.95) node[above] {$\vec{u}_t$};
+\draw[-{Stealth}, popdark] (2.3,0) -- (1.35,0) node[midway, below] {$\vec{u}_n$};
+\end{tikzpicture}
+\end{center}
+\legende{Force de gravitation et repère de Frenet $(S,\vec{u}_t,\vec{u}_n)$.}
+\end{popfigure}
+\item Deuxième loi de Newton : $\vec{F} = m\,\vec{a}$. Dans le repère de Frenet, $\vec{a} = \dfrac{dv}{dt}\,\vec{u}_t + \dfrac{v^2}{r}\,\vec{u}_n$. La force n'a aucune composante tangentielle : la projection sur $\vec{u}_t$ donne $m\,\dfrac{dv}{dt} = 0$, donc $v = \text{constante}$ : le mouvement circulaire est \textbf{uniforme}.
+\item Projection sur $\vec{u}_n$ : $m\,\dfrac{v^2}{r} = \dfrac{G\,M_T\,m}{r^2}$. En simplifiant par $m$ et en multipliant par $r$ : $v^2 = \dfrac{G\,M_T}{r}$, d'où
+\[ v = \sqrt{\dfrac{G\,M_T}{r}}. \]
+\item 
 \begin{enumerate}
-\item \emph{Loi des orbites :} chaque planète décrit une ellipse dont le Soleil occupe l'un des foyers.
-\item \emph{Loi des aires :} le rayon vecteur Soleil--planète balaye des aires égales pendant des durées égales (la planète accélère au périhélie, ralentit à l'aphélie).
-\item \emph{Loi des périodes :} le rapport $\dfrac{T^2}{a^3}$ est le même pour toutes les planètes : $\dfrac{T^2}{a^3} = K$ (constante de Kepler du système solaire), $a$ étant le demi-grand axe de l'ellipse.
+\item Conditions géostationnaires : orbite circulaire dans le \textbf{plan équatorial} ; rotation dans le \textbf{sens de rotation propre de la Terre} ; période $T = T_0 = \num{86164}\ \mathrm{s}$.
+\item Le mouvement étant uniforme, $v = \dfrac{2\pi r}{T}$. En égalant avec $v^2 = \dfrac{G\,M_T}{r}$ :
+\[ \dfrac{4\pi^2 r^2}{T^2} = \dfrac{G\,M_T}{r} \quad\Longrightarrow\quad \dfrac{T^2}{r^3} = \dfrac{4\pi^2}{G\,M_T}. \]
+\item On en tire $r^3 = \dfrac{G\,M_T\,T_0^2}{4\pi^2}$, soit
+\[ r = \left(\dfrac{G\,M_T\,T_0^2}{4\pi^2}\right)^{1/3}. \]
+Toutes les grandeurs du membre de droite sont fixées ($G$, $M_T$, $T_0$) : le rayon est \textbf{unique}, donc l'altitude $h = r - R_T$ est unique.
+\[ r^3 = \dfrac{\num{3,99}\times 10^{14} \times (\num{86164})^2}{39,48} = \dfrac{\num{3,99}\times 10^{14} \times \num{7,42}\times 10^{9}}{39,48} = \num{7,50}\times 10^{22}\ \mathrm{m^3} \]
+\[ r \approx \num{4,22}\times 10^{7}\ \mathrm{m} \quad\Longrightarrow\quad h = r - R_T \approx \num{4,22}\times 10^{7} - \num{6,38}\times 10^{6} \approx \num{3,58}\times 10^{7}\ \mathrm{m} \approx \num{35800}\ \mathrm{km}. \]
 \end{enumerate}
-
-\item \textbf{Mouvement de la Terre} (orbite assimilée à un cercle de rayon $r_T$) :
-\begin{enumerate}
-\item Force d'attraction gravitationnelle exercée par le Soleil :
-\[
-\vec{F} = -\frac{G\,M_S\,m}{r_T^2}\,\vec{u}_r
-\]
-où $\vec{u}_r$ est le vecteur unitaire dirigé du centre du Soleil vers la Terre.
-
-\item Deuxième loi de Newton dans $\mathcal{R}_H$ : $m\vec{a} = \vec{F}$, avec $\vec{a} = \dfrac{dv}{dt}\,\vec{u}_t + \dfrac{v^2}{r_T}\,\vec{u}_n$ et $\vec{u}_n = -\vec{u}_r$.
-Projection sur $\vec{u}_t$ : $m\dfrac{dv}{dt} = 0 \Rightarrow v = \text{cste}$ : le mouvement circulaire de la Terre est \textbf{uniforme}.
-
-\item Projection sur $\vec{u}_n$ : $m\dfrac{v^2}{r_T} = \dfrac{G\,M_S\,m}{r_T^2} \Rightarrow \boxed{v = \sqrt{\dfrac{G\,M_S}{r_T}}}$.
+\item $v = \sqrt{\dfrac{G\,M_T}{r}} = \sqrt{\dfrac{\num{3,99}\times 10^{14}}{\num{4,22}\times 10^{7}}} = \sqrt{\num{9,45}\times 10^{6}} \approx \num{3,08}\times 10^{3}\ \mathrm{m.s^{-1}}$.
+\item Un point de l'équateur (Kribi est proche de l'équateur) décrit un cercle de rayon $R_T$ en $T_0$ :
+\[ v_D = \dfrac{2\pi R_T}{T_0} = \dfrac{2\pi \times \num{6,38}\times 10^{6}}{\num{86164}} \approx \num{4,65}\times 10^{2}\ \mathrm{m.s^{-1}}. \]
+On a $v \approx \num{6,6}\,v_D$ : le satellite va bien plus vite en valeur absolue. Mais sa \emph{vitesse angulaire} $\omega = \dfrac{2\pi}{T_0}$ est exactement celle de la Terre : satellite et habitant de Kribi tournent « ensemble », d'où l'immobilité apparente du satellite vu du sol.
 \end{enumerate}
-
-\item Période : $T_T = \dfrac{2\pi r_T}{v} = 2\pi\sqrt{\dfrac{r_T^3}{G\,M_S}}$, d'où $T_T^2 = \dfrac{4\pi^2 r_T^3}{G\,M_S}$ et :
-\[
-\boxed{M_S = \frac{4\pi^2\,r_T^3}{G\,T_T^2}}.
-\]
-Conversion : $T_T = \num{365,25} \times \num{86400} = \num{3,1558e7}\ \mathrm{s}$.
-\[
-M_S = \frac{39,478 \times (\num{1,50e11})^3}{\num{6,67e-11} \times (\num{3,1558e7})^2} = \frac{39,478 \times \num{3,375e33}}{\num{6,67e-11} \times \num{9,959e14}} = \frac{\num{1,332e35}}{\num{6,643e4}} \approx \boxed{\SI{2,00e30}{kg}}.
-\]
-
-\item Constante de Kepler calculée :
-\[
-K = \frac{T_T^2}{r_T^3} = \frac{4\pi^2}{G\,M_S} = \frac{39,478}{\num{6,67e-11} \times \num{2,00e30}} = \frac{39,478}{\num{1,334e20}} \approx \num{2,96e-19}\ \mathrm{s^2.m^{-3}}.
-\]
-Valeur de référence : $K = \num{2,97e-19}\ \mathrm{s^2.m^{-3}}$. L'écart relatif est inférieur à $0,5\,\%$ (effet des arrondis) : les résultats sont \textbf{cohérents}, ce qui conforte la troisième loi de Kepler et la loi de gravitation universelle.
-
-\item Troisième loi de Kepler appliquée à la Terre et à Mars (même astre central, le Soleil) :
-\[
-\frac{T_M^2}{r_M^3} = \frac{T_T^2}{r_T^3} \;\Rightarrow\; r_M^3 = r_T^3\,\frac{T_M^2}{T_T^2} \;\Rightarrow\; \boxed{r_M = r_T\left(\frac{T_M}{T_T}\right)^{2/3}}.
-\]
-Application numérique : $\dfrac{T_M}{T_T} = \dfrac{687}{365,25} \approx 1,881$ ; $(1,881)^{2/3} \approx 1,523$.
-\[
-r_M = \num{1,50e11} \times 1,523 \approx \boxed{\SI{2,28e11}{m}}.
-\]
-\end{enumerate}
-
-\textbf{Points de vigilance :}
-\begin{itemize}
-\item « Peser » le Soleil = déterminer sa \emph{masse} : seule la 3\textsuperscript{e} loi de Kepler (ou la connaissance de $v$ et $T$) le permet ; la masse $m$ de la Terre s'élimine toujours des équations.
-\item Dans la question 6, exploiter le \emph{rapport} $T^2/r^3$ identique pour les deux planètes : inutile de repasser par $G$ et $M_S$ ; c'est plus rapide et plus précis.
-\item Convertir les périodes en secondes avant tout calcul avec $G$ en unités SI.
-\end{itemize}
+\textbf{Points de vigilance :} citer explicitement le référentiel et son caractère galiléen avant d'appliquer la deuxième loi de Newton ; écrire la projection sur $\vec{u}_t$ \emph{avant} celle sur $\vec{u}_n$ ; ne pas oublier de convertir $T_0$ en secondes ; distinguer soigneusement $r$ (rayon, mesuré depuis le centre de la Terre) et $h$ (altitude, mesurée depuis la surface) : $h = r - R_T$.
 \end{corrige}
 
-\begin{corrige}[Exercice 3 — Mise sur orbite géostationnaire : étude énergétique]
-\textbf{Barème indicatif (sur 10 pts) :} Q1 : 1,5 pt ; Q2 : 1 pt ; Q3 : 1,5 pt ; Q4 : 1,5 pt ; Q5 : 2 pts ; Q6 : 2,5 pts.
+\begin{corrige}[Exercice 10 — Type Bac : peser le Soleil et vérifier Kepler]
+\textbf{Barème indicatif (sur 10) :} 1 pt (q.1) ; 1,5 pt (q.2) ; 3 pts (q.3) ; 1,5 pt (q.4) ; 1 pt (q.5) ; 2 pts (q.6).
 
 \begin{enumerate}
-\item Sur une orbite circulaire de rayon $r$, la vitesse du satellite est $v = \sqrt{\dfrac{G\,M_T}{r}}$. Son énergie cinétique s'écrit donc :
-\[
-E_c = \frac{1}{2}m v^2 = \frac{1}{2}m\,\frac{G\,M_T}{r} = \boxed{\frac{G\,M_T\,m}{2r}}.
-\]
-
-\item En choisissant l'énergie potentielle nulle à l'infini, $E_p = -\dfrac{G\,M_T\,m}{r}$. Énergie mécanique :
-\[
-E_m = E_c + E_p = \frac{G\,M_T\,m}{2r} - \frac{G\,M_T\,m}{r} = \boxed{-\frac{G\,M_T\,m}{2r}}.
-\]
-\textbf{Commentaire :} $E_m < 0$ : le satellite est dans un \emph{état lié} ; il ne peut pas s'échapper de l'attraction terrestre sans apport extérieur d'énergie. On note aussi les relations utiles $E_c = -E_m$ et $E_p = 2E_m$.
-
-\item On calcule $G\,M_T\,m = \num{3,9887e14} \times \num{1,2e3} = \num{4,7864e17}\ \mathrm{J.m}$.
-Rayons : $r_1 = R_T + \num{300}{km} = \num{6,38e6} + \num{0,30e6} = \num{6,68e6}\ \mathrm{m}$ ; $r_2 = \num{4,22e7}\ \mathrm{m}$.
-\[
-E_{m1} = -\frac{\num{4,7864e17}}{2 \times \num{6,68e6}} = -\frac{\num{4,7864e17}}{\num{1,336e7}} \approx \boxed{\SI{-3,58e10}{J}}.
-\]
-\[
-E_{m2} = -\frac{\num{4,7864e17}}{2 \times \num{4,22e7}} = -\frac{\num{4,7864e17}}{\num{8,44e7}} \approx \boxed{\SI{-5,67e9}{J}}.
-\]
-
-\item L'énergie minimale à fournir est la variation d'énergie mécanique (théorème de l'énergie mécanique, le travail de la gravitation étant déjà comptabilisé dans $E_p$) :
-\[
-W = \Delta E_m = E_{m2} - E_{m1} = (-\num{5,67e9}) - (-\num{3,58e10}) = \boxed{\num{3,01e10}\ \mathrm{J}}.
-\]
-Conversion : $W = \dfrac{\num{3,01e10}}{\num{3,6e6}} \approx \boxed{\SI{8,4e3}{kWh}}$ (environ $\SI{8360}{kWh}$).
-
-\item Vitesses orbitales :
-\[
-v_1 = \sqrt{\frac{G\,M_T}{r_1}} = \sqrt{\frac{\num{3,9887e14}}{\num{6,68e6}}} = \sqrt{\num{5,97e7}} \approx \boxed{\SI{7,73e3}{m.s^{-1}}}.
-\]
-\[
-v_2 = \sqrt{\frac{G\,M_T}{r_2}} = \sqrt{\frac{\num{3,9887e14}}{\num{4,22e7}}} = \sqrt{\num{9,45e6}} \approx \boxed{\SI{3,07e3}{m.s^{-1}}}.
-\]
-\textbf{Non}, le satellite va \emph{moins vite} sur l'orbite haute ($v_2 < v_1$, car $v \propto 1/\sqrt{r}$).
-\textbf{Justification :} lors du transfert, $E_c = \dfrac{GM_Tm}{2r}$ \emph{diminue} tandis que $E_p = -\dfrac{GM_Tm}{r}$ \emph{augmente} fortement (elle devient moins négative). Le bilan $W = \Delta E_c + \Delta E_p > 0$ est dominé par $\Delta E_p$ : l'énergie fournie par les propulseurs sert essentiellement à \emph{éloigner} le satellite de la Terre, c'est-à-dire à « remonter » le puits de potentiel gravitationnel, la perte d'énergie cinétique venant en déduction.
-
-\item \textbf{Vitesse de libération :} le corps part de la surface ($r = R_T$) avec la vitesse $v_l$ et arrive à l'infini avec une vitesse nulle (cas limite). La force de gravitation étant conservative, l'énergie mécanique se conserve entre le sol et l'infini :
-\[
-\frac{1}{2}m v_l^2 - \frac{G\,M_T\,m}{R_T} = 0 + 0 \quad\Rightarrow\quad v_l^2 = \frac{2G\,M_T}{R_T} \quad\Rightarrow\quad \boxed{v_l = \sqrt{\frac{2G\,M_T}{R_T}}}.
-\]
-Application numérique :
-\[
-v_l = \sqrt{\frac{2 \times \num{3,9887e14}}{\num{6,38e6}}} = \sqrt{\num{1,250e8}} \approx \boxed{\SI{1,12e4}{m.s^{-1}}} = \SI{11,2}{km.s^{-1}}.
-\]
-\textbf{Comparaison :} $v_l = \sqrt{2}\;v_{\text{circ}}(R_T) \approx 1,414 \times \SI{7,9}{km.s^{-1}}$. Le satellite en orbite basse possède déjà $v_1 \approx \SI{7,73}{km.s^{-1}} \approx 0,69\,v_l$ : il lui « manque » environ $\SI{3,5}{km.s^{-1}}$ pour échapper définitivement à l'attraction terrestre.
+\item On étudie la Terre dans le \textbf{référentiel héliocentrique} : origine au centre du Soleil, axes dirigés vers trois étoiles lointaines fixes ; il est galiléen avec une excellente approximation.
+\item \emph{Loi des orbites} : chaque planète décrit une ellipse dont le Soleil est un foyer. \emph{Loi des aires} : le rayon Soleil--planète balaie des aires égales pendant des durées égales. \emph{Loi des périodes} : $\dfrac{T^2}{a^3}$ est identique pour toutes les planètes du système solaire.
+\item 
+\begin{enumerate}
+\item $\vec{F}_{S/T} = -\dfrac{G\,M_S\,m}{r_T^2}\,\vec{u}_n$, où $\vec{u}_n$ pointe de la Terre vers le Soleil.
+\item Deuxième loi de Newton dans le repère de Frenet, projection sur $\vec{u}_t$ : $m\,\dfrac{dv}{dt} = 0$ car $\vec{F}$ est radiale. Donc $v$ est constante : le mouvement circulaire est uniforme.
+\item Projection sur $\vec{u}_n$ : $\dfrac{m\,v^2}{r_T} = \dfrac{G\,M_S\,m}{r_T^2}$, d'où $v = \sqrt{\dfrac{G\,M_S}{r_T}}$.
 \end{enumerate}
+\item Avec $v = \dfrac{2\pi r_T}{T_T}$ : $\dfrac{4\pi^2 r_T^2}{T_T^2} = \dfrac{G\,M_S}{r_T}$, donc
+\[ M_S = \dfrac{4\pi^2\,r_T^3}{G\,T_T^2}. \]
+Numériquement : $T_T = \num{365,25}\times\num{86400} = \num{3,156}\times 10^{7}\ \mathrm{s}$ ; $T_T^2 = \num{9,96}\times 10^{14}\ \mathrm{s^2}$ ; $r_T^3 = \num{3,375}\times 10^{33}\ \mathrm{m^3}$.
+\[ M_S = \dfrac{39,48 \times \num{3,375}\times 10^{33}}{\num{6,67}\times 10^{-11} \times \num{9,96}\times 10^{14}} \approx \num{2,0}\times 10^{30}\ \mathrm{kg}. \]
+Le Soleil a bien été « pesé » depuis la salle de classe !
+\item Calculons la constante de Kepler avec notre masse :
+\[ K = \dfrac{4\pi^2}{G\,M_S} = \dfrac{39,48}{\num{6,67}\times 10^{-11} \times \num{2,0}\times 10^{30}} \approx \num{2,96}\times 10^{-19}\ \mathrm{s^2.m^{-3}}. \]
+C'est en excellent accord avec la valeur de référence $K = \num{2,97}\times 10^{-19}\ \mathrm{s^2.m^{-3}}$ (écart inférieur à 1 \%) : le résultat est cohérent.
+\item Troisième loi de Kepler pour la Terre et Mars (même astre attracteur) :
+\[ \dfrac{T_M^2}{r_M^3} = \dfrac{T_T^2}{r_T^3} \quad\Longrightarrow\quad r_M = r_T\left(\dfrac{T_M}{T_T}\right)^{2/3}. \]
+\[ r_M = \num{1,50}\times 10^{11} \times \left(\dfrac{687}{\num{365,25}}\right)^{2/3} = \num{1,50}\times 10^{11} \times (\num{1,88})^{2/3} \approx \num{1,50}\times 10^{11} \times \num{1,52} \approx \num{2,29}\times 10^{11}\ \mathrm{m}. \]
+Mars orbite donc environ 1,5 fois plus loin du Soleil que la Terre (1,52 unité astronomique).
+\end{enumerate}
+\textbf{Points de vigilance :} la démonstration de la troisième loi de Kepler dans le cas circulaire est exigible ; bien justifier l'uniformité du mouvement \emph{avant} d'écrire $v = \dfrac{2\pi r}{T}$ ; dans la question 6, exploiter le rapport des constantes de Kepler plutôt que de recalculer $M_S$ (méthode plus rapide et plus sûre).
+\end{corrige}
 
-\textbf{Points de vigilance :}
-\begin{itemize}
-\item Ne pas oublier le signe moins dans $E_p$ et $E_m$ ; une énergie mécanique positive signifierait un état de diffusion (trajectoire ouverte, non refermée).
-\item Le travail à fournir est $W = \Delta E_m = E_{m2} - E_{m1}$ (orbite finale moins orbite initiale) : il doit être \emph{positif} ; vérifier le signe avant de conclure.
-\item Attention : $r$ est le rayon de l'orbite ($r = R_T + h$), pas l'altitude.
-\item Pour la vitesse de libération, écrire explicitement la conservation de l'énergie mécanique entre le sol et l'infini, avec $E_m(\infty) = 0$.
-\end{itemize}
+\begin{corrige}[Exercice 11 — Type Bac : mise sur orbite géostationnaire — étude énergétique]
+\textbf{Barème indicatif (sur 10) :} 1,5 pt (q.1) ; 1,5 pt (q.2) ; 2 pts (q.3) ; 1,5 pt (q.4) ; 2 pts (q.5) ; 1,5 pt (q.6).
+
+\begin{enumerate}
+\item Sur une orbite circulaire, $v^2 = \dfrac{G\,M_T}{r}$ (question de cours). Donc
+\[ E_c = \dfrac{1}{2}m\,v^2 = \dfrac{1}{2}m\,\dfrac{G\,M_T}{r} = \dfrac{G\,M_T\,m}{2r}. \]
+\item $E_m = E_c + E_p = \dfrac{G\,M_T\,m}{2r} - \dfrac{G\,M_T\,m}{r} = -\dfrac{G\,M_T\,m}{2r}$. L'énergie mécanique est \textbf{négative} : le satellite est dans un état lié, il ne peut pas s'échapper seul de l'attraction terrestre (l'état de référence $E_m = 0$ correspond à un satellite au repos à l'infini).
+\item Orbite basse : $r_1 = \num{6,38}\times 10^{6} + \num{0,30}\times 10^{6} = \num{6,68}\times 10^{6}\ \mathrm{m}$. Avec $G\,M_T\,m = \num{3,99}\times 10^{14} \times \num{1,2}\times 10^{3} = \num{4,79}\times 10^{17}\ \mathrm{J.m}$ :
+\[ E_{m1} = -\dfrac{\num{4,79}\times 10^{17}}{2 \times \num{6,68}\times 10^{6}} \approx -\num{3,58}\times 10^{10}\ \mathrm{J}. \]
+\[ E_{m2} = -\dfrac{\num{4,79}\times 10^{17}}{2 \times \num{4,22}\times 10^{7}} \approx -\num{5,67}\times 10^{9}\ \mathrm{J}. \]
+\item L'énergie minimale à fournir est l'augmentation d'énergie mécanique :
+\[ W = E_{m2} - E_{m1} = -\num{5,67}\times 10^{9} - (-\num{3,58}\times 10^{10}) \approx \num{3,02}\times 10^{10}\ \mathrm{J}. \]
+En kilowattheures : $W = \dfrac{\num{3,02}\times 10^{10}}{\num{3,6}\times 10^{6}} \approx \num{8,4}\times 10^{3}\ \mathrm{kWh}$, soit la consommation électrique annuelle d'environ deux ménages camerounais urbains.
+\item $v_1 = \sqrt{\dfrac{\num{3,99}\times 10^{14}}{\num{6,68}\times 10^{6}}} = \sqrt{\num{5,97}\times 10^{7}} \approx \num{7,73}\times 10^{3}\ \mathrm{m.s^{-1}}$ ;
+$v_2 = \sqrt{\dfrac{\num{3,99}\times 10^{14}}{\num{4,22}\times 10^{7}}} \approx \num{3,08}\times 10^{3}\ \mathrm{m.s^{-1}}$.
+\textbf{Non} : le satellite va \emph{moins vite} sur l'orbite haute ($v_2 < v_1$). Pourtant il a fallu fournir de l'énergie : celle-ci a servi essentiellement à augmenter l'énergie potentielle ($E_p$ passe de $-\num{7,2}\times 10^{10}$ J à $-\num{1,1}\times 10^{10}$ J), c'est-à-dire à « éloigner » le satellite de la Terre, pendant que l'énergie cinétique \emph{diminuait}.
+\item À l'infini, le corps libéré arrive avec une vitesse nulle : $E_m(\infty) = 0$. Conservation de l'énergie mécanique entre la surface et l'infini :
+\[ \dfrac{1}{2}m\,v_l^2 - \dfrac{G\,M_T\,m}{R_T} = 0 \quad\Longrightarrow\quad v_l = \sqrt{\dfrac{2\,G\,M_T}{R_T}}. \]
+\[ v_l = \sqrt{\dfrac{2 \times \num{3,99}\times 10^{14}}{\num{6,38}\times 10^{6}}} = \sqrt{\num{1,25}\times 10^{8}} \approx \num{1,12}\times 10^{4}\ \mathrm{m.s^{-1}} \approx \num{11,2}\ \mathrm{km.s^{-1}}. \]
+Comparaison : $v_l = \sqrt{2}\,v_{\text{surface}} \approx \num{1,41}\,v_1$ (car $v_1 \approx \sqrt{\dfrac{G\,M_T}{R_T}}$ à basse altitude). Il faut donc gagner encore environ 41 \% de vitesse par rapport à l'orbite basse pour échapper définitivement à l'attraction terrestre.
+\end{enumerate}
+\textbf{Points de vigilance :} ne pas oublier le signe négatif de $E_p$ et de $E_m$ ; l'énergie à fournir est $W = \Delta E_m = E_{m2} - E_{m1} > 0$ (attention au piège des signes : $E_{m2}$ est moins négative que $E_{m1}$) ; pour la vitesse de libération, écrire explicitement la conservation de l'énergie mécanique et la condition « à peine libéré » : vitesse nulle à l'infini.
 \end{corrige}
 
 \newpage
@@ -3448,8 +2767,8 @@ v_l = \sqrt{\frac{2 \times \num{3,9887e14}}{\num{6,38e6}}} = \sqrt{\num{1,250e8}
     grow cyclic,
     every node/.style={concept, execute at begin node=\hskip0pt},
     concept color=popblue,
-    level 1/.append style={level distance=4.5cm, sibling angle=360/5},
-    level 2/.append style={level distance=3.2cm, sibling angle=360/6},
+    level 1/.append style={level distance=4.5cm, sibling angle=360/6},
+    level 2/.append style={level distance=3cm, sibling angle=360/6},
     text=white,
     font=\small\bfseries
 ]
@@ -3481,272 +2800,76 @@ v_l = \sqrt{\frac{2 \times \num{3,9887e14}}{\num{6,38e6}}} = \sqrt{\num{1,250e8}
 \legende{Carte mentale de la leçon P07 : Mouvement des planètes et des satellites}
 \end{popfigure}
 
-\coursec{Référentiels d'étude et lois de Kepler}
-
-\begin{definition}[Référentiels d'étude en mécanique céleste]
-Pour décrire le mouvement des astres, le choix du référentiel est fondamental. On utilise deux référentiels principaux, supposés \emph{galiléens} (ou quasi-galiléens) pour la durée de l'observation :
+\begin{bilan}
+\courssub{Définitions et référentiels}
 \begin{itemize}
-    \item \textbf{Référentiel héliocentrique} $\mathcal{R}_h$ : Origine $O$ au centre du Soleil. Axes fixes par rapport aux étoiles lointaines (repère des étoiles fixes). C'est le référentiel privilégié pour l'étude du mouvement des \textbf{planètes} autour du Soleil. Il est galiléen à excellente approximation (l'accélération du Soleil due aux planètes est négligeable).
-    \item \textbf{Référentiel géocentrique} $\mathcal{R}_g$ : Origine $O'$ au centre de la Terre. Axes fixes par rapport aux étoiles (repère quasi-inertiel). C'est le référentiel privilégié pour l'étude des \textbf{satellites terrestres} (Lune, satellites artificiels). Il est quasi-galiléen : la rotation de la Terre sur elle-même (période 24 h) et sa révolution autour du Soleil introduisent des forces d'inertie (Corolis, centrifuge) souvent négligeables pour une première modélisation du mouvement orbital.
+    \item \textbf{Référentiel géocentrique} : origine au centre de la Terre, axes fixes par rapport aux étoiles (quasi-galiléen pour l'étude des satellites terrestres).
+    \item \textbf{Référentiel héliocentrique} : origine au centre du Soleil, axes fixes par rapport aux étoiles (galiléen pour l'étude des planètes).
+    \item \textbf{Satellite} : corps en orbite autour d'un astre principal sous l'effet exclusif de la gravitation (poids = force centripète).
 \end{itemize}
-\end{definition}
 
-\begin{savaistu}[Du géocentrisme à l'héliocentrisme : une révolution camerounaise ?]
-Bien avant Copernic (1543), les astronomes babyloniens et grecs (Ptolémée) utilisaient un modèle géocentrique complexe (épicycles). Au Cameroun, les peuples Bamiléké et Bamoun observaient les cycles lunaires et les positions du Soleil pour organiser les calendriers agricoles et les rites. La transition vers l'héliocentrisme (Kepler, Galilée, Newton) a permis de comprendre que la \textbf{pesanteur} est une force universelle, la même qui fait tomber une mangue à Yaoundé et qui maintient la Lune en orbite.
-\end{savaistu}
-
-\begin{propriete}[Les trois lois de Kepler (Énoncés officiels Bac)]
-\emph{Issues de l'analyse minutieuse des données de Tycho Brahe (Mars), publiées entre 1609 et 1619.}
+\courssub{Lois de Kepler (énoncés à connaître)}
 \begin{enumerate}
-    \item \textbf{Loi des orbites (1ère loi)} : Chaque planète décrit une \textbf{ellipse} dont le Soleil occupe l'un des foyers. Pour un satellite terrestre, l'orbite est une ellipse (souvent quasi-circulaire) dont la Terre occupe un foyer.
-    \item \textbf{Loi des aires (2ème loi)} : Le rayon vecteur reliant le Soleil à la planète (ou la Terre au satellite) balaye \textbf{des aires égales en temps égaux}. Conséquence immédiate : le \textbf{moment cinétique} (moment du quantity de mouvement) $\vec{L} = \vec{r} \wedge \vec{p}$ est constant (conservation du moment cinétique, force centrale). Le mouvement est \textbf{plan}.
-    \item \textbf{Loi des périodes (3ème loi)} : Le carré de la période de révolution $T$ est proportionnel au cube du \textbf{demi-grand axe} $a$ de l'orbite :
-    \[
-    T^2 = \frac{4\pi^2}{GM}\,a^3 \qquad \text{où } M \text{ est la masse de l'astre central (Soleil ou Terre).}
-    \]
-    Pour une orbite \textbf{circulaire} de rayon $R$, on a $a = R$.
+    \item \textbf{Loi des orbites} : Les planètes décrivent des ellipses dont le Soleil occupe un foyer. (Pour un satellite : orbite circulaire ou elliptique, astre au foyer).
+    \item \textbf{Loi des aires} : Le rayon vecteur (astre $\to$ planète) balaye des aires égales en temps égaux $\implies$ moment cinétique constant (mouvement plan).
+    \item \textbf{Loi des périodes (3ème loi)} : Le carré de la période de révolution $T$ est proportionnel au cube du demi-grand axe $a$ de l'orbite : $T^2 = \dfrac{4\pi^2}{GM}a^3$. Pour un cercle, $a = R$.
 \end{enumerate}
-\end{propriete}
 
-\begin{attention}[Pièges fréquents sur les lois de Kepler]
+\courssub{Formules clés (mouvement circulaire uniforme, rayon $R$, masse astre $M$, masse satellite $m$)}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Grandeur} & \textbf{Expression} & \textbf{Unité SI} \\ \hline
+Vitesse orbitale & $v = \sqrt{\dfrac{GM}{R}}$ & $\SI{}{m.s^{-1}}$ \\ \hline
+Période de révolution & $T = 2\pi\sqrt{\dfrac{R^3}{GM}} = \dfrac{2\pi R}{v}$ & $\SI{}{s}$ \\ \hline
+Accélération gravitationnelle & $g(R) = \dfrac{GM}{R^2}$ & $\SI{}{m.s^{-2}}$ \\ \hline
+3ème Loi de Kepler & $\dfrac{T^2}{R^3} = \dfrac{4\pi^2}{GM} = \text{cste}$ & $\SI{}{s^2.m^{-3}}$ \\ \hline
+Masse de l'astre (si satellite connu) & $M = \dfrac{4\pi^2 R^3}{GT^2}$ & $\SI{}{kg}$ \\ \hline
+Énergie potentielle & $E_p = -\dfrac{GMm}{R}$ & $\SI{}{J}$ \\ \hline
+Énergie cinétique & $E_c = \dfrac{1}{2}mv^2 = \dfrac{GMm}{2R}$ & $\SI{}{J}$ \\ \hline
+Énergie mécanique & $E_m = E_c + E_p = -\dfrac{GMm}{2R}$ & $\SI{}{J}$ \\ \hline
+Vitesse de libération & $v_{\text{lib}} = \sqrt{\dfrac{2GM}{R}} = \sqrt{2}\,v$ & $\SI{}{m.s^{-1}}$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\courssub{Satellite géostationnaire (conditions nécessaires et suffisantes)}
+\begin{enumerate}
+    \item Mouvement circulaire uniforme.
+    \item Orbite dans le plan équatorial (inclinaison $0^\circ$).
+    \item Sens de rotation Est $\to$ Ouest (identique à la Terre).
+    \item Période sidérale $T = \SI{23}{h}\ \SI{56}{min}\ \SI{4}{s} = \SI{86164}{s}$.
+    \item Altitude $h \approx \SI{35 786}{km}$ au-dessus du niveau de la mer ($R \approx \SI{42 164}{km}$).
+\end{enumerate}
+
+\courssub{Méthode express : Déterminer la masse d'un astre}
+\begin{enumerate}
+    \item Identifier un satellite (lune, satellite artificiel) en orbite \emph{quasi-circulaire}.
+    \item Mesurer ou relever : rayon orbital $R$ (distance centre-à-centre) et période $T$.
+    \item Appliquer $M = \dfrac{4\pi^2 R^3}{GT^2}$.
+    \item Vérifier l'homogénéité : $[M] = \dfrac{[L]^3}{[M^{-1}L^3T^{-2}][T]^2} = [M]$. \checkmark
+\end{enumerate}
+
+\courssub{Méthode express : Altitude satellite géostationnaire}
+\begin{enumerate}
+    \item Écrire $T = 2\pi\sqrt{R^3/GM_{\text{Terre}}}$.
+    \item Isoler $R = \sqrt[3]{\dfrac{GM_{\text{Terre}}T^2}{4\pi^2}}$.
+    \item Calculer $h = R - R_{\text{Terre}}$ ($R_{\text{Terre}} \approx \SI{6371}{km}$).
+\end{enumerate}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Bac \textemdash{} P07]
 \begin{itemize}
-    \item \textbf{Loi 1} : Ne pas confondre "cercle" (cas particulier d'ellipse d'excentricité 0) et "ellipse" générale. Au Bac, si l'énoncé dit "orbite circulaire", on utilise $R$ ; s'il dit "orbite elliptique", on utilise le demi-grand axe $a$.
-    \item \textbf{Loi 2} : La vitesse n'est \textbf{pas} constante sur une ellipse ! Elle est maximale au périhélie (périgée) et minimale à l'aphélie (apogée). La loi des aires traduit la conservation du moment cinétique $L = m v r \sin\theta = \text{cste}$.
-    \item \textbf{Loi 3} : La constante $\frac{4\pi^2}{GM}$ ne dépend \textbf{que de la masse de l'astre central $M$}. Elle est la même pour tous les satellites d'un même astre (Lune et satellites artificiels pour la Terre ; Terre et Mars pour le Soleil).
-    \item \textbf{Unités} : $T$ \textbf{obligatoirement en secondes (s)}, $a$ ou $R$ en \textbf{mètres (m)}, $M$ en \textbf{kg}, $G = \SI{6,67e-11}{N.m^2.kg^{-2}}$.
-\end{itemize}
-\end{attention}
-
-\coursec{Mouvement circulaire uniforme d'un satellite}
-
-\begin{experience}[Modélisation : Newton et le canon sur la montagne]
-Imaginez un canon au sommet d'une très haute montagne (au-dessus de l'atmosphère), tirant un boulet horizontalement.
-\begin{itemize}
-    \item Faible vitesse : le boulet tombe en courbe (chute parabolique approchée).
-    \item Vitesse critique $v = \sqrt{GM/R}$ : la courbure de la trajectoire \textbf{coïncide} avec la courbure de la Terre. Le boulet "tombe en permanence sans jamais toucher le sol" : c'est la \textbf{mise en orbite circulaire}.
-    \item Vitesse supérieure : orbite elliptique.
-    \item Vitesse $\ge v_{\text{lib}}$ : le boulet s'échappe (parabole ou hyperbole).
-\end{itemize}
-\emph{Observation} : Le poids $\vec{P} = m\vec{g}(R)$ fournit \textbf{exactement} la force centripète nécessaire au mouvement circulaire.
-\end{experience}
-
-\begin{propriete}[Démonstration : Vitesse et période d'un satellite circulaire (Exigible au Bac)]
-Soit un satellite de masse $m$ en orbite circulaire de rayon $R$ (distance centre-à-centre) autour d'un astre de masse $M \gg m$.
-\begin{enumerate}
-    \item \textbf{Bilan des forces (PFD dans $\mathcal{R}_g$ galiléen)} : La seule force est l'attraction newtonienne (poids), dirigée vers le centre $O$ :
-    \[
-    \vec{F}_g = -\frac{GMm}{R^2}\,\vec{u}_r \quad (\vec{u}_r \text{ vecteur unitaire radial sortant})
-    \]
-    \item \textbf{Accélération} : Mouvement circulaire uniforme $\implies$ accélération centripète $\vec{a} = -\frac{v^2}{R}\,\vec{u}_r$.
-    \item \textbf{Équation du mouvement} (2ème loi de Newton) : $\vec{F}_g = m\vec{a}$.
-    \[
-    -\frac{GMm}{R^2}\,\vec{u}_r = m\left(-\frac{v^2}{R}\,\vec{u}_r\right)
-    \]
-    \item \textbf{Résolution} : On simplifie par $m$ et $R$ (le mouvement ne dépend pas de la masse du satellite !) :
-    \[
-    \frac{GM}{R} = v^2 \quad \implies \quad \boxed{v = \sqrt{\frac{GM}{R}}}
-    \]
-    \item \textbf{Période} : $T = \frac{\text{longueur orbite}}{\text{vitesse}} = \frac{2\pi R}{v}$.
-    \[
-    T = 2\pi R \sqrt{\frac{R}{GM}} = \boxed{2\pi\sqrt{\frac{R^3}{GM}}}
-    \]
-    \item \textbf{3ème loi de Kepler (cas circulaire)} : En élevant $T$ au carré :
-    \[
-    T^2 = \frac{4\pi^2}{GM}\,R^3 \quad \implies \quad \boxed{\frac{T^2}{R^3} = \frac{4\pi^2}{GM} = \text{constante pour un astre donné}}
-    \]
-\end{enumerate}
-\end{propriete}
-
-\begin{aretenir}[Analyse dimensionnelle (Vérification systématique au Bac)]
-\begin{align*}
-[v] &= \sqrt{\frac{[G][M]}{[R]}} = \sqrt{\frac{M^{-1}L^3T^{-2} \cdot M}{L}} = \sqrt{L^2T^{-2}} = LT^{-1} \quad \checkmark \\
-[T] &= \sqrt{\frac{[R]^3}{[G][M]}} = \sqrt{\frac{L^3}{M^{-1}L^3T^{-2} \cdot M}} = \sqrt{T^2} = T \quad \checkmark \\
-\left[\frac{T^2}{R^3}\right] &= \frac{T^2}{L^3} = \left[\frac{4\pi^2}{GM}\right] = \frac{1}{M^{-1}L^3T^{-2} \cdot M} = L^{-3}T^2 \quad \checkmark
-\end{align*}
-\end{aretenir}
-
-\begin{methode}[Déterminer la masse $M$ d'un astre central (Terre, Soleil, Mars...)]
-\begin{enumerate}
-    \item Identifier un satellite (Lune, Phobos, satellite artificiel) en orbite \textbf{quasi-circulaire} de rayon $R$ connu.
-    \item Mesurer ou relever sa période de révolution $T$ (en secondes !).
-    \item Appliquer la formule inversée de la 3ème loi : $\boxed{M = \dfrac{4\pi^2 R^3}{G T^2}}$.
-    \item Vérifier l'homogénéité (voir ci-dessus) et l'ordre de grandeur.
-\end{enumerate}
-\end{methode}
-
-\begin{exoresolu}[Masse de la Terre à partir de la Lune]
-\textbf{Données} : $R_{\text{Lune}} = \SI{3,84e8}{m}$ ; $T_{\text{Lune}} = \SI{27,3}{jours} = \SI{2,36e6}{s}$ ; $G = \SI{6,67e-11}{SI}$.
-\textbf{Calcul} :
-\[
-M_T = \frac{4\pi^2 (3,84\times10^8)^3}{6,67\times10^{-11} \times (2,36\times10^6)^2}
-\approx \frac{4 \times 9,87 \times 5,66 \times 10^{25}}{6,67 \times 10^{-11} \times 5,57 \times 10^{12}}
-\approx \frac{2,23 \times 10^{27}}{3,71 \times 10^2} \approx \SI{6,01e24}{kg}
-\]
-(Valeur acceptée : $\SI{5,97e24}{kg}$. L'écart vient de l'excentricité de l'orbite lunaire et de la masse de la Lune non négligeable devant $M_T$ pour une précision extrême).
-\tcblower
-\textbf{Solution détaillée} : Vérification des unités : $R$ en m, $T$ en s. Conversion jours $\to$ secondes : $27,3 \times 24 \times 3600 = 2\,358\,720 \approx \SI{2,36e6}{s}$. Application directe de la formule. Le résultat est cohérent.
-\end{exoresolu}
-
-\begin{exoresolu}[Satellite d'observation en orbite basse (LEO) - Contexte Cameroun]
-Un satellite d'observation agricole (type \emph{NigeriaSat} ou futur \emph{CamSat}) orbite à une altitude $h = \SI{600}{km}$.
-\textbf{Données} : $R_T = \SI{6371}{km}$ ; $M_T = \SI{5,97e24}{kg}$ ; $G = \SI{6,67e-11}{SI}$.
-\textbf{Questions} : 1. Rayon orbital $R$. 2. Vitesse $v$. 3. Période $T$ (en min).
-\textbf{Résolution} :
-1. $R = R_T + h = \SI{6371}{km} + \SI{600}{km} = \SI{6971}{km} = \SI{6,971e6}{m}$.
-2. $v = \sqrt{\frac{GM_T}{R}} = \sqrt{\frac{6,67\times10^{-11} \times 5,97\times10^{24}}{6,971\times10^6}} = \sqrt{\frac{3,98\times10^{14}}{6,971\times10^6}} \approx \sqrt{5,71\times10^7} \approx \SI{7550}{m.s^{-1}}$.
-3. $T = \frac{2\pi R}{v} = \frac{2\pi \times 6,971\times10^6}{7550} \approx \SI{5800}{s} \approx \SI{96,7}{min}$.
-\tcblower
-\textbf{Solution} : $R = \SI{6,97e6}{m}$ ; $v \approx \SI{7,55}{km/s}$ ; $T \approx \SI{97}{min}$ (environ 15 orbites/jour). Idéal pour l'imagerie de la canopée forestière du bassin du Congo ou le suivi des cultures cotonnières au Nord.
-\end{exoresolu}
-
-\coursec{Le satellite géostationnaire}
-
-\begin{definition}[Satellite géostationnaire (ou géosynchrone équatorial)]
-Un satellite artificiel est \textbf{géostationnaire} s'il apparaît \textbf{immobile} dans le ciel pour un observateur au sol. Cela impose \textbf{quatre conditions nécessaires et suffisantes} :
-\begin{enumerate}
-    \item \textbf{Orbite circulaire} (vitesse constante, distance constante).
-    \item \textbf{Plan orbital = Plan équatorial} (inclinaison $i = 0^\circ$). Sinon, il oscille Nord-Sud.
-    \item \textbf{Sens de rotation Ouest $\to$ Est} (identique à la rotation de la Terre). \emph{Attention : la Terre tourne vers l'Est, le satellite doit la "suivre" vers l'Est.}
-    \item \textbf{Période sidérale $T = T_{\text{Terre}} = \SI{23}{h}\ \SI{56}{min}\ \SI{4}{s} = \SI{86164}{s}$}. (Période de rotation de la Terre par rapport aux étoiles, pas le jour solaire de 24 h).
-\end{enumerate}
-\end{definition}
-
-\begin{propriete}[Altitude du satellite géostationnaire - Démonstration]
-On utilise la 3ème loi de Kepler pour $T = \SI{86164}{s}$ et $M = M_T$.
-\[
-R = \sqrt[3]{\frac{GM_T T^2}{4\pi^2}}
-\]
-\textbf{Calcul numérique} :
-$GM_T \approx \SI{3,98e14}{m^3.s^{-2}}$ (paramètre gravitationnel standard $\mu_T$).
-$T^2 = (8,6164\times10^4)^2 \approx \SI{7,424e9}{s^2}$.
-$R^3 = \frac{3,98\times10^{14} \times 7,424\times10^9}{4\pi^2} \approx \frac{2,95\times10^{24}}{39,48} \approx \SI{7,48e22}{m^3}$.
-$R = \sqrt[3]{7,48\times10^{22}} \approx \SI{4,216e7}{m} = \SI{42 164}{km}$.
-\textbf{Altitude} $h = R - R_T = \SI{42 164}{km} - \SI{6 371}{km} = \boxed{\SI{35 793}{km} \approx \SI{35 800}{km}}$.
-\end{propriete}
-
-\begin{savaistu}[Télécommunications au Cameroun : Les "oiseaux" fixes à 36 000 km]
-Les opérateurs \textbf{MTN Cameroon}, \textbf{Orange Cameroun} et \textbf{CAMTEL} louent des capacités sur des satellites géostationnaires (ex: \emph{Intelsat}, \emph{Eutelsat}, \emph{Yahsat}, \emph{SES}) positionnés au-dessus de l'équateur (ex: longitude 20° Est, 36° Est).
-\begin{itemize}
-    \item \textbf{Antennes paraboliques} : Fixes sur les toits (Yaoundé, Douala, Garoua), pointées vers le satellite (azimut $\approx$ Nord pour le Cameroun, élévation $\approx 50^\circ-60^\circ$).
-    \item \textbf{Latence} : Aller-retour signal $\approx 2 \times \frac{35\,800\,\text{km}}{300\,000\,\text{km/s}} \approx \SI{240}{ms}$. Sensible pour la voix/VPN, acceptable pour la TV (Canaux CRTV, Canal+ via satellite) et l'internet rural (VSAT).
-    \item \textbf{Éclipses} : Aux équinoxes (mars/septembre), le satellite passe dans l'ombre de la Terre $\to$ bascule sur batteries (contrainte thermique/énergétique).
-\end{itemize}
-\end{savaistu}
-
-\begin{attention}[Erreurs classiques sur le géostationnaire]
-\begin{itemize}
-    \item Confondre \textbf{jour solaire (24 h)} et \textbf{jour sidéral (23 h 56 min 4 s)}. Utiliser 24 h donne $h \approx \SI{35 900}{km}$ (erreur $\sim \SI{100}{km}$).
-    \item Oublier la condition "Plan équatorial" : un satellite incliné (ex: orbite Molniya) n'est pas géostationnaire (il trace un "8" dans le ciel : analemme).
-    \item Sens de rotation : "Est $\to$ Ouest" est \textbf{faux}. La Terre tourne vers l'Est (lever du Soleil à l'Est). Le satellite doit tourner vers l'Est pour rester au-dessus du même méridien.
-    \item $R$ vs $h$ : La formule donne $R$ (distance au centre). L'altitude $h = R - R_T$.
-\end{itemize}
-\end{attention}
-
-\coursec{Énergie mécanique d'un satellite (Complément Bac)}
-
-\begin{propriete}[Expressions des énergies pour une orbite circulaire de rayon $R$]
-Rappel : Énergie potentielle de gravitation (zéro à l'infini) : $E_p(R) = -\dfrac{GMm}{R}$.
-\begin{itemize}
-    \item \textbf{Énergie cinétique} : $E_c = \dfrac{1}{2}mv^2 = \dfrac{1}{2}m\left(\frac{GM}{R}\right) = \boxed{\dfrac{GMm}{2R}}$.
-    \item \textbf{Énergie mécanique} : $E_m = E_c + E_p = \dfrac{GMm}{2R} - \dfrac{GMm}{R} = \boxed{-\dfrac{GMm}{2R}}$.
-\end{itemize}
-\emph{Remarques fondamentales} :
-\begin{enumerate}
-    \item $E_m < 0$ : Le système est \textbf{lié} (orbite fermée). Pour s'échapper ($E_m \ge 0$), il faut apporter de l'énergie.
-    \item Relation du \textbf{viriel} (cas force $\propto 1/r^2$) : $E_m = -E_c = \dfrac{1}{2}E_p$.
-    \item Plus l'orbite est basse ($R$ petit), plus $E_m$ est \textbf{négative grande} (plus "lié"), et plus $v$ est grande.
-\end{enumerate}
-\end{propriete}
-
-\begin{propriete}[Vitesse de libération (ou vitesse de fuite) $v_{\text{lib}}$]
-C'est la vitesse minimale à donner au satellite au point $R$ pour qu'il s'échappe à l'infini avec une vitesse résiduelle nulle ($E_m(\infty) = 0$).
-\[
-E_m(R) = \frac{1}{2}m v_{\text{lib}}^2 - \frac{GMm}{R} = 0 \quad \implies \quad \boxed{v_{\text{lib}} = \sqrt{\frac{2GM}{R}} = \sqrt{2}\,v_{\text{circ}}}
-\]
-\begin{itemize}
-    \item Au sol ($R = R_T$) : $v_{\text{lib}} \approx \SI{11,2}{km/s}$.
-    \item En orbite géostationnaire ($R \approx 6,6 R_T$) : $v_{\text{lib}} \approx \SI{4,3}{km/s}$ (vs $v_{\text{circ}} \approx \SI{3,07}{km/s}$).
-\end{itemize}
-\end{propriete}
-
-\begin{exemplebox}[Changement d'orbite : Hohmann (Notion de complément)]
-Pour passer d'une orbite circulaire basse ($R_1$) à une orbite circulaire haute ($R_2 > R_1$), on utilise deux impulsions :
-1. Impulsion prograde (dans le sens du mouvement) au périgée $\to$ orbite de transfert elliptique ($a = (R_1+R_2)/2$). $\Delta v_1 > 0$.
-2. Impulsion prograde à l'apogée $\to$ circularisation. $\Delta v_2 > 0$.
-\textbf{Paradoxe apparent} : On accélère pour monter, mais la vitesse finale sur l'orbite haute $v_2 = \sqrt{GM/R_2}$ est \textbf{plus faible} que $v_1$. L'énergie apportée a augmenté l'énergie potentielle (devenue moins négative) plus qu'elle n'a augmenté l'énergie cinétique.
-\end{exemplebox}
-
-\coursec{Synthèse et méthodes de résolution}
-
-\begin{methode}[Résolution type d'un problème "Mouvement d'un satellite"]
-\begin{enumerate}
-    \item \textbf{Analyse} : Identifier le système (satellite), l'astre central (masse $M$), le référentiel (géocentrique/héliocentrique galiléen). Repérer les données : $R$ (ou $h$), $T$, $v$, $M$, $m$.
-    \item \textbf{Modélisation} :
-        \begin{itemize}
-            \item Orbite circulaire ? $\to$ Bilan de forces : $\frac{GMm}{R^2} = m\frac{v^2}{R}$.
-            \item Orbite elliptique ? $\to$ Conservation de l'énergie ($E_m$ cste) + Conservation du moment cinétique ($L$ cste) aux points caractéristiques (péri/apo).
-        \end{itemize}
-    \item \textbf{Mathématisation} : Écrire les équations littérales. Isoler l'inconnue.
-    \item \textbf{Calcul numérique} : Convertir TOUT en SI (m, kg, s). Utiliser $G = \SI{6,67e-11}{SI}$. Calculer. Vérifier l'homogénéité.
-    \item \textbf{Interprétation} : Donner le résultat avec unité et chiffres significatifs (3 généralement). Commenter l'ordre de grandeur.
-\end{enumerate}
-\end{methode}
-
-\begin{exoresolu}[Détermination de la masse de Mars via Phobos (Sujet Bac type)]
-\textbf{Données} : Phobos (satellite de Mars) : $R = \SI{9,38e6}{m}$, $T = \SI{7,65}{h} = \SI{2,754e4}{s}$. $G = \SI{6,67e-11}{SI}$.
-\textbf{Question} : Calculer la masse $M_M$ de Mars.
-\textbf{Résolution} :
-1. Modèle : Orbite quasi-circulaire $\to$ 3ème loi de Kepler : $T^2 = \frac{4\pi^2}{GM_M}R^3$.
-2. Expression de $M_M$ : $M_M = \frac{4\pi^2 R^3}{G T^2}$.
-3. Calcul :
-$R^3 = (9,38\times10^6)^3 \approx 8,25\times10^{20}\,\text{m}^3$.
-$T^2 = (2,754\times10^4)^2 \approx 7,58\times10^8\,\text{s}^2$.
-$M_M = \frac{4\pi^2 \times 8,25\times10^{20}}{6,67\times10^{-11} \times 7,58\times10^8}
-= \frac{39,48 \times 8,25\times10^{20}}{5,06\times10^{-2}}
-\approx \frac{3,26\times10^{22}}{5,06\times10^{-2}}
-\approx \SI{6,44e23}{kg}$.
-\textbf{Réponse} : La masse de Mars est d'environ $\SI{6,4e23}{kg}$ (valeur acceptée $\SI{6,42e23}{kg}$).
-\tcblower
-\textbf{Solution détaillée} : Conversion heures $\to$ secondes indispensable. Analyse dimensionnelle : $[M] = \frac{L^3}{M^{-1}L^3T^{-2}T^2} = M$. Cohérent.
-\end{exoresolu}
-
-\begin{exercice}[Entraînement Bac - Satellite de télécoms pour la zone CEMAC]
-On souhaite placer un satellite de télécommunications au-dessus de l'équateur pour couvrir l'Afrique centrale (Cameroun, Tchad, RCA, Gabon, Congo, Guinée Équatoriale).
-\textbf{Données} : $M_T = \SI{5,97e24}{kg}$ ; $R_T = \SI{6371}{km}$ ; $G = \SI{6,67e-11}{SI}$ ; $T_{\text{sid}} = \SI{86164}{s}$.
-\begin{enumerate}
-    \item Justifier que le satellite doit être géostationnaire pour cette mission (antennes fixes au sol).
-    \item Calculer son rayon orbital $R$ et son altitude $h$.
-    \item Calculer sa vitesse orbitale $v$.
-    \item Déterminer l'énergie mécanique $E_m$ d'un satellite de masse $m = \SI{2000}{kg}$ sur cette orbite.
-    \item Quelle vitesse supplémentaire ($\Delta v$) faut-il lui donner au périgée d'une orbite de transfert (périgée $R_T + \SI{200}{km}$, apogée $R_{\text{geo}}$) pour circulariser ? (On admet $v_{\text{transfert, apogée}} = \SI{1,60}{km/s}$).
-\end{enumerate}
-\end{exercice}
-
-\begin{corrige}[Exercice n°1 - Satellite CEMAC]
-\begin{enumerate}
-    \item \textbf{Justification} : Couverture permanente d'une zone fixe $\implies$ satellite immobile relatif au sol $\implies$ géostationnaire (4 conditions : circulaire, équatorial, sens Ouest$\to$Est, $T = T_{\text{sid}}$). Antennes paraboliques fixes (pas de suivi complexe, coût réduit pour les zones rurales).
-    \item \textbf{Rayon et Altitude} :
-    $R = \sqrt[3]{\frac{GM_T T^2}{4\pi^2}} = \sqrt[3]{\frac{3,98\times10^{14} \times (8,6164\times10^4)^2}{39,48}} \approx \SI{4,216e7}{m} = \SI{42 164}{km}$.
-    $h = R - R_T = \SI{42 164}{km} - \SI{6 371}{km} = \boxed{\SI{35 793}{km}}$.
-    \item \textbf{Vitesse} : $v = \sqrt{\frac{GM_T}{R}} = \sqrt{\frac{3,98\times10^{14}}{4,216\times10^7}} \approx \sqrt{9,44\times10^6} \approx \boxed{\SI{3070}{m.s^{-1}}}$.
-    \item \textbf{Énergie mécanique} : $E_m = -\frac{GM_T m}{2R} = -\frac{3,98\times10^{14} \times 2000}{2 \times 4,216\times10^7} \approx -\frac{7,96\times10^{17}}{8,43\times10^7} \approx \boxed{-\SI{9,44e9}{J}}$.
-    \item \textbf{Circularisation} : $v_{\text{circ}} = \SI{3,07}{km/s}$. $v_{\text{transfert, apogée}} = \SI{1,60}{km/s}$.
-    $\Delta v = v_{\text{circ}} - v_{\text{transfert}} = 3,07 - 1,60 = \boxed{\SI{1,47}{km/s}}$ (impulsion prograde).
-\end{enumerate}
-\end{corrige}
-
-\begin{aretenir}[Checklist finale de révision \textemdash{} P07 : Prêt pour le Bac !]
-\begin{itemize}
-    \item $\square$ \textbf{Référentiels} : Héliocentrique (planètes/Soleil) vs Géocentrique (satellites/Terre). Galiléens approchés.
-    \item $\square$ \textbf{Lois de Kepler} : 1. Ellipse (foyer astre). 2. Aires égales / temps égaux $\iff$ Moment cinétique cste. 3. $T^2 = \frac{4\pi^2}{GM}a^3$ ($a=R$ si cercle).
-    \item $\square$ \textbf{Démonstration exigible} : PFD $\vec{F}_g = m\vec{a}_c \implies v = \sqrt{GM/R},\; T = 2\pi\sqrt{R^3/GM}$.
-    \item $\square$ \textbf{3ème loi exploitable} : $\frac{T_1^2}{R_1^3} = \frac{T_2^2}{R_2^3}$ (même astre central). Masse astre $M = \frac{4\pi^2 R^3}{GT^2}$.
-    \item $\square$ \textbf{Géostationnaire} : 4 conditions (Circulaire, Équatorial, Ouest$\to$Est, $T=\SI{86164}{s}$). Altitude $h \approx \SI{35 800}{km}$. Applications : Télécoms (MTN/Orange/CAMTEL), Météo (Meteosat), TV.
-    \item $\square$ \textbf{Énergies (Complément)} : $E_p = -GMm/R,\; E_c = +GMm/2R,\; E_m = -GMm/2R$. $E_m < 0$ (lié). $E_m = -E_c = E_p/2$.
-    \item $\square$ \textbf{Vitesse de libération} : $v_{\text{lib}} = \sqrt{2GM/R} = \sqrt{2}\,v_{\text{circ}}$. Au sol $\approx \SI{11,2}{km/s}$.
-    \item $\square$ \textbf{Vigilance unités} : $R$ en \textbf{m} (centre-à-centre), $T$ en \textbf{s}, $M$ en \textbf{kg}. $h = R - R_T$.
-    \item $\square$ \textbf{Analyse dimensionnelle} : Systématique sur chaque formule nouvelle.
-    \item $\square$ \textbf{Contexte Cameroun} : Satellites géostationnaires pour internet rural (VSAT), TV, banque ; Barrages (Lom Pangar, Nachtigal) : $g$ local pour turbines ; Agriculture de précision via satellites d'observation (LEO).
+    \item $\square$ Différencier référentiel géocentrique (satellites Terre) et héliocentrique (planètes).
+    \item $\square$ Énoncer les 3 lois de Kepler sans erreur (ellipses, aires, $T^2 \propto a^3$).
+    \item $\square$ Démontrer $v = \sqrt{GM/R}$ et $T = 2\pi\sqrt{R^3/GM}$ à partir du PFD ($\vec{F}_g = m\vec{a}$).
+    \item $\square$ Savoir exploiter $T^2/R^3 = \text{cste}$ pour comparer deux satellites d'un même astre.
+    \item $\square$ Calculer la masse $M$ d'un astre connaissant $R$ et $T$ d'un satellite ($M = 4\pi^2 R^3/GT^2$).
+    \item $\square$ Lister les 4 conditions du satellite géostationnaire et donner son altitude ($\approx \SI{36 000}{km}$).
+    \item $\square$ Écrire les expressions de $E_p$, $E_c$, $E_m$ pour un satellite circulaire ($E_m < 0$, $|E_m| = E_c = -E_p/2$).
+    \item $\square$ Définir la vitesse de libération $v_{\text{lib}} = \sqrt{2GM/R}$ et la comparer à $v_{\text{circ}}$ ($v_{\text{lib}} = \sqrt{2}\,v_{\text{circ}}$).
+    \item $\square$ Vérifier systématiquement l'homogénéité des formules (analyse dimensionnelle).
+    \item $\square$ Attention : $R$ = distance centre-à-centre (pas l'altitude $h$) ; $T$ en secondes (pas en heures).
+    \item $\square$ Contexte Cameroun : Satellites de télécoms (MTN/Orange/CAMTEL) géostationnaires ; barrage de Lom Pangar / Nachtigal (pesanteur locale $g$).
 \end{itemize}
 \end{aretenir}
 

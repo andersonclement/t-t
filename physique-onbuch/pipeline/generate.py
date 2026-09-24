@@ -192,7 +192,7 @@ CONTRAT LaTeX (obligatoire) :
 - Tableaux : \begin{center}\begin{tabularx}{\linewidth}{|l|X|X|}\hline ... \end{tabularx}\end{center} ou tabular + booktabs. En-têtes colorés possibles : \rowcolor{popblueL}. Un tableau de signes ou de variations se fait avec \begin{tabular}{|c|ccccc|} ... (flèches \nearrow \searrow autorisées, ou décris simplement croissant/décroissant si le rendu est plus sûr).
 - Illustrations : place chaque figure dans \begin{popfigure} ... \legende{Légende}\end{popfigure}. Utilise TikZ (schémas géométriques, arbres de probabilité, graphes orientés/non orientés, cartes mentales) et pgfplots (courbes de fonctions, nuages de points, diagrammes). Couleurs autorisées : popink, poporange, popdark, poppurple, popgreen, popblue, poppink, popgold, popmuted, popline, popcream, et leurs teintes popblueL, poporangeL, popgreenL, poppurpleL, poppinkL, popgoldL (ou mélanges comme popblue!30). Style de courbe prêt à l'emploi : \addplot[popcurve,domain=-3:3,samples=200]{...};. Largeur max des figures : \linewidth. Garde le code TikZ simple, correct et compilable (bibliothèques disponibles : arrows.meta, positioning, calc, shapes.geometric, decorations.pathmorphing, patterns, mindmap, trees, fit, backgrounds, matrix, intersections).
 - DANS TOUT CODE TikZ / pgfplots (coordonnées, options, domain, xtick, dimensions), les nombres décimaux s'écrivent avec un POINT : (7.389,2), xtick={1,2.718}, 0.55cm, domain=-1.5:1.5. La virgule y sépare les valeurs ; la virgule décimale française est réservée au texte et aux formules.
-- SCHÉMAS ÉLECTRIQUES : utilise circuitikz dans un tikzpicture (option [european]) : \draw (0,0) to[R=$R$] (2,0) to[C=$C$] (4,0) to[L=$L$] (4,-2) to[sV=$u$] (0,-2) -- (0,0); composants disponibles : R, C, L, sV (générateur sinusoïdal), V, battery1, lamp, ammeter, voltmeter, D (diode), nos (interrupteur), Tnpn (transistor), thermistor, photoresistor. Flèches de tension : v=$u_C$. Courant : i=$i$. Reste simple et compilable.
+- SCHÉMAS ÉLECTRIQUES : utilise circuitikz dans un tikzpicture (option [european]) : \draw (0,0) to[R=$R$] (2,0) to[C=$C$] (4,0) to[L=$L$] (4,-2) to[sV=$u$] (0,-2) -- (0,0); composants disponibles : R, C, L, sV (générateur sinusoïdal), V, battery1, lamp, ammeter, voltmeter, D (diode), nos (interrupteur), npn (transistor : ancres .B .C .E), thermistor, photoresistor. Flèches de tension : v=$u_C$. Courant : i=$i$. Reste simple et compilable.
 - PHYSIQUE NUCLÉAIRE : noyaux avec \ce{^{235}_{92}U}, équations avec \ce{^{14}_{6}C -> ^{14}_{7}N + ^{0}_{-1}e}. Particules : \ce{^{4}_{2}He}, \ce{^{1}_{0}n}.
 - Vecteurs : \vec{F}, \vec{v}, \vec{B} ; norme ||\vec{F}|| ou simplement F. Produit vectoriel : \wedge. Dérivées temporelles : \dot{x}, \ddot{x} ou \dfrac{dx}{dt}, \dfrac{d^2x}{dt^2}.
 - Listes : itemize / enumerate classiques.
@@ -265,6 +265,8 @@ def autofix(body):
     body = _node_align(body)
     body = _cases_math(body)
     body = _lonely_items(body)
+    # circuitikz : Tnpn/Tpnp n'ont pas les ancres .B/.C/.E -> npn/pnp
+    body = re.sub(r"\bT(npn|pnp)\b", r"\1", body)
     # la boîte bilan n'a pas de titre optionnel : [..] s'imprimerait tel quel
     body = re.sub(r"\\begin\{bilan\}\[[^\]\n]*\]", r"\\begin{bilan}", body)
     # Fautes de frappe sur \begin : \begin{savaistu][Titre] ou \begin{tabularx{\linewidth}
