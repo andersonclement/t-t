@@ -21,6 +21,7 @@
 \usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
 % \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
 \providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
 \providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
@@ -31,7 +32,7 @@
 \usepackage{pgfplots}
 \usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
 \pgfplotsset{compat=1.18}
-\usepgfplotslibrary{fillbetween} % aires entre courbes (calcul intégral)
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
 \usepackage{enumitem}
 \usepackage{fancyhdr}
 % [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
@@ -52,6 +53,7 @@
 \usepackage{siunitx}
 % parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
 \sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
 \usepackage{qrcode}
 % \degree : commande fréquemment utilisée par les modèles pour un angle ou une
 % température en dehors de \SI{}{} (non fournie par les paquets chargés).
@@ -410,6 +412,18 @@
   \par\vfill\nopagebreak
   \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
   \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
 }
 
 \begin{document}
@@ -820,7 +834,7 @@ Nous verrons en section 4 qu'à toute matrice $A$ est associée une transformati
 \node[popblue] at (0.5,0.5) {aire $=1$};
 \node[below left] at (0,0) {$O$};
 % Flèche de transformation
-\draw[->,poporange,very thick] (1.6,0.5) -- (2.6,0.5) node[midway,above] {$A=\begin{pmatrix} 2 & 1 \\ 0.5 & 1 \end{pmatrix}$};
+\draw[->,poporange,very thick] (1.6,0.5) -- (2.6,0.5) node[midway,above, align=center] {$A=\begin{pmatrix} 2 & 1 \\ 0.5 & 1 \end{pmatrix}$};
 % Parallélogramme image : u=(2,0.5), v=(1,1)
 \begin{scope}[xshift=3.2cm]
 \fill[poporangeL,opacity=0.6] (0,0) -- (2,0.5) -- (3,1.5) -- (1,1) -- cycle;
@@ -2038,7 +2052,7 @@ child[concept color=poporange]{ node {Déterminant}
 }
 child[concept color=poppurple]{ node {Inverse}
   child[concept color=poppurple!80]{ node[font=\scriptsize\bfseries] {Existe ssi $\det \neq 0$} }
-  child[concept color=poppurple!80]{ node[font=\scriptsize\bfseries] {$M^{-1} = \frac{1}{\det}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$} }
+  child[concept color=poppurple!80]{ node[font=\scriptsize\bfseries, align=center] {$M^{-1} = \frac{1}{\det}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$} }
 }
 child[concept color=popink]{ node {Systèmes}
   child[concept color=popink!80]{ node[font=\scriptsize\bfseries] {$MX = B \Rightarrow X = M^{-1}B$} }
@@ -2533,7 +2547,7 @@ Les deux méthodes donnent le même résultat, ce qui conforte le calcul.
 \begin{aretenir}[Matrices des transformations usuelles (base orthonormée)]
 Dans un repère orthonormé $(O;\vec{\imath},\vec{\jmath})$, les transformations planes suivantes sont des applications linéaires dont les matrices sont :
 \begin{center}
-\begin{tabular}{|l|c|}
+\begin{tabular}{|l|cc|}
 \hline
 \textbf{Transformation} & \textbf{Matrice} \\ \hline
 Symétrie orthogonale d'axe $(Ox)$ & $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$ \\ \hline
@@ -3148,7 +3162,7 @@ Comme $T^2\neq2T$, l'affirmation est fausse. (Multiplier par 2 reviendrait à do
     child { node[concept color=poporange!70] {Interprétation aire} }
   }
   child[concept color=popgreen]{ node {Matrice inverse}
-    child { node[concept color=popgreen!70] {$A^{-1}=\frac{1}{\det A}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$} }
+    child { node[concept color=popgreen!70, align=center] {$A^{-1}=\frac{1}{\det A}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}$} }
     child { node[concept color=popgreen!70] {Existe ssi $\det A\neq 0$} }
   }
   child[concept color=poppurple]{ node {Systèmes linéaires}
