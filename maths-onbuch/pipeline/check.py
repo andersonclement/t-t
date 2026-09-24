@@ -16,7 +16,8 @@ import generate as g  # noqa: E402
 def check(ref):
     lid, name = ref.split("/")
     d = g.BUILD / lid
-    body = (d / f"{name}.rev.tex").read_text()
+    body = g.autofix((d / f"{name}.rev.tex").read_text())
+    (d / f"{name}.rev.tex").write_text(body)
     ok, err, line = g.compile_check(body)
     if ok:
         (d / f"{name}.ok.tex").write_text(body)

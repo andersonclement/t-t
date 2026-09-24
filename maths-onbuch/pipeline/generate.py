@@ -225,6 +225,24 @@ HEADER = r"""\newcommand{\DOCMATIERE}{Mathématiques}\newcommand{\DOCNIVEAU}{Tle
 """
 
 
+def autofix(body):
+    """Corrections mécaniques sûres, appliquées avant compilation (sans modèle).
+    - virgule décimale dans une dimension TikZ : 0,55cm -> 0.55cm, aspect=2,6 -> 2.6
+    - coordonnée calculée non protégée dans un \\foreach : (\\x,\\y) déjà sûr, rien à faire
+    """
+    body = re.sub(r"(?<![\w.])(\d+),(\d+)\s*(cm|mm|pt|em|ex)\b", r"\1.\2\3", body)
+    body = re.sub(r"\b(aspect|scale|xscale|yscale|opacity|line width|inner sep|outer sep|minimum size|minimum width|minimum height|text width|samples|domain|xmin|xmax|ymin|ymax)\s*=\s*(-?\d+),(\d+)",
+                  r"\1=\2.\3", body)
+    # domain=-1,45:1,45 -> domain=-1.45:1.45
+    body = re.sub(r"domain\s*=\s*(-?\d+(?:[.,]\d+)?)\s*:\s*(-?\d+(?:[.,]\d+)?)",
+                  lambda m: f"domain={m.group(1).replace(',', '.')}:{m.group(2).replace(',', '.')}", body)
+    # 0,9\linewidth -> 0.9\linewidth
+    body = re.sub(r"(?<![\w.])(\d+),(\d+)\s*\\(linewidth|textwidth)", r"\1.\2\\\3", body)
+    # at={(0,02,0,98)} (2D écrit à la française : 3 virgules) -> (0.02,0.98)
+    body = re.sub(r"\((-?\d+),(\d+),(-?\d+),(\d+)\)", r"(\1.\2,\3.\4)", body)
+    return body
+
+
 def compile_check(body):
     """Compile le bloc seul. Renvoie (ok, extrait_du_log, ligne_fautive_ou_None)."""
     with tempfile.TemporaryDirectory() as d:
@@ -412,7 +430,7 @@ Ne raccourcis pas le contenu : la version finale doit être au moins aussi riche
             log(f"[{L['id']}] relecture {what} trop courte ({len(rev)} < {len(raw)}), version initiale conservée")
             rev = raw
         rev_f.write_text(rev)
-    body = rev_f.read_text()
+    body = autofix(rev_f.read_text())
     ok, err, line = compile_check(body)
     if not ok:
         # Pas de boucle de correction par le modèle : le bloc est signalé
