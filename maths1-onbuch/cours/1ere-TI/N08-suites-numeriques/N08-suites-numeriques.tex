@@ -1,0 +1,2766 @@
+% Suites numériques — Mathématiques 1ère TI — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N08-suites-numeriques.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1ère TI}
+\newcommand{\DOCMODULE}{Relations et opérations fondamentales dans l'ensemble des nombres réels}
+\newcommand{\DOCLECON}{N08}
+\newcommand{\DOCTITRE}{Suites numériques}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+
+\begin{document}
+
+\pagegarde{Suites numériques}{Mathématiques}{1ère TI}{Relations et opérations fondamentales dans l'ensemble des nombres réels}{N08}{8 h}{Cette leçon introduit les suites numériques, leurs modes de définition (explicite et par récurrence) et l'étude des suites arithmétiques et géométriques : terme général, relation entre deux termes et somme de termes consécutifs. Elle s'achève par la résolution de problèmes concrets (placements d'argent, remises, partages proportionnels) rencontrés dans la vie quotidienne camerounaise.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais calculer les termes d'une suite définie par une formule explicite ou par une relation de récurrence
+\item À la fin de cette leçon, je sais représenter graphiquement les termes d'une suite sur un axe ou dans un repère
+\item À la fin de cette leçon, je sais montrer qu'une suite est arithmétique ou géométrique et préciser sa raison
+\item À la fin de cette leçon, je sais déterminer l'expression du terme général d'une suite arithmétique ou géométrique
+\item À la fin de cette leçon, je sais établir la relation entre deux termes quelconques d'une suite arithmétique ou géométrique
+\item À la fin de cette leçon, je sais calculer la somme de termes consécutifs d'une suite arithmétique ou géométrique
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Généralités sur les suites numériques
+\item Suites arithmétiques
+\item Suites géométriques
+\item Reconnaître et exploiter une suite
+\item Applications aux problèmes de la vie courante
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais calculer les termes d'une suite définie par une formule explicite ou par une relation de récurrence
+\item À la fin de cette leçon, je sais représenter graphiquement les termes d'une suite sur un axe ou dans un repère
+\item À la fin de cette leçon, je sais montrer qu'une suite est arithmétique ou géométrique et préciser sa raison
+\item À la fin de cette leçon, je sais déterminer l'expression du terme général d'une suite arithmétique ou géométrique
+\item À la fin de cette leçon, je sais établir la relation entre deux termes quelconques d'une suite arithmétique ou géométrique
+\item À la fin de cette leçon, je sais calculer la somme de termes consécutifs d'une suite arithmétique ou géométrique
+\item À la fin de cette leçon, je sais modéliser et résoudre des problèmes concrets (placements, remises, partages) à l'aide des suites numériques
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Calculs dans l'ensemble des nombres réels (puissances, fractions, pourcentages)
+\item Notion de fonction numérique et calcul d'images f(n)
+\item Résolution d'équations du premier degré et d'équations simples avec puissances
+\item Lecture et construction de repères et représentation de points
+\item Notion de pourcentage d'augmentation et de diminution
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Généralités sur les suites numériques}
+
+\textbf{Situation d'accroche.} Maman Aïcha, commerçante au marché de Mokolo, décide enfin de sécuriser ses économies. Elle dépose \num{50000} FCFA dans une banque de la place et s'impose une discipline de fer : chaque mois, elle ajoute exactement \num{5000} FCFA sur son compte épargne. Son voisin, lui, place \num{50000} FCFA dans une tontine bancarisée qui rapporte des intérêts composés de $4\,\%$ par mois : chaque mois, son capital augmente de $4\,\%$ du capital du mois précédent. Au bout de 12 mois, qui aura le plus d'argent ?
+
+Pour le savoir, il ne suffit pas de calculer « au feeling » : il faut décrire mois après mois l'évolution des deux capitaux, c'est-à-dire construire deux listes ordonnées de nombres : le capital au mois 0, au mois 1, au mois 2, \dots{} De telles listes ordonnées de nombres s'appellent des \cle{suites numériques}. Cette première partie de la leçon te donne les outils pour définir une suite, calculer ses termes et la représenter graphiquement. Les parties suivantes te permettront de résoudre complètement le problème de Maman Aïcha.
+
+\courssub{Notion de suite numérique}
+
+\textbf{Intuition.} Imagine un relevé de température à Yaoundé, pris chaque jour à midi : $27\,\text{°C}$ le jour 1, $28\,\text{°C}$ le jour 2, $26\,\text{°C}$ le jour 3, \dots{} À chaque numéro de jour (un entier naturel) correspond exactement une température (un nombre réel). Une suite numérique, c'est précisément cela : une machine qui, à chaque entier naturel $n$, associe un nombre réel, noté $u_n$.
+
+\begin{definition}[Suite numérique]
+Une \cle{suite numérique} est une fonction $u$ définie sur $\mathbb{N}$ (ou sur une partie de $\mathbb{N}$, par exemple $\mathbb{N}^*$ ou l'ensemble des entiers $n \geq n_0$) et à valeurs dans $\mathbb{R}$ :
+\[ u : n \longmapsto u(n). \]
+Le nombre $u(n)$ est noté plus simplement $u_n$ et s'appelle le \cle{terme} de \cle{rang} $n$ (ou d'\cle{indice} $n$) de la suite. La suite elle-même se note $(u_n)_{n \in \mathbb{N}}$ ou simplement $(u_n)$.
+\end{definition}
+
+\begin{aretenir}[Vocabulaire à maîtriser]
+\begin{itemize}
+\item Le \textbf{rang} (ou indice) $n$ est la \emph{position} du terme dans la liste : c'est un entier naturel.
+\item Le \textbf{terme} $u_n$ est la \emph{valeur} de la suite à cette position : c'est un nombre réel.
+\item Le \textbf{premier terme} est le plus souvent $u_0$ (suite définie sur $\mathbb{N}$) ou $u_1$ (suite définie sur $\mathbb{N}^*$). Toujours vérifier l'énoncé !
+\item Deux termes sont dits \textbf{consécutifs} lorsque leurs rangs se suivent : $u_n$ et $u_{n+1}$ sont consécutifs ; on dit que $u_{n+1}$ est le \emph{successeur} de $u_n$, et $u_n$ le \emph{prédécesseur} de $u_{n+1}$.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Rang et valeur : ne pas confondre]
+L'erreur la plus fréquente au Probatoire est de confondre le \cle{rang} $n$ et la \cle{valeur} $u_n$. Dire « $u_3 = 10$ » signifie : le terme de rang 3 vaut 10. Cela ne signifie pas que 3 et 10 se suivent dans la liste ! Autre piège : dans une suite dont le premier terme est $u_0$, le terme $u_n$ est le $(n+1)$-ième terme de la liste, pas le $n$-ième. Ainsi $u_0$ est le 1\ier{} terme, $u_1$ le 2\ieme{}, etc.
+\end{attention}
+
+\courssub{Suite définie explicitement par $u_n = f(n)$}
+
+\textbf{Intuition.} Le mode de définition le plus direct consiste à donner une formule qui permet de calculer n'importe quel terme à partir de son rang, comme on calcule l'image d'un nombre par une fonction. Si le prix d'un trajet en moto-taxi est de $200$ FCFA plus $50$ FCFA par kilomètre, le prix pour $n$ kilomètres est $u_n = 200 + 50n$ : tu peux calculer directement le prix pour 15 km sans connaître le prix pour 14 km.
+
+\begin{definition}[Suite définie par une formule explicite]
+On dit qu'une suite $(u_n)$ est définie \cle{explicitement} (ou \emph{par son terme général}) lorsqu'il existe une fonction $f$ telle que, pour tout entier naturel $n$ (à partir d'un certain rang) :
+\[ u_n = f(n). \]
+L'expression $u_n = f(n)$ s'appelle le \cle{terme général} de la suite.
+\end{definition}
+
+\begin{methode}[Calculer des termes d'une suite définie par $u_n = f(n)$]
+\begin{enumerate}
+\item Repérer la formule donnant $u_n$ en fonction de $n$.
+\item Pour calculer $u_k$, remplacer \emph{toutes} les occurrences de $n$ par $k$ dans la formule.
+\item Effectuer le calcul en respectant les priorités opératoires (puissances avant produits et sommes).
+\item Vérifier la cohérence du résultat (signe, ordre de grandeur).
+\end{enumerate}
+L'avantage majeur : on peut calculer \emph{directement} un terme de rang élevé, par exemple $u_{100}$, sans calculer les 99 termes précédents.
+\end{methode}
+
+\begin{exemplebox}[Calcul direct de termes]
+Soit $(u_n)$ la suite définie sur $\mathbb{N}$ par $u_n = n^2 - 3n$. Calculons quelques termes :
+\begin{align*}
+u_0 &= 0^2 - 3 \times 0 = 0 ; \\
+u_1 &= 1^2 - 3 \times 1 = 1 - 3 = -2 ; \\
+u_5 &= 5^2 - 3 \times 5 = 25 - 15 = 10 ; \\
+u_{20} &= 20^2 - 3 \times 20 = 400 - 60 = 340.
+\end{align*}
+Remarque que $u_{20}$ a été obtenu \emph{sans} connaître $u_{19}$ : c'est toute la puissance de la formule explicite.
+\end{exemplebox}
+
+\courssub{Suite définie par récurrence : $u_{n+1} = f(u_n)$}
+
+\textbf{Intuition.} Certaines situations ne donnent pas de formule directe, mais une règle de passage d'un mois au suivant. Le voisin de Maman Aïcha ne connaît pas son capital au mois 12 directement ; il sait seulement que \emph{chaque mois, le capital augmente de $4\,\%$}. Si on note $v_n$ son capital au mois $n$, alors $v_{n+1} = v_n + 0{,}04\,v_n = 1{,}04\,v_n$. Pour connaître $v_{12}$, il faudra calculer de proche en proche : $v_1$ à partir de $v_0$, puis $v_2$ à partir de $v_1$, etc.
+
+\begin{definition}[Suite définie par récurrence]
+Une suite $(u_n)$ est définie \cle{par récurrence} lorsqu'on donne :
+\begin{itemize}
+\item son \textbf{premier terme} (par exemple $u_0$) ;
+\item une \textbf{relation de récurrence} qui exprime chaque terme en fonction du précédent : $u_{n+1} = f(u_n)$, où $f$ est une fonction donnée.
+\end{itemize}
+Les deux ingrédients sont \emph{indispensables} : la relation seule ne détermine pas la suite.
+\end{definition}
+
+\begin{methode}[Calculer des termes d'une suite définie par récurrence]
+\begin{enumerate}
+\item Écrire le premier terme donné par l'énoncé (par exemple $u_0$).
+\item Appliquer la relation de récurrence en remplaçant $u_n$ par sa valeur connue pour obtenir $u_{n+1}$.
+\item Répéter l'opération autant de fois que nécessaire, de proche en proche, jusqu'au rang demandé.
+\item Présenter les calculs en colonne ou en chaîne, en vérifiant chaque étape : une erreur à une étape fausse \emph{tous} les termes suivants.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Calcul de proche en proche]
+Soit $(u_n)$ la suite définie par $u_0 = 3$ et, pour tout $n \in \mathbb{N}$, $u_{n+1} = 2u_n - 1$. Alors :
+\begin{align*}
+u_1 &= 2u_0 - 1 = 2 \times 3 - 1 = 5 ; \\
+u_2 &= 2u_1 - 1 = 2 \times 5 - 1 = 9 ; \\
+u_3 &= 2u_2 - 1 = 2 \times 9 - 1 = 17 ; \\
+u_4 &= 2u_3 - 1 = 2 \times 17 - 1 = 33.
+\end{align*}
+Chaque terme se déduit du précédent : impossible de calculer $u_4$ sans avoir calculé $u_3$.
+\end{exemplebox}
+
+\begin{attention}[Oublier le premier terme]
+Dans une définition par récurrence, le premier terme fait partie intégrante de la définition. Les suites définies par $u_{n+1} = 2u_n - 1$ avec $u_0 = 3$ et avec $u_0 = 10$ sont \emph{totalement différentes}. Au brouillon comme sur la copie, commence toujours par écrire clairement : « premier terme : $u_0 = \dots$ ». Autre piège : la relation $u_{n+1} = f(u_n)$ relie deux termes \emph{consécutifs} ; ne l'utilise jamais pour sauter directement de $u_0$ à $u_5$.
+\end{attention}
+
+\courssub{Comparaison des deux modes de définition}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Formule explicite }$u_n = f(n)$ & \textbf{Récurrence }$u_{n+1} = f(u_n)$ \\
+\hline
+Calcul de $u_{100}$ & Direct, immédiat & Nécessite les 100 premiers termes \\
+\hline
+Modélisation d'une évolution & Parfois difficile à trouver & Naturelle (mois par mois, année par année) \\
+\hline
+Risque d'erreur & Faible (un seul calcul) & Élevé (erreur propagée en cascade) \\
+\hline
+Information donnée & Le terme en fonction du rang & Le premier terme et la loi de passage \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{aretenir}[Ce qu'il faut retenir]
+Les deux modes de définition sont complémentaires. La récurrence décrit naturellement les phénomènes d'évolution (épargne, population, température) ; la formule explicite est idéale pour les calculs directs. Une grande partie du travail du mathématicien consiste d'ailleurs à \emph{passer} d'une définition par récurrence à une formule explicite : c'est ce que nous ferons pour les suites arithmétiques et géométriques dans les parties suivantes.
+\end{aretenir}
+
+\courssub{Représentation graphique d'une suite}
+
+\textbf{Dans un repère : le nuage de points.} Une suite étant une fonction de $\mathbb{N}$ dans $\mathbb{R}$, on la représente par les points de coordonnées $(n \, ; u_n)$ dans un repère du plan. Attention : on obtient un \cle{nuage de points isolés}, jamais une courbe continue, car $n$ ne prend que des valeurs entières. Relier les points n'a pas de sens mathématique (il n'y a pas de terme de rang $1{,}5$ !), même si on le fait parfois en pointillés pour mieux visualiser la tendance.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.85\linewidth, height=6cm,
+    xlabel={Rang $n$}, ylabel={$u_n$},
+    xmin=-0.5, xmax=8.5, ymin=0, ymax=18,
+    xtick={0,1,2,3,4,5,6,7,8},
+    ytick={0,2,4,6,8,10,12,14,16,18},
+    grid=both, grid style={popline!40},
+    axis lines=left,
+]
+\addplot[only marks, mark=*, mark size=2.5pt, color=popblue] coordinates {(0,1) (1,3) (2,5) (3,7) (4,9) (5,11) (6,13) (7,15) (8,17)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Nuage de points de la suite $u_n = 2n + 1$ pour $n$ de 0 à 8. Les points sont alignés : on conjecture une croissance régulière, de $2$ en $2$.}
+\end{popfigure}
+
+\textbf{Sur un axe gradué.} Pour une suite définie par récurrence, on peut aussi placer les termes $u_0, u_1, u_2, \dots$ sur un axe gradué : cela permet de « voir » si les termes se rapprochent d'une valeur, s'éloignent, oscillent, etc. C'est le \cle{repérage sur l'un des axes} exigé par le programme.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.6]
+\draw[->, thick, popdark] (-0.3,0) -- (10.5,0);
+\foreach \x in {0,1,2,3,4,5,6,7,8,9,10}
+  \draw[popdark] (\x,0.08) -- (\x,-0.08) node[below, font=\small] {\x};
+\foreach \x/\n/\c in {3/0/popblue, 5/1/poporange, 9/2/popgreen}{
+  \fill[\c] (\x,0) circle (2.2pt);
+  \node[above, \c, font=\small\bfseries] at (\x,0.1) {$u_{\n}$};
+}
+\draw[->, thick, popmuted, bend left=25] (3,0.35) to (5,0.35);
+\draw[->, thick, popmuted, bend left=25] (5,0.35) to (9,0.35);
+\node[popmuted, font=\small] at (4,0.75) {$\times 2 - 1$};
+\node[popmuted, font=\small] at (7,0.75) {$\times 2 - 1$};
+\end{tikzpicture}
+\end{center}
+\legende{Placement sur un axe gradué des premiers termes de la suite $u_0 = 3$, $u_{n+1} = 2u_n - 1$ : $u_0 = 3$, $u_1 = 5$, $u_2 = 9$. Les écarts grandissent : la suite semble croître de plus en plus vite.}
+\end{popfigure}
+
+\textbf{Lecture graphique et conjectures.} La représentation graphique permet de lire des valeurs approchées et surtout d'émettre des \cle{conjectures} sur le comportement de la suite : les termes semblent-ils croître, décroître, stagner, se rapprocher d'une valeur limite ? Une conjecture n'est pas une preuve : elle devra être confirmée par des calculs ou un raisonnement (ce sera l'objet des leçons suivantes).
+
+\begin{exoresolu}[Deux modes de définition, une même compétence]
+\textbf{Énoncé.} On considère la suite $(u_n)$ définie sur $\mathbb{N}$ par $u_n = n^2 - 3n$ et la suite $(v_n)$ définie par $v_0 = 3$ et $v_{n+1} = 2v_n - 1$.
+\begin{enumerate}
+\item Calculer $u_0$, $u_1$ et $u_5$.
+\item Calculer $v_1$, $v_2$ et $v_3$.
+\item Peut-on calculer directement $v_{10}$ sans calculer les termes précédents ? Et $u_{10}$ ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item La suite $(u_n)$ est définie explicitement : on remplace $n$ par sa valeur.
+\[ u_0 = 0^2 - 3 \times 0 = 0, \qquad u_1 = 1^2 - 3 \times 1 = -2, \qquad u_5 = 5^2 - 3 \times 5 = 25 - 15 = 10. \]
+\item La suite $(v_n)$ est définie par récurrence : on calcule de proche en proche à partir de $v_0 = 3$.
+\[ v_1 = 2 \times 3 - 1 = 5, \qquad v_2 = 2 \times 5 - 1 = 9, \qquad v_3 = 2 \times 9 - 1 = 17. \]
+\item Pour $v_{10}$, la définition par récurrence impose de calculer successivement $v_4, v_5, \dots, v_{10}$ : il n'y a pas de raccourci avec les outils dont on dispose pour l'instant. En revanche, pour $(u_n)$, la formule explicite donne immédiatement :
+\[ u_{10} = 10^2 - 3 \times 10 = 100 - 30 = 70. \]
+\end{enumerate}
+Cet exercice illustre bien la différence pratique entre les deux modes de définition.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Soit $(u_n)$ définie sur $\mathbb{N}$ par $u_n = 3n - 2$. Calculer $u_0$, $u_4$ et $u_{50}$.
+\item Soit $(w_n)$ définie par $w_0 = 1$ et $w_{n+1} = w_n + 4$. Calculer $w_1$, $w_2$, $w_3$, puis conjecturer une formule explicite donnant $w_n$ en fonction de $n$.
+\item Dans la situation d'accroche, on note $a_n$ le capital de Maman Aïcha au bout de $n$ mois. Donner $a_0$ et exprimer $a_{n+1}$ en fonction de $a_n$. Faire de même avec $v_n$ pour le voisin.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de jouer]
+\begin{enumerate}
+\item $u_0 = 3 \times 0 - 2 = -2$ ; $u_4 = 3 \times 4 - 2 = 10$ ; $u_{50} = 3 \times 50 - 2 = 148$.
+\item $w_1 = 1 + 4 = 5$ ; $w_2 = 5 + 4 = 9$ ; $w_3 = 9 + 4 = 13$. Les termes augmentent de 4 à chaque étape : on conjecture $w_n = 1 + 4n$. Vérification : $w_3 = 1 + 4 \times 3 = 13$. Correct.
+\item Maman Aïcha : $a_0 = \num{50000}$ et $a_{n+1} = a_n + \num{5000}$ (elle ajoute \num{5000} FCFA chaque mois). Le voisin : $v_0 = \num{50000}$ et $v_{n+1} = v_n + 0{,}04\,v_n = 1{,}04\,v_n$ (augmentation de $4\,\%$). Ces deux suites, l'une « additive », l'autre « multiplicative », seront étudiées en détail dans les parties 2 et 3 : ce sont respectivement une suite arithmétique et une suite géométrique.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Des suites partout autour de nous]
+Les suites numériques sont nées de problèmes très concrets. On trouve déjà des progressions arithmétiques et géométriques sur des tablettes babyloniennes vieilles de 4000 ans, et dans le papyrus Rhind égyptien (vers $-1650$). Aujourd'hui, elles modélisent les remboursements de crédits à la SGC ou à la BICEC, les forfaits data MTN et Orange qui se décomptent jour après jour, la croissance des populations étudiée par le BUCREP, ou encore les intérêts des comptes épargne. Le célèbre mathématicien italien Fibonacci a introduit au XIII\textsuperscript{e} siècle la suite définie par $u_0 = 1$, $u_1 = 1$ et $u_{n+2} = u_{n+1} + u_n$ : on la retrouve dans la disposition des graines de tournesol et des pommes de pin !
+\end{savaistu}
+
+\coursec{Suites arithmétiques}
+
+Dans la section précédente, tu as découvert ce qu'est une suite numérique : une liste infinie de nombres réels indexés par les entiers naturels, définie soit par une formule explicite $u_n = f(n)$, soit par une relation de récurrence $u_{n+1} = f(u_n)$. Nous allons maintenant étudier les deux familles de suites les plus importantes du programme de Première : les suites \cle{arithmétiques} (cette section) et les suites \cle{géométriques} (section suivante). Ces suites modélisent d'innombrables situations concrètes : épargne régulière, remises commerciales, croissance d'une population, remboursement d'un crédit.
+
+\courssub{Définition et premiers exemples}
+
+\textbf{Une situation pour comprendre.}\par
+Aminatou, élève en Première C à Bafoussam, décide d'épargner pour s'acheter un ordinateur portable. Elle dépose \SI{25000}{F} sur son compte MTN Mobile Money le 1$^{\text{er}}$ janvier, puis ajoute \textbf{exactement} \SI{5000}{F} au début de chaque mois. Notons $u_0 = 25000$ son capital initial et $u_n$ son capital après $n$ mois. Alors :
+\[ u_1 = 30000, \quad u_2 = 35000, \quad u_3 = 40000, \quad \ldots \]
+Chaque terme s'obtient en \textbf{ajoutant toujours le même nombre}, ici $5000$, au terme précédent. C'est exactement l'idée d'une suite arithmétique : on avance \emph{à pas constants}.
+
+\begin{definition}[Suite arithmétique]
+Soit $(u_n)$ une suite numérique et $r$ un nombre réel. On dit que $(u_n)$ est une \cle{suite arithmétique} de \cle{raison} $r$ si, pour tout entier naturel $n$ :
+\[ u_{n+1} = u_n + r. \]
+Autrement dit, chaque terme s'obtient en ajoutant la raison $r$ au terme précédent.
+\end{definition}
+
+\begin{exemplebox}[Premiers exemples]
+\begin{itemize}
+\item La suite d'Aminatou est arithmétique de premier terme $u_0 = 25000$ et de raison $r = 5000$.
+\item La suite des entiers naturels $0, 1, 2, 3, \ldots$ est arithmétique de raison $r = 1$.
+\item La suite des nombres impairs $1, 3, 5, 7, \ldots$ est arithmétique de raison $r = 2$.
+\item La suite définie par $u_n = 5 - 3n$ vérifie $u_{n+1} - u_n = -3$ : elle est arithmétique de raison $r = -3$ (elle \emph{décroît} à pas constants).
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[La raison peut être négative ou nulle]
+Une suite arithmétique n'est pas forcément croissante ! Si $r > 0$, la suite est strictement croissante ; si $r < 0$, elle est strictement décroissante ; si $r = 0$, elle est constante. Ne confonds pas non plus la raison avec le premier terme : ce sont deux données indépendantes qui caractérisent entièrement la suite.
+\end{attention}
+
+\courssub{Comment montrer qu'une suite est arithmétique}
+
+La définition donne immédiatement un critère pratique : si $u_{n+1} = u_n + r$ pour tout $n$, alors la différence $u_{n+1} - u_n$ vaut toujours $r$, c'est-à-dire une \textbf{constante} qui ne dépend pas de $n$. Réciproquement, si cette différence est constante, la suite est arithmétique. C'est la \emph{caractérisation} des suites arithmétiques.
+
+\begin{methode}[Montrer qu'une suite est arithmétique]
+\begin{enumerate}
+\item On calcule la différence $u_{n+1} - u_n$ pour un entier $n$ \textbf{quelconque} (avec la lettre $n$, pas avec des valeurs particulières).
+\item On simplifie l'expression obtenue.
+\item Si le résultat est une \textbf{constante} $r$ (indépendante de $n$), on conclut : $(u_n)$ est arithmétique de raison $r$.
+\item Si le résultat dépend de $n$, la suite n'est \textbf{pas} arithmétique.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Vérifier sur quelques termes ne suffit pas]
+Constater que $u_1 - u_0 = u_2 - u_1 = 3$ ne prouve \textbf{pas} que la suite est arithmétique : rien ne garantit que l'écart se maintient ensuite. Il faut traiter le cas général $u_{n+1} - u_n$ avec $n$ quelconque. C'est une exigence de rigueur souvent sanctionnée au Probatoire.
+\end{attention}
+
+\begin{exoresolu}[Reconnaître une suite arithmétique]
+On considère la suite $(u_n)$ définie pour tout $n \in \mathbb{N}$ par $u_n = 4n - 7$. Montrer que $(u_n)$ est arithmétique et préciser sa raison et son premier terme.
+\tcblower
+Pour tout entier naturel $n$ :
+\begin{align*}
+u_{n+1} - u_n &= \bigl(4(n+1) - 7\bigr) - (4n - 7) \\
+&= 4n + 4 - 7 - 4n + 7 \\
+&= 4.
+\end{align*}
+La différence $u_{n+1} - u_n$ est constante et égale à $4$. Donc $(u_n)$ est une suite arithmétique de raison $r = 4$. Son premier terme est $u_0 = 4 \times 0 - 7 = -7$.
+\end{exoresolu}
+
+\courssub{Terme général d'une suite arithmétique}
+
+\textbf{Intuition.}\par
+Reprenons l'épargne d'Aminatou. Pour passer de $u_0$ à $u_n$, elle a effectué $n$ versements de \SI{5000}{F} : son capital est donc $u_n = 25000 + 5000n$. Plus généralement, pour passer du premier terme au terme de rang $n$, on ajoute $n$ fois la raison. C'est l'une des formules les plus utiles de l'année.
+
+\begin{propriete}[Terme général — démonstration exigible]
+Soit $(u_n)$ une suite arithmétique de raison $r$ et de premier terme $u_0$. Alors, pour tout entier naturel $n$ :
+\[ u_n = u_0 + n \times r. \]
+Si le premier terme est $u_1$ (numérotation à partir de $1$), la formule devient : $u_n = u_1 + (n-1)r$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : la somme télescopique des écarts]
+Nous allons démontrer que $u_n = u_0 + nr$ par une méthode élégante appelée \emph{somme télescopique}.
+\begin{enumerate}
+\item Puisque $(u_n)$ est arithmétique de raison $r$, écris les écarts entre termes consécutifs :
+\[ u_1 - u_0 = r, \quad u_2 - u_1 = r, \quad \ldots, \quad u_n - u_{n-1} = r. \]
+\item Additionne membre à membre ces $n$ égalités :
+\[ (u_1 - u_0) + (u_2 - u_1) + \cdots + (u_n - u_{n-1}) = \underbrace{r + r + \cdots + r}_{n \text{ termes}}. \]
+\item Observe le membre de gauche : $u_1$ disparaît avec $-u_1$, $u_2$ avec $-u_2$, etc. Tous les termes intermédiaires s'éliminent deux à deux (d'où le nom \og télescopique \fg). Il ne reste que :
+\[ u_n - u_0 = nr. \]
+\item Conclus : $u_n = u_0 + nr$. \hfill$\blacksquare$
+\end{enumerate}
+\end{experience}
+
+\begin{propriete}[Relation entre deux termes quelconques]
+Soit $(u_n)$ une suite arithmétique de raison $r$. Pour tous entiers naturels $n$ et $p$ :
+\[ u_n = u_p + (n - p)\,r. \]
+\end{propriete}
+
+\textbf{Démonstration.} D'après la formule du terme général, $u_n = u_0 + nr$ et $u_p = u_0 + pr$. En soustrayant membre à membre : $u_n - u_p = nr - pr = (n-p)r$, d'où $u_n = u_p + (n-p)r$. \hfill$\blacksquare$
+
+\begin{exemplebox}[Application directe]
+Soit $(u_n)$ arithmétique de raison $r = 3$ avec $u_5 = 20$. Calculons $u_{12}$ sans connaître $u_0$ :
+\[ u_{12} = u_5 + (12 - 5) \times 3 = 20 + 21 = 41. \]
+On peut aussi retrouver $u_0$ : $u_5 = u_0 + 5 \times 3$ donne $u_0 = 20 - 15 = 5$.
+\end{exemplebox}
+
+\courssub{Représentation graphique : des points alignés}
+
+La formule $u_n = u_0 + nr$ ressemble beaucoup à l'équation d'une droite $y = rx + b$ : le terme $u_n$ est une \textbf{fonction affine} de l'indice $n$. Par conséquent, les points de coordonnées $(n\,;\,u_n)$ sont tous situés sur la droite d'équation $y = rx + u_0$, de coefficient directeur $r$. C'est un moyen visuel très efficace de reconnaître une suite arithmétique : son nuage de points est \cle{aligné}.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6.5cm,
+  axis lines=middle,
+  xlabel={$n$}, ylabel={$u_n$},
+  xmin=-0.5, xmax=8.5, ymin=-1, ymax=24,
+  xtick={0,1,2,3,4,5,6,7,8},
+  ytick={0,5,10,15,20},
+  grid=both, grid style={popline!40},
+  tick label style={font=\small},
+  label style={font=\small}
+]
+\addplot[popcurve, domain=0:8, samples=2, popblue!60, dashed] {2.5*x + 1};
+\addplot[only marks, mark=*, mark size=2.5pt, poporange] coordinates {(0,1) (1,3.5) (2,6) (3,8.5) (4,11) (5,13.5) (6,16) (7,18.5) (8,21)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Suite arithmétique de premier terme $u_0 = 1$ et de raison $r = 2,5$ : les points $(n\,;\,u_n)$ sont alignés sur la droite $y = 2,5x + 1$.}
+\end{popfigure}
+
+\courssub{Somme de termes consécutifs : la méthode de Gauss}
+
+\begin{savaistu}[L'astuce du jeune Gauss]
+Le jeune Carl Friedrich Gauss, âgé d'une dizaine d'années, aurait stupéfié son instituteur en calculant en quelques secondes la somme $1 + 2 + 3 + \cdots + 100$. Son idée : regrouper les termes \textbf{deux par deux, en partant des extrémités} : $1 + 100 = 101$, $2 + 99 = 101$, $3 + 98 = 101$, \ldots{} Chaque paire donne la même somme, et il y a $50$ paires, donc le total vaut $50 \times 101 = 5050$. Cette astuce fonctionne pour \emph{toute} suite arithmétique, car les termes avancent à pas constants : quand on avance d'un cran à gauche et qu'on recule d'un cran à droite, la somme des deux termes ne change pas.
+\end{savaistu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.92, every node/.style={font=\small}]
+\foreach \i/\v in {0/1, 1/2, 2/3, 3/4, 4/5, 5/6, 6/7, 7/8, 8/9, 9/10} {
+  \node[draw=popblue, fill=popblueL, rounded corners=2pt, minimum width=0.72cm, minimum height=0.62cm] (t\i) at (\i*1.05, 0) {\v};
+}
+\draw[poporange, thick, ->] (t0.north) to[bend left=35] node[above, popdark]{$1+10=11$} (t9.north);
+\draw[poporange, thick, ->] (t1.north) to[bend left=35] node[above, popdark, yshift=2pt]{$2+9=11$} (t8.north);
+\draw[poppurple, thick, ->] (t2.south) to[bend right=35] node[below, popdark]{$3+8=11$} (t7.south);
+\draw[poppurple, thick, ->] (t3.south) to[bend right=35] node[below, popdark, yshift=-2pt]{$4+7=11$} (t6.south);
+\draw[popgreen, thick, ->] (t4.north) to[bend left=30] node[above, popdark, yshift=14pt]{$5+6=11$} (t5.north);
+\node[popdark, font=\small\bfseries] at (4.7, -2.1) {$S = 5 \times 11 = 55$};
+\end{tikzpicture}
+\end{center}
+\legende{Méthode de Gauss pour $1 + 2 + \cdots + 10$ : les $5$ paires extrêmes ont toutes la même somme $11$.}
+\end{popfigure}
+
+\begin{propriete}[Somme de termes consécutifs — démonstration exigible]
+Soit $(u_n)$ une suite arithmétique. La somme $S$ de termes consécutifs de $(u_n)$ est donnée par :
+\[ S = (\text{nombre de termes}) \times \frac{\text{premier terme} + \text{dernier terme}}{2}. \]
+En particulier : $u_0 + u_1 + \cdots + u_n = (n+1)\,\dfrac{u_0 + u_n}{2}$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : la méthode de Gauss]
+Démontrons la formule pour $S = u_0 + u_1 + \cdots + u_n$.
+\begin{enumerate}
+\item Écris la somme $S$ dans l'ordre croissant des indices, puis une seconde fois dans l'ordre \textbf{décroissant} :
+\begin{align*}
+S &= u_0 + u_1 + \cdots + u_{n-1} + u_n,\\
+S &= u_n + u_{n-1} + \cdots + u_1 + u_0.
+\end{align*}
+\item Additionne ces deux égalités \textbf{colonne par colonne}. Pour tout $k$ entre $0$ et $n$, la colonne $k$ contient $u_k + u_{n-k}$. Or, par la relation entre deux termes quelconques :
+\[ u_k = u_0 + kr \quad \text{et} \quad u_{n-k} = u_0 + (n-k)r, \]
+donc $u_k + u_{n-k} = 2u_0 + nr = u_0 + u_n$ : \textbf{toutes les colonnes ont la même somme} $u_0 + u_n$.
+\item Il y a $n+1$ colonnes, donc :
+\[ 2S = (n+1)(u_0 + u_n). \]
+\item Conclus en divisant par $2$ : $S = (n+1)\,\dfrac{u_0 + u_n}{2}$. \hfill$\blacksquare$
+\end{enumerate}
+\end{experience}
+
+\begin{attention}[Bien compter le nombre de termes]
+C'est \textbf{l'erreur la plus fréquente} au Probatoire ! Le nombre de termes d'une somme est :
+\[ \text{nombre de termes} = \text{indice du dernier} - \text{indice du premier} + 1. \]
+Ainsi :
+\begin{itemize}
+\item de $u_0$ à $u_n$, il y a $n+1$ termes (et non $n$) ;
+\item de $u_1$ à $u_n$, il y a $n$ termes ;
+\item de $u_5$ à $u_{20}$, il y a $20 - 5 + 1 = 16$ termes.
+\end{itemize}
+Un terme oublié fausse toute la somme. Prends l'habitude d'écrire ce comptage explicitement sur ta copie.
+\end{attention}
+
+\begin{exoresolu}[Calculer une somme de termes consécutifs]
+Soit $(u_n)$ la suite arithmétique de premier terme $u_0 = 3$ et de raison $r = 4$. Calculer $S = u_0 + u_1 + \cdots + u_{24}$.
+\tcblower
+\textbf{Étape 1 : le dernier terme.} Par la formule du terme général :
+\[ u_{24} = u_0 + 24r = 3 + 24 \times 4 = 99. \]
+\textbf{Étape 2 : le nombre de termes.} De $u_0$ à $u_{24}$, il y a $24 - 0 + 1 = 25$ termes.
+\textbf{Étape 3 : la formule de Gauss.}
+\[ S = 25 \times \frac{u_0 + u_{24}}{2} = 25 \times \frac{3 + 99}{2} = 25 \times 51 = 1275. \]
+Donc $S = 1275$.
+\end{exoresolu}
+
+\begin{exoresolu}[Problème concret : l'épargne d'Aminatou]
+Aminatou dépose \SI{25000}{F} puis ajoute \SI{5000}{F} chaque mois. 
+\begin{enumerate}
+\item Quel capital aura-t-elle après $12$ mois ?
+\item Calculer la somme des soldes mensuels (capitaux) affichés sur son relevé du mois $0$ (dépôt initial) au mois $11$ inclus.
+\end{enumerate}
+\tcblower
+La suite $(u_n)$ des capitaux est arithmétique : $u_0 = 25000$, $r = 5000$.
+\begin{enumerate}
+\item $u_{12} = 25000 + 12 \times 5000 = 25000 + 60000 = 85000$. Après $12$ mois, elle disposera de \SI{85000}{F}.
+\item On cherche $S = u_0 + u_1 + \cdots + u_{11}$.
+Le nombre de termes est $11 - 0 + 1 = 12$.
+Le dernier terme de la somme est $u_{11} = 25000 + 11 \times 5000 = 80000$.
+\[ S = 12 \times \frac{u_0 + u_{11}}{2} = 12 \times \frac{25000 + 80000}{2} = 12 \times 52500 = 630000. \]
+La somme des soldes mensuels (du mois 0 au mois 11) est de \SI{630000}{F}. Cette somme représente l'exposition cumulative du capital ; elle sert par exemple à calculer des intérêts si la banque rémunère le solde moyen.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Pour t'entraîner]
+\begin{enumerate}
+\item Soit $(u_n)$ définie par $u_n = 7 - 2n$. Montrer qu'elle est arithmétique, préciser sa raison, puis calculer $u_{50}$.
+\item Soit $(v_n)$ arithmétique telle que $v_3 = 11$ et $v_9 = 35$. Déterminer sa raison $r$ et son premier terme $v_0$.
+\item Calculer la somme $S = 5 + 8 + 11 + \cdots + 302$ (somme des termes d'une suite arithmétique de raison $3$).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercices d'entraînement]
+\begin{enumerate}
+\item $u_{n+1} - u_n = \bigl(7 - 2(n+1)\bigr) - (7 - 2n) = -2$, constante. Donc $(u_n)$ est arithmétique de raison $r = -2$, et $u_{50} = u_0 + 50r = 7 - 100 = -93$.
+\item $v_9 - v_3 = 6r$, donc $35 - 11 = 6r$, soit $r = 4$. Puis $v_3 = v_0 + 3r$ donne $v_0 = 11 - 12 = -1$.
+\item Les termes sont $u_n = 5 + 3n$. Le dernier vérifie $5 + 3n = 302$, soit $n = 99$. Il y a donc $100$ termes (de $u_0$ à $u_{99}$) et :
+\[ S = 100 \times \frac{5 + 302}{2} = 100 \times 153{,}5 = 15350. \]
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel sur les suites arithmétiques]
+\begin{itemize}
+\item $(u_n)$ est arithmétique de raison $r$ si $u_{n+1} = u_n + r$, c'est-à-dire si $u_{n+1} - u_n$ est \textbf{constante}.
+\item Terme général : $u_n = u_0 + nr$ ; entre deux termes quelconques : $u_n = u_p + (n-p)r$.
+\item Les points $(n\,;\,u_n)$ sont alignés sur une droite de coefficient directeur $r$.
+\item Somme de termes consécutifs : $S = (\text{nombre de termes}) \times \dfrac{\text{premier} + \text{dernier}}{2}$, avec nombre de termes $=$ dernier indice $-$ premier indice $+1$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Suites géométriques}
+
+Après avoir étudié les suites arithmétiques, où l'on passe d'un terme au suivant en \emph{ajoutant} une constante, nous allons maintenant explorer une autre famille fondamentale : les suites où l'on passe d'un terme au suivant en \emph{multipliant} par une constante. C'est le modèle naturel de tout phénomène de croissance ou de décroissance \emph{proportionnelle} : intérêts composés à la banque, multiplication bactérienne, dépréciation d'un véhicule, propagation d'un virus, ou encore amplification d'un signal chez MTN ou Orange.
+
+\courssub{Définition et premiers exemples}
+
+\begin{definition}[Suite géométrique de raison $q$]
+Une suite $(u_n)$ est dite \textbf{géométrique de raison $q$} (où $q \in \mathbb{R}$) si elle vérifie la relation de récurrence :
+\[
+\forall n \in \mathbb{N},\quad u_{n+1} = q \times u_n.
+\]
+Le nombre $q$ est appelé la \cle{raison} de la suite. Le premier terme $u_0$ (ou $u_1$ selon l'indexation) est appelé le \cle{terme initial}.
+\end{definition}
+
+\begin{attention}[Indexation et terme initial]
+Au Cameroun, en Première, on utilise le plus souvent l'indexation à partir de $0$ : le premier terme est $u_0$. Vérifie toujours l'énoncé : « La suite $(u_n)$ définie pour $n \in \mathbb{N}$ par... » implique $u_0$ premier terme. Si l'énoncé dit « pour $n \ge 1$ », le premier terme est $u_1$. Adapte les formules en conséquence ($u_n = u_0 q^n$ ou $u_n = u_1 q^{n-1}$).
+\end{attention}
+
+\begin{exemplebox}[Exemples concrets au Cameroun]
+\begin{enumerate}
+    \item \textbf{Placement à intérêts composés (Banque, Mobile Money).}
+    Tu places \SI{500000}{FCFA} dans un compte rapportant $5\%$ par an. Le capital après $n$ années suit une suite géométrique :
+    $u_0 = 500\,000$, $q = 1 + \frac{5}{100} = 1,05$.
+    $u_1 = 1,05 \times u_0 = 525\,000$, $u_2 = 1,05 \times u_1 = 551\,250$, etc.
+    
+    \item \textbf{Dépréciation d'un matériel (Camion, ordinateur).}
+    Un camion coûte \SI{15000000}{FCFA}. Il perd $15\%$ de sa valeur chaque année.
+    $v_0 = 15\,000\,000$, $q = 1 - 0,15 = 0,85$.
+    $v_1 = 0,85 \times v_0 = 12\,750\,000$, $v_2 = 0,85 \times v_1 = 10\,837\,500$.
+    
+    \item \textbf{Propagation d'une information (Réseaux sociaux, SMS).}
+    Tu envoies un message à 3 amis. Chacun le transmet à 3 nouveaux amis, etc.
+    Nombre de nouveaux destinataires à l'étape $n$ : $u_0 = 1$ (toi), $q = 3$.
+    $u_1 = 3$, $u_2 = 9$, $u_3 = 27$, $u_4 = 81$...
+\end{enumerate}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={font=\small}]
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$n$ (rang)}, ylabel={$u_n$},
+    xmin=-0.5, xmax=6.5, ymin=0, ymax=55,
+    xtick={0,1,2,3,4,5,6}, ytick={0,10,20,30,40,50},
+    grid=major, grid style={popline},
+    tick label style={font=\tiny},
+    label style={font=\small},
+    clip=false
+]
+% Suite croissante q=1.5, u0=2
+\addplot[only marks, mark=*, mark size=2.5pt, popblue, thick] coordinates {
+    (0,2) (1,3) (2,4.5) (3,6.75) (4,10.125) (5,15.1875) (6,22.78125)
+};
+\addlegendentry{$u_n = 2 \times 1,5^n$ (croissance)}
+
+% Suite décroissante q=0.5, u0=32
+\addplot[only marks, mark=square*, mark size=2.5pt, poporange, thick] coordinates {
+    (0,32) (1,16) (2,8) (3,4) (4,2) (5,1) (6,0.5)
+};
+\addlegendentry{$v_n = 32 \times 0,5^n$ (décroissance)}
+
+% Lignes guides pointillées pour visualiser l'exponentielle
+\addplot[popblue, dashed, very thin, domain=0:6, samples=50] {2*1.5^x};
+\addplot[poporange, dashed, very thin, domain=0:6, samples=50] {32*0.5^x};
+\end{axis}
+\end{tikzpicture}
+\legende{Nuages de points de deux suites géométriques : raison $q=1,5 > 1$ (croissance exponentielle, bleu) et raison $q=0,5 \in ]0,1[$ (décroissance exponentielle, orange). Les pointillés rappellent la courbe continue de la fonction exponentielle $x \mapsto u_0 q^x$.}
+\end{popfigure}
+
+\courssub{Caractérisation et terme général}
+
+\begin{propriete}[Caractérisation d'une suite géométrique]
+Soit $(u_n)$ une suite \textbf{à termes non nuls}. Les deux affirmations suivantes sont équivalentes :
+\begin{enumerate}
+    \item $(u_n)$ est une suite géométrique de raison $q$.
+    \item Le quotient $\dfrac{u_{n+1}}{u_n}$ est constant (égal à $q$) pour tout $n \in \mathbb{N}$.
+\end{enumerate}
+\end{propriete}
+
+\begin{attention}[Condition « termes non nuls »]
+La caractérisation par le quotient $\frac{u_{n+1}}{u_n}$ \textbf{exige} que aucun terme ne soit nul. Si un terme est nul, le quotient n'a pas de sens (division par zéro) ou est indéterminé ($0/0$). Une suite géométrique de raison $q \neq 0$ et de premier terme non nul n'a \textbf{jamais} de terme nul. Si $u_0 = 0$, la suite est constamment nulle (géométrique de raison quelconque, mais le quotient n'est pas défini).
+\end{attention}
+
+\begin{methode}[Montrer qu'une suite est géométrique]
+Pour démontrer qu'une suite $(u_n)$ (à termes non nuls) est géométrique :
+\begin{enumerate}
+    \item Calculer l'expression du quotient $\dfrac{u_{n+1}}{u_n}$ en fonction de $n$.
+    \item Simplifier cette expression.
+    \item \textbf{Conclure} :
+    \begin{itemize}
+        \item Si le résultat est une \textbf{constante} $q$ (ne dépendant pas de $n$), la suite est géométrique de raison $q$. Préciser le premier terme $u_0$.
+        \item Si le résultat dépend de $n$, la suite \textbf{n'est pas} géométrique.
+    \end{itemize}
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Montrer qu'une suite est géométrique]
+Soit la suite $(u_n)$ définie pour tout $n \in \mathbb{N}$ par $u_n = 5 \times 3^n - 2$.
+Montrer que la suite $(v_n)$ définie par $v_n = u_{n+1} - u_n$ est géométrique. Préciser sa raison et son premier terme.
+\tcblower
+\textbf{Solution.}
+Calculons $v_n$ explicitement :
+\[
+v_n = u_{n+1} - u_n = (5 \times 3^{n+1} - 2) - (5 \times 3^n - 2) = 5 \times 3^{n+1} - 5 \times 3^n = 5 \times 3^n(3 - 1) = 10 \times 3^n.
+\]
+La suite $(v_n)$ est de la forme $v_n = 10 \times 3^n$. C'est une suite géométrique de premier terme $v_0 = 10$ et de raison $q = 3$.
+\textit{Vérification par le quotient :} $\frac{v_{n+1}}{v_n} = \frac{10 \times 3^{n+1}}{10 \times 3^n} = 3$ (constant). CQFD.
+\end{exoresolu}
+
+\begin{experience}[Démonstration guidée : Terme général par produit télescopique]
+On veut établir la formule $u_n = u_0 \times q^n$ pour une suite géométrique de raison $q$ et de premier terme $u_0$.
+\begin{enumerate}
+    \item Écris les égalités successives données par la définition : $u_1 = q u_0$, $u_2 = q u_1$, ..., $u_n = q u_{n-1}$.
+    \item Multiplie membre à membre ces $n$ égalités.
+    \item Observe les simplifications (produit télescopique) dans le second membre.
+    \item En déduire l'expression de $u_n$ en fonction de $u_0$, $q$ et $n$.
+\end{enumerate}
+\tcblower
+\textbf{Solution guidée.}
+\begin{align*}
+u_1 &= q u_0 \\
+u_2 &= q u_1 \\
+&\vdots \\
+u_n &= q u_{n-1}
+\end{align*}
+En multipliant membre à membre : $u_1 u_2 \dots u_n = (q u_0)(q u_1) \dots (q u_{n-1}) = q^n (u_0 u_1 \dots u_{n-1})$.
+Comme les termes sont non nuls (si $u_0 \neq 0$ et $q \neq 0$), on simplifie par $u_1 u_2 \dots u_{n-1}$ :
+\[
+u_n = q^n u_0.
+\]
+Si $u_0 = 0$, la suite est nulle et la formule $u_n = 0 \times q^n = 0$ reste vraie.
+\end{experience}
+
+\begin{propriete}[Terme général d'une suite géométrique]
+Soit $(u_n)$ une suite géométrique de raison $q$ et de premier terme $u_0$ (indice de départ $0$).
+Pour tout entier naturel $n$ :
+\[
+\boxed{u_n = u_0 \times q^n}
+\]
+Si le premier terme est $u_1$ (indice de départ $1$) :
+\[
+\boxed{u_n = u_1 \times q^{n-1}}
+\]
+\end{propriete}
+
+\begin{propriete}[Relation entre deux termes quelconques]
+Soit $(u_n)$ une suite géométrique de raison $q$. Pour tous entiers naturels $n$ et $p$ (avec $n \ge p$) :
+\[
+\boxed{u_n = u_p \times q^{n-p}}
+\]
+\textit{Preuve :} $u_n = u_0 q^n = (u_0 q^p) q^{n-p} = u_p q^{n-p}$.
+\end{propriete}
+
+\begin{exemplebox}[Utilisation de la relation entre deux termes]
+Une population de bactéries double toutes les heures (suite géométrique de raison $q=2$).
+À 14h00 (instant $n=0$), on compte $u_0 = 1000$ bactéries.
+Combien y en aura-t-il à 18h00 (instant $n=4$) ?
+$u_4 = u_0 \times 2^4 = 1000 \times 16 = 16\,000$.
+Et si on sait qu'à 16h00 ($n=2$) il y en a $4000$, combien à 19h00 ($n=5$) ?
+$u_5 = u_2 \times 2^{5-2} = 4000 \times 2^3 = 4000 \times 8 = 32\,000$.
+\end{exemplebox}
+
+\courssub{Somme des termes consécutifs}
+
+C'est un outil indispensable pour calculer un capital total après plusieurs versements, une distance totale parcourue avec un rebond qui diminue, etc.
+
+\begin{propriete}[Théorème : Somme des termes de rang $0$ à $n$ d'une suite géométrique ($q \neq 1$)]
+Soit $(u_n)$ une suite géométrique de raison $q \neq 1$ et de premier terme $u_0$.
+La somme $S_n$ des termes de rang $0$ à $n$ (soit $n+1$ termes) est :
+\[
+\boxed{S_n = u_0 + u_1 + \dots + u_n = u_0 \, \frac{1 - q^{n+1}}{1 - q}}
+\]
+Si le premier terme est $u_1$ (somme des $n$ premiers termes, indices $1$ à $n$) :
+\[
+\boxed{S_n = u_1 \, \frac{1 - q^{n}}{1 - q}}
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration de la formule de la somme par $S - qS$]
+Soit $S_n = u_0 + u_1 + \dots + u_n = u_0 + u_0 q + u_0 q^2 + \dots + u_0 q^n$.
+\begin{enumerate}
+    \item Écris l'expression de $q S_n$.
+    \item Calcule la différence $S_n - q S_n$ (ou $S_n(1-q)$). Observe les annulations (somme télescopique).
+    \item Factorise $S_n$ et isole-le pour obtenir la formule.
+    \item Pourquoi la condition $q \neq 1$ est-elle nécessaire ?
+\end{enumerate}
+\tcblower
+\textbf{Démonstration.}
+\begin{align*}
+S_n &= u_0 + u_0 q + u_0 q^2 + \dots + u_0 q^{n-1} + u_0 q^n \\
+q S_n &= \phantom{u_0 +{}} u_0 q + u_0 q^2 + \dots + u_0 q^{n-1} + u_0 q^n + u_0 q^{n+1}
+\end{align*}
+En soustrayant la deuxième ligne de la première (ou en calculant $S_n - q S_n = S_n(1-q)$), tous les termes intermédiaires s'annulent :
+\[
+S_n(1 - q) = u_0 - u_0 q^{n+1} = u_0(1 - q^{n+1}).
+\]
+Comme $q \neq 1$, on divise par $1-q$ :
+\[
+S_n = u_0 \frac{1 - q^{n+1}}{1 - q}.
+\]
+Si $q = 1$, la suite est constante ($u_n = u_0$) et la somme est simplement $S_n = (n+1)u_0$. La formule ci-dessus donnerait une division par zéro.
+\end{experience}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={font=\small}]
+% Représentation visuelle de S - qS
+\def\u{1.5} % u0
+\def\q{0.7} % q
+\def\N{5}   % n
+
+% Ligne du haut : S_n
+\draw[popblue, thick] (0,2.5) -- (12,2.5);
+\foreach \i in {0,...,\N} {
+    \pgfmathsetmacro{\val}{\u * \q^\i}
+    \pgfmathsetmacro{\x}{\i * 1.8}
+    \draw[popblue, fill=popblue!20] (\x, 2.2) rectangle (\x+1.6, 2.8);
+    \node[popblue] at (\x+0.8, 2.5) {$u_0 q^{\i}$};
+}
+\node[left] at (0,2.5) {$S_n = $};
+
+% Ligne du bas : q S_n
+\draw[poporange, thick] (0,0.5) -- (12,0.5);
+\foreach \i in {0,...,\N} {
+    \pgfmathsetmacro{\val}{\u * \q^\i}
+    \pgfmathsetmacro{\x}{\i * 1.8}
+    \draw[poporange, fill=poporange!20] (\x+0.3, 0.2) rectangle (\x+1.9, 0.8);
+    \node[poporange] at (\x+1.1, 0.5) {$u_0 q^{\i+1}$};
+}
+\node[left] at (0,0.5) {$q S_n = $};
+
+% Flèches d'annulation
+\foreach \i in {0,...,4} {
+    \pgfmathsetmacro{\x}{\i * 1.8}
+    \draw[popmuted, -{Latex[length=2mm]}, bend left=40] (\x+1.6, 2.3) to (\x+1.9, 0.7);
+}
+% Termes restants
+\node[popblue, align=center] at (11.5, 3.3) {Reste : $u_0$};
+\node[poporange, align=center] at (11.5, -0.5) {Reste : $u_0 q^{n+1}$};
+\draw[popblue, -{Latex[length=2mm]}] (11.5, 3.0) -- (10.6, 2.6);
+\draw[poporange, -{Latex[length=2mm]}] (11.5, -0.2) -- (10.6, 0.6);
+
+% Équation finale
+\node[align=center, font=\normalsize] at (6, -1.8) {
+    $S_n - q S_n = u_0 - u_0 q^{n+1} \implies S_n(1-q) = u_0(1-q^{n+1})$ \\
+    $\implies S_n = u_0 \dfrac{1-q^{n+1}}{1-q} \quad (q \neq 1)$
+};
+\end{tikzpicture}
+\legende{Preuve visuelle de la formule de la somme géométrique par la méthode $S_n - q S_n$ (somme télescopique). Les termes bleus de $S_n$ et oranges de $q S_n$ s'annulent deux à deux, ne laissant que le premier terme de $S_n$ et le dernier terme de $q S_n$.}
+\end{popfigure}
+
+\begin{attention}[Pièges classiques sur la somme géométrique]
+\begin{enumerate}
+    \item \textbf{Confondre le nombre de termes et l'indice final.}
+    La somme $S_n = u_0 + \dots + u_n$ contient \textbf{$n+1$ termes}. La formule utilise $q^{n+1}$ au numérateur.
+    Si on somme de $u_p$ à $u_n$ ($n \ge p$), le nombre de termes est $n-p+1$ et la somme vaut $u_p \frac{1-q^{n-p+1}}{1-q}$.
+    
+    \item \textbf{Oublier le cas $q=1$.}
+    Si $q=1$, la suite est constante : $u_n = u_0$. La somme est $S_n = (n+1)u_0$. \textbf{N'utilise jamais la formule avec le dénominateur $1-q$ car elle donne $0/0$.}
+    
+    \item \textbf{Signe de $1-q$ et $1-q^{n+1}$.}
+    Ne « simplifie » pas le signe moins bêtement. La formule $u_0 \frac{1-q^{n+1}}{1-q}$ est \textbf{universelle} pour $q \neq 1$ (que $q>1$, $0<q<1$, $q<0$). Applique-la telle quelle.
+    
+    \item \textbf{Confusion Arithmétique / Géométrique.}
+    Somme arithmétique : $S = \frac{\text{nombre de termes}}{2} (\text{premier} + \text{dernier})$.
+    Somme géométrique : $S = \text{premier} \times \frac{1 - q^{\text{nombre de termes}}}{1-q}$.
+    Ne mélange pas les deux !
+\end{enumerate}
+\end{attention}
+
+\begin{exoresolu}[Application : Placement et somme des intérêts]
+M. Fouda place \SI{2000000}{FCFA} dans une banque offrant un taux d'intérêt annuel de $6\%$ (intérêts composés). Les intérêts sont capitalisés chaque année.
+\begin{enumerate}
+    \item Exprimer le capital $C_n$ après $n$ années. Nature de la suite ?
+    \item Calculer le capital après 5 ans.
+    \item Calculer le total des intérêts perçus sur ces 5 ans (somme des intérêts annuels).
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+    \item $C_0 = 2\,000\,000$. Chaque année, le capital est multiplié par $1,06$.
+    $C_{n+1} = 1,06 \, C_n$. La suite $(C_n)$ est géométrique de raison $q = 1,06$ et premier terme $C_0 = 2\,000\,000$.
+    Terme général : $C_n = 2\,000\,000 \times 1,06^n$.
+    
+    \item $C_5 = 2\,000\,000 \times 1,06^5 \approx 2\,000\,000 \times 1,33822558 \approx \SI{2676451}{FCFA}$.
+    
+    \item Les intérêts de l'année $k$ (pour $k=1$ à $5$) sont $I_k = C_k - C_{k-1}$.
+    On veut $S = \sum_{k=1}^{5} I_k = (C_1 - C_0) + (C_2 - C_1) + \dots + (C_5 - C_4) = C_5 - C_0$ (somme télescopique !).
+    $S = 2\,676\,451 - 2\,000\,000 = \SI{676451}{FCFA}$.
+    
+    \textit{Autre méthode (somme géométrique directe) :} $I_k = C_{k-1} \times 0,06 = 2\,000\,000 \times 1,06^{k-1} \times 0,06 = 120\,000 \times 1,06^{k-1}$.
+    La suite $(I_k)$ pour $k=1..5$ est géométrique de premier terme $I_1 = 120\,000$, raison $1,06$, 5 termes.
+    $S = 120\,000 \times \frac{1 - 1,06^5}{1 - 1,06} = 120\,000 \times \frac{1 - 1,33822558}{-0,06} = 120\,000 \times \frac{-0,33822558}{-0,06} \approx 120\,000 \times 5,637093 = \SI{676451}{FCFA}$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Comportement graphique et limite (aperçu)}
+
+\begin{savaistu}[Croissance exponentielle vs Linéaire]
+Une suite arithmétique croît \emph{linéairement} (ajout constant) : $u_n \sim n$.
+Une suite géométrique de raison $q>1$ croît \emph{exponentiellement} (multiplication constante) : $u_n \sim q^n$.
+Pour $n$ grand, \textbf{l'exponentielle écrase toujours la linéaire}.
+Exemple : $u_n = 100 n$ (arithmétique) vs $v_n = 2^n$ (géométrique).
+$n=5 : 500$ vs $32$. $n=10 : 1000$ vs $1024$. $n=20 : 2000$ vs $1\,048\,576$.
+C'est pourquoi les épidémies (géométrique au début) débordent les capacités hospitalières (linéaires) si on n'agit pas vite.
+\end{savaistu}
+
+\begin{aretenir}[Résumé : Suite géométrique $(u_n)$ de raison $q$, premier terme $u_0$]
+\begin{itemize}
+    \item \textbf{Définition :} $u_{n+1} = q u_n$.
+    \item \textbf{Caractérisation :} $\frac{u_{n+1}}{u_n} = q$ (constante, termes non nuls).
+    \item \textbf{Terme général :} $u_n = u_0 q^n$ \quad (ou $u_n = u_1 q^{n-1}$).
+    \item \textbf{Relation deux termes :} $u_n = u_p q^{n-p}$.
+    \item \textbf{Somme ($q \neq 1$) :} $S_n = u_0 \frac{1-q^{n+1}}{1-q}$ (somme indices $0$ à $n$, $n+1$ termes).
+    \item \textbf{Somme ($q = 1$) :} $S_n = (n+1)u_0$ (suite constante).
+    \item \textbf{Comportement (si $u_0 > 0$) :}
+    \begin{itemize}
+        \item $q > 1$ : Croissante, divergente vers $+\infty$ (croissance explosive).
+        \item $q = 1$ : Constante.
+        \item $0 < q < 1$ : Décroissante, convergente vers $0$ (décroissance exponentielle).
+        \item $q < 0$ : Alternée (signe change), $|u_n|$ suit $|q|^n$.
+    \end{itemize}
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[Entraînement : Détection et calcul]
+\begin{enumerate}
+    \item Déterminer si les suites suivantes sont géométriques. Si oui, donner la raison et le terme général.
+    \begin{itemize}
+        \item $(a_n)$ : $a_0 = 3$, $a_{n+1} = 0,8 a_n$.
+        \item $(b_n)$ : $b_n = 5 \times (-2)^n$.
+        \item $(c_n)$ : $c_n = n^2$.
+        \item $(d_n)$ : $d_0 = 10$, $d_{n+1} = d_n + 5$.
+    \end{itemize}
+    \item Une suite géométrique $(u_n)$ de raison $q=3$ vérifie $u_3 = 54$. Calculer $u_0$ et $u_7$.
+    \item Calculer la somme $S = 2 + 6 + 18 + \dots + 2 \times 3^{10}$.
+    \item \textbf{Problème concret :} Un téléphone portable neuf coûte \SI{300000}{FCFA}. Sa valeur diminue de $20\%$ par an.
+    \begin{itemize}
+        \item Modéliser la valeur $V_n$ après $n$ années.
+        \item Au bout de combien d'années la valeur descendra-t-elle sous la barre des \SI{100000}{FCFA} ? (On pourra tester des valeurs successives).
+    \end{itemize}
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n]
+\begin{enumerate}
+    \item 
+    \begin{itemize}
+        \item $(a_n)$ : Géométrique. $q=0,8$, $a_0=3$. $a_n = 3 \times 0,8^n$.
+        \item $(b_n)$ : Géométrique. Forme $u_0 q^n$ avec $u_0=5$, $q=-2$. Raison $-2$.
+        \item $(c_n)$ : Non géométrique. $\frac{c_{n+1}}{c_n} = \frac{(n+1)^2}{n^2} = (1+\frac{1}{n})^2$ dépend de $n$.
+        \item $(d_n)$ : Non géométrique (c'est arithmétique de raison $5$). $\frac{d_{n+1}}{d_n} = \frac{d_n+5}{d_n} = 1 + \frac{5}{d_n}$ dépend de $n$.
+    \end{itemize}
+    \item $u_3 = u_0 \times 3^3 = 27 u_0 = 54 \implies u_0 = 2$.
+    $u_7 = u_0 \times 3^7 = 2 \times 2187 = 4374$.
+    \item Suite géométrique : $u_0=2$, $q=3$. Dernier terme : $2 \times 3^{10}$ (rang 10).
+    Nombre de termes = $11$ (indices $0$ à $10$).
+    $S = 2 \times \frac{1 - 3^{11}}{1 - 3} = 2 \times \frac{1 - 177147}{-2} = 177146$.
+    \item 
+    \begin{itemize}
+        \item $V_0 = 300\,000$. Perte $20\% \implies q = 0,8$. $V_n = 300\,000 \times 0,8^n$.
+        \item Test : $n=4 \to 300\,000 \times 0,4096 = 122\,880$. $n=5 \to 122\,880 \times 0,8 = 98\,304 < 100\,000$.
+        Réponse : Au bout de \textbf{5 ans}.
+    \end{itemize}
+\end{enumerate}
+\end{corrige}
+
+\coursec{Reconnaître et exploiter une suite}
+
+Dans les sections précédentes, tu as appris ce qu'est une \cle{suite arithmétique} (on ajoute toujours le même nombre $r$) et une \cle{suite géométrique} (on multiplie toujours par le même nombre $q$). Tu sais aussi écrire leur terme général et calculer des sommes de termes consécutifs. Mais au Probatoire, l'énoncé ne dit pas toujours \og montrez que cette suite est arithmétique \fg{} : parfois, on te donne simplement une suite et c'est à \emph{toi} de deviner sa nature, puis de l'exploiter. Cette section te donne la boîte à outils complète : reconnaître, démontrer, déterminer les paramètres, et représenter les termes sur un axe.
+
+\courssub{Stratégie de reconnaissance : arithmétique, géométrique, ou ni l'une ni l'autre ?}
+
+\textbf{Intuition.}\par
+Face à une suite $(u_n)$, pose-toi deux questions simples :
+\begin{itemize}
+\item la \emph{différence} $u_{n+1}-u_n$ entre deux termes consécutifs est-elle constante ? Si oui, la suite est \cle{arithmétique} ;
+\item le \emph{quotient} $\dfrac{u_{n+1}}{u_n}$ (lorsque les termes ne s'annulent pas) est-il constant ? Si oui, la suite est \cle{géométrique}.
+\end{itemize}
+
+La démarche se fait toujours en deux temps : d'abord une \textbf{conjecture} sur les premiers termes (pour deviner), ensuite une \textbf{démonstration} pour $n$ quelconque (pour prouver).
+
+\begin{methode}[Reconnaître la nature d'une suite et préciser sa raison]
+\begin{enumerate}
+\item \textbf{Conjecturer.} Calculer les trois ou quatre premiers termes, puis $u_1-u_0$, $u_2-u_1$, $u_3-u_2$. Si ces différences semblent constantes, on conjecture une suite arithmétique. Sinon, calculer $\dfrac{u_1}{u_0}$, $\dfrac{u_2}{u_1}$, $\dfrac{u_3}{u_2}$ : si ces quotients semblent constants, on conjecture une suite géométrique.
+\item \textbf{Démontrer pour $n$ quelconque.} À partir de l'expression de $u_{n+1}$ et de $u_n$, calculer $u_{n+1}-u_n$ (ou $\dfrac{u_{n+1}}{u_n}$) et montrer que le résultat est une \emph{constante} indépendante de $n$.
+\item \textbf{Conclure} en précisant la nature de la suite, sa raison et son premier terme.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Vérifier sur deux termes ne suffit pas !]
+L'erreur la plus fréquente au Probatoire est de calculer $\dfrac{u_1}{u_0}=\dfrac{u_2}{u_1}=2$ et d'écrire \og donc $(u_n)$ est géométrique de raison $2$ \fg. C'est \textbf{faux} en toute rigueur : une coïncidence sur deux ou trois termes ne prouve rien. Considère la suite définie par $u_n = 2^n + n(n-1)(n-2)$ : on a $u_0=1$, $u_1=2$, $u_2=4$, donc les quotients valent $2$ et $2$... mais $u_3 = 8+6 = 14$ et $\dfrac{u_3}{u_2}=\dfrac{14}{4}=3,5 \neq 2$. La suite n'est pas géométrique ! \textbf{Seule une démonstration pour $n$ quelconque} (calcul algébrique de $u_{n+1}-u_n$ ou de $\dfrac{u_{n+1}}{u_n}$) permet de conclure.
+\end{attention}
+
+\begin{exemplebox}[Conjecture puis démonstration]
+Soit $(u_n)$ définie par $u_n = 3n-5$ pour $n \in \mathbb{N}$.
+\begin{itemize}
+\item \emph{Conjecture} : $u_0=-5$, $u_1=-2$, $u_2=1$, $u_3=4$. Les différences valent $3$, $3$, $3$ : on conjecture une suite arithmétique de raison $3$.
+\item \emph{Démonstration} : pour tout $n \in \mathbb{N}$,
+\[ u_{n+1}-u_n = \bigl(3(n+1)-5\bigr)-\bigl(3n-5\bigr) = 3n+3-5-3n+5 = 3. \]
+\item \emph{Conclusion} : $u_{n+1}-u_n = 3$ est constant, donc $(u_n)$ est arithmétique de raison $r=3$ et de premier terme $u_0=-5$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{exemplebox}[Cas d'une suite géométrique]
+Soit $(v_n)$ définie par $v_n = 5 \times 2^n$. Pour tout $n \in \mathbb{N}$, $v_n \neq 0$ et
+\[ \frac{v_{n+1}}{v_n} = \frac{5 \times 2^{n+1}}{5 \times 2^n} = 2. \]
+Le quotient est constant : $(v_n)$ est géométrique de raison $q=2$ et de premier terme $v_0 = 5$.
+\end{exemplebox}
+
+\courssub{Prouver qu'une suite n'est ni arithmétique ni géométrique}
+
+Pour démontrer qu'une propriété est fausse, il suffit d'un \textbf{contre-exemple}. Ici, trois termes suffisent : si la suite était arithmétique, la différence serait constante \emph{pour tous} les indices, en particulier pour les premiers. Il suffit donc d'exhiber deux différences différentes (ou deux quotients différents).
+
+\begin{propriete}[Contre-exemple sur trois termes]
+Soit $(u_n)$ une suite.
+\begin{itemize}
+\item Si $u_1 - u_0 \neq u_2 - u_1$, alors $(u_n)$ \textbf{n'est pas arithmétique}.
+\item Si les termes sont non nuls et $\dfrac{u_1}{u_0} \neq \dfrac{u_2}{u_1}$, alors $(u_n)$ \textbf{n'est pas géométrique}.
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[Une suite ni arithmétique ni géométrique]
+Soit $(w_n)$ définie par $w_n = n^2$. On a $w_0=0$, $w_1=1$, $w_2=4$, $w_3=9$.
+\begin{itemize}
+\item $w_1 - w_0 = 1$ et $w_2 - w_1 = 3$ : comme $1 \neq 3$, $(w_n)$ n'est pas arithmétique.
+\item $w_0 = 0$ interdit déjà le calcul de $\dfrac{w_1}{w_0}$ ; de plus $\dfrac{w_2}{w_1}=4$ et $\dfrac{w_3}{w_2}=\dfrac{9}{4}=2,25$ : les quotients ne sont pas constants, $(w_n)$ n'est pas géométrique.
+\end{itemize}
+La suite des carrés n'est donc ni arithmétique ni géométrique.
+\end{exemplebox}
+
+L'arbre de décision suivant résume toute la stratégie de reconnaissance.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  font=\small,
+  decision/.style={diamond, draw=popblue, fill=popblueL, text width=3.6cm, align=center, inner sep=1pt, aspect=2},
+  result/.style={rectangle, rounded corners, draw=popdark, fill=popcream, text width=3.2cm, align=center, inner sep=4pt},
+  start/.style={rectangle, rounded corners, draw=poporange, fill=poporangeL, text width=4.2cm, align=center, inner sep=4pt},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}
+]
+\node[start] (dep) {On calcule $u_{n+1}-u_n$ pour $n$ quelconque};
+\node[decision, below=0.9cm of dep] (diff) {La différence est-elle constante ?};
+\node[result, below left=1.1cm and 0.2cm of diff, align=center] (arith) {\textbf{Suite arithmétique}\\ raison $r=u_{n+1}-u_n$};
+\node[decision, below right=1.1cm and 0.2cm of diff, align=center] (quo) {$\dfrac{u_{n+1}}{u_n}$ est-il constant ?\\ (termes non nuls)};
+\node[result, below left=1.1cm and -0.6cm of quo, align=center] (geom) {\textbf{Suite géométrique}\\ raison $q=\dfrac{u_{n+1}}{u_n}$};
+\node[result, below right=1.1cm and -0.6cm of quo, align=center] (rien) {\textbf{Ni arithmétique}\\ \textbf{ni géométrique}};
+\draw[fleche] (dep) -- (diff);
+\draw[fleche] (diff) -| node[pos=0.25, above left]{oui} (arith);
+\draw[fleche] (diff) -| node[pos=0.25, above right]{non} (quo);
+\draw[fleche] (quo) -| node[pos=0.25, above left]{oui} (geom);
+\draw[fleche] (quo) -| node[pos=0.25, above right]{non} (rien);
+\end{tikzpicture}
+\end{center}
+\legende{Arbre de décision : reconnaître la nature d'une suite. La conjecture sur les premiers termes guide le choix, mais la démonstration porte toujours sur $n$ quelconque.}
+\end{popfigure}
+
+\courssub{Déterminer la raison et le premier terme à partir de deux termes connus}
+
+\textbf{Intuition.}\par
+Une suite arithmétique est entièrement déterminée par deux informations (son premier terme et sa raison) : deux termes connus donnent donc deux équations, et l'on résout un système. Même principe pour une suite géométrique, avec des quotients au lieu de différences.
+
+\begin{methode}[Trouver le terme général connaissant deux termes]
+\textbf{Cas arithmétique.} On connaît $u_p$ et $u_m$ avec $p<m$.
+\begin{enumerate}
+\item Écrire la relation entre deux termes : $u_m = u_p + (m-p)\,r$.
+\item En déduire la raison : $r = \dfrac{u_m - u_p}{m-p}$.
+\item Calculer le premier terme : $u_0 = u_p - p\,r$.
+\item Conclure : $u_n = u_0 + nr$ (ou directement $u_n = u_p + (n-p)r$).
+\end{enumerate}
+\textbf{Cas géométrique.} On connaît $u_p$ et $u_m$ (termes non nuls), et l'on note $q$ la raison.
+\begin{enumerate}
+\item Écrire $u_m = u_p \times q^{\,m-p}$.
+\item En déduire la raison : $q^{\,m-p} = \dfrac{u_m}{u_p}$, puis extraire la racine $(m-p)$-ième (si $m-p$ est pair, il peut y avoir deux raisons possibles, de signes opposés).
+\item Calculer $u_0 = \dfrac{u_p}{q^{\,p}}$, puis conclure : $u_n = u_0 \times q^n$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Suite arithmétique : $u_3 = 7$ et $u_8 = 22$]
+Soit $(u_n)$ une suite arithmétique de raison $r$ telle que $u_3 = 7$ et $u_8 = 22$.
+\begin{enumerate}
+\item Relation entre deux termes : $u_8 = u_3 + (8-3)r$, soit $22 = 7 + 5r$.
+\item Raison : $5r = 22-7 = 15$, donc $r = 3$.
+\item Premier terme : $u_0 = u_3 - 3r = 7 - 9 = -2$.
+\item Terme général : $u_n = u_0 + nr = -2 + 3n$, c'est-à-dire $u_n = 3n-2$.
+\end{enumerate}
+\emph{Vérification} : $u_3 = 9-2=7$ et $u_8 = 24-2 = 22$ : les deux conditions de l'énoncé sont bien retrouvées.
+\end{exemplebox}
+
+\begin{exoresolu}[Suite géométrique : déterminer raison et terme général]
+\textbf{Énoncé.} Une suite géométrique $(v_n)$ de raison $q$ positive vérifie $v_2 = 12$ et $v_5 = 96$. Déterminer $q$, $v_0$ et l'expression de $v_n$ en fonction de $n$, puis calculer $v_7$.
+\tcblower
+\textbf{Solution.} La relation entre deux termes d'une suite géométrique s'écrit $v_5 = v_2 \times q^{5-2}$, soit $96 = 12\,q^3$. On en tire :
+\[ q^3 = \frac{96}{12} = 8 \quad \text{donc} \quad q = \sqrt[3]{8} = 2 \quad (\text{car } q>0). \]
+Ensuite, $v_2 = v_0 \times q^2$ donne $12 = 4v_0$, d'où $v_0 = 3$.
+Le terme général est donc $v_n = 3 \times 2^n$.
+Enfin, $v_7 = 3 \times 2^7 = 3 \times 128 = 384$.
+\emph{Vérification} : $v_5 = 3 \times 2^5 = 3 \times 32 = 96$, conforme à l'énoncé.
+\end{exoresolu}
+
+\begin{attention}[Les pièges de la détermination des paramètres]
+\begin{itemize}
+\item Dans $u_m = u_p + (m-p)r$, l'écart des \emph{indices} est $m-p$, pas $m$ : avec $u_3$ et $u_8$, on divise par $5$, pas par $8$.
+\item Pour une suite géométrique, si l'écart des indices est \textbf{pair} (par exemple $u_1=2$ et $u_3=18$, donc $q^2=9$), il y a \emph{deux} raisons possibles : $q=3$ ou $q=-3$. L'énoncé doit préciser le signe, sinon donne les deux solutions.
+\item Ne confonds pas $u_0$ et $u_1$ comme \og premier terme \fg : lis attentivement l'énoncé pour savoir à partir de quel indice la suite est définie.
+\end{itemize}
+\end{attention}
+
+\courssub{Passage de la relation entre deux termes au terme général (et inversement)}
+
+\begin{aretenir}[Les deux écritures équivalentes]
+Pour une suite \textbf{arithmétique} de raison $r$, pour tous entiers naturels $n$ et $p$ :
+\[ u_n = u_0 + nr \qquad \text{et} \qquad u_n = u_p + (n-p)r. \]
+Pour une suite \textbf{géométrique} de raison $q$, pour tous entiers naturels $n$ et $p$ (avec des termes non nuls) :
+\[ u_n = u_0 \times q^n \qquad \text{et} \qquad u_n = u_p \times q^{\,n-p}. \]
+La formule de gauche est le \emph{terme général} ; celle de droite est la \emph{relation entre deux termes quelconques}. On passe de l'une à l'autre en choisissant $p=0$ (ou $p=1$ si la suite commence à l'indice $1$).
+\end{aretenir}
+
+Cette double écriture est un outil de travail formidable : si l'on connaît $u_{10}$ et qu'on veut $u_{25}$, inutile de repasser par $u_0$ : $u_{25} = u_{10} + 15r$ (cas arithmétique) ou $u_{25} = u_{10}\times q^{15}$ (cas géométrique).
+
+\begin{exemplebox}[Exploiter la relation entre deux termes]
+Une suite arithmétique vérifie $u_{10} = 45$ et $r = -2$. Alors, sans calculer $u_0$ :
+\[ u_{25} = u_{10} + (25-10)\times(-2) = 45 - 30 = 15. \]
+Inversement, si le terme général est $u_n = 7n+1$, alors la relation entre deux termes est immédiate : $u_n = u_p + 7(n-p)$, et la raison se lit directement : $r=7$.
+\end{exemplebox}
+
+\courssub{Calculs et repérage des termes sur un axe gradué}
+
+Le programme demande de savoir \textbf{construire sur un axe des termes consécutifs} d'une suite. L'idée est géométrique : sur une droite graduée, passer de $u_n$ à $u_{n+1}$ revient, pour une suite arithmétique, à \emph{reporter toujours la même longueur} $|r|$, vers la droite si $r>0$, vers la gauche si $r<0$. C'est exactement ce que fait un commerçant de Mokolo qui note chaque soir le contenu de sa caisse : si la caisse diminue de la même somme chaque jour (remboursement régulier d'une dette, stock qui s'épuise), la raison est négative.
+
+\begin{methode}[Construire les termes d'une suite arithmétique sur un axe]
+\begin{enumerate}
+\item Tracer une droite graduée et choisir une unité adaptée à l'ordre de grandeur des termes.
+\item Placer le premier terme $u_0$.
+\item Reporter la raison $r$ : translation de $r$ unités vers la droite si $r>0$, de $|r|$ unités vers la gauche si $r<0$.
+\item Répéter pour obtenir $u_2, u_3, \ldots$ Les points obtenus sont \emph{régulièrement espacés}.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Construction avec une raison négative]
+Soit $(u_n)$ la suite arithmétique de premier terme $u_0 = 8$ et de raison $r = -3$. Les premiers termes sont :
+\[ u_0 = 8, \quad u_1 = 5, \quad u_2 = 2, \quad u_3 = -1, \quad u_4 = -4. \]
+Sur l'axe, on part de $8$ et l'on recule de $3$ unités à chaque étape : les points sont équidistants et progressent vers la gauche (voir figure ci-dessous).
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[x=0.85cm, font=\small]
+\draw[-{Stealth}, thick, popdark] (-5.6,0) -- (9.4,0);
+\foreach \x in {-5,-4,...,9}{
+  \draw[popmuted] (\x,0.08) -- (\x,-0.08);
+  \node[below, popmuted, font=\scriptsize] at (\x,-0.08) {\x};
+}
+\foreach \x/\nom in {8/u_0, 5/u_1, 2/u_2, -1/u_3, -4/u_4}{
+  \fill[poporange] (\x,0) circle (2.2pt);
+  \node[above=4pt, popdark] at (\x,0.02) {$\nom$};
+}
+\foreach \a/\b in {8/5, 5/2, 2/-1, -1/-4}{
+  \draw[-{Stealth}, thick, popblue] (\a,0.55) to[bend right=35] node[above, font=\scriptsize, popblue]{$-3$} (\b,0.55);
+}
+\end{tikzpicture}
+\end{center}
+\legende{Repérage sur un axe des termes de la suite arithmétique $u_0=8$, $r=-3$ : chaque terme s'obtient en reculant de $3$ unités. Les points sont régulièrement espacés.}
+\end{popfigure}
+
+\begin{attention}[Raison négative et sens de lecture]
+Quand $r<0$, les termes \emph{décroissent} : sur l'axe, on se déplace vers la gauche. Une erreur fréquente consiste à reporter $|r|$ vers la droite par habitude. Vérifie toujours le signe de la raison avant de construire, et contrôle que $u_1 = u_0 + r$ par le calcul.
+\end{attention}
+
+\courssub{Complément pour la Terminale : sens de variation (hors exigibilité)}
+
+Ce qui suit n'est pas exigible en Première, mais il te donnera une longueur d'avance en Terminale et t'aide déjà à contrôler tes résultats.
+
+\begin{propriete}[Sens de variation — complément hors exigibilité]
+\begin{itemize}
+\item Une suite \textbf{arithmétique} de raison $r$ est : strictement croissante si $r>0$ ; strictement décroissante si $r<0$ ; constante si $r=0$. En effet, $u_{n+1}-u_n = r$ a le signe de $r$.
+\item Une suite \textbf{géométrique} de premier terme $u_0>0$ est : strictement croissante si $q>1$ ; strictement décroissante si $0<q<1$ ; constante si $q=1$. Si $q<0$, les termes alternent en signe : la suite n'est \emph{ni croissante ni décroissante}.
+\end{itemize}
+\end{propriete}
+
+Ainsi, la suite de l'exemple précédent ($u_0=8$, $r=-3$) est décroissante, ce que confirme la figure : les points glissent vers la gauche.
+
+\begin{savaistu}[La légende de l'échiquier : la puissance de la croissance géométrique]
+Selon la légende, le sage Sissa présenta le jeu d'échecs au roi des Indes. Pour le récompenser, le roi lui promit ce qu'il voudrait. Sissa demanda simplement du riz : $1$ grain sur la première case de l'échiquier, $2$ sur la deuxième, $4$ sur la troisième, et ainsi de suite en doublant à chaque case. Le roi rit de cette modestie... avant de comprendre. Le nombre de grains sur la $64$\textsuperscript{e} case est $2^{63}$, et le total vaut
+\[ 1+2+2^2+\cdots+2^{63} = 2^{64}-1 \approx 1,8 \times 10^{19} \text{ grains}, \]
+soit des centaines de fois la production mondiale annuelle de riz ! C'est la somme des termes d'une suite géométrique de raison $2$. Une croissance géométrique finit toujours par exploser : c'est pourquoi les intérêts composés enrichissent (ou ruinent) si vite, et pourquoi une épidémie non maîtrisée peut croître si rapidement.
+\end{savaistu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item La suite $(u_n)$ est définie par $u_n = n^2 - 3n$. Montrer qu'elle n'est ni arithmétique ni géométrique.
+\item Une suite arithmétique vérifie $u_4 = 11$ et $u_{10} = 35$. Déterminer sa raison, $u_0$ et $u_n$.
+\item Une suite géométrique de raison positive vérifie $u_1 = 6$ et $u_3 = 24$. Déterminer sa raison et $u_0$, puis représenter $u_0, u_1, u_2, u_3$ sur un axe gradué.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\textbf{1.} $u_0 = 0$, $u_1 = -2$, $u_2 = -2$, $u_3 = 0$. Différences : $u_1-u_0 = -2$ et $u_2-u_1 = 0$ : non constantes, la suite n'est pas arithmétique. Comme $u_0=0$, le quotient $\dfrac{u_1}{u_0}$ n'existe pas ; de plus $\dfrac{u_2}{u_1}=1$ et $\dfrac{u_3}{u_2}=\dfrac{0}{-2}=0$ : non constants, la suite n'est pas géométrique.
+
+\textbf{2.} $r = \dfrac{u_{10}-u_4}{10-4} = \dfrac{35-11}{6} = \dfrac{24}{6} = 4$ ; $u_0 = u_4 - 4r = 11-16 = -5$ ; $u_n = 4n-5$.
+
+\textbf{3.} $q^2 = \dfrac{u_3}{u_1} = \dfrac{24}{6} = 4$ donc $q=2$ (raison positive) ; $u_0 = \dfrac{u_1}{q} = \dfrac{6}{2} = 3$. Termes : $3, 6, 12, 24$ ; sur l'axe, les écarts \emph{doublent} à chaque pas (contrairement au cas arithmétique où ils sont constants).
+\end{corrige}
+
+\coursec{Applications aux problèmes de la vie courante}
+
+Après avoir acquis les outils pour \emph{reconnaître}, \emph{étudier} et \emph{manipuler} les suites arithmétiques et géométriques, nous voici au cœur de leur utilité réelle : la \textbf{modélisation}. En Première, une suite n'est pas seulement un objet abstrait ; c'est un langage pour décrire l'évolution d'une quantité dans le temps (épargne, population, production, prix). Cette section te montre comment passer d'un énoncé concret (souvent issu du quotidien camerounais) à un modèle mathématique rigoureux, le résoudre, et \emph{interpréter} le résultat. C'est exactement la démarche attendue au Probatoire, où les problèmes de suites sont presque toujours présentés dans un contexte de vie courante.
+
+\courssub{Modélisation des placements financiers : intérêts simples vs intérêts composés}
+
+C'est l'application historique et la plus immédiate des suites. Distinguons deux mécanismes fondamentaux.
+
+\begin{definition}[Intérêts simples et suite arithmétique]
+Soit un capital initial $C_0$ placé à un taux $t$ (en écriture décimale, par exemple $4\% \rightarrow t = 0,04$) selon le régime des \textbf{intérêts simples}. Les intérêts sont calculés \emph{uniquement} sur le capital initial $C_0$ à chaque période. Le capital après $n$ périodes, noté $C_n$, vérifie :
+\[
+C_n = C_0 + n \times (C_0 \times t) = C_0(1 + n t).
+\]
+La suite $(C_n)$ est une \textbf{suite arithmétique} de premier terme $C_0$ et de raison $r = C_0 \times t$ (l'intérêt périodique, constant).
+\end{definition}
+
+\begin{definition}[Intérêts composés et suite géométrique]
+Soit un capital initial $C_0$ placé à un taux $t$ selon le régime des \textbf{intérêts composés}. À la fin de chaque période, les intérêts sont ajoutés au capital et produisent eux-mêmes des intérêts aux périodes suivantes. Le capital après $n$ périodes vérifie :
+\[
+C_{n+1} = C_n + t C_n = C_n(1+t) \quad \text{donc} \quad C_n = C_0 (1+t)^n.
+\]
+La suite $(C_n)$ est une \textbf{suite géométrique} de premier terme $C_0$ et de raison $q = 1+t > 1$.
+\end{definition}
+
+\begin{attention}[Piège classique : confusion des régimes]
+Ne confonds \emph{jamais} les deux formules.
+\begin{itemize}
+    \item \textbf{Intérêts simples :} $C_n = C_0(1+nt)$. Croissance \emph{linéaire}. Les intérêts perçus chaque année sont constants.
+    \item \textbf{Intérêts composés :} $C_n = C_0(1+t)^n$. Croissance \emph{exponentielle}. Les intérêts perçus augmentent chaque année.
+\end{itemize}
+Au Probatoire, l'énoncé précise souvent « intérêts simples » ou « intérêts composés ». S'il dit simplement « placement à taux $t$ » sans autre précision, la convention bancaire standard est celle des \textbf{intérêts composés}.
+\end{attention}
+
+\begin{exemplebox}[Comparaison concrète sur 12 mois]
+Imaginons deux options pour ton argent de poche ou ton premier salaire à Yaoundé :
+\begin{enumerate}
+    \item \textbf{Option A (Épargne régulière / style tontine) :} tu verses \textbf{5 000 FCFA} chaque mois dans une boîte (ou une tontine sans intérêt). Total épargné après $n$ mois : $S_n = 5000n$ (somme des termes d'une suite arithmétique de raison 5 000).
+    \item \textbf{Option B (Placement à intérêts composés) :} tu places \textbf{50 000 FCFA} d'un coup à \textbf{4\% par mois} (taux mensuel volontairement élevé pour l'exemple). Capital après $n$ mois : $C_n = 50000 \times 1,04^n$.
+\end{enumerate}
+Comparons après 12 mois :
+\begin{align*}
+    \text{Option A : } S_{12} &= 5000 \times 12 = \textbf{60 000 FCFA}. \\
+    \text{Option B : } C_{12} &= 50000 \times 1,04^{12} \approx 50000 \times 1,60103 \approx \textbf{80 052 FCFA}.
+\end{align*}
+L'intérêt composé (Option B) l'emporte largement ici car le capital de départ est important. Mais si tu ne disposes que de 5 000 FCFA par mois (Option A), tu construis ton capital progressivement. La suite arithmétique modélise l'\textbf{épargne de flux} (versements réguliers), la suite géométrique modélise la \textbf{valorisation d'un stock} (un capital placé).
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=0.55\linewidth,
+    xlabel={Mois $n$}, ylabel={Capital (FCFA)},
+    xmin=0, xmax=12, ymin=0, ymax=90000,
+    xtick={0,2,4,6,8,10,12}, ytick={0,20000,40000,60000,80000},
+    yticklabel style={/pgf/number format/set thousands separator={\,}, /pgf/number format/fixed},
+    grid=major, grid style={popline}, legend pos=north west,
+    title style={font=\small}, title={Comparaison : épargne mensuelle fixe vs intérêts composés à 4\%}
+]
+\addplot[popcurve, popblue, mark=*, samples at={0,...,12}, thick] {5000*x};
+\addlegendentry{Option A : $S_n = 5000n$ (arithmétique)}
+\addplot[popcurve, poporange, mark=square*, samples at={0,...,12}, thick] {50000*1.04^x};
+\addlegendentry{Option B : $C_n = 50000 \times 1.04^n$ (géométrique)}
+\end{axis}
+\end{tikzpicture}
+\legende{Évolution comparée sur 12 mois. La courbe géométrique (orange) dépasse nettement la droite arithmétique (bleue) car sa croissance s'accélère.}
+\end{popfigure}
+
+\begin{experience}[Suivi mensuel détaillé d'un placement à intérêts composés]
+Construisons pas à pas le tableau de suivi de l'Option B (50 000 FCFA à 4\% par mois). C'est l'application directe de la relation de récurrence $C_{n+1} = 1,04\, C_n$ : chaque ligne se déduit de la précédente en multipliant par $1,04$.
+\begin{center}
+\begin{tabular}{|c|c|c|c|}\hline
+\rowcolor{popblueL}
+\textbf{Mois $n$} & \textbf{Capital début $C_n$ (FCFA)} & \textbf{Intérêts $0,04\,C_n$} & \textbf{Capital fin $C_{n+1}$} \\ \hline
+0 & 50 000,00 & 2 000,00 & 52 000,00 \\ \hline
+1 & 52 000,00 & 2 080,00 & 54 080,00 \\ \hline
+2 & 54 080,00 & 2 163,20 & 56 243,20 \\ \hline
+3 & 56 243,20 & 2 249,73 & 58 492,93 \\ \hline
+4 & 58 492,93 & 2 339,72 & 60 832,65 \\ \hline
+5 & 60 832,65 & 2 433,31 & 63 265,95 \\ \hline
+6 & 63 265,95 & 2 530,64 & 65 796,59 \\ \hline
+7 & 65 796,59 & 2 631,86 & 68 428,45 \\ \hline
+8 & 68 428,45 & 2 737,14 & 71 165,59 \\ \hline
+9 & 71 165,59 & 2 846,62 & 74 012,22 \\ \hline
+10 & 74 012,22 & 2 960,49 & 76 972,71 \\ \hline
+11 & 76 972,71 & 3 078,91 & \textbf{80 051,62} \\ \hline
+\end{tabular}
+\end{center}
+On observe que les intérêts mensuels croissent (2 000 $\rightarrow$ 3 078,91 FCFA) : c'est la « magie » des intérêts composés, chaque intérêt produit à son tour des intérêts. Vérifie au passage que $\frac{C_{n+1}}{C_n} = 1,04$ sur chaque ligne : le quotient est constant, ce qui confirme le caractère géométrique de la suite.
+\end{experience}
+
+\courssub{Remises successives : la composition des pourcentages}
+
+C'est un cas d'école de suite géométrique \emph{cachée}. Une remise de $p\%$ correspond à multiplier le prix par un coefficient $k = 1 - \frac{p}{100}$.
+
+\begin{propriete}[Remises successives et coefficients multiplicateurs]
+Appliquer successivement des remises de $p_1\%$, $p_2\%$, \dots, $p_n\%$ sur un prix initial $P_0$ revient à multiplier par les coefficients successifs $k_1, k_2, \dots, k_n$. Le prix final est :
+\[
+P_n = P_0 \times k_1 \times k_2 \times \dots \times k_n.
+\]
+Si les remises sont \emph{identiques} ($p\%$ à chaque fois), les coefficients sont égaux ($k$) et $(P_n)$ est une \textbf{suite géométrique} de raison $k = 1 - \frac{p}{100} < 1$.
+\end{propriete}
+
+\begin{exemplebox}[Deux remises successives : 10\% puis 5\%]
+Un tissu coûte 10 000 FCFA au marché Mokolo.
+\begin{enumerate}
+    \item Première remise de 10\% : coefficient $k_1 = 0,90$. Prix $P_1 = 10000 \times 0,90 = 9000$ FCFA.
+    \item Deuxième remise de 5\% sur le \emph{nouveau} prix : coefficient $k_2 = 0,95$. Prix final $P_2 = 9000 \times 0,95 = 8550$ FCFA.
+\end{enumerate}
+Coefficient global : $k = 0,90 \times 0,95 = 0,855$.
+Remise globale équivalente : $1 - 0,855 = 0,145 = \textbf{14,5\%}$.
+Remarque décisive : $10\% + 5\% = 15\% \neq 14,5\%$. On \textbf{n'additionne jamais} les pourcentages de remises successives !
+\end{exemplebox}
+
+\begin{attention}[Erreur fatale : l'addition des pourcentages]
+\begin{itemize}
+    \item \textbf{Faux :} « 10\% puis 5\% = 15\% de remise. »
+    \item \textbf{Vrai :} on multiplie les coefficients multiplicateurs : $0,9 \times 0,95 = 0,855$, soit 14,5\% de remise globale.
+    \item \textbf{Autre piège :} une augmentation de $p\%$ suivie d'une remise de $p\%$ ne ramène \emph{pas} au prix initial, car $\left(1+\frac{p}{100}\right)\left(1-\frac{p}{100}\right) = 1 - \left(\frac{p}{100}\right)^2 < 1$. Par exemple, +10\% puis $-10\%$ donne $1,1 \times 0,9 = 0,99$ : le prix final est 1\% \emph{en dessous} du prix initial.
+\end{itemize}
+\end{attention}
+
+\courssub{Partages proportionnels et progressions}
+
+Les partages (héritage, bénéfices d'une tontine, répartition d'une récolte) conduisent souvent à des suites arithmétiques ou géométriques.
+
+\begin{exemplebox}[Partage en progression arithmétique]
+Un père partage 1 200 000 FCFA entre ses 4 enfants. Chaque enfant reçoit 50 000 FCFA de plus que le suivant (de l'aîné vers le cadet). Combien reçoit chacun ?
+
+\textbf{Modélisation :} soit $x$ la part du plus jeune. Les parts forment une suite arithmétique de raison $r = 50\,000$ : $x,\; x+r,\; x+2r,\; x+3r$.
+
+La somme des 4 termes vaut :
+\[
+S_4 = \frac{4}{2}\bigl(2x + 3r\bigr) = 2(2x + 150\,000) = 4x + 300\,000.
+\]
+On résout : $4x + 300\,000 = 1\,200\,000 \iff 4x = 900\,000 \iff x = 225\,000$.
+
+Parts : \textbf{225 000 ; 275 000 ; 325 000 ; 375 000 FCFA}. Vérification : $225\,000 + 275\,000 + 325\,000 + 375\,000 = 1\,200\,000$ FCFA. La répartition est correcte.
+\end{exemplebox}
+
+\begin{exemplebox}[Partage proportionnel à des apports en progression géométrique]
+Une coopérative de cacao d'Ebolowa répartit un bénéfice de 3 900 000 FCFA entre 3 associés, proportionnellement à leurs apports initiaux qui sont en progression géométrique de raison 2, le plus petit apport étant de 100 000 FCFA.
+
+\textbf{Modélisation :} les apports sont $100\,000$ ; $200\,000$ ; $400\,000$ FCFA. Leur somme vaut $700\,000$ FCFA.
+
+Coefficient de répartition : $k = \dfrac{3\,900\,000}{700\,000} = \dfrac{39}{7} \approx 5,5714$.
+
+Gains respectifs (arrondis au FCFA) :
+\[
+100\,000 \times \tfrac{39}{7} \approx 557\,143 \text{ FCFA} ; \quad 200\,000 \times \tfrac{39}{7} \approx 1\,114\,286 \text{ FCFA} ; \quad 400\,000 \times \tfrac{39}{7} \approx 2\,228\,571 \text{ FCFA}.
+\]
+Vérification : la somme des valeurs exactes $\frac{39}{7}(100\,000 + 200\,000 + 400\,000) = 3\,900\,000$ FCFA est bien égale au bénéfice (les arrondis peuvent créer un écart de 1 ou 2 FCFA, qu'on ajuste sur la plus grosse part en pratique).
+\end{exemplebox}
+
+\courssub{Collecte et exploitation de données : évolution de populations et de productions}
+
+C'est le domaine des \textbf{effectifs cumulés} et de la \textbf{modélisation démographique ou agricole}.
+
+\begin{definition}[Évolution d'un effectif et effectifs cumulés]
+Soit une population (ou une production) observée à des dates régulières $n = 0, 1, 2, \dots$
+\begin{itemize}
+    \item Si l'effectif $E_n$ suit une suite \textbf{arithmétique} : $E_n = E_0 + nr$. C'est une évolution \emph{linéaire} (exemple : plantation d'un nombre fixe d'arbres chaque année, migration constante).
+    \item Si l'effectif $E_n$ suit une suite \textbf{géométrique} : $E_n = E_0\, q^n$. C'est une évolution \emph{exponentielle} (exemple : croissance démographique naturelle en pourcentage, rendement amélioré de $t\%$ par an).
+\end{itemize}
+L'\textbf{effectif cumulé} jusqu'au rang $n$ est la somme des termes : $C_n = \displaystyle\sum_{k=0}^{n} E_k$.
+\begin{itemize}
+    \item Suite arithmétique : $C_n = \dfrac{n+1}{2}\left(E_0 + E_n\right)$.
+    \item Suite géométrique ($q \neq 1$) : $C_n = E_0 \times \dfrac{q^{n+1}-1}{q-1}$.
+\end{itemize}
+\end{definition}
+
+\begin{exoresolu}[Production de maïs dans le Nord-Cameroun]
+Une coopérative produit 2 000 tonnes de maïs l'année 0. Grâce à de nouvelles semences, sa production augmente de 8\% par an.
+\begin{enumerate}
+    \item Modéliser la production $P_n$ (en tonnes) de l'année $n$.
+    \item Calculer la production de l'année 5.
+    \item Calculer la production \textbf{cumulée} sur les 6 premières années (de l'année 0 à l'année 5).
+\end{enumerate}
+\tcblower
+\begin{enumerate}
+    \item Une augmentation de 8\% correspond au coefficient multiplicateur $q = 1 + \frac{8}{100} = 1,08$. La suite $(P_n)$ est géométrique de premier terme $P_0 = 2000$ et de raison $1,08$ :
+    \[
+    P_n = 2000 \times 1,08^n.
+    \]
+    \item $P_5 = 2000 \times 1,08^5 \approx 2000 \times 1,46933 \approx \textbf{2 938,7 tonnes}$.
+    \item Il y a 6 termes (de $P_0$ à $P_5$). La formule de la somme des termes d'une suite géométrique donne :
+    \[
+    S = \sum_{k=0}^{5} P_k = 2000 \times \frac{1,08^6 - 1}{1,08 - 1} = 2000 \times \frac{1,58687 - 1}{0,08} = 2000 \times 7,33593 \approx \textbf{14 671,9 tonnes}.
+    \]
+\end{enumerate}
+\textbf{Interprétation :} sur six campagnes, la coopérative aura produit au total environ 14 672 tonnes, alors qu'avec une production constante de 2 000 tonnes elle n'aurait produit que 12 000 tonnes.
+\end{exoresolu}
+
+\begin{savaistu}[Les tontines camerounaises : des suites arithmétiques vivantes]
+Au Cameroun, la \textbf{tontine} (ou \emph{njangi} dans le Nord-Ouest et le Sud-Ouest, \emph{esusu} chez les Sawa) est un système d'épargne rotative très répandu.
+\begin{itemize}
+    \item \textbf{Tontine à cotisation fixe :} chaque membre verse 10 000 FCFA par mois. L'épargne \emph{individuelle cumulée} d'un membre suit une suite arithmétique : $E_n = 10\,000\, n$.
+    \item \textbf{Tontine à crédit interne :} si la cagnotte est prêtée à un membre avec intérêts, le capital prêté suit une suite géométrique pendant la durée du prêt.
+    \item \textbf{Partage final :} la répartition du capital et des intérêts entre les membres, au prorata de leurs cotisations, est un partage proportionnel.
+\end{itemize}
+Ces mécanismes informels appliquent exactement les formules de ce cours ! Comprendre les suites, c'est comprendre la finance de ton quartier.
+\end{savaistu}
+
+\courssub{Méthodologie universelle : du problème concret à la réponse mathématique}
+
+\begin{methode}[Résoudre un problème concret à l'aide d'une suite]
+\emph{Étape 1 : Lecture active et identification de la variable.}
+Quelle quantité évolue ? (Capital, population, prix, production, épargne.) Note-la $u_n$ (ou $C_n$, $P_n$\dots). Précise l'unité (FCFA, tonnes, individus) et l'indice initial : en général $n = 0$ pour « aujourd'hui » ou « l'année de départ ».
+
+\emph{Étape 2 : Diagnostic du type de suite.}
+\begin{itemize}
+    \item « Augmente de $k$ unités par période » $\rightarrow$ suite \textbf{arithmétique} de raison $r = k$.
+    \item « Augmente de $t\%$ par période » $\rightarrow$ suite \textbf{géométrique} de raison $q = 1 + \frac{t}{100}$.
+    \item « Diminue de $t\%$ par période » $\rightarrow$ suite \textbf{géométrique} de raison $q = 1 - \frac{t}{100} < 1$.
+    \item Versements fixes réguliers $\rightarrow$ suite \textbf{arithmétique} (et le total épargné est une somme de termes).
+    \item Intérêts composés, remises successives identiques, croissance en pourcentage $\rightarrow$ suite \textbf{géométrique}.
+\end{itemize}
+
+\emph{Étape 3 : Extraction des paramètres.}
+Identifie le premier terme $u_0$ (ou $u_1$) et la raison $r$ ou $q$. \textbf{Vérifie l'indice de départ} ($n = 0$ ou $n = 1$), puis écris explicitement la formule du terme général $u_n$.
+
+\emph{Étape 4 : Traduction de la question.}
+\begin{itemize}
+    \item « Valeur après $n$ périodes » $\rightarrow$ calculer le terme $u_n$.
+    \item « Au bout de combien de périodes dépasse-t-on $M$ ? » $\rightarrow$ résoudre l'inéquation $u_n > M$ (par le logarithme si la suite est géométrique, directement si elle est arithmétique).
+    \item « Total cumulé sur $N$ périodes » $\rightarrow$ calculer la somme $S = \sum u_k$ avec la formule adaptée.
+\end{itemize}
+
+\emph{Étape 5 : Calcul rigoureux et interprétation.}
+Effectue les calculs (la calculatrice est autorisée au Probatoire). \textbf{Arrondis correctement} : un nombre de périodes s'arrondit à l'entier supérieur ; une somme d'argent s'arrondit au FCFA. \textbf{Rédige une phrase de conclusion} dans le contexte : « Au bout de 26 mois, le capital dépassera 500 000 FCFA. »
+\end{methode}
+
+\begin{exercice}[Placement mixte : intérêts composés et versements réguliers]
+Marie place 200 000 FCFA dans une microfinance offrant 0,5\% d'intérêts \textbf{composés} par mois. Elle ajoute \textbf{10 000 FCFA} à la fin de chaque mois (après le calcul des intérêts). On note $C_n$ le capital après $n$ mois, avec $C_0 = 200\,000$.
+\begin{enumerate}
+    \item Justifier que pour tout entier naturel $n$ : $C_{n+1} = 1,005\, C_n + 10\,000$.
+    \item On pose $D_n = C_n + 2\,000\,000$. Montrer que $(D_n)$ est une suite géométrique dont on précisera la raison et le premier terme. En déduire l'expression de $C_n$ en fonction de $n$.
+    \item Au bout de combien de mois le capital dépassera-t-il 500 000 FCFA ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+    \item À la fin du mois $n$, les intérêts valent $0,005\, C_n$. Le capital capitalisé est donc $C_n + 0,005\,C_n = 1,005\,C_n$. Marie ajoute ensuite 10 000 FCFA, d'où :
+    \[
+    C_{n+1} = 1,005\, C_n + 10\,000.
+    \]
+    \item Calculons :
+    \begin{align*}
+    D_{n+1} &= C_{n+1} + 2\,000\,000 = 1,005\, C_n + 10\,000 + 2\,000\,000 \\
+    &= 1,005\, C_n + 2\,010\,000 = 1,005\left(C_n + \frac{2\,010\,000}{1,005}\right) \\
+    &= 1,005\left(C_n + 2\,000\,000\right) = 1,005\, D_n.
+    \end{align*}
+    Donc $(D_n)$ est géométrique de raison $q = 1,005$ et de premier terme $D_0 = C_0 + 2\,000\,000 = 2\,200\,000$.
+    On en déduit $D_n = 2\,200\,000 \times 1,005^n$, puis :
+    \[
+    C_n = D_n - 2\,000\,000 = 2\,200\,000 \times 1,005^n - 2\,000\,000.
+    \]
+    \item On résout l'inéquation :
+    \begin{align*}
+    C_n > 500\,000 &\iff 2\,200\,000 \times 1,005^n > 2\,500\,000 \\
+    &\iff 1,005^n > \frac{2\,500\,000}{2\,200\,000} = \frac{25}{22} \approx 1,13636 \\
+    &\iff n\, \ln(1,005) > \ln\left(\tfrac{25}{22}\right) \quad (\text{la fonction } \ln \text{ est croissante}) \\
+    &\iff n > \frac{\ln(25/22)}{\ln(1,005)} \approx \frac{0,12783}{0,00499} \approx 25,6.
+    \end{align*}
+    (Le sens de l'inégalité est conservé car $\ln(1,005) > 0$.) Comme $n$ est un entier, il faut \textbf{26 mois} pour que le capital de Marie dépasse 500 000 FCFA.
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Points de vigilance pour le Probatoire]
+\begin{itemize}
+    \item \textbf{Unité du taux :} attention à « $t\%$ par an » contre « $t\%$ par mois ». Si le taux annuel est de 6\% avec capitalisation \emph{mensuelle}, le taux mensuel est $0,5\%$ ($q = 1,005$) et le nombre de périodes sur $n$ années est $12n$.
+    \item \textbf{Indice $n$ :} « après 5 ans » correspond à $n = 5$ si $u_0$ est l'année de départ ; « au début de la 5\up{e} année » correspond à $n = 4$. Lis l'énoncé attentivement !
+    \item \textbf{Somme ou terme ?} « Total produit en 5 ans » appelle une \emph{somme} de termes ; « production de la 5\up{e} année » appelle un \emph{terme} de la suite. Confondre les deux est l'erreur la plus fréquente.
+    \item \textbf{Arrondi d'un nombre de périodes :} on arrondit toujours à l'\emph{entier supérieur}. « Au bout de 25,6 mois » signifie qu'à la fin du 25\up{e} mois le seuil n'est pas encore atteint : c'est à la fin du 26\up{e}.
+    \item \textbf{Sens de l'inégalité avec le logarithme :} en divisant par $\ln q$, on conserve le sens si $q > 1$ (car $\ln q > 0$), mais on le \emph{change} si $0 < q < 1$ (car $\ln q < 0$).
+\end{itemize}
+\end{attention}
+
+\courssub{Synthèse des modèles types à connaître}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Situation concrète} & \textbf{Type de suite} & \textbf{Paramètres clés} & \textbf{Terme général $u_n$} \\ \hline
+Épargne à versements constants & Arithmétique & $u_0$ = 1\up{er} versement, $r$ = montant du versement & $u_n = u_0 + nr$ ; total $S_n = \frac{n+1}{2}(u_0 + u_n)$ \\ \hline
+Placement à intérêts composés (taux $t$) & Géométrique & $u_0$ = capital initial, $q = 1+t$ & $u_n = u_0\, q^n$ \\ \hline
+Placement à intérêts simples (taux $t$) & Arithmétique & $u_0$ = capital initial, $r = u_0\, t$ & $u_n = u_0(1+nt)$ \\ \hline
+Remises successives identiques ($p\%$) & Géométrique & $u_0$ = prix initial, $q = 1 - \frac{p}{100}$ & $u_n = u_0\, q^n$ \\ \hline
+Croissance démographique ou de production ($t\%$/an) & Géométrique & $u_0$ = effectif initial, $q = 1 + \frac{t}{100}$ & $u_n = u_0\, q^n$ \\ \hline
+Migration constante, plantation fixe par an & Arithmétique & $u_0$ = effectif initial, $r$ = flux constant & $u_n = u_0 + nr$ \\ \hline
+Recherche d'un seuil (rentabilité, objectif) & Inéquation & Résoudre $u_n > \text{seuil}$ & Logarithme si géométrique, résolution directe si arithmétique \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{aretenir}[Check-list avant l'examen]
+\begin{itemize}
+    \item « Augmentation de $t\%$ » se traduit par : multiplier par $1 + \frac{t}{100}$.
+    \item « Diminution de $t\%$ » se traduit par : multiplier par $1 - \frac{t}{100}$.
+    \item Identifier correctement $u_0$ ou $u_1$ selon l'énoncé (année 0 ou année 1).
+    \item Connaître les deux formules de somme : $S = \frac{\text{nombre de termes}}{2}\times(\text{premier} + \text{dernier})$ (arithmétique) et $S = u_0 \times \frac{q^{\text{nombre de termes}} - 1}{q - 1}$ (géométrique, $q \neq 1$).
+    \item Résoudre $q^n > K$ avec le logarithme népérien : $n > \frac{\ln K}{\ln q}$ lorsque $q > 1$.
+    \item Ne jamais additionner des pourcentages successifs : on multiplie les coefficients.
+    \item Toujours conclure par une phrase dans le contexte du problème, avec l'unité et l'arrondi adaptés.
+\end{itemize}
+\end{aretenir}
+
+Tu disposes maintenant de toutes les clés pour transformer n'importe quel problème de la vie courante (épargne, crédit, démographie, agriculture, commerce) en un exercice de suites numériques résolu avec rigueur. Entraîne-toi sur les annales du Probatoire : les sujets portent \emph{très} souvent sur ces modèles classiques, et la rédaction soignée des étapes (modélisation, résolution, interprétation) y est toujours récompensée !
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Leçon 08 : Suites numériques}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu seras capable de :
+\begin{itemize}
+\item modéliser une situation concrète d'épargne par une \cle{suite numérique} (explicite ou récurrente) ;
+\item reconnaître une \cle{suite arithmétique}, justifier sa nature et préciser sa \cle{raison} ;
+\item exploiter la relation entre deux termes quelconques pour calculer rapidement un terme de rang donné ;
+\item calculer une \cle{somme de termes consécutifs} d'une suite arithmétique ;
+\item étudier une suite définie par une relation de récurrence du type $U_{n+1}=aU_n+b$ en calculant ses termes successifs ;
+\item représenter graphiquement l'évolution de deux suites et comparer leurs comportements ;
+\item rédiger une recommandation argumentée, en mobilisant les résultats obtenus, pour résoudre un problème de la vie courante.
+\end{itemize}
+
+\courssub{Situation}
+
+\begin{experience}[Le projet épargne du jeune commerçant de Mokolo]
+Noura, 19 ans, tient un petit stand de vente de chaussures au marché Mokolo à Yaoundé. Grâce à ses bonnes ventes, elle dispose d'un capital de départ de \num{20000} FCFA et souhaite constituer, en \textbf{12 mois}, une épargne qui lui permettra d'ouvrir une véritable boutique. Sa tante, qui gère un compte dans une microfinance du quartier, lui propose deux stratégies.
+
+\textbf{Plan A : l'effort progressif.} Noura dépose \num{20000} FCFA le premier mois, puis chaque mois suivant elle dépose \num{2000} FCFA de \emph{plus} que le mois précédent (le deuxième mois : \num{22000} FCFA, le troisième : \num{24000} FCFA, etc.). Les dépôts sont conservés dans une caisse sans intérêts.
+
+\textbf{Plan B : les intérêts composés.} Noura place ses \num{20000} FCFA sur un compte rémunéré à \num{3} \% par mois (intérêts composés : chaque mois, le capital est augmenté de \num{3} \%), et elle ajoute un versement \emph{fixe} de \num{10000} FCFA à la fin de chaque mois.
+
+Noura hésite : le plan A lui semble rapporter beaucoup, mais l'effort demandé devient de plus en plus lourd ; le plan B paraît plus doux, mais lui rapportera-t-il assez ? Ton groupe est chargé de l'éclairer par les mathématiques.
+\end{experience}
+
+\courssub{Consignes}
+
+\textbf{Partie 1 : étude du plan A.} On note $(a_n)$ la suite des dépôts mensuels, où $a_n$ est le dépôt du mois $n$ (en FCFA), avec $a_1=\num{20000}$.
+\begin{enumerate}
+\item Calculer $a_2$, $a_3$ et $a_4$.
+\item Montrer que $(a_n)$ est une suite arithmétique dont on précisera la raison.
+\item Exprimer $a_n$ en fonction de $n$, puis calculer le dépôt du $12^{\text{e}}$ mois.
+\item Calculer le montant total épargné au bout de 12 mois.
+\item Quel est le dépôt du dernier mois ? Ce plan est-il réaliste pour une vendeuse dont le bénéfice mensuel est d'environ \num{60000} FCFA ?
+\end{enumerate}
+
+\textbf{Partie 2 : étude du plan B.} On note $U_n$ le capital (en FCFA) après $n$ mois, avec $U_0=\num{20000}$.
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item Justifier que, pour tout entier naturel $n$, $U_{n+1}=\num{1,03}\,U_n+\num{10000}$.
+\item La suite $(U_n)$ est-elle arithmétique ? géométrique ? Justifier.
+\item Calculer $U_1$, $U_2$, $U_3$ (arrondir à l'unité).
+\item On admet que $U_n=\num{353333,33}\times(\num{1,03})^n-\num{333333,33}$. Calculer le capital $U_{12}$ au bout de 12 mois.
+\item Quel montant total Noura a-t-elle réellement versé de sa poche dans le plan B ? Comparer avec le capital final : d'où vient la différence ?
+\end{enumerate}
+
+\textbf{Partie 3 : comparaison et décision.}
+\begin{enumerate}
+\setcounter{enumi}{10}
+\item Représenter sur un même graphique l'évolution des deux stratégies (en abscisse : le mois ; en ordonnée : le capital accumulé).
+\item Rédiger une recommandation argumentée de 5 à 10 lignes, que ton groupe présentera à la classe : quel plan conseiller à Noura, et pourquoi ?
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item Une suite $(u_n)$ est \cle{arithmétique} de raison $r$ si, pour tout $n$, $u_{n+1}-u_n=r$ (constante).
+\item Relation entre deux termes : $u_n=u_p+(n-p)r$ ; en particulier $u_n=u_1+(n-1)r$.
+\item Somme de termes consécutifs d'une suite arithmétique :
+\[ S=\text{nombre de termes}\times\frac{\text{premier terme}+\text{dernier terme}}{2}. \]
+\item Une suite définie par $U_{n+1}=aU_n+b$ (avec $a\neq 1$) n'est ni arithmétique ni géométrique : on calcule ses termes \emph{de proche en proche}.
+\item Augmenter une quantité de $t$ \% revient à la multiplier par $1+\dfrac{t}{100}$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé détaillé de l'activité]
+Énoncé : comparer le plan A (dépôts arithmétiques : $a_1=\num{20000}$, $r=\num{2000}$) et le plan B ($U_{n+1}=\num{1,03}\,U_n+\num{10000}$, $U_0=\num{20000}$) sur 12 mois, puis recommander une stratégie à Noura.
+\tcblower
+\textbf{Partie 1 : le plan A.}
+
+\textbf{1.} $a_2=a_1+\num{2000}=\num{22000}$ ; $a_3=\num{24000}$ ; $a_4=\num{26000}$ FCFA.
+
+\textbf{2.} Pour tout $n\geq 1$, $a_{n+1}-a_n=\num{2000}$ (constante) : $(a_n)$ est \cle{arithmétique} de raison $r=\num{2000}$ et de premier terme $a_1=\num{20000}$.
+
+\textbf{3.} Terme général : $a_n=a_1+(n-1)r=\num{20000}+\num{2000}(n-1)$. Donc
+\[ a_{12}=\num{20000}+11\times\num{2000}=\num{42000}\ \text{FCFA}. \]
+
+\textbf{4.} Total épargné en 12 mois :
+\[ S_{12}=12\times\frac{a_1+a_{12}}{2}=12\times\frac{\num{20000}+\num{42000}}{2}=12\times\num{31000}=\num{372000}\ \text{FCFA}. \]
+
+\textbf{5.} Le dernier mois, Noura doit déposer \num{42000} FCFA, soit $70\,\%$ de son bénéfice mensuel de \num{60000} FCFA : l'effort devient très lourd, le plan A est exigeant mais rapporte gros.
+
+\textbf{Partie 2 : le plan B.}
+
+\textbf{6.} Chaque mois, le capital est d'abord augmenté de $3\,\%$ (multiplié par $\num{1,03}$), puis Noura ajoute \num{10000} FCFA : $U_{n+1}=\num{1,03}\,U_n+\num{10000}$.
+
+\textbf{7.} $U_1=\num{30600}$, $U_2=\num{41518}$, $U_3=\num{52764}$. Or $U_1-U_0=\num{10600}$ et $U_2-U_1=\num{10918}\neq\num{10600}$ : la suite n'est \textbf{pas arithmétique}. De même $\dfrac{U_1}{U_0}=\num{1,53}$ et $\dfrac{U_2}{U_1}\approx\num{1,357}$ : elle n'est \textbf{pas géométrique}. C'est une suite dite \emph{arithmético-géométrique}.
+
+\textbf{8.} $U_1=\num{1,03}\times\num{20000}+\num{10000}=\num{30600}$ ; $U_2=\num{1,03}\times\num{30600}+\num{10000}=\num{41518}$ ; $U_3=\num{1,03}\times\num{41518}+\num{10000}\approx\num{52764}$ FCFA.
+
+\textbf{9.} Avec la formule admise :
+\[ U_{12}=\num{353333,33}\times(\num{1,03})^{12}-\num{333333,33}\approx\num{353333,33}\times\num{1,425761}-\num{333333,33}\approx\num{170436}\ \text{FCFA}. \]
+
+\textbf{10.} Noura a versé : $\num{20000}+12\times\num{10000}=\num{140000}$ FCFA. Le capital final est \num{170436} FCFA : la différence, environ \num{30436} FCFA, provient des \cle{intérêts composés}.
+
+\textbf{Partie 3 : comparaison.}
+
+\textbf{11.} Évolution des deux stratégies (capital cumulé en FCFA, en fonction du mois) :
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[width=\linewidth,height=7cm,xlabel={Mois},ylabel={Capital cumulé (FCFA)},xmin=0,xmax=12,ymin=0,ymax=380000,xtick={0,2,4,6,8,10,12},legend pos=north west,grid=both,grid style={popline!40}]
+\addplot[popcurve,mark=*,color=popblue] coordinates {(0,0)(1,20000)(2,42000)(3,66000)(4,92000)(5,120000)(6,150000)(7,182000)(8,216000)(9,252000)(10,290000)(11,330000)(12,372000)};
+\addlegendentry{Plan A (cumul des dépôts)}
+\addplot[popcurve,mark=square*,color=poporange] coordinates {(0,20000)(1,30600)(2,41518)(3,52764)(4,64346)(5,76277)(6,88565)(7,101222)(8,114259)(9,127687)(10,141517)(11,155763)(12,170436)};
+\addlegendentry{Plan B (capital sur le compte)}
+\end{axis}
+\end{tikzpicture}
+\legende{Le plan A croît de plus en plus vite (dépôts croissants) ; le plan B croît régulièrement mais plafonne plus bas.}
+\end{popfigure}
+
+\textbf{12.} Recommandation (modèle) : \emph{« Le plan A permet d'épargner \num{372000} FCFA en 12 mois, soit plus du double du plan B (\num{170436} FCFA), mais il exige un dépôt final de \num{42000} FCFA, difficilement soutenable. Le plan B ne demande qu'un effort fixe de \num{10000} FCFA par mois et fait travailler l'argent grâce aux intérêts composés (\num{30436} FCFA gagnés "gratuitement"). Nous conseillons à Noura de commencer par le plan B, réaliste et sûr, puis de basculer vers un effort progressif dès que son bénéfice augmentera. »}
+\end{exoresolu}
+
+\begin{attention}[Pièges à éviter dans cette activité]
+\begin{itemize}
+\item Ne pas confondre le \emph{dépôt mensuel} $a_n$ (plan A) avec le \emph{capital cumulé} : la somme $S_{12}$ n'est pas un terme de la suite $(a_n)$.
+\item Le plan B n'est \textbf{ni arithmétique ni géométrique} à cause du versement fixe : les formules de $u_n=u_0+nr$ ou $u_n=u_0 q^n$ ne s'appliquent pas directement.
+\item Augmenter de $3\,\%$ puis ajouter \num{10000} n'est pas la même chose qu'ajouter \num{10000} puis augmenter de $3\,\%$ : respecter l'ordre donné par l'énoncé.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence que :
+\begin{itemize}
+\item une situation d'épargne à \emph{effort constant croissant} se modélise naturellement par une \cle{suite arithmétique}, et le total épargné s'obtient par la formule de la somme des termes ;
+\item une situation à \emph{intérêts composés avec versements fixes} se modélise par une suite récurrente $U_{n+1}=aU_n+b$, dont on calcule les termes de proche en proche ;
+\item la \cle{représentation graphique} est un outil puissant de comparaison : elle rend visibles la croissance accélérée du plan A et la régularité du plan B ;
+\item les mathématiques éclairent la décision : le « meilleur » plan n'est pas seulement celui qui rapporte le plus, mais celui qui est \emph{soutenable} — ici, la rigueur du calcul (termes, raison, sommes) nourrit un argumentaire de la vie courante ;
+\item enfin, les intérêts composés récompensent la patience : même avec des versements modestes, le capital finit par « travailler tout seul », principe au cœur de la microfinance camerounaise.
+\end{itemize}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Calculer des termes d'une suite numérique}
+
+\begin{methode}[Calculer des termes d'une suite]
+Pour calculer des termes d'une suite $(U_n)$, on distingue deux cas selon le mode de définition.
+\begin{enumerate}
+\item \textbf{Suite définie explicitement} par $U_n=f(n)$ : on remplace directement $n$ par l'indice voulu. Par exemple $U_3=f(3)$. Tout terme se calcule \emph{sans connaître les précédents}.
+\item \textbf{Suite définie par récurrence} par $U_{n+1}=f(U_n)$ avec un premier terme donné : on calcule les termes \emph{de proche en proche}, en partant du premier terme. Pour obtenir $U_4$, il faut d'abord avoir calculé $U_1$, $U_2$, $U_3$.
+\item \textbf{Vigilance sur les indices} : si la suite commence à $U_0$, alors $U_n$ est le $(n+1)$-ième terme ; si elle commence à $U_1$, $U_n$ est le $n$-ième terme.
+\item \textbf{Rédaction} : écrire le calcul complet, par exemple $U_2=3\times 2-5=1$, et non le seul résultat.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Deux modes de définition]
+On considère la suite $(U_n)$ définie pour tout $n\in\mathbb{N}$ par $U_n=n^2-3n+1$, et la suite $(V_n)$ définie par $V_0=2$ et, pour tout $n\in\mathbb{N}$, $V_{n+1}=2V_n-3$.
+\begin{enumerate}
+\item Calculer $U_0$, $U_1$, $U_2$ et $U_{10}$.
+\item Calculer $V_1$, $V_2$ et $V_3$.
+\end{enumerate}
+\tcblower
+\textbf{1.} La suite $(U_n)$ est définie explicitement : on remplace $n$ par sa valeur.
+\begin{align*}
+U_0 &= 0^2-3\times 0+1 = 1 ;\\
+U_1 &= 1^2-3\times 1+1 = 1-3+1 = -1 ;\\
+U_2 &= 2^2-3\times 2+1 = 4-6+1 = -1 ;\\
+U_{10} &= 10^2-3\times 10+1 = 100-30+1 = 71.
+\end{align*}
+\textbf{2.} La suite $(V_n)$ est définie par récurrence : on calcule de proche en proche à partir de $V_0=2$.
+\begin{align*}
+V_1 &= 2V_0-3 = 2\times 2-3 = 1 ;\\
+V_2 &= 2V_1-3 = 2\times 1-3 = -1 ;\\
+V_3 &= 2V_2-3 = 2\times(-1)-3 = -5.
+\end{align*}
+\textbf{Conclusion :} $U_0=1$, $U_1=-1$, $U_2=-1$, $U_{10}=71$ et $V_1=1$, $V_2=-1$, $V_3=-5$.
+\end{exoresolu}
+
+\courssub{Montrer qu'une suite est arithmétique ou géométrique et préciser sa raison}
+
+\begin{methode}[Reconnaître la nature d'une suite]
+Soit $(U_n)$ une suite définie pour tout entier $n\geq n_0$.
+\begin{enumerate}
+\item \textbf{Piste arithmétique} : calculer la différence $U_{n+1}-U_n$. Si l'on obtient une \emph{constante} $r$ (indépendante de $n$), la suite est arithmétique de raison $r$.
+\item \textbf{Piste géométrique} (termes non nuls) : calculer le quotient $\dfrac{U_{n+1}}{U_n}$. Si l'on obtient une \emph{constante} $q$, la suite est géométrique de raison $q$.
+\item \textbf{Justification rigoureuse} : la constante doit être établie \emph{pour tout $n$} (calcul littéral en fonction de $n$), et non constatée sur deux ou trois termes seulement.
+\item \textbf{Conclusion rédigée} : « Pour tout $n\in\mathbb{N}$, $U_{n+1}-U_n=r$, donc $(U_n)$ est arithmétique de raison $r$ et de premier terme $U_0=\ldots$ ».
+\item Pour montrer qu'une suite \emph{n'est pas} arithmétique (resp. géométrique), il suffit d'un contre-exemple : $U_1-U_0\neq U_2-U_1$ (resp. $\dfrac{U_1}{U_0}\neq\dfrac{U_2}{U_1}$).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Nature d'une suite auxiliaire]
+Soit $(U_n)$ la suite définie par $U_0=1$ et, pour tout $n\in\mathbb{N}$, $U_{n+1}=3U_n+4$. On pose, pour tout $n\in\mathbb{N}$, $V_n=U_n+2$.
+\begin{enumerate}
+\item Calculer $V_0$.
+\item Montrer que $(V_n)$ est une suite géométrique dont on précisera la raison.
+\item La suite $(U_n)$ est-elle géométrique ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{1.} $V_0=U_0+2=1+2=3$.
+
+\textbf{2.} Pour tout $n\in\mathbb{N}$, exprimons $V_{n+1}$ en fonction de $V_n$ :
+\begin{align*}
+V_{n+1} &= U_{n+1}+2 = (3U_n+4)+2 = 3U_n+6 = 3(U_n+2) = 3V_n.
+\end{align*}
+Ainsi, pour tout $n\in\mathbb{N}$, $V_{n+1}=3V_n$. De plus, les termes de $(V_n)$ sont non nuls : $V_0=3>0$ et chaque terme s'obtient en multipliant le précédent par $3>0$, donc $V_n>0$ pour tout $n$, et le quotient $\dfrac{V_{n+1}}{V_n}=3$ est bien défini et constant (indépendant de $n$).
+
+\textbf{Conclusion :} $(V_n)$ est une suite géométrique de raison $q=3$ et de premier terme $V_0=3$.
+
+\textbf{3.} Calculons les premiers termes de $(U_n)$ : $U_0=1$, $U_1=3\times 1+4=7$, $U_2=3\times 7+4=25$.
+\[
+\frac{U_1}{U_0}=\frac{7}{1}=7 \qquad\text{et}\qquad \frac{U_2}{U_1}=\frac{25}{7}\neq 7.
+\]
+Les quotients successifs ne sont pas égaux : la suite $(U_n)$ \textbf{n'est pas géométrique}.
+\end{exoresolu}
+
+\courssub{Déterminer la relation entre deux termes quelconques et le terme général}
+
+\begin{methode}[Terme général et relation entre deux termes]
+\textbf{Cas arithmétique} (raison $r$) : pour tous entiers $n$ et $p$ (supérieurs ou égaux au premier indice),
+\[ U_n=U_0+nr \qquad\text{et plus généralement}\qquad U_n=U_p+(n-p)r. \]
+\textbf{Cas géométrique} (raison $q$) : pour tous entiers $n$ et $p$,
+\[ U_n=U_0\times q^{\,n} \qquad\text{et plus généralement}\qquad U_n=U_p\times q^{\,n-p}. \]
+Démarche type :
+\begin{enumerate}
+\item Identifier la nature de la suite, sa raison et un terme connu avec son indice.
+\item Choisir la formule adaptée : $U_0+nr$ si le premier terme est $U_0$ ; $U_p+(n-p)r$ si l'on connaît $U_p$.
+\item Pour trouver la raison à partir de deux termes : $r=\dfrac{U_n-U_p}{n-p}$ (arithmétique) ; $q^{\,n-p}=\dfrac{U_n}{U_p}$ (géométrique).
+\item Pour trouver un \emph{rang} inconnu, résoudre l'équation en $n$ obtenue (équation du premier degré en arithmétique ; avec des puissances en géométrique).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Retrouver raison, terme général et rang]
+Soit $(U_n)$ une suite arithmétique telle que $U_3=7$ et $U_8=27$.
+\begin{enumerate}
+\item Déterminer la raison $r$ et le premier terme $U_0$.
+\item Exprimer $U_n$ en fonction de $n$, puis calculer $U_{20}$.
+\item Déterminer le rang $n$ tel que $U_n=107$.
+\end{enumerate}
+\tcblower
+\textbf{1.} Pour une suite arithmétique, $U_n=U_p+(n-p)r$. Avec $n=8$ et $p=3$ :
+\[ U_8=U_3+(8-3)r \iff 27=7+5r \iff 5r=20 \iff r=4. \]
+Ensuite, $U_3=U_0+3r$ donne $7=U_0+12$, d'où $U_0=-5$.
+
+\textbf{2.} Le terme général est :
+\[ U_n=U_0+nr=-5+4n \qquad\text{pour tout } n\in\mathbb{N}. \]
+Alors $U_{20}=-5+4\times 20=-5+80=75$.
+
+\textbf{3.} On résout $U_n=107$ :
+\[ -5+4n=107 \iff 4n=112 \iff n=28. \]
+\textbf{Conclusion :} $r=4$, $U_0=-5$, $U_n=4n-5$, $U_{20}=75$, et $107$ est le terme de rang $28$.
+\end{exoresolu}
+
+\begin{exoresolu}[Suite géométrique : terme général]
+Soit $(V_n)$ une suite géométrique de raison $q>0$ telle que $V_2=12$ et $V_5=324$.
+\begin{enumerate}
+\item Déterminer la raison $q$.
+\item En déduire $V_0$ et l'expression de $V_n$ en fonction de $n$.
+\end{enumerate}
+\tcblower
+\textbf{1.} Pour une suite géométrique, $V_5=V_2\times q^{\,5-2}=V_2\,q^3$. Donc :
+\[ q^3=\frac{V_5}{V_2}=\frac{324}{12}=27 \iff q=\sqrt[3]{27}=3 \quad(\text{car } q>0). \]
+\textbf{2.} De $V_2=V_0\,q^2$, on tire $12=V_0\times 9$, d'où $V_0=\dfrac{12}{9}=\dfrac{4}{3}$.
+
+Le terme général est donc :
+\[ V_n=V_0\times q^{\,n}=\frac{4}{3}\times 3^{\,n}=4\times 3^{\,n-1} \qquad\text{pour tout } n\in\mathbb{N}. \]
+\textbf{Vérification :} $V_2=4\times 3^{1}=12$ et $V_5=4\times 3^{4}=4\times 81=324$. \textbf{Conclusion :} $q=3$, $V_0=\dfrac{4}{3}$ et $V_n=4\times 3^{\,n-1}$.
+\end{exoresolu}
+
+\courssub{Calculer une somme de termes consécutifs}
+
+\begin{methode}[Sommes arithmétiques et géométriques]
+\textbf{Somme arithmétique} : pour toute suite arithmétique,
+\[ S = (\text{nombre de termes})\times\frac{\text{premier terme}+\text{dernier terme}}{2}. \]
+En particulier : $1+2+\cdots+n=\dfrac{n(n+1)}{2}$.
+
+\textbf{Somme géométrique} : si $q\neq 1$,
+\[ S = (\text{premier terme})\times\frac{1-q^{\,\text{nombre de termes}}}{1-q}. \]
+En particulier : $1+q+q^2+\cdots+q^n=\dfrac{1-q^{\,n+1}}{1-q}$.
+
+Réflexes indispensables :
+\begin{enumerate}
+\item \textbf{Compter les termes} : de l'indice $a$ à l'indice $b$ (inclus), il y a $b-a+1$ termes. De $U_0$ à $U_n$ : $n+1$ termes.
+\item Identifier la nature de la suite avant de choisir la formule.
+\item Si $q=1$ (géométrique), la somme est simplement $(n+1)U_0$ : la formule au quotient ne s'applique pas.
+\item Conclure par une phrase avec l'unité éventuelle (FCFA, tonnes...).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Somme de termes d'une suite arithmétique]
+Soit $(U_n)$ la suite arithmétique de premier terme $U_0=3$ et de raison $r=5$.
+\begin{enumerate}
+\item Calculer $U_{19}$.
+\item Calculer la somme $S=U_0+U_1+\cdots+U_{19}$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $U_{19}=U_0+19r=3+19\times 5=3+95=98$.
+
+\textbf{2.} La somme comporte $19-0+1=20$ termes. La formule de la somme arithmétique donne :
+\begin{align*}
+S &= \text{nombre de termes}\times\frac{\text{premier}+\text{dernier}}{2}\\
+&= 20\times\frac{U_0+U_{19}}{2} = 20\times\frac{3+98}{2} = 20\times\frac{101}{2} = 10\times 101 = 1010.
+\end{align*}
+\textbf{Conclusion :} $U_{19}=98$ et $S=1010$.
+\end{exoresolu}
+
+\begin{exoresolu}[Somme de termes d'une suite géométrique]
+Calculer la somme $T=2+6+18+\cdots+2\times 3^{9}$ (les puissances de $3$ de $3^0$ à $3^9$, multipliées par $2$). On donne $3^{10}=59049$.
+\tcblower
+Les termes $2$, $6$, $18$, \ldots forment une suite géométrique de premier terme $2$ et de raison $q=3$, car $\dfrac{6}{2}=\dfrac{18}{6}=3$.
+
+Le dernier terme est $2\times 3^{9}$ : les exposants vont de $0$ à $9$, il y a donc $9-0+1=10$ termes. Comme $q=3\neq 1$ :
+\begin{align*}
+T &= 2\times\frac{1-3^{10}}{1-3} = 2\times\frac{1-59049}{-2} = 2\times\frac{-59048}{-2} = 59048.
+\end{align*}
+\textbf{Conclusion :} $T=59048$.
+\end{exoresolu}
+
+\courssub{Construire sur un axe des termes consécutifs d'une suite}
+
+\begin{methode}[Représentation des termes sur un axe]
+Pour représenter les termes d'une suite sur l'un des axes d'un repère (programme : « calculs et repérage sur l'un des axes ») :
+\begin{enumerate}
+\item Tracer une droite graduée (axe), choisir une unité adaptée à l'ordre de grandeur des termes.
+\item Calculer les premiers termes $U_0, U_1, U_2, \ldots$ (explicitement ou par récurrence).
+\item Placer sur l'axe les points d'abscisses $U_0, U_1, U_2, \ldots$ en les étiquetant.
+\item Observer : pour une suite \textbf{arithmétique}, les points sont \emph{régulièrement espacés} (écart constant égal à $|r|$) ; pour une suite \textbf{géométrique} de raison $q>1$, les écarts grandissent de plus en plus vite.
+\end{enumerate}
+Cette observation visuelle permet de conjecturer la nature d'une suite, qu'il faudra ensuite démontrer par le calcul.
+\end{methode}
+
+\begin{exoresolu}[Placement sur un axe gradué]
+On considère la suite $(U_n)$ définie par $U_0=1$ et $U_{n+1}=U_n+3$, et la suite $(V_n)$ définie par $V_0=1$ et $V_{n+1}=2V_n$.
+\begin{enumerate}
+\item Calculer les quatre premiers termes de chaque suite.
+\item Placer ces termes sur deux axes gradués et commenter l'espacement des points.
+\end{enumerate}
+\tcblower
+\textbf{1.} Pour $(U_n)$ : $U_0=1$, $U_1=1+3=4$, $U_2=4+3=7$, $U_3=7+3=10$.
+
+Pour $(V_n)$ : $V_0=1$, $V_1=2\times 1=2$, $V_2=2\times 2=4$, $V_3=2\times 4=8$.
+
+\textbf{2.} On place les points sur deux axes gradués :
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.62,>=Stealth]
+% Axe arithmétique
+\draw[->,popdark] (-0.5,0) -- (11.5,0);
+\foreach \x in {0,1,...,11} \draw[popmuted] (\x,0.08) -- (\x,-0.08);
+\foreach \p/\l/\v in {1/{$U_0$}/{1},4/{$U_1$}/{4},7/{$U_2$}/{7},10/{$U_3$}/{10}}{
+  \fill[popblue] (\p,0) circle (0.12);
+  \node[above,popblue] at (\p,0.15) {\l};
+  \node[below,popdark] at (\p,-0.15) {\footnotesize \v};
+}
+\node[left,popdark] at (-0.5,0.5) {\footnotesize Suite arithmétique};
+% Axe géométrique
+\begin{scope}[yshift=-2.4cm]
+\draw[->,popdark] (-0.5,0) -- (11.5,0);
+\foreach \x in {0,1,...,11} \draw[popmuted] (\x,0.08) -- (\x,-0.08);
+\foreach \p/\l/\v in {1/{$V_0$}/{1},2/{$V_1$}/{2},4/{$V_2$}/{4},8/{$V_3$}/{8}}{
+  \fill[poporange] (\p,0) circle (0.12);
+  \node[above,poporange] at (\p,0.15) {\l};
+  \node[below,popdark] at (\p,-0.15) {\footnotesize \v};
+}
+\node[left,popdark] at (-0.5,0.5) {\footnotesize Suite géométrique};
+\end{scope}
+\end{tikzpicture}
+\legende{Termes d'une suite arithmétique (raison $3$) et d'une suite géométrique (raison $2$) sur un axe.}
+\end{popfigure}
+
+\textbf{Commentaire :} les points de $(U_n)$ sont régulièrement espacés de $3$ unités (écart constant : la raison), tandis que ceux de $(V_n)$ s'écartent de plus en plus vite (écarts $1$, $2$, $4$ : ils doublent à chaque étape). \textbf{Conclusion :} l'espacement constant caractérise visuellement les suites arithmétiques.
+\end{exoresolu}
+
+\courssub{Résoudre des problèmes concrets de la vie courante}
+
+\begin{methode}[Modéliser une situation par une suite]
+Face à un problème concret (placement d'argent, remises, épargne, production...) :
+\begin{enumerate}
+\item \textbf{Repérer l'évolution} : si une \emph{quantité constante s'ajoute} à chaque étape, le modèle est arithmétique ($U_{n+1}=U_n+r$) ; si la quantité est \emph{multipliée par un facteur constant} (augmentation de $t\%$ $\Rightarrow$ facteur $1+\dfrac{t}{100}$), le modèle est géométrique ($U_{n+1}=q\,U_n$).
+\item \textbf{Nommer} : définir clairement $U_n$ (avec son unité) et préciser ce que représente l'indice $n$ (années, mois, semaines...), ainsi que le premier terme.
+\item \textbf{Justifier} la nature de la suite à partir de l'énoncé, puis utiliser le terme général ou la formule de somme adaptée.
+\item \textbf{Répondre à la question posée} par une phrase complète, avec l'unité (FCFA, kg...), et vérifier la cohérence du résultat.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Épargne régulière : suite arithmétique]
+Aminatou, élève en classe de Première C à Bafoussam, décide d'épargner pour acheter un ordinateur portable. Elle dépose \SI{10000}{FCFA} en janvier sur son compte MTN Mobile Money, puis augmente son dépôt de \SI{2500}{FCFA} chaque mois suivant. On note $U_n$ le montant déposé le $n$-ième mois (janvier correspond à $n=1$).
+\begin{enumerate}
+\item Donner la nature de la suite $(U_n)$, sa raison et $U_1$.
+\item Quel montant déposera-t-elle en décembre ($n=12$) ?
+\item Quelle somme totale aura-t-elle épargnée au bout de 12 mois ?
+\end{enumerate}
+\tcblower
+\textbf{1.} Chaque mois, le dépôt augmente d'une \emph{quantité constante} de \SI{2500}{FCFA} : pour tout $n\geq 1$, $U_{n+1}=U_n+2500$. La suite $(U_n)$ est donc \textbf{arithmétique} de raison $r=2500$ et de premier terme $U_1=10000$.
+
+\textbf{2.} Attention : la suite commence à $U_1$, donc $U_n=U_1+(n-1)r$. En décembre :
+\[ U_{12}=U_1+(12-1)r=10000+11\times 2500=10000+27500=37500. \]
+Elle déposera \SI{37500}{FCFA} en décembre.
+
+\textbf{3.} La somme des 12 dépôts comporte $12$ termes, de $U_1$ à $U_{12}$ :
+\begin{align*}
+S &= 12\times\frac{U_1+U_{12}}{2} = 12\times\frac{10000+37500}{2} = 12\times\frac{47500}{2} = 12\times 23750 = 285000.
+\end{align*}
+\textbf{Conclusion :} Aminatou aura épargné au total \SI{285000}{FCFA} en un an, de quoi acheter son ordinateur portable.
+\end{exoresolu}
+
+\begin{exoresolu}[Placement à intérêts composés : suite géométrique]
+M. Nkoulou place \SI{500000}{FCFA} dans une microfinance de Yaoundé au taux d'intérêt composé de $5\%$ par an : chaque année, le capital est augmenté de $5\%$. On note $C_n$ le capital (en FCFA) au bout de $n$ années, avec $C_0=500000$.
+\begin{enumerate}
+\item Montrer que $(C_n)$ est une suite géométrique ; préciser sa raison.
+\item Exprimer $C_n$ en fonction de $n$.
+\item Calculer le capital au bout de $10$ ans (on donne $1,05^{10}\approx 1,6289$). Arrondir au FCFA près.
+\end{enumerate}
+\tcblower
+\textbf{1.} Augmenter une quantité de $5\%$ revient à la multiplier par $1+\dfrac{5}{100}=1,05$. Ainsi, pour tout $n\in\mathbb{N}$ :
+\[ C_{n+1}=C_n+0,05\,C_n=1,05\,C_n. \]
+Le quotient $\dfrac{C_{n+1}}{C_n}=1,05$ est constant : $(C_n)$ est une suite \textbf{géométrique} de raison $q=1,05$ et de premier terme $C_0=500000$.
+
+\textbf{2.} Le terme général d'une suite géométrique donne :
+\[ C_n=C_0\times q^{\,n}=500000\times 1,05^{\,n} \qquad\text{pour tout } n\in\mathbb{N}. \]
+
+\textbf{3.} Au bout de $10$ ans :
+\[ C_{10}=500000\times 1,05^{10}\approx 500000\times 1,6289 = 814450. \]
+\textbf{Conclusion :} au bout de $10$ ans, le capital de M. Nkoulou s'élèvera à environ \SI{814450}{FCFA}, soit un gain d'environ \SI{314450}{FCFA} d'intérêts.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Conclure sur la nature d'une suite à partir de deux ou trois termes.} Vérifier que $U_1-U_0=U_2-U_1$ ne prouve rien : il faut établir $U_{n+1}-U_n=r$ (ou $\dfrac{U_{n+1}}{U_n}=q$) \emph{pour tout entier $n$}, par un calcul littéral. En revanche, un seul contre-exemple suffit pour nier.
+\item \textbf{Se tromper dans le nombre de termes d'une somme.} De $U_0$ à $U_n$, il y a $n+1$ termes ; de $U_1$ à $U_n$, il y en a $n$ ; de $U_5$ à $U_{20}$, il y en a $20-5+1=16$. C'est l'erreur la plus fréquente dans les sommes.
+\item \textbf{Confondre les formules du terme général.} Arithmétique : $U_n=U_0+nr$ (on \emph{ajoute}) ; géométrique : $U_n=U_0\times q^{\,n}$ (on \emph{multiplie}). Et si le premier terme est $U_1$, les formules deviennent $U_n=U_1+(n-1)r$ et $U_n=U_1\,q^{\,n-1}$.
+\item \textbf{Appliquer la formule de somme géométrique avec $q=1$.} Le dénominateur $1-q$ serait nul : la formule est interdite. Si $q=1$, tous les termes sont égaux et $S=(n+1)U_0$.
+\item \textbf{Oublier de traduire le pourcentage en coefficient multiplicateur.} Une hausse de $5\%$ correspond à $q=1,05$ (et non $q=5$ ni $q=0,05$) ; une remise de $10\%$ correspond à $q=0,90$. Toujours écrire $q=1+\dfrac{t}{100}$ ou $q=1-\dfrac{t}{100}$ explicitement.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : à chaud]
+Pour chaque question, une seule réponse est exacte. Entoure-la et justifie brièvement ton choix.
+\begin{enumerate}
+\item La suite $(u_n)$ est définie par $u_n = 2n+1$ pour tout $n \in \mathbb{N}$. Alors $u_5$ vaut :
+\begin{enumerate}
+\item[a)] $10$ \hspace{1cm} b) $11$ \hspace{1cm} c) $12$
+\end{enumerate}
+\item La suite $(u_n)$ est arithmétique de premier terme $u_0 = 4$ et de raison $r = -3$. Alors $u_2$ vaut :
+\begin{enumerate}
+\item[a)] $-2$ \hspace{1cm} b) $1$ \hspace{1cm} c) $-36$
+\end{enumerate}
+\item La suite $(v_n)$ est géométrique de premier terme $v_0 = 5$ et de raison $q = 2$. Alors $v_3$ vaut :
+\begin{enumerate}
+\item[a)] $11$ \hspace{1cm} b) $30$ \hspace{1cm} c) $40$
+\end{enumerate}
+\item La somme $1+2+3+\cdots+100$ vaut :
+\begin{enumerate}
+\item[a)] $5\,000$ \hspace{1cm} b) $5\,050$ \hspace{1cm} c) $10\,100$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux]
+Réponds par VRAI ou FAUX en justifiant chaque réponse par un calcul ou un contre-exemple.
+\begin{enumerate}
+\item Toute suite définie par $u_n = an+b$ (avec $a$ et $b$ réels) est une suite arithmétique.
+\item La suite définie par $u_0 = 2$ et $u_{n+1} = 3u_n - 4$ est une suite géométrique.
+\item Si $(u_n)$ est géométrique de raison $q$, alors pour tous entiers $n$ et $p$ : $u_n = u_p \times q^{\,n-p}$.
+\item La somme des $n$ premiers termes d'une suite géométrique de raison $q$ est toujours $\dfrac{1-q^n}{1-q}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et complétions]
+\begin{enumerate}
+\item Complète : une suite $(u_n)$ est dite \cle{arithmétique} de raison $r$ si, pour tout entier naturel $n$, on a : \ldots\ldots\ldots
+\item Complète : une suite $(u_n)$ est dite \cle{géométrique} de raison $q$ si, pour tout entier naturel $n$, on a : \ldots\ldots\ldots
+\item Donne la formule explicite du terme général $u_n$ d'une suite arithmétique de premier terme $u_0$ et de raison $r$, puis celle d'une suite géométrique de premier terme $u_0$ et de raison $q$.
+\item Écris la formule donnant la somme $S = u_0 + u_1 + \cdots + u_n$ lorsque $(u_n)$ est arithmétique, en fonction du nombre de termes, du premier et du dernier terme.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+\begin{enumerate}
+\item Soit $(u_n)$ la suite définie par $u_n = n^2 - 3n + 1$ pour tout $n \in \mathbb{N}$. Calculer $u_0$, $u_1$, $u_2$ et $u_{10}$.
+\item Soit $(v_n)$ la suite définie par $v_0 = 2$ et $v_{n+1} = 3v_n - 4$ pour tout $n \in \mathbb{N}$. Calculer $v_1$, $v_2$ et $v_3$. La suite $(v_n)$ est-elle arithmétique ? géométrique ? Justifier.
+\item Une suite arithmétique $(w_n)$ vérifie $w_0 = 7$ et $r = 4$. Calculer $w_1$, $w_5$ et $w_{20}$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Une suite explicite arithmétique]
+On considère la suite $(u_n)$ définie sur $\mathbb{N}$ par $u_n = 5n - 3$.
+\begin{enumerate}
+\item Calculer $u_0$, $u_1$ et $u_2$.
+\item Démontrer que $(u_n)$ est une suite arithmétique dont on précisera la raison et le premier terme.
+\item Déterminer l'entier $n$ tel que $u_n = 147$.
+\item Calculer la somme $S = u_0 + u_1 + \cdots + u_{30}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Suite arithmétique définie par deux termes]
+Une suite arithmétique $(u_n)$ vérifie $u_2 = 5$ et $u_7 = 25$.
+\begin{enumerate}
+\item Déterminer la raison $r$ de cette suite.
+\item En déduire son premier terme $u_0$.
+\item Donner l'expression de $u_n$ en fonction de $n$.
+\item Calculer la somme $S = u_0 + u_1 + \cdots + u_{20}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Suite géométrique définie par deux termes]
+Une suite géométrique $(u_n)$, de raison \emph{positive}, vérifie $u_1 = 6$ et $u_3 = 24$.
+\begin{enumerate}
+\item Déterminer la raison $q$ de cette suite.
+\item En déduire le premier terme $u_0$.
+\item Donner l'expression du terme général $u_n$ en fonction de $n$.
+\item Calculer la somme $S$ des 8 premiers termes de la suite (de $u_0$ à $u_7$).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Reconnaître la nature d'une suite]
+Pour chacune des suites suivantes, déterminer si elle est arithmétique, géométrique, ou ni l'une ni l'autre. Justifier soigneusement chaque réponse et préciser, le cas échéant, la raison et le premier terme.
+\begin{enumerate}
+\item $u_n = 7 - 2n$ pour tout $n \in \mathbb{N}$.
+\item $v_n = 3 \times 2^{n}$ pour tout $n \in \mathbb{N}$.
+\item $w_n = n^2 + 1$ pour tout $n \in \mathbb{N}$.
+\item $t_0 = 5$ et $t_{n+1} = \dfrac{t_n}{2}$ pour tout $n \in \mathbb{N}$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Le planteur de cacao de la région du Centre]
+Un planteur de cacao de la localité d'Obala produit $2$ tonnes de cacao la première année (année $0$). Grâce à l'encadrement du SODECAO et à l'extension de sa plantation, sa production augmente de $15\,\%$ chaque année. On note $P_n$ la production (en tonnes) l'année $n$.
+\begin{enumerate}
+\item Calculer $P_1$ et $P_2$ (on donnera les valeurs exactes).
+\item Justifier que $(P_n)$ est une suite géométrique dont on précisera la raison et le premier terme.
+\item Exprimer $P_n$ en fonction de $n$.
+\item Calculer la production prévisible l'année $5$. On donnera la valeur arrondie au kilogramme près (on rappelle que $1$ tonne $= 1\,000$ kg).
+\item Calculer la production totale cumulée du planteur sur les 6 premières années (de l'année $0$ à l'année $5$). Arrondir le résultat au kilogramme près.
+\item Le planteur souhaite savoir à partir de quelle année sa production annuelle dépassera $4$ tonnes. Déterminer, par des calculs successifs, le plus petit entier $n$ tel que $P_n > 4$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Remises successives chez un commerçant de Douala]
+Pendant les fêtes de fin d'année, un commerçant du marché Mboppi à Douala accorde sur un article affiché à $\num{40000}$ FCFA une première remise de $20\,\%$, puis, sur le prix déjà réduit, une seconde remise de $10\,\%$.
+\begin{enumerate}
+\item On note $P_0 = \num{40000}$ le prix initial et $P_1$ le prix après la première remise.
+\begin{enumerate}
+\item Calculer $P_1$.
+\item Par quel nombre $k$ faut-il multiplier un prix pour lui appliquer une remise de $20\,\%$ ?
+\end{enumerate}
+\item On note $P_2$ le prix après la seconde remise. Calculer $P_2$.
+\item Justifier que la suite $(P_0, P_1, P_2)$ est une suite géométrique dont on donnera la raison $q$.
+\item Le commerçant affirme : « Deux remises successives de $20\,\%$ et $10\,\%$ équivalent à une remise unique de $30\,\%$. »
+\begin{enumerate}
+\item Calculer le prix de l'article après une remise unique de $30\,\%$.
+\item Calculer le taux de remise unique $t$ (en pourcentage) équivalent aux deux remises successives.
+\item L'affirmation du commerçant est-elle exacte ? Justifier.
+\end{enumerate}
+\item Un client très habile négocie une troisième remise de $5\,\%$ sur le prix $P_2$. Calculer le prix final $P_3$ payé par ce client.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Partage proportionnel et épargne à Yaoundé]
+\textbf{Partie A : le partage.}
+
+À la suite de la vente d'un terrain familial à Odza, trois frères — Alain, Bertin et Cédric, du plus jeune au plus âgé — se partagent $\num{465000}$ FCFA. Ils décident que les parts seront en progression arithmétique : Bertin reçoit $\num{30000}$ FCFA de plus qu'Alain, et Cédric reçoit $\num{30000}$ FCFA de plus que Bertin. On note $a$ la part d'Alain.
+\begin{enumerate}
+\item Exprimer en fonction de $a$ les parts de Bertin et de Cédric.
+\item Justifier que les trois parts forment une suite arithmétique dont on précisera la raison.
+\item Montrer que $a = \num{125000}$ et déterminer la part de chacun des trois frères.
+\end{enumerate}
+
+\textbf{Partie B : l'épargne d'Alain.}
+
+Alain place sa part dans un compte épargne qui lui rapporte $4\,\%$ d'intérêts par an, les intérêts étant chaque année ajoutés au capital (intérêts composés). On note $C_n$ le capital disponible (en FCFA) au bout de $n$ années, avec $C_0 = \num{125000}$.
+\begin{enumerate}
+\item Calculer $C_1$ et $C_2$.
+\item Montrer que $(C_n)$ est une suite géométrique dont on précisera la raison.
+\item Exprimer $C_n$ en fonction de $n$.
+\item Alain souhaite acheter une moto coûtant $\num{150000}$ FCFA. Déterminer, par des calculs successifs, le nombre minimal d'années de placement nécessaires pour que son capital dépasse cette somme.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Exercices résolus et applications aux problèmes concrets}
+
+\begin{corrige}[Exercice 1 — QCM : à chaud]
+\begin{enumerate}
+\item La suite est définie par $u_n = 2n+1$. Pour $n=5$ : $u_5 = 2\times5+1 = 11$. La réponse exacte est \textbf{b)} $11$.
+\item Suite arithmétique : $u_0 = 4$, raison $r = -3$. $u_2 = u_0 + 2r = 4 + 2\times(-3) = -2$. La réponse exacte est \textbf{a)} $-2$.
+\item Suite géométrique : $v_0 = 5$, raison $q = 2$. $v_3 = v_0 \times q^3 = 5 \times 2^3 = 5 \times 8 = 40$. La réponse exacte est \textbf{c)} $40$.
+\item Somme des 100 premiers entiers naturels non nuls : $S = \frac{100\times101}{2} = 5050$. La réponse exacte est \textbf{b)} $5\,050$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux]
+\begin{enumerate}
+\item \textbf{VRAI.} Une suite définie par $u_n = an+b$ vérifie $u_{n+1}-u_n = a$ (constant), donc elle est arithmétique de raison $a$.
+\item \textbf{VRAI.} Calculons les termes : $u_0=2$, $u_1=3\times2-4=2$, $u_2=3\times2-4=2$, … La suite est constante, égale à $2$. Une suite constante est géométrique de raison $q=1$ (puisque $u_{n+1}=1\times u_n$ pour tout $n$).
+\item \textbf{VRAI.} Par définition, $u_n = u_0 q^n$ et $u_p = u_0 q^p$, donc $u_n = u_p \times q^{n-p}$ pour tous entiers $n,p$ (avec $n\ge p$ si on reste dans $\mathbb{N}$, mais la formule reste valide en étendant aux indices négatifs si la suite est définie sur $\mathbb{Z}$).
+\item \textbf{FAUX.} La somme des $n$ premiers termes (de $u_0$ à $u_{n-1}$) d'une suite géométrique de premier terme $u_0$ et de raison $q\neq1$ est $S_n = u_0\,\dfrac{1-q^n}{1-q}$. La formule $\dfrac{1-q^n}{1-q}$ ne vaut que si $u_0=1$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions et complétions]
+\begin{enumerate}
+\item Une suite $(u_n)$ est dite \cle{arithmétique} de raison $r$ si, pour tout entier naturel $n$, on a : $u_{n+1} = u_n + r$ (équivalent : $u_n = u_0 + nr$).
+\item Une suite $(u_n)$ est dite \cle{géométrique} de raison $q$ si, pour tout entier naturel $n$, on a : $u_{n+1} = q\,u_n$ (équivalent : $u_n = u_0 q^n$).
+\item \begin{itemize}
+      \item Suite arithmétique : $u_n = u_0 + n r$.
+      \item Suite géométrique : $u_n = u_0 q^n$.
+    \end{itemize}
+\item Pour une suite arithmétique, la somme des termes de $u_0$ à $u_n$ (soit $n+1$ termes) est :
+  \[
+  S = u_0 + u_1 + \cdots + u_n = (n+1)\,\frac{u_0+u_n}{2}.
+  \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item $u_n = n^2 - 3n + 1$.
+  \begin{align*}
+    u_0 &= 0^2 - 0 + 1 = 1,\\
+    u_1 &= 1^2 - 3 + 1 = -1,\\
+    u_2 &= 2^2 - 6 + 1 = -1,\\
+    u_{10} &= 10^2 - 30 + 1 = 71.
+  \end{align*}
+\item $v_0 = 2$, $v_{n+1} = 3v_n - 4$.
+  \begin{align*}
+    v_1 &= 3\times2 - 4 = 2,\\
+    v_2 &= 3\times2 - 4 = 2,\\
+    v_3 &= 3\times2 - 4 = 2.
+  \end{align*}
+  La suite est constante ($v_n=2$ pour tout $n$). Elle est donc \cle{arithmétique} de raison $r=0$ (car $v_{n+1}-v_n=0$) et \cle{géométrique} de raison $q=1$ (car $v_{n+1}=1\times v_n$).
+\item Suite arithmétique : $w_0 = 7$, $r = 4$.
+  \begin{align*}
+    w_1 &= 7 + 4 = 11,\\
+    w_5 &= 7 + 5\times4 = 27,\\
+    w_{20} &= 7 + 20\times4 = 87.
+  \end{align*}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Une suite explicite arithmétique]
+\begin{enumerate}
+\item $u_n = 5n-3$ :
+  $u_0 = -3$, $u_1 = 2$, $u_2 = 7$.
+\item $u_{n+1}-u_n = [5(n+1)-3] - [5n-3] = 5$. La différence est constante, donc $(u_n)$ est \cle{arithmétique} de raison $r=5$. Son premier terme est $u_0 = -3$.
+\item $u_n = 147 \;\Leftrightarrow\; 5n-3 = 147 \;\Leftrightarrow\; 5n = 150 \;\Leftrightarrow\; n = 30$.
+\item Somme de $u_0$ à $u_{30}$ (31 termes) :
+  \[
+  S = 31 \times \frac{u_0+u_{30}}{2} = 31 \times \frac{-3+147}{2} = 31 \times \frac{144}{2} = 31 \times 72 = 2232.
+  \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Suite arithmétique définie par deux termes]
+\begin{enumerate}
+\item $u_7 = u_2 + 5r \;\Rightarrow\; 25 = 5 + 5r \;\Rightarrow\; 5r = 20 \;\Rightarrow\; r = 4$.
+\item $u_2 = u_0 + 2r \;\Rightarrow\; 5 = u_0 + 8 \;\Rightarrow\; u_0 = -3$.
+\item $u_n = u_0 + nr = -3 + 4n$.
+\item Somme de $u_0$ à $u_{20}$ (21 termes) : $u_{20} = -3 + 80 = 77$.
+  \[
+  S = 21 \times \frac{u_0+u_{20}}{2} = 21 \times \frac{-3+77}{2} = 21 \times \frac{74}{2} = 21 \times 37 = 777.
+  \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Suite géométrique définie par deux termes]
+\begin{enumerate}
+\item $u_3 = u_1 \times q^2 \;\Rightarrow\; 24 = 6 q^2 \;\Rightarrow\; q^2 = 4 \;\Rightarrow\; q = 2$ (raison positive).
+\item $u_1 = u_0 \times q \;\Rightarrow\; 6 = u_0 \times 2 \;\Rightarrow\; u_0 = 3$.
+\item $u_n = u_0 q^n = 3 \times 2^n$.
+\item Somme des 8 premiers termes (de $u_0$ à $u_7$) :
+  \[
+  S = u_0\,\frac{1-q^8}{1-q} = 3 \times \frac{1-2^8}{1-2} = 3 \times \frac{1-256}{-1} = 3 \times 255 = 765.
+  \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Reconnaître la nature d'une suite]
+\begin{enumerate}
+\item $u_n = 7-2n$. $u_{n+1}-u_n = [7-2(n+1)] - [7-2n] = -2$ (constant). \cle{Arithmétique} de raison $r=-2$, premier terme $u_0=7$.
+\item $v_n = 3 \times 2^n$. $\dfrac{v_{n+1}}{v_n} = \dfrac{3\times2^{n+1}}{3\times2^n} = 2$ (constant). \cle{Géométrique} de raison $q=2$, premier terme $v_0=3$.
+\item $w_n = n^2+1$. $w_{n+1}-w_n = (n+1)^2+1 - (n^2+1) = 2n+1$ (non constant). $\dfrac{w_{n+1}}{w_n} = \dfrac{(n+1)^2+1}{n^2+1}$ (non constant). \textbf{Ni arithmétique ni géométrique}.
+\item $t_0=5$, $t_{n+1} = \dfrac{t_n}{2}$. $\dfrac{t_{n+1}}{t_n} = \dfrac{1}{2}$ (constant). \cle{Géométrique} de raison $q=\frac12$, premier terme $t_0=5$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Le planteur de cacao de la région du Centre]
+\begin{enumerate}
+\item $P_0 = 2$ tonnes. Augmentation de $15\%$ chaque année $\Rightarrow$ multiplicateur $1,15$.
+  $P_1 = 2 \times 1,15 = 2,3$ tonnes.
+  $P_2 = 2,3 \times 1,15 = 2,645$ tonnes.
+\item $P_{n+1} = 1,15\,P_n$ pour tout $n$, donc $(P_n)$ est \cle{géométrique} de raison $q = 1,15$ et de premier terme $P_0 = 2$.
+\item $P_n = P_0 \times q^n = 2 \times 1,15^n$.
+\item $P_5 = 2 \times 1,15^5$. $1,15^5 = 2,0113571875$, donc $P_5 = 4,022714375$ tonnes.
+  En kilogrammes : $4,022714375 \times 1000 = 4022,714375 \approx \textbf{4023 kg}$ (arrondi au kg près).
+\item Production cumulée sur 6 ans (années $0$ à $5$) : somme des 6 premiers termes.
+  \[
+  S = P_0\,\frac{1-q^6}{1-q} = 2 \times \frac{1-1,15^6}{1-1,15}.
+  \]
+  $1,15^6 = 1,15^5 \times 1,15 = 2,0113571875 \times 1,15 = 2,313060765625$.
+  $S = 2 \times \frac{1-2,313060765625}{-0,15} = 2 \times \frac{-1,313060765625}{-0,15} = 2 \times 8,7537384375 = 17,507476875$ tonnes.
+  En kg : $17507,476875 \approx \textbf{17507 kg}$ (arrondi au kg près).
+\item On cherche le plus petit $n$ tel que $P_n > 4$ tonnes.
+  $2 \times 1,15^n > 4 \;\Leftrightarrow\; 1,15^n > 2$.
+  Par essais successifs :
+  $n=4 : 1,15^4 = 1,74900625 < 2$,
+  $n=5 : 1,15^5 = 2,0113571875 > 2$.
+  Donc le plus petit entier est $n = \textbf{5}$ (l'année 5).
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 20) :}
+\begin{itemize}
+\item Q1 : 2 pts (calculs exacts)
+\item Q2 : 3 pts (justification + raison + premier terme)
+\item Q3 : 2 pts (expression correcte)
+\item Q4 : 4 pts (calcul $P_5$, conversion en kg, arrondi)
+\item Q5 : 5 pts (formule de somme, calcul $1,15^6$, conversion, arrondi)
+\item Q6 : 4 pts (inéquation, essais, conclusion)
+\end{itemize}
+
+\textbf{Points de vigilance :}
+\begin{itemize}
+\item Ne pas confondre « année $n$ » et « $n$ années après l'année 0 » : $P_0$ correspond à l'année 0.
+\item Pour la somme, vérifier le nombre de termes : de l'année 0 à l'année 5 inclus, il y a 6 termes ($n=0$ à $5$).
+\item L'arrondi au kilogramme près doit être explicite.
+\item Pour Q6, la méthode par essais successifs est attendue (pas de logarithmes en Première).
+\end{itemize}
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Remises successives chez un commerçant de Douala]
+\begin{enumerate}
+\item \begin{enumerate}
+      \item Remise de $20\%$ : multiplicateur $k = 1 - 0,20 = 0,80$.
+        $P_1 = 40000 \times 0,80 = \textbf{32\,000}$ FCFA.
+      \item Le nombre $k$ est $0,80$ (ou $80\%$).
+    \end{enumerate}
+\item Seconde remise de $10\%$ sur $P_1$ : multiplicateur $0,90$.
+  $P_2 = 32\,000 \times 0,90 = \textbf{28\,800}$ FCFA.
+\item La suite $(P_0, P_1, P_2)$ a pour termes $40\,000 ; 32\,000 ; 28\,800$.
+  Les rapports successifs sont :
+  $\dfrac{P_1}{P_0} = \dfrac{32\,000}{40\,000} = 0,8$,
+  $\dfrac{P_2}{P_1} = \dfrac{28\,800}{32\,000} = 0,9$.
+  Ces rapports ne sont \textbf{pas égaux}, donc la suite \textbf{n'est pas \cle{géométrique}}.
+  (Si les deux remises avaient été identiques, la suite aurait été géométrique.)
+\item \begin{enumerate}
+      \item Remise unique de $30\%$ : multiplicateur $0,70$.
+        Prix = $40\,000 \times 0,70 = \textbf{28\,000}$ FCFA.
+      \item Taux de remise unique équivalent : on cherche $t$ tel que $40\,000 \times (1-t) = 28\,800$.
+        $1-t = \dfrac{28\,800}{40\,000} = 0,72 \;\Rightarrow\; t = 0,28 = \textbf{28\%}$.
+      \item L'affirmation du commerçant est \textbf{fausse} : deux remises successives de $20\%$ et $10\%$ équivalent à une remise unique de $28\%$, et non $30\%$. Le prix après $30\%$ de remise (28\,000 FCFA) est inférieur au prix réel (28\,800 FCFA).
+    \end{enumerate}
+\item Troisième remise de $5\%$ sur $P_2$ : multiplicateur $0,95$.
+  $P_3 = 28\,800 \times 0,95 = \textbf{27\,360}$ FCFA.
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 20) :}
+\begin{itemize}
+\item Q1 : 3 pts (calcul $P_1$, identification $k$)
+\item Q2 : 2 pts (calcul $P_2$)
+\item Q3 : 4 pts (calcul des rapports, conclusion correcte avec justification)
+\item Q4 : 7 pts (prix remise 30\%, taux équivalent, conclusion justifiée)
+\item Q5 : 4 pts (calcul $P_3$)
+\end{itemize}
+
+\textbf{Points de vigilance :}
+\begin{itemize}
+\item Une remise de $x\%$ correspond à une multiplication par $1-\frac{x}{100}$.
+\item Deux remises successives ne s'additionnent pas : le taux global n'est pas la somme des taux.
+\item Vérifier que la suite n'est pas géométrique lorsque les pourcentages diffèrent ; ne pas forcer une raison unique.
+\item Arrondis : les prix sont en FCFA, pas de décimales.
+\end{itemize}
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Partage proportionnel et épargne à Yaoundé]
+\textbf{Partie A : le partage.}
+\begin{enumerate}
+\item Soit $a$ la part d'Alain (le plus jeune).
+  Bertin reçoit $30\,000$ de plus : $a + 30\,000$.
+  Cédric reçoit $30\,000$ de plus que Bertin : $a + 60\,000$.
+\item Les trois parts sont $a,\; a+30\,000,\; a+60\,000$. Les différences successives sont constantes ($30\,000$), donc elles forment une \cle{suite arithmétique} de raison $r = 30\,000$.
+\item Somme des parts = $465\,000$ :
+  $a + (a+30\,000) + (a+60\,000) = 3a + 90\,000 = 465\,000$
+  $\Rightarrow 3a = 375\,000 \Rightarrow a = 125\,000$.
+  Parts :
+  Alain : \textbf{125\,000} FCFA,
+  Bertin : \textbf{155\,000} FCFA,
+  Cédric : \textbf{185\,000} FCFA.
+\end{enumerate}
+
+\textbf{Partie B : l'épargne d'Alain.}
+\begin{enumerate}
+\item $C_0 = 125\,000$. Taux $4\%$ $\Rightarrow$ multiplicateur $1,04$.
+  $C_1 = 125\,000 \times 1,04 = \textbf{130\,000}$ FCFA.
+  $C_2 = 130\,000 \times 1,04 = \textbf{135\,200}$ FCFA.
+\item $C_{n+1} = 1,04\,C_n$ pour tout $n$, donc $(C_n)$ est \cle{géométrique} de raison $q = 1,04$ et de premier terme $C_0 = 125\,000$.
+\item $C_n = C_0 \times q^n = 125\,000 \times 1,04^n$.
+\item On cherche le plus petit $n$ tel que $C_n > 150\,000$.
+  $125\,000 \times 1,04^n > 150\,000 \;\Leftrightarrow\; 1,04^n > 1,2$.
+  Essais successifs :
+  $n=4 : 1,04^4 = 1,16985856 < 1,2$,
+  $n=5 : 1,04^5 = 1,2166529024 > 1,2$.
+  Il faut \textbf{5 ans} minimum.
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 20) :}
+\begin{itemize}
+\item Partie A :
+  \begin{itemize}
+  \item Q1 : 2 pts (expressions correctes)
+  \item Q2 : 3 pts (identification suite arithmétique, raison)
+  \item Q3 : 5 pts (équation, résolution, parts)
+  \end{itemize}
+\item Partie B :
+  \begin{itemize}
+  \item Q1 : 2 pts (calculs $C_1$, $C_2$)
+  \item Q2 : 3 pts (justification géométrique, raison, premier terme)
+  \item Q3 : 2 pts (expression $C_n$)
+  \item Q4 : 3 pts (inéquation, essais, conclusion)
+  \end{itemize}
+\end{itemize}
+
+\textbf{Points de vigilance :}
+\begin{itemize}
+\item Dans le partage, vérifier que l'ordre « Alain, Bertin, Cédric » correspond bien à une progression arithmétique croissante (le plus jeune reçoit le moins).
+\item Pour les intérêts composés, la suite des capitaux est géométrique de raison $1+\frac{t}{100}$.
+\item La recherche du nombre d'années se fait par essais successifs (pas de logarithmes en Première).
+\item Vérifier que $C_0$ correspond à l'année 0 (capital initial), donc après $n$ années on a $C_n$.
+\end{itemize}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+  root concept/.append style={concept color=popdark, font=\large\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=60},
+  level 2/.append style={level distance=2.2cm, sibling angle=45, font=\scriptsize},
+  concept connection/.append style={color=popmuted}]
+\node[root concept]{Suites numériques}
+  child[concept color=popblue]{ node {Généralités}
+    child[concept color=popblue!70]{ node {$u_n=f(n)$} }
+    child[concept color=popblue!70]{ node {$u_{n+1}=f(u_n)$} }
+  }
+  child[concept color=poporange]{ node {Arithmétiques}
+    child[concept color=poporange!70]{ node {$u_{n+1}=u_n+r$} }
+    child[concept color=poporange!70]{ node {$u_n=u_p+(n-p)r$} }
+  }
+  child[concept color=popgreen]{ node {Géométriques}
+    child[concept color=popgreen!70]{ node {$u_{n+1}=q\,u_n$} }
+    child[concept color=popgreen!70]{ node {$u_n=u_p\,q^{\,n-p}$} }
+  }
+  child[concept color=poppurple]{ node {Sommes}
+    child[concept color=poppurple!70]{ node {Arith. : $\frac{n(u_1+u_n)}{2}$} }
+    child[concept color=poppurple!70]{ node {Géom. : $u_1\frac{1-q^n}{1-q}$} }
+  }
+  child[concept color=poppink]{ node {Reconnaître}
+    child[concept color=poppink!70]{ node {$u_{n+1}-u_n$ constant ?} }
+    child[concept color=poppink!70]{ node {$\frac{u_{n+1}}{u_n}$ constant ?} }
+  }
+  child[concept color=popgold]{ node {Vie courante}
+    child[concept color=popgold!70]{ node {Placements, intérêts} }
+    child[concept color=popgold!70]{ node {Remises, partages} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : les six compétences clés autour des suites numériques.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+  \item Une \cle{suite numérique} est une fonction $u:\mathbb{N}\to\mathbb{R}$ (ou définie à partir d'un rang $n_0$). On note $u_n$ ou $u(n)$ le \cle{terme} de rang $n$.
+  \item Suite définie \cle{explicitement} : $u_n=f(n)$ ; on calcule chaque terme directement.
+  \item Suite définie par \cle{récurrence} : $u_{n+1}=f(u_n)$ avec un premier terme donné ; on calcule les termes de proche en proche.
+  \item Suite \cle{arithmétique} de raison $r$ : $u_{n+1}=u_n+r$ (on ajoute toujours le même nombre).
+  \item Suite \cle{géométrique} de raison $q$ : $u_{n+1}=q\times u_n$ (on multiplie toujours par le même nombre).
+\end{itemize}
+
+\textbf{Formules à connaître par cœur}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} & \textbf{Suite arithmétique (raison $r$)} & \textbf{Suite géométrique (raison $q$)} \\
+\hline
+Récurrence & $u_{n+1}=u_n+r$ & $u_{n+1}=q\,u_n$ \\
+\hline
+Terme général & $u_n=u_0+nr$ \; ou \; $u_n=u_1+(n-1)r$ & $u_n=u_0\,q^{n}$ \; ou \; $u_n=u_1\,q^{\,n-1}$ \\
+\hline
+Deux termes quelconques & $u_n=u_p+(n-p)r$ & $u_n=u_p\,q^{\,n-p}$ \\
+\hline
+Somme de termes consécutifs & $S=\dfrac{\text{nombre de termes}\times(\text{premier}+\text{dernier})}{2}$ & $S=\text{premier terme}\times\dfrac{1-q^{\text{nombre de termes}}}{1-q}$ \; ($q\neq 1$) \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthodes express}
+\begin{itemize}
+  \item \cle{Montrer qu'une suite est arithmétique} : calculer $u_{n+1}-u_n$ ; si le résultat est une constante $r$, c'est gagné.
+  \item \cle{Montrer qu'une suite est géométrique} : calculer $\dfrac{u_{n+1}}{u_n}$ (termes non nuls) ; si le résultat est une constante $q$, c'est gagné.
+  \item \cle{Compter les termes} d'une somme de $u_p$ à $u_n$ : il y en a $n-p+1$ (piège classique !).
+  \item \cle{Représentation graphique} : une suite arithmétique donne des points alignés ; une suite géométrique donne des points sur une courbe exponentielle.
+  \item \cle{Problèmes concrets} : hausse ou baisse d'un \emph{montant fixe} $\Rightarrow$ arithmétique ; hausse ou baisse en \emph{pourcentage} $\Rightarrow$ géométrique (augmenter de $t\,\%$ : $q=1+\frac{t}{100}$ ; diminuer de $t\,\%$ : $q=1-\frac{t}{100}$).
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais calculer les premiers termes d'une suite définie par $u_n=f(n)$.
+  \item[$\square$] Je sais calculer les premiers termes d'une suite définie par récurrence $u_{n+1}=f(u_n)$.
+  \item[$\square$] Je sais placer des termes consécutifs sur un axe gradué.
+  \item[$\square$] Je sais prouver qu'une suite est arithmétique en calculant $u_{n+1}-u_n$.
+  \item[$\square$] Je sais prouver qu'une suite est géométrique en calculant $\dfrac{u_{n+1}}{u_n}$.
+  \item[$\square$] Je connais par cœur $u_n=u_p+(n-p)r$ et $u_n=u_p\,q^{\,n-p}$.
+  \item[$\square$] Je sais déterminer la raison et le premier terme à partir de deux termes connus.
+  \item[$\square$] Je sais calculer la somme de termes consécutifs d'une suite arithmétique.
+  \item[$\square$] Je sais calculer la somme de termes consécutifs d'une suite géométrique ($q\neq 1$).
+  \item[$\square$] Je compte correctement le nombre de termes : de $u_p$ à $u_n$, il y a $n-p+1$ termes.
+  \item[$\square$] Je traduis une augmentation de $t\,\%$ par la multiplication par $1+\frac{t}{100}$.
+  \item[$\square$] Je sais modéliser un placement d'argent, une remise ou un partage proportionnel par une suite.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
