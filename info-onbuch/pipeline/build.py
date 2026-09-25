@@ -35,15 +35,22 @@ SERIES_NOMS = {"A": "Tle A", "C": "Tle C", "D": "Tle D", "E": "Tle E", "TI": "Tl
 
 
 def esc(s):
-    """Échappe un texte brut issu du plan (hors segments $...$)."""
-    parts = re.split(r"(\$[^$]*\$)", s)
+    """Échappe un texte brut issu du plan (hors segments $...$).
+    Un nombre impair de $ (ex. variable PHP $_GET citée en prose, sans
+    intention mathématique) ne peut former de paire équilibrée : on
+    échappe alors tous les $ comme du texte brut plutôt que de laisser
+    un mode mathématique non refermé se propager dans tout le document."""
+    if s.count("$") % 2 == 1:
+        parts = [s]
+    else:
+        parts = re.split(r"(\$[^$]*\$)", s)
     out = []
     for i, p in enumerate(parts):
         if i % 2:
             out.append(p)
         else:
             p = p.replace("\\", "\\textbackslash{}")
-            for c in "%&#_":
+            for c in "%&#_$":
                 p = p.replace(c, "\\" + c)
             p = p.replace("^", "\\^{}").replace("~", "\\~{}")
             out.append(p)
