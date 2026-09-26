@@ -1,0 +1,2533 @@
+% Systèmes d'information : concepts de base — Informatique 1ère C — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N05-systemes-information-concepts.tex
+\newcommand{\DOCMATIERE}{Informatique}
+\newcommand{\DOCNIVEAU}{1ère C}
+\newcommand{\DOCMODULE}{Module 1 : Environnement numérique, sécurité, multimédia et gestion des données}
+\newcommand{\DOCLECON}{N05}
+\newcommand{\DOCTITRE}{Systèmes d'information : concepts de base}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,shapes.symbols,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\bit{bit}
+\DeclareSIUnit\byte{o} % octet
+\DeclareSIUnit\inch{po} % pouce
+\DeclareSIUnit\ppp{ppp} % points par pouce (résolution d'image)
+\usepackage{qrcode}
+% Blocs de code source (PHP, C, HTML, JavaScript, SQL) — spécifique à la
+% matière Informatique : listings + habillage aux couleurs OnBuch+ (voir le
+% style \lstset ci-dessous, à côté des autres boîtes pédagogiques).
+\usepackage{listings}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Bloc de code source — \begin{lstlisting}[language=Php]...\end{lstlisting}
+% (ou language=C, HTML, JavaScript, SQL ; option omise = pseudo-code brut).
+% Même recette visuelle que les figures (\popfigure) : cadre encre épais,
+% fond clair (popcream), légende possible juste après via \legende{...}
+% comme pour une figure (listings ne sait pas arrondir ses coins : on garde
+% un cadre rectangulaire, cohérent avec les autres tableaux du document).
+% CONTRAT : les modèles ne doivent utiliser QUE \begin{lstlisting}[...] tel
+% quel (pas de \begin{tcblisting}, pas de \verb pour un bloc multi-lignes).
+% ============================================================
+\lstdefinestyle{poplst}{
+  backgroundcolor=\color{popcream},
+  basicstyle=\popsemi\fontsize{8.6}{11}\selectfont\color{popink},
+  keywordstyle=\bfseries\color{popblue},
+  commentstyle=\itshape\color{popmuted},
+  stringstyle=\color{popgreen},
+  numberstyle=\tiny\color{popmuted},
+  identifierstyle=\color{popink},
+  frame=l,
+  rulecolor=\color{popink},
+  framerule=1.6pt,
+  framesep=7pt,
+  framexleftmargin=7pt,
+  framexrightmargin=7pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt,
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  showspaces=false,
+  showtabs=false,
+  tabsize=2,
+  columns=flexible,
+  keepspaces=true,
+  numbers=none,
+  aboveskip=10pt,
+  belowskip=10pt,
+  captionpos=b,
+}
+\lstset{style=poplst, language=PHP}
+% La distribution TeX embarquée ne fournit pas le fichier de langue
+% JavaScript de listings (lstlang*.dat) : on la redéfinit nous-mêmes
+% pour que \begin{lstlisting}[language=JavaScript] fonctionne.
+\lstdefinelanguage{JavaScript}{
+  keywords={break,case,catch,class,const,continue,debugger,default,delete,do,
+    else,export,extends,finally,for,function,if,import,in,instanceof,let,new,
+    return,static,super,switch,this,throw,try,typeof,var,void,while,with,yield,
+    async,await,of,get,set},
+  keywordstyle=\bfseries\color{popblue},
+  ndkeywords={true,false,null,undefined,NaN,Infinity},
+  ndkeywordstyle=\bfseries\color{poporange},
+  identifierstyle=\color{popink},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  string=[b]",
+  morestring=[b]',
+  morestring=[b]`,
+}
+% Même limitation pour CSS et les fichiers de configuration (apacheconf,
+% nginx, ini...) : ils ne sont pas fournis. CSS et un style générique de
+% type "config" (commentaires # ou ;, pas de mots-clés) couvrent les besoins.
+\lstdefinelanguage{CSS}{
+  keywords={color,background,background-color,margin,padding,border,
+    border-radius,font,font-size,font-weight,font-family,width,height,
+    display,position,top,left,right,bottom,float,clear,text-align,
+    line-height,list-style,cursor,overflow,box-shadow,transition,
+    flex,grid,align-items,justify-content,z-index},
+  keywordstyle=\bfseries\color{popblue},
+  identifierstyle=\color{popink},
+  sensitive=false,
+  comment=[s]{/*}{*/},
+  string=[b]",
+  morestring=[b]',
+}
+\lstdefinelanguage{apacheconf}{
+  sensitive=false,
+  morecomment=[l]{\#},
+}
+\lstdefinelanguage{Apache}{
+  sensitive=false,
+  morecomment=[l]{\#},
+}
+\lstdefinelanguage{text}{sensitive=false}
+\lstdefinelanguage{powershell}{
+  keywords={New-Object,New-SmbShare,Get-Acl,Set-Acl,Get-ChildItem,Set-Content,
+    Get-Content,Write-Host,ForEach-Object,Where-Object,Select-Object,
+    Test-Path,Remove-Item,Copy-Item,Move-Item,Start-Process,Stop-Process,
+    If,Else,ElseIf,ForEach,While,Function,Return,Try,Catch},
+  keywordstyle=\bfseries\color{popblue},
+  identifierstyle=\color{popink},
+  sensitive=false,
+  comment=[l]{\#},
+  string=[b]",
+  morestring=[b]',
+}
+\lstdefinelanguage{ini}{
+  sensitive=false,
+  morecomment=[l]{;},
+  morecomment=[l]{\#},
+}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}Ludovic A.\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Systèmes d'information : concepts de base}{Informatique}{1ère C}{Module 1 : Environnement numérique, sécurité, multimédia et gestion des données}{N05}{4 h}{Cette leçon introduit les concepts fondamentaux des systèmes d'information : information, donnée, entreprise, modèle et modélisation. Elle présente les trois sous-systèmes d'une organisation, les composants, les fonctions et les intérêts d'un système d'information, ainsi que les principales méthodes de conception (MERISE, AXIAL, OMT, RUP).
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir les notions d'information, de donnée, d'entreprise, de modèle et de modélisation.
+\item À la fin de cette leçon, je sais distinguer un système d'information d'un système d'information automatisé.
+\item À la fin de cette leçon, je sais décrire les trois sous-systèmes d'une organisation (pilotage, information, opérant) et leurs interactions.
+\item À la fin de cette leçon, je sais énumérer les composants d'un système d'information (ressources humaines, matérielles et logicielles).
+\item À la fin de cette leçon, je sais décrire les quatre fonctions d'un système d'information (collecte, stockage, traitement, diffusion).
+\item À la fin de cette leçon, je sais décrire les intérêts d'un système d'information pour une organisation.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Information, donnée et entreprise
+\item Système d'information et système d'information automatisé
+\item Les trois sous-systèmes d'une organisation
+\item Composants et fonctions d'un système d'information
+\item Modèle, modélisation et méthodes de conception
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir les notions d'information, de donnée, d'entreprise, de modèle et de modélisation.
+\item À la fin de cette leçon, je sais distinguer un système d'information d'un système d'information automatisé.
+\item À la fin de cette leçon, je sais décrire les trois sous-systèmes d'une organisation (pilotage, information, opérant) et leurs interactions.
+\item À la fin de cette leçon, je sais énumérer les composants d'un système d'information (ressources humaines, matérielles et logicielles).
+\item À la fin de cette leçon, je sais décrire les quatre fonctions d'un système d'information (collecte, stockage, traitement, diffusion).
+\item À la fin de cette leçon, je sais décrire les intérêts d'un système d'information pour une organisation.
+\item À la fin de cette leçon, je sais énumérer quelques méthodes de conception d'un système d'information (MERISE, AXIAL, OMT, RUP) et situer leur usage.
+\item À la fin de cette leçon, je sais analyser une organisation concrète (lycée, entreprise, hôpital) en identifiant ses sous-systèmes, ses flux d'information et les fonctions de son SI.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notions générales sur l'ordinateur et ses périphériques (Seconde).
+\item Notion de logiciel et de fichier (Seconde).
+\item Vocabulaire de base de l'organisation scolaire ou d'une entreprise (acteurs, tâches, documents).
+\item Notion de base de données vue en introduction du module (gestion des données).
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Information, donnée et entreprise}
+
+Au lycée de Ngaoundéré, le proviseur constate chaque trimestre des erreurs dans les bulletins : notes perdues, moyennes mal calculées, listes d'élèves incomplètes. Le censeur utilise encore des registres papier, la secrétaire un vieil ordinateur, et les enseignants transmettent les notes sur des bouts de papier. Comment organiser la circulation des informations dans cet établissement pour que chaque décision (conseil de classe, orientation, délibération) repose sur des données fiables ? C'est exactement le rôle d'un système d'information. Cette leçon nous donne les concepts de base pour comprendre, décrire et concevoir un tel système.
+
+\courssub{De la donnée brute à l'information utile}
+
+\begin{definition}[Donnée]
+Une \cle{donnée} est un élément brut, non interprété, enregistré sur un support (papier, disque dur, clé USB, puce RFID). Elle peut être un chiffre, un texte, une image, un son, une date, une heure, etc. Une donnée, prise isolément, ne porte pas de sens exploitable pour une décision.
+\end{definition}
+
+\begin{definition}[Information]
+Une \cle{information} est une donnée qui a été \textbf{traitée}, \textbf{organisée} et \textbf{interprétée} dans un contexte précis. Elle est porteuse de sens pour un destinataire et lui permet de prendre une décision ou d'agir.
+\end{definition}
+
+\noindent
+La distinction est fondamentale : la même valeur « 14 » peut être une simple donnée pour un élève qui la voit sur sa copie, mais devenir une information décisive pour le conseil de classe quand elle est mise en contexte (matière, coefficient, moyenne de classe, rang).
+
+\begin{exemplebox}[Note d'un élève : donnée vs information]
+\begin{itemize}
+    \item \textbf{Donnée brute} : « 14 » inscrit sur une copie de devoir.
+    \item \textbf{Information contextualisée} : « Note de 14/20 en Algorithmique, coefficient 3, moyenne de la classe 11/20, rang 3\textsuperscript{e} sur 45 élèves. »
+\end{itemize}
+Pour l'élève, le « 14 » est une donnée. Pour le professeur principal qui prépare le bulletin, c'est une information qui entre dans le calcul de la moyenne pondérée. Pour le proviseur qui suit la réussite de l'établissement, l'ensemble des moyennes de la classe devient une information agrégée (taux de réussite, évolution par rapport au trimestre précédent).
+\end{exemplebox}
+
+\begin{attention}[Confusion fréquente : donnée $\neq$ information]
+Ne confonds jamais la \textbf{valeur} et son \textbf{statut}. Une même valeur numérique peut être :
+\begin{itemize}
+    \item une \textbf{donnée} pour un système qui la stocke sans la comprendre (ex. : un capteur de température enregistre « 32 » dans un fichier journal) ;
+    \item une \textbf{information} pour un agriculteur qui lit « 32 °C » et décide d'irriguer ses champs de maïs à Foumban.
+\end{itemize}
+Le \textbf{contexte}, le \textbf{traitement} et le \textbf{destinataire} transforment la donnée en information.
+\end{attention}
+
+\courssub{La chaîne de valeur : donnée $\to$ traitement $\to$ information $\to$ décision $\to$ action}
+
+Toute organisation vit au rythme de cette chaîne. La comprendre, c'est comprendre pourquoi un système d'information est indispensable.
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=1.2cm and 1.5cm,
+    box/.style={rectangle, draw=popblue, thick, fill=popblueL, rounded corners, minimum width=2.8cm, minimum height=1.2cm, align=center, font=\small},
+    arrow/.style={-Stealth, thick, popdark},
+    example/.style={rectangle, draw=poporange, thick, fill=poporangeL, rounded corners, minimum width=3.2cm, minimum height=1cm, align=center, font=\small\itshape, text=popdark}
+]
+\node[box, align=center] (donnee){Donnée\\brute};
+\node[box, right=of donnee, align=center] (traitement){Traitement\\calcul, tri, filtrage,\\agrégation};
+\node[box, right=of traitement, align=center] (info){Information\\contextualisée};
+\node[box, right=of info, align=center] (decision){Décision\\choix éclairé};
+\node[box, right=of decision, align=center] (action){Action\\réalisation concrète};
+
+\node[example, below=0.6cm of donnee, align=center] (ex1){Relevés horaires\\de température :\\28, 30, 32, 31, 29 °C};
+\node[example, below=0.6cm of traitement, align=center] (ex2){Calcul de la moyenne\\sur 30 jours : 30,2 °C};
+\node[example, below=0.6cm of info, align=center] (ex3){« Température moyenne\\du mois : 30,2 °C,\\seuil d'alerte 30 °C »};
+\node[example, below=0.6cm of decision, align=center] (ex4){Décision : déclencher\\l'irrigation goutte-à-goutte};
+\node[example, below=0.6cm of action, align=center] (ex5){Pompes activées,\\champs arrosés,\\récolte sauvée};
+
+\draw[arrow] (donnee) -- (traitement);
+\draw[arrow] (traitement) -- (info);
+\draw[arrow] (info) -- (decision);
+\draw[arrow] (decision) -- (action);
+
+\draw[popmuted, dashed, thick] (donnee.south) -- (ex1.north);
+\draw[popmuted, dashed, thick] (traitement.south) -- (ex2.north);
+\draw[popmuted, dashed, thick] (info.south) -- (ex3.north);
+\draw[popmuted, dashed, thick] (decision.south) -- (ex4.north);
+\draw[popmuted, dashed, thick] (action.south) -- (ex5.north);
+\end{tikzpicture}
+\legende{Chaîne de valeur de l'information : de la donnée brute à l'action, illustrée par la gestion de l'irrigation dans une exploitation agricole au Cameroun.}
+\end{popfigure}
+
+\begin{aretenir}[Chaîne de valeur de l'information]
+\begin{enumerate}
+    \item \textbf{Donnée} : capture brute (capteur, saisie clavier, scan, import).
+    \item \textbf{Traitement} : opérations algorithmiques (calcul, tri, sélection, fusion, formatage) qui structurent la donnée.
+    \item \textbf{Information} : résultat interprété, présenté au bon format, au bon moment, pour le bon destinataire.
+    \item \textbf{Décision} : choix rationnel fondé sur l'information (ex. : « irriguer maintenant »).
+    \item \textbf{Action} : exécution concrète qui modifie l'état du système réel (pompes, commande fournisseur, envoi courrier, validation bulletin).
+\end{enumerate}
+Une rupture à n'importe quel maillon (donnée erronée, traitement bogué, information tardive, décision absente, action non exécutée) dégrade la performance de l'organisation.
+\end{aretenir}
+
+\courssub{Caractéristiques d'une information de qualité}
+
+Une information ne vaut que si elle possède certaines qualités. Le moyen mnémotechnique \textbf{ERPAD} (Exacte, Pertinente, À jour, Disponible, Destinataire) aide à les retenir.
+
+\begin{propriete}[Qualités d'une bonne information (critères ERPAD)]
+Une information de qualité doit être :
+\begin{itemize}
+    \item \textbf{Exacte} : fidèle à la réalité, sans erreur de saisie, de calcul ou de transmission.
+    \item \textbf{Pertinente} : adaptée au besoin du décideur, ni trop détaillée, ni trop synthétique.
+    \item \textbf{À jour} : reflétant l'état actuel du système, pas celui d'hier ou de la semaine dernière.
+    \item \textbf{Disponible} : accessible au moment où la décision doit être prise (pas après le conseil de classe !).
+    \item \textbf{Adressée au bon destinataire} : transmise à qui a le pouvoir d'agir (le proviseur pour l'orientation, le professeur pour la note, l'intendant pour les stocks).
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[Bulletin trimestriel : information de qualité vs information défaillante]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL}
+\textbf{Critère} & \textbf{Information de qualité} & \textbf{Information défaillante (lycée de Ngaoundéré)} \\
+\hline
+Exacte & Moyenne calculée avec les bons coefficients & Erreur de formule dans le tableur : coefficient 2 au lieu de 3 \\
+\hline
+Pertinente & Moyenne, rang, appréciation, décision du conseil & Liste brute de 15 notes sans synthèse \\
+\hline
+À jour & Notes saisies avant le conseil de classe & Notes du 2\textsuperscript{e} trimestre manquantes le jour du conseil \\
+\hline
+Disponible & Bulletin imprimé et remis aux parents le vendredi & Bulletins prêts 3 semaines après la délibération \\
+\hline
+Bon destinataire & Remis au parent \emph{et} archivé au secrétariat & Remis seulement à l'élève, pas de copie administrative \\
+\hline
+\end{tabularx}
+\end{center}
+\end{exemplebox}
+
+\courssub{L'entreprise et les organisations au Cameroun}
+
+\begin{definition}[Entreprise]
+Une \cle{entreprise} est une unité économique juridiquement autonome qui combine des \textbf{ressources humaines} (salariés, dirigeants), \textbf{matérielles} (locaux, machines, stock) et \textbf{financières} (capital, trésorerie) pour produire des \textbf{biens} (produits physiques) ou des \textbf{services} (prestations immatérielles) en vue d'un objectif, le plus souvent la \textbf{recherche de profit} (excédent de recettes sur dépenses).
+\end{definition}
+
+\begin{savaistu}[Organisation vs entreprise : la nuance camerounaise]
+Toute entreprise est une organisation, mais l'inverse est faux. Au Cameroun :
+\begin{itemize}
+    \item \textbf{Entreprises (but lucratif)} : SODECOTON (coton), ENEO (électricité), CAMTEL (télécoms), Brasseries du Cameroun, boulangerie du quartier, cybercafé « Le Rapide » à Yaoundé.
+    \item \textbf{Organisations non lucratives} : Lycée de Ngaoundéré (service public), Hôpital central de Yaoundé (santé publique), ONG « Plan International Cameroun », Coopérative agricole « Paysans Unis » du Nord-Ouest, Ministère de l'Éducation de Base (MINEDUB).
+\end{itemize}
+Ces organisations non lucratives ont \textbf{aussi} un système d'information : gestion des élèves, des patients, des projets, des cotisations, du budget. La rigueur de l'information y est tout aussi vitale.
+\end{savaistu}
+
+\begin{exoresolu}[Identifier données, informations et décideurs dans trois contextes camerounais]
+\textbf{Énoncé.} Pour chaque situation ci-dessous, identifie : (a) la ou les données brutes, (b) l'information produite, (c) le décideur qui utilise cette information, (d) l'action qui en découle.
+
+\begin{enumerate}
+    \item \textbf{Salle informatique d'un lycée} : le surveillant note sur un cahier les numéros de poste occupés chaque heure.
+    \item \textbf{Boutique « Chez Maman » à Douala} : la gérante compte le stock de sachets d'eau « Supermont » chaque soir.
+    \item \textbf{Coopérative « Paysans Unis »} : le secrétaire enregistre les apports de maïs (en kg) de chaque adhérent à chaque récolte.
+\end{enumerate}
+
+\tcblower
+
+\textbf{Solution détaillée.}
+
+\begin{enumerate}
+    \item \textbf{Lycée — Salle informatique}
+    \begin{itemize}
+        \item \textbf{Données} : « Poste 3 occupé à 8h », « Poste 7 libre à 9h », « Poste 12 occupé à 10h » (enregistrements horaires bruts).
+        \item \textbf{Information} : « Taux d'occupation moyen de la salle cette semaine : 68 \% ; pic à 85 \% entre 8h et 10h ; 5 postes défectueux non utilisés. »
+        \item \textbf{Décideur} : Proviseur / Censeur / Chef de travaux.
+        \item \textbf{Action} : Planifier la maintenance des 5 postes hors service ; demander un créneau supplémentaire pour les TP de 1\textsuperscript{re} C ; justifier l'achat de 10 nouveaux postes auprès de la tutelle.
+    \end{itemize}
+
+    \item \textbf{Boutique « Chez Maman » — Stock d'eau}
+    \begin{itemize}
+        \item \textbf{Données} : « Mardi soir : 42 sachets restants », « Mercredi soir : 18 sachets », « Jeudi soir : 3 sachets ».
+        \item \textbf{Information} : « Vitesse de vente moyenne : 24 sachets/jour ; stock actuel : 3 sachets ; rupture prévue demain midi ; délai de livraison du grossiste : 24 h. »
+        \item \textbf{Décideur} : Gérante (Maman).
+        \item \textbf{Action} : Passer commande d'urgence ce soir pour livraison demain matin (2 cartons = 48 sachets) ; négocier le paiement à la livraison.
+    \end{itemize}
+
+    \item \textbf{Coopérative « Paysans Unis » — Apports de maïs}
+    \begin{itemize}
+        \item \textbf{Données} : « M. Njoya : 1200 kg », « Mme Fouda : 850 kg », « M. Bello : 2100 kg » (liste brute des apports).
+        \item \textbf{Information} : « Total collecté : 4150 kg ; part de M. Bello : 50,6 \% ; moyenne par adhérent : 1383 kg ; 3 adhérents sous le minimum de 500 kg. »
+        \item \textbf{Décideur} : Conseil d'administration de la coopérative.
+        \item \textbf{Action} : Vente groupée à un transformateur local ; répartition du revenu proportionnelle aux apports ; accompagnement technique pour les 3 petits producteurs.
+    \end{itemize}
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Tableau comparatif : donnée vs information — trois cas concrets}
+
+\begin{popfigure}
+\begin{center}
+\begin{tabularx}{\linewidth}{|>{\bfseries}l|X|X|X|}
+\hline
+\rowcolor{popblueL}
+\textbf{Contexte} & \textbf{Donnée brute (exemple)} & \textbf{Traitement appliqué} & \textbf{Information résultante} \\
+\hline
+Notes d'un élève & 12 ; 14 ; 9 ; 16 ; 11 (cinq notes sur 20) & Calcul de la moyenne pondérée (coeff. 2, 3, 1, 3, 2) + rang dans la classe & « Moyenne : 12,8/20 — Rang : 12\textsuperscript{e}/42 — Appréciation : "Peut mieux faire" » \\
+\hline
+Chiffre d'affaires boutique & 15 000 ; 22 500 ; 18 000 ; 30 000 ; 25 000 FCFA (ventes quotidiennes Lundi–Vendredi) & Somme hebdomadaire + comparaison avec la semaine précédente + projection mensuelle & « CA semaine : 110 500 FCFA (+12 \% vs sem. dernière) — Projection mensuelle : 442 000 FCFA — Objectif 500 000 FCFA : effort nécessaire » \\
+\hline
+Liste de présence (réunion parents) & « N. Mballa — présent » ; « P. Essomba — absent » ; « R. Atangana — présent » (30 lignes) & Comptage + taux + identification des absents récurrents & « Taux de présence : 73 \% (22/30) — 8 parents absents dont 3 pour la 3\textsuperscript{e} fois — Relance SMS programmée » \\
+\hline
+\end{tabularx}
+\end{center}
+\legende{Comparatif donnée vs information dans trois contextes camerounais scolaires et commerciaux.}
+\end{popfigure}
+
+\begin{methode}[Comment transformer une donnée en information exploitable ?]
+\begin{enumerate}
+    \item \textbf{Identifier le besoin} : quelle décision doit être prise ? Par qui ? Quand ?
+    \item \textbf{Collecter les données pertinentes} : sources fiables, format structuré (pas de bouts de papier volants).
+    \item \textbf{Appliquer le traitement adapté} : calcul (moyenne, somme, taux), tri, filtrage, regroupement, mise en forme (graphique, tableau de bord).
+    \item \textbf{Contextualiser} : ajouter unité, période, comparaison (objectif, historique, référence), destinataire.
+    \item \textbf{Diffuser au bon moment} : canal approprié (écran, impression, SMS, email, application) vers le décideur habilité.
+    \item \textbf{Archiver et tracer} : conserver l'historique pour l'audit, l'analyse de tendances, la conformité.
+\end{enumerate}
+\end{methode}
+
+\begin{experience}[Mini-TP : De la donnée à l'information — Gestion des présences en classe]
+\textbf{Objectif.} Vivre la chaîne complète : saisir des données brutes, les traiter, produire une information, simuler une décision.
+
+\textbf{Matériel.} Un tableur (LibreOffice Calc / Excel) ou papier + calculatrice.
+
+\textbf{Manipulation.}
+\begin{enumerate}
+    \item Crée un tableau avec 10 élèves fictifs (noms camerounais : Abena, Bello, Chi, Djoum, Essomba, Fouda, Garga, Hassou, Idriss, Jika).
+    \item Sur 5 jours (Lundi–Vendredi), note pour chaque jour : P (présent) ou A (absent). Invente un scénario réaliste (ex. : Bello absent Mardi et Jeudi ; Fouda absent Vendredi seulement).
+    \item \textbf{Données brutes} : la grille de 50 cases P/A.
+    \item Applique les formules :
+    \begin{itemize}
+        \item Nombre de jours présents par élève : \texttt{=NB.SI(B2:F2;"P")} (plage des 5 jours de l'élève en ligne 2) ;
+        \item Taux de présence : \texttt{=G2/5*100} (si le nombre de présences est en G2) ;
+        \item Moyenne de la classe : \texttt{=MOYENNE(H2:H11)} (colonne des taux des 10 élèves).
+    \end{itemize}
+    \item \textbf{Information produite} : tableau de synthèse avec taux individuel, moyenne de classe, liste des élèves dont le taux est inférieur à 80 \%.
+    \item \textbf{Décision simulée} : « Convocation des parents de Bello (60 \%) et Fouda (80 \%) pour absences répétées / justificatifs manquants. »
+\end{enumerate}
+
+\textbf{Observations.}
+\begin{itemize}
+    \item Sans le traitement (étape 4), la grille de 50 P/A est illisible pour le professeur principal.
+    \item L'information « Bello 60 \% » déclenche l'action ; la donnée « Bello : A, P, A, P, P » ne la déclenche pas.
+\end{itemize}
+
+\textbf{Interprétation.}
+Ce mini-TP montre qu'un \textbf{système d'information}, même minimal (tableur + procédure), transforme une masse de données brutes en levier de pilotage pédagogique. C'est la base de tout SI : collecte $\to$ traitement $\to$ diffusion $\to$ action.
+\end{experience}
+
+\begin{attention}[Piège du « trop d'information »]
+Une information \textbf{trop abondante} ou \textbf{mal hiérarchisée} devient contre-productive : le décideur se noie (surcharge cognitive). Exemple : donner au proviseur la liste des 1 200 notes brutes de l'établissement au lieu du tableau de bord « Taux de réussite par classe, évolution par trimestre, alertes $< 30$ \% ». \textbf{Règle} : une information = un décideur = une décision possible. Tout le reste est du bruit.
+\end{attention}
+
+\courssub{Synthèse : ce qu'il faut retenir avant la suite}
+
+\begin{aretenir}[Bilan de la section 1]
+\begin{itemize}
+    \item \textbf{Donnée} = élément brut, non interprété, enregistré sur un support.
+    \item \textbf{Information} = donnée traitée + contexte + sens pour un destinataire $\to$ décision.
+    \item \textbf{Chaîne de valeur} : Donnée $\xrightarrow{\text{traitement}}$ Information $\xrightarrow{\text{analyse}}$ Décision $\xrightarrow{\text{exécution}}$ Action.
+    \item \textbf{Qualité ERPAD} : Exacte, Pertinente, À jour, Disponible, bon Destinataire.
+    \item \textbf{Entreprise} = unité économique lucrative (ressources $\to$ biens/services $\to$ profit).
+    \item \textbf{Organisation} = toute structure coordonnée (entreprise, école, hôpital, ONG, ministère) ; toute organisation a un SI, lucrative ou non.
+    \item \textbf{Contexte camerounais} : lycée, hôpital, SODECOTON, ENEO, CAMTEL, coopérative, cybercafé, boutique — tous manipulent des données pour produire des informations qui pilotent leurs actions.
+\end{itemize}
+\end{aretenir}
+
+\noindent
+La section suivante décrira ce qu'est un \textbf{système d'information} et un \textbf{système d'information automatisé}, puis nous verrons comment une organisation se décompose en trois sous-systèmes (pilotage, information, opérant).
+
+\coursec{Système d'information et système d'information automatisé}
+
+Dans la section précédente, nous avons distingué la \cle{donnée} (fait brut, enregistré) de l'\cle{information} (donnée interprétée, porteuse de sens pour un destinataire), et nous avons vu que l'\cle{entreprise} — au sens large : toute organisation, y compris un lycée, un hôpital ou une coopérative — vit de ces informations. Mais une question demeure : \emph{comment} une organisation fait-elle circuler l'information entre ses membres ? Qui collecte les notes des élèves ? Où sont-elles conservées ? Qui les transforme en moyennes ? Qui les communique aux parents ? La réponse à toutes ces questions porte un nom : le \cle{système d'information}. C'est l'objet central de cette section.
+
+\courssub{La notion de système}
+
+\begin{experience}[Observer un système autour de soi]
+\textbf{Objectif :} comprendre intuitivement ce qu'est un système avant d'en donner une définition formelle.
+
+\textbf{Manipulation :} considère le système de freinage d'un vélo, puis le fonctionnement de la cantine de ton lycée. Pour chacun, réponds aux trois questions suivantes :
+\begin{enumerate}
+  \item Quels sont les \emph{éléments} qui le composent ? (Pour le vélo : levier, câble, étrier, patins, roue.)
+  \item Ces éléments \emph{interagissent}-ils entre eux ? (Le levier tire le câble, le câble serre l'étrier, les patins frottent la jante.)
+  \item Existe-t-il un \emph{objectif commun} ? (Ralentir ou arrêter le vélo.)
+\end{enumerate}
+
+\textbf{Observation :} dans les deux cas, on trouve des éléments reliés entre eux, qui échangent de la matière, de l'énergie ou de l'information, et qui coopèrent vers un même but.
+
+\textbf{Interprétation :} c'est exactement cette structure — éléments, interactions, finalité — que le mot \emph{système} désigne en informatique comme dans les autres sciences.
+\end{experience}
+
+\begin{definition}[Système]
+Un \cle{système} est un ensemble d'éléments en \textbf{interaction}, organisés et coordonnés en vue d'atteindre un \textbf{objectif commun}. Un système reçoit des \emph{entrées}, les transforme par des \emph{traitements} et produit des \emph{sorties}.
+\end{definition}
+
+Cette vision « entrées $\rightarrow$ traitements $\rightarrow$ sorties » est universelle : l'usine transforme des matières premières en produits finis ; le corps humain transforme l'oxygène et les aliments en énergie ; le lycée transforme des élèves de seconde en bacheliers. Un système possède aussi une \textbf{frontière} qui le sépare de son \emph{environnement}, avec lequel il échange des flux.
+
+\begin{exemplebox}[Le lycée vu comme un système]
+\begin{itemize}
+  \item \textbf{Entrées :} élèves inscrits, programmes officiels, enseignants, budgets.
+  \item \textbf{Traitements :} cours, évaluations, conseils de classe, activités.
+  \item \textbf{Sorties :} élèves formés, bulletins, diplômes, statistiques envoyées à la délégation régionale.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Le système d'information (SI)}
+
+Revenons à notre question de départ. Dans un lycée de 1\,500 élèves, les notes ne se téléportent pas toutes seules du cahier du professeur jusqu'au bulletin remis aux parents. Il faut des \emph{personnes} (enseignants, surveillants, secrétaires), des \emph{supports} (cahiers de notes, registres, ordinateurs), des \emph{logiciels} éventuels, et surtout des \emph{règles} : « les notes sont saisies avant le vendredi », « la moyenne est calculée avec les coefficients officiels », « le bulletin est signé par le proviseur ». L'ensemble de tout cela constitue le système d'information.
+
+\begin{definition}[Système d'information]
+Le \cle{système d'information} (SI) d'une organisation est l'ensemble organisé des \textbf{ressources} (humaines, matérielles, logicielles) et des \textbf{procédures} permettant de \textbf{collecter}, \textbf{stocker}, \textbf{traiter} et \textbf{diffuser} l'information au sein de cette organisation et avec son environnement.
+\end{definition}
+
+\begin{aretenir}[Les quatre fonctions d'un SI]
+Tout système d'information, qu'il soit manuel ou informatisé, remplit quatre fonctions fondamentales :
+\begin{enumerate}
+  \item \textbf{Collecter} : saisir l'information depuis l'intérieur ou l'extérieur de l'organisation (relever les notes, recevoir une commande).
+  \item \textbf{Stocker} : conserver l'information de façon durable et retrouvable (registre, fichier, base de données).
+  \item \textbf{Traiter} : transformer les données en informations utiles (calculer une moyenne, établir une facture).
+  \item \textbf{Diffuser} : communiquer l'information aux bonnes personnes, au bon moment, sous la bonne forme (bulletin, affichage, courrier).
+\end{enumerate}
+Ces fonctions seront détaillées dans la section 4 ; retiens dès maintenant qu'elles caractérisent le SI.
+\end{aretenir}
+
+\begin{attention}[Le piège classique du Probatoire et du Bac]
+\textbf{Erreur fréquente :} écrire qu'un système d'information \emph{nécessite obligatoirement un ordinateur}. C'est \textbf{faux}. Un SI peut être entièrement \textbf{manuel} : registres, fiches cartonnées, tableau d'affichage, courrier papier, bouche-à-oreille organisé. L'ordinateur n'est qu'un \emph{moyen} parmi d'autres pour accomplir les fonctions du SI ; il ne fait pas partie de sa définition. Les administrations camerounaises ont fonctionné pendant des décennies avec des SI entièrement manuels — et ils fonctionnaient !
+\end{attention}
+
+\begin{exemplebox}[Un SI sans aucun ordinateur]
+La caisse d'une coopérative villageoise de Njombé est tenue dans un grand cahier : chaque membre qui cotise est inscrit (collecte), le cahier est rangé dans un coffre (stockage), le trésorier totalise les cotisations à la fin du mois (traitement), et les montants sont annoncés en assemblée générale (diffusion). C'est un système d'information \emph{complet}, bien que 100 \% manuel. Le jour où le trésorier saisit les cotisations dans un tableur sur un ordinateur portable, le SI devient \emph{partiellement automatisé} — mais il reste le même SI.
+\end{exemplebox}
+
+\courssub{Le système d'information automatisé (SIA)}
+
+Lorsqu'une organisation décide de confier \emph{certains} traitements à l'outil informatique, elle ne remplace pas tout son système d'information : elle en automatise une \textbf{partie}. Cette partie porte un nom précis.
+
+\begin{definition}[Système d'information automatisé]
+Le \cle{système d'information automatisé} (SIA) est la partie du système d'information dont les traitements sont réalisés par des \textbf{moyens informatiques} : ordinateurs, logiciels, réseaux, bases de données. On parle aussi de \emph{système informatique}.
+\end{definition}
+
+\begin{propriete}[Inclusion du SIA dans le SI]
+Le SIA est un \textbf{sous-ensemble} du SI :
+\[ \text{SIA} \subset \text{SI} \]
+Autrement dit : \textbf{tout SIA est un SI}, mais \textbf{la réciproque est fausse} — un SI peut exister sans aucune part automatisée. De plus, l'automatisation ne remplace \emph{jamais totalement} l'humain : la décision (admettre un élève, accorder un crédit) reste un acte humain, même si le calcul qui la prépare est automatisé.
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+  % Grand cercle : SI
+  \draw[fill=popblueL, draw=popblue, very thick] (0,0) circle (3.4);
+  \node[popdark, font=\bfseries] at (0,2.85) {Système d'information (SI)};
+  % Petit cercle : SIA
+  \draw[fill=poporangeL, draw=poporange, very thick] (0.9,-0.6) circle (1.6);
+  \node[popdark, font=\bfseries, align=center] at (0.9,0.35) {Système\\d'information\\automatisé (SIA)};
+  % Exemples dans le SIA
+  \node[align=center, font=\small] at (0.9,-0.75) {logiciel de notes\\calcul des moyennes\\guichet automatique};
+  % Exemples dans SI hors SIA
+  \node[align=center, font=\small, popdark] at (-2.1,1.3) {registres,\\cahiers de notes};
+  \node[align=center, font=\small, popdark] at (-2.2,-1.6) {conseil de classe,\\signature du proviseur};
+  \node[align=center, font=\small, popdark] at (1.9,2.0) {affichage,\\courrier papier};
+\end{tikzpicture}
+\end{center}
+\legende{Diagramme de Venn : le SIA est strictement inclus dans le SI. La zone bleue représente la partie manuelle du SI ; la zone orange, la partie automatisée.}
+\end{popfigure}
+
+\courssub{Exemples et frontière de l'automatisation}
+
+Le point délicat — et le plus intéressant — consiste à tracer la \textbf{frontière du SIA} : qu'est-ce qui est automatisé, qu'est-ce qui reste manuel ? Prenons deux cas concrets.
+
+\begin{exemplebox}[SI et SIA d'un lycée]
+Dans un lycée de Yaoundé :
+\begin{itemize}
+  \item \textbf{Partie automatisée (SIA) :} le logiciel de gestion des notes saisit les évaluations, calcule les moyennes pondérées, établit les classements et édite les bulletins.
+  \item \textbf{Partie manuelle :} les épreuves sont composées et corrigées à la main ; le conseil de classe délibère oralement ; le proviseur signe chaque bulletin ; les résultats sont affichés au tableau.
+\end{itemize}
+Le SI du lycée = SIA $+$ toutes ces procédures manuelles.
+\end{exemplebox}
+
+\begin{exemplebox}[SI et SIA d'une banque]
+Dans une banque commerciale de Douala, le SIA comprend les guichets automatiques (GAB), l'application mobile, le logiciel central de gestion des comptes et le réseau interagences. Mais l'entretien avec le conseiller clientèle, l'analyse d'un dossier de crédit par le comité et la signature du contrat restent des opérations humaines : elles appartiennent au SI, pas au SIA.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  font=\small,
+  boite/.style={draw=popblue, fill=popblueL, rounded corners=2pt, thick, align=center, minimum height=0.9cm, text width=3.1cm},
+  boiteA/.style={draw=poporange, fill=poporangeL, rounded corners=2pt, thick, align=center, minimum height=0.9cm, text width=3.1cm},
+  flux/.style={-{Stealth[length=2.5mm]}, thick, popdark}
+]
+  % Titre des deux zones
+  \node[font=\bfseries, popblue] at (-3.4,3.1) {Partie manuelle};
+  \node[font=\bfseries, poporange] at (3.4,3.1) {Partie automatisée (SIA)};
+  % Cadres de zones
+  \draw[draw=popblue, dashed, thick, rounded corners=4pt] (-5.3,-2.6) rectangle (-1.4,2.7);
+  \draw[draw=poporange, dashed, thick, rounded corners=4pt] (1.4,-2.6) rectangle (5.3,2.7);
+  % Boîtes manuelles
+  \node[boite] (prof) at (-3.4,2.0) {Enseignant : composition et correction des épreuves};
+  \node[boite] (cahier) at (-3.4,0.5) {Cahier de notes (collecte manuelle)};
+  \node[boite] (conseil) at (-3.4,-1.0) {Conseil de classe : délibération};
+  \node[boite] (sign) at (-3.4,-2.1) {Proviseur : signature des bulletins};
+  % Boîtes automatisées
+  \node[boiteA] (saisie) at (3.4,2.0) {Saisie des notes dans le logiciel};
+  \node[boiteA] (calcul) at (3.4,0.5) {Calcul des moyennes et classements};
+  \node[boiteA] (edition) at (3.4,-1.0) {Édition des bulletins};
+  \node[boiteA] (bd) at (3.4,-2.1) {Base de données des élèves};
+  % Flux
+  \draw[flux] (prof) -- (cahier);
+  \draw[flux] (cahier.east) -- (saisie.west) node[midway, above, font=\scriptsize]{transcription};
+  \draw[flux] (saisie) -- (calcul);
+  \draw[flux] (calcul) -- (edition);
+  \draw[flux] (edition) -- (bd);
+  \draw[flux] (edition.west) -- (conseil.east) node[midway, above, font=\scriptsize]{bulletins imprimés};
+  \draw[flux] (conseil) -- (sign);
+\end{tikzpicture}
+\end{center}
+\legende{Le SI d'un lycée : les flux d'information circulent entre la partie manuelle (bleu) et la partie automatisée (orange). Le SIA ne couvre que la zone orange.}
+\end{popfigure}
+
+Ce schéma fait apparaître une règle pratique précieuse pour analyser n'importe quelle organisation.
+
+\begin{methode}[Tracer la frontière entre SI et SIA]
+Pour déterminer ce qui appartient au SIA dans une organisation, procède en trois étapes :
+\begin{enumerate}
+  \item \textbf{Liste} toutes les activités qui manipulent de l'information (collecte, stockage, traitement, diffusion).
+  \item Pour chaque activité, pose la question : « le traitement est-il réalisé par un \emph{outil informatique} (ordinateur, logiciel, réseau) ? »
+  \item Si \textbf{oui}, l'activité appartient au SIA ; si \textbf{non} (papier, décision humaine, échange oral), elle appartient au SI mais pas au SIA.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Identifier SI et SIA dans une boutique]
+\textbf{Énoncé.} Madame Etoundi tient une boutique d'articles scolaires à Bafoussam. Les ventes sont enregistrées sur un logiciel de caisse connecté à un stock informatisé ; les commandes aux fournisseurs se font par téléphone ; les dettes des clients habituels sont notées dans un cahier ; les prix sont affichés sur les rayons. Délimite le SI et le SIA de cette boutique.
+\tcblower
+\textbf{Solution détaillée.} Appliquons la méthode en trois étapes.
+
+\emph{Étape 1 — Liste des activités d'information :} enregistrement des ventes ; gestion du stock ; commandes fournisseurs ; suivi des dettes clients ; affichage des prix.
+
+\emph{Étape 2 — Test d'automatisation :}
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|l|l|}
+\hline
+\rowcolor{popblueL} \textbf{Activité} & \textbf{Informatisée ?} & \textbf{Appartient à} \\
+\hline
+Enregistrement des ventes (logiciel de caisse) & Oui & SIA \\
+\hline
+Gestion du stock (logiciel) & Oui & SIA \\
+\hline
+Commandes fournisseurs (téléphone) & Non & SI seulement \\
+\hline
+Suivi des dettes (cahier) & Non & SI seulement \\
+\hline
+Affichage des prix (étiquettes) & Non & SI seulement \\
+\hline
+\end{tabularx}
+\end{center}
+
+\emph{Étape 3 — Conclusion :} le \textbf{SIA} de la boutique est constitué du logiciel de caisse et du stock informatisé (matériel $+$ logiciel $+$ la caissière qui les utilise). Le \textbf{SI} englobe le SIA \emph{plus} le cahier des dettes, les appels téléphoniques aux fournisseurs et l'affichage des prix. On vérifie bien que SIA $\subset$ SI.
+\end{exoresolu}
+
+\begin{savaistu}[Le Cameroun et l'automatisation des SI]
+De nombreuses administrations camerounaises sont passées en quelques années d'un SI manuel à un SI largement automatisé : la déclaration d'impôts en ligne, la plateforme de paiement électronique des salaires de l'État, les systèmes de gestion des universités. À chaque fois, une partie du SI reste manuelle : c'est toujours un agent qui vérifie, décide et signe. L'informatique accélère et sécurise les traitements, mais la responsabilité finale reste humaine — c'est exactement le sens de la propriété SIA $\subset$ SI.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+  \item Un \textbf{système} est un ensemble d'éléments en interaction organisés pour atteindre un objectif commun.
+  \item Le \textbf{SI} réunit ressources humaines, matérielles, logicielles et procédures pour collecter, stocker, traiter et diffuser l'information ; \textbf{il peut être entièrement manuel}.
+  \item Le \textbf{SIA} est la partie du SI réalisée par l'outil informatique : $\text{SIA} \subset \text{SI}$.
+  \item Tout SIA est un SI, mais tout SI n'est pas un SIA ; la décision humaine échappe toujours à l'automatisation.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+Le CHU de Yaoundé utilise un logiciel pour gérer les rendez-vous et les dossiers médicaux, mais les consultations, les diagnostics et les prescriptions sont réalisés par les médecins, et le courrier officiel part par voie postale.
+\begin{enumerate}
+  \item Définis le SI et le SIA du CHU.
+  \item Classe chaque activité citée dans le SI ou dans le SIA, en justifiant.
+  \item Explique pourquoi le diagnostic médical ne peut pas, par nature, relever du SIA.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+  \item Le SI du CHU est l'ensemble des ressources (médecins, secrétaires, ordinateurs, logiciel, dossiers papier) et des procédures qui assurent la collecte, le stockage, le traitement et la diffusion de l'information médicale et administrative. Le SIA est la partie automatisée : le logiciel de rendez-vous et de dossiers médicaux, les ordinateurs et le réseau qui le supportent.
+  \item \textbf{SIA :} gestion des rendez-vous (logiciel), gestion informatisée des dossiers médicaux. \textbf{SI seulement :} consultations, diagnostics, prescriptions (actes humains), courrier postal (diffusion manuelle).
+  \item Le diagnostic est un acte de \emph{décision} fondé sur le jugement, l'expérience et la responsabilité du médecin. L'ordinateur peut fournir des données d'aide à la décision, mais la décision elle-même reste humaine : par construction, le SIA ne remplace jamais totalement l'humain (propriété SIA $\subset$ SI).
+\end{enumerate}
+\end{corrige}
+
+Maintenant que le SI et le SIA sont clairement définis et délimités, la section suivante te montrera que le système d'information n'est pas seul dans l'organisation : il dialogue en permanence avec deux autres sous-systèmes, le système de pilotage et le système opérant.
+
+\coursec{Les trois sous-systèmes d'une organisation}
+
+Dans la section précédente, nous avons défini le \cle{système d'information} (SI) comme l'ensemble organisé des ressources permettant d'acquérir, de stocker, de traiter et de diffuser l'information, et nous avons distingué le SI du \cle{système d'information automatisé} (SIA), sa partie informatisée. Mais une question reste en suspens : \emph{où se situe le SI dans l'organisation, et avec qui dialogue-t-il ?} Un système d'information n'existe jamais seul : il est inséré dans une organisation plus vaste — une entreprise, une administration, un lycée — qu'il sert et qu'il relie. Pour comprendre ce rôle, les concepteurs de systèmes d'information décomposent toute organisation en \textbf{trois sous-systèmes} : le système opérant, le système de pilotage et le système d'information. C'est cette décomposition classique, au cœur des méthodes d'analyse comme MERISE, que nous allons étudier.
+
+\courssub{Pourquoi découper une organisation en trois sous-systèmes ?}
+
+Imagine le fonctionnement quotidien du Lycée de Nkongsamba. D'un côté, des enseignants font cours, des élèves apprennent, des surveillants assurent la discipline : c'est la \emph{production} concrète du service « éducation ». De l'autre côté, le proviseur et le conseil d'établissement fixent des objectifs (taux de réussite, effectifs par classe), répartissent les salles et sanctionnent : ce sont les \emph{décisions}. Entre les deux, il faut bien que quelqu'un ou quelque chose fasse circuler les notes, les effectifs, les emplois du temps, les rapports de conseil de classe : sans cela, le proviseur déciderait sans connaître la réalité des classes, et les enseignants ignoreraient les objectifs fixés.
+
+Ce constat se généralise à toute organisation : une usine de la SOCACAO, une boutique de Douala, un hôpital régional, une agence CAMTEL. On y retrouve toujours trois rôles distincts :
+
+\begin{itemize}
+\item \textbf{produire} : transformer des entrées (matières, élèves, dossiers) en sorties (produits, élèves formés, services rendus) ;
+\item \textbf{décider} : fixer les objectifs, arbitrer, contrôler, corriger ;
+\item \textbf{informer} : faire circuler l'information entre ceux qui produisent et ceux qui décident.
+\end{itemize}
+
+Chacun de ces rôles est assuré par un sous-système de l'organisation. Étudions-les l'un après l'autre, puis leurs relations.
+
+\courssub{Le système opérant (ou opérationnel)}
+
+\begin{definition}[Système opérant]
+Le \cle{système opérant} (ou \cle{système opérationnel}) est le sous-système d'une organisation qui \textbf{réalise la production concrète} de biens ou de services : il transforme des entrées (matières premières, matière grise, demandes) en sorties (produits finis, prestations, services) en utilisant des ressources humaines, matérielles et financières.
+\end{definition}
+
+L'intuition est simple : le système opérant, c'est \emph{« là où le travail se fait réellement »}. C'est le cœur de métier de l'organisation, sa raison d'être visible.
+
+\begin{exemplebox}[Systèmes opérants dans différentes organisations]
+\begin{itemize}
+\item \textbf{Usine de chocolaterie} : les ouvriers, les machines de torréfaction et de broyage transforment les fèves de cacao en tablettes de chocolat.
+\item \textbf{Lycée} : les enseignants, les élèves, les salles de classe et les laboratoires réalisent la « production » du service d'enseignement : des élèves formés et évalués.
+\item \textbf{Cybercafé de Bafoussam} : les postes informatiques, la connexion Internet et le caissier produisent la prestation « accès Internet et services numériques ».
+\item \textbf{Hôpital} : les médecins, infirmiers et équipements produisent le service « soins aux patients ».
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Le système opérant ne décide pas de ses objectifs]
+Le système opérant exécute la production, mais il ne fixe pas lui-même ses grandes orientations : l'enseignant dispense son cours, mais c'est le proviseur qui fixe l'objectif de réussite ; l'ouvrier fabrique, mais c'est la direction qui décide des volumes à produire. Confondre exécution et décision est une erreur fréquente dans les copies d'examen.
+\end{attention}
+
+\courssub{Le système de pilotage}
+
+\begin{definition}[Système de pilotage]
+Le \cle{système de pilotage} est le sous-système d'une organisation qui \textbf{décide, oriente et contrôle} : il fixe les objectifs, prend les décisions stratégiques et opérationnelles, transmet les consignes au système opérant, puis compare les résultats obtenus aux objectifs fixés afin de corriger les écarts.
+\end{definition}
+
+L'image à retenir est celle du \emph{pilote} d'un avion ou du capitaine d'une pirogue : il ne rame pas lui-même, mais il choisit le cap, surveille les instruments et corrige la trajectoire. Dans une organisation, le pilotage est assuré par les organes de direction.
+
+\begin{exemplebox}[Systèmes de pilotage dans différentes organisations]
+\begin{itemize}
+\item \textbf{Lycée} : le proviseur, ses censeurs et le conseil d'établissement (ou conseil d'administration) fixent les objectifs de réussite, ouvrent ou ferment des classes, décident des sanctions.
+\item \textbf{Entreprise} : le directeur général, le conseil d'administration, les chefs de service.
+\item \textbf{Cybercafé} : le propriétaire-gérant, qui fixe les tarifs, décide d'acheter de nouveaux postes ou de changer de fournisseur d'accès.
+\end{itemize}
+\end{exemplebox}
+
+Le pilotage exerce trois grandes missions, à connaître pour l'examen :
+\begin{enumerate}
+\item \textbf{fixer les objectifs} (stratégie, buts chiffrés : « 80 \% de réussite au Bac », « produire 10 tonnes par mois ») ;
+\item \textbf{prendre et transmettre les décisions} (consignes, plans d'action, répartition des ressources) ;
+\item \textbf{contrôler et réguler} : comparer les résultats réels aux objectifs, puis ajuster.
+\end{enumerate}
+
+\courssub{Le système d'information : l'interface entre pilotage et opérant}
+
+Nous voici au point central de la leçon. Le pilotage décide, l'opérant exécute : mais comment le pilotage connaît-il la situation réelle de la production ? Et comment l'opérant reçoit-il les décisions ? C'est précisément le rôle du \cle{système d'information}.
+
+\begin{propriete}[Le SI, interface obligée entre pilotage et opérant (admise)]
+Le système d'information est l'\textbf{interface obligée} entre le système de pilotage et le système opérant :
+\begin{itemize}
+\item il \textbf{remonte} vers le pilotage les informations issues de l'opérant (résultats, stocks, effectifs, incidents) : ce sont les \cle{flux montants} ;
+\item il \textbf{transmet} vers l'opérant les décisions, consignes et objectifs du pilotage : ce sont les \cle{flux descendants}.
+\end{itemize}
+Conséquence : sans système d'information fiable, le pilotage décide « \emph{à l'aveugle} » et l'opérant travaille sans cap.
+\end{propriete}
+
+\begin{attention}[Ne pas confondre pilotage et système d'information]
+Piège classique du Probatoire : le \textbf{pilotage décide}, le \textbf{SI informe mais ne décide pas}. Le secrétariat du lycée qui calcule les moyennes et établit les statistiques appartient au système d'information : il produit de l'information, il ne fixe ni les objectifs ni les sanctions. Dire « le SI prend les décisions » est une erreur.
+\end{attention}
+
+\courssub{Les flux d'information : montants, descendants et boucle de régulation}
+
+\textbf{Les flux montants} sont les informations qui partent du système opérant vers le système de pilotage, via le SI. Ce sont généralement des informations de \emph{synthèse} (tableaux récapitulatifs, statistiques) et d'\emph{alerte} (signalement d'un problème) : résultats scolaires, états des stocks, effectifs des classes, chiffre d'affaires du mois, rapports d'incidents.
+
+\textbf{Les flux descendants} sont les informations qui partent du pilotage vers l'opérant, via le SI : décisions, consignes, objectifs, plans d'action, emplois du temps, notes de service.
+
+\textbf{La boucle de régulation} complète le dispositif : le pilotage \emph{compare} les résultats remontés aux objectifs fixés, constate les écarts, puis \emph{ajuste} ses décisions, qui redescendent vers l'opérant. Le cycle recommence : c'est un fonctionnement en boucle fermée, appelé aussi \emph{rétroaction}.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  bloc/.style={draw=popink, thick, rounded corners=4pt, align=center, minimum width=9.2cm, minimum height=1.9cm, font=\small},
+  flux/.style={-{Stealth[length=3mm]}, very thick},
+  lbl/.style={font=\footnotesize\itshape, align=center}
+]
+% --- Blocs ---
+\node[bloc, fill=poppurpleL] (pilot) at (0,4.2)
+  {\textbf{SYSTÈME DE PILOTAGE}\\ décide, fixe les objectifs, contrôle et corrige};
+\node[bloc, fill=popblueL] (si) at (0,1.6)
+  {\textbf{SYSTÈME D'INFORMATION}\\ collecte, stocke, traite et diffuse l'information};
+\node[bloc, fill=popgreenL] (oper) at (0,-1.0)
+  {\textbf{SYSTÈME OPÉRANT}\\ réalise la production de biens ou de services};
+% --- Flux montants (à gauche) ---
+\draw[flux, popblue] (oper.west) ++(0,0.35) -- ++(-1.6,0) |- (pilot.west) ++(0,-0.35);
+\node[lbl, text=popblue, anchor=east, align=center] at (-6.3,1.6){Flux montants\\ informations de synthèse\\ et d'alerte (résultats,\\ stocks, effectifs)};
+% --- Flux descendants (à droite) ---
+\draw[flux, poporange] (pilot.east) ++(0,-0.35) -- ++(1.6,0) |- (oper.east) ++(0,0.35);
+\node[lbl, text=poporange, anchor=west, align=center] at (6.3,1.6){Flux descendants\\ décisions, consignes,\\ objectifs};
+% --- Boucle de régulation ---
+\draw[flux, poppink, dashed] (pilot.north) ++(1.5,0) -- ++(0,0.7) -| (pilot.north) ++(-1.5,0);
+\node[lbl, text=poppink] at (0,5.55) {Boucle de régulation : comparaison résultats / objectifs, ajustement};
+\end{tikzpicture}
+\end{center}
+\legende{Les trois sous-systèmes d'une organisation et les flux d'information qui les relient.}
+\end{popfigure}
+
+\begin{exemplebox}[La boucle de régulation au lycée]
+Le proviseur fixe un objectif de \textbf{80 \% de réussite au Bac} (pilotage) à partir des statistiques de l'année précédente remontées par le SI (taux de 68 \%). Les consignes descendent : renforcement des cours de soutien, suivi des classes de Terminale (flux descendants). Les enseignants adaptent leur travail et font passer les évaluations (opérant). À la fin de l'année, le SI remonte le nouveau taux : 76 \% (flux montant). Le pilotage compare 76 \% à l'objectif de 80 \%, constate l'écart, et ajuste : recrutement d'un enseignant de mathématiques, révision des effectifs par classe. La boucle est bouclée — et elle recommence l'année suivante.
+\end{exemplebox}
+
+\courssub{Méthode : décrire les systèmes d'une organisation}
+
+\begin{methode}[Identifier les trois sous-systèmes d'une organisation]
+Pour décrire les systèmes d'une organisation quelconque, procède toujours dans cet ordre :
+\begin{enumerate}
+\item \textbf{Repérer qui produit} : quelles personnes, machines ou services réalisent concrètement le bien ou le service ? C'est le \textbf{système opérant}.
+\item \textbf{Repérer qui décide} : quels organes fixent les objectifs, tranchent et contrôlent ? C'est le \textbf{système de pilotage}.
+\item \textbf{Repérer ce qui informe} : quels services, documents ou outils collectent, traitent et diffusent l'information (notes, rapports, fichiers, logiciels) ? C'est le \textbf{système d'information}.
+\item \textbf{Tracer les flux} : identifier les informations qui montent (résultats, alertes) et celles qui descendent (décisions, consignes), puis vérifier que la boucle de régulation existe (comparaison objectifs/résultats).
+\end{enumerate}
+\end{methode}
+
+\courssub{Application guidée : le cas du lycée camerounais}
+
+Appliquons la méthode à un lycée.
+
+\begin{enumerate}
+\item \textbf{Qui produit ?} Les enseignants et les élèves, avec les salles de classe, les laboratoires et les ateliers : c'est le système opérant.
+\item \textbf{Qui décide ?} Le proviseur, le censeur, le conseil d'établissement : c'est le système de pilotage.
+\item \textbf{Qu'est-ce qui informe ?} Le secrétariat, les bulletins de notes, les statistiques de réussite, les emplois du temps, les registres d'appel, le logiciel de gestion des notes : c'est le système d'information.
+\item \textbf{Flux} : les moyennes et effectifs montent vers le proviseur ; les décisions (ouverture de classes, sanctions, objectifs) descendent vers les enseignants et les élèves.
+\end{enumerate}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  bloc/.style={draw=popink, thick, rounded corners=4pt, align=center, minimum width=9.2cm, minimum height=2.1cm, font=\small},
+  flux/.style={-{Stealth[length=3mm]}, very thick},
+  lbl/.style={font=\footnotesize\itshape, align=center}
+]
+\node[bloc, fill=poppurpleL] (pilot) at (0,4.4)
+  {\textbf{PILOTAGE}\\ Proviseur, censeur, conseil d'établissement\\ \emph{objectifs, sanctions, ouvertures de classes}};
+\node[bloc, fill=popblueL] (si) at (0,1.6)
+  {\textbf{SYSTÈME D'INFORMATION}\\ Secrétariat, bulletins de notes, statistiques,\\ emplois du temps, registres, logiciel de notes};
+\node[bloc, fill=popgreenL] (oper) at (0,-1.2)
+  {\textbf{OPÉRANT}\\ Enseignants, élèves, salles de classe, laboratoires\\ \emph{cours, évaluations, apprentissage}};
+\draw[flux, popblue] (oper.west) ++(0,0.35) -- ++(-1.6,0) |- (pilot.west) ++(0,-0.35);
+\node[lbl, text=popblue, anchor=east, align=center] at (-6.3,1.6){Moyennes, effectifs,\\ taux de réussite,\\ rapports d'incidents};
+\draw[flux, poporange] (pilot.east) ++(0,-0.35) -- ++(1.6,0) |- (oper.east) ++(0,0.35);
+\node[lbl, text=poporange, anchor=west, align=center] at (6.3,1.6){Objectifs, consignes,\\ emplois du temps,\\ décisions du conseil};
+\end{tikzpicture}
+\end{center}
+\legende{Les trois sous-systèmes appliqués à un lycée camerounais, avec les acteurs réels.}
+\end{popfigure}
+
+\begin{exoresolu}[Identifier les sous-systèmes d'une boutique de vente de téléphones]
+\textbf{Énoncé.} Madame Etoundi tient une boutique de vente de téléphones à Yaoundé. Deux vendeurs accueillent les clients et réalisent les ventes. Chaque soir, le caissier saisit les ventes du jour dans un tableur qui calcule le chiffre d'affaires et l'état du stock. Chaque lundi, Madame Etoundi consulte ce tableau, fixe les objectifs de vente de la semaine et décide des réapprovisionnements. Identifie les trois sous-systèmes de cette organisation, puis décris un flux montant, un flux descendant et la boucle de régulation.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{itemize}
+\item \textbf{Système opérant} : les deux vendeurs et le magasin, qui réalisent concrètement la vente des téléphones (la production du service).
+\item \textbf{Système de pilotage} : Madame Etoundi, la gérante, qui fixe les objectifs, décide des réapprovisionnements et contrôle les résultats.
+\item \textbf{Système d'information} : le caissier, le tableur, les fiches de vente et l'état du stock, qui collectent, traitent et diffusent l'information.
+\item \textbf{Flux montant} : le chiffre d'affaires quotidien et l'état du stock remontent chaque soir vers la gérante via le tableur.
+\item \textbf{Flux descendant} : les objectifs de vente de la semaine et les consignes (promotions, produits à mettre en avant) descendent vers les vendeurs.
+\item \textbf{Boucle de régulation} : chaque lundi, la gérante compare les ventes réalisées aux objectifs de la semaine précédente ; si le stock d'un modèle est épuisé ou si les ventes sont faibles, elle ajuste : commande de nouveaux téléphones, baisse de prix, motivation des vendeurs.
+\end{itemize}
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Toute organisation se décompose en trois sous-systèmes : le \cle{système opérant} (il produit), le \cle{système de pilotage} (il décide et contrôle) et le \cle{système d'information} (il informe).
+\item Le SI est l'\textbf{interface obligée} entre pilotage et opérant : il fait remonter les informations (flux montants) et descendre les décisions (flux descendants).
+\item La \textbf{boucle de régulation} permet au pilotage de comparer résultats et objectifs, puis d'ajuster ses décisions.
+\item Le SI \emph{informe} mais ne \emph{décide} pas : c'est le pilotage qui décide.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+On considère l'hôpital régional de ta ville. (1) Identifie le système opérant, le système de pilotage et le système d'information. (2) Donne deux exemples de flux montants et deux exemples de flux descendants. (3) Décris une boucle de régulation concernant le temps d'attente des patients.
+\end{exercice}
+
+\begin{corrige}[Exercice]
+(1) \textbf{Opérant} : médecins, infirmiers, blocs opératoires et services de consultation qui prodiguent les soins. \textbf{Pilotage} : le directeur de l'hôpital et le comité de direction, qui fixent les objectifs (réduire l'attente, améliorer la prise en charge) et répartissent les ressources. \textbf{SI} : le bureau des admissions, les dossiers patients, les registres, les statistiques de fréquentation et le logiciel de gestion hospitalière. (2) \textbf{Flux montants} : nombre de patients reçus par jour, rapports sur les ruptures de stock de médicaments. \textbf{Flux descendants} : décision d'ouvrir un guichet d'admission supplémentaire, consigne de prioriser les urgences. (3) \textbf{Régulation} : le SI remonte le temps d'attente moyen (par exemple 3 heures) ; la direction le compare à l'objectif (1 heure), constate l'écart et décide d'affecter un médecin supplémentaire aux consultations ; le mois suivant, le SI remonte la nouvelle mesure et la comparaison recommence.
+\end{corrige}
+
+\coursec{Composants et fonctions d'un système d'information}
+
+Dans la section précédente, nous avons vu que toute organisation — un lycée, un cybercafé, une entreprise comme CAMTEL — fonctionne grâce à trois sous-systèmes qui coopèrent : le \cle{système opérant} qui réalise la production, le \cle{système de pilotage} qui décide, et le \cle{système d'information} qui fait circuler l'information entre les deux. Mais de quoi ce système d'information est-il concrètement constitué ? Et que fait-il exactement, jour après jour ? C'est ce que nous allons découvrir maintenant, en suivant le fil d'une situation bien connue : l'établissement des bulletins de notes dans un lycée de 800 élèves.
+
+\courssub{Les composants d'un système d'information}
+
+\textbf{Intuition.} Pour produire les bulletins de fin de séquence, le lycée mobilise des \emph{personnes} (les enseignants qui notent, le surveillant général, la secrétaire qui saisit), des \emph{machines} (ordinateurs, imprimante, onduleur) et des \emph{programmes} (le logiciel de gestion scolaire, le tableur). Aucun de ces trois ingrédients ne suffit à lui seul : un ordinateur sans logiciel est une coquille vide, un logiciel sans utilisateur ne produit rien.
+
+\begin{definition}[Composants d'un système d'information]
+Les \cle{composants} d'un système d'information se répartissent en trois catégories complémentaires :
+\begin{itemize}
+\item les \cle{ressources humaines} : toutes les personnes qui alimentent, exploitent ou utilisent le SI ;
+\item les \cle{ressources matérielles} (hardware) : tous les équipements physiques de saisie, de traitement, de stockage et de communication ;
+\item les \cle{ressources logicielles} (software) : tous les programmes qui font fonctionner le matériel et réalisent les traitements.
+\end{itemize}
+\end{definition}
+
+\textbf{Les composants humains.} On distingue plusieurs profils, chacun avec un rôle précis :
+\begin{itemize}
+\item les \cle{utilisateurs} : ils exploitent le SI dans leur travail quotidien et consomment les informations produites (l'enseignant qui consulte les moyennes de sa classe, le comptable qui édite les fiches de paie) ;
+\item les \cle{informaticiens} : ils conçoivent, installent, administrent et maintiennent le SI (développeurs, administrateurs réseau, techniciens de maintenance) ;
+\item les \cle{décideurs} : dirigeants et responsables (proviseur, directeur général) qui s'appuient sur les informations du SI pour piloter l'organisation ;
+\item le \cle{personnel de saisie} : agents chargés d'introduire les données dans le système (la secrétaire qui saisit les notes au clavier).
+\end{itemize}
+
+\textbf{Les composants matériels.} Ce sont les équipements physiques :
+\begin{itemize}
+\item les \cle{ordinateurs} (postes de travail) pour la saisie et la consultation ;
+\item les \cle{serveurs}, ordinateurs puissants qui centralisent les données et les mettent à disposition de tous ;
+\item les \cle{imprimantes} pour produire les documents (bulletins, rapports) ;
+\item le \cle{réseau} (câbles, switchs, points d'accès Wi-Fi) qui relie les équipements entre eux ;
+\item les \cle{supports de stockage} (disques durs, clés USB, bandes de sauvegarde) qui conservent les données ;
+\item les \cle{onduleurs} (UPS), qui fournissent une alimentation de secours en cas de coupure d'électricité et protègent les données en cours de traitement.
+\end{itemize}
+
+\textbf{Les composants logiciels.} Ce sont les programmes :
+\begin{itemize}
+\item le \cle{système d'exploitation} (Windows, Linux) qui fait fonctionner les machines ;
+\item le \cle{SGBD} (Système de Gestion de Bases de Données, comme MySQL ou PostgreSQL) qui organise et sécurise les données ;
+\item les \cle{logiciels de gestion} (comptabilité, paie, gestion scolaire) ;
+\item les \cle{applications métier}, développées pour les besoins spécifiques de l'organisation (logiciel de calcul des moyennes et d'édition des bulletins).
+\end{itemize}
+
+\begin{exemplebox}[Les composants du SI d'un lycée]
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Ressources humaines} & \textbf{Ressources matérielles} & \textbf{Ressources logicielles} \\
+\hline
+Proviseur (décideur), enseignants (utilisateurs), secrétaire (saisie), informaticien (maintenance) & Ordinateurs de la salle informatique, serveur, imprimante, réseau local, onduleur, disque externe de sauvegarde & Windows, SGBD MySQL, logiciel de gestion scolaire, tableur Excel, traitement de texte \\
+\hline
+\end{tabularx}
+\end{center}
+\end{exemplebox}
+
+\begin{savaistu}[Coupures d'électricité et pertes de données]
+Au Cameroun, la panne d'électricité est la première cause de perte de données dans les systèmes d'information : une coupure brutale pendant une saisie ou une écriture sur disque peut corrompre des fichiers entiers. C'est pourquoi tout SI sérieux s'équipe d'\cle{onduleurs} (qui laissent le temps d'enregistrer et d'éteindre proprement) et applique une politique de \cle{sauvegardes} régulières sur des supports externes.
+\end{savaistu}
+
+\courssub{Les fonctions d'un système d'information}
+
+\textbf{Intuition.} Revenons à notre exemple filé. Une note de mathématiques obtenue par une élève de Première D suit un chemin précis : l'enseignant la reporte sur sa fiche de notes, la secrétaire la \emph{saisit} dans le logiciel, celle-ci est \emph{conservée} dans la base de données, puis le logiciel \emph{calcule} la moyenne, et enfin le bulletin est \emph{imprimé et remis} à l'élève. Ces quatre étapes correspondent exactement aux quatre fonctions de tout système d'information.
+
+\begin{propriete}[Les quatre fonctions d'un SI]
+Tout système d'information remplit quatre \cle{fonctions} qui s'enchaînent dans cet ordre logique :
+\[ \text{Collecte} \;\longrightarrow\; \text{Stockage} \;\longrightarrow\; \text{Traitement} \;\longrightarrow\; \text{Diffusion} \]
+\begin{itemize}
+\item la \cle{collecte} : saisir ou acquérir les données à la source, qu'elles soient internes (notes, ventes) ou externes (taux de change, données d'un partenaire) ;
+\item le \cle{stockage} : conserver les données de façon organisée et sécurisée (fichiers, bases de données) pour pouvoir les retrouver à tout moment ;
+\item le \cle{traitement} : transformer les données en informations utiles (calculs, tris, regroupements, statistiques) ;
+\item la \cle{diffusion} : distribuer l'information au bon destinataire, au bon moment, sous la bonne forme (bulletin imprimé, rapport, SMS, affichage).
+\end{itemize}
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[node distance=0.55cm and 0.9cm,
+  fonc/.style={rectangle, rounded corners=3pt, draw=popblue, fill=popblueL, thick, minimum width=2.5cm, minimum height=0.95cm, align=center, font=\bfseries},
+  ex/.style={rectangle, draw=popmuted, fill=popcream, rounded corners=3pt, minimum width=2.5cm, minimum height=0.8cm, align=center, font=\footnotesize\itshape, below=0.25cm of #1},
+  fleche/.style={-{Stealth[length=3mm]}, very thick, poporange}]
+\node[fonc] (c) {Collecte};
+\node[fonc, right=of c] (s) {Stockage};
+\node[fonc, right=of s] (t) {Traitement};
+\node[fonc, right=of t] (d) {Diffusion};
+\node[ex=c, align=center]{note saisie\\ au clavier};
+\node[ex=s, align=center]{base de\\ données};
+\node[ex=t, align=center]{moyenne\\ calculée};
+\node[ex=d, align=center]{bulletin\\ imprimé};
+\draw[fleche] (c) -- (s);
+\draw[fleche] (s) -- (t);
+\draw[fleche] (t) -- (d);
+\end{tikzpicture}
+\end{center}
+\legende{Chaîne des quatre fonctions du SI, illustrée par l'exemple filé du bulletin de notes.}
+\end{popfigure}
+
+\textbf{Détaillons chaque fonction.}
+
+La \cle{collecte} est la porte d'entrée du SI : une donnée mal collectée (note recopiée avec une erreur, doublon de saisie) faussera tous les traitements suivants. Elle peut être manuelle (saisie au clavier) ou automatisée (code-barres, capteurs, importation de fichiers).
+
+Le \cle{stockage} garantit la persistance et l'organisation des données : plutôt que des classeurs papier éparpillés, on utilise une base de données gérée par un SGBD, qui assure la cohérence, la sécurité (droits d'accès) et les sauvegardes.
+
+Le \cle{traitement} est la valeur ajoutée du SI : il transforme des données brutes en informations significatives. Par exemple, le calcul de la moyenne générale d'un élève à partir de ses notes et des coefficients s'écrit :
+\[ \text{Moyenne} = \frac{\sum_{i} \text{note}_i \times \text{coef}_i}{\sum_{i} \text{coef}_i} \]
+
+La \cle{diffusion} adapte l'information à son destinataire : bulletin imprimé pour l'élève, tableau synthétique pour le proviseur, SMS aux parents, affichage des listes d'admission.
+
+\begin{attention}[Diffusion n'est pas archivage]
+Ne confonds pas \cle{diffusion} et \cle{stockage} : diffuser, c'est \emph{transmettre} l'information à un destinataire (imprimer, envoyer, afficher) ; stocker, c'est la \emph{conserver} pour un usage ultérieur. Archiver un bulletin dans la base, c'est du stockage ; le remettre à l'élève, c'est de la diffusion.
+\end{attention}
+
+\begin{exoresolu}[Le gain apporté par l'automatisation]
+Énoncé. Un lycée de 800 élèves éditait ses bulletins à la main : calcul des moyennes à la calculatrice, recopie, vérification. Le travail mobilisait l'équipe administrative pendant 5 jours. Après l'installation d'un logiciel de gestion scolaire, l'édition complète ne prend plus que 2 heures. Calcule le temps gagné et le taux de réduction du temps de travail.
+\tcblower
+Solution détaillée. On raisonne en heures, avec une journée de travail de 8 heures.
+\begin{align*}
+\text{Temps manuel} &= 5 \times 8 = 40 \text{ heures} \\
+\text{Temps gagné} &= 40 - 2 = 38 \text{ heures} \\
+\text{Taux de réduction} &= \frac{40 - 2}{40} \times 100 = 95\,\%
+\end{align*}
+L'automatisation a donc réduit le temps d'édition des bulletins de \num{95}\,\%, libérant 38 heures de travail administratif à chaque séquence, tout en supprimant les erreurs de calcul et de recopie.
+\end{exoresolu}
+
+\courssub{Analyser le SI d'une organisation : le tableau fonction-composant}
+
+\begin{methode}[Dresser le tableau croisé « fonction $\times$ composant »]
+Pour analyser le système d'information d'une organisation, procède en quatre étapes :
+\begin{enumerate}
+\item \textbf{Identifier les fonctions} : repérer où et comment l'organisation collecte, stocke, traite et diffuse ses informations.
+\item \textbf{Associer les acteurs} : pour chaque fonction, demander « qui la réalise ? » (ressource humaine).
+\item \textbf{Associer les équipements et logiciels} : demander « avec quel matériel ? quel logiciel ? ».
+\item \textbf{Synthétiser} dans un tableau croisé à quatre lignes (les fonctions) et trois colonnes (humain, matériel, logiciel), puis repérer les points faibles (absence d'onduleur, saisie redondante, diffusion tardive).
+\end{enumerate}
+\end{methode}
+
+\begin{experience}[TP guidé : analyse du SI d'une bibliothèque scolaire]
+\textbf{Objectif} : appliquer la méthode du tableau croisé à un cas réel.
+\textbf{Matériel} : une feuille ou un tableur ; une visite de la bibliothèque de l'établissement.
+\textbf{Manipulation} :
+\begin{enumerate}
+\item Observer le travail du bibliothécaire : comment enregistre-t-il un nouvel ouvrage ? Comment gère-t-il les prêts et les retours ?
+\item Pour chacune des quatre fonctions, noter l'acteur, le matériel et le logiciel utilisés (ou leur absence).
+\item Construire le tableau croisé et proposer deux améliorations (par exemple : lecteur de codes-barres pour la collecte, sauvegarde hebdomadaire pour le stockage).
+\end{enumerate}
+\textbf{Observations attendues} : la collecte est souvent manuelle (registre papier), le stockage fragile (cahier unique), le traitement quasi inexistant (aucune statistique sur les ouvrages les plus empruntés), la diffusion limitée à l'affichage.
+\textbf{Interprétation} : ce diagnostic révèle un SI peu automatisé et justifie un projet d'informatisation.
+\end{experience}
+
+\courssub{Les intérêts d'un système d'information}
+
+Un SI bien conçu apporte à l'organisation des bénéfices décisifs :
+\begin{itemize}
+\item une \cle{meilleure prise de décision} : le proviseur dispose de statistiques fiables pour agir (taux de réussite par classe, effectifs) ;
+\item un \cle{gain de temps} considérable, comme l'a montré l'exemple des bulletins (réduction de \num{95}\,\%) ;
+\item la \cle{fiabilité} et la \cle{traçabilité} : chaque opération est enregistrée, on peut retrouver qui a saisi quoi et quand ;
+\item la \cle{coordination des services} : comptabilité, scolarité et direction partagent les mêmes données à jour ;
+\item la \cle{réduction des coûts} : moins de papier, moins d'heures de travail répétitif, moins d'erreurs coûteuses ;
+\item la constitution d'une \cle{mémoire de l'organisation} : les archives numériques conservent l'historique (bulletins des années passées) ;
+\item la \cle{compétitivité} : une entreprise bien informée réagit plus vite que ses concurrents.
+\end{itemize}
+
+\begin{aretenir}[L'essentiel de la section]
+Un système d'information repose sur trois catégories de composants : les ressources \cle{humaines} (utilisateurs, informaticiens, décideurs, personnel de saisie), les ressources \cle{matérielles} (ordinateurs, serveurs, réseaux, supports de stockage, onduleurs) et les ressources \cle{logicielles} (système d'exploitation, SGBD, logiciels de gestion, applications métier). Il remplit quatre fonctions enchaînées : \cle{collecte}, \cle{stockage}, \cle{traitement}, \cle{diffusion}. Pour analyser un SI, on dresse le tableau croisé fonction-composant. Un bon SI améliore la décision, fait gagner du temps, fiabilise et trace les opérations, coordonne les services, réduit les coûts et constitue la mémoire de l'organisation.
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+Le cybercafé « Espace Net » de Bafoussam veut informatiser la gestion de ses postes et de ses recettes.
+\begin{enumerate}
+\item Énumère les ressources humaines, matérielles et logicielles nécessaires à son futur SI.
+\item Décris comment les quatre fonctions du SI s'appliquent à la gestion des connexions des clients.
+\item Propose deux intérêts concrets que le gérant retirera de cette informatisation.
+\end{enumerate}
+\end{exercice}
+
+\coursec{Modèle, modélisation et méthodes de conception}
+
+Dans la section précédente, nous avons vu qu'un système d'information repose sur des ressources humaines, matérielles et logicielles, et qu'il remplit quatre fonctions : collecter, stocker, traiter et diffuser l'information. Une question se pose alors naturellement : comment \emph{construit-on} un tel système ? Peut-on se lancer directement dans l'achat des ordinateurs et l'écriture des programmes ? L'expérience montre que non : concevoir un système d'information « au feeling » conduit presque toujours à des erreurs coûteuses. Avant de construire, il faut \cle{modéliser}. C'est l'objet de cette dernière section.
+
+\courssub{Le modèle : représenter la réalité avant de la construire}
+
+\textbf{Une situation pour comprendre.} Le proviseur d'un lycée de Yaoundé veut faire construire une nouvelle salle informatique. L'architecte ne commence jamais par couler le béton : il dessine d'abord un \emph{plan} de la salle. Ce plan n'est pas la salle elle-même : on ne peut pas s'asseoir dessus, il n'a ni murs ni toit. Pourtant, il suffit pour vérifier que 40 tables d'élèves y tiendront, que la porte est bien placée, que les prises électriques sont prévues. Le plan est une \emph{représentation simplifiée} de la future salle, qui n'en retient que ce qui est utile à la décision.
+
+C'est exactement l'idée du \cle{modèle} en informatique.
+
+\begin{definition}[Modèle]
+Un \cle{modèle} est une représentation simplifiée et abstraite d'une réalité, qui n'en retient que les aspects utiles à l'étude que l'on souhaite mener.
+\end{definition}
+
+Le mot \emph{abstraite} signifie que le modèle s'éloigne volontairement des détails concrets : sur le plan de la salle informatique, une table est un simple rectangle, pas un meuble avec ses vis et sa peinture. Le mot \emph{simplifiée} signifie que l'on écarte tout ce qui n'est pas utile à l'objectif poursuivi : le plan ne précise ni la couleur des murs ni la marque des chaises, car cela n'aide pas à vérifier que la salle est bien dimensionnée.
+
+\begin{exemplebox}[Des modèles que tu connais déjà]
+\begin{itemize}
+\item Le \textbf{plan d'une maison} : modèle de la maison avant sa construction ; il retient les dimensions et la disposition des pièces.
+\item La \textbf{maquette d'un pont} : modèle réduit qui permet de tester la solidité de l'ouvrage avant de le bâtir réellement sur le fleuve Wouri.
+\item La \textbf{carte géographique} : modèle d'un territoire ; une carte routière du Cameroun ne montre ni les maisons ni les arbres, seulement ce qui sert à se déplacer.
+\item Le \textbf{bulletin de notes} : modèle simplifié du travail d'un élève sur un trimestre ; il ne dit pas tout de l'élève, seulement ce qui sert à l'évaluation.
+\end{itemize}
+\end{exemplebox}
+
+\begin{propriete}[Tout modèle est incomplet (propriété admise)]
+Un modèle n'est jamais une copie parfaite de la réalité : par nature, il est \textbf{incomplet}. Sa qualité ne se juge donc pas à sa fidélité totale à la réalité, mais à son \textbf{utilité} pour l'objectif fixé. Une carte routière est un « bon » modèle pour un chauffeur, mais un « mauvais » modèle pour un agriculteur qui veut connaître la nature des sols.
+\end{propriete}
+
+\courssub{La modélisation : la démarche de construction du modèle}
+
+\begin{definition}[Modélisation]
+La \cle{modélisation} est la démarche qui consiste à construire un modèle d'un système \textbf{avant} de réaliser le système réel. Elle fait passer de la réalité observée à une représentation abstraite, sur laquelle on raisonne, que l'on corrige et que l'on valide, avant toute mise en œuvre concrète.
+\end{definition}
+
+Pourquoi prendre le temps de modéliser ? Parce qu'il est infiniment moins coûteux de corriger un dessin que de démolir un mur. Modéliser permet de :
+
+\begin{itemize}
+\item \textbf{comprendre} : analyser calmement le fonctionnement de l'organisation (qui fait quoi, quelles données circulent) ;
+\item \textbf{communiquer} : le modèle est un langage commun entre le proviseur, le comptable, le professeur et l'informaticien, qui ne parlent pas le même langage technique ;
+\item \textbf{prévoir} : anticiper les difficultés (volumes de données, cas particuliers) avant qu'elles ne deviennent des pannes ;
+\item \textbf{réduire les erreurs et les coûts} : une erreur détectée sur le modèle coûte une gomme ; détectée après la programmation, elle coûte des semaines de travail.
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small, >=Stealth, node distance=0.6cm]
+  % Réalité
+  \node[draw=popblue, fill=popblueL, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center] (realite) {\textbf{Réalité}\\ La future salle};
+  \node[draw=popmuted, fill=popcream, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center, right=2.4cm of realite] (modele) {\textbf{Modèle}\\ Le plan de la salle};
+  \node[draw=popgreen, fill=popgreenL, rounded corners, minimum width=2.6cm, minimum height=1.1cm, align=center, right=2.4cm of modele] (realisation) {\textbf{Réalisation}\\ La salle construite};
+  % Flèches
+  \draw[->, very thick, poporange] (realite) -- node[above, align=center]{abstraction\\ (on simplifie)} (modele);
+  \draw[->, very thick, poporange] (modele) -- node[above, align=center]{mise en \oe{}uvre\\ (on construit)} (realisation);
+  % Retour de validation
+  \draw[->, thick, poppurple, dashed] (modele.south) to[bend right=25] node[below, align=center]{validation, corrections} (realite.south);
+\end{tikzpicture}
+\end{center}
+\legende{La démarche de modélisation : on part de la réalité, on en tire un modèle par abstraction, on le valide et on le corrige, puis seulement on réalise le système.}
+\end{popfigure}
+
+\begin{methode}[La règle d'or de la conception d'un SI]
+Pour concevoir un système d'information, on procède toujours dans cet ordre :
+\begin{enumerate}
+\item \textbf{Analyser les besoins} : interroger les utilisateurs (que veut faire le secrétariat ? le comptable ?) ;
+\item \textbf{Modéliser les données} : quelles informations faut-il mémoriser (élèves, notes, classes...) et comment sont-elles liées ?
+\item \textbf{Modéliser les traitements} : quelles opérations effectue-t-on sur ces données (calculer une moyenne, éditer un bulletin) ?
+\item \textbf{Puis seulement réaliser} : choisir les logiciels, écrire les programmes, installer les machines.
+\end{enumerate}
+On modélise \textbf{toujours avant} de programmer — jamais l'inverse. Un programme écrit sans modèle préalable est une maison bâtie sans plan.
+\end{methode}
+
+\courssub{Les méthodes de conception d'un système d'information}
+
+La modélisation est une démarche exigeante : pour ne pas la laisser à l'improvisation de chacun, des informaticiens ont mis au point des \cle{méthodes de conception}, c'est-à-dire des démarches normalisées, avec des étapes précises et des formalismes graphiques bien définis. Le programme officiel en retient quatre : \cle{MERISE}, \cle{AXIAL}, \cle{OMT} et \cle{RUP}.
+
+\textbf{La méthode MERISE.} MERISE est une méthode \emph{française} de conception de systèmes d'information, née à la fin des années 1970. Son idée directrice est de séparer clairement l'étude des \textbf{données} (que faut-il mémoriser ?) de celle des \textbf{traitements} (que fait-on avec ?). Elle propose de décrire le système à trois niveaux d'abstraction successifs :
+
+\begin{itemize}
+\item le niveau \textbf{conceptuel} : on décrit les données et les traitements du point de vue du métier, sans aucune préoccupation technique (c'est le niveau du fameux \emph{MCD}, voir plus bas) ;
+\item le niveau \textbf{logique} (ou organisationnel) : on adapte le modèle à un type de technologie, par exemple une base de données relationnelle ;
+\item le niveau \textbf{physique} (ou technique) : on décrit l'implantation concrète sur les machines (fichiers, tables réelles, programmes).
+\end{itemize}
+
+MERISE est la méthode la plus citée au programme et la plus enseignée dans le monde francophone.
+
+\textbf{La méthode AXIAL.} AXIAL est également une méthode \emph{française}, consacrée à la \emph{conduite de projets informatiques}. Elle organise le projet en \textbf{cycles} successifs : analyse des besoins, conception, réalisation, avec des points de validation entre chaque étape. Là où MERISE décrit surtout \emph{quoi} produire (des modèles de données et de traitements), AXIAL s'intéresse davantage à \emph{comment organiser} le déroulement du projet.
+
+\textbf{La méthode OMT.} OMT (\emph{Object Modeling Technique}, « technique de modélisation par objets ») est une méthode de modélisation \textbf{orientée objet} : au lieu de séparer données et traitements, elle décrit le système comme un ensemble d'\emph{objets} qui regroupent chacun leurs données (attributs) et leurs traitements (méthodes). Un objet « Élève » contient à la fois son nom, sa date de naissance et les opérations qui le concernent.
+
+\textbf{La méthode RUP.} RUP (\emph{Rational Unified Process}) est un processus de développement \textbf{itératif} et orienté objet : le système n'est pas construit d'un seul coup, mais par \emph{itérations} successives — on réalise une première version simplifiée, on la fait tester, on l'améliore, et ainsi de suite jusqu'au produit final. Cela limite les risques, car les erreurs d'orientation sont détectées très tôt.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Méthode} & \textbf{Origine} & \textbf{Type} & \textbf{Usage principal} \\
+\hline
+MERISE & France (fin des années 1970) & Données et traitements, en trois niveaux (conceptuel, logique, physique) & Conception de systèmes d'information et de bases de données \\
+\hline
+AXIAL & France & Conduite de projet par cycles & Organisation des étapes : analyse des besoins, conception, réalisation \\
+\hline
+OMT & États-Unis & Modélisation orientée objet & Décrire le système comme des objets (attributs + méthodes) \\
+\hline
+RUP & États-Unis & Processus itératif orienté objet & Développement par versions successives corrigées et enrichies \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{savaistu}[MERISE, une méthode française devenue référence]
+La méthode MERISE a été créée en France à la fin des années 1970, à la demande du ministère de l'Industrie, pour harmoniser la conception des systèmes d'information des grandes administrations et entreprises. Son nom viendrait, selon une anecdote souvent racontée, d'un atelier de travail qui se tenait à proximité d'un verger de merisiers. Plus de quarante ans après, elle reste la méthode de référence dans l'enseignement francophone des systèmes d'information, y compris dans les lycées camerounais.
+\end{savaistu}
+
+\begin{attention}[Ne confonds pas méthode et langage !]
+Au Probatoire, il faut savoir \textbf{énumérer les quatre méthodes} de conception : MERISE, AXIAL, OMT et RUP. Erreur fréquente : les confondre avec des \emph{langages de programmation}. MERISE n'est pas un langage : on ne « programme » pas en MERISE, on \emph{conçoit} avec MERISE. Les langages (C, JavaScript, HTML...) servent ensuite, à l'étape de réalisation, à traduire le modèle en programmes exécutables. Autre piège : ne pas confondre OMT (méthode de modélisation orientée objet) avec RUP (processus itératif de développement).
+\end{attention}
+
+\courssub{Complément utile au Probatoire : le MCD de MERISE (hors programme)}
+
+\begin{attention}[Notion hors programme, à connaître seulement de nom]
+Ce qui suit dépasse le programme officiel de Première : il ne s'agit pas d'apprendre à construire un MCD, mais simplement de savoir \textbf{citer} ce modèle et dire à quoi il sert, ce qui est souvent apprécié dans une copie.
+\end{attention}
+
+Parmi les modèles proposés par MERISE, le plus célèbre est le \cle{MCD} : \emph{Modèle Conceptuel des Données}. Il s'agit d'un schéma qui représente, au niveau conceptuel, les données du système d'information et les liens entre elles :
+
+\begin{itemize}
+\item les \textbf{entités} (les objets du monde réel dont on mémorise les informations : ÉLÈVE, CLASSE, MATIÈRE) sont dessinées dans des rectangles ;
+\item les \textbf{associations} (les liens entre entités : un élève \emph{appartient à} une classe) sont dessinées dans des ellipses ou des losanges ;
+\item les \textbf{cardinalités} précisent combien d'occurrences participent au lien (une classe contient \emph{plusieurs} élèves, un élève appartient à \emph{une seule} classe).
+\end{itemize}
+
+Le MCD répond à la question : « quelles sont les données à mémoriser, et comment sont-elles reliées ? » — avant toute décision technique. Sa construction détaillée sera étudiée en classe de Terminale.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small, >=Stealth]
+  % Entité ÉLÈVE
+  \node[draw=popblue, fill=popblueL, minimum width=2.6cm, minimum height=1.3cm, align=center] (eleve) at (0,0) {\textbf{ÉLÈVE}\\ \footnotesize matricule, nom,\\ \footnotesize date de naissance};
+  % Entité CLASSE
+  \node[draw=popblue, fill=popblueL, minimum width=2.6cm, minimum height=1.3cm, align=center] (classe) at (7.5,0) {\textbf{CLASSE}\\ \footnotesize code, libellé,\\ \footnotesize effectif};
+  % Association
+  \node[draw=poporange, fill=poporangeL, ellipse, minimum width=2.8cm, minimum height=1cm, align=center] (assoc) at (3.75,0) {\textbf{appartenir}};
+  % Liens et cardinalités
+  \draw[thick, popdark] (eleve) -- node[above, pos=0.25]{1,1} (assoc);
+  \draw[thick, popdark] (assoc) -- node[above, pos=0.75]{1,n} (classe);
+\end{tikzpicture}
+\end{center}
+\legende{Exemple de MCD très simple : un élève appartient à une seule classe (cardinalité 1,1) et une classe regroupe plusieurs élèves (cardinalité 1,n).}
+\end{popfigure}
+
+\begin{exoresolu}[Choisir la bonne méthode et le bon vocabulaire]
+Énoncé. Une entreprise de Douala veut informatiser sa gestion des stocks. Le chef de projet annonce : « Nous allons d'abord écrire le programme en langage C, puis nous verrons quelles données il faudra stocker. Nous utiliserons le langage MERISE pour cela. » Relever les deux erreurs commises et reformuler correctement.
+\tcblower
+\textbf{Solution détaillée.}
+
+\emph{Première erreur : l'inversion des étapes.} Le chef de projet veut programmer \emph{avant} de réfléchir aux données. Or la règle d'or de la conception impose l'ordre inverse : on commence par analyser les besoins et modéliser les données et les traitements, et l'on ne programme qu'ensuite. Programmer d'abord, c'est construire la maison avant de dessiner le plan : on risque de devoir tout démolir.
+
+\emph{Deuxième erreur : la confusion entre méthode et langage.} MERISE n'est pas un langage de programmation : c'est une \emph{méthode de conception} de systèmes d'information, centrée sur les données et les traitements. On ne peut pas « écrire un programme en MERISE ».
+
+\emph{Reformulation correcte :} « Nous allons d'abord analyser les besoins et modéliser le système à l'aide d'une méthode de conception comme MERISE (par exemple en construisant le MCD des données de stock). Ensuite seulement, à l'étape de réalisation, nous écrirons les programmes dans un langage adapté, comme le langage C. »
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Un \cle{modèle} est une représentation simplifiée et abstraite d'une réalité, qui n'en retient que les aspects utiles à l'étude (plan d'une maison, maquette, carte géographique).
+\item La \cle{modélisation} est la démarche de construction du modèle \emph{avant} la réalisation ; elle permet de comprendre, communiquer, prévoir et réduire les erreurs et les coûts.
+\item Tout modèle est incomplet : il se juge à son utilité, pas à sa fidélité totale.
+\item Les quatre méthodes de conception à connaître : \cle{MERISE} (française, données et traitements, niveaux conceptuel/logique/physique), \cle{AXIAL} (française, conduite de projet par cycles), \cle{OMT} (orientée objet), \cle{RUP} (itératif et orienté objet).
+\item Hors programme mais utile : le \cle{MCD} (Modèle Conceptuel des Données) est le modèle le plus connu de MERISE ; il représente les entités, les associations et les cardinalités.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[QCM de consolidation]
+1. Un modèle est : a) une copie exacte de la réalité ; b) une représentation simplifiée de la réalité adaptée à un objectif ; c) un programme informatique.
+
+2. Citer les quatre méthodes de conception d'un SI vues au programme, et préciser pour chacune son type (données et traitements, conduite de projet, objet, processus itératif).
+
+3. Vrai ou faux : « RUP est un langage de programmation orienté objet. » Justifier.
+
+4. Pourquoi dit-on qu'il faut « modéliser avant de programmer » ? Donner une analogie avec la construction d'un bâtiment.
+\end{exercice}
+
+\begin{corrige}[Exercice]
+1. Réponse b) : un modèle est une représentation simplifiée et abstraite, qui ne retient de la réalité que ce qui est utile à l'étude. Il n'est ni une copie exacte (tout modèle est incomplet) ni un programme.
+
+2. MERISE : méthode française centrée sur les données et les traitements (niveaux conceptuel, logique, physique). AXIAL : méthode française de conduite de projet par cycles. OMT : méthode de modélisation orientée objet. RUP : processus de développement itératif et orienté objet.
+
+3. Faux. RUP (\emph{Rational Unified Process}) est un \emph{processus de développement} itératif et orienté objet, c'est-à-dire une méthode de conception, et non un langage de programmation. Un langage sert à écrire des programmes ; une méthode sert à concevoir le système avant la programmation.
+
+4. Modéliser avant de programmer permet de comprendre les besoins, de détecter les erreurs sur le papier (où elles coûtent peu cher) et de communiquer entre tous les acteurs. C'est l'équivalent du plan d'un bâtiment : l'architecte dessine et corrige le plan avant que le maçon ne coule le béton, car démolir un mur coûte infiniment plus cher qu'effacer un trait.
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Leçon 5 : Systèmes d'information — concepts de base}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité, tu seras capable de mobiliser \textbf{l'ensemble des savoir-faire} de la leçon pour analyser le système d'information d'une organisation réelle. Concrètement, tu devras :
+
+\begin{itemize}
+  \item \textbf{décrire} les trois sous-systèmes d'une organisation (pilotage, information, opérant) et nommer les acteurs de chacun ;
+  \item \textbf{énumérer} les composants d'un système d'information : ressources humaines, matérielles et logicielles ;
+  \item \textbf{décrire} les quatre fonctions d'un système d'information (collecte, stockage, traitement, diffusion) à partir d'exemples observés ;
+  \item \textbf{distinguer} la partie automatisée de la partie manuelle du système d'information ;
+  \item \textbf{formuler} une proposition d'amélioration et \textbf{citer} une méthode de conception adaptée (MERISE, AXIAL, OMT, RUP) ;
+  \item travailler en équipe, présenter et défendre tes résultats devant la classe (\emph{savoir-être} : rigueur, esprit critique, communication).
+\end{itemize}
+
+\courssub{Situation}
+
+\begin{exemplebox}[Le lycée bilingue de Nkol-Eton veut moderniser son système d'information]
+Le lycée bilingue de Nkol-Eton (région du Centre) accueille 1~450 élèves répartis en 32 classes, encadrés par 58 enseignants et 12 personnels administratifs. Le proviseur, M.~Essomba, constate chaque année les mêmes difficultés : les bulletins de notes sont calculés à la main et rendus avec trois semaines de retard, les dossiers des élèves s'égarent dans les armoires du secrétariat, et les parents se plaignent de ne pas être informés à temps des absences de leurs enfants.
+
+Voici comment le lycée fonctionne actuellement :
+
+\begin{itemize}
+  \item Le \textbf{conseil d'administration} et le proviseur fixent les objectifs : taux de réussite au Probatoire d'au moins 70~\%, réduction des retards de paiement de l'APEE, ouverture d'une salle multimédia.
+  \item Les \textbf{censeurs} collectent les notes sur des fiches papier remplies par les enseignants ; la surveillante générale consigne les absences dans un registre cartonné.
+  \item Le \textbf{secrétariat} saisit les notes dans un classeur du tableur installé sur un seul ordinateur de bureau (vieux de 9 ans, \SI{2}{Go} de mémoire vive), puis imprime les bulletins. Les dossiers des élèves (fiches d'inscription, photocopies des actes de naissance) sont rangés dans 6 armoires métalliques.
+  \item Le lycée dispose d'une salle informatique de 25 postes (dont 19 fonctionnels) reliés en étoile à un commutateur, d'une connexion Internet CAMTEL par fibre optique de \SI{20}{Mbit/s}, et d'un logiciel de gestion scolaire acheté en 2019 mais jamais vraiment utilisé, faute de formation du personnel.
+  \item Les résultats sont affichés au tableau d'affichage ; les convocations des parents sont envoyées par courrier papier porté par les élèves.
+\end{itemize}
+
+Le proviseur sollicite ta classe de Première pour réaliser un \textbf{audit complet du système d'information} du lycée avant d'investir le budget de 4~millions de FCFA débloqué par l'APEE. Par groupes de 4 élèves, vous devez décrire, analyser et proposer des pistes d'amélioration.
+\end{exemplebox}
+
+\courssub{Consignes}
+
+Travail en groupes de 4. Chaque groupe rédige un rapport d'audit (affiche) et le présente en 5 minutes.
+
+\begin{enumerate}
+  \item \textbf{Sous-systèmes et acteurs.} Identifie les trois sous-systèmes du lycée (pilotage, information, opérant). Pour chacun, nomme précisément les acteurs (personnes ou services) qui en font partie dans la situation décrite.
+  \item \textbf{Flux d'information.} Sur un schéma, représente les trois sous-systèmes et trace les flux d'information : flux \emph{descendants} (ordres, décisions), flux \emph{montants} (comptes rendus, remontées d'informations) et flux entre le système d'information et le système opérant.
+  \item \textbf{Composants du SI.} Dresse un tableau à trois colonnes (ressources humaines, ressources matérielles, ressources logicielles) recensant tous les composants du système d'information du lycée mentionnés dans l'énoncé.
+  \item \textbf{Fonctions du SI.} Pour chacune des quatre fonctions (collecte, stockage, traitement, diffusion), cite un exemple réel tiré de la situation.
+  \item \textbf{Automatisé ou manuel ?} Distingue ce qui relève du système d'information \emph{automatisé} de ce qui reste manuel. Calcule la proportion de postes informatiques fonctionnels dans la salle et commente.
+  \item \textbf{Proposition d'amélioration.} Formule une proposition d'amélioration concrète (par exemple la mise en service effective du logiciel de gestion scolaire). Indique quelle méthode de conception parmi MERISE, AXIAL, OMT et RUP tu citerais pour conduire ce projet, et justifie ton choix en une phrase.
+\end{enumerate}
+
+\begin{attention}[Critères d'évaluation]
+La grille d'évaluation porte sur : l'\textbf{exactitude des concepts} (les définitions du cours sont respectées), la \textbf{complétude} (les 6 consignes sont traitées), la \textbf{clarté du schéma} (flux correctement orientés) et la \textbf{qualité de la présentation orale} (5 minutes, répartition de la parole dans le groupe).
+\end{attention}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Rappels essentiels]
+\begin{itemize}
+  \item Une \textbf{donnée} est un fait brut (une note, un nom) ; une \textbf{information} est une donnée traitée, interprétée, utile à la décision (une moyenne, un taux d'absentéisme).
+  \item Toute organisation comprend trois sous-systèmes : le système de \textbf{pilotage} (décide), le système \textbf{d'information} (collecte, stocke, traite, diffuse) et le système \textbf{opérant} (réalise la production).
+  \item Les composants d'un SI : ressources \textbf{humaines}, \textbf{matérielles} et \textbf{logicielles}.
+  \item Les quatre fonctions d'un SI : \textbf{collecte}, \textbf{stockage}, \textbf{traitement}, \textbf{diffusion}.
+  \item Le \textbf{système d'information automatisé} est la partie du SI prise en charge par les outils informatiques.
+  \item Méthodes de conception : \textbf{MERISE} (française, analyse par niveaux : MCD/MLD), \textbf{AXIAL} (conduite de projet par cycles), \textbf{OMT} (méthode objet), \textbf{RUP} (processus unifié, itératif).
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé commenté de l'audit du SI du lycée de Nkol-Eton]
+Énoncé : réaliser l'audit complet du système d'information du lycée bilingue de Nkol-Eton selon les six consignes.
+
+\tcblower
+
+\textbf{Étape 1 — Les trois sous-systèmes et leurs acteurs.}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Sous-système} & \textbf{Rôle} & \textbf{Acteurs au lycée} \\
+\hline
+Pilotage & Fixe les objectifs, prend les décisions & Proviseur, conseil d'administration, censeurs (adjoints) \\
+\hline
+Information & Collecte, stocke, traite, diffuse l'information & Secrétariat, censeurs, surveillante générale, informaticien \\
+\hline
+Opérant & Réalise la mission : enseigner et éduquer & Enseignants, élèves, personnels de service \\
+\hline
+\end{tabularx}
+\end{center}
+
+\emph{Justification :} le pilotage décide (objectif de 70~\% de réussite), l'opérant exécute (les cours), et le SI fait le lien entre les deux.
+
+\textbf{Étape 2 — Schéma des flux.}
+
+\begin{center}
+\begin{tikzpicture}[font=\small, node distance=1.1cm]
+  \node[draw=popblue, fill=popblueL, rounded corners, minimum width=4.2cm, minimum height=1cm] (pil) {\textbf{Système de pilotage}};
+  \node[draw=poporange, fill=poporangeL, rounded corners, minimum width=4.2cm, minimum height=1cm, below=of pil] (si) {\textbf{Système d'information}};
+  \node[draw=popgreen, fill=popgreenL, rounded corners, minimum width=4.2cm, minimum height=1cm, below=of si] (op) {\textbf{Système opérant}};
+  \draw[-{Stealth}, thick, popdark] (pil.west) -- ++(-1.6,0) |- node[pos=0.25, left, align=center]{ordres,\\décisions} (si.west);
+  \draw[-{Stealth}, thick, popdark] (si.east) -- ++(1.6,0) |- node[pos=0.25, right, align=center]{comptes\\rendus} (pil.east);
+  \draw[-{Stealth}, thick, poppurple] (op.west) -- ++(-0.8,0) |- node[pos=0.25, left, align=center]{consignes\\de travail} (si.west);
+  \draw[-{Stealth}, thick, poppurple] (si.east) -- ++(0.8,0) |- node[pos=0.25, right, align=center]{données\\(notes, absences)} (op.east);
+\end{tikzpicture}
+\par\small\textit{Les flux d'information entre les trois sous-systèmes du lycée.}
+\end{center}
+
+Les flux \emph{descendants} vont du pilotage vers l'opérant (via le SI) ; les flux \emph{montants} remontent les résultats vers le pilotage.
+
+\textbf{Étape 3 — Composants du SI.}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Ressources humaines} & \textbf{Ressources matérielles} & \textbf{Ressources logicielles} \\
+\hline
+Secrétaires, censeurs, surveillante, enseignants (saisie des notes) & 25 postes (19 fonctionnels), commutateur, fibre CAMTEL \SI{20}{Mbit/s}, imprimante, 6 armoires, registres & Tableur, logiciel de gestion scolaire (2019), système d'exploitation \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Étape 4 — Les quatre fonctions illustrées.}
+
+\begin{itemize}
+  \item \textbf{Collecte :} les enseignants remplissent les fiches de notes ; la surveillante consigne les absences.
+  \item \textbf{Stockage :} classeur du tableur sur l'ordinateur du secrétariat ; dossiers papier dans les 6 armoires.
+  \item \textbf{Traitement :} calcul des moyennes et des rangs dans le tableur, impression des bulletins.
+  \item \textbf{Diffusion :} affichage des résultats, convocations envoyées aux parents.
+\end{itemize}
+
+\textbf{Étape 5 — Automatisé ou manuel ?}
+
+Automatisé : la saisie des notes et l'impression des bulletins (tableur). Manuel : la collecte sur fiches papier, le registre d'absences, l'archivage dans les armoires, la diffusion par affichage et courriers. Proportion de postes fonctionnels :
+\[ \frac{19}{25} \times 100 = 76~\% \]
+soit près d'un quart du parc hors service : le SI automatisé est fragile et dépend d'un seul poste au secrétariat.
+
+\textbf{Étape 6 — Proposition d'amélioration.}
+
+Former le personnel et mettre en service le logiciel de gestion scolaire déjà acheté : saisie directe des notes par les enseignants, registre d'absences numérique, notification des parents par SMS. Pour conduire ce projet, on citerait la méthode \textbf{MERISE}, méthode d'analyse et de conception la plus enseignée et la plus adaptée à la modélisation des données d'une administration scolaire (MCD puis MLD), avant toute mise en \oe uvre informatique.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cet audit t'a permis de passer du cours à la pratique. Tu as d'abord constaté qu'un lycée est une \textbf{entreprise} comme une autre : il possède un système de pilotage qui décide, un système opérant qui produit (l'enseignement) et un système d'information qui relie les deux par des flux montants et descendants. Tu as ensuite vérifié que le SI ne se réduit pas à l'informatique : les ressources humaines (secrétaires, censeurs) et les supports papier (registres, armoires) en font pleinement partie, et le \textbf{système d'information automatisé} n'en est qu'une sous-partie — ici fragile, puisqu'il repose sur un seul poste et que 24~\% du parc est en panne. Enfin, tu as compris qu'améliorer un SI ne s'improvise pas : il faut une \textbf{méthode de conception} (MERISE, AXIAL, OMT ou RUP) pour modéliser avant de réaliser. C'est exactement la démarche que tu retrouveras dans la suite du module, lorsque tu construiras toi-même des modèles de données avec MERISE.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Méthode 1 : Décrire les trois sous-systèmes d'une organisation}
+
+\begin{methode}[Identifier et décrire les sous-systèmes d'une organisation]
+Pour décrire les systèmes d'une organisation (lycée, entreprise, boutique, hôpital), procède toujours en quatre étapes :
+\begin{enumerate}
+\item \textbf{Repérer le système opérant} : c'est lui qui \cle{réalise la production} (transformation de matières premières, prestations de service). Question à te poser : « Que produit concrètement l'organisation ? »
+\item \textbf{Repérer le système de pilotage} : c'est lui qui \cle{décide} (direction, conseil d'administration). Question : « Qui fixe les objectifs et contrôle les résultats ? »
+\item \textbf{Repérer le système d'information} : c'est lui qui \cle{fait circuler l'information} entre les deux autres. Question : « Par quels canaux les ordres descendent-ils et les comptes rendus remontent-ils ? »
+\item \textbf{Décrire les flux} : le pilotage envoie des \emph{décisions} à l'opérant ; l'opérant renvoie des \emph{informations de suivi} au pilotage, \emph{via} le système d'information.
+\end{enumerate}
+\textbf{Réflexe de rédaction} : au Probatoire, cite toujours les trois sous-systèmes \emph{avec leur rôle} et précise que le SI est l'interface entre le pilotage et l'opérant. Un schéma à trois blocs reliés par des flèches est très apprécié.
+\end{methode}
+
+\begin{exoresolu}[Les trois sous-systèmes du Lycée de Nkongsamba]
+Énoncé. Le Lycée bilingue de Nkongsamba est une organisation qui accueille 2 400 élèves. Le proviseur fixe les objectifs (taux de réussite au Bac, effectifs par classe), les enseignants dispensent les cours et évaluent les élèves, et les bulletins, rapports de conseil et tableaux de bord circulent entre tous les acteurs.
+\begin{enumerate}
+\item Identifie les trois sous-systèmes de cette organisation en justifiant chaque réponse.
+\item Représente ces sous-systèmes par un schéma faisant apparaître les flux.
+\end{enumerate}
+\tcblower
+\textbf{1. Identification des sous-systèmes.}
+\begin{itemize}
+\item \textbf{Système opérant} : l'ensemble des enseignants, des salles de classe et des laboratoires. Justification : c'est lui qui réalise la « production » de l'organisation, c'est-à-dire la formation et l'évaluation des élèves.
+\item \textbf{Système de pilotage} : le proviseur, les censeurs et le conseil d'administration. Justification : ce sont eux qui prennent les décisions (objectifs de réussite, ouverture de classes, sanctions) et qui contrôlent les résultats.
+\item \textbf{Système d'information} : l'ensemble des bulletins de notes, rapports de conseils de classe, tableaux de bord statistiques et canaux de communication (registres, logiciel de gestion scolaire). Justification : il collecte les résultats de l'opérant (notes, assiduité) et les transmet au pilotage, et il diffuse les décisions du pilotage vers l'opérant.
+\end{itemize}
+\textbf{2. Schéma des flux.}
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[>=Stealth,
+  bloc/.style={draw=popblue, fill=popblueL, rounded corners, thick, minimum width=4.2cm, minimum height=1cm, align=center, font=\small\bfseries}]
+\node[bloc, align=center] (pilot){Système de pilotage\\ \normalfont\footnotesize proviseur, conseil d'administration};
+\node[bloc, below left=1.5cm and -1.2cm of pilot, align=center] (si){Système d'information\\ \normalfont\footnotesize bulletins, rapports, logiciel};
+\node[bloc, below right=1.5cm and -1.2cm of pilot, align=center] (op){Système opérant\\ \normalfont\footnotesize enseignants, salles, élèves};
+\draw[->, thick, poporange] (pilot.west) to[bend right=15] node[left, font=\footnotesize, align=center]{décisions,\\ objectifs} (si.north);
+\draw[->, thick, popgreen] (si.north) to[bend right=15] node[right, font=\footnotesize, align=center]{comptes\\ rendus} (pilot.west);
+\draw[->, thick, poporange] (si.east) to[bend right=15] node[above, font=\footnotesize]{consignes} (op.west);
+\draw[->, thick, popgreen] (op.west) to[bend right=15] node[below, font=\footnotesize]{résultats} (si.east);
+\end{tikzpicture}
+\end{center}
+\legende{Les trois sous-systèmes du lycée et leurs flux d'information}
+\end{popfigure}
+\textbf{Conclusion} : le lycée fonctionne comme toute organisation : un système de pilotage décide, un système opérant exécute, et le système d'information assure la circulation des informations entre les deux.
+\end{exoresolu}
+
+\courssub{Méthode 2 : Énumérer les composants d'un système d'information}
+
+\begin{methode}[Recenser les composants d'un SI sans en oublier]
+Pour énumérer correctement les composants d'un SI, classe-les systématiquement en \textbf{trois familles} :
+\begin{enumerate}
+\item \textbf{Ressources humaines} : tous les acteurs qui utilisent ou gèrent le SI (personnel de saisie, informaticiens, administrateurs réseau, direction, usagers).
+\item \textbf{Ressources matérielles} : les équipements physiques (ordinateurs, serveurs, imprimantes, onduleurs, câbles, routeurs, téléphones).
+\item \textbf{Ressources logicielles} : les programmes (système d'exploitation, logiciels de gestion, SGBD, applications métier, antivirus).
+\end{enumerate}
+\textbf{Réflexes} :
+\begin{itemize}
+\item Ne confonds jamais un composant avec une fonction : « l'ordinateur » est un composant, « stocker » est une fonction.
+\item Si l'énoncé décrit une organisation concrète (cybercafé, boutique), puise tes exemples \emph{dans l'énoncé} avant d'en ajouter d'autres.
+\item Certains sujets ajoutent les \textbf{données} et les \textbf{procédures} (modes opératoires) : cite-les si on te demande une liste « complète ».
+\end{itemize}
+\end{methode}
+
+\begin{exoresolu}[Composants du SI d'un cybercafé de Bafoussam]
+Énoncé. M. Kamdem gère un cybercafé à Bafoussam. Il emploie deux caissières et un technicien. Le cybercafé dispose de 15 ordinateurs clients, d'un serveur, d'une imprimante-scanner, d'un onduleur et d'une box Internet CAMTEL. On y utilise Windows 10, le logiciel de facturation CyberCafé Pro, Microsoft Office et un antivirus.
+\begin{enumerate}
+\item Énumère les composants du système d'information de ce cybercafé en les classant par famille.
+\item Pourquoi les deux caissières font-elles partie du SI alors qu'elles ne sont pas des machines ?
+\end{enumerate}
+\tcblower
+\textbf{1. Classement des composants.}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Famille} & \textbf{Composants du cybercafé} \\
+\hline
+Ressources humaines & M. Kamdem (gérant), les deux caissières, le technicien, et les clients usagers du service \\
+\hline
+Ressources matérielles & 15 ordinateurs clients, 1 serveur, 1 imprimante-scanner, 1 onduleur, 1 box Internet CAMTEL \\
+\hline
+Ressources logicielles & Windows 10 (SE), CyberCafé Pro (facturation), Microsoft Office (bureautique), antivirus \\
+\hline
+\end{tabularx}
+\end{center}
+\textbf{2. Rôle des ressources humaines.} Un système d'information n'est pas qu'un ensemble de machines : il comprend aussi les \cle{ressources humaines} qui collectent, saisissent, contrôlent et exploitent l'information. Les caissières encaissent les sommes, saisissent les durées de connexion et délivrent les factures : sans elles, les données ne seraient ni collectées ni fiabilisées. Elles sont donc des composants à part entière du SI.
+
+\textbf{Conclusion} : le SI du cybercafé repose sur trois familles de composants complémentaires : humaines, matérielles et logicielles.
+\end{exoresolu}
+
+\courssub{Méthode 3 : Décrire les fonctions d'un système d'information}
+
+\begin{methode}[Reconnaître et décrire les quatre fonctions d'un SI]
+Un SI remplit toujours \textbf{quatre fonctions}, dans cet ordre logique :
+\begin{enumerate}
+\item \textbf{Collecte} : saisir ou capter les données (internes : notes, ventes ; externes : prix du marché, décisions ministérielles).
+\item \textbf{Stockage} : conserver les données de façon durable et organisée (fichiers, bases de données, registres, disques durs).
+\item \textbf{Traitement} : transformer les données en informations utiles (calculs de moyennes, tri, recherche, statistiques).
+\item \textbf{Diffusion} : mettre l'information à disposition des destinataires (affichage, impression, envoi par réseau ou courriel).
+\end{enumerate}
+\textbf{Réflexe} : pour chaque opération décrite dans un énoncé, demande-toi : « saisit-on ? conserve-t-on ? transforme-t-on ? transmet-on ? ». Le verbe de l'énoncé désigne presque toujours la fonction : \emph{saisir, enregistrer} $\to$ collecte ; \emph{archiver, conserver} $\to$ stockage ; \emph{calculer, trier} $\to$ traitement ; \emph{imprimer, envoyer, publier} $\to$ diffusion.
+\end{methode}
+
+\begin{exoresolu}[Les fonctions du SI dans la confection des bulletins]
+Énoncé. Au Lycée de Bafang, à la fin de chaque séquence : (a) les enseignants remettent leurs notes au secrétariat qui les saisit dans le logiciel de gestion ; (b) les notes sont enregistrées dans une base de données sur le serveur de l'établissement ; (c) le logiciel calcule les moyennes, les rangs et les appréciations ; (d) les bulletins sont imprimés et remis aux élèves, et une copie est envoyée aux parents par SMS.
+\begin{enumerate}
+\item Associe à chaque étape (a), (b), (c), (d) la fonction du SI qu'elle illustre, en justifiant.
+\item La saisie des notes est-elle une collecte interne ou externe ? Justifie.
+\end{enumerate}
+\tcblower
+\textbf{1. Association étape--fonction.}
+\begin{itemize}
+\item \textbf{(a) Collecte} : les notes sont des données brutes saisies dans le système ; c'est l'entrée de l'information dans le SI.
+\item \textbf{(b) Stockage} : les notes sont conservées de façon durable et organisée dans une base de données, ce qui permet de les retrouver à tout moment.
+\item \textbf{(c) Traitement} : le calcul des moyennes, des rangs et des appréciations transforme les données brutes (notes) en informations élaborées (moyennes, décisions de conseil).
+\item \textbf{(d) Diffusion} : l'impression des bulletins et l'envoi de SMS mettent l'information à la disposition de ses destinataires (élèves, parents).
+\end{itemize}
+\textbf{2. Nature de la collecte.} Il s'agit d'une collecte \textbf{interne} : les notes sont produites à l'intérieur même de l'organisation (par les enseignants du lycée), et non à l'extérieur (comme le seraient des décisions du MINESEC ou des taux de réussite nationaux).
+
+\textbf{Conclusion} : la confection des bulletins illustre parfaitement la chaîne complète : collecte $\to$ stockage $\to$ traitement $\to$ diffusion.
+\end{exoresolu}
+
+\courssub{Méthode 4 : Décrire les intérêts d'un système d'information}
+
+\begin{methode}[Formuler les intérêts d'un SI avec des arguments précis]
+Pour décrire les intérêts d'un SI, évite les formules vagues (« c'est utile »). Structure ta réponse autour de bénéfices concrets :
+\begin{enumerate}
+\item \textbf{Gain de temps} : les traitements automatisés sont rapides (calcul de 2 000 moyennes en quelques secondes).
+\item \textbf{Fiabilité} : réduction des erreurs de calcul et de recopie ; données centralisées et cohérentes.
+\item \textbf{Aide à la décision} : le pilotage dispose de tableaux de bord à jour pour décider.
+\item \textbf{Meilleure circulation de l'information} : partage rapide entre services, traçabilité des opérations.
+\item \textbf{Économies} : moins de paperasse, moins de doubles saisies, archivage moins coûteux.
+\end{enumerate}
+\textbf{Réflexe} : illustre chaque intérêt par un exemple tiré de l'énoncé. Un intérêt non illustré vaut souvent la moitié des points.
+\end{methode}
+
+\begin{exoresolu}[Intérêts du SI pour une boutique de Douala]
+Énoncé. Mme Etoundi tient une boutique d'électroménager à Douala. Auparavant, les ventes étaient notées dans un cahier et les stocks comptés à la main chaque samedi : erreurs fréquentes, ruptures de stock découvertes trop tard, et deux journées par mois pour établir les comptes. Elle installe un logiciel de gestion relié à une base de données.
+
+Décris quatre intérêts que ce système d'information apporte à la boutique, en les reliant à la situation décrite.
+\tcblower
+\begin{enumerate}
+\item \textbf{Gain de temps} : les comptes mensuels, qui exigeaient deux journées de travail, sont produits automatiquement par le logiciel en quelques minutes ; le personnel se consacre à la vente.
+\item \textbf{Fiabilité des données} : chaque vente est enregistrée une seule fois et le stock est décrémenté automatiquement ; les erreurs de recopie du cahier disparaissent et les chiffres sont cohérents.
+\item \textbf{Aide à la décision} : grâce aux états de stock en temps réel, Mme Etoundi est alertée avant les ruptures et sait quels articles commander ; elle pilote sa boutique sur des informations à jour au lieu de découvrir les problèmes le samedi.
+\item \textbf{Meilleure circulation et traçabilité de l'information} : chaque opération (vente, livraison, paiement) est historisée ; on peut retrouver qui a vendu quoi et quand, ce qui sécurise la gestion de la caisse.
+\end{enumerate}
+\textbf{Conclusion} : le SI apporte à la boutique rapidité, fiabilité, aide à la décision et traçabilité : ce sont les quatre intérêts majeurs d'un système d'information bien conçu.
+\end{exoresolu}
+
+\courssub{Méthode 5 : Distinguer information, donnée et entreprise}
+
+\begin{methode}[Employer les définitions sans les confondre]
+Trois définitions à maîtriser mot pour mot :
+\begin{enumerate}
+\item \textbf{Donnée} : élément brut, non interprété, enregistré sur un support (ex. : « 14 », « Kamdem », « 12/05/2025 »). Elle n'a de valeur que dans un contexte.
+\item \textbf{Information} : donnée \emph{traitée, interprétée et dotée d'un sens} pour un destinataire, qui lui permet de décider ou d'agir (ex. : « Kamdem a 14/20 en informatique, il est 3\textsuperscript{e} de sa classe »).
+\item \textbf{Entreprise} : organisation économique qui combine des ressources (humaines, matérielles, financières, informationnelles) pour produire des biens ou des services en vue d'un objectif (souvent le profit).
+\end{enumerate}
+\textbf{Réflexes} :
+\begin{itemize}
+\item La relation clé : $\text{donnée} + \text{traitement} + \text{contexte} \to \text{information}$.
+\item Une même valeur peut être donnée pour l'un et information pour l'autre : la moyenne de la classe est une \emph{information} pour l'élève, mais une simple \emph{donnée} d'entrée pour le calcul du taux de réussite du lycée.
+\end{itemize}
+\end{methode}
+
+\begin{exoresolu}[Donnée ou information ?]
+Énoncé. Dans le fichier d'une agence de voyage de Yaoundé, on lit : « 32 » ; « le vol Douala--Paris du 18 juillet affiche complet » ; « 4 500 » ; « le chiffre d'affaires du mois est en hausse de 12 \%, il faut renforcer l'équipe du samedi ».
+\begin{enumerate}
+\item Classe chaque élément comme donnée ou information, en justifiant.
+\item Rappelle la définition d'une entreprise et montre que cette agence en est une.
+\end{enumerate}
+\tcblower
+\textbf{1. Classement.}
+\begin{itemize}
+\item « 32 » : \textbf{donnée}. C'est une valeur brute, sans contexte : on ne sait pas s'il s'agit d'un âge, d'un nombre de sièges ou d'un prix.
+\item « le vol Douala--Paris du 18 juillet affiche complet » : \textbf{information}. Les données (vol, date, nombre de places réservées) ont été traitées et dotées d'un sens ; un client peut décider de changer de date.
+\item « 4 500 » : \textbf{donnée}. Valeur brute non interprétée.
+\item « le chiffre d'affaires est en hausse de 12 \%, il faut renforcer l'équipe du samedi » : \textbf{information}. Résultat d'un traitement (comparaison de deux mois) qui fonde une décision de gestion.
+\end{itemize}
+\textbf{2. L'agence est une entreprise.} Une entreprise est une organisation économique qui combine des ressources humaines (agents, comptables), matérielles (ordinateurs, locaux) et financières pour produire un service (organisation de voyages, vente de billets) dans un but de rentabilité. L'agence de Yaoundé réunit exactement ces caractéristiques : c'est donc une entreprise.
+
+\textbf{Conclusion} : une donnée est brute et sans contexte ; une information est une donnée traitée, interprétée et utile à la décision.
+\end{exoresolu}
+
+\courssub{Méthode 6 : Énumérer les méthodes de conception d'un SI}
+
+\begin{methode}[Citer et situer les méthodes de conception]
+Pour répondre à « énumère quelques méthodes de conception d'un SI », retiens le quatuor du programme :
+\begin{enumerate}
+\item \textbf{MERISE} : méthode française (1978), basée sur la séparation données/traitements et sur des modèles successifs (MCD, MLD, MCT, MOT). C'est la plus citée au lycée.
+\item \textbf{AXIAL} : méthode française centrée sur la gestion de projet et l'analyse de la valeur.
+\item \textbf{OMT} (\emph{Object Modeling Technique}) : méthode américaine (Rumbaugh), orientée objet.
+\item \textbf{RUP} (\emph{Rational Unified Process}) : processus itératif et incrémental, orienté objet, fondé sur UML.
+\end{enumerate}
+\textbf{Réflexes} :
+\begin{itemize}
+\item « Énumérer » = citer avec une courte caractérisation (origine ou principe). Une simple liste de sigles sans aucun commentaire perd des points.
+\item Ne confonds pas une \emph{méthode de conception} (MERISE, RUP...) avec un \emph{modèle} (MCD, MLD) : les modèles sont des étapes produites \emph{à l'intérieur} d'une méthode. De même, UML est un \emph{langage} de modélisation, pas une méthode.
+\item La \cle{modélisation} est l'action de construire un \cle{modèle}, c'est-à-dire une représentation simplifiée et abstraite de la réalité de l'organisation.
+\end{itemize}
+\end{methode}
+
+\begin{exoresolu}[Choisir et présenter une méthode de conception]
+Énoncé. La mairie de Dschang veut informatiser la gestion de l'état civil (naissances, mariages, décès). Le consultant missionné explique qu'il va d'abord « construire un modèle conceptuel des données » avant toute programmation.
+\begin{enumerate}
+\item Définis les termes \emph{modèle} et \emph{modélisation}.
+\item Énumère quatre méthodes de conception d'un SI en précisant pour chacune une caractéristique.
+\item La démarche du consultant (modéliser les données avant de programmer) s'inscrit typiquement dans quelle méthode ? Justifie.
+\end{enumerate}
+\tcblower
+\textbf{1. Définitions.} Un \textbf{modèle} est une représentation abstraite et simplifiée d'une réalité (ici, l'état civil de Dschang), qui en retient les éléments pertinents pour l'étude. La \textbf{modélisation} est la démarche qui consiste à construire ce modèle à partir de l'observation de l'organisation réelle.
+
+\textbf{2. Quatre méthodes de conception.}
+\begin{itemize}
+\item \textbf{MERISE} : méthode d'analyse et de conception française, fondée sur la séparation des données et des traitements et sur une démarche par niveaux (conceptuel, logique, physique).
+\item \textbf{AXIAL} : méthode française axée sur la conduite de projet et l'analyse de la valeur.
+\item \textbf{OMT} : méthode orientée objet de Rumbaugh, qui décrit le système par des modèles d'objets, dynamiques et fonctionnels.
+\item \textbf{RUP} : processus unifié, itératif et incrémental, orienté objet et basé sur le langage UML.
+\end{itemize}
+\textbf{3. Méthode du consultant.} Il s'agit typiquement de \textbf{MERISE} : cette méthode impose de construire d'abord un Modèle Conceptuel des Données (MCD) — ici les entités \textsc{Personne}, \textsc{Acte de naissance}, \textsc{Mariage}... — avant tout choix technique et toute programmation. Cette priorité donnée à la modélisation des données est la signature de MERISE.
+
+\textbf{Conclusion} : concevoir un SI, c'est d'abord modéliser la réalité de l'organisation ; MERISE, AXIAL, OMT et RUP sont quatre méthodes reconnues pour conduire cette conception.
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la leçon en un tableau]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Notion} & \textbf{À retenir} \\
+\hline
+Donnée / Information & La donnée est brute ; l'information est une donnée traitée, interprétée, utile à la décision. \\
+\hline
+Trois sous-systèmes & Pilotage (décide), opérant (exécute), information (fait circuler, interface des deux autres). \\
+\hline
+Composants du SI & Ressources humaines, matérielles, logicielles (parfois données et procédures). \\
+\hline
+Fonctions du SI & Collecte, stockage, traitement, diffusion. \\
+\hline
+Intérêts du SI & Gain de temps, fiabilité, aide à la décision, circulation de l'information, économies. \\
+\hline
+Méthodes de conception & MERISE, AXIAL, OMT, RUP. \\
+\hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Confondre donnée et information.} Écrire « l'information est une donnée brute » est une erreur de définition rédhibitoire : l'information est une donnée \emph{traitée et interprétée}. Vérifie toujours le sens de la relation : donnée $\to$ traitement $\to$ information.
+\item \textbf{Intervertir système opérant et système de pilotage.} Le pilotage \emph{décide}, l'opérant \emph{exécute}. Dire que « les enseignants pilotent le lycée » est faux : ils constituent le système opérant ; le pilotage, c'est le proviseur et le conseil d'administration.
+\item \textbf{Oublier les ressources humaines dans les composants.} Beaucoup d'élèves ne citent que le matériel et les logiciels. Un SI sans utilisateurs n'existe pas : la famille « ressources humaines » vaut un point à elle seule.
+\item \textbf{Confondre les quatre fonctions entre elles.} Enregistrer une note dans la base, c'est du \emph{stockage}, pas du \emph{traitement} ; calculer une moyenne, c'est du \emph{traitement}, pas de la \emph{collecte}. Appuie-toi sur le verbe de l'énoncé (saisir, conserver, calculer, diffuser).
+\item \textbf{Présenter les modèles (MCD, MLD) comme des méthodes de conception.} Quand on te demande d'énumérer des méthodes, réponds MERISE, AXIAL, OMT, RUP — jamais « MCD » ou « UML » seul. Le MCD est un \emph{livrable} produit par la méthode MERISE, pas une méthode.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : donnée ou information ?]
+Pour chacun des huit éléments suivants, indique s'il s'agit d'une \cle{donnée} ou d'une \cle{information} pour le conseil de classe de Première D du lycée de Bafoussam. Une seule réponse par ligne.
+\begin{enumerate}
+\item La note brute 12/20 obtenue par une élève en informatique ;
+\item la moyenne générale 13,45/20 calculée pour cette élève ;
+\item la photo d'identité scannée d'un élève ;
+\item l'effectif 85 de la classe de Première D ;
+\item la décision « Admis en classe supérieure » ;
+\item la date de naissance 14/03/2008 d'un élève ;
+\item la mention « Tableau d'honneur » figurant sur le bulletin ;
+\item le nom « Ngo Bell Amina » saisi dans le registre.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux : justifie ta réponse]
+Réponds par \textbf{vrai} ou \textbf{faux} aux affirmations suivantes, en justifiant chaque réponse par une phrase.
+\begin{enumerate}
+\item « Un système d'information nécessite obligatoirement des ordinateurs pour fonctionner. »
+\item « Le système d'information automatisé (SIA) contient le système d'information (SI). »
+\item « La diffusion est l'une des quatre fonctions d'un système d'information. »
+\item « Le système de pilotage donne des ordres au système opérant. »
+\item « MERISE est une méthode de conception de SI centrée sur les données. »
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions express]
+Définis en une ou deux phrases chacun des termes suivants, puis illustre chacun par un exemple tiré de la vie d'un lycée camerounais :
+\begin{enumerate}
+\item entreprise ;
+\item système d'information ;
+\item modèle ;
+\item modélisation.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Les trois sous-systèmes]
+Recopie et complète le tableau suivant en associant à chaque sous-système d'une organisation son rôle principal et un exemple concret dans un hôpital de district.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Sous-système} & \textbf{Rôle principal} & \textbf{Exemple à l'hôpital} \\
+\hline
+Système opérant & \ldots & \ldots \\
+\hline
+Système de pilotage & \ldots & \ldots \\
+\hline
+Système d'information & \ldots & \ldots \\
+\hline
+\end{tabularx}
+\end{center}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Classement des composants d'un SI]
+Le lycée bilingue de Nkongsamba dispose des douze éléments suivants : professeur, serveur, SGBD, registre des notes, imprimante, secrétaire, logiciel de paie, câble réseau, élève, ordinateur portable, procédure de saisie des notes, switch.
+\begin{enumerate}
+\item Range chacun de ces éléments dans l'une des trois catégories de composants d'un système d'information : ressources humaines, ressources matérielles, ressources logicielles.
+\item Présente ton classement sous forme d'un tableau à trois colonnes.
+\item Un élément te semble relever de deux catégories ? Lequel et pourquoi ?
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Les fonctions du futur SI d'un lycée]
+Le proviseur du lycée de Maroua souhaite informatiser la gestion des notes des élèves. Il te consulte en tant qu'élève de Première C passionné d'informatique.
+\begin{enumerate}
+\item Énumère les quatre fonctions d'un système d'information.
+\item Pour chacune de ces fonctions, propose un exemple concret d'activité dans le futur SI de gestion des notes (par exemple : qui collecte quoi, où et comment ?).
+\item Cite deux intérêts que le proviseur peut attendre de cette informatisation.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Identifier les flux d'information]
+La boutique « Chez Maman Rose » à Douala fonctionne ainsi : les clients passent des commandes à la vendeuse ; celle-ci note les ventes dans un cahier ; chaque soir, la propriétaire consulte le cahier, calcule le chiffre d'affaires du jour et décide des réapprovisionnements auprès des fournisseurs du marché Mboppi.
+\begin{enumerate}
+\item Identifie dans cette organisation le système opérant et le système de pilotage.
+\item Repère deux flux d'information montants (de l'opérant vers le pilotage) et un flux descendant (du pilotage vers l'opérant).
+\item Ce système d'information est-il automatisé ? Justifie ta réponse.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Modèle et méthodes de conception]
+\begin{enumerate}
+\item Définis les termes \cle{modèle} et \cle{modélisation}.
+\item Explique en trois ou quatre phrases pourquoi il est indispensable de modéliser un système d'information avant de le réaliser (pense au coût d'une erreur découverte tardivement).
+\item Cite quatre méthodes de conception d'un système d'information vues en cours, en précisant pour chacune son pays ou sa culture d'origine si tu le connais.
+\item Laquelle de ces méthodes est centrée sur les données ? Quels sont ses deux niveaux de modélisation des données ?
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Étude de cas : la SODECOTON]
+La SODECOTON (Société de Développement du Coton du Cameroun), basée à Garoua, achète le coton graine aux producteurs, le transforme en fibre dans ses usines d'égrenage, puis vend la fibre sur les marchés national et international. La direction générale fixe chaque année les objectifs de production et les prix d'achat aux planteurs ; elle s'appuie pour cela sur les rapports de production, les stocks et les ventes remontés par les différents services.
+\begin{enumerate}
+\item Définis les termes \emph{entreprise} et \emph{système d'information}.
+\item À partir de la description ci-dessus, identifie en les justifiant :
+\begin{enumerate}
+\item le système opérant de la SODECOTON ;
+\item le système de pilotage ;
+\item le système d'information.
+\end{enumerate}
+\item Représente par un schéma les trois sous-systèmes de cette organisation et les flux (ordres, informations, biens) qui circulent entre eux.
+\item Cite deux ressources humaines, deux ressources matérielles et deux ressources logicielles que l'on peut raisonnablement trouver dans le SI de cette entreprise.
+\item La direction envisage d'automatiser entièrement la remontée des rapports de production. Définis ce qu'est un système d'information automatisé et donne un intérêt de cette automatisation pour la SODECOTON.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Étude de cas : la bibliothèque scolaire]
+La bibliothèque du lycée classique de Dschang gère ses activités à l'aide de fiches cartonnées : une fiche par livre (titre, auteur, cote) et une fiche par emprunteur (nom, classe, livres empruntés, dates). La bibliothécaire, Mme Tchoupo, passe chaque matin une heure à rechercher des fiches et à vérifier les retards de retour. Le proviseur décide de faire appel à un informaticien pour concevoir un système d'information automatisé.
+\begin{enumerate}
+\item Le système actuel est-il un système d'information ? Justifie ta réponse en t'appuyant sur la définition du SI.
+\item Pour chacune des quatre fonctions d'un SI (collecte, stockage, traitement, diffusion), décris comment elle est réalisée \emph{actuellement} dans cette bibliothèque, puis comment elle le serait \emph{après informatisation}.
+\item Énumère trois intérêts du futur SIA pour la bibliothèque.
+\item L'informaticien annonce qu'il va d'abord « modéliser » le futur système. Explique ce que cela signifie et pourquoi cette étape précède la réalisation.
+\item Il choisit la méthode MERISE. Cite deux autres méthodes de conception d'un SI qu'il aurait pu utiliser.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Problème de synthèse : le cybercafé « Espace Jeunes »]
+M. Kamdem tient un cybercafé à Bafoussam. Il emploie deux caissiers qui enregistrent les connexions Internet et les impressions dans un registre. En fin de mois, il met deux jours à calculer ses recettes et constate parfois des écarts entre l'argent en caisse et le registre. Un ami lui conseille d'installer un logiciel de gestion de cybercafé relié à ses six postes clients et à son imprimante.
+\begin{enumerate}
+\item Rappelle la différence entre une donnée et une information, puis classe les éléments suivants : « 45 minutes », « recette mensuelle de 380 000 FCFA », « écart de caisse de 12 500 FCFA », « nom du client ».
+\item Identifie les ressources humaines, matérielles et logicielles du futur système d'information du cybercafé.
+\item Décris, pour ce cybercafé, une activité concrète correspondant à chacune des quatre fonctions du SI.
+\item Explique pourquoi le futur système est qualifié de système d'information \emph{automatisé} alors que le système actuel ne l'est pas.
+\item M. Kamdem hésite : il craint que le logiciel soit trop cher. Présente-lui deux arguments fondés sur les intérêts d'un SI pour le convaincre.
+\item Avant d'acheter le logiciel, un concepteur propose de décrire les données à gérer (clients, séances, tarifs, recettes) à l'aide d'un modèle. Cite la méthode de conception la plus adaptée à cette démarche centrée sur les données et justifie ton choix.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : donnée ou information ?]
+Rappel du critère : une \cle{donnée} est un fait brut, non interprété ; une \cle{information} est une donnée traitée, dotée d'un sens dans un contexte de décision.
+
+\begin{enumerate}
+\item Note brute 12/20 : \cle{donnée} (valeur brute saisie, non encore interprétée).
+\item Moyenne générale 13,45/20 : \cle{information} (résultat d'un calcul, elle sert à délibérer).
+\item Photo d'identité scannée : \cle{donnée} (fait brut enregistré, sans traitement).
+\item Effectif 85 : \cle{information} (résultat d'un comptage, utile à la gestion de la classe).
+\item Décision « Admis en classe supérieure » : \cle{information} (résultat d'un traitement : la délibération du conseil).
+\item Date de naissance 14/03/2008 : \cle{donnée} (fait brut saisi tel quel).
+\item Mention « Tableau d'honneur » : \cle{information} (résultat d'un traitement appliquant une règle, par exemple moyenne $\geq 14/20$).
+\item Nom « Ngo Bell Amina » : \cle{donnée} (fait brut d'identification).
+\end{enumerate}
+
+\textbf{Point de vigilance :} un même élément peut changer de statut selon le contexte. La moyenne 13,45/20, information pour le conseil de classe, redevient une \emph{donnée} pour le proviseur qui calcule les statistiques du lycée. C'est le contexte d'utilisation qui fait la différence, pas la nature de l'élément.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux]
+\begin{enumerate}
+\item \textbf{Faux.} Un système d'information peut être entièrement manuel : le registre des notes tenu à la main par le censeur constitue déjà un SI, car il collecte, stocke, traite et diffuse l'information. L'ordinateur n'intervient que dans le \emph{système d'information automatisé}.
+\item \textbf{Faux.} C'est l'inverse : le SI contient le SIA. Le SIA est la partie du SI dont les traitements sont réalisés par des moyens informatiques ; le SI comprend aussi les procédures manuelles et les échanges informels.
+\item \textbf{Vrai.} Les quatre fonctions d'un SI sont la \cle{collecte}, le \cle{stockage}, le \cle{traitement} et la \cle{diffusion} de l'information.
+\item \textbf{Vrai.} Le système de pilotage (direction) prend les décisions et transmet des ordres au système opérant, qui les exécute ; en retour, l'opérant remonte des informations vers le pilotage via le système d'information.
+\item \textbf{Vrai.} MERISE (méthode française, née en 1978) est centrée sur les données ; elle distingue notamment le modèle conceptuel des données (MCD) et le modèle logique des données (MLD).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions express]
+\begin{enumerate}
+\item \textbf{Entreprise} : unité économique et sociale qui combine des ressources (humaines, matérielles, financières) pour produire des biens ou des services destinés à être vendus ou fournis. \emph{Exemple :} le lycée de Bafoussam est une organisation (entreprise publique de service) qui produit un service d'enseignement.
+\item \textbf{Système d'information} : ensemble organisé des ressources (humaines, matérielles, logicielles) et des procédures qui permettent de collecter, stocker, traiter et diffuser l'information au sein d'une organisation. \emph{Exemple :} au lycée, le registre des notes, les bulletins, le censeur et les professeurs forment le SI de gestion des résultats scolaires.
+\item \textbf{Modèle} : représentation abstraite et simplifiée d'un objet ou d'un système réel, qui en retient les aspects utiles à l'étude. \emph{Exemple :} le plan des salles de classe affiché à l'entrée du lycée est un modèle du bâtiment.
+\item \textbf{Modélisation} : démarche qui consiste à construire un modèle d'un système avant de le réaliser, afin de le comprendre, de le décrire et de vérifier sa cohérence. \emph{Exemple :} avant d'informatiser la bibliothèque, l'informaticien dessine le schéma des livres, des emprunteurs et des emprunts : c'est la modélisation.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Les trois sous-systèmes]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Sous-système} & \textbf{Rôle principal} & \textbf{Exemple à l'hôpital} \\
+\hline
+\cle{Système opérant} & Réalise l'activité de production : transforme les entrées en sorties (biens ou services). & Les médecins et infirmiers qui consultent et soignent les malades. \\
+\hline
+\cle{Système de pilotage} & Prend les décisions, fixe les objectifs et transmet des ordres à l'opérant. & Le directeur de l'hôpital qui fixe le budget et organise les gardes. \\
+\hline
+\cle{Système d'information} & Collecte, stocke, traite et diffuse l'information entre les deux autres sous-systèmes. & Les dossiers médicaux, les rapports d'activité et les registres du service informatique. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Point de vigilance :} ne pas confondre le système d'information avec le seul service informatique. Le SI inclut aussi les flux papier (ordonnances, registres) et les échanges oraux entre services.
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Classement des composants d'un SI]
+\textbf{1. et 2.} Classement des douze éléments :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Ressources humaines} & \textbf{Ressources matérielles} & \textbf{Ressources logicielles} \\
+\hline
+professeur & serveur & SGBD \\
+\hline
+secrétaire & imprimante & logiciel de paie \\
+\hline
+élève & câble réseau & procédure de saisie des notes \\
+\hline
+ & ordinateur portable & registre des notes \\
+\hline
+ & switch & \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{3.} L'élément ambigu est le \textbf{registre des notes}. En tant qu'objet physique (cahier cartonné), c'est une ressource matérielle ; en tant que support organisé de données et de règles de saisie, il relève de la partie logicielle/documentaire du SI. On le classe ici parmi les ressources logicielles car c'est son contenu informationnel qui compte. On aurait aussi pu discuter la \emph{procédure de saisie} : c'est bien une ressource logicielle (règles, programmes, documentation), même si elle est appliquée par des humains.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Les fonctions du futur SI d'un lycée]
+\textbf{1.} Les quatre fonctions d'un système d'information sont : la \cle{collecte}, le \cle{stockage}, le \cle{traitement} et la \cle{diffusion}.
+
+\textbf{2.} Exemples d'activités dans le SI de gestion des notes :
+\begin{itemize}
+\item \textbf{Collecte :} chaque professeur saisit les notes de ses évaluations dans l'application, depuis la salle informatique ou son poste personnel.
+\item \textbf{Stockage :} les notes sont enregistrées dans une base de données hébergée sur le serveur du lycée, avec des sauvegardes régulières.
+\item \textbf{Traitement :} le logiciel calcule automatiquement les moyennes par matière, les moyennes générales pondérées par les coefficients et les rangs des élèves.
+\item \textbf{Diffusion :} les bulletins sont imprimés et remis aux élèves, et les moyennes sont transmises au proviseur et aux conseils de classe.
+\end{itemize}
+
+\textbf{3.} Deux intérêts attendus (au choix parmi) :
+\begin{itemize}
+\item \textbf{gain de temps} : les moyennes et bulletins sont calculés en quelques minutes au lieu de plusieurs jours ;
+\item \textbf{fiabilité} : réduction des erreurs de calcul et de recopie ;
+\item \textbf{aide à la décision} : le proviseur dispose de statistiques à jour pour piloter l'établissement ;
+\item \textbf{pérennité} : les données sont sauvegardées et consultables plusieurs années.
+\end{itemize}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Identifier les flux d'information]
+\textbf{1.} Le \textbf{système opérant} est constitué de la vendeuse qui réalise l'activité de production (la vente aux clients). Le \textbf{système de pilotage} est la propriétaire, Maman Rose, qui analyse les résultats et prend les décisions (réapprovisionnement).
+
+\textbf{2.} Flux d'information :
+\begin{itemize}
+\item \emph{Flux montants} (opérant $\rightarrow$ pilotage) : les ventes notées dans le cahier par la vendeuse ; les commandes et demandes des clients rapportées à la propriétaire.
+\item \emph{Flux descendant} (pilotage $\rightarrow$ opérant) : les ordres de réapprovisionnement et les consignes données à la vendeuse (quels produits commander au marché Mboppi, quels prix appliquer).
+\end{itemize}
+
+\textbf{3.} Ce système d'information n'est \textbf{pas automatisé} : toutes les opérations (noter les ventes, calculer le chiffre d'affaires) sont réalisées manuellement, à la main, sans aucun moyen informatique. C'est un SI manuel, ce qui prouve au passage qu'un SI n'exige pas d'ordinateur.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Modèle et méthodes de conception]
+\textbf{1.} Un \cle{modèle} est une représentation abstraite et simplifiée d'un système réel, qui en retient les aspects pertinents pour l'étude. La \cle{modélisation} est la démarche qui consiste à construire ce modèle avant la réalisation du système.
+
+\textbf{2.} Modéliser avant de réaliser est indispensable car un système d'information est complexe : il met en jeu de nombreuses données, personnes et procédures. Le modèle permet de vérifier sur le papier que rien n'est oublié et que tout est cohérent, à un moment où corriger ne coûte presque rien. En revanche, une erreur découverte après la programmation ou la mise en service oblige à refaire des développements coûteux, voire à reprendre toute la conception. Comme en construction, il vaut mieux corriger le plan de la maison que casser les murs.
+
+\textbf{3.} Quatre méthodes de conception :
+\begin{itemize}
+\item \textbf{MERISE} : méthode française (née en 1978), centrée sur les données ;
+\item \textbf{AXIAL} : méthode française, centrée sur les traitements ;
+\item \textbf{OMT} (\emph{Object Modeling Technique}) : méthode américaine, orientée objet ;
+\item \textbf{RUP} (\emph{Rational Unified Process}) : méthode américaine, processus unifié orienté objet.
+\end{itemize}
+
+\textbf{4.} La méthode centrée sur les données est \textbf{MERISE}. Ses deux niveaux de modélisation des données sont le \cle{modèle conceptuel des données} (MCD), qui décrit les entités et leurs associations indépendamment de toute technique, et le \cle{modèle logique des données} (MLD), qui traduit le MCD en tables adaptées à un type de SGBD (relationnel, par exemple).
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Étude de cas : la SODECOTON]
+\textbf{Barème indicatif (sur 20) :} question 1 : 4 pts ; question 2 : 6 pts (2 pts par sous-système justifié) ; question 3 : 4 pts ; question 4 : 3 pts ; question 5 : 3 pts.
+
+\textbf{1.} Une \emph{entreprise} est une unité économique et sociale qui combine des ressources humaines, matérielles et financières pour produire des biens ou des services. Un \emph{système d'information} est l'ensemble organisé des ressources (humaines, matérielles, logicielles) et des procédures qui collectent, stockent, traitent et diffusent l'information au sein d'une organisation.
+
+\textbf{2.} Identification des sous-systèmes :
+\begin{enumerate}
+\item \textbf{Système opérant} : les unités qui réalisent la production, c'est-à-dire les services d'achat du coton graine auprès des planteurs, les usines d'égrenage qui transforment le coton en fibre et le service commercial qui vend la fibre. Justification : c'est là que s'effectue la transformation des entrées (coton graine) en sorties (fibre vendue).
+\item \textbf{Système de pilotage} : la direction générale, qui fixe les objectifs de production et les prix d'achat. Justification : elle prend les décisions stratégiques et transmet des ordres à l'opérant.
+\item \textbf{Système d'information} : l'ensemble des rapports de production, des états de stocks et des ventes remontés par les services, ainsi que les personnes et moyens qui les gèrent. Justification : il assure la circulation de l'information entre l'opérant et le pilotage.
+\end{enumerate}
+
+\textbf{3.} Schéma des trois sous-systèmes et des flux :
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  box/.style={draw=popblue, fill=popblueL, rounded corners, minimum width=4.6cm, minimum height=1.1cm, align=center, font=\small\bfseries},
+  flux/.style={-{Stealth[length=3mm]}, thick, popdark},
+  lbl/.style={font=\footnotesize\itshape, fill=white, inner sep=1pt}
+]
+\node[box, align=center] (pilot) at (0,3.4){Système de pilotage\\ \mdseries\footnotesize direction générale};
+\node[box, fill=popgreenL, draw=popgreen, align=center] (si) at (0,0){Système d'information\\ \mdseries\footnotesize rapports, stocks, ventes};
+\node[box, fill=poporangeL, draw=poporange, align=center] (oper) at (0,-3.4){Système opérant\\ \mdseries\footnotesize achats, égrenage, ventes};
+\draw[flux] (pilot.west) .. controls (-3.6,2.4) and (-3.6,-2.4) .. (oper.west)
+  node[lbl, midway, xshift=-0.2cm] {ordres, objectifs, prix};
+\draw[flux] (oper.east) .. controls (3.6,-2.4) and (3.6,2.4) .. (pilot.east)
+  node[lbl, midway, xshift=0.2cm] {informations remontées};
+\draw[flux, popgreen!70!black] (si.west) -- ++(-1.6,0) |- ($(oper.west)+(0,0.5)$);
+\draw[flux, popgreen!70!black] ($(oper.west)+(0,-0.5)$) -| ++(-1.0,0) |- (si.west);
+\draw[flux, popgreen!70!black] (si.east) -- ++(1.6,0) |- ($(pilot.east)+(0,-0.5)$);
+\draw[flux, popgreen!70!black] ($(pilot.east)+(0,-1.0)$) .. controls (2.2,2.2) and (2.2,0.8) .. (si.east);
+\node[font=\footnotesize, align=center, popmuted] at (5.6,-3.4) {biens : coton graine\\ $\rightarrow$ fibre vendue};
+\draw[flux, poporange!80!black, dashed] (oper.east) -- (4.6,-3.4);
+\end{tikzpicture}
+\end{center}
+\legende{Les trois sous-systèmes de la SODECOTON et les flux qui les relient : ordres descendants, informations montantes, flux de biens dans l'opérant.}
+\end{popfigure}
+
+\textbf{4.} Composants du SI (exemples raisonnables) :
+\begin{itemize}
+\item \emph{Ressources humaines} : les chefs de service qui établissent les rapports ; les informaticiens du service informatique.
+\item \emph{Ressources matérielles} : les serveurs et ordinateurs de la direction ; le réseau reliant les usines à Garoua.
+\item \emph{Ressources logicielles} : le logiciel de gestion des stocks ; le SGBD hébergeant la base de données de production.
+\end{itemize}
+
+\textbf{5.} Un \emph{système d'information automatisé} (SIA) est la partie du système d'information dont les traitements sont réalisés à l'aide de moyens informatiques (ordinateurs, logiciels, réseaux). Intérêt pour la SODECOTON : les rapports de production remontent en temps réel vers la direction, ce qui accélère et fiabilise la prise de décision (fixation des objectifs et des prix) et réduit les erreurs de saisie et de transmission.
+
+\textbf{Points de vigilance :} exiger la justification de chaque sous-système par sa fonction (produire / décider / faire circuler l'information) ; au schéma, les flèches doivent être orientées et légendées ; ne pas écrire que le SI « est » le service informatique.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Étude de cas : la bibliothèque scolaire]
+\textbf{Barème indicatif (sur 20) :} question 1 : 3 pts ; question 2 : 8 pts (1 pt par fonction, actuel + futur) ; question 3 : 3 pts ; question 4 : 3 pts ; question 5 : 3 pts.
+
+\textbf{1.} Oui, le système actuel est bien un système d'information : il possède des ressources humaines (Mme Tchoupo), des ressources matérielles (fiches cartonnées, casiers) et des procédures (règles de prêt et de retour), et il assure les quatre fonctions : collecte (remplissage des fiches), stockage (classement des fiches), traitement (vérification des retards) et diffusion (réponses aux élèves). Il est simplement \emph{manuel}, non automatisé.
+
+\textbf{2.} Les quatre fonctions, avant et après informatisation :
+\begin{itemize}
+\item \textbf{Collecte} — \emph{Actuellement :} la bibliothécaire écrit à la main les informations sur les fiches (livre, emprunteur, dates). \emph{Après :} saisie au clavier, éventuellement par lecture d'un code-barres sur les livres et les cartes d'emprunteur.
+\item \textbf{Stockage} — \emph{Actuellement :} les fiches sont rangées dans des casiers, par ordre alphabétique ou par cote. \emph{Après :} les données sont enregistrées dans une base de données sur l'ordinateur, avec sauvegardes.
+\item \textbf{Traitement} — \emph{Actuellement :} Mme Tchoupo parcourt les fiches une à une pour repérer les retards. \emph{Après :} le logiciel affiche instantanément la liste des emprunts en retard et calcule les statistiques de prêt.
+\item \textbf{Diffusion} — \emph{Actuellement :} réponses orales au comptoir et affichage manuscrit. \emph{Après :} recherche par titre ou auteur à l'écran, impression des listes de retards et des rappels pour les élèves.
+\end{itemize}
+
+\textbf{3.} Trois intérêts du futur SIA : gain de temps considérable (l'heure quotidienne de recherche est réduite à quelques secondes) ; fiabilité du suivi (aucun retard oublié, moins d'erreurs et de fiches perdues) ; meilleure aide à la décision (statistiques sur les livres les plus empruntés pour guider les achats).
+
+\textbf{4.} « Modéliser » signifie construire une représentation abstraite et simplifiée du futur système (données à gérer, traitements à réaliser) avant de le programmer. Cette étape précède la réalisation car elle permet de vérifier la cohérence et la complétude du futur SI à moindre coût : corriger un schéma est infiniment moins cher que modifier un logiciel déjà écrit.
+
+\textbf{5.} Deux autres méthodes de conception : \textbf{AXIAL} et \textbf{OMT} (ou \textbf{RUP}).
+
+\textbf{Points de vigilance :} pour la question 1, la justification doit citer explicitement la définition du SI (ressources + quatre fonctions) ; pour la question 2, chaque fonction doit être décrite dans les deux situations, avant et après ; ne pas confondre stockage (conserver) et diffusion (mettre à disposition).
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Problème de synthèse : le cybercafé « Espace Jeunes »]
+\textbf{Barème indicatif (sur 20) :} question 1 : 4 pts ; question 2 : 3 pts ; question 3 : 4 pts ; question 4 : 3 pts ; question 5 : 3 pts ; question 6 : 3 pts.
+
+\textbf{1.} Une \cle{donnée} est un fait brut, non interprété ; une \cle{information} est une donnée traitée, dotée d'un sens dans un contexte de décision. Classement :
+\begin{itemize}
+\item « 45 minutes » : \cle{donnée} (durée brute d'une séance) ;
+\item « recette mensuelle de 380 000 FCFA » : \cle{information} (résultat d'un calcul de synthèse, utile au pilotage) ;
+\item « écart de caisse de 12 500 FCFA » : \cle{information} (résultat d'une comparaison entre deux montants, qui déclenche une décision) ;
+\item « nom du client » : \cle{donnée} (fait brut saisi).
+\end{itemize}
+
+\textbf{2.} Composants du futur SI :
+\begin{itemize}
+\item \emph{Ressources humaines} : M. Kamdem (gestionnaire) et les deux caissiers ;
+\item \emph{Ressources matérielles} : les six postes clients, le poste serveur de la caisse, l'imprimante, les câbles et le switch du réseau local ;
+\item \emph{Ressources logicielles} : le logiciel de gestion de cybercafé, le système d'exploitation des postes, la base de données des séances et des tarifs.
+\end{itemize}
+
+\textbf{3.} Les quatre fonctions illustrées :
+\begin{itemize}
+\item \textbf{Collecte :} à chaque connexion, le logiciel enregistre automatiquement le poste utilisé, l'heure de début et le nom du client.
+\item \textbf{Stockage :} les séances, impressions et tarifs sont conservés dans la base de données du poste serveur.
+\item \textbf{Traitement :} en fin de journée ou de mois, le logiciel calcule le montant dû par client, les recettes totales et compare la caisse théorique à l'argent réellement compté.
+\item \textbf{Diffusion :} le logiciel affiche et imprime les factures des clients et le bilan mensuel des recettes pour M. Kamdem.
+\end{itemize}
+
+\textbf{4.} Le futur système est un système d'information \emph{automatisé} car ses traitements (enregistrement des séances, calcul des recettes et des écarts) sont réalisés par des moyens informatiques : logiciel, ordinateurs et réseau. Le système actuel est un SI \emph{manuel} : les caissiers écrivent dans un registre et M. Kamdem calcule à la main, sans aucun outil informatique.
+
+\textbf{5.} Deux arguments pour convaincre M. Kamdem :
+\begin{itemize}
+\item \textbf{Fiabilité et gain de temps :} les recettes sont calculées automatiquement et sans erreur ; les deux jours de calcul mensuel disparaissent, et les écarts de caisse (12 500 FCFA constatés) sont détectés immédiatement, ce qui fait rapidement « rentrer » le prix du logiciel.
+\item \textbf{Aide à la décision :} le logiciel fournit des statistiques (heures de pointe, postes les plus utilisés, services les plus rentables) qui permettent d'ajuster les tarifs et les horaires d'ouverture pour augmenter le chiffre d'affaires.
+\end{itemize}
+
+\textbf{6.} La méthode la plus adaptée est \textbf{MERISE} : c'est la méthode centrée sur les données. Elle permet d'abord de décrire les données (clients, séances, tarifs, recettes) et leurs liens dans un \cle{modèle conceptuel des données} (MCD), indépendant de tout logiciel, puis de le traduire en \cle{modèle logique des données} (MLD) sous forme de tables, directement implantables dans un SGBD. C'est exactement la démarche proposée par le concepteur.
+
+\textbf{Points de vigilance :} à la question 1, le statut donnée/information doit être justifié par la présence ou l'absence d'un traitement ; à la question 4, citer explicitement la définition du SIA ; à la question 6, le choix de MERISE n'est accepté que s'il est justifié par le caractère « centré sur les données » et les deux niveaux MCD/MLD.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[
+  mindmap,
+  grow cyclic,
+  every node/.style={concept, text=white, font=\small\bfseries},
+  root concept/.append style={concept color=popdark, font=\normalsize\bfseries, minimum size=3.1cm},
+  level 1 concept/.append style={level distance=3.6cm, sibling angle=72, font=\scriptsize\bfseries},
+  level 2 concept/.append style={level distance=2.1cm, font=\tiny},
+  concept connection/.append style={color=popmuted}
+]
+\node[root concept]{Systèmes d'information : concepts de base}
+  child[concept color=popblue]{ node {Information, donnée, entreprise}
+      child[concept color=popblue!70]{ node {Donnée : fait brut} }
+      child[concept color=popblue!70]{ node {Information : donnée interprétée} }
+  }
+  child[concept color=poporange]{ node {SI et SIA}
+      child[concept color=poporange!70]{ node {SI : ensemble des moyens} }
+      child[concept color=poporange!70]{ node {SIA : partie automatisée} }
+  }
+  child[concept color=popgreen]{ node {3 sous-systèmes}
+      child[concept color=popgreen!70]{ node {Pilotage} }
+      child[concept color=popgreen!70]{ node {Information} }
+      child[concept color=popgreen!70]{ node {Opérant} }
+  }
+  child[concept color=poppurple]{ node {Composants}
+      child[concept color=poppurple!70]{ node {Humaines} }
+      child[concept color=poppurple!70]{ node {Matérielles} }
+      child[concept color=poppurple!70]{ node {Logicielles} }
+  }
+  child[concept color=poppink]{ node {Fonctions}
+      child[concept color=poppink!70]{ node {Collecte, stockage} }
+      child[concept color=poppink!70]{ node {Traitement, diffusion} }
+  }
+  child[concept color=popgold]{ node {Modélisation}
+      child[concept color=popgold!70]{ node {Modèle, modélisation} }
+      child[concept color=popgold!70]{ node {MERISE, AXIAL, OMT, RUP} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de synthèse de la leçon sur les systèmes d'information.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{1. Définitions clés à connaître par c\oe ur}
+\begin{itemize}
+  \item \cle{Donnée} : fait brut, élémentaire, non interprété (ex. : \og 14 \fg{} relevé sur une copie).
+  \item \cle{Information} : donnée traitée, interprétée et dotée d'un sens pour un destinataire (ex. : \og moyenne de 14/20 en informatique \fg).
+  \item \cle{Entreprise} : organisation qui combine des ressources (humaines, matérielles, financières) pour produire des biens ou des services.
+  \item \cle{Système d'information (SI)} : ensemble organisé des ressources (humaines, matérielles, logicielles) et des procédures permettant de collecter, stocker, traiter et diffuser l'information au sein d'une organisation.
+  \item \cle{Système d'information automatisé (SIA)} : partie du SI dont les traitements sont réalisés par des moyens informatiques (ordinateurs, logiciels, réseaux).
+  \item \cle{Modèle} : représentation simplifiée et abstraite de la réalité, construite pour comprendre, analyser ou concevoir un système.
+  \item \cle{Modélisation} : démarche qui consiste à construire un modèle d'un système réel avant sa réalisation.
+\end{itemize}
+
+\textbf{2. Les trois sous-systèmes d'une organisation}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Sous-système} & \textbf{Rôle} \\
+\hline
+Pilotage & Prend les décisions, fixe les objectifs, contrôle (direction). \\
+\hline
+Information & Fait circuler l'information entre le pilotage et l'opérant. \\
+\hline
+Opérant & Réalise la production concrète (transforme les entrées en sorties). \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{3. Composants et fonctions du SI}
+\begin{itemize}
+  \item \cle{Composants} : ressources \textbf{humaines} (utilisateurs, informaticiens), ressources \textbf{matérielles} (ordinateurs, serveurs, réseaux), ressources \textbf{logicielles} (systèmes d'exploitation, SGBD, applications).
+  \item \cle{Fonctions} (dans l'ordre) : \textbf{collecte} $\rightarrow$ \textbf{stockage} $\rightarrow$ \textbf{traitement} $\rightarrow$ \textbf{diffusion}.
+  \item \cle{Intérêts} : rapidité et fiabilité des traitements, aide à la décision, meilleure communication interne, gain de temps et de coûts, sécurisation et partage des données.
+\end{itemize}
+
+\textbf{4. Méthodes de conception d'un SI}
+\begin{itemize}
+  \item \cle{MERISE} : méthode française, par niveaux (conceptuel, logique, physique) ; très utilisée pour les bases de données (MCD, MLD).
+  \item \cle{AXIAL}, \cle{OMT} (méthode objet), \cle{RUP} (processus unifié, itératif).
+  \item Méthode express : observer le réel $\rightarrow$ construire le modèle $\rightarrow$ valider $\rightarrow$ réaliser $\rightarrow$ tester et mettre en service.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+  \item[$\square$] Je sais distinguer clairement une \cle{donnée} d'une \cle{information} avec un exemple.
+  \item[$\square$] Je sais définir une \cle{entreprise} et citer ses ressources.
+  \item[$\square$] Je sais définir un \cle{système d'information} en citant ses ressources.
+  \item[$\square$] Je sais expliquer la différence entre \cle{SI} et \cle{SIA}.
+  \item[$\square$] Je sais nommer et décrire les trois sous-systèmes : \cle{pilotage}, \cle{information}, \cle{opérant}.
+  \item[$\square$] Je sais énumérer les trois catégories de composants d'un SI (humaines, matérielles, logicielles).
+  \item[$\square$] Je connais les quatre fonctions d'un SI dans l'ordre : collecte, stockage, traitement, diffusion.
+  \item[$\square$] Je sais citer au moins trois intérêts d'un SI pour une organisation.
+  \item[$\square$] Je sais définir \cle{modèle} et \cle{modélisation}.
+  \item[$\square$] Je sais énumérer les méthodes de conception : MERISE, AXIAL, OMT, RUP.
+  \item[$\square$] Je sais illustrer chaque notion par un exemple camerounais (bulletin de notes, boutique, bibliothèque scolaire).
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
