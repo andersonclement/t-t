@@ -1,0 +1,544 @@
+\newcommand{\DOCMATIERE}{SVTEEHB}\newcommand{\DOCNIVEAU}{Tle C TI}\newcommand{\DOCMODULE}{Module I : Le Monde Vivant}\newcommand{\DOCLECON}{05}\newcommand{\DOCTITRE}{Le fonctionnement des neurones}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+\begin{tcolorbox}[enhanced,colback=popink,colframe=popink,arc=10pt,boxrule=0pt,left=12pt,right=12pt,top=9pt,bottom=9pt]
+{\color{white}\popxbold\small FICHE DE TD 3/3 \textbullet\ DIFFICILE \hfill SVTEEHB \textbullet\ Tle C TI\par}
+\vspace{4pt}{\color{white}\popxbold\Large Le fonctionnement des neurones\par}
+\vspace{3pt}{\color{white}\small Module I : Le Monde Vivant\par}
+\end{tcolorbox}
+\vspace{4pt}
+\textbf{Durée : 3h. Documents autorisés. Les réponses seront justifiées, argumentées et illustrées de schémas légendés si nécessaire.}
+
+\begin{exercice}[Modélisation biophysique du potentiel d'action et rôle des canaux voltage-dépendants]
+On étudie la genèse du potentiel d'action (PA) chez un axone myélinisé de mammifère à \SI{37}{\celsius}. Les concentrations ioniques intra- et extracellulaires (en \SI{}{\milli\mole\per\litre}) sont : $[\ce{K+}]_i = 140$, $[\ce{K+}]_o = 5$ ; $[\ce{Na+}]_i = 15$, $[\ce{Na+}]_o = 145$ ; $[\ce{Cl-}]_i = 10$, $[\ce{Cl-}]_o = 120$. Les permeabilités relatives au repos sont $P_{\ce{K+}} : P_{\ce{Na+}} : P_{\ce{Cl-}} = 1 : 0,04 : 0,45$. Au pic du PA, $P_{\ce{Na+}}$ devient 2000 fois plus grande que $P_{\ce{K+}}$ au repos.
+
+\begin{enumerate}
+    \item En utilisant l'équation de Goldman-Hodgkin-Katz (GHK), calculer la valeur théorique du potentiel de repos ($V_{repos}$). Comparer cette valeur au potentiel d'équilibre du $\ce{K+}$ ($E_{\ce{K+}}$) calculé par Nernst. Interpréter la différence au vu des permeabilités au repos. \textit{(4 pts)}
+    \item Calculer le potentiel d'équilibre du $\ce{Na+}$ ($E_{\ce{Na+}}$). Expliquer pourquoi le potentiel de membrane au pic du PA ($V_{pic} \approx \SI{+30}{\milli\volt}$) ne atteint pas $E_{\ce{Na+}}$, malgré l'ouverture massive des canaux $\ce{Na+}$ voltage-dépendants. \textit{(3 pts)}
+    \item L'inactivation des canaux $\ce{Na+}$ et l'activation retardée des canaux $\ce{K+}$ voltage-dépendants assurent la répolarisation. Établir l'équation différentielle simplifiée de la dynamique de membrane ($C_m \frac{dV}{dt} = ...$) pendant la phase de répolarisation en ne considérant que les courants $\ce{Na+}$ (inactivant) et $\ce{K+}$ (activant retardé). Discuter qualitativement de l'influence de la conductance maximale du $\ce{K+}$ ($\bar{g}_{\ce{K+}}$) sur la durée du PA et la période réfractaire absolue. \textit{(5 pts)}
+    \item Une mutation génétique ralentit la cinétique d'inactivation des canaux $\ce{Na+}$ (constante de temps $\tau_h$ doublée) sans affecter leur activation. Prédire et justifier les conséquences sur : la forme du PA, la fréquence maximale de décharge, la vitesse de conduction dans une fibre myélinisée. \textit{(4 pts)}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Conduction saltatoire, myélinisation et pathologie démyélinisante]
+On considère un axone myélinisé de diamètre interne $d = \SI{10}{\micro\metre}$, longueur des internœuds $L = \SI{1,5}{\milli\metre}$, épaisseur de myéline donnant une résistance membranaire spécifique $R_m = \SI{2000}{\ohm\centi\metre\squared}$ et une capacité membranaire spécifique $C_m = \SI{0,01}{\micro\farad\per\centi\metre\squared}$ (sous myéline). La résistivité axoplasmique est $\rho_i = \SI{100}{\ohm\centi\metre}$. Aux nœuds de Ranvier, la densité de canaux $\ce{Na+}$ est élevée ($g_{\ce{Na+}} = \SI{3000}{\milli\siemens\per\centi\metre\squared}$).
+
+\begin{enumerate}
+    \item Calculer la constante de longueur ($\lambda$) et la constante de temps membranaire ($\tau_m$) pour le segment internodal (sous myéline). En déduire la vitesse théorique de conduction passive du courant local entre deux nœuds ($v \approx \frac{\lambda}{\tau_m}$). Comparer à la vitesse physiologique observée ($\sim \SI{50}{\metre\per\second}$). \textit{(4 pts)}
+    \item Expliquer le mécanisme de la conduction saltatoire : pourquoi le courant local généré au nœud $n$ suffit-il à dépolariser le nœud $n+1$ au-delà du seuil, alors que la membrane internodale est inexcitable ? Rôle de la géométrie (diamètre, longueur internodale) et des propriétés électriques ($R_m, C_m$). \textit{(4 pts)}
+    \item \textbf{Pathologie : Sclérose en plaques (SEP).} La démyélinisation réduit $R_m$ à \SI{100}{\ohm\centi\metre\squared} et augmente $C_m$ à \SI{1}{\micro\farad\per\centi\metre\squared} sur une zone de \SI{5}{\milli\metre} (plusieurs internœuds).
+    \begin{enumerate}
+        \item Recalculer $\lambda$ et $\tau_m$ sur la zone démyélinisée. Quel est l'effet sur l'atténuation du courant local ?
+        \item Pourquoi la conduction peut-elle bloquer sur cette zone alors que les nœuds de Ranvier adjacents sont intacts ? Notion de "facteur de sécurité" de la conduction.
+        \item L'hyperthermie (fièvre) aggrave souvent les symptômes cliniques (phénomène d'Uhthoff). Expliquer cet effet à l'échelle biophysique des canaux $\ce{Na+}$ voltage-dépendants (cinétiques, seuil d'activation, inactivation). \textit{(6 pts)}
+    \end{enumerate}
+    \item Proposer un protocole expérimental \textit{in vitro} (chambre à deux compartiments ou électrodes extracellulaires) pour mettre en évidence le bloc de conduction et tester l'effet de la température. Variables mesurées, contrôles attendus. \textit{(2 pts)}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Physiologie synaptique : plasticité à court terme, modulation pharmacologique et intégration]
+On étudie une synapse glutamatergique centrale (type AMPA) entre un neurone pré-synaptique (P) et un neurone post-synaptique (S). Le potentiel de repos de S est \SI{-70}{\milli\volt}, le seuil de déclenchement du PA est \SI{-55}{\milli\volt}, $E_{rev}(\ce{AMPA}) = \SI{0}{\milli\volt}$. Un PA unique dans P évoque un PSPC (courant post-synaptique) de pointe $I_{peak} = \SI{-200}{\pico\ampere}$ (courant entrant) avec une cinétique de décroissance mono-exponentielle $\tau_{decay} = \SI{2}{\milli\second}$. La résistance d'entrée de S est $R_{in} = \SI{100}{\mega\ohm}$, sa constante de temps membranaire $\tau_m = \SI{20}{\milli\second}$.
+
+\begin{enumerate}
+    \item Calculer l'amplitude du PPSE (potentiel post-synaptique excitateur) unitaire. Ce PPSE suffit-il à déclencher un PA dans S ? Justifier. \textit{(2 pts)}
+    \item \textbf{Facilitation et Dépression.} On stimule P à \SI{50}{\hertz} (intervalle \SI{20}{\milli\second}). La probabilité de libération initiale $P_r = 0,3$. Le pool de vésicules facilement libérables (RRP) contient 10 vésicules. La facilitation résiduelle du $\ce{Ca^{2+}}$ augmente $P_r$ d'un facteur $F = 1 + 0,5 e^{-t/\tau_{Ca}}$ avec $\tau_{Ca} = \SI{50}{\milli\second}$. La dépression vésiculaire suit $\Delta RRP = -P_r \times RRP$.
+    \begin{enumerate}
+        \item Simuler (calcul itératif) l'évolution de l'amplitude normalisée du PPSE (ou PSPC) pour les 5 premiers stimuli. Tracer l'allure attendue (facilitation puis dépression). \textit{(4 pts)}
+        \item Discuter l'impact de cette dynamique sur le codage temporel : cette synapse agit-elle comme un filtre passe-haut ou passe-bas pour des rafales de PA ? \textit{(2 pts)}
+    \end{enumerate}
+    \item \textbf{Modulation par les récepteurs métabotropes (mGluR).} L'activation de récepteurs mGluR de groupe II (pré-synaptiques, inhibiteurs, couplés $G_i/o$) par un agoniste spécifique réduit l'entrée de $\ce{Ca^{2+}}$ pré-synaptique de 40\% sans affecter la sensibilité post-synaptique.
+    \begin{enumerate}
+        \item Prédire l'effet sur l'amplitude du PPSE unitaire et sur la dynamique de facilitation/dépression lors d'un train à \SI{50}{\hertz}. Justifier quantitativement (variation de $P_r$). \textit{(3 pts)}
+        \item Comment distinguer expérimentalement cet effet pré-synaptique d'une action post-synaptique (ex: blocage partiel des récepteurs AMPA) en analysant le coefficient de variation (CV) des amplitudes de PPSE ou les échecs synaptiques ? \textit{(2 pts)}
+    \end{enumerate}
+    \item \textbf{Intégration spatiale et inhibition shunting.} Le neurone S reçoit simultanément l'entrée excitatrice E (ci-dessus) et une entrée inhibitrice I (GABAergique, $E_{rev}(\ce{GABA_A}) = \SI{-75}{\milli\volt}$, conductance de pointe $g_{inh} = \SI{5}{\nano\siemens}$, $\tau_{decay} = \SI{10}{\milli\second}$) sur le même domaine dendritique.
+    \begin{enumerate}
+        \item Calculer le potentiel de membrane "effectif" ($V_{eff}$) atteint lors de la co-activation sommitale d'E et I (hypothèse de conductance linéaire, potentiel de repos initial). \textit{(3 pts)}
+        \item Expliquer pourquoi l'inhibition shunting (avec $E_{rev} \approx V_{repos}$) est plus efficace pour diviser (gain control) l'entrée excitatrice qu'une inhibition hyperpolarisante forte ($E_{rev} = \SI{-90}{\milli\volt}$) pour un même charge transférée. Notion de "division" vs "soustraction". \textit{(2 pts)}
+    \end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Analyse critique : Toxines, pharmacologie et applications thérapeutiques]
+Le tableau ci-dessous résume l'action de quatre substances sur la transmission neuromusculaire (jonction myoneurale, synapse cholinergique) ou centrale.
+
+\begin{center}
+\begin{tabular}{|l|l|l|c|}
+\hline
+\textbf{Substance} & \textbf{Cible moléculaire précise} & \textbf{Mécanisme d'action} & \textbf{Effet sur PPSE/PPA} \\
+\hline
+$\alpha$-Bungarotoxine ($\alpha$-BgTx) & Récepteur nicotinique $\ce{nAChR}$ (site $\alpha$) & Antagoniste compétitif irréversible & Blocage total \\
+Tétrodotoxine (TTX) & Canal $\ce{Na+}$ voltage-dépendant (site 1) & Blocage pore extracellulaire & ? \\
+$\omega$-Conotoxine GVIA ($\omega$-CgTx) & Canal $\ce{Ca^{2+}}$ voltage-dépendant ($N$-type) & Blocage pore extracellulaire & ? \\
+Botulino-toxine A (BoNT/A) & SNAP-25 (protéine SNARE) & Protéolyse spécifique & ? \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{enumerate}
+    \item Compléter le tableau pour les trois dernières substances (effet qualitatif sur l'amplitude du PPSE/PPA et sur la fréquence miniature). \textit{(3 pts)}
+    \item \textbf{Analyse différentielle.} On enregistre l'activité électrique d'une fibre musculaire (intracellulaire) et du nerf moteur (extracellulaire) avant et après application de chacune des toxines (concentration saturante).
+    \begin{enumerate}
+        \item Pour chaque toxine, décrire l'effet sur : le PA du nerf (amplitude, vitesse), les PPSE évoqués (amplitude, latence, fréquence des potentiels miniatures - mEPP), le PA musculaire évoqué. \textit{(5 pts)}
+        \item Comment distinguer expérimentalement l'effet de la TTX de celui de la $\omega$-CgTx si l'on ne dispose que d'enregistrements intracellulaires musculaires (PPSE évoqués et mEPP) ? \textit{(2 pts)}
+    \end{enumerate}
+    \item \textbf{Application thérapeutique : Myasthénie auto-immune (anticorps anti-$\ce{nAChR}$).}
+    \begin{enumerate}
+        \item Expliquer la pathophysiologie : perte de récepteurs, simplification des replis post-synaptiques, fatigue musculaire. Pourquoi le curare (antagoniste compétitif réversible) aggrave-t-il les symptômes, alors que la néostigmine (inhibiteur de l'acétylcholinestérase) les améliore ? \textit{(3 pts)}
+        \item La néostigmine ne traverse pas la barrière hémato-encéphalique (BHE). Proposer une stratégie pharmacologique pour traiter une myasthénie avec atteinte bulbaire (respiratoire) sévère sans risquer de crise cholinergique centrale. Justifier. \textit{(2 pts)}
+    \end{enumerate}
+    \item \textbf{Question ouverte de synthèse.} "La spécificité d'une toxine pour un sous-type de canal ionique ou de récepteur est un outil indispensable pour la physiologie, mais sa transposition thérapeutique est limitée." Discuter cette affirmation en prenant appui sur les exemples ci-dessus (sélectivité, pharmacocinétique, fenêtre thérapeutique, immunogénicité). \textit{(3 pts)}
+\end{enumerate}
+\end{exercice}
+\end{document}
