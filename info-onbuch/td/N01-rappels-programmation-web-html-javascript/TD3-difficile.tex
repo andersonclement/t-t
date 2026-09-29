@@ -1,0 +1,603 @@
+\newcommand{\DOCMATIERE}{Informatique}\newcommand{\DOCNIVEAU}{Tle TI}\newcommand{\DOCMODULE}{Module 1 : Programmation}\newcommand{\DOCLECON}{01}\newcommand{\DOCTITRE}{Rappels de programmation web : HTML et JavaScript}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,shapes.symbols,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\usepackage{qrcode}
+% Blocs de code source (PHP, C, HTML, JavaScript, SQL) — spécifique à la
+% matière Informatique : listings + habillage aux couleurs OnBuch+ (voir le
+% style \lstset ci-dessous, à côté des autres boîtes pédagogiques).
+\usepackage{listings}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Bloc de code source — \begin{lstlisting}[language=Php]...\end{lstlisting}
+% (ou language=C, HTML, JavaScript, SQL ; option omise = pseudo-code brut).
+% Même recette visuelle que les figures (\popfigure) : cadre encre épais,
+% fond clair (popcream), légende possible juste après via \legende{...}
+% comme pour une figure (listings ne sait pas arrondir ses coins : on garde
+% un cadre rectangulaire, cohérent avec les autres tableaux du document).
+% CONTRAT : les modèles ne doivent utiliser QUE \begin{lstlisting}[...] tel
+% quel (pas de \begin{tcblisting}, pas de \verb pour un bloc multi-lignes).
+% ============================================================
+\lstdefinestyle{poplst}{
+  backgroundcolor=\color{popcream},
+  basicstyle=\popsemi\fontsize{8.6}{11}\selectfont\color{popink},
+  keywordstyle=\bfseries\color{popblue},
+  commentstyle=\itshape\color{popmuted},
+  stringstyle=\color{popgreen},
+  numberstyle=\tiny\color{popmuted},
+  identifierstyle=\color{popink},
+  frame=l,
+  rulecolor=\color{popink},
+  framerule=1.6pt,
+  framesep=7pt,
+  framexleftmargin=7pt,
+  framexrightmargin=7pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt,
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  showspaces=false,
+  showtabs=false,
+  tabsize=2,
+  columns=flexible,
+  keepspaces=true,
+  numbers=none,
+  aboveskip=10pt,
+  belowskip=10pt,
+  captionpos=b,
+}
+\lstset{style=poplst, language=PHP}
+% La distribution TeX embarquée ne fournit pas le fichier de langue
+% JavaScript de listings (lstlang*.dat) : on la redéfinit nous-mêmes
+% pour que \begin{lstlisting}[language=JavaScript] fonctionne.
+\lstdefinelanguage{JavaScript}{
+  keywords={break,case,catch,class,const,continue,debugger,default,delete,do,
+    else,export,extends,finally,for,function,if,import,in,instanceof,let,new,
+    return,static,super,switch,this,throw,try,typeof,var,void,while,with,yield,
+    async,await,of,get,set},
+  keywordstyle=\bfseries\color{popblue},
+  ndkeywords={true,false,null,undefined,NaN,Infinity},
+  ndkeywordstyle=\bfseries\color{poporange},
+  identifierstyle=\color{popink},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  string=[b]",
+  morestring=[b]',
+  morestring=[b]`,
+}
+% Même limitation pour CSS et les fichiers de configuration (apacheconf,
+% nginx, ini...) : ils ne sont pas fournis. CSS et un style générique de
+% type "config" (commentaires # ou ;, pas de mots-clés) couvrent les besoins.
+\lstdefinelanguage{CSS}{
+  keywords={color,background,background-color,margin,padding,border,
+    border-radius,font,font-size,font-weight,font-family,width,height,
+    display,position,top,left,right,bottom,float,clear,text-align,
+    line-height,list-style,cursor,overflow,box-shadow,transition,
+    flex,grid,align-items,justify-content,z-index},
+  keywordstyle=\bfseries\color{popblue},
+  identifierstyle=\color{popink},
+  sensitive=false,
+  comment=[s]{/*}{*/},
+  string=[b]",
+  morestring=[b]',
+}
+\lstdefinelanguage{apacheconf}{
+  sensitive=false,
+  morecomment=[l]{\#},
+}
+\lstdefinelanguage{Apache}{
+  sensitive=false,
+  morecomment=[l]{\#},
+}
+\lstdefinelanguage{text}{sensitive=false}
+\lstdefinelanguage{powershell}{
+  keywords={New-Object,New-SmbShare,Get-Acl,Set-Acl,Get-ChildItem,Set-Content,
+    Get-Content,Write-Host,ForEach-Object,Where-Object,Select-Object,
+    Test-Path,Remove-Item,Copy-Item,Move-Item,Start-Process,Stop-Process,
+    If,Else,ElseIf,ForEach,While,Function,Return,Try,Catch},
+  keywordstyle=\bfseries\color{popblue},
+  identifierstyle=\color{popink},
+  sensitive=false,
+  comment=[l]{\#},
+  string=[b]",
+  morestring=[b]',
+}
+\lstdefinelanguage{ini}{
+  sensitive=false,
+  morecomment=[l]{;},
+  morecomment=[l]{\#},
+}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}Ludovic A.\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+\begin{tcolorbox}[enhanced,colback=popink,colframe=popink,arc=10pt,boxrule=0pt,left=12pt,right=12pt,top=9pt,bottom=9pt]
+{\color{white}\popxbold\small FICHE DE TD 3/3 \textbullet\ DIFFICILE \hfill Informatique \textbullet\ Tle TI\par}
+\vspace{4pt}{\color{white}\popxbold\Large Rappels de programmation web : HTML et JavaScript\par}
+\vspace{3pt}{\color{white}\small Module 1 : Programmation\par}
+\end{tcolorbox}
+\vspace{4pt}
+Cette fiche propose des exercices de synthèse mobilisant la structure HTML, la manipulation du DOM et la validation client en JavaScript. Le code doit être conforme aux standards actuels (HTML5, ES6+).
+
+\begin{exercice}[Gestion dynamique d'un catalogue de modules]
+On souhaite développer une interface d'administration pour un établissement de formation. La page unique \texttt{admin.html} doit permettre de saisir des modules (code, intitulé, volume horaire, coefficient), de les afficher dans un tableau récapitulatif triable par colonne, et de calculer le total des volumes horaires et la moyenne des coefficients. Aucune base de données ni backend n'est utilisé ; la persistance se fait via \texttt{localStorage}.
+
+\begin{enumerate}
+    \item \textbf{Structure HTML (3 pts).} Écrire le squelette HTML5 complet. Le formulaire de saisie (identifié \texttt{form-module}) doit contenir : un \texttt{select} pour le semestre (S1, S2, S3, S4), des \texttt{input} adaptés pour les autres champs (types, contraintes \texttt{min}, \texttt{max}, \texttt{pattern}, \texttt{required}), et deux boutons : « Ajouter » (type \texttt{submit}) et « Réinitialiser » (type \texttt{reset}). Prévoir un \texttt{section} pour le tableau (identifié \texttt{vue-tableau}) avec \texttt{thead}, \texttt{tbody} (identifié \texttt{corps-tableau}), \texttt{tfoot} pour les totaux, et une zone d'alerte (identifiée \texttt{zone-message}) pour les retours utilisateur.
+    \item \textbf{Modèle de données et stockage (3 pts).} Définir la structure d'un objet \texttt{Module} en JavaScript. Écrire la fonction \texttt{chargerCatalogue()} qui récupère le tableau d'objets depuis \texttt{localStorage} (clé \texttt{'catalogueModules'}), gère l'absence de donnée (retourne un tableau vide), et appelle \texttt{rendreTableau()}.
+    \item \textbf{Rendu et tri (4 pts).} Implémenter \texttt{rendreTableau(liste)}. Cette fonction vide \texttt{corps-tableau}, génère les \texttt{tr}/\texttt{td} pour chaque module, ajoute une colonne d'action avec un bouton « Supprimer » (attribut \texttt{data-code} pour identifier le module), met à jour le \texttt{tfoot} (total volume horaire, moyenne coefficient arrondie à 2 décimales). Implémenter le tri dynamique : un clic sur un \texttt{th} (sauf colonne action) trie \texttt{liste} selon la colonne (ordre croissant/décroissant alterné, indicateur visuel ▼/▲ dans le \texttt{th}) et rafraîchit l'affichage.
+    \item \textbf{Gestion des événements et validation (4 pts).} Au \texttt{submit} du formulaire : empêcher le rechargement, valider côté client (code unique non vide, volume horaire entier $>0$, coefficient nombre $>0$). En cas d'erreur, afficher le message dans \texttt{zone-message} (classe \texttt{erreur}) sans vider le formulaire. En cas de succès : ajouter l'objet au catalogue, sauvegarder dans \texttt{localStorage}, rafraîchir le tableau, vider le formulaire, afficher un message de succès (classe \texttt{succes}). Gérer la suppression via délégation d'événement sur \texttt{corps-tableau} (confirmation \texttt{confirm()} avant suppression effective).
+    \item \textbf{Analyse critique (2 pts).} Expliquer pourquoi la validation côté client est insuffisante pour garantir l'intégrité des données dans une application réelle. Citer deux types d'attaques ou de contournements possibles. Proposer une architecture complémentaire.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Formulaire d'inscription multi-étapes avec validation contextuelle]
+On conçoit un formulaire d'inscription en trois étapes (fieldsets) : 1. Identité (Nom, Prénom, Email, Date de naissance), 2. Coordonnées (Adresse, Ville, Code postal, Téléphone), 3. Sécurité (Mot de passe, Confirmation, Question secrète, Réponse). La navigation se fait par boutons « Suivant » / « Précédent » ; le bouton « Valider » n'apparaît qu'à l'étape 3. Un indicateur de progression (barre ou étapes numérotées) montre l'avancement.
+
+\begin{enumerate}
+    \item \textbf{Architecture HTML sémantique (3 pts).} Produire le code HTML du formulaire (\texttt{id="inscription"}). Utiliser \texttt{fieldset} pour chaque étape (attribut \texttt{hidden} géré en JS), \texttt{legend} pour les titres. Associer correctement chaque \texttt{label} à son \texttt{input} (\texttt{for}/\texttt{id}). Choisir les types d'\texttt{input} les plus pertinents (email, tel, date, password, number pour code postal). Ajouter les attributs de contrainte HTML5 (\texttt{required}, \texttt{minlength}, \texttt{pattern} pour le téléphone français, \texttt{min}/\texttt{max} pour la date de naissance : majeur, $<100$ ans). Prévoir un \texttt{output} ou \texttt{span} de classe \texttt{erreur-champ} après chaque champ pour les messages d'erreur JS.
+    \item \textbf{Machine à états de navigation (3 pts).} En JavaScript, créer un objet \texttt{FormWizard} (ou module IIFE) encapsulant : l'index de l'étape courante, la liste des \texttt{fieldset}, les références aux boutons de navigation. Implémenter \texttt{afficherEtape(index)} qui gère l'attribut \texttt{hidden}, l'état \texttt{disabled} des boutons « Précédent » (étape 0) / « Suivant » (dernière étape), et met à jour l'indicateur de progression.
+    \item \textbf{Validation différentielle par étape (4 pts).} Implémenter \texttt{validerEtapeActuelle()}. Cette fonction ne valide \textbf{que} les champs visibles de l'étape courante. Elle utilise l'API \texttt{Constraint Validation} (\texttt{checkValidity()}, \texttt{validity}) pour la validation native, mais ajoute des règles personnalisées : unicité de l'email (simulée via un \texttt{Set} d'emails « déjà pris » fourni), cohérence « Mot de passe / Confirmation » (étape 3), force du mot de passe (regex : 8 car., 1 maj, 1 min, 1 chiffre, 1 spécial). Afficher les messages d'erreur dans les \texttt{span.erreur-champ} correspondants et ajouter la classe \texttt{invalide} sur l'\texttt{input}. Retourner \texttt{true} si l'étape est valide. Le bouton « Suivant » ne passe à l'étape suivante que si cette fonction retourne \texttt{true}.
+    \item \textbf{Soumission finale et agrégation (2 pts).} Au \texttt{submit} final (étape 3 valide), construire un objet \texttt{FormData} ou un objet littéral contenant toutes les données des 3 étapes (exclure la confirmation de mot de passe). Simuler l'envoi \texttt{fetch('/api/inscription', ...)} avec \texttt{JSON.stringify}. Gérer la réponse (succès/erreur réseau) et afficher un message global.
+    \item \textbf{Accessibilité et UX (2 pts).} Citer 3 attributs ARIA ou rôles HTML à ajouter pour rendre ce formulaire multi-étapes accessible aux lecteurs d'écran (navigation, région live pour erreurs, indication d'étape courante). Justifier l'intérêt de la validation \textbf{au fur et à mesure} (sur événement \texttt{input} ou \texttt{blur}) en plus de la validation à la navigation.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Tableau de bord interactif : filtrage, pagination et export]
+Une page \texttt{dashboard.html} affiche une liste d'étudiants (Matricule, Nom, Prénom, Filière, Niveau, Moyenne) dans un tableau paginé (10 lignes/page). Les données initiales (50 entrées) sont fournies dans un fichier \texttt{data/etudiants.json} chargé via \texttt{fetch} au chargement de la page. L'interface propose : un champ de recherche global (filtre sur toutes les colonnes textuelles), un sélecteur de filtre par Filière, un tri par colonne (clic sur en-tête), et un bouton « Exporter CSV » (uniquement les lignes filtrées et triées courantes).
+
+\begin{enumerate}
+    \item \textbf{Chargement asynchrone et état initial (2 pts).} Écrire la fonction asynchrone \texttt{initDashboard()}. Elle doit : afficher un état « Chargement... » dans \texttt{tbody}, récupérer le JSON via \texttt{fetch}, gérer les erreurs HTTP/réseau (affichage message d'erreur dans le tableau), stocker les données brutes dans une variable module \texttt{let donneesBrutes = []}, et appeler \texttt{appliquerFiltresEtRendu()}.
+    \item \textbf{Pipeline de transformation des données (4 pts).} Implémenter \texttt{appliquerFiltresEtRendu()}. Cette fonction chaîne les opérations pures (sans effet de bord sur le DOM) sur \texttt{donneesBrutes} :
+    \begin{enumerate}
+        \item Filtre texte (insensible à la casse, recherche partielle sur Nom, Prénom, Matricule).
+        \item Filtre Filière (valeur « Toutes » = pas de filtre).
+        \item Tri (selon \texttt{colonneTri} et \texttt{ordreTri} stockés en état).
+    \end{enumerate}
+    Elle met à jour \texttt{donneesFiltrees} (résultat final), réinitialise la page courante à 1, et appelle \texttt{rendrePage()} et \texttt{rendrePagination()}.
+    \item \textbf{Rendu paginé et performances (3 pts).} Implémenter \texttt{rendrePage()}. Calculer les indices de début/fin selon \texttt{pageCourante} et \texttt{TAILLE\_PAGE=10}. Utiliser un \texttt{DocumentFragment} pour construire les \texttt{tr} (création via \texttt{document.createElement} ou \texttt{template} \texttt{content.cloneNode(true)}) et les ajouter au fragment, puis vider \texttt{tbody} (\texttt{innerHTML=''}) et y ajouter le fragment en une seule opération. Mettre à jour l'affichage « Page X sur Y / N résultats totaux ».
+    \item \textbf{Génération CSV côté client (3 pts).} Implémenter \texttt{exporterCSV()}. Construire la chaîne CSV (en-têtes + lignes de \texttt{donneesFiltrees}) en échappant correctement les guillemets doubles et les retours à la ligne dans les cellules (RFC 4180). Créer un \texttt{Blob} de type \texttt{text/csv;charset=utf-8;}, générer une URL objet (\texttt{URL.createObjectURL}), déclencher le téléchargement via un lien \texttt{<a download="etudiants\_export.csv">} simulé, puis révoquer l'URL. Gérer le BOM UTF-8 (\texttt{\textbackslash uFEFF}) pour Excel.
+    \item \textbf{Architecture et maintenabilité (2 pts).} Le code actuel mélange logique métier (filtres, tri, CSV) et manipulation DOM dans les mêmes fonctions. Proposer une refactorisation selon le pattern \textbf{MVC} ou \textbf{Modèle-Vue-Contrôleur} (ou MVVM) adaptée au Vanilla JS. Décrire succinctement les responsabilités de chaque couche (Modèle : état + données + persistance ; Vue : rendu + écouteurs UI ; Contrôleur : orchestration). Quel avantage pour les tests unitaires ?
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Sécurité et limites de la validation côté client]
+On considère l'exercice 1 (Catalogue de modules). Un étudiant malveillant ouvre les outils de développement (F12), modifie le HTML pour supprimer l'attribut \texttt{required} sur le champ « Code », change le \texttt{type="number"} du volume horaire en \texttt{type="text"}, et injecte un \texttt{<script>alert(1)</script>} dans l'intitulé via la console : \texttt{document.querySelector('\#intitule').value = '<script>alert(1)</script>'}.
+
+\begin{enumerate}
+    \item \textbf{Contournement des contraintes HTML5 (2 pts).} Expliquer pourquoi la suppression des attributs \texttt{required}, \texttt{min}, \texttt{max}, \texttt{pattern} dans l'inspecteur permet de soumettre des données invalides malgré le code JavaScript de validation écrit dans l'exercice 1 (question 4). Quel événement JavaScript est déclenché par le \texttt{submit} natif du formulaire même si les contraintes HTML sont violées après modification du DOM ?
+    \item \textbf{Injection XSS stockée via localStorage (3 pts).} Si la fonction \texttt{rendreTableau()} insère l'intitulé via \texttt{cellule.textContent = module.intitule}, l'injection est-elle neutralisée ? Et si elle utilise \texttt{cellule.innerHTML += module.intitule} ? Démontrer par l'exemple. Comment l'attaque devient-elle « stockée » et persistante pour les autres utilisateurs (si partie partagée) ou pour la même session ? Proposer la fonction d'échappement HTML minimale à appliquer systématiquement avant tout \texttt{innerHTML}.
+    \item \textbf{Validation du code unique : faille de course (TOCTOU) (2 pts).} La vérification « code unique » se fait en JS en parcourant \texttt{catalogueModules} avant \texttt{push}. Imaginer un scénario (même utilisateur, onglets multiples, ou manipulation console rapide) où deux modules avec le même code sont ajoutés. Expliquer le principe \textit{Time-Of-Check to Time-Of-Use}. Pourquoi \texttt{localStorage} n'offre-t-il pas de transactions atomiques ?
+    \item \textbf{Principes de défense en profondeur (3 pts).} Citer et expliquer 3 mesures complémentaires \textbf{côté serveur} (backend) indispensables pour sécuriser réellement cette fonctionnalité d'ajout de module, même si le frontend est parfaitement codé. (Indices : validation schéma, authentification/autorisation, en-têtes HTTP, sanitization sortie).
+    \item \textbf{Content Security Policy (2 pts).} Écrire l'en-tête HTTP \texttt{Content-Security-Policy} le plus restrictif possible pour cette page (scripts inline interdits, styles inline interdits, fontes/images self, pas de frames, pas d'objets), qui aurait empêché l'exécution du \texttt{<script>alert(1)</script>} même s'il avait été injecté via \texttt{innerHTML}.
+\end{enumerate}
+\end{exercice}
+\end{document}
