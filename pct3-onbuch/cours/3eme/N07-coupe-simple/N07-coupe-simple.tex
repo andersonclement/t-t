@@ -1,0 +1,2695 @@
+% Coupe simple — PCT 3ème — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N07-coupe-simple.tex
+\newcommand{\DOCMATIERE}{PCT}
+\newcommand{\DOCNIVEAU}{3ème}
+\newcommand{\DOCMODULE}{Module 4 : Technologie et mécanique}
+\newcommand{\DOCLECON}{N07}
+\newcommand{\DOCTITRE}{Coupe simple}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Coupe simple}{PCT}{3ème}{Module 4 : Technologie et mécanique}{N07}{1 séance (1 h chacune)}{Cette leçon introduit la coupe simple, technique de représentation en dessin technique qui permet de visualiser l'intérieur d'un objet en le sectionnant fictivement par un plan de coupe. L'élève apprend à tracer le plan de coupe, à hachurer les matières sectionnées et à interpréter une vue en coupe dans des situations concrètes de la vie courante.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir la coupe simple et expliquer son utilité en dessin technique.
+\item À la fin de cette leçon, je sais identifier sur un dessin le plan de coupe, son tracé et son sens de visée.
+\item À la fin de cette leçon, je sais distinguer les parties sectionnées (hachurées) des parties vues en projection dans une vue en coupe.
+\item À la fin de cette leçon, je sais tracer correctement des hachures (inclinaison à 45°, espacement régulier, traits fins).
+\item À la fin de cette leçon, je sais énumérer et ordonner les étapes d'exécution d'une coupe simple.
+\item À la fin de cette leçon, je sais réaliser la vue en coupe simple d'un objet usuel simple (écrou, poulie, tuyau, bouteille).
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Pourquoi couper un objet ?
+\item Le plan de coupe
+\item Les hachures
+\item Étapes d'exécution d'une coupe simple
+\item Règles de représentation et cas particuliers
+\item Applications concrètes au quotidien
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir la coupe simple et expliquer son utilité en dessin technique.
+\item À la fin de cette leçon, je sais identifier sur un dessin le plan de coupe, son tracé et son sens de visée.
+\item À la fin de cette leçon, je sais distinguer les parties sectionnées (hachurées) des parties vues en projection dans une vue en coupe.
+\item À la fin de cette leçon, je sais tracer correctement des hachures (inclinaison à 45°, espacement régulier, traits fins).
+\item À la fin de cette leçon, je sais énumérer et ordonner les étapes d'exécution d'une coupe simple.
+\item À la fin de cette leçon, je sais réaliser la vue en coupe simple d'un objet usuel simple (écrou, poulie, tuyau, bouteille).
+\item À la fin de cette leçon, je sais interpréter un dessin en coupe pour décrire la forme intérieure d'un objet.
+\item À la fin de cette leçon, je sais citer les règles de représentation (éléments non coupés : nervures, arbres, vis) et les erreurs à éviter.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Projections orthogonales : vues de face, de dessus et de profil (leçons précédentes du module Technologie et mécanique).
+\item Lecture d'un dessin technique : traits forts, traits fins, traits interrompus, axes (traits mixtes).
+\item Notions de géométrie : plan, section d'un solide par un plan (cube, cylindre).
+\item Cotation simple d'un dessin (longueurs, diamètres).
+\item Manipulation des instruments de dessin : règle, équerre, compas, crayons H et HB.
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Pourquoi couper un objet ?}
+
+\courssub{Une situation concrète : le menuisier de Nkongsamba}
+
+Imagine un menuisier installé à \textbf{Nkongsamba}, dans la région du Littoral. Un client lui commande une \textbf{poulie en bois} pour un moulin à manioc artisanal. Le menuisier sort son carnet, prend son crayon et trace la vue de face de la poulie : un grand cercle extérieur, un cercle intérieur plus petit pour l'alésage (le trou central où passe l'axe), et une gorge en forme de U sur le pourtour pour recevoir la courroie. Il montre le dessin au client. Ce dernier fronce les sourcils : « \emph{Mais comment est fait le trou au milieu ? Est-il lisse ? Et la gorge, elle a quel profil exactement ?} » Le menuisier regarde son dessin : l'intérieur de la pièce est représenté par des \textbf{traits interrompus} (tirets fins). Avec tous ces traits qui se croisent, le dessin devient illisible, confus. Le client ne « voit » pas l'intérieur.
+
+\medskip
+\textbf{Problématique :} \emph{Comment représenter clairement l'intérieur d'un objet technique (perçages, gorges, nervures, évidements) sans le détruire physiquement et sans noyer le dessin sous une multitude de traits cachés ?}
+
+La réponse est la \textbf{coupe simple}, une convention universelle du dessin industriel. Elle consiste à \emph{imaginer} qu'on tranche l'objet avec un plan (comme un grand couteau) pour regarder à l'intérieur, puis à dessiner ce qu'on voit.
+
+\begin{savaistu}[L'origine du mot]
+Le terme « coupe » vient du verbe couper. Dans l'Antiquité, les architectes romains utilisaient déjà des sections pour expliquer la construction des aqueducs et des thermes. Aujourd'hui, que tu regardes le plan de ta maison à Yaoundé, le schéma d'un moteur de moto-taxi ou la notice d'un tuyau PVC, tu retrouveras toujours cette même idée : \textbf{couper pour comprendre}.
+\end{savaistu}
+
+\courssub{Les limites des vues extérieures (projection orthogonale)}
+
+Rappelle-toi : en projection orthogonale (vues de face, de dessus, de profil), les parties invisibles sont représentées par des \textbf{traits interrompus fins} (tirets).
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.85, every node/.style={font=\small}]
+% Vue extérieure avec traits interrompus (confus)
+\begin{scope}
+\draw[thick] (0,0) circle (2.5);
+\draw[thick] (0,0) circle (2.0);
+\draw[dashed, thin, popmuted] (0,0) circle (1.5);
+\draw[dashed, thin, popmuted] (0,0) circle (1.0);
+\draw[dashed, thin, popmuted] (-2.2,-1.2) -- (2.2,-1.2);
+\draw[dashed, thin, popmuted] (-2.2,1.2) -- (2.2,1.2);
+\draw[dashed, thin, popmuted] (-1.2,-2.2) -- (-1.2,2.2);
+\draw[dashed, thin, popmuted] (1.2,-2.2) -- (1.2,2.2);
+\node at (0,-3.2) {\textbf{Vue extérieure}};
+\node at (0,-3.8) {\emph{Traits interrompus : confusion}};
+\end{scope}
+% Vue en coupe (claire) : demi-anneau hachuré
+\begin{scope}[xshift=8cm]
+% Matière hachurée : anneau entre R=2.5 et R=2.0 (jante) et entre R=1.5 et R=1.0 (moyeu), plus âme
+\fill[pattern=north east lines, pattern color=popblue] (2.0,0) arc (0:180:2.0) -- (-2.5,0) arc (180:0:2.5) -- cycle;
+\fill[pattern=north east lines, pattern color=popblue] (1.0,0) arc (0:180:1.0) -- (-1.5,0) arc (180:0:1.5) -- cycle;
+\fill[pattern=north east lines, pattern color=popblue] (-2.0,0) rectangle (-1.5,-0.4);
+\fill[pattern=north east lines, pattern color=popblue] (1.5,0) rectangle (2.0,-0.4);
+% Contours
+\draw[thick] (2.5,0) arc (0:180:2.5);
+\draw[thick] (2.0,0) arc (0:180:2.0);
+\draw[thick] (1.5,0) arc (0:180:1.5);
+\draw[thick] (1.0,0) arc (0:180:1.0);
+\draw[thick] (-2.5,0) -- (-2.0,0);
+\draw[thick] (-1.5,0) -- (-1.0,0);
+\draw[thick] (1.0,0) -- (1.5,0);
+\draw[thick] (2.0,0) -- (2.5,0);
+% Lignes d'axes
+\draw[thin, dash pattern=on 4pt off 2pt on 1pt off 2pt, popdark] (-3,0) -- (3,0);
+\draw[thin, dash pattern=on 4pt off 2pt on 1pt off 2pt, popdark] (0,-0.8) -- (0,3);
+\node at (0,-3.2) {\textbf{Demi-coupe (vue de face)}};
+\node at (0,-3.8) {\emph{Hachures : matière visible}};
+\end{scope}
+\end{tikzpicture}
+\legende{Comparaison : à gauche, la vue extérieure noie l'information sous les traits interrompus. À droite, la coupe révèle instantanément l'alésage central, l'épaisseur de la jante et la position de la gorge grâce aux hachures.}
+\end{popfigure}
+
+Quand l'objet est simple (un cube percé d'un seul trou), les traits interrompus suffisent. Mais dès que l'objet devient complexe — un \textbf{bloc-moteur de groupe électrogène}, un \textbf{corps de pompe à eau}, un \textbf{robinet de bonbonne de gaz} — les traits cachés se superposent. Le dessin devient une « toile d'araignée » où l'on ne distingue plus rien : ni le diamètre de l'alésage, ni la profondeur de la gorge, ni la forme des nervures de renfort.
+
+\courssub{L'idée fondamentale : la section fictive par un plan}
+
+Pour sortir de cette confusion, les dessinateurs industriels ont adopté une convention puissante : \textbf{on imagine que l'objet est sectionné par un plan}.
+
+\begin{methode}[Le principe de la coupe en 4 étapes]
+\begin{enumerate}
+\item \textbf{Choisir un plan de coupe} (généralement un plan de symétrie vertical ou horizontal) qui traverse l'objet aux endroits stratégiques.
+\item \textbf{Séparer fictivement l'objet} en deux parties le long de ce plan.
+\item \textbf{Enlever la partie située entre l'observateur et le plan} (la partie « avant »). On ne garde que la partie « arrière ».
+\item \textbf{Projeter la partie restante} sur un plan de projection, selon les règles de la projection orthogonale, et \textbf{hachurer la matière coupée}.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={font=\small}]
+% Objet : tuyau (cylindre creux) vu en perspective simplifiée
+% Partie arrière (pleine)
+\draw[thick, popblue] (0,0) -- (0,3);
+\draw[thick, popblue] (0,0) arc (180:360:1.5 and 0.4);
+\draw[thick, popblue] (3,0) -- (3,3);
+\draw[thick, popblue] (0,3) arc (180:360:1.5 and 0.4);
+% Partie avant (pointillés, à enlever)
+\draw[dashed, thick, popmuted] (0,0) arc (180:0:1.5 and 0.4);
+\draw[dashed, thick, popmuted] (0,3) arc (180:0:1.5 and 0.4);
+% Trou intérieur (arrière)
+\draw[thick, popblue] (0.6,0) -- (0.6,3);
+\draw[thick, popblue] (2.4,0) -- (2.4,3);
+% Plan de coupe (vertical, au milieu)
+\draw[fill=poporange!30, opacity=0.6] (1.5,-1.2) -- (1.5,4) -- (2.3,4.6) -- (2.3,-0.6) -- cycle;
+\node[poporange, rotate=90] at (1.85,1.5) {\textbf{PLAN DE COUPE}};
+% Flèche d'enlèvement
+\draw[->, very thick, poppink] (3.4,1.5) -- (4.8,1.5) node[right, popdark] {\textbf{On enlève}};
+\node[popdark] at (4.1,2.6) {\emph{la partie avant}};
+% Vue résultante en coupe
+\begin{scope}[xshift=8.5cm]
+\fill[pattern=north east lines, pattern color=popblue] (-1.5,0) rectangle (-0.9,3);
+\fill[pattern=north east lines, pattern color=popblue] (0.9,0) rectangle (1.5,3);
+\draw[thick] (-1.5,0) rectangle (-0.9,3);
+\draw[thick] (0.9,0) rectangle (1.5,3);
+\draw[thin, dash pattern=on 4pt off 2pt on 1pt off 2pt, popdark] (0,-0.5) -- (0,3.5);
+\node at (0,-1.0) {\textbf{Vue en coupe}};
+\node at (0,-1.6) {\emph{Hachures = matière coupée}};
+\end{scope}
+\node at (1.5,-1.8) {\textbf{Objet : tuyau creux}};
+\end{tikzpicture}
+\legende{Principe de la coupe simple : l'objet est sectionné par un plan vertical (orange). La partie avant (pointillés) est enlevée fictivement (flèche). La partie arrière est projetée : on obtient la vue en coupe avec hachures sur la matière.}
+\end{popfigure}
+
+\courssub{Définition rigoureuse : la coupe simple}
+
+\begin{definition}[Coupe simple]
+Une \textbf{coupe simple} est la représentation d'un objet supposé sectionné par \textbf{un seul plan de coupe}. La partie de l'objet située entre l'observateur et le plan de coupe est \textbf{fictivement supprimée}. La partie restante est projetée selon les règles de la projection orthogonale. La matière coupée par le plan est représentée par des \textbf{hachures}.
+\end{definition}
+
+Attention au vocabulaire : on ne « coupe » pas l'objet réel (le menuisier ne scie pas sa poulie avant de la livrer !). On effectue une \textbf{opération mentale} sur le dessin.
+
+\courssub{Distinction essentielle : coupe et section}
+
+C'est une confusion classique au BEPC. Sois vigilant.
+
+\begin{propriete}[Coupe et section]
+\begin{itemize}
+\item \textbf{La coupe} montre \textbf{la matière coupée} (hachurée) \textbf{et tout ce qui est visible derrière le plan de coupe} (arêtes, trous, gorges). C'est une \textbf{vue complète}.
+\item \textbf{La section} ne montre \textbf{que la surface d'intersection} entre le plan de coupe et l'objet : c'est une \textbf{figure plane fermée}, hachurée, sans aucun trait derrière.
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[Exemple : un tuyau PVC coudé]
+\begin{itemize}
+\item \textbf{Section} : un anneau hachuré (deux cercles concentriques). On ne sait pas si le tuyau est droit ou coudé, ni sa longueur.
+\item \textbf{Coupe} : on voit l'anneau hachuré \textbf{et} le prolongement du tuyau derrière, sa courbure, son diamètre intérieur, l'épaisseur de sa paroi.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Piège BEPC : « dessiner la section » ou « dessiner la coupe » ?]
+Si l'énoncé demande : \emph{« Faire la section selon le plan P »}, tu dessines \textbf{uniquement} la forme de la coupure (contour fermé + hachures), sans rien derrière.
+Si l'énoncé demande : \emph{« Représenter la vue en coupe selon P »}, tu dessines la matière coupée (hachures) \textbf{et} toutes les arêtes visibles derrière le plan.
+\end{attention}
+
+\courssub{Exemples de la vie courante au Cameroun}
+
+La coupe n'est pas une invention lointaine : elle est partout autour de toi.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Objet / Situation} & \textbf{Vue extérieure (ce qu'on ne voit pas)} & \textbf{Ce que la coupe révèle} \\ \hline
+Bouteille en plastique (eau, jus) & Paroi lisse, fond bombé invisible. & Épaisseur de la paroi, forme du fond, filetage du goulot. \\ \hline
+Tuyau PVC (évacuation d'eau) & Cylindre gris uniforme. & Épaisseur de paroi, intérieur lisse, emboîture pour le collage. \\ \hline
+Noix de palme & Coque noire dure. & Amande à l'intérieur, pulpe fibreuse, cavité centrale. \\ \hline
+Silo à maïs ou à cacao & Grande tôle cylindrique. & Épaisseur de la tôle, nervures, fond conique de vidange. \\ \hline
+Forage / puits & Tube sortant de terre. & Tubages successifs, crépine, niveau d'eau. \\ \hline
+Écrou (mécanique moto) & Hexagone percé d'un trou noir. & Profil du filetage, chanfreins, hauteur utile. \\ \hline
+Maison (plan d'architecte) & Façades, toiture. & Épaisseur des murs, hauteur sous plafond, fondations, charpente. \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{exemplebox}[L'écrou : le cas d'école]
+Regarde un écrou posé sur une table. Tu vois un hexagone et un trou noir au milieu. \textbf{Impossible de savoir} si le filetage est traversant ou borgne (avec un fond), ni la forme des filets.
+Maintenant, imagine la coupe par un plan passant par l'axe. Immédiatement, tu vois :
+\begin{itemize}
+\item le profil triangulaire du filetage ;
+\item le diamètre intérieur et le diamètre extérieur du filet ;
+\item la longueur de filetage utile ;
+\item le chanfrein d'entrée (le biseau qui aide à visser).
+\end{itemize}
+C'est pour cela que les catalogues de quincaillerie (vis, boulons, écrous) représentent presque toujours les pièces \textbf{en coupe}.
+\end{exemplebox}
+
+\courssub{Intérêt pratique : qui lit des coupes ?}
+
+\begin{itemize}
+\item \textbf{Le menuisier} (Nkongsamba, Foumban) : pour usiner une poulie ou une roue, il lit sur la coupe les cotes de l'alésage, la profondeur de la gorge, l'épaisseur du moyeu.
+\item \textbf{Le soudeur-chaudronnier} (zone industrielle de Douala) : pour préparer les chanfreins de soudure et l'écartement des tôles, il suit le plan de coupe du joint soudé.
+\item \textbf{Le mécanicien} (garage, atelier moto) : pour comprendre le circuit d'huile ou la forme de la chambre de combustion, il consulte les coupes du manuel d'atelier.
+\item \textbf{L'architecte et le maçon} : le \textbf{plan de coupe de la maison} montre les fondations, l'élévation des murs, la charpente et la pente du toit. C'est un document de référence pour estimer les quantités de matériaux (parpaings, fer à béton, ciment).
+\end{itemize}
+
+\begin{exoresolu}[Lecture d'une coupe : poulie de moulin à manioc]
+\textbf{Énoncé :} Le menuisier de Nkongsamba a tracé la coupe axiale d'une poulie en bois plein (sans bras creux) : un cylindre de diamètre extérieur $D = \SI{200}{mm}$, d'épaisseur $e = \SI{40}{mm}$, percé d'un alésage central de diamètre $d = \SI{30}{mm}$, avec une gorge de profondeur $p = \SI{10}{mm}$ creusée sur tout le pourtour, au milieu de l'épaisseur.
+\begin{enumerate}
+\item Quelles zones doivent être hachurées sur la coupe ?
+\item Le trou central est-il traversant ? Justifier.
+\item Calculer le diamètre au fond de la gorge.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+\item \textbf{Zones hachurées :} toute la matière du bois traversée par le plan de coupe, c'est-à-dire les deux rectangles de part et d'autre de l'alésage, \textbf{sauf} le vide de l'alésage central et le vide de la gorge. L'alésage et la gorge restent \textbf{blancs} (pas de hachures sur le vide).
+\item \textbf{Trou traversant :} \textbf{oui}. Sur la coupe, l'alésage de \SI{30}{mm} apparaît comme un vide qui traverse la pièce \textbf{de part en part} sur toute l'épaisseur de \SI{40}{mm} : il n'y a pas de fond hachuré. L'axe du moulin pourra donc passer à travers.
+\item \textbf{Diamètre au fond de gorge :} la gorge est creusée de $p = \SI{10}{mm}$ de chaque côté du diamètre, donc :
+\[ D_{\text{fond}} = D - 2 \times p = 200 - 2 \times 10 = \SI{180}{mm}. \]
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.055, every node/.style={font=\small}]
+% Coupe axiale de la poulie (demi-vue au-dessus de l'axe, cotes en mm)
+% Matière hachurée : rectangle 100 x 20 moins alésage (15) moins gorge
+% Partie gauche de l'alésage
+\fill[pattern=north east lines, pattern color=popgold] (-100,0) rectangle (-15,20);
+\fill[pattern=north east lines, pattern color=popgold] (15,0) rectangle (100,20);
+% Gorge : vide au milieu de l'épaisseur, de rayon 90 à 100, largeur 20 (de -10 à 10 en y... ici épaisseur 40 -> y de 0 à 20 en demi-vue)
+% On creuse la gorge : vide entre y=8 et y=12 pour |x| de 90 à 100
+\fill[white] (-100,8) rectangle (-90,12);
+\fill[white] (90,8) rectangle (100,12);
+% Contours
+\draw[thick] (-100,0) rectangle (100,20);
+\draw[thick] (-15,0) -- (-15,20);
+\draw[thick] (15,0) -- (15,20);
+\draw[thick] (-100,8) -- (-90,8) -- (-90,12) -- (-100,12);
+\draw[thick] (100,8) -- (90,8) -- (90,12) -- (100,12);
+% Axe
+\draw[thin, dash pattern=on 4pt off 2pt on 1pt off 2pt, popdark] (-115,0) -- (115,0);
+% Cotes
+\draw[<->, thin] (-100,-12) -- (100,-12) node[midway, below] {$D = \SI{200}{mm}$};
+\draw[<->, thin] (-15,-6) -- (15,-6) node[midway, below] {$d = \SI{30}{mm}$};
+\draw[<->, thin] (108,0) -- (108,20) node[midway, right] {$e = \SI{40}{mm}$};
+\draw[<->, thin] (-108,12) -- (-108,20) node[midway, left] {$p = \SI{10}{mm}$};
+\node at (0,32) {\textbf{Demi-coupe axiale de la poulie}};
+\node at (0,26) {\emph{(moitié supérieure, l'axe est en bas)}};
+\end{tikzpicture}
+\legende{Demi-coupe axiale de la poulie (échelle réduite, cotes en mm). Les hachures marquent le bois coupé par le plan ; l'alésage central et la gorge restent blancs car ce sont des vides.}
+\end{popfigure}
+
+\courssub{Synthèse : ce qu'il faut retenir avant d'aller plus loin}
+
+\begin{aretenir}[Les 3 piliers de la coupe simple]
+\begin{itemize}
+\item \textbf{Pourquoi ?} Pour remplacer les traits interrompus confus par une vue claire de l'intérieur de l'objet.
+\item \textbf{Comment ?} Par une \emph{opération mentale} : plan de coupe $\rightarrow$ enlèvement de la partie avant $\rightarrow$ projection de la partie arrière.
+\item \textbf{Résultat ?} Un dessin où la \textbf{matière coupée est hachurée} et où \textbf{tout ce qui est visible derrière le plan est dessiné} (arêtes vives, trous, profils).
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Erreurs fatales à ne pas commettre]
+\begin{enumerate}
+\item \textbf{Dessiner des arêtes créées par la coupe :} le plan de coupe est imaginaire, il ne crée \textbf{jamais} de nouvelles arêtes vives sur l'objet. Ne trace pas de trait continu supplémentaire pour « fermer » la coupe : seules les hachures marquent la coupure.
+\item \textbf{Confondre coupe et section :} coupe = vue complète (hachures + ce qu'il y a derrière) ; section = contour de la coupure seul (hachures seulement).
+\item \textbf{Hachurer le vide :} l'air, l'eau, les trous (alésage, gorge, rainure) ne se hachurent \textbf{jamais}. Seule la \textbf{matière} (métal, bois, plastique, béton) reçoit des hachures.
+\end{enumerate}
+\end{attention}
+
+Tu as maintenant l'intuition et la définition. Dans la suite de la leçon, nous verrons \textbf{comment choisir et représenter le plan de coupe} (traces, flèches de visée, repères), car c'est le langage codifié qui dit au lecteur : « c'est \emph{ici} que j'ai coupé, et c'est \emph{dans ce sens} que j'ai regardé ».
+
+\coursec{Le plan de coupe}
+
+Dans la section précédente, nous avons découvert pourquoi il est souvent nécessaire de « couper » un objet pour voir son intérieur : un cache extérieur ne suffit pas à montrer un perçage, une gorge ou une épaisseur de matière. Mais attention : en dessin technique, on ne coupe pas n'importe comment, n'importe où, n'importe quand. Avant de dessiner la moindre coupe, le dessinateur doit d'abord répondre à une question précise : \emph{par où passe la scie imaginaire ?} La réponse à cette question s'appelle le \cle{plan de coupe}. C'est lui que nous allons étudier pas à pas dans cette section : sa nature, son tracé, son repérage, son sens de visée et sa position.
+
+\courssub{Qu'est-ce qu'un plan de coupe ?}
+
+Commençons par une image de la vie courante. Pour vérifier si un avocat est mûr à l'intérieur, la maman le coupe en deux avec un couteau, bien au milieu, le long du noyau. La lame du couteau matérialise une surface plane : c'est exactement l'idée du plan de coupe. En dessin technique, personne ne scie réellement la pièce : on \emph{imagine} qu'un plan la traverse, on enlève mentalement la moitié située entre l'observateur et ce plan, et on dessine ce que l'on voit sur la partie restante.
+
+\begin{definition}[Plan de coupe]
+Le \cle{plan de coupe} est un plan \textbf{fictif} (imaginaire) le long duquel on suppose l'objet sectionné pour en révéler les formes intérieures. Il est généralement choisi \textbf{parallèle à un plan de projection} : par exemple parallèle au plan vertical pour obtenir une \textbf{coupe de face}. Sur le dessin, le plan de coupe est tracé en \textbf{trait mixte fin} (alternance de tirets et de points), \textbf{renforcé en trait fort aux extrémités} et aux changements de direction.
+\end{definition}
+
+Retiens bien deux idées contenues dans cette définition.
+
+\begin{itemize}
+\item Le plan de coupe est \textbf{fictif} : la pièce réelle reste entière. La coupe n'existe que sur le papier, pour communiquer une information.
+\item Le plan de coupe est \textbf{parallèle à un plan de projection} : ainsi, la surface coupée apparaît \emph{en vraie grandeur} sur la vue en coupe, sans déformation. C'est comme photographier une feuille bien de face plutôt que de biais.
+\end{itemize}
+
+\begin{attention}[Un seul plan pour une coupe simple]
+Une \cle{coupe simple} n'utilise qu'\textbf{un seul} plan de coupe. Si l'on a besoin de plusieurs plans parallèles décalés pour traverser des détails qui ne sont pas alignés, on parle alors de \emph{coupe à plans parallèles décalés}, que tu étudieras plus tard. Au BEPC, lorsqu'on te demande une « coupe simple », vérifie toujours que ton plan de coupe est unique, rectiligne et continu.
+\end{attention}
+
+\courssub{Tracé du plan de coupe sur la vue de référence}
+
+Le plan de coupe se dessine sur une vue existante de l'objet, appelée \cle{vue de référence} (par exemple la vue de dessus d'une poulie). Ce tracé obéit à un code précis, identique dans tous les ateliers du monde.
+
+\begin{aretenir}[Le code graphique du plan de coupe]
+\begin{itemize}
+\item Le corps du plan de coupe est tracé en \textbf{trait mixte fin} : un long tiret, un point, un long tiret, un point, etc.
+\item Les \textbf{extrémités} du plan de coupe sont renforcées en \textbf{trait fort} (plus épais).
+\item Les \textbf{changements de direction} éventuels sont également renforcés en trait fort.
+\item Le trait mixte du plan de coupe ne doit jamais être confondu avec le trait mixte fin des \emph{axes de symétrie} : c'est le renforcement des extrémités et la présence des lettres et des flèches qui distinguent un plan de coupe d'un simple axe.
+\end{itemize}
+\end{aretenir}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.0, line cap=round]
+% Poulie vue de dessus : cercles concentriques
+\draw[popdark, thick] (0,0) circle (2.4);
+\draw[popdark, thick] (0,0) circle (1.9);
+\draw[popdark, thick] (0,0) circle (0.6);
+% Gorge (traits interrompus côté intérieur)
+\draw[popdark, dashed] (0,0) circle (2.15);
+% Plan de coupe A-A : trait mixte fin
+\draw[poporange, dash pattern=on 8pt off 3pt on 1.5pt off 3pt, thin] (-3.4,0) -- (3.4,0);
+% Extrémités renforcées en trait fort
+\draw[poporange, very thick] (-3.4,0) -- (-2.9,0);
+\draw[poporange, very thick] (2.9,0) -- (3.4,0);
+% Flèches de visée (vers le bas)
+\draw[poporange, very thick, -{Stealth[length=3.5mm]}] (-3.15,0) -- (-3.15,-0.9);
+\draw[poporange, very thick, -{Stealth[length=3.5mm]}] (3.15,0) -- (3.15,-0.9);
+% Lettres de repérage
+\node[poporange, font=\bfseries\large] at (-3.15,0.45) {A};
+\node[poporange, font=\bfseries\large] at (3.15,0.45) {A};
+% Annotations
+\node[popmuted, font=\small] at (0,2.75) {Vue de dessus de la poulie};
+\node[poporange, font=\small\itshape] at (0,-1.5) {Plan de coupe A-A (trait mixte fin, extrémités fortes)};
+\end{tikzpicture}
+\legende{Vue de dessus d'une poulie. Le plan de coupe A-A est tracé en trait mixte fin (orange), renforcé en trait fort aux deux extrémités. Les lettres A repèrent le plan ; les flèches, perpendiculaires au plan, indiquent le sens de visée : on regarde la partie restante vers le bas.}
+\end{popfigure}
+
+\courssub{Repérage du plan de coupe : lettres et désignation}
+
+Un dessin technique peut comporter plusieurs coupes différentes (coupe A-A, coupe B-B, etc.). Pour éviter toute confusion, chaque plan de coupe porte un nom.
+
+\begin{propriete}[Repérage d'un plan de coupe]
+Le plan de coupe est repéré par des \textbf{lettres majuscules} (A, B, C\ldots) placées \textbf{aux extrémités} du plan, près des flèches. La vue en coupe obtenue est alors désignée et titrée : \textbf{« Coupe A-A »}. Ce titre est écrit au-dessus ou au-dessous de la vue en coupe, toujours de façon claire et lisible.
+\end{propriete}
+
+\begin{exemplebox}[Vocabulaire à l'oral comme à l'écrit]
+Si le plan de coupe est repéré par la lettre A aux deux extrémités, on dit et on écrit : « coupe A-A ». On ne dit jamais « coupe A » tout court : les deux lettres rappellent que le plan possède deux extrémités repérées, et que l'on regarde de l'une vers l'autre.
+\end{exemplebox}
+
+\courssub{Le sens de visée : les flèches}
+
+Voici le point le plus délicat de la leçon, et le plus souvent sanctionné au BEPC. Le plan de coupe partage l'objet en deux morceaux. Lequel conserve-t-on ? De quel côté regarde-t-on ? C'est le rôle des \cle{flèches de visée}.
+
+\begin{definition}[Flèches de visée]
+Les \cle{flèches de visée} sont deux flèches pleines placées aux extrémités du plan de coupe, \textbf{perpendiculaires} à celui-ci. Elles indiquent la \textbf{direction dans laquelle on regarde} la partie de l'objet qui est conservée. Autrement dit : on élimine mentalement la partie située \emph{entre l'observateur et le plan de coupe}, et on dessine ce que l'on voit en regardant dans le sens des flèches.
+\end{definition}
+
+\begin{experience}[Observation : une même coupe, deux résultats différents]
+\textbf{Matériel :} une pomme, un couteau (manipulé par l'enseignant), une feuille.
+
+\textbf{Protocole :}
+\begin{enumerate}
+\item Couper la pomme en deux moitiés, bien au milieu.
+\item Poser les deux moitiés sur la table, face coupée vers le haut.
+\item Observer d'abord la moitié de gauche en regardant vers la droite, puis la moitié de droite en regardant vers la gauche.
+\end{enumerate}
+
+\textbf{Observations :} les deux faces coupées montrent le même plan de coupe, mais ce sont deux \emph{objets différents} que l'on regarde : les pépins apparaissent en miroir, et si la pomme avait un défaut d'un seul côté, il ne serait visible que sur une seule des deux vues.
+
+\textbf{Interprétation :} le plan de coupe est le même, mais le \emph{sens de visée} change la partie conservée, donc change la vue obtenue. En dessin technique, c'est exactement pareil : inverser les flèches, c'est choisir l'autre moitié de l'objet.
+
+\textbf{Conclusion :} les flèches de visée sont indispensables : elles lèvent l'ambiguïté sur la partie de l'objet que la coupe représente.
+\end{experience}
+
+\begin{attention}[Erreur fréquente : inverser les flèches]
+L'erreur la plus classique consiste à dessiner les flèches « au hasard » ou à les inverser. Retiens la règle : \textbf{la flèche indique toujours le sens du regard vers la partie conservée}. Si tu inverses le sens des flèches, tu changes la vue obtenue : certains détails visibles disparaissent, d'autres apparaissent. Au BEPC, des flèches mal orientées rendent la coupe fausse, même si le plan de coupe est bien placé. Vérifie toujours : « je me place du côté des flèches, je regarde dans leur sens, et c'est cette moitié-là que je dessine ».
+\end{attention}
+
+\begin{savaistu}[Et la norme ISO ?]
+En normalisation internationale (norme ISO), les flèches de visée sont des \textbf{flèches pleines} placées \textbf{dans le prolongement des extrémités renforcées} du plan de coupe. Leur largeur est proportionnée au trait fort utilisé. Grâce à ce code universel, un plan de coupe tracé à Douala est compris sans aucune explication par un technicien de Yokohama ou de Berlin : le dessin technique est une véritable langue internationale, et le plan de coupe en est une « phrase » codifiée.
+\end{savaistu}
+
+\courssub{Position du plan de coupe : où faut-il couper ?}
+
+Un plan de coupe ne se place pas au hasard. Son unique mission est de \textbf{montrer les détails intérieurs} que les vues extérieures cachent. Il doit donc passer \emph{là où il y a quelque chose à voir}.
+
+\begin{propriete}[Règle de positionnement]
+Le plan de coupe passe en général :
+\begin{itemize}
+\item par les \textbf{axes de symétrie} de l'objet (le plan de coupe coïncide alors souvent avec un plan de symétrie) ;
+\item par les \textbf{détails intérieurs à montrer} : perçages, trous, gorges, rainures, évidements.
+\end{itemize}
+Un plan de coupe qui ne traverse aucun détail intérieur est inutile : il ne révèle rien de plus qu'une vue extérieure.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.95, line cap=round]
+% ---- BON positionnement (gauche) ----
+\begin{scope}[xshift=-4.2cm]
+\draw[popdark, thick] (0,0) circle (1.8);
+\draw[popdark, thick] (0,0) circle (0.5);
+% Plan de coupe passant par le centre
+\draw[popgreen, dash pattern=on 8pt off 3pt on 1.5pt off 3pt, thin] (-2.6,0) -- (2.6,0);
+\draw[popgreen, very thick] (-2.6,0) -- (-2.1,0);
+\draw[popgreen, very thick] (2.1,0) -- (2.6,0);
+\draw[popgreen, very thick, -{Stealth[length=3mm]}] (-2.35,0) -- (-2.35,-0.7);
+\draw[popgreen, very thick, -{Stealth[length=3mm]}] (2.35,0) -- (2.35,-0.7);
+\node[popgreen, font=\bfseries] at (-2.35,0.4) {A};
+\node[popgreen, font=\bfseries] at (2.35,0.4) {A};
+\node[popgreen, font=\small\bfseries] at (0,-2.4) {BON : le plan passe par le perçage};
+\end{scope}
+% ---- MAUVAIS positionnement (droite) ----
+\begin{scope}[xshift=4.2cm]
+\draw[popdark, thick] (0,0) circle (1.8);
+\draw[popdark, thick] (0,0) circle (0.5);
+% Plan de coupe décalé, ne passant pas par le trou
+\draw[poppink, dash pattern=on 8pt off 3pt on 1.5pt off 3pt, thin] (-2.6,1.1) -- (2.6,1.1);
+\draw[poppink, very thick] (-2.6,1.1) -- (-2.1,1.1);
+\draw[poppink, very thick] (2.1,1.1) -- (2.6,1.1);
+\draw[poppink, very thick, -{Stealth[length=3mm]}] (-2.35,1.1) -- (-2.35,0.4);
+\draw[poppink, very thick, -{Stealth[length=3mm]}] (2.35,1.1) -- (2.35,0.4);
+\node[poppink, font=\bfseries] at (-2.35,1.5) {B};
+\node[poppink, font=\bfseries] at (2.35,1.5) {B};
+\node[poppink, font=\small\bfseries] at (0,-2.4) {MAUVAIS : le plan rate le perçage};
+\end{scope}
+\end{tikzpicture}
+\legende{À gauche, le plan de coupe A-A passe par l'axe de symétrie et traverse le perçage central : la coupe montrera le trou en vraie grandeur. À droite, le plan B-B est décalé : il ne traverse pas le perçage, la coupe ne révèle rien d'utile. C'est un mauvais positionnement.}
+\end{popfigure}
+
+\begin{exoresolu}[Placer correctement un plan de coupe]
+\textbf{Énoncé.} Une poulie en fonte, vue de dessus, est un disque plein percé en son centre d'un trou cylindrique destiné à recevoir l'arbre du moteur d'une moto-taxi. On veut obtenir une coupe de face montrant clairement ce perçage. Indique où doit passer le plan de coupe et justifie ta réponse.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Identifier le détail à montrer :} c'est le perçage central, invisible de l'extérieur une fois la poulie montée.
+\item \textbf{Choisir la position du plan :} le plan de coupe doit passer par l'\textbf{axe du perçage}, qui est aussi l'\textbf{axe de symétrie} de la poulie. Ainsi, la coupe traverse le trou sur toute sa largeur et le montre en vraie grandeur.
+\item \textbf{Choisir l'orientation :} pour obtenir une \emph{coupe de face}, le plan est parallèle au plan vertical de projection.
+\item \textbf{Vérification :} le plan est unique (coupe simple), il passe par un axe de symétrie et par le détail intérieur à montrer : le positionnement est correct. Un plan décalé, tangent au trou ou passant à côté, ne montrerait pas le perçage correctement et serait rejeté.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Cas particulier : quand on peut simplifier}
+
+La rigueur du dessin technique n'interdit pas le bon sens. Il existe un cas où l'on peut alléger le dessin.
+
+\begin{propriete}[Simplification admise]
+Lorsque la position du plan de coupe est \textbf{évidente} — c'est-à-dire lorsqu'il coïncide avec un \textbf{plan de symétrie} de l'objet et qu'aucune confusion n'est possible — on peut \textbf{omettre les flèches de visée et le repérage par lettres}. La vue en coupe est alors simplement placée à sa position normale de projection.
+\end{propriete}
+
+\begin{attention}[Simplifier ne veut pas dire oublier]
+Cette simplification n'est autorisée que si la position du plan est \emph{vraiment} évidente pour n'importe quel lecteur. En cas de doute — objet non symétrique, plusieurs coupes sur le même dessin, plan décalé — le repérage complet (trait mixte renforcé, lettres, flèches, titre « Coupe A-A ») est \textbf{obligatoire}. Au BEPC, si l'énoncé ne précise rien, trace toujours le repérage complet : tu ne seras jamais pénalisé pour être trop clair.
+\end{attention}
+
+\courssub{Méthode complète pour repérer une coupe}
+
+Récapitulons tout ce que nous venons d'apprendre sous la forme d'une démarche en étapes, à appliquer systématiquement.
+
+\begin{methode}[Repérer une coupe simple en cinq étapes]
+\begin{enumerate}
+\item \textbf{Tracer le plan de coupe} en trait mixte fin (tiret-point) sur la vue de référence, en le faisant passer par les axes de symétrie et les détails intérieurs à montrer.
+\item \textbf{Renforcer les extrémités} (et les changements de direction éventuels) en trait fort.
+\item \textbf{Placer les lettres} majuscules (A, B\ldots) près de chaque extrémité.
+\item \textbf{Dessiner les flèches de visée} : flèches pleines, perpendiculaires au plan, pointant vers la partie conservée, dans le sens du regard.
+\item \textbf{Titrer la vue obtenue} : écrire « Coupe A-A » au-dessus ou au-dessous de la vue en coupe.
+\end{enumerate}
+\end{methode}
+
+\begin{exercice}[À toi de jouer]
+Un bouchon de bonbonne de gaz, vu de dessus, est un cylindre creux traversé par un canal central. 1) Sur une vue de dessus schématisée par deux cercles concentriques, trace le plan de coupe permettant d'obtenir une coupe de face montrant le canal. 2) Repère ce plan (lettres, flèches) et donne le titre de la vue en coupe. 3) Explique pourquoi un plan de coupe tangent au canal serait un mauvais choix.
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+1) Le plan de coupe est un trait mixte fin passant par le \textbf{centre} des deux cercles (axe de symétrie et axe du canal), orienté parallèlement au plan vertical de projection. 2) On renforce les extrémités en trait fort, on place la lettre A à chaque extrémité, on dessine deux flèches pleines perpendiculaires au plan pointant vers la partie conservée, et on titre la vue obtenue « \textbf{Coupe A-A} ». 3) Un plan tangent au canal ne le traverserait que sur une épaisseur quasi nulle : la coupe ne montrerait pas la largeur réelle du passage du gaz. Le plan de coupe doit toujours traverser le détail intérieur à montrer, idéalement par son axe.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Le \cle{plan de coupe} est un plan \textbf{fictif}, parallèle à un plan de projection, le long duquel l'objet est supposé sectionné.
+\item Il se trace en \textbf{trait mixte fin}, renforcé en \textbf{trait fort} aux extrémités et aux changements de direction.
+\item Il est repéré par des \textbf{lettres majuscules} ; la coupe est désignée « \textbf{Coupe A-A} ».
+\item Les \textbf{flèches de visée}, perpendiculaires au plan, indiquent le sens du regard vers la partie conservée : les inverser change la vue obtenue.
+\item Il passe par les \textbf{axes de symétrie} et les \textbf{détails intérieurs} à montrer.
+\item Si sa position est évidente (plan de symétrie), on peut omettre flèches et repérage.
+\item Une coupe simple n'utilise qu'\textbf{un seul} plan de coupe.
+\end{itemize}
+\end{aretenir}
+
+Maintenant que le plan de coupe est bien tracé, bien repéré et bien orienté, une question se pose naturellement : comment distinguer, sur la vue en coupe, la matière réellement sciée du reste de l'objet ? C'est précisément le rôle des \emph{hachures}, que nous étudierons dans la section suivante.
+
+\coursec{Les hachures}
+
+Dans la section précédente, nous avons vu que le \cle{plan de coupe} est un plan imaginaire qui « tranche » la pièce, et que l'on retire la partie située entre l'observateur et ce plan pour regarder l'intérieur. Une question se pose alors immédiatement : sur le dessin obtenu, comment distinguer ce qui est de la \textbf{matière réellement tranchée} de ce qui est du \textbf{vide} (un trou, un perçage) ou simplement une partie \textbf{vue derrière} le plan de coupe ? C'est précisément le rôle des \cle{hachures}, que nous allons étudier maintenant.
+
+\courssub{Le rôle des hachures : montrer la matière coupée}
+
+\textbf{Une intuition pour commencer.} Imagine que tu coupes un avocat en deux avec un couteau. Sur la face coupée, tu vois nettement la chair de l'avocat, la peau, et le creux laissé par le noyau. Si tu voulais dessiner cette face coupée, tu colorierais la chair pour la distinguer du creux. En dessin technique, on ne colorie pas : on « colorie » la matière avec des \textbf{petits traits parallèles} appelés hachures.
+
+\begin{definition}[Les hachures]
+Les \cle{hachures} sont un ensemble de \textbf{traits fins continus, parallèles entre eux et inclinés à \ang{45}} par rapport aux axes ou aux contours principaux de la pièce. Elles matérialisent les surfaces de \textbf{matière réellement sectionnées} par le plan de coupe.
+\end{definition}
+
+\begin{experience}[Observer pour comprendre : la boîte de conserve coupée]
+\textbf{Matériel :} une vieille boîte de conserve vide, une scie à métaux (utilisée par l'enseignant), une feuille et un crayon.\par
+\textbf{Protocole :}
+\begin{enumerate}
+\item L'enseignant scie la boîte en deux dans le sens de la hauteur (coupe verticale).
+\item Chaque élève observe la moitié de boîte : on voit la paroi métallique tranchée (un fin liseré brillant) et le grand vide intérieur.
+\item On dessine ce que l'on voit : deux rectangles fins (la paroi tranchée, en haut et en bas de la vue) entourant un grand espace vide.
+\end{enumerate}
+\textbf{Observations :} la matière tranchée n'occupe qu'une petite surface ; le vide intérieur occupe presque tout le dessin.\par
+\textbf{Interprétation :} si l'on ne marque pas la matière tranchée, un lecteur du dessin ne peut pas savoir où passe la paroi. Les hachures jouent ce rôle de « marquage » : elles disent « ici, la scie a coupé de la matière ».\par
+\textbf{Conclusion :} les hachures indiquent les surfaces de matière réellement sectionnées par le plan de coupe. Le vide, lui, reste blanc.
+\end{experience}
+
+\begin{aretenir}[Ce que disent les hachures]
+\begin{itemize}
+\item Une zone \textbf{hachurée} = de la \textbf{matière} que le plan de coupe a réellement traversée.
+\item Une zone \textbf{blanche} à l'intérieur de la pièce = un \textbf{vide} (perçage, alésage, gorge) ou une partie située \textbf{derrière} le plan de coupe.
+\end{itemize}
+\end{aretenir}
+
+\courssub{La règle de tracé : des traits fins à \ang{45}}
+
+\begin{propriete}[Règle de tracé des hachures]
+Les hachures sont tracées en \textbf{trait fin continu}, inclinées à \textbf{\ang{45}} par rapport aux axes de la pièce ou à ses contours principaux. Elles sont \textbf{parallèles entre elles} et \textbf{régulièrement espacées}.
+\end{propriete}
+
+Pourquoi \ang{45} ? Parce que c'est l'inclinaison qui se voit le mieux et qui ne risque pas d'être confondue avec les contours de la pièce, qui sont le plus souvent horizontaux ou verticaux. Si les hachures étaient verticales ou horizontales, on pourrait les prendre pour des arêtes de la pièce !
+
+\begin{attention}[Cas particulier : contour déjà à \ang{45}]
+Si un contour principal de la pièce est lui-même incliné à \ang{45}, on choisit une autre inclinaison pour les hachures (par exemple \ang{30} ou \ang{60}) afin d'éviter toute confusion entre hachures et contours. L'essentiel : les hachures ne doivent jamais être parallèles à un contour voisin.
+\end{attention}
+
+\courssub{L'espacement des hachures : ni trop serré, ni trop lâche}
+
+Les hachures doivent être \textbf{régulièrement espacées}. L'espacement dépend de la taille de la surface à hachurer :
+
+\begin{itemize}
+\item en pratique scolaire, on choisit un espacement de \textbf{2 à \SI{4}{mm}} environ ;
+\item sur une petite surface, on espace davantage (vers \SI{2}{mm} minimum) pour que le dessin reste lisible ;
+\item sur une grande surface, on peut aller jusqu'à \SI{4}{mm}, mais jamais beaucoup plus, sinon le lecteur ne « voit » plus la matière.
+\end{itemize}
+
+\begin{exemplebox}[Un exemple chiffré]
+Une surface coupée a une hauteur de \SI{30}{mm}. On choisit un espacement de \SI{3}{mm}. Le nombre d'intervalles est :
+\[ \frac{30}{3} = 10 \]
+On tracera donc environ \textbf{10 hachures régulières} sur cette hauteur. Si l'on avait choisi \SI{1}{mm}, il en faudrait 30 : le dessin serait noirci et illisible. Avec \SI{10}{mm}, il n'y en aurait que 3 : on ne reconnaîtrait plus une zone hachurée.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+% --- Exemple 1 : correct ---
+\begin{scope}
+\draw[line width=1pt, popdark] (0,0) rectangle (3,2.4);
+\clip (0,0) rectangle (3,2.4);
+\foreach \x in {-2.4,-2.0,...,3.0} {
+  \draw[popblue, line width=0.5pt] (\x,0) -- (\x+2.4,2.4);
+}
+\end{scope}
+\draw[line width=1pt, popdark] (0,0) rectangle (3,2.4);
+\node[align=center, font=\small\bfseries, popgreen] at (1.5,-0.5) {Correct\\\ang{45}, régulier};
+
+% --- Exemple 2 : trop serré ---
+\begin{scope}[xshift=4.5cm]
+\draw[line width=1pt, popdark] (0,0) rectangle (3,2.4);
+\clip (0,0) rectangle (3,2.4);
+\foreach \x in {-2.4,-2.3,...,3.0} {
+  \draw[poporange, line width=0.5pt] (\x,0) -- (\x+2.4,2.4);
+}
+\end{scope}
+\draw[line width=1pt, popdark] (4.5,0) rectangle (7.5,2.4);
+\node[align=center, font=\small\bfseries, poppink] at (6,-0.5) {Incorrect\\trop serré};
+
+% --- Exemple 3 : irrégulier ---
+\begin{scope}[xshift=9cm]
+\draw[line width=1pt, popdark] (0,0) rectangle (3,2.4);
+\clip (0,0) rectangle (3,2.4);
+\draw[popmuted, line width=0.5pt] (-2.4,0) -- (0,2.4);
+\draw[popmuted, line width=0.5pt] (-1.9,0) -- (0.5,2.4);
+\draw[popmuted, line width=0.5pt] (-0.6,0) -- (1.8,2.4);
+\draw[popmuted, line width=0.5pt] (-0.35,0) -- (2.05,2.4);
+\draw[popmuted, line width=0.5pt] (0.9,0) -- (3.0,2.1);
+\draw[popmuted, line width=0.5pt] (1.0,0) -- (3.0,2.0);
+\draw[popmuted, line width=0.5pt] (2.3,0) -- (3.0,0.7);
+\end{scope}
+\draw[line width=1pt, popdark] (9,0) rectangle (12,2.4);
+\node[align=center, font=\small\bfseries, poppink] at (10.5,-0.5) {Incorrect\\irrégulier};
+\end{tikzpicture}
+\end{center}
+\legende{Trois qualités de hachurage. À gauche : hachures correctes, fines, à \ang{45}, régulièrement espacées. Au centre : hachures trop serrées, la zone paraît noircie. À droite : hachures irrégulières (espacements inégaux), à proscrire.}
+\end{popfigure}
+
+\courssub{Même pièce, mêmes hachures ; pièces différentes, hachures différentes}
+
+\begin{propriete}[Cohérence des hachures dans une même pièce]
+Toutes les zones coupées d'une \textbf{même pièce} sont hachurées avec la \textbf{même direction} et le \textbf{même espacement}, même si ces zones sont séparées par des vides sur le dessin.
+\end{propriete}
+
+Cette règle est très utile en lecture de plan : si deux zones hachurées ont exactement les mêmes hachures, le lecteur comprend qu'elles appartiennent à la \textbf{même pièce}. C'est le cas de notre bague ci-dessous : la matière au-dessus et au-dessous du trou central porte des hachures identiques, car c'est une seule et même pièce.
+
+\begin{propriete}[Hachures dans un assemblage (complément pour la lecture de plans)]
+Dans le dessin d'un \textbf{assemblage} de plusieurs pièces, deux pièces voisines sont hachurées avec des \textbf{directions différentes} (par exemple \ang{45} et \ang{135}) ou des \textbf{espacements différents}, afin de distinguer facilement les pièces entre elles.
+\end{propriete}
+
+\begin{savaistu}[Pourquoi cette convention est-elle si pratique ?]
+Sur le plan d'ensemble du moteur d'une moto-taxi, on peut voir une dizaine de pièces assemblées : piston, cylindre, bielle, vis, joints... Grâce aux hachures de directions différentes, un mécanicien de Douala ou de Yaoundé identifie immédiatement où s'arrête une pièce et où commence la suivante, sans avoir à démonter quoi que ce soit. Les hachures sont un véritable « code couleur » du dessin technique, universel : un plan dessiné au Cameroun se lit de la même façon en France, en Chine ou au Brésil.
+\end{savaistu}
+
+\courssub{Ce que l'on ne hachure pas}
+
+Règle d'or : \textbf{on ne hachure que la matière réellement coupée}. Par conséquent :
+
+\begin{itemize}
+\item on ne hachure \textbf{jamais les vides} : perçages, alésages (trous cylindriques soignés), gorges, rainures, logements ;
+\item on ne hachure pas les \textbf{parties vues derrière le plan de coupe} : elles sont dessinées normalement (contours en trait fort, arêtes cachées en traits interrompus fins si nécessaire), mais sans hachures ;
+\item les hachures \textbf{s'arrêtent exactement aux contours intérieurs} (les bords des vides) : elles ne débordent jamais.
+\end{itemize}
+
+\begin{attention}[Erreur fréquente n\textsuperscript{o} 1 : hachurer le vide]
+L'erreur la plus courante au BEPC est de \textbf{faire passer les hachures à travers un perçage} ou d'oublier de les arrêter aux contours intérieurs. Résultat : le trou disparaît visuellement et le dessin devient faux. Avant de rendre ta copie, vérifie toujours : \emph{les vides sont-ils restés blancs ? Les hachures s'arrêtent-elles net sur les contours intérieurs ?}
+\end{attention}
+
+\begin{attention}[Erreur fréquente n\textsuperscript{o} 2 : le mauvais type de trait]
+Les hachures se tracent en \textbf{trait fin continu}. Les contours des zones hachurées, eux, se tracent en \textbf{trait fort continu}. Ne trace jamais les hachures en trait fort (le dessin devient illisible) ni les contours en trait fin (la pièce perd sa lisibilité). Et n'oublie pas : les hachures sont inclinées à \ang{45}, jamais verticales ni horizontales sans raison.
+\end{attention}
+
+\begin{attention}[Cas particulier important : les pièces minces (nervures, rayons, ailettes)]
+Si le plan de coupe contient l'axe d'une pièce mince (nervure de renfort, rayon de poulie, ailette de refroidissement de moteur de moto), cette pièce \textbf{n'est pas hachurée}. Elle est représentée en vue de face (traits forts) comme si on la voyait de l'extérieur. Cela évite de noircir le dessin et de faire croire à une pièce pleine.
+\begin{center}
+\textbf{Règle mnémotechnique :} « Axe dans le plan $\rightarrow$ pas de hachures. » « Axe coupé $\rightarrow$ hachures. »
+\end{center}
+\end{attention}
+
+\courssub{Application : la coupe d'une bague}
+
+Étudions le cas d'une \textbf{bague} (anneau métallique), pièce très courante en mécanique : on la trouve autour des axes de roues de moto, dans les poulies, les roulements. Coupée par un plan passant par son axe, elle apparaît comme deux rectangles de matière (en haut et en bas) séparés par le vide central.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+% Dimensions : bague vue en coupe, largeur totale 6, hauteur 4, trou central 2.4 de large
+% Zone hachurée haut : rectangle (0,2.6)-(6,4)
+% Zone hachurée bas : rectangle (0,0)-(6,1.4)
+% Vide central : (0,1.4)-(6,2.6) reste blanc
+\fill[popblueL] (0,2.6) rectangle (6,4);
+\fill[popblueL] (0,0) rectangle (6,1.4);
+% Hachures zone haute
+\begin{scope}
+\clip (0,2.6) rectangle (6,4);
+\foreach \x in {-1.4,-1.0,...,6.0} {
+  \draw[popblue, line width=0.5pt] (\x,2.6) -- (\x+1.4,4);
+}
+\end{scope}
+% Hachures zone basse (meme direction, meme espacement)
+\begin{scope}
+\clip (0,0) rectangle (6,1.4);
+\foreach \x in {-1.4,-1.0,...,6.0} {
+  \draw[popblue, line width=0.5pt] (\x,0) -- (\x+1.4,1.4);
+}
+\end{scope}
+% Contours en trait fort
+\draw[line width=1.1pt, popdark] (0,0) rectangle (6,4);
+\draw[line width=1.1pt, popdark] (0,1.4) -- (6,1.4);
+\draw[line width=1.1pt, popdark] (0,2.6) -- (6,2.6);
+% Axe de symetrie
+\draw[poporange, line width=0.7pt, dash pattern=on 6pt off 2pt on 1pt off 2pt] (-0.6,2) -- (6.6,2);
+% Annotations
+\draw[->, popdark] (7.0,3.3) -- (6.15,3.3);
+\node[right, font=\small, popdark, align=left] at (7.0,3.3) {Matière coupée\\(hachurée à \ang{45})};
+\draw[->, popdark] (7.0,2.0) -- (6.15,2.0);
+\node[right, font=\small, popdark, align=left] at (7.0,2.0) {Vide central\\(non hachuré)};
+\node[font=\small, poporange] at (-0.9,2) {axe};
+\end{tikzpicture}
+\end{center}
+\legende{Vue en coupe d'une bague. Les deux zones de matière sectionnée (au-dessus et au-dessous du trou) sont hachurées à \ang{45} avec la même direction et le même espacement, car c'est une seule pièce. Le vide central reste blanc. Les contours des zones hachurées sont en trait fort continu.}
+\end{popfigure}
+
+\begin{methode}[Comment hachurer correctement, pas à pas]
+\begin{enumerate}
+\item \textbf{Repérer} les zones de matière réellement coupée par le plan de coupe (demande-toi : « par où la scie est-elle passée ? »).
+\item \textbf{Choisir} l'espacement en fonction de la taille de la surface : de 2 à \SI{4}{mm} environ (par exemple \SI{3}{mm} pour une hauteur de \SI{30}{mm}, soit environ 10 traits).
+\item \textbf{Tracer} au crayon, en trait fin continu, des traits parallèles inclinés à \ang{45} par rapport aux axes ou contours principaux, en partant d'un contour et en s'arrêtant net sur le contour opposé.
+\item \textbf{Vérifier} que tous les vides (perçages, alésages, gorges) sont restés blancs, que les hachures ne débordent pas, et que toutes les zones d'une même pièce ont la même direction et le même espacement.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Hachurer la coupe d'une cale percée]
+Énoncé. Une cale métallique rectangulaire de \SI{60}{mm} de long et \SI{20}{mm} de haut est traversée par un perçage cylindrique vertical de \SI{10}{mm} de diamètre, situé au milieu de sa longueur. On réalise une coupe par un plan vertical passant par l'axe du perçage. Décris l'aspect de la vue en coupe et propose un espacement de hachures.
+\tcblower
+Solution détaillée.\par
+\textbf{Étape 1 : repérer la matière coupée.} Le plan de coupe traverse la cale de part en part, mais au niveau du perçage il ne rencontre pas de matière : c'est du vide. La matière coupée forme donc \textbf{deux rectangles} : l'un à gauche du trou, l'autre à droite.\par
+\textbf{Étape 2 : choisir l'espacement.} La hauteur à hachurer est \SI{20}{mm}. Avec un espacement de \SI{2,5}{mm}, on obtient $\dfrac{20}{2,5} = 8$ intervalles, soit environ 8 hachures par zone : c'est lisible et régulier.\par
+\textbf{Étape 3 : tracer.} On trace les contours en trait fort continu, puis des hachures en trait fin continu, inclinées à \ang{45}, parallèles et espacées de \SI{2,5}{mm}, dans chacun des deux rectangles. Les hachures s'arrêtent net sur les bords du perçage.\par
+\textbf{Étape 4 : vérifier.} Le perçage (une bande verticale blanche de \SI{10}{mm} de large au milieu) est resté blanc ; les deux zones, appartenant à la même pièce, portent des hachures de même direction et de même espacement. Le dessin est correct.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Un tube en acier a un diamètre extérieur de \SI{40}{mm} et un diamètre intérieur de \SI{30}{mm}. On le coupe par un plan perpendiculaire à son axe.
+\begin{enumerate}
+\item Quelle forme a la surface de matière sectionnée ?
+\item Cette surface doit-elle être hachurée ? Et le disque central ?
+\item L'épaisseur de la paroi est de \SI{5}{mm}. Un espacement de hachures de \SI{2}{mm} est-il raisonnable ? Justifie.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : le tube en acier]
+\begin{enumerate}
+\item La matière sectionnée a la forme d'une \textbf{couronne} (anneau) : un disque de \SI{40}{mm} de diamètre moins un disque central de \SI{30}{mm}.
+\item La couronne est de la matière réellement coupée : elle \textbf{doit être hachurée} à \ang{45}, en trait fin. Le disque central est un vide : il reste \textbf{blanc}.
+\item La largeur de la zone à hachurer est l'épaisseur de la paroi, soit \SI{5}{mm}. Avec un espacement de \SI{2}{mm}, on place 2 à 3 hachures : c'est le minimum pour être lisible, donc c'est raisonnable. Un espacement plus grand (\SI{4}{mm}) ne laisserait qu'une seule hachure : insuffisant pour marquer la matière.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel sur les hachures]
+\begin{itemize}
+\item Les hachures matérialisent la \textbf{matière réellement coupée} par le plan de coupe.
+\item Traits \textbf{fins continus}, inclinés à \textbf{\ang{45}}, parallèles, espacés de \textbf{2 à \SI{4}{mm}} de façon régulière.
+\item \textbf{Même pièce} $\Rightarrow$ mêmes direction et espacement ; \textbf{pièces différentes} $\Rightarrow$ directions ou espacements différents.
+\item On ne hachure \textbf{jamais} les vides (perçages, alésages, gorges) ni les parties vues derrière le plan de coupe.
+\item \textbf{Cas particulier :} les pièces minces (nervures, rayons, ailettes) dont l'axe est contenu dans le plan de coupe ne sont \textbf{pas hachurées}.
+\item Les contours des zones hachurées sont tracés en \textbf{trait fort continu}.
+\end{itemize}
+\end{aretenir}
+
+Maintenant que tu sais ce que sont les hachures et comment les tracer, nous pouvons passer à la section suivante : les \textbf{étapes d'exécution complètes d'une coupe simple}, depuis le choix du plan de coupe jusqu'au dessin final.
+
+\coursec{Étapes d'exécution d'une coupe simple}
+
+Dans la section précédente, tu as appris ce que sont les hachures : ces traits fins inclinés à 45° qui colorent la matière « tranchée » par le plan de coupe. Mais une hachure ne se trace pas au hasard ! Pour obtenir une coupe propre, lisible et conforme aux règles du dessin technique, il faut suivre une \cle{méthode} précise, étape par étape. C'est exactement comme en cuisine : pour présenter joliment un gâteau coupé en deux, il faut d'abord choisir où couper, couper d'un geste net, puis disposer les deux moitiés de façon que l'on voie bien l'intérieur. En dessin technique, le « geste net » s'appelle une démarche en huit étapes. Cette section te les apprend une à une, puis les applique sur un exemple complet.
+
+\courssub{Vue d'ensemble : la démarche en huit étapes}
+
+Exécuter une coupe simple, c'est répondre dans l'ordre à huit questions :
+
+\begin{enumerate}
+\item Quelle vue faut-il couper ?
+\item Où placer le plan de coupe ?
+\item Comment repérer ce plan (lettres, flèches) ?
+\item Où dessiner la vue en coupe ?
+\item Quels contours tracer en premier ?
+\item Quels traits faut-il supprimer ?
+\item Où tracer les hachures ?
+\item Comment titrer et vérifier le dessin ?
+\end{enumerate}
+
+\begin{methode}[Exécuter une coupe simple : les 8 étapes]
+\begin{enumerate}
+\item \textbf{Choisir la vue à couper} : celle qui montre le mieux les formes intérieures (souvent la vue de face).
+\item \textbf{Choisir et tracer le plan de coupe} : il passe par les axes et les détails intérieurs ; on le trace sur la vue de référence en \cle{trait mixte fort} (long trait -- point -- long trait).
+\item \textbf{Repérer le plan} : lettres majuscules (A, B, ...) aux extrémités et flèches de visée indiquant le sens d'observation.
+\item \textbf{Projeter la vue en coupe} : elle est dessinée à l'emplacement de la vue extérieure qu'elle \textbf{remplace}.
+\item \textbf{Dessiner les contours} : d'abord la matière sectionnée en trait fort, puis les contours visibles situés derrière le plan.
+\item \textbf{Supprimer les traits interrompus} devenus inutiles dans la vue en coupe.
+\item \textbf{Tracer les hachures} à 45° sur toutes les zones de matière sectionnée.
+\item \textbf{Titrer la vue} (« Coupe A-A ») et vérifier la cotation.
+\end{enumerate}
+\end{methode}
+
+Étudions maintenant chaque étape en détail.
+
+\courssub{Étape 1 : analyser l'objet et choisir la vue à couper}
+
+Avant de couper, il faut \textbf{observer} l'objet. Pose-toi la question : « Qu'est-ce que je veux montrer ? » Une coupe ne sert qu'à une chose : rendre visibles les \cle{formes intérieures} (trous, alésages, rainures, cavités) qui, sur une vue extérieure, sont dessinées en traits interrompus.
+
+\begin{experience}[Observation : quelle vue couper ?]
+\textbf{Matériel :} un dessin en trois vues (face, dessus, profil) d'une poulie en fonte percée d'un trou central.
+
+\textbf{Protocole :}
+\begin{enumerate}
+\item Compte les traits interrompus sur chaque vue.
+\item Repère la vue qui en contient le plus.
+\end{enumerate}
+
+\textbf{Observations :} la vue de face de la poulie contient de nombreux traits interrompus (trou central, gorge, moyeu) ; la vue de profil en contient peu.
+
+\textbf{Interprétation :} une coupe est utile là où les traits interrompus rendent le dessin confus. Plus une vue cache de détails intérieurs, plus elle mérite d'être coupée.
+
+\textbf{Conclusion :} on choisit de couper la vue qui montre le mieux les formes intérieures, c'est-à-dire celle qui contient le plus de traits interrompus. C'est très souvent la \textbf{vue de face}.
+\end{experience}
+
+\begin{attention}[Piège fréquent]
+Ne coupe pas une vue « pour faire joli ». Une coupe qui ne révèle aucun détail intérieur nouveau est inutile et sera sanctionnée au BEPC. La coupe doit toujours \emph{apporter} de l'information.
+\end{attention}
+
+\courssub{Étape 2 : choisir et tracer le plan de coupe}
+
+Le plan de coupe doit traverser l'objet de manière à « trancher » le maximum de détails intérieurs. La règle d'or est simple :
+
+\begin{aretenir}[Position du plan de coupe]
+Le plan de coupe passe par les \cle{axes} de l'objet (axes de révolution, plans de symétrie) et par les \cle{détails intérieurs} à montrer (trous, rainures, lumières). Pour un objet cylindrique (arbre, manchon, poulie), le plan de coupe contient l'axe de révolution.
+\end{aretenir}
+
+Une fois la position choisie, on trace le plan sur la \textbf{vue de référence} (celle où le plan apparaît comme une ligne) en \cle{trait mixte fort} (long trait -- point -- long trait, épais). Les extrémités du plan, plus épaisses (barbes), marquent le début et la fin de la coupe.
+
+\courssub{Étape 3 : repérer le plan de coupe}
+
+Pour que le lecteur du dessin sache \emph{où} l'on a coupé et \emph{dans quel sens} l'on regarde, le plan de coupe doit être repéré :
+
+\begin{itemize}
+\item deux \textbf{lettres majuscules} identiques (A, A) placées aux extrémités du plan, au niveau des barbes ;
+\item deux \textbf{flèches de visée} perpendiculaires au plan, qui indiquent le sens d'observation (la direction dans laquelle on regarde la partie conservée).
+\end{itemize}
+
+\begin{attention}[Sens des flèches]
+Les flèches indiquent le sens de la vue en coupe. Si tu inverses les flèches, tu obtiens la coupe vue de l'autre côté : au BEPC, c'est une erreur de lecture du dessin. Vérifie toujours que les flèches pointent vers la partie que tu conserves.
+\end{attention}
+
+\courssub{Étape 4 : projeter la vue en coupe}
+
+Voici une règle capitale, souvent mal comprise :
+
+\begin{propriete}[La coupe remplace une vue]
+La vue en coupe est dessinée \textbf{à l'emplacement de la vue extérieure qu'elle remplace}, en respectant les correspondances de projection (alignement des vues). Une coupe ne s'\emph{ajoute} pas au dessin : elle \emph{substitue} une vue en coupe à une vue extérieure.
+\end{propriete}
+
+\begin{attention}[Erreur fréquente : dessiner la vue deux fois]
+Beaucoup d'élèves dessinent la vue extérieure \emph{puis} la vue en coupe à côté, comme s'il s'agissait de deux vues différentes. C'est faux ! Si la vue de face est coupée, il n'existe plus de vue de face extérieure : la coupe A-A \textbf{est} la vue de face. On ne dessine jamais la même vue deux fois.
+\end{attention}
+
+\courssub{Étapes 5 et 6 : dessiner les contours et supprimer les traits cachés}
+
+Le dessin de la coupe se fait en deux temps :
+
+\begin{enumerate}
+\item \textbf{La matière sectionnée d'abord.} Toutes les surfaces réellement tranchées par le plan (la « chair » de l'objet) sont dessinées en \cle{trait fort}. C'est le contour de la coupure.
+\item \textbf{Les contours visibles derrière ensuite.} Tout ce qui se trouve \emph{derrière} le plan de coupe et qui est visible (arêtes, contours de trous débouchants) est également tracé en trait fort, car on le voit réellement.
+\end{enumerate}
+
+Puis vient le grand ménage :
+
+\begin{propriete}[Disparition des traits interrompus]
+Dans une vue en coupe, les formes intérieures traversées par le plan sont devenues visibles : elles sont dessinées en trait fort. Les \cle{traits interrompus} qui les représentaient dans la vue extérieure doivent être \textbf{supprimés}. En règle générale, on ne dessine \textbf{aucun trait interrompu} dans une vue en coupe.
+\end{propriete}
+
+\begin{attention}[L'erreur n° 1 au BEPC]
+Conserver les traits interrompus dans la vue en coupe est l'erreur la plus fréquente. Retiens cette phrase : « \emph{Ce que la coupe montre en trait fort ne doit plus exister en trait interrompu.} » Avant de rendre ta copie, passe en revue ta vue en coupe et efface tout trait interrompu superflu.
+\end{attention}
+
+\courssub{Étapes 7 et 8 : hachurer, titrer et vérifier}
+
+Il ne reste plus qu'à finir la présentation :
+
+\begin{itemize}
+\item \textbf{Étape 7 — Hachurer.} Trace les hachures (traits fins à 45°, régulièrement espacés) sur \textbf{toutes} les zones de matière sectionnée, et uniquement sur elles. Les vides (trous, cavités) restent blancs. Pour une même pièce, l'angle et l'espacement des hachures sont identiques.
+\item \textbf{Étape 8 — Titrer et vérifier.} Écris le titre de la vue au-dessus ou en dessous : \og Coupe A-A \fg{}, en reprenant les lettres du plan de coupe. Vérifie enfin que les cotes nécessaires sont reportées et lisibles : la cotation d'une vue en coupe se fait comme celle d'une vue normale.
+\end{itemize}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={font=\small}]
+% ---------- Vignette 1 : objet + plan de coupe ----------
+\begin{scope}[shift={(0,0)}]
+  % manchon : rectangle extérieur + trou en traits interrompus
+  \draw[line width=1pt, popblue] (0,0) rectangle (3,1.6);
+  \draw[dashed, popmuted] (0,0.5) -- (3,0.5);
+  \draw[dashed, popmuted] (0,1.1) -- (3,1.1);
+  % plan de coupe vertical : trait mixte FORT (épais)
+  \draw[poporange, line width=0.9pt, dash pattern=on 7pt off 2pt on 1pt off 2pt] (1.5,-0.5) -- (1.5,2.1);
+  % barbes aux extrémités
+  \draw[poporange, line width=0.9pt] (1.3,-0.5) -- (1.7,-0.5);
+  \draw[poporange, line width=0.9pt] (1.3,2.1) -- (1.7,2.1);
+  \node[poporange] at (1.5,2.35) {A};
+  \node[poporange] at (1.5,-0.75) {A};
+  \draw[-{Stealth}, poporange, line width=0.9pt] (1.5,1.95) -- (2.15,1.95);
+  \draw[-{Stealth}, poporange, line width=0.9pt] (1.5,-0.35) -- (2.15,-0.35);
+  \node[align=center, popdark] at (1.5,-1.35) {\textbf{1.} Plan de coupe\\ tracé et repéré};
+\end{scope}
+% ---------- Vignette 2 : contours de matière coupée ----------
+\begin{scope}[shift={(5,0)}]
+  \draw[line width=1.4pt, popblue] (0,0) rectangle (3,0.5);
+  \draw[line width=1.4pt, popblue] (0,1.1) rectangle (3,1.6);
+  \node[align=center, popdark] at (1.5,-1.35) {\textbf{2.} Matière sectionnée\\ en trait fort};
+\end{scope}
+% ---------- Vignette 3 : contours arrière ajoutés ----------
+\begin{scope}[shift={(10,0)}]
+  \draw[line width=1.4pt, popblue] (0,0) rectangle (3,0.5);
+  \draw[line width=1.4pt, popblue] (0,1.1) rectangle (3,1.6);
+  % contours visibles derrière le plan (fond du trou)
+  \draw[line width=0.9pt, popgreen] (0.4,0.5) -- (0.4,1.1);
+  \draw[line width=0.9pt, popgreen] (2.6,0.5) -- (2.6,1.1);
+  \draw[line width=0.9pt, popgreen] (0.4,0.8) -- (2.6,0.8);
+  \node[align=center, popdark] at (1.5,-1.35) {\textbf{3.} Contours visibles\\ derrière le plan};
+\end{scope}
+% ---------- Vignette 4 : hachures + titre ----------
+\begin{scope}[shift={(15,0)}]
+  \fill[pattern=north east lines, pattern color=poporange] (0,0) rectangle (3,0.5);
+  \fill[pattern=north east lines, pattern color=poporange] (0,1.1) rectangle (3,1.6);
+  \draw[line width=1.4pt, popblue] (0,0) rectangle (3,0.5);
+  \draw[line width=1.4pt, popblue] (0,1.1) rectangle (3,1.6);
+  \draw[line width=0.9pt, popgreen] (0.4,0.5) -- (0.4,1.1);
+  \draw[line width=0.9pt, popgreen] (2.6,0.5) -- (2.6,1.1);
+  \draw[line width=0.9pt, popgreen] (0.4,0.8) -- (2.6,0.8);
+  \node[popdark, font=\small\bfseries] at (1.5,2.0) {Coupe A-A};
+  \node[align=center, popdark] at (1.5,-1.35) {\textbf{4.} Hachures à 45°\\ et titre de la vue};
+\end{scope}
+\end{tikzpicture}
+\legende{Les quatre grandes phases du dessin d'une coupe simple : (1) on trace et repère le plan de coupe A-A (trait mixte fort) sur la vue de référence ; (2) on dessine la matière tranchée en trait fort ; (3) on ajoute les contours visibles situés derrière le plan ; (4) on hachure les zones sectionnées (45°) et on titre la vue « Coupe A-A ». Les traits interrompus de la vue extérieure ont disparu.}
+\end{popfigure}
+
+\courssub{Exemple guidé : coupe A-A d'un manchon cylindrique percé}
+
+Mettons la méthode en application sur une pièce réelle : un \textbf{manchon cylindrique} (tube en acier) de diamètre extérieur \SI{40}{mm}, percé d'un alésage (trou traversant) de diamètre \SI{20}{mm}. Ce genre de pièce sert, par exemple, d'entretoise sur l'axe d'une poulie de moto-taxi.
+
+\begin{exoresolu}[Coupe A-A d'un manchon cylindrique]
+\textbf{Énoncé.} Un manchon cylindrique en acier a un diamètre extérieur de \SI{40}{mm} et un alésage cylindrique traversant de diamètre \SI{20}{mm}. La vue de face extérieure montre l'alésage en traits interrompus. On demande d'exécuter la coupe A-A par un plan contenant l'axe du manchon. Décris, étape par étape, comment le dessinateur procède et précise l'aspect final de la vue en coupe.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Étape 1 — Choix de la vue.} La vue de face est celle qui contient les traits interrompus représentant l'alésage : c'est elle que l'on coupe.
+
+\textbf{Étape 2 — Position et tracé du plan.} Le plan de coupe A-A contient l'axe de révolution du manchon : il tranche ainsi l'alésage sur toute sa longueur. On le trace en \textbf{trait mixte fort} sur la vue de référence (la vue de bout, où le plan apparaît comme un diamètre du cercle).
+
+\textbf{Étape 3 — Repérage.} On place les lettres A et A aux deux extrémités du plan (au niveau des barbes), avec deux flèches de visée pointant dans le sens où l'on regarde la moitié conservée.
+
+\textbf{Étape 4 — Projection.} La coupe A-A est dessinée \emph{à la place} de la vue de face extérieure, en conservant les alignements de projection avec les autres vues. La vue de face extérieure disparaît.
+
+\textbf{Étape 5 — Contours.} Le plan tranche la matière du manchon en deux bandes rectangulaires : une au-dessus de l'alésage, une en dessous. Chaque bande a une épaisseur de :
+\[
+e=\frac{40-20}{2}=\frac{20}{2}=\SI{10}{mm}.
+\]
+On dessine ces deux rectangles de matière en trait fort, puis les contours visibles derrière le plan (les génératrices du fond de l'alésage) en trait fort également.
+
+\textbf{Étape 6 — Suppression des traits cachés.} Les deux traits interrompus qui figuraient l'alésage dans l'ancienne vue de face sont effacés : l'alésage est maintenant délimité par des traits forts.
+
+\textbf{Étape 7 — Hachures.} On hachure à 45° les deux bandes de matière (épaisseur \SI{10}{mm}), avec le même angle et le même espacement, car il s'agit d'une seule pièce. L'alésage, vide, reste blanc.
+
+\textbf{Étape 8 — Titre et cotation.} On écrit « Coupe A-A » sous la vue et on reporte les cotes : $\varnothing\,40$ et $\varnothing\,20$.
+
+\textbf{Aspect final :} deux rectangles hachurés de \SI{10}{mm} d'épaisseur, séparés par un espace blanc de \SI{20}{mm} (l'alésage), le tout en trait fort, sans aucun trait interrompu, titré « Coupe A-A ».
+\end{exoresolu}
+
+\begin{savaistu}[Au Cameroun : le cylindre de moto et la bonbonne de gaz]
+Dans un moteur de moto-taxi (type 125 cm$^3$ très courant à Douala ou Yaoundé), le \textbf{cylindre} en aluminium est percé de lumières (admission, échappement) et accueille le piston. Pour fabriquer ce cylindre, les dessinateurs industriels font des coupes simples pour vérifier l'épaisseur des parois et la forme des lumières. De même, une \textbf{bonbonne de gaz butane} (12,5 kg) est un corps de révolution soudé : une coupe simple permet de contrôler l'épaisseur du tôle, le filetage du col et l'intérieur du tube plongeur. Sans coupe, ces détails resteraient invisibles sur le plan d'ensemble !
+\end{savaistu}
+
+\courssub{Synthèse et conseils pratiques}
+
+\begin{aretenir}[L'essentiel des étapes d'exécution]
+\begin{itemize}
+\item On coupe la vue qui montre le mieux les formes intérieures.
+\item Le plan de coupe passe par les axes et les détails intérieurs ; il est tracé en \textbf{trait mixte fort} et repéré par des lettres et des flèches de visée.
+\item La coupe \textbf{remplace} la vue extérieure correspondante.
+\item Matière sectionnée et contours visibles derrière le plan : \textbf{trait fort}.
+\item Les traits interrompus devenus inutiles sont \textbf{supprimés}.
+\item Hachures à 45° sur la matière tranchée uniquement (même angle, même écart pour une même pièce) ; titre « Coupe A-A » ; cotation vérifiée.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+Un axe plein de diamètre \SI{30}{mm} est traversé par un trou transversal de diamètre \SI{8}{mm}. 
+\begin{enumerate}
+\item Quelle vue faut-il couper pour montrer clairement ce trou ?
+\item Où doit passer le plan de coupe ?
+\item Après la coupe, que deviennent les traits interrompus qui représentaient le trou ?
+\item Rédige le titre de la vue obtenue si le plan est repéré B-B.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item La vue de face, car c'est elle qui contient les traits interrompus du trou transversal : c'est la vue qui montre le mieux les formes intérieures.
+\item Le plan de coupe doit contenir l'axe de l'axe (axe de révolution) \emph{et} l'axe du trou transversal, afin de trancher le trou sur toute sa longueur (le trou apparaît alors en rectangle dans la coupe).
+\item Ils sont supprimés : le trou devient visible et est dessiné en trait fort dans la vue en coupe.
+\item Le titre de la vue est « Coupe B-B ».
+\end{enumerate}
+\end{corrige}
+
+Tu sais désormais exécuter une coupe simple de bout en bout, comme un vrai dessinateur industriel. Dans la prochaine section, nous verrons les règles de représentation plus fines et les cas particuliers (nervures, vis, arbres) où la coupe obéit à des conventions surprenantes.
+
+\coursec{Règles de représentation et cas particuliers}
+
+Dans la section précédente, tu as appris à exécuter une coupe simple étape par étape : choisir le plan de coupe, tracer les traces du plan, hachurer la matière sectionnée et projeter les arêtes visibles restantes. Mais le dessin technique, comme toute langue, possède ses \emph{exceptions} et ses \emph{règles de grammaire}. Un dessinateur qui hachurerait tout ce que le plan de coupe traverse commettrait de grosses erreurs de lecture : sa poulie semblerait massive alors qu'elle est allégée, sa vis semblerait soudée à la pièce. Cette section te donne les règles officielles de représentation, celles que le correcteur du BEPC vérifie en premier.
+
+\courssub{La règle des éléments non coupés}
+
+\textbf{Une observation pour commencer.}\par
+
+Imagine une moto-taxi de quartier. Son moteur est fixé au cadre par de longues vis qui traversent le moteur \emph{dans le sens de la longueur}. Si l'on sciait le moteur en deux dans le sens de ces vis, la lame couperait chaque vis le long de son axe, comme on fend un bâton de manioc dans sa longueur. La vis resterait entière, simplement « ouverte ». Fendre un bâton dans sa longueur ne révèle rien de nouveau : on voit simplement son profil. En revanche, si l'on coupe la vis \emph{en travers}, comme on tranche un bâton de manioc en rondelles, on découvre sa section circulaire : là, il y a bien de la matière sectionnée à hachurer.
+
+C'est exactement cette intuition que la normalisation du dessin technique a transformée en règle.
+
+\begin{propriete}[Règle des éléments non coupés (règle admise de normalisation)]
+Lorsque le plan de coupe passe \cle{longitudinalement} (c'est-à-dire dans le sens de la longueur) par les éléments suivants, on \textbf{ne les hachure pas} :
+\begin{itemize}
+\item les \cle{nervures} et les \cle{bras} (de poulie, de volant) ;
+\item les \cle{arbres} (axes, tiges) ;
+\item les \cle{vis}, \cle{boulons}, \cle{écrous}, \cle{rivets} ;
+\item les \cle{clavettes} et les \cle{goupilles}.
+\end{itemize}
+Ces éléments sont dessinés en \textbf{vue extérieure}, comme s'ils n'étaient pas coupés. En revanche, si le plan de coupe les sectionne \cle{transversalement} (perpendiculairement à leur longueur), on les hachure normalement.
+\end{propriete}
+
+\textbf{Pourquoi cette règle ?}\par
+
+La justification est double :
+\begin{enumerate}
+\item \textbf{Fausse impression d'épaisseur et de plein.} Hachurer une nervure ou un bras de poulie coupé dans sa longueur donnerait l'impression que la pièce est massive et épaisse à cet endroit, alors qu'il s'agit d'un simple renfort mince. Le hachurage signifie « matière pleine sectionnée » ; l'employer à tort trompe le lecteur du plan.
+\item \textbf{Aucune information nouvelle.} Une vis ou un arbre coupé longitudinalement montre exactement le même profil qu'en vue extérieure. Le hachurage n'apporterait rien et alourdirait le dessin.
+\end{enumerate}
+
+\begin{attention}[L'erreur la plus sanctionnée au BEPC]
+Hachurer une \textbf{vis}, un \textbf{arbre} ou une \textbf{clavette} coupés dans le sens de la longueur est l'erreur la plus fréquente et la plus lourdement sanctionnée en dessin technique au BEPC. Avant de poser le moindre hachurage, pose-toi toujours la question : « Le plan de coupe traverse-t-il cet élément dans sa longueur ou en travers ? » Longueur $\Rightarrow$ pas de hachures. Travers $\Rightarrow$ hachures.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+% ===== Coupe longitudinale =====
+% Corps (moyeu) hachuré au-dessus et en dessous de l'arbre
+\fill[pattern=north east lines, pattern color=popblue] (0,1.1) rectangle (5,1.7);
+\fill[pattern=north east lines, pattern color=popblue] (0,-1.7) rectangle (5,-1.1);
+\draw[thick, popdark] (0,1.7) rectangle (5,1.1);
+\draw[thick, popdark] (0,-1.1) rectangle (5,-1.7);
+% Arbre (non hachuré)
+\draw[thick, popdark, fill=popcream] (0.3,-0.55) rectangle (4.7,0.55);
+% Clavette (non hachurée)
+\draw[thick, popdark, fill=poporangeL] (2.2,0.55) rectangle (3.4,1.1);
+% Vis traversante verticale (non hachurée)
+\draw[thick, popdark, fill=popcream] (1.0,-1.7) -- (1.0,1.7) -- (1.35,1.7) -- (1.35,-1.7) -- cycle;
+\draw[thick, popdark] (0.85,1.7) rectangle (1.5,1.95);
+% Axe
+\draw[popmuted, dash pattern=on 6pt off 2pt on 1pt off 2pt] (-0.4,0) -- (5.4,0);
+\node[popdark, font=\bfseries] at (2.5,-2.4) {a) Coupe longitudinale};
+\node[popmuted, font=\small] at (2.5,-2.85) {arbre, vis et clavette NON hachurés};
+
+% ===== Coupe transversale =====
+\begin{scope}[xshift=8.2cm]
+% Anneau (moyeu) hachuré
+\fill[pattern=north east lines, pattern color=popblue, even odd rule] (0,0) circle (1.7) (0,0) circle (1.1);
+\draw[thick, popdark] (0,0) circle (1.7);
+\draw[thick, popdark] (0,0) circle (1.1);
+% Arbre : section hachurée (coupé en travers)
+\fill[pattern=north east lines, pattern color=popgreen] (0,0) circle (0.55);
+\draw[thick, popdark] (0,0) circle (0.55);
+% Clavette : section hachurée (coupée en travers)
+\fill[pattern=north east lines, pattern color=poporange] (0.5,-0.28) rectangle (1.15,0.28);
+\draw[thick, popdark] (0.5,-0.28) rectangle (1.15,0.28);
+\node[popdark, font=\bfseries] at (0,-2.4) {b) Coupe transversale};
+\node[popmuted, font=\small] at (0,-2.85) {arbre et clavette hachurés (coupés en travers)};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{a) Coupe longitudinale : le plan de coupe contient l'axe de l'arbre. L'arbre, la vis et la clavette sont dessinés en vue extérieure, sans hachures ; seul le corps (moyeu) est hachuré. b) Coupe transversale : le plan de coupe est perpendiculaire à l'axe. L'arbre et la clavette sont sectionnés en travers : on les hachure normalement.}
+\end{popfigure}
+
+\courssub{La demi-coupe : deux informations en un seul dessin}
+
+\textbf{Situation.}\par
+
+Une poulie de moto est un objet \cle{symétrique} : sa moitié droite est identique à sa moitié gauche. Faire une coupe complète obligerait à dessiner toute la pièce en coupe, alors qu'une vue extérieure serait aussi utile pour voir les formes extérieures (gorge, rainure). Le dessinateur a trouvé une solution élégante : la \cle{demi-coupe}.
+
+\begin{definition}[Demi-coupe]
+Pour un objet \textbf{symétrique}, on peut représenter sur une même vue :
+\begin{itemize}
+\item une \textbf{moitié en vue extérieure} (on voit les formes extérieures) ;
+\item l'autre \textbf{moitié en coupe} (on voit l'intérieur, avec les hachures).
+\end{itemize}
+Les deux moitiés sont séparées par le \textbf{trait d'axe} (trait mixte fin), qui remplace le trait d'arête. On ne trace \textbf{aucun trait fort} sur la ligne de séparation, et on ne dessine pas les arêtes cachées (traits interrompus) dans la moitié en vue extérieure.
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05]
+% Axe vertical de séparation
+\draw[popmuted, dash pattern=on 6pt off 2pt on 1pt off 2pt] (0,-2.6) -- (0,2.6);
+\node[popmuted, font=\small] at (0,2.9) {axe};
+% ===== Moitié gauche : vue extérieure =====
+\draw[thick, popdark, fill=popcream] (-2.3,-1.9) -- (-2.3,1.9) -- (0,1.9);
+\draw[thick, popdark] (-2.3,-1.9) -- (0,-1.9);
+% Gorge en V visible en vue extérieure
+\draw[thick, popdark] (-2.3,0.55) -- (-1.75,0.15);
+\draw[thick, popdark] (-2.3,-0.55) -- (-1.75,-0.15);
+% ===== Moitié droite : coupe =====
+\fill[pattern=north east lines, pattern color=popblue] (0,1.9) -- (2.3,1.9) -- (2.3,0.55) -- (1.75,0.15) -- (1.75,-0.15) -- (2.3,-0.55) -- (2.3,-1.9) -- (0,-1.9) -- (0,-0.55) -- (1.0,-0.55) -- (1.0,0.55) -- (0,0.55) -- cycle;
+\draw[thick, popdark] (0,1.9) -- (2.3,1.9) -- (2.3,0.55) -- (1.75,0.15) -- (1.75,-0.15) -- (2.3,-0.55) -- (2.3,-1.9) -- (0,-1.9);
+% Alésage (trou central) côté coupe
+\draw[thick, popdark] (0,0.55) -- (1.0,0.55) -- (1.0,-0.55) -- (0,-0.55);
+% Annotations
+\node[popdark, font=\small\bfseries] at (-1.5,-2.4) {vue extérieure};
+\node[popdark, font=\small\bfseries] at (1.5,-2.4) {demi-coupe};
+\draw[->, poporange, thick] (1.6,1.2) -- (1.1,1.5);
+\node[poporange, font=\small] at (2.1,1.15) {hachures};
+\end{tikzpicture}
+\end{center}
+\legende{Demi-coupe d'une poulie : à gauche de l'axe, la vue extérieure montre la gorge en V ; à droite de l'axe, la demi-coupe hachurée révèle l'épaisseur du disque et l'alésage central (trou de l'arbre). Un seul dessin donne ainsi l'extérieur et l'intérieur.}
+\end{popfigure}
+
+\begin{savaistu}[La demi-coupe, une économie de travail]
+La demi-coupe est une invention des dessinateurs industriels pour \textbf{économiser le travail} : un seul dessin montre à la fois l'extérieur et l'intérieur d'une pièce symétrique, au lieu de deux vues séparées. Sur les plans de moteurs, de pompes ou de réducteurs fabriqués dans le monde entier — y compris les pièces des groupes électrogènes que l'on répare dans nos ateliers de quartier — la demi-coupe est partout. Elle respecte un principe cher aux techniciens : \emph{donner le maximum d'informations avec le minimum de traits}.
+\end{savaistu}
+
+\courssub{La section rabattue}
+
+\begin{definition}[Section rabattue]
+Pour montrer la forme de la \textbf{section droite} d'une barre, d'un profilé ou d'une tige (fer plat, cornière, fer en T, barre hexagonale), on dessine la section \textbf{directement sur la vue}, comme si l'on avait coupé la barre en travers et « rabattu » la tranche de 90° sur le papier. Le contour de la section rabattue se trace en \textbf{trait fin} et la matière est hachurée.
+\end{definition}
+
+C'est le dessin que fait le menuisier métallique du quartier quand il veut montrer au client le profil du fer à béton ou de la cornière qu'il va souder : il trace la barre en long, puis dessine sa tranche hachurée juste dessus.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+% Barre en long (cornière)
+\draw[thick, popdark] (0,0.4) -- (6,0.4);
+\draw[thick, popdark] (0,-0.4) -- (6,-0.4);
+\draw[popmuted, dash pattern=on 6pt off 2pt on 1pt off 2pt] (-0.3,0) -- (6.3,0);
+% Section rabattue au milieu : profil en L (cornière)
+\fill[pattern=north east lines, pattern color=popblue] (2.6,-0.4) -- (3.4,-0.4) -- (3.4,-0.15) -- (2.85,-0.15) -- (2.85,0.4) -- (2.6,0.4) -- cycle;
+\draw[thin, popdark] (2.6,-0.4) -- (3.4,-0.4) -- (3.4,-0.15) -- (2.85,-0.15) -- (2.85,0.4) -- (2.6,0.4) -- cycle;
+% Annotations
+\draw[->, poporange, thick] (4.3,0.9) -- (3.2,0.25);
+\node[poporange, font=\small] at (5.0,1.05) {section rabattue (trait fin, hachurée)};
+\node[popdark, font=\small] at (1.0,-0.85) {cornière vue en long};
+\end{tikzpicture}
+\end{center}
+\legende{Section rabattue d'une cornière : la barre est dessinée en long, et sa section droite (profil en L) est tracée directement sur la vue, en trait fin, avec des hachures. On voit ainsi d'un coup d'œil la longueur de la barre et la forme de sa tranche.}
+\end{popfigure}
+
+\courssub{Lire une coupe : la démarche du technicien}
+
+Savoir \emph{lire} une coupe est aussi important que savoir la dessiner : au BEPC, on te donne souvent un dessin en coupe et on te demande de l'interpréter.
+
+\begin{methode}[Lire un dessin en coupe en quatre étapes]
+\begin{enumerate}
+\item \textbf{Repérer le plan de coupe.} Cherche la trace du plan (trait mixte fort, par exemple A--A) sur la vue voisine, avec ses extrémités et ses changements de direction marqués par des traits forts.
+\item \textbf{Suivre les flèches.} Les flèches placées aux extrémités de la trace indiquent le \textbf{sens de visée} : c'est la direction dans laquelle on regarde la pièce coupée.
+\item \textbf{Identifier matière et vides.} Les zones \textbf{hachurées} sont de la matière sectionnée ; les zones \textbf{blanches} entourées de traits forts sont des vides (trous, logements, rainures). Vérifie que vis, arbres, nervures et clavettes coupés en long ne sont pas hachurés.
+\item \textbf{Reconstituer la forme 3D.} Combine mentalement la coupe et les autres vues pour imaginer la pièce dans l'espace, comme on reconstitue un avocat entier à partir de sa moitié coupée.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Lecture d'une coupe]
+Énoncé. Sur le dessin d'un assemblage, une coupe A--A passe dans l'axe d'un arbre traversé par une vis de fixation. Sur la coupe, l'arbre et la vis sont hachurés. Le dessin est-il correct ? Justifie, puis décris la représentation correcte.
+\tcblower
+Solution détaillée.
+\begin{enumerate}
+\item Le plan de coupe A--A contient l'axe de l'arbre : l'arbre et la vis sont donc coupés \textbf{longitudinalement}.
+\item Or, la règle de normalisation interdit de hachurer les arbres et les vis coupés dans le sens de la longueur : cela donnerait une fausse impression de plein et n'apporterait aucune information.
+\item Le dessin est donc \textbf{incorrect}.
+\item Représentation correcte : l'arbre et la vis sont dessinés en vue extérieure (sans hachures) ; seules les pièces environnantes réellement sectionnées (moyeu, corps) sont hachurées, avec des hachures d'inclinaisons différentes pour distinguer les pièces.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Une poulie est montée sur un arbre par l'intermédiaire d'une clavette. On réalise deux coupes : la coupe 1 dont le plan contient l'axe de l'arbre, et la coupe 2 dont le plan est perpendiculaire à cet axe.
+\begin{enumerate}
+\item Pour chaque coupe, indique quels éléments (poulie, arbre, clavette) doivent être hachurés.
+\item La poulie est symétrique par rapport à son axe. Quel type de représentation permet de montrer à la fois sa gorge extérieure et son alésage intérieur sur une seule vue ? Précise la nature du trait qui sépare les deux moitiés.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de jouer]
+\begin{enumerate}
+\item \textbf{Coupe 1 (plan contenant l'axe)} : l'arbre et la clavette sont coupés longitudinalement, donc \textbf{non hachurés} ; seul le corps de la poulie, réellement sectionné, est hachuré. \textbf{Coupe 2 (plan perpendiculaire à l'axe)} : l'arbre et la clavette sont coupés transversalement, donc \textbf{hachurés}, comme la poulie.
+\item On utilise une \textbf{demi-coupe} : une moitié en vue extérieure (gorge visible) et l'autre moitié en coupe (alésage visible, hachuré). Les deux moitiés sont séparées par le \textbf{trait d'axe} (trait mixte fin), sans trait fort sur la ligne de séparation.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Sécurité et soin en dessin technique}
+
+Un beau dessin technique exige des instruments bien utilisés, dans le respect des règles de sécurité de l'atelier et de la salle de dessin.
+
+\begin{attention}[Sécurité et soin : les bons gestes]
+\begin{itemize}
+\item \textbf{Cutter et taille-crayon.} Taille ton crayon en tenant la lame \emph{à distance des doigts}, en poussant la lame \textbf{vers l'extérieur}, jamais vers toi. Referme le cutter après usage. Une mine bien taillée donne un trait net.
+\item \textbf{Compas.} Manipule la pointe sèche avec précaution ; range le compas pointe protégée. Ne le laisse jamais au bord de la table.
+\item \textbf{Propreté du tracé.} Mains propres, feuille bien fixée, gommage léger pour ne pas abîmer le papier.
+\item \textbf{Ordre des traits.} Trace toujours d'abord en \textbf{traits fins} (construction, hachures), puis repasse en \textbf{traits forts} les contours définitifs. On ne gomme jamais un trait fort : d'où l'importance de construire fin d'abord.
+\item \textbf{Hachures régulières.} Même inclinaison (45° de préférence), même espacement pour une même pièce.
+\end{itemize}
+\end{attention}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Nervures, bras, arbres, vis, rivets et clavettes coupés \textbf{longitudinalement} ne sont \textbf{jamais hachurés} ; coupés \textbf{transversalement}, ils le sont.
+\item La \textbf{demi-coupe} (objets symétriques) montre une moitié en vue extérieure et l'autre en coupe, séparées par le trait d'axe.
+\item La \textbf{section rabattue} dessine la tranche d'un profilé directement sur la vue, en trait fin hachuré.
+\item Lire une coupe : plan de coupe $\rightarrow$ sens de visée $\rightarrow$ matière et vides $\rightarrow$ forme 3D.
+\item Sécurité : cutter et compas manipulés avec soin ; traits fins avant traits forts.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Applications concrètes au quotidien}
+
+Dans la section précédente, tu as appris les règles de représentation d'une coupe simple : le plan de coupe, la visée, les hachures, les contours arrière et les cas particuliers (nervures, arbres, vis non hachurées). Tu sais donc maintenant \emph{dessiner} une coupe. Mais à quoi cela sert-il concrètement ? Dans cette dernière section, nous allons voir que la coupe simple est un outil utilisé chaque jour au Cameroun : par le plombier qui choisit un tuyau, par le maçon qui lit le plan d'une maison, par le mécanicien qui démonte un écrou, par le menuisier qui assemble un meuble. Comprendre la coupe, c'est comprendre l'intérieur des objets qui nous entourent.
+
+\courssub{Coupe d'un tuyau PVC : voir l'épaisseur de la paroi}
+
+\begin{experience}[Observer l'intérieur d'un tuyau]
+Prends un morceau de tuyau PVC utilisé pour l'adduction d'eau (chez le plombier ou au marché des matériaux). Coupe-le proprement à la scie, perpendiculairement à son axe. Observe la section : tu vois un anneau gris (la matière plastique) et un trou circulaire au centre (le passage de l'eau).
+\begin{itemize}
+\item \textbf{Observation :} la matière forme une couronne circulaire ; l'intérieur est vide.
+\item \textbf{Hypothèse :} on peut mesurer l'épaisseur de la paroi sans casser le tuyau, simplement en le dessinant en coupe.
+\item \textbf{Vérification :} dessine la coupe transversale du tuyau, hachure la matière, cote les deux diamètres. Le calcul donne l'épaisseur.
+\item \textbf{Conclusion :} la coupe rend visibles et mesurables des formes intérieures invisibles de l'extérieur.
+\end{itemize}
+\end{experience}
+
+En dessin technique, un tuyau coupé perpendiculairement à son axe apparaît comme \textbf{deux cercles concentriques} : le grand cercle est le diamètre extérieur, le petit cercle est le diamètre intérieur. La \cle{matière} (la couronne entre les deux cercles) est \cle{hachurée}, car elle est réellement coupée par le plan de coupe. Le trou central reste blanc : c'est du vide.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.09]
+% Matière hachurée (couronne)
+\fill[pattern=north east lines, pattern color=popblue] (0,0) circle (16);
+\fill[white] (0,0) circle (13);
+% Contours
+\draw[very thick, popdark] (0,0) circle (16);
+\draw[very thick, popdark] (0,0) circle (13);
+% Axes de symétrie
+\draw[popmuted, dash dot] (-20,0) -- (20,0);
+\draw[popmuted, dash dot] (0,-20) -- (0,20);
+% Cotes diamètres
+\draw[<->, >=latex, poporange, thick] (-16,-19) -- (16,-19) node[midway, below, popdark] {$\varnothing$ 32};
+\draw[<->, >=latex, popgreen, thick] (-13,19) -- (13,19) node[midway, above, popdark] {$\varnothing$ 26};
+% Épaisseur
+\draw[<->, >=latex, poppurple, thick] (13,0) -- (16,0) node[midway, above=1pt, popdark, font=\small] {$e$};
+% Titre
+\node[popdark, font=\bfseries] at (0,-26) {Coupe A-A};
+\end{tikzpicture}
+\end{center}
+\legende{Coupe transversale A-A d'un tuyau PVC. La couronne hachurée représente la matière plastique coupée ; le cercle central blanc est le passage de l'eau. Diamètre extérieur : 32 mm ; diamètre intérieur : 26 mm.}
+\end{popfigure}
+
+\begin{exoresolu}[Épaisseur de la paroi d'un tuyau PVC]
+Un tuyau PVC a un diamètre extérieur de \SI{32}{mm} et un diamètre intérieur de \SI{26}{mm}, lus directement sur la coupe A-A. Calcule l'épaisseur $e$ de la paroi.
+\tcblower
+\textbf{Solution détaillée.}
+
+Sur la coupe, le rayon extérieur vaut $R = \dfrac{32}{2} = \SI{16}{mm}$ et le rayon intérieur vaut $r = \dfrac{26}{2} = \SI{13}{mm}$.
+
+L'épaisseur de la paroi est la différence des deux rayons :
+\begin{align*}
+e &= R - r \\
+&= \frac{32 - 26}{2} \\
+&= \frac{6}{2} \\
+&= \SI{3}{mm}
+\end{align*}
+
+\textbf{Conclusion :} la paroi du tuyau mesure \SI{3}{mm} d'épaisseur. Cette valeur se lit directement sur la coupe, sans découper le tuyau réel : c'est toute la puissance du dessin en coupe.
+\end{exoresolu}
+
+\begin{attention}[Coter les diamètres intérieurs sur la coupe]
+Une coupe doit rester \textbf{cotée comme une vue normale}. Erreur fréquente : oublier de coter le diamètre intérieur, ou le coter sur une vue extérieure où il apparaît en traits interrompus. Règle pratique : les \cle{diamètres intérieurs} se cotent \textbf{sur la coupe}, là où ils apparaissent en traits forts. N'oublie jamais le symbole $\varnothing$ devant la valeur d'un diamètre.
+\end{attention}
+
+\courssub{Coupe d'une bouteille ou d'un bidon}
+
+Observe une bouteille d'eau minérale ou un bidon d'huile : de l'extérieur, impossible de voir comment le bouchon se visse. En coupe longitudinale (plan de coupe vertical passant par l'axe), tout devient clair :
+
+\begin{itemize}
+\item la \cle{paroi} de la bouteille est hachurée : on voit qu'elle est fine sur le corps et plus épaisse au niveau du goulot ;
+\item le \cle{goulot} (la partie rétrécie du col) apparaît clairement ;
+\item le \cle{filetage} du bouchon et du goulot est représenté : ce sont les rainures en hélice qui permettent de visser. En coupe, le filetage se dessine par des traits fins alternés (filet extérieur sur le goulot, filet intérieur dans le bouchon).
+\end{itemize}
+
+C'est exactement ce type de coupe que l'on trouve dans les bureaux d'études des usines d'embouteillage (par exemple pour les bouteilles de la SABC ou de Source Tangui) : elle permet de vérifier que le bouchon s'adapte parfaitement au goulot pour garantir l'étanchéité.
+
+\courssub{Coupe d'un écrou : taraudage et chanfrein}
+
+Un écrou est une petite pièce hexagonale percée d'un trou fileté. De l'extérieur, on ne voit que l'hexagone. La coupe longitudinale par un plan passant par l'axe révèle deux détails essentiels :
+
+\begin{itemize}
+\item le \cle{taraudage} : c'est le filetage \emph{intérieur} du trou, qui reçoit la vis. En coupe, il est représenté par des traits fins (le fond du filet) et des traits forts (le sommet du filet) ;
+\item le \cle{chanfrein} : c'est le petit biseau à l'entrée du trou, qui facilite l'engagement de la vis. En coupe, il apparaît comme deux petits segments inclinés à chaque extrémité du trou.
+\end{itemize}
+
+\begin{attention}[Ne pas hachurer la vis dans un assemblage]
+Quand on coupe un ensemble vis + écrou, l'écrou est hachuré (il est coupé), mais la \cle{vis} ne se hachure \textbf{jamais} quand elle est coupée longitudinalement : c'est un cas particulier vu dans la section précédente. Les pièces pleines (vis, boulons, arbres, clavettes) restent non hachurées en coupe longitudinale.
+\end{attention}
+
+\courssub{Coupe d'une maison : le plan de coupe de l'architecte}
+
+Quand un architecte ou un maçon construit une case au Cameroun, le plan de coupe vertical est un document indispensable. Le plan de coupe est un plan vertical qui « tranche » la maison ; on regarde dans le sens de la visée. On y lit :
+
+\begin{itemize}
+\item l'\cle{épaisseur des murs} (par exemple \SI{15}{cm} pour des parpaings de 15, hachurés dans la coupe) ;
+\item la \cle{hauteur sous plafond} (distance du sol au plafond, souvent \SI{2,50}{m} à \SI{3}{m}) ;
+\item les \cle{fondations} (la partie enterrée, en béton, plus large que le mur) ;
+\item la pente de la \cle{toiture} (tôles ou chaume) et la hauteur du faîtage ;
+\item la position des portes et fenêtres traversées par le plan de coupe.
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.55]
+% Sol / terrain naturel
+\draw[thick, popmuted] (-1.5,0) -- (9.5,0);
+% Hachures terrain (schématique)
+\foreach \x in {-1.2,-0.6,0,0.6,1.2,1.8,2.4,3,3.6,4.2,4.8,5.4,6,6.6,7.2,7.8,8.4,9}
+  \draw[popmuted, thin] (\x,0) -- (\x-0.35,-0.3);
+% Fondations hachurées (béton)
+\fill[pattern=north east lines, pattern color=popmuted] (-0.3,-1.2) rectangle (0.6,0);
+\fill[pattern=north east lines, pattern color=popmuted] (7.4,-1.2) rectangle (8.3,0);
+\draw[popdark] (-0.3,-1.2) rectangle (0.6,0);
+\draw[popdark] (7.4,-1.2) rectangle (8.3,0);
+% Mur gauche hachuré (parpaings)
+\fill[pattern=north east lines, pattern color=popblue] (0,0) rectangle (0.5,3);
+\draw[very thick, popdark] (0,0) rectangle (0.5,3);
+% Mur droit hachuré
+\fill[pattern=north east lines, pattern color=popblue] (7.5,0) rectangle (8,3);
+\draw[very thick, popdark] (7.5,0) rectangle (8,3);
+% Porte (contour arrière visible car plan de coupe passe à côté de l'embrasure)
+\draw[thick, poporange] (3.2,0) rectangle (4.3,2.1);
+% Traits de la porte (panneaux)
+\draw[thin, poporange] (3.4,0.3) -- (4.1,0.3);
+\draw[thin, poporange] (3.4,1.0) -- (4.1,1.0);
+\draw[thin, poporange] (3.4,1.7) -- (4.1,1.7);
+% Toiture (charpente + tôles)
+\draw[very thick, popdark] (-0.4,3) -- (4,4.6) -- (8.4,3);
+\draw[thick, popdark] (-0.4,3) -- (8.4,3); % Faîtage / plafond
+% Hachures tôles (symbolique)
+\foreach \t in {0.15,0.35,...,2.9}
+  \draw[popgreen, thin] (\t,3) -- (\t+0.55,3.35);
+\foreach \t in {0.15,0.35,...,2.9}
+  \draw[popgreen, thin] (8-\t,3) -- (8-\t-0.55,3.35);
+% Cotes
+\draw[<->, >=latex, poppurple] (8.6,0) -- (8.6,3) node[midway, right, popdark, font=\small] {\SI{2,80}{m}};
+\draw[<->, >=latex, poppurple] (0,-1.7) -- (0.5,-1.7) node[midway, below, popdark, font=\small] {\SI{15}{cm}};
+% Légendes sur le schéma
+\node[popblue, font=\small] at (0.25,3.3) {mur};
+\node[popgreen, font=\small] at (6.3,4.35) {toiture};
+\node[poporange, font=\small] at (3.75,-0.45) {porte};
+\node[popmuted, font=\small] at (0.15,-1.55) {fondation};
+% Titre
+\node[popdark, font=\bfseries] at (4,-2.4) {Coupe B-B};
+\end{tikzpicture}
+\end{center}
+\legende{Plan de coupe vertical B-B d'une case camerounaise (schéma simplifié). Les murs et les fondations, réellement coupés, sont hachurés ; la porte située derrière le plan de coupe est dessinée en contours arrière (non hachurée). La cote verticale donne la hauteur sous plafond.}
+\end{popfigure}
+
+\begin{exemplebox}[Lire le plan d'une maison]
+Sur le plan de coupe d'une maison à Yaoundé, on lit : hauteur sous plafond \SI{2,80}{m}, murs en parpaings de \SI{15}{cm}, fondations de \SI{40}{cm} de profondeur. Grâce à cette seule vue, le maçon sait quelle quantité de parpaings et de ciment prévoir, et le menuisier sait quelle hauteur de porte fabriquer (\SI{2,10}{m} en général). Sans la coupe, toutes ces dimensions intérieures resteraient invisibles.
+\end{exemplebox}
+
+\courssub{Coupe d'un silo ou d'un grenier à maïs}
+
+Dans les villages, on conserve le maïs, le mil ou le niébé dans des greniers ou des silos. Un silo moderne est un grand cylindre métallique avec un fond en forme d'entonnoir appelé \cle{trémie de vidange}. En coupe verticale, on distingue :
+
+\begin{itemize}
+\item la \cle{paroi cylindrique} hachurée (tôle d'acier) ;
+\item le \cle{volume intérieur} vide, dont on calcule la \cle{capacité} : $V = \pi \times R^2 \times h$ pour la partie cylindrique ;
+\item la \cle{trémie} (cône inversé en bas) qui permet au grain de s'écouler par gravité vers la trappe de vidange.
+\end{itemize}
+
+\begin{exemplebox}[Capacité d'un silo]
+Un silo cylindrique a un rayon intérieur $R = \SI{1,5}{m}$ et une hauteur $h = \SI{4}{m}$, lus sur sa coupe. Sa capacité est :
+\[ V = \pi \times R^2 \times h = 3,14 \times 1,5^2 \times 4 \approx \SI{28,3}{m^3} \]
+Soit environ 28 000 litres de maïs. Les dimensions intérieures nécessaires au calcul sont lues directement sur la coupe.
+\end{exemplebox}
+
+\courssub{La coupe dans les métiers : un atout pour ton orientation}
+
+La lecture de plans de coupe fait partie du quotidien de nombreux métiers. La voici résumée :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Métier} & \textbf{Utilisation de la coupe} \\
+\hline
+Menuisier & Coupe d'une porte, d'un tiroir ou d'un assemblage (tenon-mortaise) pour voir comment les pièces de bois s'emboîtent. \\
+\hline
+Mécanicien & Coupe d'un moteur (piston, cylindre, soupapes) ou d'un carter pour comprendre et réparer les mécanismes de la moto-taxi ou de la voiture. \\
+\hline
+Maçon & Plan de coupe d'une maison : épaisseur des murs, fondations, hauteur des étages. \\
+\hline
+Plombier & Coupe des tuyaux, raccords et robinets pour choisir les bons diamètres et garantir l'étanchéité. \\
+\hline
+\end{tabularx}
+\end{center}
+
+Si tu envisages une orientation vers un lycée technique (génie civil, génie mécanique, ébénisterie) ou vers l'architecture, la maîtrise du dessin en coupe sera l'une de tes compétences de base. C'est un langage universel : un plan de coupe dessiné à Douala se comprend à Paris ou à Tokyo.
+
+\begin{savaistu}[Les notices de montage]
+Les notices de montage des meubles (armoires, lits, tables vendus en kit) et les revues techniques des motos utilisent des \textbf{vues en coupe} et des \textbf{vues éclatées} pour montrer comment les pièces s'emboîtent les unes dans les autres. Quand tu montes un meuble en suivant la notice, tu lis en réalité des dessins techniques simplifiés ! Les ingénieurs qui conçoivent les motos Yamaha ou les groupes électrogènes dessinent des coupes complètes du moteur avant de fabriquer la moindre pièce.
+\end{savaistu}
+
+\begin{methode}[Choisir la bonne vue à couper]
+Face à un objet à représenter en coupe, quelle vue faut-il couper ? Suis ces étapes :
+\begin{enumerate}
+\item Examine toutes les vues (face, dessus, profil) et repère les \cle{traits interrompus} (traits fins discontinus) : ils représentent les formes intérieures cachées.
+\item Choisis la vue où les formes intérieures sont les \textbf{plus nombreuses} en traits interrompus : c'est elle que l'on coupe.
+\item Place le plan de coupe (traces et flèches de visée) sur une vue voisine, en passant par les formes intérieures importantes.
+\item Dessine la coupe : matière coupée hachurée, contours arrière visibles en traits forts, cotes intérieures reportées sur la coupe.
+\item Termine par le titre : « Coupe A-A ».
+\end{enumerate}
+\end{methode}
+
+\courssub{Synthèse de la leçon}
+
+\begin{aretenir}[La coupe simple en une phrase]
+Une \cle{coupe simple} est la représentation d'un objet coupé par un plan de coupe parallèle à un plan de projection. Elle se construit avec cinq éléments obligatoires :
+\begin{enumerate}
+\item le \textbf{plan de coupe} (traces en traits mixtes fins, repéré par des lettres : A-A) ;
+\item la \textbf{visée} (flèches indiquant le sens d'observation) ;
+\item la \textbf{matière hachurée} (traits fins inclinés à 45° sur les parties réellement coupées) ;
+\item les \textbf{contours arrière} visibles, dessinés en traits forts continus ;
+\item le \textbf{titre} de la coupe (« Coupe A-A ») et les cotes, y compris les diamètres intérieurs.
+\end{enumerate}
+Grâce à elle, l'intérieur des objets — tuyaux, écrous, maisons, silos — devient visible, mesurable et constructible.
+\end{aretenir}
+
+\begin{exercice}[À toi de jouer]
+Un tuyau d'arrosage a un diamètre extérieur de \SI{25}{mm} et une épaisseur de paroi de \SI{2,5}{mm}.
+\begin{enumerate}
+\item Calcule son diamètre intérieur.
+\item Dessine à main levée la coupe transversale du tuyau : hachure la matière et place les deux cotes de diamètres.
+\item Cite deux métiers qui utilisent la lecture de coupes et explique pourquoi.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Le diamètre intérieur vaut : $d = D - 2e = 25 - 2 \times 2,5 = 25 - 5 = \SI{20}{mm}$.
+\item La coupe est formée de deux cercles concentriques : $\varnothing$ 25 (extérieur) et $\varnothing$ 20 (intérieur). La couronne entre les deux cercles est hachurée à 45° ; l'intérieur reste blanc. Les deux cotes portent le symbole $\varnothing$.
+\item Exemples : le maçon (plan de coupe d'une maison pour connaître l'épaisseur des murs et les fondations) ; le mécanicien (coupe d'un moteur pour réparer les pièces internes) ; le plombier (coupe des tuyaux pour choisir les diamètres) ; le menuisier (coupe des assemblages de meubles).
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Leçon N07 : Coupe simple}
+
+\courssub{Objectifs de l'activité}
+
+À la fin de cette activité, tu seras capable de :
+
+\begin{itemize}
+\item repérer et tracer un \cle{plan de coupe} sur une vue extérieure d'une pièce mécanique réelle, avec ses lettres et ses flèches d'observation ;
+\item transformer une vue extérieure en \cle{coupe simple} en appliquant les étapes d'exécution vues dans la leçon (contours en traits forts, suppression des traits interrompus, hachures à 45°, titre de la vue) ;
+\item interpréter une coupe simple : mesurer une épaisseur de matière, identifier une gorge, justifier le non-hachurage de certains éléments (bras, nervures, axes) ;
+\item vérifier ton travail à l'aide d'une grille d'auto-évaluation et corriger tes erreurs.
+\end{itemize}
+
+\courssub{Situation}
+
+À Nkongsamba, dans la région du Littoral, le menuisier-atelier de M.~Etame répare les petits moulins à manioc du quartier. Un moulin est entraîné par un moteur électrique relié à une \cle{poulie} en fonte : la courroie s'appuie dans la \cle{gorge en V} de la poulie pour transmettre le mouvement de rotation.
+
+Un client apporte une poulie fissurée. Pour commander une pièce de remplacement identique, M.~Etame doit envoyer au fondeur de Douala un \textbf{dessin technique complet}. Or, les vues extérieures seules ne montrent pas l'intérieur de la pièce : le fondeur ne verrait ni l'épaisseur réelle de la jante, ni le profil de la gorge, ni le diamètre de l'alésage central où passe l'arbre du moteur. M.~Etame décide donc de réaliser une \textbf{coupe simple} de la poulie.
+
+Il te confie son carnet de croquis. Voici les données mesurées au pied à coulisse :
+
+\begin{itemize}
+\item diamètre extérieur de la poulie : $D = \SI{120}{mm}$ ;
+\item diamètre de l'alésage central (trou pour l'arbre) : $d = \SI{20}{mm}$ ;
+\item gorge en V sur la jante : profondeur $p = \SI{10}{mm}$, largeur au sommet $\ell = \SI{16}{mm}$ ;
+\item largeur (épaisseur) de la poulie : $L = \SI{30}{mm}$ ;
+\item moyeu central : diamètre $\SI{40}{mm}$, relié à la jante par un disque plein (pas de bras) ;
+\item matériau : fonte.
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.035, every node/.style={font=\small}]
+% Vue de face (extérieure)
+\draw[popdark, line width=1pt] (0,0) circle (60);
+\draw[popdark, line width=1pt] (0,0) circle (10);
+\draw[popmuted, dashed] (0,0) circle (50);
+% Axe
+\draw[popblue, dash dot] (-75,0) -- (75,0);
+\draw[popblue, dash dot] (0,-75) -- (0,75);
+% Cotes
+\draw[poporange, <->] (-60,-70) -- (60,-70) node[midway, below, poporange]{120 mm};
+\draw[poporange, <->] (-10,14) -- (10,14) node[midway, above, poporange]{20 mm};
+\node[popdark] at (0,-95) {Vue de face};
+% Vue de profil (dessus)
+\begin{scope}[xshift=190]
+\draw[popdark, line width=1pt] (-15,-60) rectangle (15,60);
+\draw[popdark, line width=1pt] (-15,-20) rectangle (15,20);
+\draw[popmuted, dashed] (-15,-10) -- (15,-10);
+\draw[popmuted, dashed] (-15,10) -- (15,10);
+% Gorge
+\draw[popdark, line width=1pt] (-15,-60) -- (-15,-52) -- (-8,-50) -- (-15,-48);
+\draw[popdark, line width=1pt] (-15,60) -- (-15,52) -- (-8,50) -- (-15,48);
+\draw[popdark, line width=1pt] (15,-60) -- (15,-52) -- (8,-50) -- (15,-48);
+\draw[popdark, line width=1pt] (15,60) -- (15,52) -- (8,50) -- (15,48);
+\draw[popblue, dash dot] (-25,0) -- (25,0);
+\draw[poporange, <->] (22,-15) -- (22,15) node[midway, right, poporange]{30 mm};
+\node[popdark] at (0,-95) {Vue de profil};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{Les deux vues extérieures de la poulie relevées par M.~Etame : vue de face (gauche) et vue de profil (droite). Les traits interrompus fins représentent les arêtes cachées (alésage, fond de gorge).}
+\end{popfigure}
+
+\textbf{Problème posé :} comment représenter l'intérieur de cette poulie pour que le fondeur comprenne exactement sa forme et ses dimensions, sans ambiguïté ?
+
+\courssub{Consignes}
+
+Travail en groupes de quatre élèves. Matériel : feuille de dessin, règle, équerre, compas, crayon HB et crayon gras, rapporteur.
+
+\begin{enumerate}
+\item \textbf{Repérage du plan de coupe.} Sur la vue de profil, trace le plan de coupe A--A passant par l'axe de la poulie : représente les traces du plan en \cle{traits mixtes fins} (tireté long -- point), place les lettres A aux extrémités et dessine les \cle{flèches} indiquant le sens d'observation (vers la gauche, pour obtenir la vue de face en coupe).
+\item \textbf{Prévision.} Avant de dessiner, réponds par écrit : quelles parties de la poulie seront réellement « sciées » par le plan A--A ? Quelles parties resteront visibles derrière le plan ?
+\item \textbf{Exécution de la coupe.} Transforme la vue de face en \textbf{coupe A--A} en suivant les étapes de la leçon :
+\begin{enumerate}
+\item reporte les contours de la matière sectionnée en \cle{traits forts continus} ;
+\item supprime tous les \cle{traits interrompus} (arêtes cachées) devenus inutiles ;
+\item hachure les surfaces coupées avec des \cle{hachures à 45°}, fines, régulièrement espacées ;
+\item écris le titre « \textbf{Coupe A--A} » sous la vue.
+\end{enumerate}
+\item \textbf{Interprétation.} À l'aide de ta coupe et des cotes :
+\begin{enumerate}
+\item calcule l'épaisseur de matière $e$ entre le fond de la gorge et l'alésage central (on admettra que le fond de gorge est au diamètre $120 - 2\times 10 = \SI{100}{mm}$ et que la jante est pleine jusqu'au moyeu de diamètre $\SI{40}{mm}$) ;
+\item indique la largeur $\ell$ de la gorge au sommet et justifie sa forme en V ;
+\item la poulie est ici pleine (disque). Si elle possédait des \textbf{bras} (rayons) à la place du disque, faudrait-il les hachurer lorsque le plan de coupe passe dans leur longueur ? Justifie ta réponse par la règle de représentation.
+\end{enumerate}
+\item \textbf{Vérification.} Échange ta feuille avec un autre groupe et remplis la grille d'auto-évaluation ci-dessous (oui / non) :
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Réussi ?} \\
+\hline
+Le plan A--A est repéré (traits mixtes, lettres, flèches) & \\
+\hline
+Les contours de la matière coupée sont en traits forts & \\
+\hline
+Les traits interrompus ont été supprimés dans la vue en coupe & \\
+\hline
+Les hachures sont à 45°, fines et régulières & \\
+\hline
+Le titre « Coupe A--A » est écrit sous la vue & \\
+\hline
+\end{tabularx}
+\end{center}
+\item \textbf{Correction collective.} Un rapporteur par groupe présente son tracé au tableau ; la classe compare les résultats et corrige les écarts.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{itemize}
+\item \textbf{Plan de coupe :} surface imaginaire qui « scie » l'objet ; on la repère par ses traces en traits mixtes fins, terminées par des lettres majuscules et des flèches indiquant le sens de la vue.
+\item \textbf{Étapes d'une coupe simple :} (1) choisir et repérer le plan de coupe ; (2) imaginer la partie avant enlevée ; (3) dessiner les contours de la matière coupée en traits forts ; (4) supprimer les traits interrompus cachés derrière le plan ; (5) hachurer les surfaces sectionnées à 45° ; (6) titrer la vue (« Coupe A--A »).
+\item \textbf{Règles de représentation :} les hachures d'une même pièce ont la même direction et le même espacement ; les éléments pleins coupés \emph{dans leur longueur} (bras, nervures, axes, vis, arbres) \textbf{ne se hachurent pas}.
+\item \textbf{Calculs utiles :} rayon $R = \dfrac{D}{2}$ ; épaisseur radiale entre deux cercles concentriques $e = \dfrac{D_1 - D_2}{2}$.
+\end{itemize}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Coupe A--A de la poulie du moulin à manioc]
+Énoncé : réaliser la coupe A--A de la poulie ($D = \SI{120}{mm}$, alésage $d = \SI{20}{mm}$, gorge en V de profondeur $\SI{10}{mm}$, largeur $\SI{16}{mm}$, moyeu de $\SI{40}{mm}$, largeur de poulie $\SI{30}{mm}$), puis calculer l'épaisseur de matière entre le fond de gorge et l'alésage et justifier le non-hachurage des bras dans le cas d'une poulie à bras.
+\tcblower
+\textbf{Étape 1 : repérage du plan de coupe.} Sur la vue de profil, on trace une ligne en traits mixtes fins (tireté long -- point) sur l'axe horizontal de la poulie. Aux deux extrémités, on place un trait fort court perpendiculaire, la lettre A, et une flèche dirigée vers la gauche : c'est le sens dans lequel on regarde pour obtenir la vue de face en coupe.
+
+\textbf{Étape 2 : prévision.} Le plan A--A contient l'axe : il scie la jante (avec la gorge en V), le disque plein, le moyeu et l'alésage. Toute la matière traversée sera hachurée ; seul le vide de l'alésage ($\varnothing\,\SI{20}{mm}$) et le vide de la gorge restent blancs.
+
+\textbf{Étape 3 : exécution.} On dessine la vue de face en coupe : deux rectangles de matière (au-dessus et au-dessous de l'axe) représentant la section du disque et de la jante, le moyeu autour de l'alésage, et le profil en V de la gorge sur le bord extérieur. Tous les contours sont en traits forts. On supprime les traits interrompus : en coupe, l'alésage et le fond de gorge sont visibles directement, les arêtes cachées n'ont plus lieu d'être. On hachure à 45° toutes les surfaces de matière coupée, avec le même espacement partout (c'est une seule pièce). On écrit « Coupe A--A » sous la vue.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.05, every node/.style={font=\small}]
+% Axes de symétrie
+\draw[popblue, dash dot] (-70,0) -- (70,0);
+\draw[popblue, dash dot] (0,-25) -- (0,25);
+% Zone hachurée (matière) : rectangle extérieur moins gorge moins alésage
+% On utilise l'option even odd rule pour créer le trou de l'alésage
+\draw[popdark, line width=1pt, pattern=north east lines, pattern color=popdark, even odd rule]
+  (-60, 15) -- (60, 15) 
+  -- (60, 8) -- (50, 0) -- (60, -8) 
+  -- (60, -15) -- (-60, -15) -- cycle
+  (0,0) circle (10); % Alésage (trou)
+% Contours forts
+\draw[popdark, line width=1pt] (-60, 15) -- (60, 15) 
+  -- (60, 8) -- (50, 0) -- (60, -8) 
+  -- (60, -15) -- (-60, -15) -- cycle;
+\draw[popdark, line width=1pt] (0,0) circle (10); % Contour alésage
+% Limite moyeu (trait fin)
+\draw[popmuted, thin] (0,0) circle (20);
+% Cotes
+\draw[poporange, <->] (-60,-22) -- (60,-22) node[midway, below, poporange]{120 mm};
+\draw[poporange, <->] (0,-22) -- (10,-22) node[midway, below, poporange]{10 mm};
+\draw[poporange, <->] (22,-15) -- (22,15) node[midway, right, poporange]{30 mm};
+\draw[poporange, <->] (50,0) -- (60,0) node[midway, above, poporange]{10 mm};
+\draw[poporange, <->] (60,0) -- (60,8) node[midway, right, poporange]{8 mm};
+\node[popdark] at (0,-30) {\textbf{Coupe A--A}};
+\end{tikzpicture}
+\end{center}
+\legende{Coupe A--A de la poulie : la matière est hachurée à 45° (nord-est), l'alésage (Ø20) et la gorge (V) sont vides. Le cercle fin (Ø40) marque la limite du moyeu.}
+\end{popfigure}
+
+\textbf{Étape 4 : interprétation.}
+\begin{enumerate}
+\item \textbf{Épaisseur de matière.} Le fond de gorge se situe au diamètre $\SI{100}{mm}$ (rayon $\SI{50}{mm}$). Le moyeu a un diamètre de $\SI{40}{mm}$ (rayon $\SI{20}{mm}$). L'épaisseur radiale de la toile (disque plein) entre le fond de gorge et le moyeu vaut :
+\[ e_{\text{toile}} = \frac{100 - 40}{2} = \SI{30}{mm}. \]
+La distance radiale totale entre le fond de gorge (Ø100) et l'alésage (Ø20) est de $\frac{100-20}{2} = \SI{40}{mm}$, dont $\SI{10}{mm}$ de moyeu plein et $\SI{30}{mm}$ de toile. Le fondeur voit ainsi qu'il n'y a aucun risque de perçage accidentel.
+\item \textbf{Profil de la gorge.} La gorge mesure $\ell = \SI{16}{mm}$ au sommet pour $\SI{10}{mm}$ de profondeur. Sa forme en V coince la courroie par frottement sur les deux flancs : plus la poulie tire, plus la courroie se serre, ce qui évite le patinage du moulin.
+\item \textbf{Cas d'une poulie à bras.} Si la poulie avait des bras : lorsque le plan de coupe passe \emph{dans la longueur} d'un bras, on \textbf{ne hachure pas} le bras. Règle : les éléments pleins (bras, nervures, axes, arbres) coupés longitudinalement ne se hachurent pas, pour ne pas donner une fausse impression d'épaisseur massive. En revanche, un bras coupé \emph{en travers} (perpendiculairement à son axe) serait hachuré normalement.
+\end{enumerate}
+
+\textbf{Étape 5 : vérification.} La grille est remplie critère par critère ; toute case « non » est corrigée immédiatement au crayon gras avant la correction collective.
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents dans cette activité]
+\begin{itemize}
+\item Oublier de supprimer les traits interrompus : en coupe, ce qui était caché devient visible, les arêtes cachées disparaissent.
+\item Hachurer l'alésage ou le vide de la gorge : on ne hachure que la \textbf{matière réellement coupée}.
+\item Changer l'angle ou l'espacement des hachures d'une même pièce : ils doivent rester identiques partout.
+\item Hachurer les bras coupés dans leur longueur : c'est l'erreur classique sanctionnée au BEPC.
+\item Oublier les flèches d'observation ou le titre « Coupe A--A » : le dessin devient alors impossible à interpréter.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan de l'activité}
+
+Cette activité t'a permis de mettre en œuvre, sur une pièce réelle du quotidien camerounais, la \textbf{démarche complète} de la coupe simple : repérage du plan de coupe (traces, lettres, flèches), exécution méthodique (contours en traits forts, suppression des traits interrompus, hachures à 45°, titre) puis interprétation (calcul d'une épaisseur de matière, lecture du profil de gorge, application de la règle du non-hachurage des bras). Tu as constaté qu'une vue extérieure seule ne suffit pas à décrire l'intérieur d'un objet : la coupe simple est le langage qui permet à un artisan de Nkongsamba et à un fondeur de Douala de se comprendre sans se tromper. La grille d'auto-évaluation t'a enfin appris à contrôler toi-même la qualité d'un dessin technique, compétence directement exigible au BEPC.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Coupe simple}
+
+\begin{savaistu}[Pourquoi couper un objet ?]
+Dans un atelier de mécanique à Douala ou Yaoundé, un tourneur doit fabriquer un corps de pompe, un manchon de moto-taxi ou un carter de moteur. Sur le plan qu'il reçoit, l'intérieur de la pièce (alésages, gorges, perçages traversants) est souvent caché par l'enveloppe extérieure. Si le dessinateur représente tous ces détails intérieurs par des \cle{traits interrompus fins} (traits cachés) sur la vue extérieure, le dessin devient un « plat de spaghettis » illisible : on ne distingue plus les cotes, les formes, ni les tolérances. La \cle{coupe simple} est la solution normalisée : on imagine l'objet tranché par un plan, on retire la partie avant, et on regarde l'intérieur. La matière coupée apparaît en \cle{traits forts continus} et est \cle{hachurée} ; les traits cachés inutiles disparaissent. Le tourneur lit alors le plan sans ambiguïté.
+\end{savaistu}
+
+\courssub{Méthode 1 : Décider si une coupe est nécessaire}
+
+\begin{methode}[Décider d'une coupe simple]
+Pour savoir s'il faut représenter un objet en coupe, suis cette démarche :
+\begin{enumerate}
+\item \textbf{Observer} l'objet et repérer ses parties \cle{intérieures} (perçage traversant ou borgne, rainure, gorge, cavité, alésage, filetage intérieur).
+\item \textbf{Analyser} la vue extérieure : si les détails intérieurs apparaissent en \cle{traits interrompus fins} nombreux, le dessin devient confus et source d'erreurs de lecture pour l'usineur.
+\item \textbf{Compter} les traits cachés : au-delà de 2 ou 3 traits interrompus fins sur une même vue, une coupe s'impose.
+\item \textbf{Conclure} : remplacer la vue concernée par une \cle{coupe simple} qui montre l'intérieur en traits forts continus et supprime les traits cachés devenus inutiles.
+\end{enumerate}
+\textbf{Réflexe à retenir :} la coupe est un artifice de représentation : l'objet n'est pas réellement scié, on l'imagine coupé par un plan imaginaire.
+\end{methode}
+
+\begin{exoresolu}[Le corps de robinet]
+Un plombier de Douala doit fabriquer un corps de robinet en laiton. La vue de face montre 5 traits interrompus fins correspondant au perçage central traversant, au filetage intérieur et au logement du joint torique. Le dessinateur hésite : faut-il une coupe ? Justifier.
+\tcblower
+\textbf{Raisonnement :}
+\begin{enumerate}
+\item L'objet possède des parties intérieures : un perçage traversant, un filetage intérieur et un logement de joint.
+\item Sur la vue extérieure, ces détails sont représentés par 5 traits interrompus fins.
+\item 5 traits interrompus sur une même vue rendent le dessin confus et source d'erreurs de lecture pour l'usineur.
+\end{enumerate}
+\textbf{Conclusion :} oui, une coupe simple est nécessaire. On remplace la vue de face par une coupe qui fait apparaître le perçage, le filetage et le logement du joint en \cle{traits forts continus}, avec des \cle{hachures} sur la matière coupée. Le dessin devient clair et directement exploitable à l'atelier.
+\end{exoresolu}
+
+\courssub{Le plan de coupe et son repérage}
+
+\begin{definition}[Plan de coupe]
+C'est un plan imaginaire, noté $P$, qui tranche l'objet. Il est choisi \textbf{parallèle à un plan de projection principal} (frontal, horizontal ou profil) et passe par l'axe des détails intérieurs à montrer (axe de symétrie, axes des perçages).
+\end{definition}
+
+\begin{methode}[Positionner et repérer le plan de coupe]
+\begin{enumerate}
+\item \textbf{Choisir} le plan de coupe $P$ : plan vertical (coupe frontale) ou horizontal (coupe horizontale) passant par les axes des détails intérieurs.
+\item \textbf{Tracer} la trace du plan de coupe sur la vue voisine (celle qui montre l'épaisseur de la pièce) : un \cle{trait mixte fin} (tireté long -- point), renforcé en \textbf{trait fort} aux deux extrémités sur une longueur d'environ \SI{5}{mm}.
+\item \textbf{Repérer} la coupe par deux lettres majuscules identiques (A, A ; B, B ; etc.) placées aux extrémités de la trace, de part et d'autre du trait fort de renfort.
+\item \textbf{Indiquer le sens de la vue} par deux flèches perpendiculaires à la trace, dirigées vers la partie conservée (la partie qui reste après la coupe imaginaire).
+\item \textbf{Désigner} la vue en coupe au-dessus d'elle : \og \textbf{coupe A--A} \fg (lettres séparées par deux tirets).
+\end{enumerate}
+\end{methode}
+
+\begin{experience}[Repérage de la coupe A--A d'une poulie]
+\textbf{Matériel :} Feuille de dessin, règle, crayon HB, équerre. \textbf{Objet :} Poulie à gorge (dessin fournie : vue de face circulaire, vue de gauche rectangulaire avec gorge).
+\textbf{Protocole :}
+\begin{enumerate}
+\item Identifier la vue qui servira de référence pour le repérage (ici la vue de gauche, car elle montre l'épaisseur de la poulie).
+\item Tracer la trace du plan de coupe vertical passant par l'axe de la poulie sur cette vue de gauche.
+\item Appliquer les 4 éléments de repérage : trait mixte fin + renforts, lettres A--A, flèches, désignation.
+\end{enumerate}
+\textbf{Observations attendues :} La trace est horizontale sur la vue de gauche, passe par le centre. Les flèches pointent vers la droite (vers la vue de face). La vue de face est remplacée par la coupe A--A.
+\textbf{Interprétation :} Ce repérage normalisé (ISO 128-40) permet à tout technicien, au Cameroun comme ailleurs, de comprendre instantanément où et comment la pièce est coupée.
+\end{experience}
+
+\courssub{Les hachures : règles et conventions}
+
+\begin{definition}[Hachures]
+Ce sont des traits fins continus, inclinés généralement à \ang{45} par rapport aux contours principaux ou aux axes de la pièce, qui recouvrent \textbf{uniquement la matière réellement coupée} par le plan $P$. Elles indiquent la nature du matériau (acier, fonte, bronze, plastique, bois) par leur direction et leur espacement, mais en 3ème on retient surtout la règle de distinction des pièces.
+\end{definition}
+
+\begin{methode}[Règles de hachurage]
+\begin{enumerate}
+\item Hachurer \textbf{uniquement} la matière réellement coupée par le plan $P$ (jamais les parties vues en élévation, jamais les vides : trous, cavités, gorges).
+\item Tracer des \cle{traits fins continus} inclinés à \ang{45} par rapport aux contours principaux (ou aux axes de symétrie).
+\item Espacer les hachures régulièrement : espacement constant, adapté à la taille de la pièce (environ \SI{2}{mm} à \SI{4}{mm}).
+\item Pour deux pièces \textbf{adjacentes} coupées : varier la direction (pente opposée : l'une vers la droite, l'autre vers la gauche) \textbf{ou} l'espacement des hachures.
+\item Interrompre les hachures autour des \textbf{repères et chiffres} de cotation placés dans la zone hachurée (laisser un petit espace blanc).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Hachurage d'un coussinet en deux demi-coquilles]
+Un palier est constitué de deux demi-coquilles en bronze assemblées. Le plan de coupe vertical coupe les deux pièces. Expliquer comment hachurer correctement la vue en coupe.
+\tcblower
+\textbf{Analyse :} Le plan de coupe traverse la matière des deux demi-coquilles : les deux zones coupées doivent être hachurées. Le trou central (logement de l'arbre) est un vide : il n'est \textbf{pas} hachuré.
+\begin{enumerate}
+\item Demi-coquille supérieure : hachures en traits fins à \ang{45} vers la droite, espacées de \SI{3}{mm}.
+\item Demi-coquille inférieure : hachures à \ang{45} vers la \textbf{gauche} (pente opposée), espacées de \SI{3}{mm}, afin de distinguer visuellement les deux pièces.
+\item Le trou central reste blanc (pas de hachures).
+\item Les contours de la matière coupée sont tracés en \textbf{traits forts continus}.
+\end{enumerate}
+\textbf{Conclusion :} Deux directions de hachures distinctes pour deux pièces distinctes ; le vide central n'est jamais hachuré. C'est la règle qui permet de lire instantanément un montage en coupe.
+\end{exoresolu}
+
+\courssub{Étapes d'exécution d'une coupe simple}
+
+\begin{methode}[Les 6 étapes d'exécution d'une coupe simple]
+\begin{enumerate}
+\item \textbf{Analyser} l'objet : repérer les détails intérieurs à montrer (perçage axial, gorge, rainure, cavité).
+\item \textbf{Choisir} la position du plan de coupe $P$ (généralement plan de symétrie vertical passant par les axes des perçages).
+\item \textbf{Repérer} la coupe sur la vue voisine : trace en trait mixte fin, lettres identiques aux extrémités, flèches de sens.
+\item \textbf{Supprimer} mentalement la partie située entre l'observateur et le plan $P$ (la partie « devant » le plan).
+\item \textbf{Dessiner} les contours de la matière coupée en traits forts continus, puis les contours visibles au-delà du plan (partie conservée) en traits forts.
+\item \textbf{Hachurer} la matière coupée à \ang{45} en traits fins, désigner la vue (\og coupe A--A \fg) et \textbf{supprimer les traits cachés} devenus inutiles (ceux qui représentaient les détails maintenant visibles en coupe).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Coupe d'un manchon percé]
+Un manchon cylindrique en acier (diamètre extérieur \SI{40}{mm}, longueur \SI{60}{mm}) est traversé par un perçage axial de diamètre \SI{20}{mm}. Décrire l'exécution complète de la coupe longitudinale (frontale) et calculer l'épaisseur de matière hachurée de part et d'autre du perçage.
+\tcblower
+\textbf{Exécution de la coupe :}
+\begin{enumerate}
+\item Détail intérieur à montrer : le perçage axial de diamètre \SI{20}{mm}.
+\item Plan de coupe $P$ : plan vertical (frontal) passant par l'axe du manchon.
+\item Repérage : trace en trait mixte fin sur la vue de gauche (vue circulaire), lettres A et A, flèches vers la droite (vers la vue de face).
+\item On supprime la moitié avant du manchon (imaginairement).
+\item Contours en coupe : deux rectangles de matière (haut et bas), limites du perçage en traits forts continus.
+\item Hachures à \ang{45} sur les deux zones de matière ; légende \og coupe A--A \fg ; les traits interrompus du perçage disparaissent.
+\end{enumerate}
+\textbf{Calcul de l'épaisseur de matière :}
+\begin{align*}
+e &= \frac{D_{\text{ext}} - D_{\text{int}}}{2} \\
+e &= \frac{40 - 20}{2} \\
+e &= \frac{20}{2} = \SI{10}{mm}
+\end{align*}
+\textbf{Conclusion :} La coupe montre deux zones hachurées de \SI{10}{mm} d'épaisseur chacune, séparées par le vide du perçage de \SI{20}{mm}. Le dessin est désormais lisible sans aucun trait caché.
+\end{exoresolu}
+
+\courssub{Cas particuliers de représentation (éléments non hachurés)}
+
+\begin{propriete}[Éléments non hachurés en coupe longitudinale]
+Règle fondamentale (ISO 128-40) : Lorsque le plan de coupe passe \textbf{longitudinalement} (dans le sens de la longueur, parallèlement à l'axe) par certains éléments normalisés, on les représente \textbf{sans hachures} pour ne pas alourdir le dessin et signifier qu'il s'agit d'éléments standard distincts de la pièce principale :
+\begin{itemize}
+\item les \textbf{arbres, axes, tiges} ;
+\item les \textbf{vis, boulons, écrous, rondelles} ;
+\item les \textbf{clavettes, goupilles, rivets} ;
+\item les \textbf{nervures} (raidisseurs) et les \textbf{rayons de poulie} (bras) coupés longitudinalement.
+\end{itemize}
+En revanche, si ces éléments sont coupés \textbf{transversalement} (perpendiculairement à leur axe), ils sont hachurés normalement.
+\textbf{Réflexe :} Demande-toi toujours dans quel sens le plan coupe la pièce.
+\end{propriete}
+
+\begin{exoresolu}[Assemblage par vis]
+Une plaque de support en acier (épaisseur \SI{15}{mm}) est fixée sur un bâti en fonte par une vis M8 (diamètre nominal \SI{8}{mm}). La coupe A--A passe par l'axe de la vis. Un élève a hachuré la vis, la plaque et le bâti avec les mêmes hachures (même direction, même espacement). Relever toutes les erreurs et donner la représentation correcte.
+\tcblower
+\textbf{Erreurs relevées :}
+\begin{enumerate}
+\item \textbf{La vis est hachurée} : erreur. Coupée longitudinalement (le plan passe par son axe), la vis ne se hachure pas. Elle est dessinée en traits forts continus (contours du filetage extérieur et du noyau).
+\item \textbf{Mêmes hachures pour la plaque et le bâti} : erreur. Deux pièces différentes (acier et fonte) doivent avoir des hachures de directions ou d'espacements différents pour être distinguées.
+\item \textbf{Trou de passage non conforme} : le trou dans la plaque (diamètre \SI{9}{mm} pour vis M8, jeu normalisé) est un vide, il ne doit pas être hachuré.
+\end{enumerate}
+\textbf{Représentation correcte :}
+\begin{itemize}
+\item La vis : traits forts continus, \textbf{sans hachures}, traversant le trou de la plaque et se vissant dans le bâti (filetage intérieur suggéré par traits fins si nécessaire).
+\item La plaque (acier) : hachures à \ang{45} vers la droite, espacement \SI{3}{mm}.
+\item Le bâti (fonte) : hachures à \ang{45} vers la gauche (pente opposée), espacement \SI{3}{mm}.
+\item Le trou de passage dans la plaque : blanc (vide).
+\end{itemize}
+\textbf{Conclusion :} La coupe correcte montre la vis non hachurée, et deux réseaux de hachures distincts pour la plaque et le bâti. Cette convention évite de croire que la vis est soudée ou monobloc avec l'ensemble.
+\end{exoresolu}
+
+\courssub{Lire et interpréter un dessin en coupe}
+
+\begin{methode}[Lire une vue en coupe]
+\begin{enumerate}
+\item \textbf{Repérer} la désignation de la coupe (ex. \og coupe B--B \fg) et retrouver la trace du plan de coupe sur la vue voisine grâce aux lettres identiques.
+\item \textbf{Identifier} le sens d'observation grâce aux flèches (vers quelle partie on regarde).
+\item \textbf{Distinguer} les zones hachurées (matière coupée) des zones blanches (vides : perçages, cavités, gorges, trous de passage).
+\item \textbf{Différencier} les pièces par leurs hachures (direction, espacement) et reconstituer mentalement l'objet en volume.
+\item \textbf{Exploiter} la cotation : les cotes des détails intérieurs (diamètres d'alésage, profondeurs, largeurs de gorge) se placent de préférence sur la vue en coupe.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Lecture de la coupe d'un corps de pompe]
+Sur le plan d'un corps de pompe à eau (atelier de réparation à Yaoundé), la vue de face est en coupe A--A. On y voit deux zones hachurées de pentes identiques mais séparées par un contour en trait fort, une grande cavité centrale blanche et un perçage latéral blanc. Interpréter ce dessin.
+\tcblower
+\textbf{Lecture méthodique :}
+\begin{enumerate}
+\item La désignation \og coupe A--A \fg renvoie à la trace du plan $P$ sur la vue de dessus : le plan est vertical et passe par l'axe de la pompe.
+\item Les flèches indiquent que l'on regarde vers l'arrière du corps (partie conservée).
+\item Les deux zones hachurées de même pente mais séparées par un trait fort appartiennent à la \textbf{même pièce} (le corps en fonte), coupée en deux endroits par le plan : la cavité centrale les sépare.
+\item La cavité blanche centrale est la \textbf{chambre de la pompe} (vide où tourne la roue/turbine) : non hachurée.
+\item Le perçage latéral blanc est le \textbf{passage d'admission ou de refoulement} de l'eau (raccordement tuyauterie).
+\end{enumerate}
+\textbf{Conclusion :} Le corps de pompe est une seule pièce creuse : la matière (hachurée) forme la paroi, la chambre centrale et le perçage latéral (blancs) assurent le passage de l'eau. Le mécanicien comprend ainsi où percer les trous de fixation, où positionner le joint et où brider le tuyau.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au BEPC]
+\begin{enumerate}
+\item \textbf{Hachurer un vide} (perçage, cavité, trou de passage, gorge) : seule la matière réellement coupée par le plan $P$ est hachurée. C'est l'erreur la plus fréquente.
+\item \textbf{Oublier le repérage complet de la coupe} : trace en trait mixte fin, lettres identiques aux extrémités, flèches de sens, désignation \og coupe A--A \fg. Un seul élément manquant et la coupe est non conforme.
+\item \textbf{Hachurer les vis, boulons, arbres, clavettes, goupilles, rivets, nervures et rayons de poulie coupés longitudinalement} : ces éléments ne se hachurent jamais dans le sens de la longueur.
+\item \textbf{Utiliser les mêmes hachures pour deux pièces adjacentes} : il faut varier la direction (pente opposée) ou l'espacement, sinon le correcteur ne peut pas distinguer les pièces.
+\item \textbf{Laisser les traits interrompus} des détails devenus visibles après la coupe : une fois la coupe réalisée, ces traits cachés doivent disparaître et être remplacés par des traits forts continus sur la vue en coupe.
+\end{enumerate}
+\end{attention}
+
+\begin{exercice}[Entraînement : Coupe d'un écrou borgne]
+Un écrou borgne hexagonal en acier (classe 8) a un diamètre de filetage M12, une hauteur totale de \SI{18}{mm} et une profondeur de filetage de \SI{14}{mm}. Le fond du filetage est plat.
+\begin{enumerate}
+\item Dessiner la vue de face (cercle de diamètre nominal) et la vue de dessus (hexagone circonscrit au cercle).
+\item Choisir et repérer une coupe frontale A--A passant par l'axe pour montrer le fond du filetage.
+\item Exécuter la coupe A--A : contours, hachures (direction, espacement), désignation.
+\item Calculer l'épaisseur de matière restante au fond du filetage (donné : diamètre au fond de filetage \SI{10,4}{mm}, diamètre extérieur de l'écrou \SI{22}{mm} -- on considère la coupe passant par les plats de l'hexagone).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Coupe d'un écrou borgne]
+\begin{enumerate}
+\item \textbf{Vues :} Vue de face : cercle \SI{22}{mm} (diamètre aux sommets) ou cercle de filetage \SI{12}{mm} selon convention. Vue de dessus : hexagone (clé de 19 pour M12).
+\item \textbf{Repérage coupe A--A :} Sur la vue de dessus, trace horizontale (trait mixte fin) passant par le centre, lettres A--A, flèches vers le bas (vers la vue de face), désignation \og coupe A--A \fg au-dessus de la vue de face.
+\item \textbf{Exécution coupe :} La coupe traverse l'hexagone par les plats. Matière coupée : l'anneau extérieur (hachuré à \ang{45} vers la droite, esp. \SI{3}{mm}). Filetage : traits forts continus (profil du filetage). Fond du filetage : trait fort horizontal à \SI{14}{mm} du haut. Trou central (diam \SI{10,4}{mm}) : blanc. Vis non représentée (écrou seul).
+\item \textbf{Calcul épaisseur fond :} La coupe passe par les plats. Épaisseur radiale au fond : $e = \frac{D_{\text{ext, plats}} - d_{\text{fond}}}{2}$. Diamètre aux plats $\approx \SI{19}{mm}$ (clé 19). $e = \frac{19 - 10,4}{2} = \frac{8,6}{2} = \SI{4,3}{mm}$.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : les bases de la coupe]
+Pour chaque question, choisis la (ou les) bonne(s) réponse(s).
+\begin{enumerate}
+\item Une coupe simple sert à :
+\begin{enumerate}
+\item rendre le dessin plus joli ;
+\item montrer l'intérieur d'une pièce sans traits interrompus ;
+\item réduire le nombre de vues nécessaires.
+\end{enumerate}
+\item Le plan de coupe est représenté par :
+\begin{enumerate}
+\item un trait continu fort ;
+\item un trait mixte fin dont les extrémités sont en trait fort ;
+\item un trait interrompu fin.
+\end{enumerate}
+\item Les hachures sont tracées :
+\begin{enumerate}
+\item uniquement sur les parties vides de la pièce ;
+\item sur les parties de matière réellement coupées par le plan de coupe ;
+\item sur toute la vue, même le vide.
+\end{enumerate}
+\item Les flèches placées aux extrémités du plan de coupe indiquent :
+\begin{enumerate}
+\item le sens de déplacement de la scie ;
+\item le sens de regard de l'observateur ;
+\item le sens de rotation de la pièce.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux ? Justifie]
+Réponds par Vrai ou Faux, puis justifie ta réponse en une phrase.
+\begin{enumerate}
+\item Dans une coupe, les arêtes cachées par la matière restante sont toujours représentées en traits interrompus.
+\item Une vis, un axe ou une nervure coupés longitudinalement ne se hachurent pas.
+\item L'angle des hachures est en général de $45^{\circ}$ par rapport aux axes ou aux contours principaux de la pièce.
+\item Deux pièces différentes accolées dans une même coupe doivent avoir des hachures identiques (même direction, même espacement).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions à compléter]
+Recopie et complète les phrases suivantes avec les mots : \emph{plan de coupe}, \emph{hachures}, \emph{coupe}, \emph{traits interrompus}, \emph{demi-coupe}.
+\begin{enumerate}
+\item Une \ldots\ldots\ldots est la représentation d'une pièce que l'on imagine sciée par un plan, la partie située entre l'observateur et le plan étant enlevée.
+\item Le \ldots\ldots\ldots matérialise la position du plan sécant sur une vue ; il est repéré par des lettres majuscules (A-A, B-B).
+\item Les \ldots\ldots\ldots sont des traits fins parallèles qui indiquent la matière réellement coupée.
+\item Dans une coupe, on supprime en principe les \ldots\ldots\ldots devenus inutiles.
+\item Pour une pièce symétrique, on peut réaliser une \ldots\ldots\ldots : moitié vue extérieure, moitié vue en coupe, séparées par l'axe de symétrie.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs : épaisseurs de matière]
+Un manchon cylindrique (tube en acier) a un diamètre extérieur $D = \SI{50}{mm}$ et un diamètre intérieur (perçage) $d = \SI{30}{mm}$.
+\begin{enumerate}
+\item Calcule l'épaisseur $e$ de matière entre le perçage et l'extérieur.
+\item Sur une coupe A-A de ce manchon, quelle largeur totale de zones hachurées observera-t-on sur un diamètre (les deux côtés réunis) ?
+\item Le même manchon est percé transversalement d'un trou de diamètre $\SI{10}{mm}$. Ce trou doit-il être hachuré sur la coupe ? Justifie.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Tracer un plan de coupe]
+On donne la vue de face et la vue de dessus d'un support de lampe de cour de récréation : une plaque rectangulaire de $\SI{80}{mm} \times \SI{60}{mm}$, percée de deux trous cylindriques de diamètre $\SI{20}{mm}$, alignés sur l'axe de symétrie longitudinal.
+\begin{enumerate}
+\item Reproduis les deux vues à l'échelle 1.
+\item Trace le plan de coupe A-A passant par l'axe des deux trous, sur la vue de dessus : trait mixte, extrémités fortes, flèches, lettres A.
+\item Indique le sens de regard choisi et explique pourquoi l'autre sens donnerait une vue moins intéressante.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Hachurer correctement]
+Une rondelle plate (diamètre extérieur $\SI{40}{mm}$, trou central $\SI{16}{mm}$, épaisseur $\SI{5}{mm}$) est représentée en coupe A-A.
+\begin{enumerate}
+\item Dessine la coupe à l'échelle 1 (rectangle de $\SI{40}{mm} \times \SI{5}{mm}$ avec le vide central).
+\item Hachure les zones de matière avec des traits fins à $45^{\circ}$, régulièrement espacés (environ $\SI{3}{mm}$).
+\item Explique pourquoi le trou central ne reçoit aucune hachure.
+\item Écris le titre de la vue obtenue sous le dessin, selon la règle (exemple : « Coupe A-A »).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Choisir le bon plan de coupe]
+Une boîte de vitesses de moto-taxi contient un arbre cannelé et deux roulements. Trois positions de plan de coupe sont proposées :
+\begin{itemize}
+\item position 1 : plan perpendiculaire à l'axe de l'arbre ;
+\item position 2 : plan contenant l'axe de l'arbre (coupe longitudinale) ;
+\item position 3 : plan parallèle au fond de la boîte, à mi-hauteur.
+\end{itemize}
+\begin{enumerate}
+\item Pour chaque position, décris ce que la coupe montrerait.
+\item Quelle position révèle le mieux les détails intérieurs (arbre, cannelures, roulements) ? Justifie ton choix en deux ou trois phrases.
+\item Propose une désignation normalisée de ce plan de coupe (lettres, flèches, titre de la vue).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Corriger une coupe mal exécutée]
+Sur la coupe d'un corps de robinet exécutée par un élève, on relève les cinq erreurs suivantes : hachures tracées dans le vide du perçage ; traits interrompus conservés alors que les arêtes sont devenues visibles ; flèches du plan de coupe dirigées à l'opposé du sens de regard réel ; vis de réglage longitudinale hachurée ; titre de la vue absent.
+\begin{enumerate}
+\item Pour chaque erreur, cite la règle de représentation qui a été violée.
+\item Indique, pour chaque cas, la correction à apporter.
+\item Rédige une phrase de conclusion expliquant pourquoi une coupe fautive peut conduire à un mauvais usinage de la pièce en atelier.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Type BEPC : manchon percé]
+Un atelier de mécanique de Douala reçoit le plan d'un manchon de guidage en acier : cylindre extérieur de diamètre $D = \SI{60}{mm}$, de longueur $L = \SI{80}{mm}$, traversé par un perçage cylindrique de diamètre $d = \SI{30}{mm}$. On donne la vue de face (rectangle de $\SI{80}{mm} \times \SI{60}{mm}$, perçage en traits interrompus) et la vue de dessus (deux cercles concentriques).
+\begin{enumerate}
+\item Reproduis les deux vues à l'échelle 1 sur ta feuille.
+\item Trace le plan de coupe A-A sur la vue de dessus : il passe par l'axe du manchon. Place les lettres, les extrémités fortes et les flèches de regard.
+\item Complète la vue de face en coupe A-A : supprime les traits interrompus devenus inutiles, trace les contours du perçage en traits forts, hachure la matière coupée à $45^{\circ}$.
+\item Écris le titre normalisé de la vue en coupe.
+\item Calcule l'épaisseur de matière $e$ entre le perçage et la surface extérieure, puis la surface totale hachurée visible sur la coupe (on assimilera chaque zone hachurée à un rectangle de longueur $L$ et de largeur $e$).
+\item Le client demande d'alléger le manchon en portant le perçage à $d' = \SI{40}{mm}$. Calcule la nouvelle épaisseur $e'$ et dis si l'on peut encore hachurer avec le même espacement de traits.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type BEPC : lecture de la coupe d'un écrou]
+Sur le plan d'un écrou hexagonal utilisé pour fixer la roue de secours d'une camionnette, la coupe A-A cotée donne : largeur sur plats de l'hexagone $S = \SI{24}{mm}$, diamètre du taraudage (trou fileté) $d = \SI{12}{mm}$, hauteur de l'écrou $H = \SI{10}{mm}$.
+\begin{enumerate}
+\item Décris par écrit, en trois ou quatre phrases, la forme intérieure et extérieure de la pièce telle qu'elle apparaît sur la coupe A-A (extérieur hexagonal, trou central fileté, matière hachurée).
+\item Calcule la distance minimale de matière entre le taraudage et le sommet d'un plat de l'hexagone (on prendra $S/2$ comme distance du centre au milieu d'un plat).
+\item Explique pourquoi le filetage est représenté par des traits fins et non par des hachures.
+\item Le mécanicien hésite entre une coupe A-A passant par deux plats opposés et une coupe B-B passant par deux sommets opposés. Laquelle donne la plus grande largeur de matière hachurée ? Justifie à l'aide d'un calcul (distance du centre à un sommet : $R = S / \sqrt{3} \approx \SI{13,9}{mm}$).
+\item Rédige le titre des deux vues en coupe.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type BEPC : coupe d'une maison et demi-coupe d'une poulie]
+\textbf{Partie A.} Sur le plan de coupe simplifié d'une maison de quartier à Yaoundé, on relève : épaisseur des murs extérieurs $\SI{20}{cm}$, hauteur sous plafond $\SI{2,80}{m}$, profondeur des fondations $\SI{60}{cm}$, épaisseur de la dalle $\SI{15}{cm}$.
+\begin{enumerate}
+\item Qu'est-ce qu'une coupe verticale d'un bâtiment ? À quel plan de coupe correspond-elle ?
+\item Calcule la hauteur totale de maçonnerie verticale entre le bas des fondations et le plafond (fondations + dalle + hauteur sous plafond).
+\item Pourquoi les murs et les fondations sont-ils hachurés sur ce plan, alors que les pièces (séjour, chambres) ne le sont pas ?
+\end{enumerate}
+\textbf{Partie B.} Une poulie en fonte, symétrique par rapport à son axe, a les cotes suivantes : diamètre extérieur $\SI{120}{mm}$, alésage central $\SI{25}{mm}$, largeur du moyeu $\SI{40}{mm}$, gorge en V sur la jante.
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item Explique ce qu'est une demi-coupe et pourquoi elle est adaptée à cette poulie.
+\item Décris les étapes d'exécution de la demi-coupe de la vue de face : séparation par l'axe, partie extérieure, partie coupée, hachures, suppression des traits interrompus.
+\item Calcule l'épaisseur de matière entre l'alésage et le fond de gorge, en supposant le fond de gorge au diamètre $\SI{100}{mm}$.
+\item Cite deux éléments normalisés de la poulie (par exemple la clavette ou un éventuel axe) qui ne devraient pas être hachurés en coupe longitudinale, et dis pourquoi.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : les bases de la coupe]
+\begin{enumerate}
+\item \textbf{Bonnes réponses : b et c.} Une coupe simple sert à montrer l'intérieur d'une pièce sans multiplier les traits interrompus (b), ce qui rend le dessin plus lisible et permet souvent de réduire le nombre de vues nécessaires (c). La réponse a est fausse : la coupe n'a aucune vocation décorative, c'est un outil de lecture technique.
+\item \textbf{Bonne réponse : b.} Le plan de coupe est un trait mixte fin (alternance de tirets longs et de points), dont les extrémités et les changements de direction sont renforcés en trait continu fort.
+\item \textbf{Bonne réponse : b.} Les hachures ne couvrent que les parties de matière réellement coupées par le plan de coupe. Le vide (perçage, cavité) n'est jamais hachuré.
+\item \textbf{Bonne réponse : b.} Les flèches placées sur les extrémités fortes du plan de coupe indiquent le sens de regard de l'observateur, c'est-à-dire le sens dans lequel on regarde la pièce après avoir enlevé la partie avant.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux ? Justifie]
+\begin{enumerate}
+\item \textbf{Faux.} Dans une coupe, les arêtes devenues visibles par l'enlèvement de la matière avant sont tracées en traits continus forts ; on supprime en principe les traits interrompus devenus inutiles.
+\item \textbf{Vrai.} Les vis, axes, rivets, clavettes, nervures et rayons coupés longitudinalement ne se hachurent pas, par convention normalisée, afin de ne pas donner une fausse impression d'épaisseur ou de plein.
+\item \textbf{Vrai.} Les hachures sont en général inclinées à $45^{\circ}$ par rapport aux axes ou aux contours principaux de la pièce, pour éviter toute confusion avec ces lignes.
+\item \textbf{Faux.} Deux pièces accolées doivent avoir des hachures différenciées (direction ou espacement différents) afin de distinguer clairement les pièces dans un assemblage.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions à compléter]
+\begin{enumerate}
+\item Une \cle{coupe} est la représentation d'une pièce que l'on imagine sciée par un plan, la partie située entre l'observateur et le plan étant enlevée.
+\item Le \cle{plan de coupe} matérialise la position du plan sécant sur une vue ; il est repéré par des lettres majuscules (A-A, B-B).
+\item Les \cle{hachures} sont des traits fins parallèles qui indiquent la matière réellement coupée.
+\item Dans une coupe, on supprime en principe les \cle{traits interrompus} devenus inutiles.
+\item Pour une pièce symétrique, on peut réaliser une \cle{demi-coupe} : moitié vue extérieure, moitié vue en coupe, séparées par l'axe de symétrie.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs : épaisseurs de matière]
+\begin{enumerate}
+\item L'épaisseur de matière est la moitié de la différence des diamètres :
+\[ e = \frac{D - d}{2} = \frac{50 - 30}{2} = \frac{20}{2} = \SI{10}{mm}. \]
+\item Sur un diamètre de la coupe, la matière apparaît de part et d'autre du perçage : deux zones hachurées de \SI{10}{mm} chacune, soit une largeur totale de
+\[ 2 \times e = 2 \times 10 = \SI{20}{mm}. \]
+\item \textbf{Non.} Le trou transversal de \SI{10}{mm} est un vide : on ne hachure jamais le vide. Seule la matière réellement coupée par le plan de coupe reçoit des hachures ; le contour du trou est simplement tracé en traits continus forts s'il est visible sur la coupe.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Tracer un plan de coupe]
+\begin{enumerate}
+\item On reproduit à l'échelle 1 : la vue de face (rectangle de $\SI{80}{mm} \times \SI{60}{mm}$, avec les deux trous en traits interrompus si cachés) et la vue de dessus (rectangle de $\SI{80}{mm} \times \SI{60}{mm}$ avec deux cercles de diamètre \SI{20}{mm} centrés sur l'axe longitudinal).
+\item Sur la vue de dessus, on trace le plan de coupe A-A : un trait mixte fin (long tiret — point — long tiret) passant par les centres des deux trous, avec des extrémités renforcées en trait continu fort, deux flèches perpendiculaires au plan indiquant le sens de regard, et la lettre A près de chaque flèche.
+\item On choisit le sens de regard qui montre le plus de détails (par exemple vers l'avant, de façon que la coupe A-A remplace la vue de face). Le sens opposé donnerait une vue symétriquement identique ici, mais dans le cas général on choisit toujours le sens qui révèle le maximum de formes intérieures ; l'autre sens serait moins intéressant car il montrerait une face pleine sans détail supplémentaire.
+\end{enumerate}
+\textbf{Point de vigilance :} le plan de coupe se trace sur la vue où il apparaît comme une ligne (ici la vue de dessus), jamais sur la vue en coupe elle-même.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Hachurer correctement]
+\begin{enumerate}
+\item La coupe A-A de la rondelle est un rectangle de $\SI{40}{mm} \times \SI{5}{mm}$, avec un vide central de \SI{16}{mm} de large : il reste deux zones de matière de $\dfrac{40-16}{2} = \SI{12}{mm}$ de large chacune.
+\item On hachure ces deux zones avec des traits fins parallèles inclinés à $45^{\circ}$, espacés régulièrement d'environ \SI{3}{mm} (soit environ 4 traits par zone). Les hachures doivent avoir la même direction et le même espacement sur les deux zones, car il s'agit de la même pièce.
+\item Le trou central est un vide (de l'air) : il n'y a pas de matière coupée par le plan de coupe à cet endroit, donc aucune hachure. Hachurer le vide serait une erreur grave de représentation.
+\item Sous le dessin, on écrit le titre normalisé : \textbf{Coupe A-A}.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Choisir le bon plan de coupe]
+\begin{enumerate}
+\item \textbf{Position 1} (plan perpendiculaire à l'axe) : la coupe montre des sections circulaires — la section de l'arbre, ses cannelures vues de bout, les bagues des roulements vues en anneaux — mais pas la longueur des pièces ni leur disposition le long de l'arbre.
+\textbf{Position 2} (plan contenant l'axe, coupe longitudinale) : la coupe montre l'arbre sur toute sa longueur, l'enfilage des roulements, les cannelures en long, les épaulements : c'est la vue la plus riche.
+\textbf{Position 3} (plan parallèle au fond à mi-hauteur) : la coupe tranche l'arbre et les roulements transversalement à mi-hauteur ; elle ne suit aucun élément dans sa longueur et donne une image confuse.
+\item \textbf{La position 2} révèle le mieux les détails intérieurs. En contenant l'axe de l'arbre, le plan de coupe suit les pièces dans leur plus grande dimension : on voit simultanément l'arbre, ses cannelures, les deux roulements et leurs positions relatives. C'est le choix classique pour toute pièce ou mécanisme de révolution.
+\item Désignation normalisée : plan de coupe repéré \textbf{A-A} sur la vue de dessus (trait mixte fin, extrémités fortes, flèches dirigées vers l'avant, lettres A aux flèches) ; la vue obtenue est titrée \textbf{Coupe A-A}.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Corriger une coupe mal exécutée]
+\begin{enumerate}
+\item et 2. Règles violées et corrections :
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Erreur} & \textbf{Règle violée} & \textbf{Correction} \\
+\hline
+Hachures dans le vide du perçage & On ne hachure que la matière réellement coupée & Effacer les hachures du perçage, laisser le vide blanc \\
+\hline
+Traits interrompus conservés & En coupe, les arêtes devenues visibles se tracent en traits forts ; les traits interrompus inutiles sont supprimés & Remplacer par des traits continus forts, effacer le reste \\
+\hline
+Flèches inversées & Les flèches indiquent le sens de regard réel de l'observateur & Retourner les flèches dans le sens de regard choisi \\
+\hline
+Vis longitudinale hachurée & Vis, axes, rivets, nervures coupés longitudinalement ne se hachurent pas & Représenter la vis sans hachures \\
+\hline
+Titre absent & Toute vue en coupe porte un titre : « Coupe A-A » & Écrire le titre sous la vue \\
+\hline
+\end{tabularx}
+\end{center}
+\item \textbf{Conclusion :} une coupe fautive donne une image fausse de la matière et des vides de la pièce ; l'ouvrier d'atelier qui lit ce plan risque d'usiner la pièce avec de mauvaises cotes (perçage mal placé, épaisseur insuffisante), ce qui conduit au rebut de la pièce, voire à un accident en service.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type BEPC : manchon percé]
+\begin{enumerate}
+\item On reproduit à l'échelle 1 la vue de face (rectangle $\SI{80}{mm} \times \SI{60}{mm}$, perçage en traits interrompus fins) et la vue de dessus (deux cercles concentriques de diamètres \SI{60}{mm} et \SI{30}{mm}).
+\item Sur la vue de dessus, le plan de coupe A-A est un trait mixte fin passant par le centre commun des cercles, avec extrémités en trait fort, flèches de regard dirigées vers la vue de face, et lettres A.
+\item Sur la vue de face devenue Coupe A-A : les traits interrompus du perçage sont supprimés et remplacés par deux traits continus forts (contours du perçage devenu visible) ; les deux bandes de matière entre le perçage et l'extérieur sont hachurées à $45^{\circ}$, traits fins régulièrement espacés.
+\item Titre normalisé sous la vue : \textbf{Coupe A-A}.
+\item Épaisseur de matière :
+\[ e = \frac{D - d}{2} = \frac{60 - 30}{2} = \SI{15}{mm}. \]
+Surface totale hachurée (deux rectangles de longueur $L = \SI{80}{mm}$ et de largeur $e = \SI{15}{mm}$) :
+\[ S = 2 \times (L \times e) = 2 \times (80 \times 15) = 2 \times 1200 = \SI{2400}{mm^2} = \SI{24}{cm^2}. \]
+\item Nouvelle épaisseur avec $d' = \SI{40}{mm}$ :
+\[ e' = \frac{D - d'}{2} = \frac{60 - 40}{2} = \SI{10}{mm}. \]
+La zone hachurée passe de \SI{15}{mm} à \SI{10}{mm} de large : il reste assez de place pour plusieurs traits de hachures espacés de $\SI{2}{mm}$ à $\SI{3}{mm}$. \textbf{Oui}, on peut hachurer avec le même espacement ; on aura simplement moins de traits (environ 3 à 5 traits par zone au lieu de 5 à 7).
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} vues reproduites : 2 pts ; plan de coupe normalisé : 2 pts ; coupe correcte (traits forts, hachures, suppression des traits interrompus) : 2 pts ; titre : 1 pt ; calculs de $e$ et $S$ : 2 pts ; question 6 : 1 pt.
+
+\textbf{Points de vigilance :} justifier chaque calcul par la formule $e = \dfrac{D-d}{2}$ ; ne pas oublier le facteur 2 dans la surface hachurée (deux zones) ; citer la règle « on ne hachure que la matière coupée » ; convertir correctement $\SI{2400}{mm^2} = \SI{24}{cm^2}$ si la conversion est demandée.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type BEPC : lecture de la coupe d'un écrou]
+\begin{enumerate}
+\item Sur la coupe A-A, l'écrou apparaît comme un rectangle de largeur $S = \SI{24}{mm}$ (distance sur plats) et de hauteur $H = \SI{10}{mm}$. Au centre, un trou vertical de diamètre $d = \SI{12}{mm}$ traverse la pièce de part en part : c'est le taraudage, figuré par des traits fins (filetage). De part et d'autre du trou, la matière de l'écrou est hachurée à $45^{\circ}$, car elle est réellement coupée par le plan de coupe. Les flancs extérieurs correspondent à deux plats opposés de l'hexagone.
+\item Distance minimale de matière entre le taraudage et le milieu d'un plat :
+\[ e = \frac{S}{2} - \frac{d}{2} = \frac{24}{2} - \frac{12}{2} = 12 - 6 = \SI{6}{mm}. \]
+\item Le filetage n'est pas de la matière pleine coupée : c'est un profil en hélice gravé dans le trou. Par convention normalisée, il se représente par des traits fins (diamètre intérieur du filet) et non par des hachures, qui sont réservées à la matière massive réellement sectionnée.
+\item Largeur de matière hachurée :
+\begin{itemize}
+\item Coupe A-A (par deux plats opposés) : $2 \times 6 = \SI{12}{mm}$ de matière au total.
+\item Coupe B-B (par deux sommets opposés) : distance du centre au sommet $R \approx \SI{13,9}{mm}$, d'où
+\[ e' = R - \frac{d}{2} = 13,9 - 6 = \SI{7,9}{mm} \quad\text{soit}\quad 2 \times 7,9 = \SI{15,8}{mm}. \]
+\end{itemize}
+\textbf{Conclusion :} la coupe B-B passant par deux sommets opposés donne la plus grande largeur de matière hachurée ($\SI{15,8}{mm} > \SI{12}{mm}$), car le sommet est plus éloigné du centre que le milieu d'un plat.
+\item Titres des vues : \textbf{Coupe A-A} et \textbf{Coupe B-B}.
+\end{enumerate}
+\textbf{Barème indicatif (sur 10) :} description : 2 pts ; calcul de $e$ : 2 pts ; justification du filetage : 2 pts ; comparaison A-A / B-B avec calculs : 3 pts ; titres : 1 pt.
+
+\textbf{Points de vigilance :} bien distinguer distance au plat ($S/2$) et distance au sommet ($R = S/\sqrt{3}$) ; penser à doubler l'épaisseur pour obtenir la largeur totale hachurée ; la justification de la question 3 doit citer la convention de représentation normalisée des filetages.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Type BEPC : coupe d'une maison et demi-coupe d'une poulie]
+\textbf{Partie A.}
+\begin{enumerate}
+\item Une coupe verticale d'un bâtiment est la représentation de la maison que l'on imagine sciée par un plan vertical, la partie située entre l'observateur et le plan étant enlevée. Elle correspond à un plan de coupe vertical, repéré sur le plan de niveau (vue de dessus) par un trait mixte avec lettres et flèches, comme en dessin industriel.
+\item Hauteur totale de maçonnerie verticale :
+\[ H = 0{,}60 + 0{,}15 + 2{,}80 = \SI{3,55}{m}. \]
+\item Les murs et les fondations sont des parties pleines réellement coupées par le plan de coupe : ils sont donc hachurés. Les pièces (séjour, chambres) sont des vides intérieurs : le plan de coupe n'y rencontre aucune matière, elles restent donc blanches. C'est l'application directe de la règle : on ne hachure que la matière coupée.
+\end{enumerate}
+\textbf{Partie B.}
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item Une demi-coupe est la représentation d'une pièce symétrique dont une moitié est dessinée en vue extérieure et l'autre moitié en coupe, les deux moitiés étant séparées par l'axe de symétrie (trait mixte fin). Elle est adaptée à la poulie car celle-ci est symétrique par rapport à son axe : une seule vue montre à la fois l'aspect extérieur (gorge, jante) et l'intérieur (alésage, moyeu), ce qui économise une vue.
+\item Étapes d'exécution :
+\begin{enumerate}
+\item tracer l'axe de symétrie vertical en trait mixte fin, qui servira de frontière ;
+\item d'un côté de l'axe, dessiner la vue extérieure (contours de la jante, de la gorge, du moyeu) ;
+\item de l'autre côté, dessiner la coupe : contours de l'alésage en traits forts, matière hachurée à $45^{\circ}$ ;
+\item supprimer les traits interrompus devenus inutiles des deux côtés ;
+\item ne pas tracer de trait fort de séparation entre les deux moitiés : seul l'axe les sépare.
+\end{enumerate}
+\item Épaisseur de matière entre l'alésage et le fond de gorge :
+\[ e = \frac{D_{\text{gorge}} - d_{\text{alésage}}}{2} = \frac{100 - 25}{2} = \frac{75}{2} = \SI{37,5}{mm}. \]
+\item Deux éléments qui ne se hachurent pas en coupe longitudinale : \textbf{l'axe} (arbre) monté dans l'alésage et la \textbf{clavette}. Par convention normalisée, les axes, vis, rivets, clavettes et nervures coupés longitudinalement restent sans hachures, afin de ne pas alourdir le dessin ni donner une fausse impression de masse.
+\end{enumerate}
+\textbf{Barème indicatif (sur 12) :} Partie A : définition de la coupe : 2 pts ; calcul $H = \SI{3,55}{m}$ : 2 pts ; justification des hachures : 2 pts. Partie B : définition et intérêt de la demi-coupe : 2 pts ; étapes d'exécution : 2 pts ; calcul $e = \SI{37,5}{mm}$ : 1 pt ; éléments non hachurés justifiés : 1 pt.
+
+\textbf{Points de vigilance :} convertir toutes les longueurs dans la même unité avant d'additionner (Partie A : tout en mètres) ; dans la demi-coupe, la séparation des deux moitiés est l'axe, jamais un trait fort ; la justification des questions 3 et 8 doit citer explicitement la règle de représentation normalisée concernée.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept}, text width=2.4cm, align=center,
+root concept/.append style={concept color=popblue, font=\bfseries, text=white},
+level 1/.append style={level distance=3.4cm, sibling angle=60, font=\small},
+level 1 concept/.append style={text width=2.6cm}]
+\node[root concept]{La coupe simple}
+  child[concept color=poporange]{ node {Pourquoi couper ? Voir l'intérieur caché} }
+  child[concept color=popgreen]{ node {Plan de coupe : trace + flèches de visée} }
+  child[concept color=poppurple]{ node {Hachures : traits fins à 45 degrés} }
+  child[concept color=poppink]{ node {Étapes : repérer, couper, hachurer, coter} }
+  child[concept color=popgold]{ node {Règles : nervures et arbres non coupés} }
+  child[concept color=popblueL]{ node {Applications : maison, mécanique, bâtiment} };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : la coupe simple en six idées clés.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+\item Une \cle{coupe simple} est la représentation d'un objet que l'on imagine sectionné par un plan, afin de rendre visibles ses formes intérieures.
+\item Le \cle{plan de coupe} est le plan imaginaire qui sectionne l'objet ; sa trace est repérée sur une vue par un trait mixte fin, terminé par deux traits forts et des flèches indiquant le sens d'observation.
+\item Les \cle{hachures} sont des traits fins parallèles, inclinés à 45 degrés, tracés sur toutes les surfaces réellement coupées par le plan de coupe.
+\item Une \cle{demi-coupe} représente une moitié en vue extérieure et l'autre moitié en coupe (objets symétriques).
+\end{itemize}
+
+\textbf{Règles à connaître par cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Règle} & \textbf{Application} \\ \hline
+Sens des hachures & 45 degrés par rapport aux axes ; même pièce : mêmes direction et espacement. \\ \hline
+Pièces non coupées & Arbres, axes, vis, écrous, rivets, nervures, rayons : jamais hachurés quand le plan passe dans leur longueur. \\ \hline
+Arêtes cachées & En principe non représentées dans une vue en coupe. \\ \hline
+Repérage & Trace du plan cotée par des lettres majuscules (A--A) ; la vue en coupe porte le même titre. \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthode express : exécuter une coupe simple}
+\begin{enumerate}
+\item Choisir le plan de coupe qui révèle le plus de formes intérieures.
+\item Repérer sa trace (trait mixte fin, flèches, lettres A--A).
+\item Supprimer mentalement la partie située entre l'observateur et le plan.
+\item Dessiner les contours vus, hachurer les surfaces coupées.
+\item Titrer la vue (coupe A--A) et vérifier la correspondance des vues.
+\end{enumerate}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le BEPC]
+\begin{itemize}
+\item[$\square$] Je sais définir une coupe simple et expliquer son utilité.
+\item[$\square$] Je sais repérer la trace d'un plan de coupe (trait mixte fin, traits forts, flèches).
+\item[$\square$] Je sais que les flèches indiquent le sens d'observation.
+\item[$\square$] Je trace des hachures fines, parallèles, inclinées à 45 degrés.
+\item[$\square$] Je hachure uniquement les matières réellement coupées.
+\item[$\square$] Je garde le même espacement et la même direction pour une même pièce.
+\item[$\square$] Je ne hachure jamais les nervures, arbres, vis et rivets coupés en longueur.
+\item[$\square$] Je ne représente pas les arêtes cachées dans une vue en coupe.
+\item[$\square$] Je titre correctement ma vue : coupe A--A.
+\item[$\square$] Je sais citer deux applications concrètes (plan de maison, moteur de moto).
+\item[$\square$] Je vérifie la correspondance entre la vue de définition et la vue en coupe.
+\item[$\square$] Je soigne le tracé : traits fins pour les hachures, traits forts pour les contours.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

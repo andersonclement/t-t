@@ -1,0 +1,2797 @@
+% Installation simple : allumage et va-et-vient — PCT 3ème — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N22-installation-allumage-va-et-vient.tex
+\newcommand{\DOCMATIERE}{PCT}
+\newcommand{\DOCNIVEAU}{3ème}
+\newcommand{\DOCMODULE}{Module 4 : Technologie et mécanique}
+\newcommand{\DOCLECON}{N22}
+\newcommand{\DOCTITRE}{Installation simple : allumage et va-et-vient}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Installation simple : allumage et va-et-vient}{PCT}{3ème}{Module 4 : Technologie et mécanique}{N22}{1 séance (1 h chacune)}{Cette leçon présente les deux installations électriques domestiques de base : le simple allumage et le va-et-vient. L'élève apprend à identifier les appareillages, à lire et tracer les schémas normalisés, à réaliser un montage en toute sécurité et à choisir l'installation adaptée à une situation concrète.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir une installation électrique simple et citer ses éléments constitutifs
+\item À la fin de cette leçon, je sais décrire la fonction et le symbole normalisé d'un interrupteur simple, d'un interrupteur va-et-vient et d'une douille
+\item À la fin de cette leçon, je sais reconnaître sur un schéma un montage en simple allumage et un montage en va-et-vient
+\item À la fin de cette leçon, je sais tracer le schéma normalisé d'une installation en simple allumage
+\item À la fin de cette leçon, je sais tracer le schéma normalisé d'une installation en va-et-vient
+\item À la fin de cette leçon, je sais réaliser expérimentalement un montage simple allumage et un montage va-et-vient en basse tension
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Généralités sur une installation électrique domestique
+\item Les appareillages de commande et leurs symboles
+\item Le montage en simple allumage
+\item Le montage en va-et-vient
+\item Comparaison, choix de l'installation et sécurité
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir une installation électrique simple et citer ses éléments constitutifs
+\item À la fin de cette leçon, je sais décrire la fonction et le symbole normalisé d'un interrupteur simple, d'un interrupteur va-et-vient et d'une douille
+\item À la fin de cette leçon, je sais reconnaître sur un schéma un montage en simple allumage et un montage en va-et-vient
+\item À la fin de cette leçon, je sais tracer le schéma normalisé d'une installation en simple allumage
+\item À la fin de cette leçon, je sais tracer le schéma normalisé d'une installation en va-et-vient
+\item À la fin de cette leçon, je sais réaliser expérimentalement un montage simple allumage et un montage va-et-vient en basse tension
+\item À la fin de cette leçon, je sais choisir l'installation adaptée à une situation concrète (chambre, couloir, escalier)
+\item À la fin de cette leçon, je sais appliquer les consignes de sécurité lors de la manipulation d'un circuit électrique
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Circuit électrique simple : générateur, récepteur, fils de connexion, interrupteur (classe de 4ème)
+\item Notions de courant alternatif domestique : phase, neutre, terre (leçons précédentes du module)
+\item Symboles normalisés des dipôles électriques de base
+\item Conditions de fonctionnement d'une lampe (circuit fermé)
+\item Dangers de l'électricité et rôle de la prise de terre
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Généralités sur une installation électrique domestique}
+
+\courssub{Situation d'accroche : la lampe de Mama Odile}
+
+À Yaoundé, dans le quartier Nlongkak, Mama Odile vient de faire construire une petite maison. Elle veut installer une lampe au plafond de son salon, qu'elle pourra allumer et éteindre depuis l'entrée de la pièce. Chez son voisin, elle remarque quelque chose d'étonnant : dans l'escalier, on peut allumer la lumière en bas, monter les marches, puis éteindre la même lampe une fois arrivé en haut. Une seule ampoule, mais deux endroits pour la commander ! Comment est-ce possible ? Quels appareils faut-il acheter chez le quincaillier ? Et surtout, comment les brancher sans risquer l'électrocution ou l'incendie ?
+
+\begin{attention}[Problématique de la leçon]
+Comment est constituée une installation électrique domestique simple ? Quels sont les rôles des différents fils et appareils ? Pourquoi faut-il respecter des règles de branchement précises ? Dans cette première partie, nous posons les bases communes aux deux installations que nous étudierons ensuite : le \cle{simple allumage} (la lampe de Mama Odile) et le \cle{va-et-vient} (l'escalier du voisin).
+\end{attention}
+
+\courssub{Qu'est-ce qu'une installation électrique simple ?}
+
+Quand tu rentres le soir dans ta chambre, tu appuies sur un bouton au mur et la lumière apparaît. Ce geste si simple met en jeu toute une chaîne d'appareils reliés entre eux par des fils conducteurs, depuis le poteau ENEO de la rue jusqu'à l'ampoule du plafond. C'est cette chaîne que nous allons étudier.
+
+\begin{definition}[Installation électrique simple]
+Une \cle{installation électrique simple} est l'ensemble des appareils et des conducteurs électriques qui permettent de \textbf{commander l'éclairage d'une pièce} à partir du réseau de distribution. Elle comprend toujours quatre éléments indispensables :
+\begin{enumerate}
+\item une \cle{source} d'énergie électrique (le réseau ENEO, qui délivre une tension de \SI{220}{V}) ;
+\item des \cle{conducteurs} (les fils électriques qui transportent le courant) ;
+\item un \cle{appareil de commande} (interrupteur ou va-et-vient) qui ouvre ou ferme le circuit ;
+\item un \cle{récepteur} (la lampe) qui transforme l'énergie électrique en lumière.
+\end{enumerate}
+À ces quatre éléments s'ajoutent des \cle{éléments de protection} (compteur, disjoncteur, fusibles) qui protègent les personnes et les biens.
+\end{definition}
+
+\begin{aretenir}[L'idée directrice]
+Une installation électrique est comme un circuit d'eau : la source joue le rôle du château d'eau (CAMWATER), les fils sont les tuyaux, l'interrupteur est le robinet, et la lampe est le point d'utilisation. Si le robinet est fermé, l'eau ne coule pas ; si l'interrupteur est ouvert, le courant ne passe pas et la lampe est éteinte.
+\end{aretenir}
+
+\courssub{Constitution générale d'une installation domestique}
+
+\courssub{Le trajet de l'électricité : du poteau ENEO à la lampe}
+
+Observons une maison camerounaise alimentée par ENEO. Le courant électrique arrive par un câble aérien ou souterrain. Il traverse successivement :
+
+\begin{enumerate}
+\item \textbf{Le compteur} : il mesure l'énergie électrique consommée (en kilowattheures, kWh). C'est grâce à lui qu'ENEO établit la facture mensuelle.
+\item \textbf{Le disjoncteur général} : c'est le gardien de l'installation. En cas de court-circuit ou de surcharge (trop d'appareils branchés en même temps), il \emph{coupe automatiquement} le courant dans toute la maison. On dit qu'il « saute » ou « disjoncte ».
+\item \textbf{Le tableau de répartition} : de là partent plusieurs circuits indépendants, chacun protégé par un \textbf{fusible} ou un petit disjoncteur divisionnaire : un circuit pour l'éclairage du salon, un autre pour les chambres, un autre pour les prises de courant, etc.
+\item \textbf{Le circuit d'éclairage} proprement dit : les fils partent du tableau, passent par l'appareil de commande (l'interrupteur), puis arrivent à la lampe, et reviennent au tableau.
+\end{enumerate}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Poteau ENEO
+\draw[line width=2pt, popdark] (0,0) -- (0,2.6);
+\draw[line width=1.5pt, popdark] (-0.7,2.3) -- (0.7,2.3);
+\node[below, popdark] at (0,0) {\textbf{1. Réseau ENEO}};
+\node[popdark] at (0,2.9) {\SI{220}{V} -- \SI{50}{Hz}};
+% Cable vers compteur
+\draw[line width=1.5pt, popline] (0.7,2.3) -- (2.2,2.3) -- (2.2,1.5);
+% Compteur
+\draw[fill=popblueL, draw=popblue, line width=1pt] (1.7,0.6) rectangle (2.7,1.5);
+\node at (2.2,1.05) {\textbf{2. Compteur}};
+% Cable vers disjoncteur
+\draw[line width=1.5pt, popline] (2.7,1.05) -- (4.1,1.05);
+% Disjoncteur
+\draw[fill=poporangeL, draw=poporange, line width=1pt] (4.1,0.6) rectangle (5.3,1.5);
+\node at (4.7,1.05) {\textbf{3. Disjoncteur}};
+% Cable vers tableau
+\draw[line width=1.5pt, popline] (5.3,1.05) -- (6.5,1.05);
+% Tableau
+\draw[fill=poppurpleL, draw=poppurple, line width=1pt] (6.5,0.4) rectangle (7.9,1.7);
+\node[align=center] at (7.2,1.05) {\textbf{4. Tableau}\\ \textbf{+ fusibles}};
+% Fils phase et neutre vers interrupteur
+\draw[line width=1.5pt, red] (7.9,1.4) -- (9.3,1.4);
+\draw[line width=1.5pt, blue] (7.9,0.7) -- (10.9,0.7) -- (10.9,2.6);
+\node[red, above] at (8.6,1.4) {Phase};
+\node[blue, below] at (9.4,0.7) {Neutre};
+% Interrupteur
+\draw[fill=popgreenL, draw=popgreen, line width=1pt] (9.3,1.1) rectangle (10.3,1.7);
+\node[align=center] at (9.8,1.4) {\scriptsize\textbf{5.}};
+\node[below, align=center] at (9.8,1.05) {\scriptsize Interrupteur};
+% Fil phase coupée vers lampe
+\draw[line width=1.5pt, red] (10.3,1.4) -- (10.9,1.4) -- (10.9,2.2);
+% Lampe
+\draw[fill=popgoldL, draw=popgold, line width=1pt] (10.9,2.4) circle (0.35);
+\draw[popgold] (10.69,2.19) -- (11.11,2.61);
+\draw[popgold] (10.69,2.61) -- (11.11,2.19);
+\node[right, popdark] at (11.3,2.4) {\textbf{6. Lampe}};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma simplifié d'une installation électrique domestique : le courant part du réseau ENEO (1), traverse le compteur (2), le disjoncteur général (3), le tableau de répartition avec ses fusibles (4), puis le circuit d'éclairage : le fil de phase (rouge) passe par l'interrupteur (5) avant d'arriver à la lampe (6), tandis que le fil neutre (bleu) va directement à la lampe.}
+\end{popfigure}
+
+\courssub{Les trois fils : phase, neutre et terre}
+
+Dans les câbles d'une maison, on trouve des fils de couleurs différentes. Ces couleurs ne sont pas choisies au hasard : elles obéissent à une \textbf{norme internationale} que tout électricien doit respecter. Chaque couleur indique le rôle du fil.
+
+\begin{definition}[Phase, neutre et terre]
+\begin{itemize}
+\item La \cle{phase} (fil \textbf{rouge} ou \textbf{marron}) est le fil qui \emph{amène} le courant depuis le réseau. C'est le fil « sous tension » : il est dangereux de le toucher.
+\item Le \cle{neutre} (fil \textbf{bleu}) est le fil de \emph{retour} du courant vers le réseau. Sa tension est proche de zéro volt ; il est beaucoup moins dangereux, mais on ne doit jamais le toucher non plus par précaution.
+\item La \cle{terre} (fil \textbf{vert et jaune}) est un fil de \emph{sécurité}. Relié à une tige métallique plantée dans le sol, il évacue vers la terre les courants de fuite éventuels (par exemple si le fil de phase touche la carcasse métallique d'un fer à repasser). Il ne sert jamais à alimenter un appareil en fonctionnement normal.
+\end{itemize}
+\end{definition}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Fil} & \textbf{Couleur normalisée} & \textbf{Rôle} & \textbf{Danger} \\
+\hline
+Phase (L) & Rouge ou marron & Amène le courant depuis le réseau (fil sous tension, \SI{220}{V}) & Très dangereux : risque d'électrocution \\
+\hline
+Neutre (N) & Bleu & Ramène le courant vers le réseau (tension proche de \SI{0}{V}) & Peu dangereux, mais à ne jamais toucher \\
+\hline
+Terre & Vert et jaune & Protège les personnes en évacuant les courants de fuite vers le sol & Aucun en fonctionnement normal \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{experience}[Observation : reconnaître les fils dans une boîte d'encastrement]
+\textbf{Matériel} : une vieille boîte d'interrupteur démontée (hors tension !), un tournevis testeur, des gants.
+
+\textbf{Protocole} : avec un adulte, et après avoir coupé le disjoncteur général, ouvrir une boîte d'interrupteur et observer les fils.
+
+\textbf{Observations} : on distingue des fils de couleurs différentes. Le fil arrivant à l'interrupteur est rouge ou marron (phase). Dans les boîtes de jonction du plafond, on trouve aussi un fil bleu (neutre) qui va directement à la douille de la lampe.
+
+\textbf{Interprétation} : le courant arrive à la lampe par la phase, traverse le filament de l'ampoule, et repart par le neutre. L'interrupteur est placé sur le trajet de la phase.
+
+\textbf{Conclusion} : dans une installation correcte, l'appareil de commande coupe toujours le fil de phase.
+\end{experience}
+
+\courssub{La règle fondamentale : la commande coupe toujours la phase}
+
+Pourquoi l'interrupteur doit-il être branché sur la phase et non sur le neutre ? Raisonnons ensemble.
+
+Supposons qu'on branche l'interrupteur sur le fil neutre. Quand on éteint, le circuit est bien ouvert : plus de courant, la lampe s'éteint. Tout semble normal. \textbf{Mais} le fil de phase, lui, arrive toujours jusqu'à la douille de la lampe : celle-ci reste \emph{reliée au réseau}, donc \emph{sous tension}. Si quelqu'un dévisse l'ampoule en croyant le circuit hors tension et touche le plot central de la douille, le courant traverse son corps vers la terre : c'est l'électrocution.
+
+En revanche, si l'interrupteur coupe la phase, la douille entière est déconnectée du réseau quand la lampe est éteinte. On peut alors changer l'ampoule sans danger.
+
+\begin{propriete}[Règle de branchement de la commande (admise)]
+Dans toute installation électrique, l'appareil de commande (interrupteur, va-et-vient) se branche \textbf{toujours sur le fil de phase}, jamais sur le fil neutre. Ainsi, lorsque le circuit est ouvert (lampe éteinte), le récepteur et sa douille sont complètement hors tension. Cette règle, admise au niveau de la classe de 3ème, est une règle de sécurité obligatoire exigible au BEPC.
+\end{propriete}
+
+\begin{attention}[Erreur fréquente et dangereuse]
+Brancher l'interrupteur sur le neutre est l'erreur la plus fréquente des installations faites « à la va-vite ». Conséquence : la lampe s'éteint normalement, \textbf{mais sa douille reste sous tension}. Le danger est invisible ! Retiens bien : \emph{lampe éteinte} ne signifie pas \emph{circuit hors tension}. Avant toute intervention sur une installation, on coupe le disjoncteur général.
+\end{attention}
+
+\begin{methode}[Repérer la phase avec un tournevis testeur (manipulation réservée à un adulte)]
+Le tournevis testeur est un petit outil contenant une lampe néon. Voici comment un adulte l'utilise :
+\begin{enumerate}
+\item Vérifier que le testeur fonctionne sur une prise dont on connaît la phase.
+\item Toucher avec la pointe du tournevis le plot ou le fil à tester, tout en posant un doigt sur le capuchon métallique du testeur.
+\item Observer : si la lampe néon \textbf{s'allume}, le fil testé est la \textbf{phase} ; si elle reste éteinte, c'est le neutre ou la terre.
+\item Marquer le fil de phase repéré avant tout branchement.
+\end{enumerate}
+\textbf{Consigne absolue} : cette manipulation se fait circuit sous tension ; elle est strictement réservée à un adulte. Un élève ne doit jamais la réaliser seul.
+\end{methode}
+
+\begin{savaistu}[Le courant domestique au Cameroun]
+Au Cameroun, ENEO distribue un courant \textbf{alternatif} de tension efficace \SI{220}{V} et de fréquence \SI{50}{Hz}. « Alternatif » signifie que le courant change de sens 50 fois par seconde ; « \SI{50}{Hz} » veut dire 50 oscillations par seconde. C'est la même norme qu'en Europe. Aux États-Unis, c'est \SI{110}{V} à \SI{60}{Hz} : voilà pourquoi certains appareils américains ne fonctionnent pas correctement chez nous ! Dans les quartiers non encore raccordés, beaucoup de familles utilisent un groupe électrogène : les règles de sécurité (commande sur la phase, mise à la terre) restent exactement les mêmes.
+\end{savaistu}
+
+\courssub{Les deux types d'installations simples étudiés}
+
+Selon le nombre d'endroits d'où l'on veut commander une même lampe, on distingue deux montages :
+
+\begin{itemize}
+\item Le \cle{simple allumage} : une lampe commandée depuis \textbf{un seul endroit}, par un seul interrupteur. C'est le cas de la lampe du salon de Mama Odile, commandée depuis l'entrée. On l'utilise dans les chambres, les salons, les cuisines.
+\item Le \cle{va-et-vient} : une lampe commandée depuis \textbf{deux endroits différents}, grâce à deux appareils spéciaux appelés « va-et-vient ». C'est le cas de l'escalier du voisin : on allume en bas, on éteint en haut. On l'utilise dans les escaliers, les longs couloirs, ou une chambre (commande à la porte et près du lit).
+\end{itemize}
+
+\begin{exemplebox}[Confort et sécurité au quotidien]
+Imagine un couloir de dix mètres sans va-et-vient : pour le traverser la nuit, il faudrait marcher dans le noir jusqu'à l'interrupteur situé à l'autre bout, avec le risque de trébucher. Le va-et-vient supprime ce danger : on allume avant de s'engager, on éteint une fois arrivé. De même, dans un escalier, pouvoir allumer avant de monter évite bien des chutes. Le choix du bon montage est donc une question de \textbf{confort}, mais aussi de \textbf{sécurité}.
+\end{exemplebox}
+
+\begin{exoresolu}[Identifier les éléments d'une installation]
+\textbf{Énoncé.} Dans la maison de Mama Odile, on relève les éléments suivants : un compteur ENEO, un disjoncteur général, un fusible de \SI{10}{A} pour le circuit du salon, un interrupteur mural, une lampe de \SI{60}{W}, des fils rouge et bleu. 
+\begin{enumerate}
+\item Classer ces éléments en quatre catégories : source/protection, conducteurs, commande, récepteur.
+\item Sur quel fil (rouge ou bleu) l'interrupteur doit-il être branché ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Source et protection} : le compteur ENEO (mesure de l'énergie fournie par la source), le disjoncteur général et le fusible de \SI{10}{A} (protections contre les surintensités). \textbf{Conducteurs} : les fils rouge (phase) et bleu (neutre). \textbf{Commande} : l'interrupteur mural. \textbf{Récepteur} : la lampe de \SI{60}{W}.
+\item L'interrupteur doit être branché sur le fil \textbf{rouge}, c'est-à-dire la \textbf{phase}. Justification : c'est la règle fondamentale de sécurité. Ainsi, lorsque l'interrupteur est ouvert, la douille de la lampe est entièrement hors tension et l'on peut changer l'ampoule sans risque d'électrocution.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Citer les quatre éléments indispensables d'une installation électrique simple et donner le rôle de chacun.
+\item Quelle est la couleur normalisée du fil de neutre ? Du fil de terre ?
+\item Papa Nicolas a branché l'interrupteur de sa chambre sur le fil neutre. La lampe fonctionne pourtant normalement. Expliquer pourquoi ce montage est quand même dangereux.
+\item Pour chaque pièce, choisir le montage adapté (simple allumage ou va-et-vient) et justifier : (a) les toilettes ; (b) un escalier à deux niveaux ; (c) un long couloir ; (d) un placard.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice « À toi de jouer »]
+\begin{enumerate}
+\item La source (fournit l'énergie électrique : réseau ENEO \SI{220}{V}) ; les conducteurs (transportent le courant : phase et neutre) ; l'appareil de commande (ouvre ou ferme le circuit : interrupteur) ; le récepteur (transforme l'énergie électrique : la lampe).
+\item Le neutre est \textbf{bleu} ; la terre est \textbf{verte et jaune}.
+\item La lampe s'allume et s'éteint normalement car le circuit est bien ouvert ou fermé. Mais quand la lampe est éteinte, la douille reste reliée à la phase, donc sous tension : toute personne qui touche l'intérieur de la douille risque l'électrocution. La commande doit toujours couper la phase.
+\item (a) Toilettes : simple allumage (une seule entrée). (b) Escalier : va-et-vient (commander en bas et en haut). (c) Long couloir : va-et-vient (commander aux deux extrémités). (d) Placard : simple allumage (un seul accès).
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de cette section]
+\begin{itemize}
+\item Une installation électrique simple commande l'éclairage d'une pièce : source ENEO (\SI{220}{V}), conducteurs, appareil de commande, récepteur, éléments de protection (compteur, disjoncteur, fusibles).
+\item La phase (rouge/marron) amène le courant, le neutre (bleu) le ramène, la terre (vert-jaune) protège les personnes.
+\item Règle d'or : l'appareil de commande se branche \textbf{toujours sur la phase}.
+\item Deux montages au programme : le \textbf{simple allumage} (un point de commande) et le \textbf{va-et-vient} (deux points de commande), que nous détaillerons dans les sections suivantes.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Les appareillages de commande et leurs symboles}
+
+Dans la section précédente, nous avons suivi le trajet du courant dans une installation domestique : du compteur ENEO au disjoncteur général, puis vers les différents circuits de la maison (éclairage, prises, gros appareils). Mais entre le disjoncteur et ta lampe de chambre, il y a un acteur indispensable : l'\cle{appareillage de commande}, ce petit boîtier mural sur lequel tu appuies chaque soir. Pour réaliser ou lire le schéma d'une installation, il faut d'abord connaître ces appareillages, comprendre leur fonctionnement interne et savoir les reconnaître grâce à leurs \cle{symboles normalisés}. C'est l'objet de cette section.
+
+\courssub{L'interrupteur simple (unipolaire)}
+
+\textbf{Intuition.} Un interrupteur est comme un pont mobile sur une route : quand le pont est abaissé, les voitures (le courant) passent ; quand il est levé, tout s'arrête. L'interrupteur n'a qu'un seul rôle : \emph{ouvrir} ou \emph{fermer} le circuit.
+
+\begin{definition}[Interrupteur simple]
+Un \cle{interrupteur simple} (ou interrupteur unipolaire) est un appareillage de commande qui possède \textbf{deux bornes} de raccordement et \textbf{deux positions} :
+\begin{itemize}
+\item position \textbf{fermée} (ON) : les deux bornes sont reliées à l'intérieur, le courant passe, la lampe s'allume ;
+\item position \textbf{ouverte} (OFF) : les deux bornes sont séparées, le circuit est coupé, la lampe s'éteint.
+\end{itemize}
+\end{definition}
+
+\begin{aretenir}[Symbole normalisé de l'interrupteur simple]
+Sur les schémas d'installation, l'interrupteur simple est représenté par un cercle traversé par un trait oblique terminé par un petit trait perpendiculaire (voir figure ci-dessous). Ce symbole est \textbf{normalisé} : il est le même dans tous les pays et sur tous les plans d'électricien.
+\end{aretenir}
+
+\begin{attention}[Où placer l'interrupteur ?]
+L'interrupteur simple se monte toujours sur le fil de \cle{phase} (fil rouge, marron ou noir), jamais sur le neutre (fil bleu). Ainsi, quand l'interrupteur est ouvert, la lampe n'est plus sous tension et on peut changer l'ampoule sans danger.
+\end{attention}
+
+\courssub{L'interrupteur va-et-vient}
+
+\textbf{Situation problème.} Dans un couloir ou un escalier, tu allumes la lumière en bas et tu veux l'éteindre en haut. Un seul interrupteur simple ne suffit pas : il en faut deux, qui commandent la \emph{même} lampe. C'est le rôle du \cle{va-et-vient}.
+
+\begin{definition}[Interrupteur va-et-vient]
+Un \cle{interrupteur va-et-vient} est un appareillage de commande qui possède \textbf{trois bornes} :
+\begin{itemize}
+\item une borne \textbf{commune}, repérée par la lettre \textbf{L} (ou parfois C ou P) ;
+\item deux bornes dites de \textbf{navette}, repérées \textbf{1} et \textbf{2}.
+\end{itemize}
+À l'intérieur, un contact mobile relie la borne commune L soit à la borne 1, soit à la borne 2. À chaque action sur le bouton, le contact bascule d'une borne de navette à l'autre. Le va-et-vient n'interrompt jamais complètement le circuit : il \emph{aiguille} le courant vers l'un des deux fils de navette.
+\end{definition}
+
+\begin{experience}[Observation du basculement d'un va-et-vient]
+\textbf{Matériel :} un interrupteur va-et-vient démonté, un multimètre réglé sur le mode « continuité » (bip sonore).\\
+\textbf{Protocole :}
+\begin{enumerate}
+\item Bouton en position haute : toucher la borne L et la borne 1 avec les pointes de touche. Le multimètre sonne-t-il ? Recommencer avec L et la borne 2.
+\item Actionner le bouton (position basse) et refaire les deux mesures.
+\end{enumerate}
+\textbf{Observations :} en position haute, la continuité existe entre L et 1 (le bip sonne) mais pas entre L et 2. Après basculement, c'est l'inverse : continuité entre L et 2, plus rien entre L et 1.\\
+\textbf{Interprétation :} à chaque action, la borne commune L change de contact. Le va-et-vient fonctionne comme un aiguillage de chemin de fer à deux voies.\\
+\textbf{Conclusion :} un va-et-vient relie en permanence la borne commune à l'une des deux bornes de navette, et bascule à chaque action.
+\end{experience}
+
+\begin{methode}[Identifier la borne commune d'un va-et-vient au multimètre]
+Sur un va-et-vient dont les repères sont effacés, voici comment retrouver la borne commune :
+\begin{enumerate}
+\item Régler le multimètre sur le mode continuité (symbole sonore) ou sur le plus petit calibre ohmmètre.
+\item Choisir une borne quelconque et la tester avec les deux autres, bouton dans une position fixe.
+\item Actionner le bouton et recommencer les mesures.
+\item La borne qui présente une continuité avec \emph{l'une ou l'autre} des deux autres bornes (selon la position du bouton) est la \textbf{borne commune L}. Les deux bornes qui ne présentent \emph{jamais} de continuité entre elles sont les navettes 1 et 2.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Repérage des bornes sur un va-et-vient du marché]
+Moussa achète un va-et-vient de marque courante au marché de Douala. Au dos de l'appareil, il lit trois repères gravés : « L », « 1 » et « 2 ». La borne L est souvent isolée d'un côté du boîtier, tandis que les bornes 1 et 2 sont côte à côte de l'autre côté. Il branche le fil de phase (rouge) sur L du premier va-et-vient, relie les bornes 1 et 2 des deux appareils par deux fils de navette (orange), et raccorde la borne L du second va-et-vient à la lampe. L'installation fonctionne : la lampe s'allume et s'éteint depuis les deux endroits.
+\end{exemplebox}
+
+\begin{attention}[Ne pas confondre va-et-vient et interrupteur double]
+Le \textbf{va-et-vient} possède 3 bornes et commande \emph{un seul} point lumineux depuis deux endroits. L'\textbf{interrupteur double} possède deux boutons et 4 bornes : il commande \emph{deux circuits indépendants} (par exemple une lampe de chambre et une lampe de couloir) depuis un seul boîtier. Utiliser l'un à la place de l'autre est une erreur classique au BEPC et dans la vie pratique !
+\end{attention}
+
+\begin{savaistu}[Un va-et-vient peut servir d'interrupteur simple]
+Astuce d'électricien : si tu n'as qu'un va-et-vient sous la main, tu peux l'utiliser comme interrupteur simple ! Il suffit de brancher les fils sur la borne commune L et sur \emph{une seule} des deux bornes de navette (1 ou 2), en laissant l'autre libre. L'inverse est impossible : un interrupteur simple ne peut jamais remplacer un va-et-vient, car il n'a que deux bornes.
+\end{savaistu}
+
+\courssub{La douille et la lampe}
+
+La \cle{douille} est le support qui reçoit l'ampoule et la relie au circuit. Elle possède deux contacts : le \textbf{plot central} (au fond de la douille) et le \textbf{côté fileté} (la vis métallique).
+
+\begin{aretenir}[Règle de sécurité de la douille]
+Le fil de \textbf{phase} doit être raccordé au \cle{plot central} de la douille, et le fil de \textbf{neutre} à la partie filetée. Ainsi, même si l'interrupteur est mal placé ou si l'ampoule n'est pas complètement vissée, la partie accessible (le filetage) reste au potentiel du neutre, ce qui réduit fortement le risque d'électrisation lors du changement d'ampoule.
+\end{aretenir}
+
+Sur les schémas, la lampe est représentée par un cercle barré d'une croix (voir figure).
+
+\courssub{Autres appareillages (pour information)}
+
+\begin{itemize}
+\item La \cle{prise de courant} : appareillage permettant de brancher les appareils mobiles (fer à repasser, chargeur de téléphone). Symbole : un demi-cercle ou un petit rectangle avec deux fiches. Les prises modernes comportent une \textbf{borne de terre} (broche ou ergot) reliée au fil vert-jaune.
+\item La \cle{boîte de dérivation} : boîtier où arrivent et repartent les fils ; elle permet de répartir le courant vers plusieurs points de la maison.
+\item Les \cle{dominos} (ou bornes de connexion) : petits connecteurs à vis qui servent à joindre proprement deux fils à l'intérieur des boîtes, sans soudure.
+\end{itemize}
+
+\courssub{Tableau récapitulatif des symboles normalisés}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Appareillage} & \textbf{Rôle} & \textbf{Repères des bornes} \\
+\hline
+Interrupteur simple & Ouvre ou ferme un seul circuit & 2 bornes (entrée, sortie) \\
+\hline
+Va-et-vient & Aiguille le courant vers l'une des deux navettes & L (commune), 1 et 2 (navettes) \\
+\hline
+Lampe (douille) & Convertit l'énergie électrique en lumière & Phase au plot central, neutre au filetage \\
+\hline
+Prise de courant & Alimente les appareils mobiles & Phase, neutre, terre \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Interrupteur simple
+\draw[thick] (0,0) -- (0.6,0);
+\draw[thick] (0.6,0) -- (1.5,0.5);
+\fill (0.6,0) circle (0.05); \fill (1.6,0) circle (0.05);
+\draw[thick] (1.6,0) -- (2.2,0);
+\node[below, align=center] at (1.1,-0.3) {Interrupteur\\ simple};
+% Va-et-vient
+\draw[thick] (3.5,0) -- (4.1,0);
+\draw[thick] (4.1,0) -- (5.0,0.45);
+\fill (4.1,0) circle (0.05); \fill (5.1,0.5) circle (0.05); \fill (5.1,-0.5) circle (0.05);
+\draw[thick] (5.1,0.5) -- (5.7,0.5); \draw[thick] (5.1,-0.5) -- (5.7,-0.5);
+\node[left] at (3.5,0) {L}; \node[right] at (5.7,0.5) {1}; \node[right] at (5.7,-0.5) {2};
+\node[below, align=center] at (4.6,-0.9) {Va-et-vient};
+% Lampe
+\draw[thick] (7.5,0) circle (0.35);
+\draw[thick] (7.25,-0.25) -- (7.75,0.25); \draw[thick] (7.25,0.25) -- (7.75,-0.25);
+\node[below] at (7.5,-0.5) {Lampe};
+% Prise
+\draw[thick] (9.3,0.3) arc (90:270:0.3);
+\draw[thick] (9.3,0.3) -- (9.9,0.3); \draw[thick] (9.3,-0.3) -- (9.9,-0.3);
+\draw[thick] (9.9,0.3) -- (9.9,-0.3);
+\node[below] at (9.6,-0.5) {Prise};
+\end{tikzpicture}
+\legende{Symboles normalisés utilisés dans les schémas d'installation : interrupteur simple, va-et-vient (borne commune L et navettes 1 et 2), lampe et prise de courant.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.05, every node/.style={font=\small}]
+% Boîtier
+\draw[thick, fill=popcream, rounded corners] (0,0) rectangle (6,3);
+\node[above] at (3,3) {\textbf{Vue éclatée d'un va-et-vient}};
+% Borne commune
+\draw[thick, fill=popblueL] (-0.6,1.4) rectangle (0,1.8);
+\node[left, color=popblue] at (-0.6,1.6) {\textbf{L} (borne commune)};
+\draw[thick, popblue] (0,1.6) -- (1.4,1.6);
+% Contact mobile
+\draw[very thick, poporange] (1.4,1.6) -- (3.4,2.3);
+\fill[popdark] (1.4,1.6) circle (0.07);
+\node[poporange, above] at (2.4,2.15) {contact mobile};
+% Bornes navettes
+\draw[thick, fill=popgreenL] (6,2.1) rectangle (6.6,2.5);
+\draw[thick, fill=popgreenL] (6,0.7) rectangle (6.6,1.1);
+\node[right, color=popgreen] at (6.6,2.3) {\textbf{1} (navette)};
+\node[right, color=popgreen] at (6.6,0.9) {\textbf{2} (navette)};
+\draw[thick, popgreen] (5.6,2.3) -- (6,2.3);
+\draw[thick, popgreen] (5.6,0.9) -- (6,0.9);
+\fill[popdark] (5.6,2.3) circle (0.07); \fill[popdark] (5.6,0.9) circle (0.07);
+% Bouton
+\draw[thick, fill=poppurpleL, rounded corners] (2.5,3.1) rectangle (3.5,3.7);
+\draw[thick, dashed, poppurple] (3,3.1) -- (2.7,2.35);
+\node[above] at (3,3.7) {bouton poussoir};
+% Flèche bascule
+\draw[->, thick, poppink, dashed] (3.4,2.3) .. controls (4.3,1.6) .. (4.6,1.05);
+\node[poppink] at (4.9,1.6) {bascule};
+\end{tikzpicture}
+\legende{Schéma éclaté d'un interrupteur va-et-vient : en appuyant sur le bouton, le contact mobile relie la borne commune L soit à la navette 1 (position représentée), soit à la navette 2 (après bascule).}
+\end{popfigure}
+
+\begin{exoresolu}[Identifier un appareillage]
+Énoncé. Sur le plan d'une maison, un électricien a dessiné un appareillage comportant trois bornes repérées L, 1 et 2, placé en bas d'un escalier. a) De quel appareillage s'agit-il ? b) Quel est le rôle de la borne L ? c) Où doit-on brancher le fil de phase ? d) Cet appareillage peut-il être remplacé par un interrupteur simple ? Justifier.
+\tcblower
+Solution. a) Il s'agit d'un \textbf{interrupteur va-et-vient}, reconnaissable à ses trois bornes L, 1 et 2. b) La borne L est la \textbf{borne commune} : elle est reliée, à l'intérieur de l'appareil, soit à la borne 1, soit à la borne 2 selon la position du bouton. c) Le fil de phase se branche sur la \textbf{borne commune L} du premier va-et-vient (celui qui reçoit l'arrivée du courant). d) Non : un interrupteur simple ne possède que deux bornes et ne peut pas aiguiller le courant vers deux navettes ; il est donc impossible de commander la lampe depuis deux endroits avec un interrupteur simple.
+\end{exoresolu}
+
+\begin{exercice}[Symboles et bornes]
+1) Dessine le symbole normalisé d'un va-et-vient et légende ses trois bornes. 2) Un élève affirme : « Un interrupteur double et un va-et-vient, c'est la même chose. » Corrige cette erreur en une phrase. 3) Pourquoi raccorde-t-on la phase au plot central de la douille ?
+\end{exercice}
+
+\begin{corrige}[Exercice : Symboles et bornes]
+1) Voir la figure des symboles : cercle ou contact basculant entre deux plots, bornes L (commune), 1 et 2 (navettes). 2) Faux : le va-et-vient (3 bornes) commande une seule lampe depuis deux endroits, tandis que l'interrupteur double (2 boutons, 4 bornes) commande deux circuits indépendants. 3) Pour que la partie accessible de la douille (le filetage) reste au neutre : on peut alors dévisser l'ampoule sans toucher une pièce sous tension.
+\end{corrige}
+
+Maintenant que nous savons reconnaître chaque appareillage et son symbole, nous pouvons passer au montage le plus simple : le \emph{simple allumage}, objet de la section suivante.
+
+\coursec{Le montage en simple allumage}
+
+Dans la section précédente, nous avons découvert les appareillages de commande — interrupteur simple, va-et-vient, bouton-poussoir — et appris à reconnaître leurs symboles normalisés. Il est temps maintenant de les assembler dans une installation réelle. Commençons par le montage le plus simple et le plus répandu dans nos maisons : le \cle{simple allumage}. C'est le montage qui te permet, en entrant dans ta chambre le soir, d'allumer la lampe du plafond d'un seul geste, au même endroit où tu l'éteindras en te couchant.
+
+\courssub{Définition et principe du simple allumage}
+
+Imagine la chambre de ta maison : une seule porte, une seule lampe au plafond, un seul interrupteur sur le mur, juste à côté de la porte. Tu appuies : la lampe s'allume. Tu appuies à nouveau : elle s'éteint. Toute la commande se fait depuis \textbf{un seul endroit}. C'est exactement cela, le simple allumage.
+
+\begin{definition}[Le simple allumage]
+Le \cle{simple allumage} est une installation électrique dans laquelle un point lumineux (une lampe) est commandé — allumé ou éteint — depuis \textbf{un seul endroit}, au moyen d'un \textbf{interrupteur simple}.
+\end{definition}
+
+Le principe repose sur une idée que tu connais déjà depuis la classe de 4ème : un courant électrique ne peut circuler que dans un circuit \textbf{fermé}. L'interrupteur simple n'est rien d'autre qu'un « pont » mobile placé sur le chemin du courant :
+\begin{itemize}
+\item interrupteur en position \textbf{fermée} (ON) : le circuit est complet, le courant circule, la lampe \textbf{brille} ;
+\item interrupteur en position \textbf{ouverte} (OFF) : le circuit est coupé, le courant ne circule plus, la lampe \textbf{s'éteint}.
+\end{itemize}
+
+\begin{aretenir}[La règle d'or du câblage]
+Dans une installation domestique, l'interrupteur doit toujours être placé sur le fil de \cle{phase} (le fil « dangereux », de couleur rouge, marron ou noire), \textbf{jamais} sur le fil de \cle{neutre} (bleu). Ainsi, lorsque l'interrupteur est ouvert, la lampe n'est plus reliée à la phase : on peut changer l'ampoule sans risque d'électrisation. Le chemin normalisé est donc :
+\[ \text{Phase} \longrightarrow \text{Interrupteur} \longrightarrow \text{Lampe} \longrightarrow \text{Neutre} \]
+\end{aretenir}
+
+\courssub{Mise en évidence expérimentale}
+
+Avant de câbler une vraie maison, mettons en évidence le fonctionnement du simple allumage sur une maquette de travaux pratiques, en \textbf{basse tension} (donc sans danger).
+
+\begin{experience}[La lampe ne brille que si le circuit est fermé]
+\textbf{Matériel :} une pile plate de \SI{4,5}{V} (ou un transformateur \SI{12}{V}), une lampe de \SI{3,5}{V} sur support, un interrupteur simple, trois fils de connexion.
+
+\textbf{Protocole :}
+\begin{enumerate}
+\item Relier un pôle de la pile à une borne de l'interrupteur.
+\item Relier l'autre borne de l'interrupteur à une borne de la lampe.
+\item Relier l'autre borne de la lampe au second pôle de la pile.
+\item Interrupteur ouvert : observer la lampe. Puis fermer l'interrupteur : observer à nouveau.
+\end{enumerate}
+
+\textbf{Observations :}
+\begin{itemize}
+\item Interrupteur ouvert : la lampe reste \textbf{éteinte}.
+\item Interrupteur fermé : la lampe \textbf{brille}.
+\end{itemize}
+
+\textbf{Interprétation :} l'interrupteur ouvert crée une coupure dans le circuit : les électrons ne peuvent plus circuler. En le fermant, on rétablit la continuité du circuit et le courant traverse la lampe, qui convertit l'énergie électrique en lumière et en chaleur.
+
+\textbf{Conclusion :} dans un montage en simple allumage, la lampe n'est traversée par le courant que si l'unique interrupteur est fermé. Un seul point de commande suffit à contrôler totalement l'éclairage.
+\end{experience}
+
+\begin{attention}[Sécurité : la première règle de l'électricien]
+\textbf{Erreur fréquente :} modifier un montage — déplacer un fil, resserrer une borne, changer une lampe — alors que le circuit est encore alimenté. C'est la cause de nombreux courts-circuits en TP et d'accidents domestiques graves sous le \SI{220}{V} du réseau ENEO.
+
+\textbf{Règle absolue :} avant toute intervention sur un circuit, on \textbf{coupe l'alimentation} (on débranche la pile en TP, on ouvre le disjoncteur général à la maison), puis on \textbf{vérifie l'absence de tension}. On ne remet sous tension qu'après avoir terminé et contrôlé le montage.
+\end{attention}
+
+\courssub{Le schéma normalisé du simple allumage}
+
+Pour représenter une installation sur le papier, l'électricien n'a pas le droit de dessiner « à sa façon » : il utilise des \textbf{symboles normalisés}, identiques dans le monde entier. Le schéma électrique du simple allumage fait apparaître les quatre éléments de la chaîne : la phase, l'interrupteur, la lampe et le neutre.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Fil de phase (rouge) : du haut vers l'interrupteur
+\draw[very thick, popink] (0,2.6) -- (0,1.1);
+\node[left, popink] at (0,2.6) {\textbf{Phase} (rouge)};
+\fill[popink] (0,2.6) circle (2pt);
+% Interrupteur simple : borne basse + levier ouvert
+\fill[popdark] (0,1.1) circle (2.2pt);
+\fill[popdark] (0,-0.1) circle (2.2pt);
+\draw[very thick, popdark] (0,-0.1) -- (0.75,0.85);
+\node[right, popdark] at (0.85,0.75) {Interrupteur simple};
+\node[right, popmuted] at (0.85,0.35) {(symbole normalisé)};
+% Fil phase après interrupteur vers la lampe
+\draw[very thick, popink] (0,-0.1) -- (0,-1.6);
+% Lampe : cercle avec croix
+\draw[very thick, poporange] (0,-2.3) circle (0.7);
+\draw[very thick, poporange] (-0.5,-1.8) -- (0.5,-2.8);
+\draw[very thick, poporange] (0.5,-1.8) -- (-0.5,-2.8);
+\node[right, poporange] at (0.9,-2.3) {\textbf{Lampe} (point lumineux)};
+% Fil neutre (bleu) : de la lampe vers le bas
+\draw[very thick, popblue] (0,-3.0) -- (0,-4.3);
+\fill[popblue] (0,-4.3) circle (2pt);
+\node[left, popblue] at (0,-4.3) {\textbf{Neutre} (bleu)};
+% Flèche du sens du courant
+\draw[-{Stealth[length=3mm]}, thick, popgreen] (1.6,2.2) -- (1.6,-3.8);
+\node[right, popgreen] at (1.7,-0.8) {Sens du courant};
+\node[right, popgreen] at (1.7,-1.3) {quand l'interrupteur};
+\node[right, popgreen] at (1.7,-1.8) {est fermé};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma normalisé du montage en simple allumage : le courant part de la phase (fil rouge), traverse l'interrupteur simple, puis la lampe, et revient par le neutre (fil bleu). L'interrupteur est représenté ici en position ouverte : la lampe est éteinte.}
+\end{popfigure}
+
+\begin{methode}[Tracer le schéma d'un simple allumage en 4 étapes]
+\begin{enumerate}
+\item \textbf{Repérer les éléments} de l'installation : la source (phase et neutre), l'interrupteur simple, la lampe.
+\item \textbf{Tracer le fil de phase} (rouge) depuis l'alimentation jusqu'à la borne d'entrée de l'interrupteur, puis de la borne de sortie de l'interrupteur jusqu'à la lampe.
+\item \textbf{Tracer le fil de neutre} (bleu) directement de la lampe vers l'alimentation, \emph{sans passer par l'interrupteur}.
+\item \textbf{Vérifier la chaîne} dans l'ordre : Phase $\rightarrow$ Interrupteur $\rightarrow$ Lampe $\rightarrow$ Neutre, et contrôler que chaque symbole est correctement dessiné (levier de l'interrupteur, cercle barré d'une croix pour la lampe).
+\end{enumerate}
+\end{methode}
+
+\courssub{Le schéma d'installation : implanter le montage dans une pièce}
+
+Le schéma électrique montre les \emph{liaisons} entre les appareils. Mais l'électricien qui travaille dans une maison a besoin d'un second document : le \cle{schéma d'installation} (ou plan d'implantation), qui indique \emph{où} placer chaque élément dans la pièce. Deux règles pratiques guident ce placement :
+\begin{itemize}
+\item l'\textbf{interrupteur} est fixé sur le mur, \textbf{près de la porte d'entrée}, à environ \SI{1,10}{m} du sol : on le trouve naturellement en entrant, même dans le noir ;
+\item le \textbf{point lumineux} est placé \textbf{au centre du plafond} pour éclairer uniformément toute la pièce.
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.15, every node/.style={font=\small}]
+% Murs de la chambre
+\draw[very thick, popdark] (0,0) rectangle (6,4);
+% Ouverture de la porte (mur du bas, à gauche)
+\draw[popcream, line width=3pt] (0.6,0) -- (1.6,0);
+\draw[very thick, popdark] (0.6,0) -- (0.6,-0.05);
+% Arc de porte
+\draw[popmuted, dashed] (1.6,0) arc (0:90:1);
+\node[popmuted] at (1.1,-0.45) {Porte};
+% Interrupteur près de la porte
+\draw[fill=popink] (0.35,0.12) circle (0.12);
+\node[popink, align=center] at (0.4,0.75) {Interrupteur};
+\node[popink, align=center] at (0.4,0.38) {\SI{1,10}{m} du sol};
+% Point lumineux au plafond (centre)
+\draw[very thick, poporange] (3,2) circle (0.35);
+\draw[very thick, poporange] (2.75,1.75) -- (3.25,2.25);
+\draw[very thick, poporange] (3.25,1.75) -- (2.75,2.25);
+\node[poporange, align=center] at (4.6,2.3) {Point lumineux};
+\node[poporange, align=center] at (4.6,1.95) {(au plafond, au centre)};
+% Cheminement des fils
+\draw[popblue, thick, dashed] (0.35,0.12) -- (0.35,3.7) -- (3,3.7) -- (3,2.35);
+\node[popblue, rotate=90] at (0.12,2.1) {fils encastrés};
+% Lit et table (mobilier)
+\draw[popgreenL, thick, fill=popgreenL!40] (4.3,2.6) rectangle (5.8,3.8);
+\node[popdark] at (5.05,3.2) {Lit};
+\draw[poppurpleL, thick, fill=poppurpleL!40] (0.4,2.9) rectangle (1.5,3.7);
+\node[popdark] at (0.95,3.3) {Table};
+% Cotes
+\draw[{Stealth}-{Stealth}, popmuted] (0,-0.85) -- (6,-0.85);
+\node[popmuted] at (3,-1.1) {\SI{4}{m}};
+\draw[{Stealth}-{Stealth}, popmuted] (6.3,0) -- (6.3,4);
+\node[popmuted, rotate=90] at (6.6,2) {\SI{3}{m}};
+\node[popdark] at (3,4.35) {\textbf{Plan de la chambre (vue de dessus)}};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma d'installation d'un simple allumage dans une chambre : l'interrupteur (point rouge) est placé près de la porte, à \SI{1,10}{m} du sol ; le point lumineux (symbole orange) est au centre du plafond. Les fils (pointillés bleus) cheminent dans les murs et la dalle du plafond.}
+\end{popfigure}
+
+\begin{savaistu}[Pourquoi l'interrupteur est-il à 1,10 m du sol ?]
+Les normes d'installation électrique recommandent de placer les interrupteurs à environ \SI{1,10}{m} du sol fini, juste à côté de la porte d'entrée de la pièce. Cette hauteur n'est pas un hasard : elle convient à la main d'un adulte comme à celle d'un enfant d'une dizaine d'années, et elle tient l'appareillage hors de portée des tout-petits. À l'inverse, les prises de courant sont placées plus bas (environ \SI{30}{cm} du sol) pour éviter que les fiches ne pendent dans le vide. Observe chez toi : tu retrouveras très probablement ces hauteurs !
+\end{savaistu}
+
+\courssub{Réalisation pratique du montage}
+
+Réaliser un simple allumage sur une maquette (ou, plus tard, dans une installation réelle) demande de la méthode. Voici l'ordre des opérations qu'un bon électricien respecte toujours.
+
+\begin{methode}[Câbler un simple allumage pas à pas]
+\begin{enumerate}
+\item \textbf{Couper l'alimentation} : ouvrir le disjoncteur général (ou retirer la pile en TP) et vérifier l'absence de tension.
+\item \textbf{Préparer les conducteurs} : dénuder chaque extrémité de fil sur environ \SI{1}{cm}, sans entailler le brin de cuivre.
+\item \textbf{Raccorder la phase à l'interrupteur} : fil de phase sur la borne d'entrée, puis un fil (dit « fil retour lampe ») de la borne de sortie vers la lampe.
+\item \textbf{Raccorder le neutre directement à la lampe}, sans passer par l'interrupteur.
+\item \textbf{Serrer fermement chaque connexion} : une borne mal serrée chauffe, s'oxyde et peut provoquer un départ de feu. Tirer légèrement sur chaque fil pour vérifier qu'il tient.
+\item \textbf{Vérifier le montage} : comparer le câblage au schéma normalisé, contrôler qu'aucun fil dénudé ne touche un autre conducteur.
+\item \textbf{Remettre sous tension} et essayer : fermer puis ouvrir l'interrupteur.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Les trois erreurs de câblage les plus fréquentes]
+\begin{itemize}
+\item \textbf{Placer l'interrupteur sur le neutre} : la lampe s'allume et s'éteint normalement, mais sa douille reste reliée à la phase en permanence — danger mortel lors du changement d'ampoule !
+\item \textbf{Connexions mal serrées} : un mauvais contact crée des étincelles et un échauffement local ; c'est une cause fréquente d'incendie dans les installations vieillissantes.
+\item \textbf{Oublier de couper l'alimentation} avant de modifier le montage : en TP, on grille la maquette ; sous \SI{220}{V}, on risque l'électrocution. On coupe d'abord, on travaille ensuite, on vérifie, et seulement alors on réalimente.
+\end{itemize}
+\end{attention}
+
+\courssub{Usages, vérification et dépannage}
+
+Le simple allumage est le bon choix chaque fois qu'une pièce ne possède qu'\textbf{un seul accès} ou qu'un seul point de commande suffit : la \textbf{chambre}, le \textbf{salon}, la \textbf{cuisine}, les toilettes, un \textbf{magasin} ou une boutique du quartier. En revanche, dès qu'une pièce a deux entrées (un couloir, un escalier, un grand séjour à deux portes), il faudra commander la lampe depuis deux endroits : ce sera le rôle du \cle{va-et-vient}, que nous étudierons maintenant.
+
+Une fois le montage terminé, il faut \textbf{vérifier son fonctionnement} et savoir rechercher une panne simple. Raisonnons comme un dépanneur.
+
+\begin{exemplebox}[La lampe ne s'allume pas : que vérifier ?]
+L'interrupteur est fermé, mais la lampe reste éteinte. On procède par ordre, du plus simple au plus compliqué :
+\begin{enumerate}
+\item \textbf{La lampe est-elle grillée ?} On la remplace par une lampe neuve : c'est la cause la plus fréquente (le filament est coupé, le circuit reste ouvert même interrupteur fermé).
+\item \textbf{Y a-t-il un mauvais contact ?} Après avoir coupé l'alimentation, on resserre chaque borne et on vérifie que la lampe est bien vissée dans sa douille.
+\item \textbf{L'alimentation arrive-t-elle ?} Disjoncteur déclenché, fusible fondu, pile usée en TP : on contrôle la source.
+\item \textbf{Le circuit est-il complet ?} On compare le câblage au schéma : un fil oublié ou débranché laisse le circuit ouvert.
+\end{enumerate}
+\end{exemplebox}
+
+Terminons par un petit calcul très utile au BEPC : connaître l'intensité du courant qui traverse la lampe permet de choisir correctement les fils et la protection de l'installation.
+
+\begin{exoresolu}[Intensité du courant dans une lampe de 60 W]
+\textbf{Énoncé.} Une lampe de puissance $P = \SI{60}{W}$ est installée en simple allumage dans un salon alimenté sous la tension $U = \SI{220}{V}$ du réseau ENEO. Calculer l'intensité $I$ du courant qui traverse cette lampe lorsqu'elle brille.
+\tcblower
+\textbf{Solution détaillée.}
+
+On connaît la relation entre la puissance, la tension et l'intensité :
+\[ P = U \times I \]
+On en déduit l'intensité :
+\[ I = \frac{P}{U} \]
+Application numérique :
+\begin{align*}
+I &= \frac{60}{220} \\
+I &\approx \SI{0,27}{A}
+\end{align*}
+\textbf{Conclusion :} la lampe est traversée par un courant d'intensité $I \approx \SI{0,27}{A}$, soit environ \SI{270}{mA}. C'est une intensité faible : un fil de section courante (\SI{1,5}{mm^{2}}) et un disjoncteur de \SI{10}{A} ou \SI{16}{A} conviennent largement pour un circuit d'éclairage.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Dans la cuisine de Mme Etoundi, une lampe de \SI{100}{W} est commandée en simple allumage sous \SI{220}{V}.
+\begin{enumerate}
+\item Dessiner le schéma normalisé de cette installation (phase, interrupteur, lampe, neutre).
+\item Calculer l'intensité du courant traversant la lampe.
+\item La lampe ne s'allume plus. Citer deux causes possibles et la vérification correspondante.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : la cuisine de Mme Etoundi]
+\begin{enumerate}
+\item Le schéma comporte, dans l'ordre : le fil de phase (rouge) arrivant sur l'interrupteur simple, un fil de l'interrupteur vers la lampe (cercle barré d'une croix), puis le fil de neutre (bleu) revenant de la lampe vers l'alimentation. L'interrupteur est bien sur la phase.
+\item $I = \dfrac{P}{U} = \dfrac{100}{220} \approx \SI{0,45}{A}$.
+\item Causes possibles : la lampe est grillée (on la remplace par une lampe neuve) ; un mauvais contact ou une borne desserrée (on coupe l'alimentation puis on resserre les connexions). On peut aussi vérifier le disjoncteur.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel du simple allumage]
+\begin{itemize}
+\item Le simple allumage commande une lampe depuis \textbf{un seul endroit}, grâce à un \textbf{interrupteur simple}.
+\item La lampe ne brille que si le circuit est \textbf{fermé}.
+\item La chaîne de câblage normalisée est : \textbf{Phase $\rightarrow$ Interrupteur $\rightarrow$ Lampe $\rightarrow$ Neutre} ; l'interrupteur se place toujours sur la phase.
+\item L'interrupteur s'installe près de la porte, à environ \SI{1,10}{m} du sol ; le point lumineux au centre du plafond.
+\item Avant toute intervention : \textbf{couper, vérifier, câbler, contrôler, puis seulement réalimenter}.
+\item Intensité traversant la lampe : $I = \dfrac{P}{U}$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Le montage en va-et-vient}
+
+\courssub{Définition et principe du va-et-vient}
+
+Imagine maintenant un long couloir qui relie le salon aux chambres, ou l'escalier qui monte à l'étage. Il y a une porte (ou un accès) à chaque bout. Si tu installes un simple allumage avec l'interrupteur au bas de l'escalier, tu allumes, tu montes dans le noir, et tu ne peux pas éteindre en haut ! Il te faut commander la même lampe depuis \textbf{deux endroits différents}. C'est la fonction du \cle{va-et-vient}.
+
+\begin{definition}[Le va-et-vient]
+Le \cle{va-et-vient} est une installation électrique dans laquelle un point lumineux est commandé — allumé ou éteint — depuis \textbf{deux endroits différents}, au moyen de \textbf{deux interrupteurs va-et-vient}.
+\end{definition}
+
+Un interrupteur va-et-vient n'est pas un interrupteur simple : il possède \textbf{trois bornes} (une borne commune et deux bornes de « navettes »). Il ne coupe pas le circuit, il \textbf{dévie} le courant vers l'un ou l'autre des deux fils de liaison (les \cle{navettes}) qui relient les deux interrupteurs.
+
+\begin{aretenir}[Différence clé : simple vs va-et-vient]
+\begin{itemize}
+\item \textbf{Interrupteur simple (2 bornes) :} il \textbf{ouvre} ou \textbf{ferme} le circuit (contact NO — Normalement Ouvert).
+\item \textbf{Interrupteur va-et-vient (3 bornes) :} il \textbf{bascule} le courant entre deux chemins (contact inverseur : une borne commune C, et deux bornes 1 et 2). Il n'a pas de position « arrêt » : il est toujours connecté soit sur 1, soit sur 2.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Le schéma normalisé du va-et-vient}
+
+Le schéma électrique fait apparaître six éléments principaux : la phase, le premier va-et-vient, les deux navettes, le second va-et-vient, la lampe et le neutre.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Phase
+\draw[very thick, popink] (0,2.8) -- (0,1.5);
+\node[left, popink] at (0,2.8) {\textbf{Phase} (rouge)};
+\fill[popink] (0,2.8) circle (2pt);
+
+% Va-et-vient 1 (gauche)
+\fill[popdark] (0,1.5) circle (2.2pt); % Commun
+\fill[popdark] (-1.2,0.5) circle (2.2pt); % Navette 1
+\fill[popdark] (1.2,0.5) circle (2.2pt); % Navette 2
+\draw[very thick, popdark] (0,1.5) -- (-1.2,0.5); % Levier vers navette 1 (position haute)
+\draw[very thick, popdark, dashed] (0,1.5) -- (1.2,0.5); % Autre contact (non connecté)
+\node[left, popdark] at (-1.5,0.5) {\textbf{Va-et-vient 1}};
+\node[left, popmuted] at (-1.5,0.1) {(borne C en haut)};
+
+% Navettes (horizontal)
+\draw[very thick, poppurple] (-1.2,0.5) -- (-3.5,0.5);
+\draw[very thick, poppurple] (1.2,0.5) -- (3.5,0.5);
+\node[poppurple] at (0,0.9) {\textbf{Navettes}};
+
+% Va-et-vient 2 (droite)
+\fill[popdark] (0,-1.5) circle (2.2pt); % Commun
+\fill[popdark] (-1.2,-0.5) circle (2.2pt); % Navette 1
+\fill[popdark] (1.2,-0.5) circle (2.2pt); % Navette 2
+\draw[very thick, popdark] (0,-1.5) -- (-1.2,-0.5); % Levier vers navette 1 (position haute)
+\draw[very thick, popdark, dashed] (0,-1.5) -- (1.2,-0.5); % Autre contact
+\node[left, popdark] at (-1.5,-0.5) {\textbf{Va-et-vient 2}};
+\node[left, popmuted] at (-1.5,-0.9) {(borne C en haut)};
+
+% Liaison navettes vers V2
+\draw[very thick, poppurple] (-3.5,0.5) -- (-1.2,-0.5);
+\draw[very thick, poppurple] (3.5,0.5) -- (1.2,-0.5);
+
+% Lampe
+\draw[very thick, popink] (0,-1.5) -- (0,-2.8);
+\draw[very thick, poporange] (0,-3.5) circle (0.7);
+\draw[very thick, poporange] (-0.5,-3.0) -- (0.5,-4.0);
+\draw[very thick, poporange] (0.5,-3.0) -- (-0.5,-4.0);
+\node[right, poporange] at (0.9,-3.5) {\textbf{Lampe}};
+
+% Neutre
+\draw[very thick, popblue] (0,-4.2) -- (0,-5.5);
+\fill[popblue] (0,-5.5) circle (2pt);
+\node[left, popblue] at (0,-5.5) {\textbf{Neutre} (bleu)};
+
+% Flèches courant (exemple position haute/haute = allumé)
+\draw[-{Stealth[length=2.5mm]}, thick, popgreen] (2.5,2.5) -- (2.5,0.8);
+\draw[-{Stealth[length=2.5mm]}, thick, popgreen] (2.5,0.2) -- (2.5,-1.0);
+\draw[-{Stealth[length=2.5mm]}, thick, popgreen] (2.5,-1.8) -- (2.5,-3.0);
+\node[right, popgreen] at (2.7,0.5) {Courant si les deux};
+\node[right, popgreen] at (2.7,0.1) {sont sur la même};
+\node[right, popgreen] at (2.7,-0.3) {navette (ici la 1)};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma normalisé du va-et-vient : la phase arrive sur la borne commune (C) du premier va-et-vient. Deux navettes (violet) relient les bornes 1 et 2 des deux interrupteurs. La borne commune du second va-et-vient part vers la lampe, puis le neutre. Ici, les deux leviers sont sur la navette 1 : le circuit est fermé, la lampe brille.}
+\end{popfigure}
+
+\courssub{Principe de fonctionnement : la table de vérité}
+
+Pour comprendre pourquoi la lampe s'allume ou s'éteint selon la position des deux interrupteurs, construisons une \textbf{table de vérité}. Notons l'état de la lampe (1 = allumée, 0 = éteinte) en fonction de la position des leviers (H = Haut / Navette 1, B = Bas / Navette 2).
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|c|c|X|}\hline
+\textbf{Va-et-vient 1} & \textbf{Va-et-vient 2} & \textbf{Lampe} & \textbf{Explication} \\ \hline
+H (Navette 1) & H (Navette 1) & \textbf{1 (Allumée)} & Le courant passe : Phase $\rightarrow$ C1 $\rightarrow$ Navette 1 $\rightarrow$ C2 $\rightarrow$ Lampe $\rightarrow$ Neutre \\ \hline
+H (Navette 1) & B (Navette 2) & \textbf{0 (Éteinte)} & Circuit ouvert : le courant arrive sur Navette 1 chez V2, mais le levier de V2 est sur Navette 2. \\ \hline
+B (Navette 2) & H (Navette 1) & \textbf{0 (Éteinte)} & Circuit ouvert : symétrique du cas précédent. \\ \hline
+B (Navette 2) & B (Navette 2) & \textbf{1 (Allumée)} & Le courant passe par la Navette 2. \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{propriete}[Règle du va-et-vient]
+La lampe est \textbf{allumée} si les deux interrupteurs sont sur la \textbf{même navette} (tous les deux en Haut \textbf{ou} tous les deux en Bas).
+La lampe est \textbf{éteinte} si les deux interrupteurs sont sur des \textbf{navettes différentes} (l'un en Haut, l'autre en Bas).
+\end{propriete}
+
+\courssub{Schéma d'installation : couloir ou escalier}
+
+Le schéma d'implantation place un interrupteur à chaque extrémité de la zone de passage.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, every node/.style={font=\small}]
+% Murs du couloir
+\draw[very thick, popdark] (0,0) rectangle (8,2.5);
+% Portes aux deux bouts
+\draw[popcream, line width=3pt] (0,0.8) -- (0,1.7); % Porte gauche
+\draw[popcream, line width=3pt] (8,0.8) -- (8,1.7); % Porte droite
+\node[popmuted, rotate=90] at (-0.4,1.25) {Porte};
+\node[popmuted, rotate=-90] at (8.4,1.25) {Porte};
+% Interrupteur gauche
+\draw[fill=popink] (0.35,0.12) circle (0.12);
+\node[popink, align=center] at (0.4,0.7) {Va-et-vient 1};
+\node[popink, align=center] at (0.4,0.35) {\SI{1,10}{m}};
+% Interrupteur droit
+\draw[fill=popink] (7.65,0.12) circle (0.12);
+\node[popink, align=center] at (7.6,0.7) {Va-et-vient 2};
+\node[popink, align=center] at (7.6,0.35) {\SI{1,10}{m}};
+% Point lumineux au centre plafond
+\draw[very thick, poporange] (4,1.25) circle (0.3);
+\draw[very thick, poporange] (3.8,1.05) -- (4.2,1.45);
+\draw[very thick, poporange] (4.2,1.05) -- (3.8,1.45);
+\node[poporange, align=center] at (4,1.9) {Lampe};
+\node[poporange, align=center] at (4,1.65) {(plafond)};
+% Fils (simplifiés)
+\draw[popblue, thick, dashed] (0.35,0.12) -- (0.35,2.2) -- (4,2.2) -- (4,1.55);
+\draw[popblue, thick, dashed] (7.65,0.12) -- (7.65,2.2) -- (4,2.2);
+\draw[poppurple, thick, dashed] (0.35,0.12) -- (0.35,1.0) -- (7.65,1.0) -- (7.65,0.12); % Navettes entre interrupteurs (simplifié)
+\node[poppurple] at (4,0.6) {Navettes (dans le mur)};
+% Cotes
+\draw[{Stealth}-{Stealth}, popmuted] (0,-0.6) -- (8,-0.6);
+\node[popmuted] at (4,-0.85) {\SI{8}{m}};
+\node[popdark] at (4,2.85) {\textbf{Plan du couloir / escalier (vue de dessus)}};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma d'installation d'un va-et-vient dans un couloir : un va-et-vient près de chaque porte (à \SI{1,10}{m} du sol), la lampe au centre du plafond. Trois fils cheminent entre les deux interrupteurs (phase/navette/navette ou neutre/navette/navette selon le câblage), ici représentés en pointillés.}
+\end{popfigure}
+
+\courssub{Réalisation pratique du va-et-vient}
+
+Le câblage est plus délicat car il faut gérer \textbf{trois fils} entre les deux interrupteurs (deux navettes + le retour lampe ou la phase selon le schéma choisi). La méthode la plus courante en domestique est le \textbf{câblage en « navettes »} (phase sur C1, lampe sur C2, deux navettes entre 1-1 et 2-2).
+
+\begin{methode}[Câbler un va-et-vient (schéma navettes) en 6 étapes]
+\begin{enumerate}
+\item \textbf{Couper l'alimentation} et vérifier l'absence de tension (disjoncteur général ouvert).
+\item \textbf{Identifier les bornes} sur chaque va-et-vient : \textbf{C} (Commun, souvent repérée par une couleur rouge ou une encoche), \textbf{1} et \textbf{2} (Navettes).
+\item \textbf{Raccorder la phase} (rouge) sur la borne \textbf{C du premier va-et-vient}.
+\item \textbf{Raccorder les deux navettes} (fils orange ou violet) : borne \textbf{1 du V1} vers borne \textbf{1 du V2} ; borne \textbf{2 du V1} vers borne \textbf{2 du V2}. \emph{Ne pas croiser les navettes !}
+\item \textbf{Raccorder le retour lampe} (fil rouge ou noir) sur la borne \textbf{C du second va-et-vient} vers la lampe.
+\item \textbf{Raccorder le neutre} (bleu) directement sur la lampe. Serrer, vérifier, réalimenter, tester les 4 combinaisons.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges spécifiques au va-et-vient]
+\begin{itemize}
+\item \textbf{Croiser les navettes} (1 du V1 sur 2 du V2) : la lampe fonctionne « à l'envers » (allumée quand les interrupteurs sont opposés). Ce n'est pas dangereux mais déroutant et non conforme.
+\item \textbf{Confondre la borne C et une borne de navette} : la lampe ne s'allume jamais ou reste allumée en permanence.
+\item \textbf{Utiliser un interrupteur simple à la place d'un va-et-vient} : impossible à câbler correctement (manque une borne).
+\end{itemize}
+\end{attention}
+
+\courssub{Dépannage d'un va-et-vient}
+
+\begin{exemplebox}[La lampe ne s'allume plus, ou s'allume « à l'envers »]
+\begin{enumerate}
+\item \textbf{Vérifier la lampe} (grillée ?) et l'alimentation (disjoncteur ?) comme pour le simple allumage.
+\item \textbf{Tester les 4 positions} des deux interrupteurs. Si la lampe s'allume dans 2 positions sur 4 (ex: Haut/Haut et Bas/Bas) : \textbf{câblage correct}, panne probable sur la lampe ou l'alimentation.
+\item Si la lampe s'allume dans les positions \textbf{croisées} (Haut/Bas et Bas/Haut) : \textbf{les navettes sont croisées} entre les deux boîtes. Couper l'alimentation, inverser les deux fils de navettes sur l'un des deux interrupteurs.
+\item Si la lampe \textbf{ne s'allume jamais} : vérifier la continuité des navettes (multimètre en mode ohmmètre, alimentation coupée) et le bon raccordement des bornes C.
+\end{enumerate}
+\end{exemplebox}
+
+\coursec{Comparaison, choix de l'installation et sécurité}
+
+\courssub{Tableau comparatif : Simple allumage vs Va-et-vient}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Critère} & \textbf{Simple allumage} & \textbf{Va-et-vient} \\ \hline
+\textbf{Nombre de points de commande} & 1 & 2 \\ \hline
+\textbf{Appareillage utilisé} & 1 interrupteur simple (2 bornes) & 2 interrupteurs va-et-vient (3 bornes chacun) \\ \hline
+\textbf{Nombre de fils entre appareillages} & 0 (direct) & 2 (les navettes) + 1 (phase ou retour lampe) = 3 fils \\ \hline
+\textbf{Logique de commande} & Ouvert / Fermé & Bascule entre deux chemins (XOR inversé) \\ \hline
+\textbf{Usage typique (Cameroun)} & Chambre, salon, cuisine, boutique, toilettes & Couloir, escalier, grand séjour 2 portes, véranda, garage \\ \hline
+\textbf{Coût matériel (approx.)} & Faible (1 inter + 2 fils) & Modéré (2 inter + 3 à 4 fils) \\ \hline
+\end{tabularx}
+\end{center}
+
+\courssub{Choisir le bon montage : la règle de décision}
+
+\begin{methode}[Comment choisir entre simple allumage et va-et-vient ?]
+\begin{enumerate}
+\item \textbf{Compter les accès} à la pièce ou à la zone d'éclairage (portes, entrées d'escalier).
+\item \textbf{Si 1 seul accès} $\rightarrow$ \textbf{Simple allumage} (économique, simple).
+\item \textbf{Si 2 accès} $\rightarrow$ \textbf{Va-et-vient} (confort, sécurité : on ne traverse pas le noir).
+\item \textbf{Si 3 accès ou plus} (ex: grand hall 3 portes) $\rightarrow$ Il faut ajouter des \textbf{interrupteurs « inverseurs »} (4 bornes) entre les deux va-et-vient. Ce montage s'appelle le \cle{montage à inverseurs} (programme de 2nde / CAP).
+\end{enumerate}
+\end{methode}
+
+\courssub{Rappels de sécurité essentiels pour toute installation domestique}
+
+Au-delà du choix du montage, la sécurité repose sur le respect strict des normes NF C 15-100 (applicables au Cameroun via les normes locales ENEO/ANOR).
+
+\begin{aretenir}[Les 5 piliers de la sécurité électrique à la maison]
+\begin{enumerate}
+\item \textbf{Le disjoncteur différentiel (30 mA) :} il coupe le courant en quelques millisecondes s'il détecte une fuite vers la terre (risque d'électrocution). Obligatoire sur tous les circuits.
+\item \textbf{La liaison équipotentielle et la prise de terre :} toutes les parties métalliques (baignoire, machine à laver, châssis métallique, gaines) doivent être reliées à la terre.
+\item \textbf{Le respect des sections de fils :} \SI{1,5}{mm^{2}} pour l'éclairage (protégé par disjoncteur \SI{10}{A} ou \SI{16}{A}), \SI{2,5}{mm^{2}} pour les prises (disjoncteur \SI{16}{A} ou \SI{20}{A}), \SI{6}{mm^{2}} ou plus pour les gros appareils (four, climatiseur, groupe électrogène).
+\item \textbf{L'interrupteur sur la phase} (jamais sur le neutre) : rappel vital pour changer une ampoule en sécurité.
+\item \textbf{Protection mécanique des fils :} gaines ICTA, tubes, plinthes. Aucun fil nu apparent, surtout pas sous les tapis ou derrière les meubles (risque écrasement, rongeurs, chaleur).
+\end{enumerate}
+\end{aretenir}
+
+\begin{savaistu}[Le « fil pilote » et la gestion de l'énergie]
+Dans les installations modernes (maisons neuves à Yaoundé ou Douala), on ajoute souvent un \textbf{fil pilote} (fil noir) qui relie le tableau électrique aux radiateurs ou au ballon d'eau chaude. Ce fil transporte un signal de l'ENEO (ou du gestionnaire d'énergie) pour commander le « tempo » (heures creuses/heures pleines) ou délester automatiquement si la puissance souscrite est dépassée. C'est de la \textbf{domotique} de base : la technologie au service de la facture d'électricité !
+\end{savaistu}
+
+\begin{aretenir}[Bilan de la leçon : Allumage et Va-et-vient]
+\begin{itemize}
+\item \textbf{Simple allumage :} 1 commande, 1 interrupteur simple, câblage Phase $\rightarrow$ Inter $\rightarrow$ Lampe $\rightarrow$ Neutre. Usage : pièce à 1 porte.
+\item \textbf{Va-et-vient :} 2 commandes, 2 interrupteurs va-et-vient (3 bornes), 2 navettes. Règle : lampe allumée si les deux interrupteurs sont sur la \textbf{même} navette. Usage : couloir, escalier, pièce à 2 portes.
+\item \textbf{Sécurité :} Toujours couper l'alimentation avant d'intervenir. Interrupteur \textbf{toujours sur la phase}. Disjoncteur différentiel 30 mA obligatoire. Sections de fils adaptées.
+\item \textbf{Calcul utile :} $I = \dfrac{P}{U}$ pour dimensionner la protection (disjoncteur) et la section des conducteurs.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[Entraînement BEPC — Installation complète]
+M. Nkodo veut installer l'éclairage de sa nouvelle maison. Il a :
+\begin{itemize}
+\item Une chambre (1 porte, 1 lampe \SI{60}{W}).
+\item Un couloir long de \SI{6}{m} (2 portes, 1 lampe \SI{40}{W}).
+\item Le tout alimenté en \SI{220}{V} par le réseau ENEO.
+\end{itemize}
+\begin{enumerate}
+\item Pour chaque zone, indiquer le type de montage à réaliser (simple allumage ou va-et-vient) et le nombre d'interrupteurs nécessaires.
+\item Dessiner le schéma normalisé du montage du couloir (va-et-vient).
+\item Calculer l'intensité totale demandée par les deux lampes si elles fonctionnent en même temps. Le disjoncteur divisionnaire de \SI{10}{A} du circuit éclairage est-il suffisant ?
+\item Citer deux vérifications de sécurité à faire \textbf{avant} de remettre le courant après câblage.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Entraînement BEPC — Installation complète]
+\begin{enumerate}
+\item \textbf{Chambre :} 1 porte $\rightarrow$ \textbf{Simple allumage} (1 interrupteur simple). \textbf{Couloir :} 2 portes $\rightarrow$ \textbf{Va-et-vient} (2 interrupteurs va-et-vient).
+\item \textbf{Schéma couloir :} Phase (rouge) $\rightarrow$ Borne C du V1. Navette 1 (violet) V1-1 vers V2-1. Navette 2 (violet) V1-2 vers V2-2. Borne C du V2 $\rightarrow$ Lampe (cercle+croix) $\rightarrow$ Neutre (bleu). Les deux va-et-vient dessinés avec symbole inverseur (levier reliant C à 1 ou 2).
+\item \textbf{Calcul intensité totale :}
+$P_{\text{totale}} = 60 + 40 = \SI{100}{W}$.
+$I_{\text{totale}} = \dfrac{P_{\text{totale}}}{U} = \dfrac{100}{220} \approx \SI{0,45}{A}$.
+Le disjoncteur de \SI{10}{A} supporte jusqu'à \SI{10}{A}. $0,45\,\text{A} \ll 10\,\text{A}$. \textbf{Oui, il est largement suffisant} (marge de sécurité > 20).
+\item \textbf{Vérifications avant réalimentation :}
+\begin{enumerate}
+\item Continuité des conducteurs et absence de court-circuit (test au multimètre ohmmètre entre phase et neutre, alimentation coupée : résistance infinie attendue).
+\item Bon serrage de toutes les bornes (interrupteurs, douilles, boîtes de dérivation, tableau) et respect du code couleur (Phase rouge/noir/marron, Neutre bleu, Terre vert/jaune, Navettes orange/violet).
+\end{enumerate}
+\end{enumerate}
+\end{corrige}
+
+\coursec{Le montage en va-et-vient}
+
+Dans la section précédente, nous avons étudié le \cle{simple allumage} : un seul interrupteur commande une seule lampe. Ce montage convient parfaitement à une petite pièce à une seule entrée. Mais la vie quotidienne nous pose vite un problème : que faire lorsqu'on veut allumer ou éteindre \emph{la même lampe} depuis \emph{deux endroits différents} ? C'est exactement le rôle du montage en \cle{va-et-vient}, que nous allons construire pas à pas dans cette section.
+
+\courssub{Situation problème : l'escalier de la maison}
+
+\begin{exemplebox}[Une situation que tu connais bien]
+Dans une maison à étage à Yaoundé, la lampe de l'escalier doit pouvoir s'allumer \textbf{en bas}, avant de monter, puis s'éteindre \textbf{en haut}, une fois arrivé. Le soir, on veut aussi l'allumer depuis le haut avant de descendre. Avec un simple allumage, il faudrait redescendre dans le noir pour éteindre : dangereux et absurde ! Il faut donc \textbf{deux points de commande pour une seule lampe}.
+\end{exemplebox}
+
+La même question se pose dans un long couloir, dans une chambre (commander la lampe depuis la porte \emph{et} depuis le lit), ou dans une grande salle de classe à deux portes. Un seul interrupteur ne suffit plus : il faut un appareillage spécial, l'\cle{interrupteur va-et-vient}.
+
+\begin{attention}[Pourquoi deux simples interrupteurs ne suffisent pas]
+On pourrait croire qu'il suffit de brancher deux interrupteurs ordinaires en série. Mais alors, si l'un est ouvert, l'autre devient inutilisable : impossible d'allumer depuis le haut si l'interrupteur du bas est ouvert. Le problème exige un dispositif capable de \emph{changer de chemin} pour le courant, pas seulement de couper ou d'établir le circuit.
+\end{attention}
+
+\courssub{L'interrupteur va-et-vient : définition et principe}
+
+\begin{definition}[Interrupteur va-et-vient]
+Un \cle{interrupteur va-et-vient} est un appareil de commande à \textbf{trois bornes} : une borne dite \cle{commune} (repérée L, C ou P, souvent de couleur différente) et deux bornes de sortie (repérées 1 et 2). En basculant, il relie la borne commune soit à la borne 1, soit à la borne 2. Il ne coupe jamais le circuit : il \emph{aiguille} le courant vers l'un des deux chemins.
+\end{definition}
+
+\begin{definition}[Montage en va-et-vient]
+Le \cle{montage en va-et-vient} est une installation dans laquelle une même lampe est commandée depuis \textbf{deux points différents} grâce à \textbf{deux interrupteurs va-et-vient} reliés entre eux par \textbf{deux fils} appelés \cle{fils navettes}. La phase arrive sur la borne commune du premier va-et-vient ; la borne commune du second va-et-vient est reliée à la lampe ; la lampe est ensuite connectée au neutre.
+\end{definition}
+
+L'idée est celle d'un aiguillage de train : chaque interrupteur oriente le courant sur l'une des deux navettes. Le courant traverse le circuit \textbf{uniquement si les deux interrupteurs choisissent la même navette}, formant alors un chemin continu entre la phase et la lampe.
+
+\courssub{Étude expérimentale du fonctionnement}
+
+\begin{experience}[Mise en évidence du fonctionnement d'un va-et-vient en basse tension]
+\textbf{Matériel} : un générateur de basse tension (\SI{12}{V}), une lampe sur support, deux interrupteurs va-et-vient à trois bornes, des fils de connexion.
+
+\textbf{Protocole} :
+\begin{enumerate}
+\item Repérer sur chaque va-et-vient la borne commune (C) et les deux bornes de sortie (1 et 2).
+\item Relier la borne $+$ du générateur à la borne commune du premier va-et-vient.
+\item Relier la borne 1 du premier va-et-vient à la borne 1 du second, puis la borne 2 à la borne 2 : ce sont les deux \cle{navettes}.
+\item Relier la borne commune du second va-et-vient à la lampe, puis la lampe à la borne $-$ du générateur.
+\item Actionner successivement chaque interrupteur et noter l'état de la lampe pour les quatre combinaisons possibles.
+\end{enumerate}
+
+\textbf{Observations} : quand les deux interrupteurs relient la même navette (1--1 ou 2--2), la lampe brille. Quand ils choisissent des navettes différentes (1--2 ou 2--1), la lampe est éteinte. De plus, \emph{quel que soit l'état de départ}, une action sur l'un ou l'autre interrupteur change l'état de la lampe.
+
+\textbf{Interprétation} : la lampe est alimentée lorsque les deux navettes forment un \textbf{chemin continu} entre le générateur et la lampe. Chaque va-et-vient agit comme un aiguillage : basculer l'un des deux interrupteurs revient à ouvrir le chemin fermé, ou à fermer le chemin ouvert.
+\end{experience}
+
+Le tableau de vérité ci-dessous rassemble les quatre combinaisons observées.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|c|X|c|}
+\hline
+\rowcolor{popblueL} \textbf{Position du va-et-vient 1} & \textbf{Position du va-et-vient 2} & \textbf{Chemin du courant} & \textbf{État de la lampe} \\
+\hline
+Navette 1 & Navette 1 & Continu (navette 1) & Allumée \\
+\hline
+Navette 1 & Navette 2 & Interrompu & Éteinte \\
+\hline
+Navette 2 & Navette 1 & Interrompu & Éteinte \\
+\hline
+Navette 2 & Navette 2 & Continu (navette 2) & Allumée \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{propriete}[Propriété fondamentale du va-et-vient]
+Dans un montage en va-et-vient, \textbf{chaque action sur l'un quelconque des deux interrupteurs inverse l'état de la lampe} : si elle était allumée, elle s'éteint ; si elle était éteinte, elle s'allume. C'est pourquoi on peut commander la lampe indifféremment depuis les deux points, sans jamais se soucier de la position de l'autre interrupteur. Cette propriété, établie expérimentalement, est exigible au BEPC.
+\end{propriete}
+
+\begin{aretenir}[L'essentiel du va-et-vient]
+\begin{itemize}
+\item Une lampe, \textbf{deux} points de commande : deux va-et-vient.
+\item Les deux va-et-vient sont reliés par \textbf{deux fils navettes}.
+\item La lampe brille quand les deux interrupteurs sélectionnent la \textbf{même navette}.
+\item Actionner n'importe lequel des deux interrupteurs \textbf{change l'état} de la lampe.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Schéma normalisé du montage}
+
+Le schéma normalisé se lit ainsi : la \textbf{phase} (fil rouge ou marron) arrive sur la borne commune du premier va-et-vient ; deux \textbf{navettes} (ici en orange) relient les bornes 1 et 2 des deux interrupteurs ; la borne commune du second va-et-vient envoie le \textbf{retour lampe} (fil violet) vers la lampe ; la lampe est enfin reliée au \textbf{neutre} (fil bleu).
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0, every node/.style={font=\small}]
+% Arrivée phase
+\draw[very thick, poppink] (0,0) node[left]{Phase (L)} -- (1.2,0);
+% Va-et-vient 1
+\draw[fill=popblueL, draw=popblue, thick] (1.2,-0.9) rectangle (3.0,0.9);
+\node[popdark] at (2.1,1.15) {Va-et-vient 1};
+\fill[popdark] (1.35,0) circle (0.06) node[below=2pt, font=\scriptsize]{C};
+\fill[popdark] (2.85,0.55) circle (0.06) node[above=1pt, font=\scriptsize]{1};
+\fill[popdark] (2.85,-0.55) circle (0.06) node[below=1pt, font=\scriptsize]{2};
+\draw[very thick, popdark] (1.35,0) -- (2.75,0.55);
+% Navettes
+\draw[very thick, poporange] (2.85,0.55) -- (7.15,0.55);
+\draw[very thick, poporange] (2.85,-0.55) -- (7.15,-0.55);
+\node[poporange, font=\scriptsize] at (5.0,0.85) {navette 1};
+\node[poporange, font=\scriptsize] at (5.0,-0.85) {navette 2};
+% Va-et-vient 2
+\draw[fill=popblueL, draw=popblue, thick] (7.0,-0.9) rectangle (8.8,0.9);
+\node[popdark] at (7.9,1.15) {Va-et-vient 2};
+\fill[popdark] (7.15,0.55) circle (0.06) node[above=1pt, font=\scriptsize]{1};
+\fill[popdark] (7.15,-0.55) circle (0.06) node[below=1pt, font=\scriptsize]{2};
+\fill[popdark] (8.65,0) circle (0.06) node[below=2pt, font=\scriptsize]{C};
+\draw[very thick, popdark] (7.25,0.55) -- (8.65,0);
+% Retour lampe
+\draw[very thick, poppurple] (8.65,0) -- (9.8,0);
+% Lampe
+\draw[fill=popgoldL, draw=popgold, thick] (10.5,0) circle (0.7);
+\draw[popgold, thick] (10.0,-0.5) -- (11.0,0.5);
+\draw[popgold, thick] (10.0,0.5) -- (11.0,-0.5);
+\node[popdark] at (10.5,-1.1) {Lampe};
+% Neutre
+\draw[very thick, popblue] (11.2,0) -- (12.4,0) node[right]{Neutre (N)};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma normalisé du montage en va-et-vient : la phase alimente la borne commune C du premier va-et-vient ; les deux navettes (orange) relient les bornes 1 et 2 des deux interrupteurs ; la borne commune du second va-et-vient alimente la lampe, reliée au neutre. Ici, les deux interrupteurs sélectionnent la navette 1 : le circuit est fermé, la lampe brille.}
+\end{popfigure}
+
+\begin{attention}[L'erreur qui fait tout échouer : les navettes croisées sur la borne commune]
+L'erreur la plus fréquente au BEPC et en travaux pratiques consiste à raccorder une navette sur la \textbf{borne commune} d'un des va-et-vient, ou à croiser les navettes (borne 1 du premier sur borne 2 du second \emph{et} inversement de manière incohérente avec le schéma). Résultat : le montage ne fonctionne plus correctement — la lampe reste éteinte ou un interrupteur devient sans effet. \textbf{Règle d'or} : les navettes ne touchent \emph{jamais} les bornes communes ; elles relient uniquement les bornes 1 et 2 entre elles. Autre piège : oublier que c'est la \textbf{phase} qui doit passer par les interrupteurs, jamais le neutre seul, pour des raisons de sécurité.
+\end{attention}
+
+\courssub{Méthode de câblage pratique}
+
+\begin{methode}[Câbler un va-et-vient en quatre étapes]
+\begin{enumerate}
+\item \textbf{Repérer les bornes} : sur chaque va-et-vient, identifier la borne commune (C, L ou P, souvent rouge ou marron) et les deux bornes de sortie (1 et 2). Vérifier que l'installation est \textbf{hors tension} (disjoncteur ouvert) avant toute manipulation sur le réseau \SI{220}{V}.
+\item \textbf{Amener la phase} : connecter le fil de phase à la borne commune du premier va-et-vient (celui du bas de l'escalier, par exemple).
+\item \textbf{Poser les navettes} : relier la borne 1 du premier va-et-vient à la borne 1 du second, et la borne 2 à la borne 2, avec deux fils de couleur identique (orange ou violet, jamais bleu ni vert-jaune).
+\item \textbf{Connecter le retour lampe et le neutre} : relier la borne commune du second va-et-vient à la lampe, puis la lampe au neutre. Remettre le courant et vérifier les quatre combinaisons du tableau de vérité.
+\end{enumerate}
+\end{methode}
+
+\begin{experience}[TP : réalisation et vérification du montage en basse tension]
+Sur la maquette du laboratoire, réalise le montage décrit dans la méthode ci-dessus avec un générateur de \SI{12}{V}. Pour chacune des quatre combinaisons des positions des interrupteurs, observe la lampe et complète ton tableau de vérité. Vérifie ensuite la propriété fondamentale : quelle que soit la position de départ, actionne un seul interrupteur au choix et constate que la lampe change d'état. Si une combinaison ne correspond pas au tableau, cherche l'erreur : navette sur une borne commune, fil desserré ou lampe grillée. Cette démarche de vérification systématique est celle du technicien électricien.
+\end{experience}
+
+\courssub{Situations d'usage et application}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.95, every node/.style={font=\small}]
+% Mur / escalier : marches
+\draw[fill=popcream, draw=popmuted, thick] (0,0) -- (0,0.6) -- (0.8,0.6) -- (0.8,1.2) -- (1.6,1.2) -- (1.6,1.8) -- (2.4,1.8) -- (2.4,2.4) -- (3.2,2.4) -- (3.2,3.0) -- (4.0,3.0) -- (4.0,3.6) -- (4.8,3.6) -- (4.8,0) -- cycle;
+\node[popmuted, font=\scriptsize] at (2.4,0.3) {escalier};
+% Lampe au plafond
+\draw[fill=popgoldL, draw=popgold, thick] (2.4,4.6) circle (0.35);
+\draw[popgold, thick] (2.15,4.35) -- (2.65,4.85);
+\draw[popgold, thick] (2.15,4.85) -- (2.65,4.35);
+\node[popdark, font=\scriptsize] at (3.6,4.6) {lampe de l'escalier};
+% Interrupteur bas
+\draw[fill=popblueL, draw=popblue, thick] (-0.9,0.9) rectangle (-0.3,1.5);
+\node[popblue, font=\scriptsize, align=center] at (-1.7,1.2) {va-et-vient\\du bas};
+% Interrupteur haut
+\draw[fill=popblueL, draw=popblue, thick] (5.1,3.3) rectangle (5.7,3.9);
+\node[popblue, font=\scriptsize, align=center] at (6.6,3.6) {va-et-vient\\du haut};
+% Navettes
+\draw[very thick, poporange, dashed] (-0.3,1.35) .. controls (1.5,2.2) and (3.5,3.2) .. (5.1,3.75);
+\draw[very thick, poporange, dashed] (-0.3,1.05) .. controls (1.5,1.9) and (3.5,2.9) .. (5.1,3.45);
+\node[poporange, font=\scriptsize] at (2.4,2.95) {2 navettes};
+% Flèches usage
+\draw[-{Stealth}, thick, popgreen] (-0.6,1.5) -- (-0.6,2.1);
+\node[popgreen, font=\scriptsize, align=center] at (-0.6,2.5) {on allume\\en montant};
+\draw[-{Stealth}, thick, popgreen] (5.4,3.3) -- (5.4,2.7);
+\node[popgreen, font=\scriptsize, align=center] at (5.4,2.3) {on éteint\\arrivé en haut};
+\end{tikzpicture}
+\end{center}
+\legende{Plan de principe d'un escalier équipé d'un va-et-vient : un interrupteur en bas, un autre en haut, reliés par les deux navettes (orange). La même lampe est commandée depuis les deux extrémités de l'escalier.}
+\end{popfigure}
+
+\begin{exemplebox}[Où utilise-t-on le va-et-vient ?]
+\begin{itemize}
+\item \textbf{Escaliers} : allumer en bas, éteindre en haut (et inversement).
+\item \textbf{Couloirs} : un interrupteur à chaque extrémité du couloir.
+\item \textbf{Chambres} : une commande près de la porte, une autre près du lit — très apprécié le soir !
+\item \textbf{Grandes salles à deux entrées} : salles de classe, salles de fêtes, salons traversants.
+\end{itemize}
+\end{exemplebox}
+
+\begin{exoresolu}[Reconnaître et compléter un schéma de va-et-vient]
+\textbf{Énoncé.} Dans la maison de la famille Essono, la lampe du couloir est commandée par deux va-et-vient V1 (entrée salon) et V2 (entrée cuisine). Actuellement, V1 et V2 sélectionnent tous deux la navette 2 et la lampe est allumée. 1) Papa, qui entre par le salon, actionne V1. Quel est le nouvel état de la lampe ? 2) Maman, dans la cuisine, actionne alors V2. Que devient la lampe ? 3) Citer une erreur de câblage qui empêcherait ce montage de fonctionner.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Au départ, les deux interrupteurs sont sur la navette 2 : le chemin est continu, la lampe est allumée. En actionnant V1, papa fait passer V1 sur la navette 1 : les deux interrupteurs choisissent des navettes différentes, le circuit est ouvert, \textbf{la lampe s'éteint}.
+\item Maman actionne V2, qui passe de la navette 2 à la navette 1 : les deux interrupteurs sélectionnent à nouveau la même navette, le chemin redevient continu, \textbf{la lampe se rallume}. On vérifie au passage la propriété fondamentale : chaque action sur l'un quelconque des deux interrupteurs inverse l'état de la lampe.
+\item Une erreur classique consiste à raccorder une navette sur la borne commune d'un va-et-vient (ou à croiser les navettes sur les bornes communes) : le chemin continu ne peut plus se former correctement et le montage ne fonctionne plus. Il faut relier les navettes exclusivement entre les bornes 1 et 2.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{savaistu}[Et pour commander une lampe depuis trois endroits ?]
+Deux va-et-vient ne permettent que deux points de commande. Pour commander une même lampe depuis \textbf{trois endroits ou plus} — par exemple un couloir desservant trois chambres —, on insère entre les deux va-et-vient un appareil appelé \cle{permutateur} (ou interrupteur inverseur), qui possède quatre bornes et croise les navettes à chaque action. On peut même en ajouter plusieurs : deux va-et-vient aux extrémités et autant de permutateurs que de points de commande supplémentaires. Ce complément n'est pas exigible au BEPC, mais il montre la logique de l'aiguillage : chaque appareil supplémentaire inverse le chemin du courant. Les électriciens camerounais utilisent couramment ce montage dans les villas à plusieurs niveaux.
+\end{savaistu}
+
+\begin{exercice}[Pour t'entraîner]
+Une chambre possède une lampe commandée par un va-et-vient près de la porte (V1) et un autre près du lit (V2). La lampe est éteinte et V1 est sur la navette 1, V2 sur la navette 2. 1) Représente par un tableau les quatre combinaisons possibles et l'état de la lampe. 2) Depuis l'état initial, on actionne V2 puis V1 puis encore V2 : la lampe est-elle finalement allumée ou éteinte ? 3) Pourquoi dit-on qu'avec un va-et-vient, la position des interrupteurs ne permet pas de deviner l'état de la lampe ?
+\end{exercice}
+
+\begin{corrige}[Exercice : va-et-vient dans la chambre]
+\begin{enumerate}
+\item Combinaisons : (1,1) lampe allumée ; (1,2) lampe éteinte ; (2,1) lampe éteinte ; (2,2) lampe allumée.
+\item État initial (1,2) : éteinte. Action sur V2 $\rightarrow$ (1,1) : allumée. Action sur V1 $\rightarrow$ (2,1) : éteinte. Action sur V2 $\rightarrow$ (2,2) : \textbf{allumée}. Chaque action inverse l'état ; trois inversions à partir de « éteinte » donnent « allumée ».
+\item Parce que la lampe dépend de la \emph{combinaison} des deux positions, pas de la position d'un seul interrupteur : la position (1,1) allume la lampe, mais (1,2) l'éteint, alors que V1 est dans la même position. Seule la comparaison des deux positions renseigne sur l'état du circuit.
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Sécurité avant tout]
+Sur une installation réelle en \SI{220}{V} (réseau ENEO), toute intervention se fait \textbf{disjoncteur ouvert} et après vérification de l'absence de tension. C'est toujours la \textbf{phase} qui est coupée et aiguillée par les va-et-vient, jamais le neutre : sinon la douille de la lampe resterait sous tension même lampe éteinte, avec un risque d'électrisation lors du changement d'ampoule. En classe, on travaille exclusivement en \textbf{basse tension} (\SI{12}{V} maximum).
+\end{attention}
+
+\coursec{Comparaison, choix de l'installation et sécurité}
+
+Tu sais maintenant réaliser un montage en \cle{simple allumage} (un seul interrupteur pour une lampe) et un montage en \cle{va-et-vient} (deux commandes pour une même lampe). Une question naturelle se pose alors : dans une maison, comment choisir entre ces deux installations ? Et surtout, comment intervenir sur une installation de \SI{220}{V} sans danger ? C'est l'objet de cette dernière partie : comparer, choisir judicieusement, et travailler en toute sécurité.
+
+\courssub{Tableau comparatif : simple allumage ou va-et-vient ?}
+
+Imaginons deux pièces de la maison familiale. La chambre de ta petite sœur n'a qu'une seule porte : un interrupteur placé à côté de cette porte suffit. Le salon, lui, possède deux portes : l'une donne sur la cour, l'autre sur le couloir. Arriver par la cour et devoir traverser le salon dans le noir pour atteindre l'interrupteur près du couloir serait absurde ! Il faut donc pouvoir commander la lampe depuis les deux portes : c'est le rôle du va-et-vient.
+
+Cette observation de la vie courante nous donne le critère de choix : le \cle{nombre d'accès} à la pièce ou au passage à éclairer.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL}
+\textbf{Critère} & \textbf{Simple allumage} & \textbf{Va-et-vient} \\
+\hline
+Points de commande & 1 seul interrupteur & 2 commandes (extensible avec permuteurs) \\
+\hline
+Appareillage & Interrupteur simple (2 bornes) & 2 va-et-vient (3 bornes chacun) \\
+\hline
+Fils entre commandes & Aucun (la phase est coupée directement) & 2 fils \cle{navettes} reliant les deux appareils \\
+\hline
+Coût & Faible & Plus élevé (appareillage + câble) \\
+\hline
+Usages typiques & Chambre, cuisine, toilettes (1 porte) & Couloir, escalier, salon à 2 portes, chambre (commande lit) \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{aretenir}[L'essentiel de la comparaison]
+Le \cle{simple allumage} commande une lampe depuis \textbf{un seul} point, avec un interrupteur à deux bornes et un seul fil coupé (la phase). Le \cle{va-et-vient} commande la même lampe depuis \textbf{deux} points, grâce à deux appareils à trois bornes reliés par deux fils appelés \cle{navettes}. Le va-et-vient coûte plus cher en appareillage et en câble, mais il apporte le confort et la sécurité (on ne traverse plus une pièce dans le noir).
+\end{aretenir}
+
+\courssub{Méthode de choix d'une installation}
+
+\begin{methode}[Choisir entre simple allumage et va-et-vient]
+\begin{enumerate}
+\item \textbf{Repérer le passage à éclairer} : pièce, couloir, escalier, cour.
+\item \textbf{Compter les accès} : combien de portes ou d'entrées donnent sur ce passage ?
+\item \textbf{Appliquer la règle} :
+\begin{itemize}
+\item un seul accès $\Rightarrow$ \textbf{simple allumage} ;
+\item deux accès (ou plus) $\Rightarrow$ \textbf{va-et-vient} (avec possibilité d'ajouter des commandes intermédiaires appelées \emph{permuteurs} pour trois points ou plus).
+\end{itemize}
+\item \textbf{Vérifier le confort} : dans une chambre, on ajoute souvent une commande près du lit même s'il n'y a qu'une porte (confort : éteindre sans se lever).
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Un couloir de 8 m avec une porte à chaque extrémité]
+Le couloir d'une maison à Yaoundé mesure \SI{8}{m} et possède une porte à chaque extrémité : l'une vers le salon, l'autre vers les chambres. Quelle installation choisir ?
+
+\textbf{Analyse} : il y a \textbf{deux accès}. Avec un simple allumage, l'interrupteur serait forcément près d'une seule porte : celui qui entre par l'autre porte devrait marcher \SI{8}{m} dans l'obscurité, avec le risque de trébucher. On choisit donc un \cle{va-et-vient} : un appareil près de chaque porte, reliés par deux fils navettes, commandant la lampe du plafond. On peut allumer en entrant et éteindre en sortant, quel que soit le sens de circulation.
+\end{exemplebox}
+
+\courssub{Lecture et interprétation d'un schéma d'installation}
+
+Au BEPC, on te donne souvent le schéma d'une installation et on te demande d'identifier le type de montage. Voici la démarche infaillible.
+
+\begin{methode}[Reconnaître un montage sur un schéma]
+\begin{enumerate}
+\item \textbf{Compter les appareils de commande} dessinés sur le schéma.
+\begin{itemize}
+\item Un seul symbole d'interrupteur $\Rightarrow$ simple allumage.
+\item Deux symboles de va-et-vient $\Rightarrow$ montage va-et-vient.
+\end{itemize}
+\item \textbf{Repérer les navettes} : dans un va-et-vient, \textbf{deux fils} relient directement les deux appareils de commande entre eux. C'est la signature du montage.
+\item \textbf{Vérifier la phase} : dans tout montage correct, c'est la \cle{phase} (fil rouge ou marron) qui est coupée par l'appareillage, jamais le neutre (fil bleu).
+\item \textbf{Conclure} en nommant le montage et en justifiant par le nombre de points de commande.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Le piège classique du BEPC]
+Ne confonds pas le \textbf{nombre de fils} avec le \textbf{nombre de commandes} ! Un simple allumage possède deux fils (phase et neutre) mais une seule commande. Ce qui caractérise le va-et-vient, ce sont les \textbf{deux fils navettes} entre les deux appareils. Autre piège : si le schéma montre le neutre coupé par l'interrupteur, le montage est \textbf{dangereux} même si la lampe fonctionne, car la douille reste sous tension quand la lampe est éteinte.
+\end{attention}
+
+\begin{exoresolu}[Identifier un montage sur un schéma]
+\textbf{Énoncé.} Sur le schéma d'une installation, on observe : un générateur \SI{220}{V}, une lampe, et deux appareils de commande reliés entre eux par deux conducteurs. Le fil de phase arrive sur le premier appareil ; un fil part du second appareil vers la lampe ; le neutre va directement à la lampe. (a) Quel est le type de montage ? Justifie. (b) La lampe peut-elle être allumée depuis les deux points ? Explique.
+\tcblower
+\textbf{Solution.} (a) Il s'agit d'un montage en \cle{va-et-vient}. Justification : on compte \textbf{deux} appareils de commande, et ils sont reliés par \textbf{deux fils navettes}, ce qui est la signature de ce montage. De plus, la phase est bien coupée par l'appareillage et le neutre va directement à la lampe : le câblage est correct. (b) Oui. Chaque va-et-vient relie la borne d'entrée (borne commune) à l'une des deux navettes. La lampe est alimentée lorsque les deux appareils sélectionnent la \textbf{même navette} (circuit fermé). En basculant l'un ou l'autre appareil, on ouvre ou on ferme le circuit : on peut donc allumer ou éteindre depuis chacun des deux points.
+\end{exoresolu}
+
+\courssub{Les consignes de sécurité avant toute intervention}
+
+Le courant domestique de \SI{220}{V} est dangereux : il peut provoquer des brûlures, un arrêt cardiaque, voire la mort. Chaque année, des accidents domestiques surviennent parce qu'on a changé une douille ou réparé une rallonge « rapidement », sans couper le courant. La règle d'or est simple : \textbf{on ne travaille jamais sur un circuit sous tension}.
+
+\begin{attention}[Intervention sur une installation 220 V : hors tension, toujours]
+Toute intervention sur une installation de \SI{220}{V} se fait \textbf{hors tension}, selon la procédure de \cle{consignation} :
+\begin{enumerate}
+\item \textbf{Couper} le courant au disjoncteur général (ou au disjoncteur divisionnaire du circuit concerné) ;
+\item \textbf{Verrouiller} (cadenas) ou \textbf{signaler} (étiquette « Ne pas manœuvrer - Travaux en cours ») la coupure : personne ne doit réenclencher pendant ton travail ;
+\item \textbf{Vérifier l'absence de tension} (VAT) avec un tournevis testeur ou un multimètre \textbf{avant} de toucher les fils ;
+\item Ne jamais travailler \textbf{les mains mouillées} ni les pieds nus sur un sol humide : l'eau rend le corps conducteur et aggrave l'électrisation.
+\end{enumerate}
+\end{attention}
+
+\courssub{Le rôle des protections de l'installation}
+
+Une installation domestique bien conçue comporte plusieurs niveaux de protection, regroupés dans le \cle{tableau électrique} de la maison.
+
+\begin{definition}[Les organes de protection]
+\begin{itemize}
+\item Le \cle{disjoncteur général} (ou disjoncteur de branchement) : placé en tête de l'installation, il coupe tout le courant de la maison en cas de surintensité ou de défaut d'isolement majeur, et permet de mettre toute l'installation hors tension.
+\item L'\cle{interrupteur différentiel} (souvent appelé « disjoncteur différentiel » à tort) : placé en tête de chaque groupe de circuits (ou en général), il compare le courant entrant (phase) et le courant sortant (neutre). Si une différence (courant de fuite vers la terre) dépasse \SI{30}{mA} (seuil de protection des personnes), il \textbf{coupe instantanément} l'alimentation. C'est la protection indispensable contre l'électrisation.
+\item Le \cle{disjoncteur divisionnaire} : chaque circuit (prises, éclairage, cuisinière) possède son propre disjoncteur divisionnaire (magnéto-thermique). Si l'intensité dépasse la valeur prévue (court-circuit ou surcharge), il \textbf{coupe automatiquement} ce seul circuit pour protéger les fils contre l'échauffement.
+\item Le \cle{fusible} : dans les installations anciennes, un fil fin fond quand l'intensité est trop forte, ce qui ouvre le circuit. Il doit être \textbf{remplacé} après chaque défaut, contrairement au disjoncteur qu'on réenclenche.
+\item La \cle{mise à la terre} : un conducteur vert-jaune relie les carcasses métalliques des appareils (réfrigérateur, fer à repasser, machine à laver) à une prise de terre. Si un fil dénudé touche la carcasse, le courant de défaut s'écoule vers la terre, l'interrupteur différentiel détecte la fuite et coupe le circuit.
+\end{itemize}
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Arrivée ENEO
+\node[draw=popdark, thick, rounded corners=3pt, fill=popcream, minimum width=2.6cm, minimum height=1cm, align=center] (en) at (0,0){\textbf{Arrivée ENEO}\\ \SI{220}{V}};
+% Disjoncteur général (Abonné)
+\node[draw=popink, very thick, rounded corners=3pt, fill=popblueL, minimum width=3cm, minimum height=1cm, align=center] (dg) at (4,0){\textbf{Disjoncteur}\\ \textbf{général (abonné)}};
+% Interrupteur différentiel 30mA
+\node[draw=poppurple, very thick, rounded corners=3pt, fill=poppurpleL, minimum width=3.2cm, minimum height=1cm, align=center] (diff) at (7.5,0){\textbf{Interrupteur}\\ \textbf{différentiel 30 mA}};
+% Bornier de répartition
+\node[draw=popline, thick, fill=popgoldL, minimum width=1.2cm, minimum height=3.4cm] (bar) at (10.5,0) {};
+\node[above=1pt of bar, font=\footnotesize\itshape] {répartition};
+% Disjoncteurs divisionnaires
+\node[draw=popgreen, very thick, rounded corners=3pt, fill=popgreenL, minimum width=3.5cm, minimum height=0.85cm, align=center] (d1) at (14.5,1.4){\textbf{Disj. divisionnaire}\\ \textbf{Éclairage (10/16 A)}};
+\node[draw=popgreen, very thick, rounded corners=3pt, fill=popgreenL, minimum width=3.5cm, minimum height=0.85cm, align=center] (d2) at (14.5,0){\textbf{Disj. divisionnaire}\\ \textbf{Prises (16/20 A)}};
+\node[draw=popgreen, very thick, rounded corners=3pt, fill=popgreenL, minimum width=3.5cm, minimum height=0.85cm, align=center] (d3) at (14.5,-1.4){\textbf{Disj. divisionnaire}\\ \textbf{Cuisinière (32 A)}};
+% Circuits
+\node[right=0.35cm of d1, align=left] {Circuit éclairage};
+\node[right=0.35cm of d2, align=left] {Circuit prises};
+\node[right=0.35cm of d3, align=left] {Circuit cuisinière};
+% Liaisons
+\draw[very thick, popdark] (en) -- (dg);
+\draw[very thick, popdark] (dg) -- (diff);
+\draw[very thick, popdark] (diff) -- (bar);
+\draw[very thick, popdark] (bar.east |- d1.west) -- (d1.west);
+\draw[very thick, popdark] (bar.east |- d2.west) -- (d2.west);
+\draw[very thick, popdark] (bar.east |- d3.west) -- (d3.west);
+% Terre
+\draw[very thick, popgreen!60!black] (diff.south) -- ++(0,-0.7) node[midway, right, font=\footnotesize] {conducteur de terre};
+\draw[popgreen!60!black, thick] (7.3,-0.9) -- (7.7,-0.9);
+\draw[popgreen!60!black, thick] (7.35,-1.05) -- (7.65,-1.05);
+\draw[popgreen!60!black, thick] (7.4,-1.2) -- (7.6,-1.2);
+\node[below, font=\footnotesize\itshape, popgreen!60!black] at (7.5,-1.25) {prise de terre};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma d'un tableau de protection moderne : le courant arrive d'ENEO, traverse le disjoncteur général (abonné), puis l'interrupteur différentiel 30 mA (protection des personnes), puis se répartit vers les disjoncteurs divisionnaires (protection des fils). La prise de terre évacue les courants de défaut vers l'interrupteur différentiel.}
+\end{popfigure}
+
+\begin{propriete}[Mise à la terre et différentiel : duo inséparable (savoir admis)]
+Les normes de sécurité électrique imposent la \cle{mise à la terre} des circuits dans les constructions neuves : toutes les prises doivent comporter une broche de terre reliée au conducteur de protection vert-jaune. Cette mise à la terre n'est efficace que si elle est couplée à un \cle{interrupteur différentiel} (sensibilité \SI{30}{mA}) qui détecte la fuite de courant vers la terre et coupe l'alimentation en quelques dizaines de millisecondes. Sans différentiel, la mise à la terre seule ne protège pas l'utilisateur.
+\end{propriete}
+
+\courssub{Économie d'énergie au quotidien}
+
+Une bonne installation, ce n'est pas seulement une installation sûre : c'est aussi une installation économe. La puissance consommée par une lampe est $P = U \cdot I$, et l'énergie consommée augmente avec la durée d'utilisation. Deux gestes simples réduisent la facture :
+
+\begin{itemize}
+\item \textbf{Choisir des lampes basse consommation ou LED} : une lampe LED de \SI{9}{W} éclaire autant qu'une lampe à incandescence de \SI{60}{W}. À durée d'utilisation égale, elle consomme environ \textbf{sept fois moins} d'énergie.
+\item \textbf{Éteindre dès qu'on quitte une pièce} : le va-et-vient y aide, car il permet d'éteindre en sortant, sans retour en arrière.
+\end{itemize}
+
+\begin{exoresolu}[Calcul d'économie d'énergie]
+\textbf{Énoncé.} Dans une maison, une lampe à incandescence de $P_1 = \SI{60}{W}$ éclaire un salon pendant $t = \SI{5}{h}$ par jour. On la remplace par une lampe LED de $P_2 = \SI{9}{W}$. (a) Calcule l'énergie consommée chaque jour par chaque lampe, en wattheures. (b) Quelle économie quotidienne réalise-t-on ?
+\tcblower
+\textbf{Solution.} L'énergie électrique se calcule par $E = P \times t$.
+\begin{align*}
+E_1 &= P_1 \times t = 60 \times 5 = \SI{300}{Wh} \\
+E_2 &= P_2 \times t = 9 \times 5 = \SI{45}{Wh}
+\end{align*}
+(b) L'économie quotidienne vaut :
+\[ E_1 - E_2 = 300 - 45 = \SI{255}{Wh} \]
+Sur un mois de 30 jours, cela représente $255 \times 30 = \SI{7650}{Wh}$, soit environ $\SI{7.65}{kWh}$ économisés pour une seule lampe. Multiplié par toutes les lampes de la maison, le gain sur la facture ENEO devient considérable.
+\end{exoresolu}
+
+\begin{savaistu}[Une installation bien conçue protège la vie et le porte-monnaie]
+Une installation électrique bien conçue réduit à la fois la \textbf{facture d'électricité} et les \textbf{risques d'incendie}. Au Cameroun, de nombreux incendies domestiques sont provoqués par des installations vétustes : fils dénudés, rallonges surchargées alimentant à la fois le réfrigérateur, le fer à repasser et la télévision, fusibles remplacés par du fil de fer qui ne fond plus. Un disjoncteur divisionnaire correctement calibré, un interrupteur différentiel \SI{30}{mA}, des lampes LED et des prises reliées à la terre coûtent un peu plus cher à l'installation, mais ils protègent la famille pendant des dizaines d'années. C'est pourquoi les normes imposent la mise à la terre et le différentiel dans les constructions neuves.
+\end{savaistu}
+
+\begin{aretenir}[Bilan de la leçon]
+\begin{itemize}
+\item Le choix entre simple allumage et va-et-vient dépend du \textbf{nombre d'accès} au passage à éclairer : un accès $\Rightarrow$ simple allumage ; deux accès $\Rightarrow$ va-et-vient.
+\item Sur un schéma, on reconnaît le va-et-vient à ses \textbf{deux appareils de commande} reliés par \textbf{deux fils navettes}.
+\item Toute intervention sur une installation de \SI{220}{V} se fait \textbf{hors tension} : couper au disjoncteur, \textbf{consigner} (verrouiller/étiqueter), \textbf{vérifier l'absence de tension (VAT)}, ne jamais travailler les mains mouillées.
+\item Les protections : \textbf{disjoncteur général} (coupure totale), \textbf{interrupteur différentiel 30 mA} (protection personnes par détection fuite vers terre), \textbf{disjoncteurs divisionnaires} (protection fils contre surcharge/court-circuit), \textbf{mise à la terre} (évacuation courant de défaut).
+\item Les lampes LED et basse consommation réduisent fortement la consommation d'énergie et la facture d'électricité.
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À la fin de cette activité, tu seras capable de :
+
+\begin{itemize}
+\item choisir, pour chaque pièce d'une habitation, le type d'installation d'éclairage adapté (simple allumage ou va-et-vient) et justifier ce choix ;
+\item tracer le schéma normalisé d'une installation en va-et-vient (couloir et escalier) ;
+\item dresser la liste du matériel nécessaire à une installation simple (appareillages, lampes, conducteurs) ;
+\item rédiger des consignes de sécurité à respecter lors d'une installation électrique domestique ;
+\item travailler en groupe, argumenter et confronter ta solution à celle des autres groupes.
+\end{itemize}
+
+\courssub{Situation}
+
+La famille Ngo Bell vient de faire construire une maison à Etoudi, quartier de Yaoundé. Le gros œuvre est terminé : il reste à installer l'éclairage avant l'emménagement. Le père, M. Ngo Bell, fait appel à un électricien du quartier, mais il veut d'abord décider lui-même, pièce par pièce, du type de commande d'éclairage à poser, afin d'acheter le bon matériel au marché et d'éviter les dépenses inutiles.
+
+Voici le plan simplifié de la maison :
+
+\begin{itemize}
+\item une \cle{chambre} de $3\,\text{m} \times 4\,\text{m}$, avec une seule porte ;
+\item un \cle{couloir} de \SI{10}{m} de long, avec une porte à chaque extrémité ;
+\item un \cle{escalier} reliant le rez-de-chaussée à l'étage (hauteur entre les deux niveaux : \SI{3}{m}) ;
+\item un \cle{salon} de $4\,\text{m} \times 5\,\text{m}$, avec une seule porte.
+\end{itemize}
+
+Chaque pièce sera éclairée par une seule lampe de \SI{60}{W} sous \SI{220}{V}. Le tableau électrique (départ du circuit d'éclairage) se trouve dans le salon. Le fil électrique se vend \SI{250}{F} le mètre, un interrupteur simple coûte \SI{800}{F}, un interrupteur va-et-vient coûte \SI{1500}{F} et une lampe coûte \SI{500}{F}.
+
+\begin{attention}[Le problème à résoudre]
+M. Ngo Bell se pose plusieurs questions : faut-il un simple allumage ou un va-et-vient dans chaque pièce ? Combien d'appareils et de mètres de fil faut-il acheter ? Quelles consignes de sécurité doit-il donner à l'électricien ? Ton groupe est chargé de préparer le dossier technique de la famille Ngo Bell.
+\end{attention}
+
+\courssub{Consignes}
+
+Travail par groupes de quatre élèves. Durée : 50 minutes, puis 10 minutes de restitution au tableau.
+
+\begin{enumerate}
+\item Pour chacune des quatre pièces (chambre, couloir, escalier, salon), indique le type d'installation le plus adapté (simple allumage ou va-et-vient) et \textbf{justifie} ton choix en une phrase (nombre de portes, longueur du passage, fréquence d'utilisation).
+\item Trace le \textbf{schéma normalisé} de l'installation électrique du couloir, en utilisant les symboles vus en cours (phase en rouge, neutre en bleu, lampe, deux interrupteurs va-et-vient).
+\item Trace le \textbf{schéma normalisé} de l'installation de l'escalier (lampe commandée depuis le bas et depuis le haut de l'escalier).
+\item Dress la \textbf{liste du matériel} à acheter pour toute la maison : nombre d'interrupteurs simples, nombre d'interrupteurs va-et-vient, nombre de lampes, longueur totale de fil estimée (on comptera en moyenne \SI{6}{m} de fil par point lumineux en simple allumage et \SI{12}{m} par point lumineux en va-et-vient). Calcule ensuite le \textbf{coût total} de l'achat.
+\item Rédige \textbf{trois consignes de sécurité} précises que M. Ngo Bell doit donner à l'électricien avant et pendant les travaux.
+\item Présente ta solution au tableau et compare-la à celles des autres groupes : les choix sont-ils identiques ? Les coûts aussi ? Discute les différences.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Ce qu'il faut se rappeler]
+\begin{itemize}
+\item \cle{Simple allumage} : une lampe commandée depuis \textbf{un seul endroit} par un interrupteur simple. Convient aux petites pièces à une seule porte.
+\item \cle{Va-et-vient} : une lampe commandée depuis \textbf{deux endroits différents} grâce à deux interrupteurs va-et-vient reliés par deux fils navettes. Indispensable pour un couloir, un escalier ou une grande pièce à deux accès.
+\item Dans toute installation, l'interrupteur doit toujours être placé sur le fil de \cle{phase} (jamais sur le neutre), et la lampe reçoit le neutre directement.
+\item Sécurité : couper le courant au disjoncteur général avant toute intervention, utiliser des outils isolés, vérifier l'absence de tension, ne jamais toucher les installations avec les mains mouillées.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Équiper la maison de la famille Ngo Bell]
+On reprend les six consignes de l'activité : choix des installations, schémas du couloir et de l'escalier, liste du matériel, coût total et consignes de sécurité.
+\tcblower
+\textbf{Étape 1 : choix du type d'installation par pièce.}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Pièce} & \textbf{Installation choisie} & \textbf{Justification} \\
+\hline
+Chambre & Simple allumage & Petite pièce à une seule porte : un seul point de commande près de la porte suffit. \\
+\hline
+Couloir (\SI{10}{m}) & Va-et-vient & Passage long avec une porte à chaque extrémité : on doit pouvoir allumer en entrant et éteindre en sortant. \\
+\hline
+Escalier & Va-et-vient & On allume en bas avant de monter et on éteint en haut (ou l'inverse) : sécurité et confort. \\
+\hline
+Salon & Simple allumage & Une seule porte : un interrupteur simple près de l'entrée suffit. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Étape 2 : schéma normalisé du couloir.}
+
+La phase (fil rouge) arrive sur le premier va-et-vient $V_1$ ; deux fils navettes relient $V_1$ au second va-et-vient $V_2$ ; le fil de sortie de $V_2$ alimente la lampe, qui reçoit le neutre (fil bleu).
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Arrivée phase
+\draw[very thick, poppink] (0,0) node[left]{Phase} -- (1.2,0);
+% Va-et-vient 1
+\draw[fill=popblueL, draw=popblue] (1.2,-0.5) rectangle (2.2,0.5);
+\node at (1.7,-0.9) {$V_1$};
+\draw[very thick, popink] (1.35,0) -- (2.05,0.28);
+% Navettes
+\draw[very thick, poporange] (2.2,0.25) -- (4.6,0.25);
+\draw[very thick, poporange] (2.2,-0.25) -- (4.6,-0.25);
+\node[poporange] at (3.4,0.55) {navettes};
+% Va-et-vient 2
+\draw[fill=popblueL, draw=popblue] (4.6,-0.5) rectangle (5.6,0.5);
+\node at (5.1,-0.9) {$V_2$};
+\draw[very thick, popink] (4.75,0.25) -- (5.45,0);
+% Vers lampe
+\draw[very thick, poppink] (5.6,0) -- (6.6,0);
+% Lampe
+\draw[fill=popgoldL, draw=popgold] (7,0) circle (0.4);
+\draw[popdark] (6.72,-0.28) -- (7.28,0.28);
+\draw[popdark] (6.72,0.28) -- (7.28,-0.28);
+\node at (7,-0.8) {Lampe};
+% Neutre
+\draw[very thick, popblue] (7.4,0) -- (8.4,0) node[right]{Neutre};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma normalisé du va-et-vient du couloir : la phase passe par les deux interrupteurs va-et-vient $V_1$ et $V_2$ reliés par deux navettes, puis alimente la lampe ; le neutre va directement à la lampe.}
+\end{popfigure}
+
+\textbf{Étape 3 : schéma de l'escalier.}
+
+Le schéma est identique : un va-et-vient en bas de l'escalier, un va-et-vient en haut, deux fils navettes entre eux, la lampe au plafond de la cage d'escalier recevant le neutre. Seuls les emplacements changent : $V_1$ au rez-de-chaussée, $V_2$ à l'étage.
+
+\textbf{Étape 4 : liste du matériel et coût.}
+
+La maison compte 2 points lumineux en simple allumage (chambre, salon) et 2 points lumineux en va-et-vient (couloir, escalier).
+
+\begin{itemize}
+\item Interrupteurs simples : $2$ (chambre et salon) ;
+\item Interrupteurs va-et-vient : $2 \times 2 = 4$ (deux par installation va-et-vient) ;
+\item Lampes : $4$ (une par pièce) ;
+\item Fil : $2 \times 6 + 2 \times 12 = 12 + 24 = \SI{36}{m}$.
+\end{itemize}
+
+Coût total :
+\begin{align*}
+C &= 2 \times 800 + 4 \times 1500 + 4 \times 500 + 36 \times 250 \\
+  &= 1600 + 6000 + 2000 + 9000 \\
+  &= \SI{18600}{F}.
+\end{align*}
+
+\textbf{Étape 5 : consignes de sécurité à donner à l'électricien.}
+
+\begin{enumerate}
+\item Couper le courant au disjoncteur général et vérifier l'absence de tension avant toute intervention sur le circuit.
+\item Brancher chaque interrupteur sur le fil de phase et jamais sur le neutre, afin que la lampe soit hors tension quand elle est éteinte.
+\item Utiliser des outils à manche isolé, des conducteurs de section adaptée et des connexions bien serrées dans des boîtes de dérivation fermées.
+\end{enumerate}
+
+\textbf{Étape 6 : restitution.} Chaque groupe présente ses choix au tableau. Les solutions peuvent différer (par exemple un va-et-vient dans le salon si l'on imagine une seconde porte) : c'est la \textbf{justification} du choix qui fait la qualité de la réponse.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité t'a permis de mettre en évidence plusieurs idées essentielles :
+
+\begin{itemize}
+\item Le choix entre simple allumage et va-et-vient ne dépend pas du hasard : il dépend du \textbf{nombre d'accès} à la pièce et de sa \textbf{configuration} (couloir, escalier, pièce à une porte).
+\item Une installation en va-et-vient coûte plus cher (deux appareils spéciaux, davantage de fil) : on ne la pose que lorsqu'elle est réellement utile.
+\item Le schéma normalisé est un langage universel : n'importe quel électricien peut réaliser l'installation à partir de ton plan.
+\item La sécurité fait partie intégrante du métier d'électricien : couper l'alimentation, commander la phase, soigner les connexions sont des réflexes qui sauvent des vies.
+\end{itemize}
+
+Tu es maintenant capable de conseiller une famille pour l'éclairage de sa maison, comme un véritable technicien.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Installation simple : allumage et va-et-vient}
+
+\textbf{Situation d'accroche.} Le soir, à la maison, tu allumes la lampe de ta chambre avec un interrupteur près de la porte. Mais dans l'escalier de la maison de ton oncle à Yaoundé, tu peux allumer la lampe en bas et l'éteindre une fois arrivé en haut. Comment un même éclairage peut-il être commandé depuis deux endroits différents ? C'est toute la question de cette leçon : les \cle{installations simples} que sont le \cle{simple allumage} et le \cle{va-et-vient}.
+
+\courssub{Généralités sur une installation électrique domestique}
+
+\begin{definition}[Installation électrique domestique]
+Une \cle{installation électrique domestique} est l'ensemble des conducteurs, des appareils de commande, des appareils de protection et des récepteurs qui permettent d'amener le courant électrique de la source (réseau ENEO ou groupe électrogène) jusqu'aux points d'utilisation d'une habitation (lampes, prises de courant).
+\end{definition}
+
+Une installation domestique comprend toujours :
+\begin{itemize}
+\item une \cle{source} d'énergie électrique : le réseau ENEO (compteur puis disjoncteur général) ou un groupe électrogène ;
+\item deux conducteurs d'arrivée : la \cle{phase} (fil rouge ou marron, qui porte la tension) et le \cle{neutre} (fil bleu) ;
+\item des \cle{appareils de protection} : fusibles ou disjoncteurs divisionnaires, placés sur la phase ;
+\item des \cle{appareils de commande} : interrupteur simple, va-et-vient ;
+\item des \cle{récepteurs} : lampes, prises de courant, ventilateurs.
+\end{itemize}
+
+\begin{aretenir}[La règle d'or du câblage]
+Dans toute installation domestique, l'appareil de commande (interrupteur ou va-et-vient) coupe toujours le fil de \cle{phase}, jamais le fil de neutre. Ainsi, lorsque la lampe est éteinte, elle n'est plus sous tension : on peut changer l'ampoule sans danger.
+\end{aretenir}
+
+\courssub{Identifier les appareillages et leurs symboles}
+
+\begin{methode}[Reconnaître les éléments d'une installation simple]
+Pour identifier les appareillages d'une installation domestique et leurs symboles normalisés :
+\begin{enumerate}
+\item Repérer d'abord la \cle{source} (le réseau ENEO ou un groupe électrogène) : elle fournit deux conducteurs, la \cle{phase} (fil rouge ou marron) et le \cle{neutre} (fil bleu).
+\item Repérer le \cle{récepteur} : lampe, prise de courant, ventilateur. Le symbole de la lampe est un cercle barré d'une croix.
+\item Repérer l'\cle{appareil de commande} : interrupteur simple (une seule commande, deux bornes), va-et-vient (reconnaissable à ses trois bornes : une borne commune et deux bornes de navette).
+\item Vérifier la règle d'or du câblage : l'appareil de commande coupe toujours la \cle{phase}, jamais le neutre.
+\item Nommer chaque symbole rencontré : interrupteur simple, va-et-vient, lampe, prise de courant, fusible (ou disjoncteur).
+\end{enumerate}
+\end{methode}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Appareillage} & \textbf{Rôle} & \textbf{Repère caractéristique} \\
+\hline
+Interrupteur simple & Commander une lampe depuis un seul endroit & Deux bornes \\
+\hline
+Va-et-vient & Commander une lampe depuis deux endroits (par paire) & Trois bornes : une commune, deux navettes \\
+\hline
+Lampe & Convertir l'énergie électrique en lumière & Cercle barré d'une croix \\
+\hline
+Fusible / disjoncteur & Protéger le circuit contre les surintensités & Placé sur la phase, en amont \\
+\hline
+Prise de courant & Alimenter les appareils mobiles & Reliée à la phase, au neutre et à la terre \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Reconnaissance des symboles]
+Sur le plan de la maison de la famille Ngo Bell, on lit les inscriptions suivantes : un cercle barré d'une croix dans le salon, un appareil à trois bornes au bas de l'escalier et un autre en haut, un interrupteur à deux bornes dans la cuisine. Pour chaque élément, donner son nom et sa fonction.
+\tcblower
+\textbf{Raisonnement.} On applique la méthode : on identifie chaque symbole par sa forme et son nombre de bornes.
+\begin{enumerate}
+\item Le cercle barré d'une croix est le symbole d'une \textbf{lampe} : c'est le récepteur qui convertit l'énergie électrique en lumière et en chaleur.
+\item L'appareil à trois bornes est un \textbf{va-et-vient} : il possède une borne commune et deux bornes de navette. Deux va-et-vient (bas et haut de l'escalier) permettent de commander la même lampe depuis deux endroits différents.
+\item L'interrupteur à deux bornes est un \textbf{interrupteur simple} : il commande la lampe de la cuisine depuis un seul endroit.
+\end{enumerate}
+\textbf{Conclusion.} L'escalier est équipé d'un montage va-et-vient (deux points de commande pour la lampe du salon), la cuisine d'un montage simple allumage (un seul point de commande).
+\end{exoresolu}
+
+\courssub{Réaliser et câbler un montage en simple allumage}
+
+\begin{definition}[Simple allumage]
+Le \cle{simple allumage} est le montage dans lequel une lampe est commandée (allumée ou éteinte) depuis \textbf{un seul endroit}, à l'aide d'un interrupteur simple monté \textbf{en série} avec elle sur le fil de phase.
+\end{definition}
+
+\begin{methode}[Câbler un simple allumage en toute sécurité]
+Pour réaliser le montage d'une lampe commandée par un interrupteur simple :
+\begin{enumerate}
+\item \textbf{Couper le courant} au disjoncteur général et vérifier l'absence de tension.
+\item Relier la \cle{phase} (fil rouge) à une borne de l'interrupteur.
+\item Relier l'autre borne de l'interrupteur à une borne de la lampe (fil de retour, souvent orange ou violet).
+\item Relier le \cle{neutre} (fil bleu) directement à l'autre borne de la lampe.
+\item Protéger le circuit par un \cle{fusible} ou un disjoncteur placé sur la phase, en amont.
+\item Remettre le courant et vérifier : interrupteur fermé, la lampe brille ; interrupteur ouvert, elle s'éteint.
+\end{enumerate}
+Réflexe : la lampe et l'interrupteur sont montés \textbf{en série} sur la phase.
+\end{methode}
+
+\begin{exoresolu}[Schéma du simple allumage]
+Mama Fotso veut éclairer sa boutique avec une lampe commandée par un interrupteur simple placé près de la porte. Représenter le schéma du circuit et expliquer le rôle de chaque conducteur.
+\tcblower
+\textbf{Schéma du montage.}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+% Phase et neutre
+\draw[thick, popink] (0,2) -- (2,2) node[midway, above]{Phase};
+\draw[thick, popblue] (0,0) -- (8,0) node[midway, below]{Neutre};
+\fill (0,2) circle (2pt); \fill (0,0) circle (2pt);
+\node[left] at (0,1) {ENEO};
+% Interrupteur simple
+\draw[thick, popink] (2,2) -- (3.2,2);
+\fill (3.2,2) circle (1.5pt); \fill (4.2,2) circle (1.5pt);
+\draw[thick, popink] (3.2,2) -- (4.1,2.5);
+\draw[thick, popink] (4.2,2) -- (6,2);
+\node[above] at (3.7,2.6) {Interrupteur};
+% Lampe
+\draw[thick, popink] (6,2) -- (6,1.3);
+\draw[thick, popblue] (6,0) -- (6,0.7);
+\draw[thick, popdark] (6,1) circle (0.3);
+\draw[thick, popdark] (5.8,0.8) -- (6.2,1.2);
+\draw[thick, popdark] (5.8,1.2) -- (6.2,0.8);
+\node[right] at (6.4,1) {Lampe};
+\end{tikzpicture}
+\legende{Montage en simple allumage : l'interrupteur est en série avec la lampe, sur le fil de phase.}
+\end{popfigure}
+
+\textbf{Rôle des conducteurs.}
+\begin{itemize}
+\item La \textbf{phase} (fil rouge) amène le courant depuis le compteur ENEO jusqu'à l'interrupteur.
+\item L'\textbf{interrupteur}, monté en série sur la phase, ouvre ou ferme le circuit : fermé, le courant passe et la lampe s'allume ; ouvert, le circuit est coupé et la lampe s'éteint.
+\item Le \textbf{neutre} (fil bleu) ramène le courant de la lampe vers la source : il va directement à la lampe sans passer par l'interrupteur.
+\end{itemize}
+\textbf{Conclusion.} Le circuit est une boucle unique : phase $\rightarrow$ interrupteur $\rightarrow$ lampe $\rightarrow$ neutre. L'interrupteur coupe la phase pour que la lampe ne soit plus sous tension lorsqu'elle est éteinte.
+\end{exoresolu}
+
+\courssub{Réaliser et câbler un montage en va-et-vient}
+
+\begin{definition}[Va-et-vient]
+Le \cle{va-et-vient} est le montage dans lequel une même lampe est commandée depuis \textbf{deux endroits différents}, à l'aide de deux appareils appelés va-et-vient, reliés entre eux par deux conducteurs appelés \cle{fils navettes}.
+\end{definition}
+
+\begin{methode}[Câbler un va-et-vient]
+Pour commander une même lampe depuis deux endroits (par exemple le bas et le haut d'un escalier) :
+\begin{enumerate}
+\item Couper le courant au disjoncteur général.
+\item Relier la \cle{phase} à la borne commune du premier va-et-vient $V_1$.
+\item Relier les deux bornes de navette de $V_1$ aux deux bornes de navette du second va-et-vient $V_2$ par deux fils appelés \cle{fils navettes}.
+\item Relier la borne commune de $V_2$ à la lampe.
+\item Relier le \cle{neutre} directement à la lampe.
+\item Vérifier : chaque va-et-vient, actionné seul, doit pouvoir allumer ou éteindre la lampe quelle que soit la position de l'autre.
+\end{enumerate}
+Réflexe : les deux va-et-vient sont reliés entre eux par \textbf{exactement deux} fils navettes.
+\end{methode}
+
+\begin{exoresolu}[Le va-et-vient de l'escalier]
+Dans la maison de M. Etoundi à Yaoundé, une lampe éclaire l'escalier. Elle doit pouvoir être allumée en bas et éteinte en haut. Expliquer le fonctionnement du montage et justifier le choix des appareils.
+\tcblower
+\textbf{Choix des appareils.} Un interrupteur simple ne permet qu'une seule commande. Pour deux points de commande, il faut \textbf{deux va-et-vient}, reconnaissables à leurs trois bornes (une commune, deux navettes).
+
+\textbf{Schéma de principe.}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.85]
+% Phase
+\draw[thick, popink] (0,2) -- (1.5,2) node[midway, above]{Phase};
+\fill (0,2) circle (2pt);
+% V1
+\fill (1.5,2) circle (1.5pt);
+\draw[thick, popink] (1.5,2) -- (2.4,2.4);
+\fill (2.6,2.5) circle (1.5pt); \fill (2.6,1.5) circle (1.5pt);
+\node[above] at (2,2.7) {$V_1$ (bas)};
+% Navettes
+\draw[thick, poporange] (2.6,2.5) -- (5.4,2.5);
+\draw[thick, poporange] (2.6,1.5) -- (5.4,1.5);
+\node[above, poporange] at (4,2.5) {navettes};
+% V2
+\fill (5.4,2.5) circle (1.5pt);
+\draw[thick, popink] (5.4,2.5) -- (6.3,2.1);
+\fill (6.5,2) circle (1.5pt);
+\node[above] at (6,2.7) {$V_2$ (haut)};
+% Lampe
+\draw[thick, popink] (6.5,2) -- (7.5,2) -- (7.5,1.3);
+\draw[thick, popdark] (7.5,1) circle (0.3);
+\draw[thick, popdark] (7.3,0.8) -- (7.7,1.2);
+\draw[thick, popdark] (7.3,1.2) -- (7.7,0.8);
+\draw[thick, popblue] (7.5,0.7) -- (7.5,0) -- (0,0) node[midway, below]{Neutre};
+\fill (0,0) circle (2pt);
+\node[right] at (7.9,1) {Lampe};
+\end{tikzpicture}
+\legende{Montage en va-et-vient : deux fils navettes relient les deux va-et-vient $V_1$ et $V_2$.}
+\end{popfigure}
+
+\textbf{Fonctionnement.} Chaque va-et-vient relie sa borne commune à l'une ou l'autre des deux navettes. La lampe est allumée lorsque le courant trouve un chemin continu : les deux va-et-vient doivent sélectionner la \textbf{même navette}. Si M. Etoundi actionne $V_1$ en bas, il change la navette utilisée : le circuit s'ouvre ou se ferme. De même en haut avec $V_2$. Ainsi, chaque commande inverse l'état de la lampe, quelle que soit la position de l'autre.
+
+\textbf{Conclusion.} Le montage va-et-vient, grâce aux deux fils navettes, permet de commander une même lampe depuis deux endroits différents : c'est l'installation adaptée à un escalier ou à un long couloir.
+\end{exoresolu}
+
+\begin{savaistu}[Et pour trois points de commande ?]
+Pour commander une lampe depuis \textbf{trois} endroits (par exemple un très long couloir d'hôtel), on intercale entre les deux va-et-vient un appareil appelé \cle{permutateur}. Ce montage n'est pas exigible au BEPC, mais il montre que l'électricien sait adapter l'installation à chaque besoin.
+\end{savaistu}
+
+\courssub{Choisir l'installation adaptée à une situation}
+
+\begin{methode}[Choisir entre simple allumage et va-et-vient]
+Pour choisir le bon montage dans une situation concrète :
+\begin{enumerate}
+\item Compter le \textbf{nombre de points de commande} souhaités pour la lampe.
+\item Un seul point de commande $\Rightarrow$ \textbf{simple allumage} (un interrupteur simple à deux bornes).
+\item Deux points de commande $\Rightarrow$ \textbf{va-et-vient} (deux va-et-vient à trois bornes, reliés par deux navettes).
+\item Vérifier que le montage choisi respecte la sécurité : commande sur la phase, protection par fusible ou disjoncteur, fils de section adaptée.
+\end{enumerate}
+\end{methode}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Simple allumage} & \textbf{Va-et-vient} \\
+\hline
+Nombre de points de commande & Un seul & Deux \\
+\hline
+Appareil(s) de commande & Un interrupteur simple (2 bornes) & Deux va-et-vient (3 bornes chacun) \\
+\hline
+Liaison entre commandes & Aucune & Deux fils navettes \\
+\hline
+Exemples d'usage & Chambre, cuisine, toilettes, boutique & Escalier, long couloir, salon à deux entrées \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Aménagement d'une maison à Douala]
+Papa Kamga construit une maison à Bonabéri. Il veut : (a) commander la lampe des toilettes uniquement depuis la porte ; (b) commander la lampe du couloir depuis les deux extrémités. Pour chaque cas, indiquer le montage à réaliser et le matériel nécessaire.
+\tcblower
+\textbf{Cas (a) : les toilettes.} Un seul point de commande est prévu (la porte). On choisit donc le \textbf{simple allumage}. Matériel : un interrupteur simple (deux bornes), une lampe, du fil de phase, du fil de neutre, un fusible de protection. L'interrupteur est placé en série avec la lampe, sur la phase.
+
+\textbf{Cas (b) : le couloir.} Deux points de commande sont prévus (les deux extrémités). On choisit donc le \textbf{va-et-vient}. Matériel : deux va-et-vient (trois bornes chacun), une lampe, deux fils navettes, les fils de phase et de neutre, un fusible. La phase arrive sur la borne commune du premier va-et-vient, les deux navettes relient les deux appareils, et la borne commune du second alimente la lampe.
+
+\textbf{Conclusion.} Toilettes : simple allumage avec un interrupteur simple ; couloir : va-et-vient avec deux va-et-vient reliés par deux fils navettes.
+\end{exoresolu}
+
+\courssub{Appliquer les consignes de sécurité}
+
+\begin{methode}[Sécurité sur une installation domestique]
+Avant toute intervention ou pour vérifier une installation :
+\begin{enumerate}
+\item Toujours \textbf{couper le courant} au disjoncteur général avant de toucher au circuit.
+\item Vérifier que la \textbf{phase} est bien coupée par l'appareil de commande (jamais le neutre).
+\item Vérifier la présence d'un \textbf{disjoncteur ou fusible} de calibre adapté sur chaque circuit.
+\item Ne jamais surcharger une rallonge ou une multiprise (risque d'échauffement et d'incendie).
+\item Ne jamais toucher un appareil électrique avec les mains mouillées ou les pieds nus.
+\item Faire réparer les fils dénudés et les prises endommagées par une personne qualifiée.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Diagnostic de sécurité]
+Chez Mme Abena, on constate : (1) l'interrupteur de la chambre coupe le fil de neutre ; (2) une rallonge alimente à la fois une bouilloire, un fer à repasser et un réfrigérateur ; (3) le fusible de la maison a été remplacé par un fil de fer. Pour chaque situation, indiquer le danger et la correction à apporter.
+\tcblower
+\textbf{Situation 1.} Si l'interrupteur coupe le neutre, la lampe reste reliée à la phase même éteinte : la douille reste \textbf{sous tension}. Danger : électrisation en changeant l'ampoule. Correction : replacer l'interrupteur sur le fil de \textbf{phase}.
+
+\textbf{Situation 2.} La somme des puissances dépasse ce que la rallonge peut supporter : l'intensité devient trop grande, les fils \textbf{s'échauffent} (effet Joule). Danger : incendie. Correction : brancher les appareils puissants sur des prises distinctes et ne pas dépasser la puissance maximale de la rallonge.
+
+\textbf{Situation 3.} Un fil de fer ne fond pas en cas de surintensité : la \textbf{protection} du circuit est supprimée. Danger : échauffement des conducteurs et incendie. Correction : installer un fusible (ou disjoncteur) de \textbf{calibre adapté} au circuit.
+
+\textbf{Conclusion.} Une installation sûre exige : commande sur la phase, puissance limitée sur chaque prise, et protection par un fusible de calibre correct.
+\end{exoresolu}
+
+\courssub{Interpréter un schéma d'installation}
+
+\begin{methode}[Lire et analyser le schéma d'une installation]
+Pour interpréter un schéma électrique domestique :
+\begin{enumerate}
+\item Identifier la source, la phase et le neutre.
+\item Suivre le trajet du courant de la phase vers le neutre en passant par la commande et le récepteur.
+\item Déterminer le type de montage : un seul interrupteur en série $\Rightarrow$ simple allumage ; deux appareils à trois bornes reliés par deux navettes $\Rightarrow$ va-et-vient.
+\item Prévoir l'état de la lampe (allumée ou éteinte) selon la position des commandes.
+\item Vérifier les points de sécurité : fusible en amont, commande sur la phase.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Analyse d'un schéma]
+Sur un schéma, la phase arrive sur la borne commune d'un premier va-et-vient $V_1$ ; deux fils relient $V_1$ à un second va-et-vient $V_2$ ; la borne commune de $V_2$ alimente une lampe reliée au neutre. Initialement, $V_1$ et $V_2$ sélectionnent la même navette et la lampe est allumée. Que se passe-t-il si l'on actionne $V_1$ ? Puis si l'on actionne $V_2$ ?
+\tcblower
+\textbf{État initial.} $V_1$ et $V_2$ sélectionnent la même navette : le circuit est fermé, le courant circule, la lampe est \textbf{allumée}.
+
+\textbf{On actionne $V_1$.} $V_1$ bascule sur l'autre navette : les deux va-et-vient ne sélectionnent plus le même fil, le circuit est \textbf{ouvert}. La lampe \textbf{s'éteint}.
+
+\textbf{On actionne ensuite $V_2$.} $V_2$ bascule à son tour sur l'autre navette : les deux appareils sélectionnent de nouveau le même fil, le circuit se \textbf{referme}. La lampe \textbf{se rallume}.
+
+\textbf{Conclusion.} Chaque action sur l'un ou l'autre des va-et-vient inverse l'état de la lampe : c'est bien la propriété caractéristique du montage va-et-vient, qui permet de commander un éclairage depuis deux endroits.
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\begin{itemize}
+\item Le \textbf{simple allumage} : une lampe, un interrupteur simple (deux bornes) monté en série sur la phase, un seul point de commande.
+\item Le \textbf{va-et-vient} : une lampe, deux va-et-vient (trois bornes chacun) reliés par deux fils navettes, deux points de commande.
+\item La commande coupe toujours la \textbf{phase} ; le neutre va directement à la lampe.
+\item Toute installation est protégée par un \textbf{fusible ou disjoncteur} de calibre adapté, placé sur la phase.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au BEPC]
+\begin{enumerate}
+\item \textbf{Placer l'interrupteur sur le neutre.} Dans un schéma, la commande doit toujours être tracée sur le fil de \textbf{phase}. Un interrupteur sur le neutre est une faute de sécurité sanctionnée.
+\item \textbf{Confondre interrupteur simple et va-et-vient.} L'interrupteur simple a \textbf{deux bornes} et un seul point de commande ; le va-et-vient a \textbf{trois bornes} (une commune, deux navettes) et il en faut \textbf{deux} pour deux points de commande.
+\item \textbf{Oublier les deux fils navettes.} Entre deux va-et-vient, il passe exactement \textbf{deux} conducteurs navettes. N'en dessiner qu'un seul rend le montage faux.
+\item \textbf{Monter la lampe et la commande en dérivation.} Dans le simple allumage, l'interrupteur et la lampe sont \textbf{en série} ; un montage en dérivation court-circuite la lampe ou la laisse toujours allumée.
+\item \textbf{Négliger la protection.} Toute installation doit comporter un \textbf{fusible ou disjoncteur} de calibre adapté sur la phase ; oublier de le mentionner dans une question de sécurité fait perdre des points.
+\end{enumerate}
+\end{attention}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Définir : simple allumage ; va-et-vient ; fil navette.
+\item Pourquoi l'interrupteur doit-il être placé sur la phase et non sur le neutre ?
+\item Dessiner le schéma d'une lampe de véranda commandée en simple allumage, avec sa protection par fusible.
+\item Dans un couloir équipé d'un va-et-vient, la lampe est éteinte. On actionne le va-et-vient de l'entrée, puis celui du fond du couloir. Décrire l'état de la lampe après chaque action.
+\item Chez un voisin, la lampe du salon reste allumée même interrupteur ouvert. Proposer une explication et une correction.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Pour s'entraîner]
+\begin{enumerate}
+\item \textbf{Simple allumage} : montage où une lampe est commandée depuis un seul endroit par un interrupteur simple en série sur la phase. \textbf{Va-et-vient} : montage où une lampe est commandée depuis deux endroits par deux va-et-vient. \textbf{Fil navette} : chacun des deux conducteurs reliant les bornes de navette des deux va-et-vient.
+\item Si l'interrupteur coupait le neutre, la lampe resterait reliée à la phase même éteinte : sa douille resterait sous tension, avec un risque d'électrisation lors du changement d'ampoule. Placé sur la phase, l'interrupteur met la lampe hors tension quand elle est éteinte.
+\item Schéma : la phase traverse d'abord le fusible, puis l'interrupteur, puis la lampe ; le neutre va directement de la source à la lampe. Interrupteur et lampe sont en série.
+\item État initial : lampe éteinte (les deux va-et-vient ne sélectionnent pas la même navette). On actionne le va-et-vient de l'entrée : le circuit se ferme, la lampe \textbf{s'allume}. On actionne celui du fond : le circuit s'ouvre, la lampe \textbf{s'éteint}.
+\item Explication probable : l'interrupteur est monté en dérivation (court-circuité) ou ses bornes sont pontées, donc le courant passe en permanence. Correction : couper le courant, vérifier le câblage et remettre l'interrupteur \textbf{en série} sur la phase, ou le remplacer s'il est défectueux.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : le bon appareillage]
+Pour chaque situation, choisis l'appareillage de commande le plus adapté : \textbf{a)} interrupteur simple (simple allumage) ; \textbf{b)} va-et-vient.
+\begin{enumerate}
+\item La lampe d'un débarras sans fenêtre, commandée depuis la porte unique.
+\item La lampe d'un escalier, commandée en bas et en haut.
+\item La lampe d'un salon possédant deux entrées.
+\item La lampe de chevet d'une chambre, commandée depuis le lit uniquement.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux ? Justifie]
+Réponds par vrai ou faux, puis justifie ta réponse en une phrase.
+\begin{enumerate}
+\item Dans un montage en simple allumage, on peut commander la lampe depuis deux endroits différents.
+\item Un interrupteur va-et-vient possède trois bornes de raccordement.
+\item Dans un va-et-vient, les deux fils qui relient les deux interrupteurs s'appellent les fils navettes.
+\item La lampe d'un va-et-vient ne s'allume que lorsque les deux interrupteurs sont dans la même position.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions]
+Définis chacun des termes suivants en une ou deux phrases :
+\begin{enumerate}
+\item Installation en simple allumage.
+\item Installation en va-et-vient.
+\item Fils navettes.
+\item Appareillage de commande.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Une lampe de puissance $P = \SI{60}{W}$ est alimentée sous une tension $U = \SI{220}{V}$.
+\begin{enumerate}
+\item Calcule l'intensité $I$ du courant qui la traverse. On rappelle : $P = U \cdot I$.
+\item Calcule l'énergie électrique consommée si la lampe fonctionne pendant $\SI{4}{h}$. On rappelle : $E = P \cdot t$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Identifier un schéma]
+On donne le schéma d'une installation comportant : un générateur (compteur et disjoncteur ENEO), deux appareillages de commande à trois bornes chacun, reliés entre eux par deux fils, et une lampe.
+\begin{enumerate}
+\item S'agit-il d'un montage en simple allumage ou en va-et-vient ? Justifie.
+\item Nomme chaque élément repéré sur le schéma : générateur, interrupteurs va-et-vient, fils navettes, lampe, fil de phase, fil neutre.
+\item Redessine le schéma normalisé de cette installation en utilisant les symboles électriques.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Compléter un schéma de va-et-vient]
+Sur le schéma normalisé d'un va-et-vient fourni par le professeur, seuls le disjoncteur, la lampe et les deux interrupteurs va-et-vient sont dessinés ; les conducteurs ne sont pas tracés.
+\begin{enumerate}
+\item Trace le fil de phase (rouge) du disjoncteur jusqu'à la borne commune du premier interrupteur.
+\item Trace les deux fils navettes (orange ou violet) entre les deux interrupteurs.
+\item Trace le fil (rouge) reliant la borne commune du deuxième interrupteur à la lampe, puis le fil neutre (bleu) de la lampe au disjoncteur.
+\item Indique sur le schéma la couleur normalisée de chaque conducteur.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Tableau de vérité d'un va-et-vient]
+Deux interrupteurs va-et-vient $V_1$ et $V_2$ commandent une lampe $L$. Chaque interrupteur peut être en position 1 ou en position 2. La lampe est allumée lorsque les deux interrupteurs sont dans la même position, éteinte sinon.
+\begin{enumerate}
+\item Recopie et complète le tableau ci-dessous en indiquant l'état de la lampe (allumée ou éteinte) pour chaque combinaison.
+\end{enumerate}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor{popblueL} Position de $V_1$ & Position de $V_2$ & État de la lampe $L$ \\
+\hline
+1 & 1 & \\
+\hline
+1 & 2 & \\
+\hline
+2 & 1 & \\
+\hline
+2 & 2 & \\
+\hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item Explique pourquoi ce montage permet d'allumer ou d'éteindre la lampe depuis n'importe lequel des deux endroits.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Diagnostic d'une panne]
+Dans la maison de la famille Ngo Bell, la lampe du couloir est commandée par un va-et-vient : un interrupteur en bas de l'escalier, un autre en haut. Depuis hier, la lampe s'allume en bas mais ne s'éteint plus en haut.
+\begin{enumerate}
+\item Propose deux causes possibles de cette panne (pense aux fils navettes, aux bornes, à l'interrupteur du haut).
+\item Pour chaque cause, décris la vérification à effectuer, en précisant la consigne de sécurité à respecter avant toute intervention.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[L'escalier de la maison familiale — type BEPC]
+M. Etoundi fait construire une maison à Yaoundé. Il souhaite que la lampe de l'escalier puisse être allumée et éteinte indifféremment depuis le rez-de-chaussée et depuis l'étage. L'installation est alimentée sous $U = \SI{220}{V}$ par le réseau ENEO.
+\begin{enumerate}
+\item Quel type de montage l'électricien doit-il réaliser ? Justifie la réponse.
+\item Nomme l'appareillage de commande utilisé et précise le nombre de bornes de chacun de ces appareils.
+\item Dessine le schéma normalisé complet de l'installation : disjoncteur, appareillages de commande, fils navettes, lampe, fil de phase et fil neutre. Indique la couleur normalisée de chaque conducteur.
+\item La lampe installée porte les indications « $\SI{220}{V}$ ; $\SI{100}{W}$ ». Calcule l'intensité du courant qui la traverse en fonctionnement normal.
+\item L'électricien propose de placer le fil de phase sur la borne commune du premier interrupteur. Explique pourquoi ce choix est conforme aux règles de sécurité.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Facture d'électricité et va-et-vient — type BEPC]
+Dans un couloir de $\SI{12}{m}$ de long, une lampe de puissance $P = \SI{100}{W}$ est commandée par un va-et-vient placé à chaque extrémité. La lampe fonctionne en moyenne $\SI{5}{h}$ par jour, sous une tension $U = \SI{220}{V}$. Le kilowattheure coûte environ $100$ FCFA.
+\begin{enumerate}
+\item Calcule l'intensité $I$ du courant traversant la lampe.
+\item Calcule, en kilowattheures (kWh), l'énergie consommée par la lampe en un mois de $30$ jours. On rappelle : $E = P \cdot t$.
+\item Calcule le coût mensuel de cette consommation.
+\item Pourquoi le montage en va-et-vient est-il préférable au simple allumage dans ce couloir ? Donne deux arguments.
+\item La famille remplace la lampe par une lampe à DEL de $\SI{12}{W}$ donnant le même éclairage. Calcule l'économie réalisée en un mois (en FCFA).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Rénovation et sécurité — type BEPC]
+Pendant les travaux de rénovation d'une maison à Douala, on constate les anomalies suivantes : dans la chambre, la lampe est commandée par un va-et-vient dont un fil navette est dénudé ; dans le salon à deux portes, la lampe n'est commandée que par un interrupteur simple placé près d'une seule porte.
+\begin{enumerate}
+\item Pour le salon : quel montage faut-il installer pour commander la lampe depuis les deux portes ? Dessine son schéma normalisé.
+\item Nomme les deux conducteurs qui relient les deux appareillages de commande dans ce montage.
+\item Cite deux dangers que présente le fil navette dénudé de la chambre.
+\item Énonce trois consignes de sécurité à respecter avant et pendant la réparation de l'installation de la chambre.
+\item L'artisan affirme : « On peut couper le fil neutre à la place du fil de phase, cela revient au même. » Cette affirmation est-elle correcte ? Justifie en expliquant le rôle du fil de phase dans la protection des personnes.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{corrige}[Exercice 1 — QCM : le bon appareillage]
+\begin{enumerate}
+\item \textbf{Débarras sans fenêtre, une seule porte} : \textbf{a) interrupteur simple}. Une seule commande suffit puisqu'il n'y a qu'un seul accès.
+\item \textbf{Escalier, commandée en bas et en haut} : \textbf{b) va-et-vient}. Deux points de commande sont nécessaires (un à chaque extrémité de l'escalier).
+\item \textbf{Salon à deux entrées} : \textbf{b) va-et-vient}. On doit pouvoir allumer en entrant par une porte et éteindre en sortant par l'autre.
+\item \textbf{Lampe de chevet commandée depuis le lit uniquement} : \textbf{a) interrupteur simple}. Un seul point de commande est demandé.
+\end{enumerate}
+\textbf{Règle pratique} : un seul point de commande $\Rightarrow$ simple allumage ; deux points de commande $\Rightarrow$ va-et-vient.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux ? Justifie]
+\begin{enumerate}
+\item \textbf{Faux.} Le montage en simple allumage ne comporte qu'un seul interrupteur : la lampe ne peut être commandée que depuis un seul endroit. Pour deux points de commande, il faut un va-et-vient.
+\item \textbf{Vrai.} Un interrupteur va-et-vient possède trois bornes : une borne commune et deux bornes reliées aux fils navettes.
+\item \textbf{Vrai.} Les deux conducteurs qui relient les deux interrupteurs va-et-vient s'appellent les fils navettes (ou conducteurs navettes).
+\item \textbf{Faux.} La lampe s'allume lorsque le circuit est fermé, c'est-à-dire lorsque les deux interrupteurs relient le circuit par la même navette ; mais elle peut aussi être allumée dans d'autres combinaisons selon la position de départ : ce qui compte, c'est que \emph{chaque changement de position de l'un quelconque des deux interrupteurs change l'état de la lampe}. L'affirmation « uniquement dans la même position » n'est donc pas une règle générale du montage réel (tout dépend du câblage de départ).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions]
+\begin{enumerate}
+\item \textbf{Installation en simple allumage} : montage électrique dans lequel une lampe (ou un récepteur) est commandée (allumée ou éteinte) depuis un \cle{seul endroit}, au moyen d'un interrupteur simple placé en série sur le fil de phase.
+\item \textbf{Installation en va-et-vient} : montage électrique dans lequel une lampe est commandée depuis \cle{deux endroits différents}, au moyen de deux interrupteurs va-et-vient reliés par deux fils navettes.
+\item \textbf{Fils navettes} : les deux conducteurs qui relient les bornes homologues des deux interrupteurs va-et-vient ; ils permettent au courant de passer par l'un ou l'autre chemin selon la position des interrupteurs.
+\item \textbf{Appareillage de commande} : dispositif qui permet d'ouvrir ou de fermer un circuit électrique afin de commander un récepteur (exemples : interrupteur simple, interrupteur va-et-vient, bouton poussoir).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\textbf{Données} : $P = \SI{60}{W}$ ; $U = \SI{220}{V}$.
+\begin{enumerate}
+\item De $P = U \cdot I$, on tire :
+\[ I = \frac{P}{U} = \frac{60}{220} \approx \SI{0,27}{A}. \]
+La lampe est traversée par un courant d'intensité $I \approx \SI{0,27}{A}$ (soit environ $\SI{273}{mA}$).
+\item $E = P \cdot t = 60 \times 4 = \SI{240}{Wh}$, c'est-à-dire $E = \SI{0,24}{kWh}$.
+\end{enumerate}
+\textbf{Vérification} : $0,27 \times 220 \approx 59,4 \approx 60$ W : le résultat est cohérent.
+\end{corrige}
+
+\courssub{Je m'entraîne}
+
+\begin{corrige}[Exercice 5 — Identifier un schéma]
+\begin{enumerate}
+\item Il s'agit d'un montage en \cle{va-et-vient}. Justification : l'installation comporte \textbf{deux} appareillages de commande à \textbf{trois bornes} chacun (caractéristique des interrupteurs va-et-vient), reliés entre eux par \textbf{deux fils} (les navettes). Un simple allumage n'aurait qu'un seul interrupteur à deux bornes.
+\item Nomenclature des éléments :
+\begin{itemize}
+\item le générateur : le compteur et le disjoncteur ENEO (source d'énergie et protection) ;
+\item les deux appareillages à trois bornes : les interrupteurs va-et-vient $V_1$ et $V_2$ ;
+\item les deux fils qui les relient : les fils navettes ;
+\item le récepteur : la lampe $L$ ;
+\item le conducteur qui arrive du disjoncteur à la borne commune de $V_1$ : le fil de phase ;
+\item le conducteur qui revient de la lampe au disjoncteur : le fil neutre.
+\end{itemize}
+\item Schéma normalisé de l'installation :
+\end{enumerate}
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+% Disjoncteur
+\draw[thick, fill=popblueL] (0,0) rectangle (1,1.2);
+\node at (0.5,0.6) {D};
+\node[below] at (0.5,0) {Disjoncteur};
+% Phase vers V1
+\draw[thick, poppink] (1,1.0) -- (2.5,1.0) node[midway, above, poppink]{Phase (rouge)};
+% V1
+\draw[thick] (2.5,1.0) -- (3.0,1.35);
+\fill (2.5,1.0) circle (1.5pt);
+\fill (3.2,1.5) circle (1.5pt);
+\fill (3.2,0.5) circle (1.5pt);
+\node[below] at (2.9,0.35) {$V_1$};
+% Navettes
+\draw[thick, poporange] (3.2,1.5) -- (5.3,1.5) node[midway, above, poporange]{navette};
+\draw[thick, poppurple] (3.2,0.5) -- (5.3,0.5) node[midway, below, poppurple]{navette};
+% V2
+\fill (5.3,1.5) circle (1.5pt);
+\fill (5.3,0.5) circle (1.5pt);
+\fill (6.0,1.0) circle (1.5pt);
+\draw[thick] (5.3,0.5) -- (5.85,0.9);
+\node[below] at (5.7,0.35) {$V_2$};
+% Vers lampe
+\draw[thick, poppink] (6.0,1.0) -- (7.2,1.0) node[midway, above, poppink]{retour lampe};
+% Lampe
+\draw[thick] (7.7,1.0) circle (0.5);
+\draw[thick] (7.35,0.65) -- (8.05,1.35);
+\draw[thick] (7.35,1.35) -- (8.05,0.65);
+\node[above] at (7.7,1.6) {$L$};
+% Neutre retour
+\draw[thick, popblue] (7.7,0.5) -- (7.7,-0.6) -- (1,-0.6) -- (1,0.2);
+\node[below, popblue] at (4.3,-0.6) {Neutre (bleu)};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma normalisé du va-et-vient : D = disjoncteur ; $V_1$, $V_2$ = interrupteurs va-et-vient ; $L$ = lampe. La phase (rouge) arrive sur la borne commune de $V_1$, les deux navettes relient $V_1$ et $V_2$, le retour lampe part de la borne commune de $V_2$, le neutre (bleu) va directement à la lampe.}
+\end{popfigure}
+\textbf{Point de vigilance} : sur le schéma, la phase doit passer par les interrupteurs, jamais le neutre seul.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Compléter un schéma de va-et-vient]
+\begin{enumerate}
+\item Le fil de \textbf{phase} (rouge) part de la borne de sortie du disjoncteur et aboutit à la \textbf{borne commune} du premier interrupteur va-et-vient $V_1$.
+\item Les \textbf{deux fils navettes} (orange et violet, ou deux couleurs distinctes autres que rouge et bleu) relient les deux bornes restantes de $V_1$ aux deux bornes homologues de $V_2$ : borne 1 de $V_1$ vers borne 1 de $V_2$, borne 2 de $V_1$ vers borne 2 de $V_2$.
+\item Un fil (rouge) relie la \textbf{borne commune de $V_2$} à la première borne de la lampe ; le \textbf{fil neutre} (bleu) relie la deuxième borne de la lampe directement au disjoncteur.
+\item Couleurs normalisées à reporter sur le schéma :
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} Conducteur & Couleur normalisée \\
+\hline
+Phase (disjoncteur $\to$ $V_1$, puis $V_2$ $\to$ lampe) & rouge \\
+\hline
+Navettes ($V_1 \leftrightarrow V_2$) & orange ou violet (jamais bleu ni vert/jaune) \\
+\hline
+Neutre (lampe $\to$ disjoncteur) & bleu \\
+\hline
+\end{tabularx}
+\end{center}
+\end{enumerate}
+\textbf{Point de vigilance} : le bleu est réservé au neutre, le vert/jaune à la terre ; ils ne doivent jamais servir de navettes.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Tableau de vérité d'un va-et-vient]
+\begin{enumerate}
+\item Tableau complété :
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\rowcolor{popblueL} Position de $V_1$ & Position de $V_2$ & État de la lampe $L$ \\
+\hline
+1 & 1 & allumée \\
+\hline
+1 & 2 & éteinte \\
+\hline
+2 & 1 & éteinte \\
+\hline
+2 & 2 & allumée \\
+\hline
+\end{tabular}
+\end{center}
+\item \textbf{Explication} : quel que soit l'état actuel de la lampe, il suffit de changer la position de \emph{l'un seul} des deux interrupteurs pour passer d'une ligne « allumée » à une ligne « éteinte » du tableau (et inversement). Par exemple, si $V_1 = 1$ et $V_2 = 1$ (lampe allumée), basculer $V_2$ sur 2 éteint la lampe ; basculer ensuite $V_1$ sur 2 la rallume. Chaque interrupteur peut donc, à tout moment, allumer ou éteindre la lampe : c'est exactement la fonction recherchée dans un escalier ou un couloir.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Diagnostic d'une panne]
+\begin{enumerate}
+\item \textbf{Causes possibles} :
+\begin{itemize}
+\item \textbf{Cause 1} : un fil navette est coupé, desserré ou débranché au niveau de l'interrupteur du haut (borne mal serrée).
+\item \textbf{Cause 2} : l'interrupteur va-et-vient du haut est défectueux (contact interne usé ou cassé), il ne commute plus.
+\end{itemize}
+\item \textbf{Vérifications} :
+\begin{itemize}
+\item \textbf{Consigne de sécurité préalable, identique dans les deux cas} : couper le courant au disjoncteur général, vérifier l'absence de tension avec un vérificateur d'absence de tension (VAT), et ne jamais travailler sur une installation sous tension.
+\item \textbf{Vérification de la cause 1} : ouvrir la plaque de l'interrupteur du haut et inspecter le serrage des bornes et l'état des fils navettes ; resserrer ou rebrancher le fil concerné.
+\item \textbf{Vérification de la cause 2} : tester la continuité entre la borne commune et chaque borne de navette de l'interrupteur démonté, dans les deux positions, à l'aide d'un multimètre (hors tension). Si la continuité n'est pas assurée dans une position, remplacer l'interrupteur.
+\end{itemize}
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je me prépare au Bac}
+
+\begin{corrige}[Exercice 9 — L'escalier de la maison familiale — type BEPC]
+\begin{enumerate}
+\item L'électricien doit réaliser un montage en \cle{va-et-vient}, car la lampe doit être commandée (allumée et éteinte) depuis \textbf{deux endroits différents} : le rez-de-chaussée et l'étage.
+\item L'appareillage de commande utilisé est l'\textbf{interrupteur va-et-vient} ; il en faut \textbf{deux}, et chacun possède \textbf{trois bornes} : une borne commune et deux bornes pour les navettes.
+\item Schéma normalisé complet :
+\end{enumerate}
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+\draw[thick, fill=popblueL] (0,0) rectangle (1,1.2);
+\node at (0.5,0.6) {D};
+\node[below] at (0.5,0) {Disjoncteur};
+\draw[thick, poppink] (1,1.0) -- (2.5,1.0) node[midway, above, poppink]{Phase (rouge)};
+\draw[thick] (2.5,1.0) -- (3.0,1.35);
+\fill (2.5,1.0) circle (1.5pt);
+\fill (3.2,1.5) circle (1.5pt);
+\fill (3.2,0.5) circle (1.5pt);
+\node[below] at (2.9,0.35) {$V_1$ (RDC)};
+\draw[thick, poporange] (3.2,1.5) -- (5.3,1.5) node[midway, above, poporange]{navette (orange)};
+\draw[thick, poppurple] (3.2,0.5) -- (5.3,0.5) node[midway, below, poppurple]{navette (violet)};
+\fill (5.3,1.5) circle (1.5pt);
+\fill (5.3,0.5) circle (1.5pt);
+\fill (6.0,1.0) circle (1.5pt);
+\draw[thick] (5.3,1.5) -- (5.85,1.1);
+\node[below] at (5.8,0.35) {$V_2$ (étage)};
+\draw[thick, poppink] (6.0,1.0) -- (7.2,1.0) node[midway, above, poppink]{rouge};
+\draw[thick] (7.7,1.0) circle (0.5);
+\draw[thick] (7.35,0.65) -- (8.05,1.35);
+\draw[thick] (7.35,1.35) -- (8.05,0.65);
+\node[above] at (7.7,1.6) {$L$};
+\draw[thick, popblue] (7.7,0.5) -- (7.7,-0.6) -- (1,-0.6) -- (1,0.2);
+\node[below, popblue] at (4.3,-0.6) {Neutre (bleu)};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma normalisé du montage va-et-vient de l'escalier : la phase (rouge) alimente la borne commune de $V_1$, les navettes relient $V_1$ et $V_2$, le retour lampe (rouge) part de la borne commune de $V_2$, le neutre (bleu) va directement à la lampe.}
+\end{popfigure}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item Intensité du courant en fonctionnement normal :
+\[ I = \frac{P}{U} = \frac{100}{220} \approx \SI{0,45}{A}. \]
+\item La phase est le conducteur « dangereux » (à $\SI{220}{V}$ par rapport à la terre). En plaçant la phase sur la borne commune du premier interrupteur, on coupe la phase lorsque le circuit est ouvert : la lampe et le retour ne sont alors \textbf{plus sous tension}, ce qui permet de changer l'ampoule ou d'intervenir sans risque d'électrisation. C'est la règle de sécurité fondamentale : \emph{on coupe toujours la phase, jamais le neutre}.
+\end{enumerate}
+\textbf{Barème indicatif (sur 10)} : question 1 : 1 pt (montage + justification) ; question 2 : 2 pts (appareillage + 3 bornes) ; question 3 : 3 pts (schéma complet, symboles corrects, couleurs) ; question 4 : 2 pts (formule + application numérique + unité) ; question 5 : 2 pts (rôle de la phase + protection des personnes).
+
+\textbf{Points de vigilance} : exiger la justification « deux points de commande $\Rightarrow$ va-et-vient » ; vérifier que la phase passe par les interrupteurs sur le schéma ; l'unité de l'intensité (ampère) est obligatoire ; pour la question 5, la mention « la lampe n'est plus sous tension quand on coupe la phase » est attendue.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Facture d'électricité et va-et-vient — type BEPC]
+\textbf{Données} : $P = \SI{100}{W} = \SI{0,1}{kW}$ ; $U = \SI{220}{V}$ ; $t = 5$ h/jour ; $1$ kWh coûte $100$ FCFA.
+\begin{enumerate}
+\item Intensité du courant :
+\[ I = \frac{P}{U} = \frac{100}{220} \approx \SI{0,45}{A}. \]
+\item Durée totale de fonctionnement en un mois : $t = 5 \times 30 = \SI{150}{h}$.
+\[ E = P \cdot t = 0,1 \times 150 = \SI{15}{kWh}. \]
+(Autre calcul : $E = 100 \text{ W} \times 150 \text{ h} = \SI{15000}{Wh} = \SI{15}{kWh}$ : même résultat.)
+\item Coût mensuel : $15 \times 100 = \textbf{1 500 FCFA}$.
+\item Le va-et-vient est préférable dans ce couloir car :
+\begin{itemize}
+\item on peut allumer la lampe à une extrémité et l'éteindre à l'autre, sans traverser le couloir dans le noir (confort et sécurité contre les chutes) ;
+\item on évite de laisser la lampe allumée inutilement, ce qui réduit la consommation d'énergie et la facture.
+\end{itemize}
+\item Avec la lampe à DEL de $\SI{12}{W} = \SI{0,012}{kW}$ :
+\[ E' = 0,012 \times 150 = \SI{1,8}{kWh} \quad \Rightarrow \quad \text{coût} = 1,8 \times 100 = 180 \text{ FCFA}. \]
+Économie mensuelle : $1500 - 180 = \textbf{1 320 FCFA}$.
+\end{enumerate}
+\textbf{Vérification} : la DEL consomme $\frac{12}{100} = 12\,\%$ de l'ancienne énergie ; $15 \times 0,12 = 1,8$ kWh : cohérent.
+
+\textbf{Barème indicatif (sur 10)} : question 1 : 2 pts ; question 2 : 2 pts (conversion en kW exigée) ; question 3 : 1 pt ; question 4 : 2 pts ; question 5 : 3 pts.
+
+\textbf{Points de vigilance} : la conversion de la puissance en kilowatts avant le calcul en kWh est la condition d'application essentielle de $E = P \cdot t$ ; les unités (kWh, FCFA) doivent figurer dans la réponse finale ; pour la question 4, deux arguments distincts sont exigés (confort/sécurité et économie d'énergie).
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Rénovation et sécurité — type BEPC]
+\begin{enumerate}
+\item Pour commander la lampe du salon depuis les deux portes, il faut installer un montage en \cle{va-et-vient}, avec un interrupteur va-et-vient près de chaque porte. Schéma normalisé :
+\end{enumerate}
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1, every node/.style={font=\small}]
+\draw[thick, fill=popblueL] (0,0) rectangle (1,1.2);
+\node at (0.5,0.6) {D};
+\node[below] at (0.5,0) {Disjoncteur};
+\draw[thick, poppink] (1,1.0) -- (2.5,1.0) node[midway, above, poppink]{Phase (rouge)};
+\draw[thick] (2.5,1.0) -- (3.0,1.35);
+\fill (2.5,1.0) circle (1.5pt);
+\fill (3.2,1.5) circle (1.5pt);
+\fill (3.2,0.5) circle (1.5pt);
+\node[below] at (2.9,0.35) {$V_1$ (porte 1)};
+\draw[thick, poporange] (3.2,1.5) -- (5.3,1.5) node[midway, above, poporange]{navette};
+\draw[thick, poppurple] (3.2,0.5) -- (5.3,0.5) node[midway, below, poppurple]{navette};
+\fill (5.3,1.5) circle (1.5pt);
+\fill (5.3,0.5) circle (1.5pt);
+\fill (6.0,1.0) circle (1.5pt);
+\draw[thick] (5.3,0.5) -- (5.85,0.9);
+\node[below] at (5.8,0.35) {$V_2$ (porte 2)};
+\draw[thick, poppink] (6.0,1.0) -- (7.2,1.0);
+\draw[thick] (7.7,1.0) circle (0.5);
+\draw[thick] (7.35,0.65) -- (8.05,1.35);
+\draw[thick] (7.35,1.35) -- (8.05,0.65);
+\node[above] at (7.7,1.6) {$L$};
+\draw[thick, popblue] (7.7,0.5) -- (7.7,-0.6) -- (1,-0.6) -- (1,0.2);
+\node[below, popblue] at (4.3,-0.6) {Neutre (bleu)};
+\end{tikzpicture}
+\end{center}
+\legende{Montage en va-et-vient pour le salon à deux portes : phase (rouge) sur la borne commune de $V_1$, deux navettes entre $V_1$ et $V_2$, retour lampe (rouge) depuis la borne commune de $V_2$, neutre (bleu) direct à la lampe.}
+\end{popfigure}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item Les deux conducteurs qui relient les deux appareillages de commande sont les \textbf{fils navettes}.
+\item Dangers du fil navette dénudé :
+\begin{itemize}
+\item risque d'\textbf{électrisation} (choc électrique) pour toute personne qui touche la partie dénudée ;
+\item risque de \textbf{court-circuit} si le fil dénudé touche un autre conducteur ou une partie métallique, pouvant provoquer un \textbf{incendie}.
+\end{itemize}
+\item Trois consignes de sécurité :
+\begin{itemize}
+\item couper le courant au disjoncteur général avant toute intervention ;
+\item vérifier l'absence de tension à l'aide d'un vérificateur d'absence de tension (VAT) avant de toucher les conducteurs ;
+\item travailler avec des outils isolés, les mains sèches, sur un sol sec (et remplacer ou isoler le fil dénudé avant de remettre le courant).
+\end{itemize}
+\item L'affirmation de l'artisan est \textbf{fausse}. Le fil de phase est le conducteur qui porte la tension de $\SI{220}{V}$ par rapport à la terre : c'est lui qui est dangereux. Si l'interrupteur coupe le neutre au lieu de la phase, la lampe s'éteint certes, mais \textbf{elle reste reliée à la phase} : la douille demeure sous tension et une personne qui change l'ampoule peut être électrisée. Pour protéger les personnes, l'appareillage de commande doit toujours couper le \textbf{fil de phase}.
+\end{enumerate}
+\textbf{Barème indicatif (sur 10)} : question 1 : 2 pts (montage + schéma) ; question 2 : 1 pt ; question 3 : 2 pts ; question 4 : 2 pts ; question 5 : 3 pts (réponse + rôle de la phase + conséquence pour les personnes).
+
+\textbf{Points de vigilance} : pour la question 3, deux dangers distincts sont attendus (électrisation et court-circuit/incendie) ; pour la question 5, la justification doit mentionner explicitement que la lampe « reste sous tension » si l'on coupe le neutre ; toute intervention doit être précédée de la coupure du disjoncteur : c'est la condition de sécurité à citer systématiquement.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, font=\small},
+  root concept/.append style={concept color=popblue, font=\bfseries, minimum size=2.6cm},
+  level 1/.append style={sibling angle=72, level distance=3.6cm, minimum size=2.2cm},
+  level 1 concept/.append style={font=\footnotesize\bfseries}]
+\node[root concept]{Installation simple}
+  child[concept color=poporange]{ node {Installation domestique} 
+    child[concept color=poporange!60]{ node[font=\scriptsize] {phase, neutre, terre} } }
+  child[concept color=popgreen]{ node {Appareillages et symboles}
+    child[concept color=popgreen!60]{ node[font=\scriptsize] {interrupteur, va-et-vient, lampe} } }
+  child[concept color=poppurple]{ node {Simple allumage}
+    child[concept color=poppurple!60]{ node[font=\scriptsize] {1 point de commande} } }
+  child[concept color=poppink]{ node {Va-et-vient}
+    child[concept color=poppink!60]{ node[font=\scriptsize] {2 points de commande, 2 navettes} } }
+  child[concept color=popgold]{ node {Choix et comparaison}
+    child[concept color=popgold!60]{ node[font=\scriptsize] {chambre ou couloir / escalier} } }
+  child[concept color=popdark]{ node {S\'ecurit\'e}
+    child[concept color=popdark!60]{ node[font=\scriptsize] {couper le disjoncteur, phase sur l'interrupteur} } };
+\end{tikzpicture}
+\legende{Carte mentale de la le\c{c}on : les six id\'ees forces de l'installation simple (simple allumage et va-et-vient).}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{D\'efinitions cl\'es}
+\begin{itemize}
+  \item \cle{Installation \'electrique domestique} : ensemble des circuits qui alimentent les appareils d'une habitation \`a partir du compteur et du disjoncteur g\'en\'eral.
+  \item \cle{Simple allumage} : montage o\`u une lampe est command\'ee (allum\'ee ou \'eteinte) depuis \textbf{un seul endroit} gr\^ace \`a un interrupteur simple.
+  \item \cle{Va-et-vient} : montage o\`u une m\^eme lampe est command\'ee depuis \textbf{deux endroits diff\'erents} gr\^ace \`a deux interrupteurs va-et-vient reli\'es par deux fils appel\'es \cle{navettes}.
+  \item \cle{Interrupteur va-et-vient} : appareil \`a \textbf{trois bornes} (une borne commune et deux bornes de navette) qui bascule le courant d'un fil navette vers l'autre.
+  \item \cle{Fil de phase} (rouge ou marron) : fil qui am\`ene le courant ; \cle{fil neutre} (bleu) : fil de retour ; \cle{fil de terre} (vert-jaune) : fil de protection.
+\end{itemize}
+
+\textbf{R\`egles de c\^ablage \`a conna\^{\i}tre par c\oe ur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL} \textbf{Crit\`ere} & \textbf{Simple allumage} & \textbf{Va-et-vient} \\ \hline
+Nombre de points de commande & 1 & 2 \\ \hline
+Appareil utilis\'e & Interrupteur simple (2 bornes) & 2 interrupteurs va-et-vient (3 bornes chacun) \\ \hline
+Fils entre les commandes & Aucun & 2 fils navettes \\ \hline
+Fil coup\'e par la commande & La phase & La phase \\ \hline
+Exemple d'usage & Chambre, cuisine, salon & Couloir, escalier, pi\`ece \`a 2 portes \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{M\'ethodes express}
+\begin{itemize}
+  \item \textbf{C\^abler un simple allumage} : phase $\rightarrow$ interrupteur $\rightarrow$ lampe $\rightarrow$ neutre. La lampe s'allume quand l'interrupteur est ferm\'e.
+  \item \textbf{C\^abler un va-et-vient} : phase $\rightarrow$ borne commune du 1\ier{} va-et-vient $\rightarrow$ 2 navettes $\rightarrow$ borne commune du 2\ieme{} va-et-vient $\rightarrow$ lampe $\rightarrow$ neutre.
+  \item \textbf{Reconna\^{\i}tre un sch\'ema} : compter les bornes des appareils (2 bornes = interrupteur simple ; 3 bornes = va-et-vient) et rep\'erer les navettes.
+  \item \textbf{S\'ecurit\'e avant toute intervention} : couper le disjoncteur g\'en\'eral, v\'erifier l'absence de tension, ne jamais toucher les fils d\'enud\'es.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+  \item[$\square$] Je sais d\'efinir une installation \'electrique domestique et citer ses trois fils (phase, neutre, terre) avec leurs couleurs.
+  \item[$\square$] Je sais d\'efinir le simple allumage et le va-et-vient en une phrase chacun.
+  \item[$\square$] Je conna\^{\i}s la diff\'erence entre un interrupteur simple (2 bornes) et un va-et-vient (3 bornes).
+  \item[$\square$] Je sais que les deux fils reliant les va-et-vient s'appellent les \cle{navettes}.
+  \item[$\square$] Je sais dessiner et lire le sch\'ema d'un montage en simple allumage.
+  \item[$\square$] Je sais dessiner et lire le sch\'ema d'un montage en va-et-vient.
+  \item[$\square$] Je sais que la commande coupe toujours le fil de \cle{phase}, jamais le neutre.
+  \item[$\square$] Je sais choisir le bon montage selon la pi\`ece (chambre : simple allumage ; couloir ou escalier : va-et-vient).
+  \item[$\square$] Je reconna\^{\i}s les symboles normalis\'es de la lampe, de l'interrupteur et du va-et-vient sur un sch\'ema.
+  \item[$\square$] Je cite les consignes de s\'ecurit\'e : couper le disjoncteur avant toute intervention, ne pas toucher les fils d\'enud\'es, ne pas surcharger les rallonges.
+  \item[$\square$] Je sais expliquer pourquoi le va-et-vient est pratique dans un escalier ou un couloir.
+  \item[$\square$] Je sais identifier sur un sch\'ema r\'eel (maison, salle de classe) le type de montage install\'e.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

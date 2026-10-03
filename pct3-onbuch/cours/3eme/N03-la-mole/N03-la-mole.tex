@@ -1,0 +1,2835 @@
+% La mole — PCT 3ème — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N03-la-mole.tex
+\newcommand{\DOCMATIERE}{PCT}
+\newcommand{\DOCNIVEAU}{3ème}
+\newcommand{\DOCMODULE}{Module 1 : Chimie}
+\newcommand{\DOCLECON}{N03}
+\newcommand{\DOCTITRE}{La mole}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{La mole}{PCT}{3ème}{Module 1 : Chimie}{N03}{1 séance (1 h chacune)}{Cette leçon introduit la mole, unité de quantité de matière qui permet de compter les atomes et les molécules par paquets. Elle définit la masse molaire atomique et moléculaire et fournit la relation n = m/M, outil indispensable de tous les calculs de chimie.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir la quantité de matière et son unité, la mole.
+\item À la fin de cette leçon, je sais énoncer la valeur du nombre d'Avogadro et l'utiliser pour compter des entités chimiques.
+\item À la fin de cette leçon, je sais définir la masse molaire atomique et la lire dans le tableau périodique.
+\item À la fin de cette leçon, je sais calculer la masse molaire moléculaire d'un composé à partir de sa formule brute.
+\item À la fin de cette leçon, je sais appliquer la relation n = m/M et ses formes dérivées (m = n×M, M = m/n) dans des situations concrètes.
+\item À la fin de cette leçon, je sais réaliser et interpréter une pesée simple à la balance pour déterminer une quantité de matière.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Pourquoi compter en moles ?
+\item La masse molaire atomique
+\item La masse molaire moléculaire
+\item La relation n = m/M
+\item Applications et sécurité au laboratoire
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir la quantité de matière et son unité, la mole.
+\item À la fin de cette leçon, je sais énoncer la valeur du nombre d'Avogadro et l'utiliser pour compter des entités chimiques.
+\item À la fin de cette leçon, je sais définir la masse molaire atomique et la lire dans le tableau périodique.
+\item À la fin de cette leçon, je sais calculer la masse molaire moléculaire d'un composé à partir de sa formule brute.
+\item À la fin de cette leçon, je sais appliquer la relation n = m/M et ses formes dérivées (m = n×M, M = m/n) dans des situations concrètes.
+\item À la fin de cette leçon, je sais réaliser et interpréter une pesée simple à la balance pour déterminer une quantité de matière.
+\item À la fin de cette leçon, je sais appliquer les consignes de sécurité lors de la manipulation de produits chimiques au laboratoire.
+\item À la fin de cette leçon, je sais résoudre un problème de la vie courante (dosage d'un médicament, préparation d'une solution) en utilisant la mole.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion d'atome, de molécule et d'ion (leçons précédentes de 3ème)
+\item Formules brutes des molécules usuelles (H₂O, CO₂, NaCl, O₂...)
+\item Lecture du tableau périodique : symbole et numéro atomique
+\item Unités de masse (g, kg, mg) et conversions
+\item Utilisation de la balance électronique et calculs de proportionnalité
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Pourquoi compter en moles ?}
+
+Au marché Mokolo à Yaoundé, la vendeuse de riz ne compte jamais les grains un par un : elle utilise le \cle{koro} (la boîte) comme unité de comptage. Un client demande « deux koros de riz », et l'affaire est réglée en quelques secondes. De même, le pharmacien de quartier ne compte pas les atomes contenus dans un comprimé de paracétamol : ils sont bien trop petits et bien trop nombreux. Pourtant, pour fabriquer ce comprimé, l'industrie pharmaceutique a dû mélanger des quantités très précises d'atomes de carbone, d'hydrogène, d'azote et d'oxygène. Comment alors les chimistes comptent-ils les atomes et les molécules ? Existe-t-il une « boîte » adaptée au monde microscopique ? C'est toute l'idée de la \cle{mole}, l'unité de quantité de matière que nous allons découvrir dans cette leçon.
+
+\textbf{Problématique :} comment compter des entités invisibles et innombrables comme les atomes, les molécules et les ions, en utilisant des objets mesurables à notre échelle ?
+
+\courssub{Un constat expérimental : les atomes sont innombrables}
+
+\begin{experience}[Observer l'invisible : le fer de la limaille]
+\textbf{Matériel :} de la limaille de fer, une balance de précision, une loupe, un aimant.
+\begin{enumerate}
+\item Prélève un petit tas de limaille de fer et pèse-le : tu obtiens environ \SI{1}{g}.
+\item Observe ce tas à la loupe : tu vois de minuscules grains, mais aucun atome.
+\item Attire la limaille avec l'aimant : chaque grain est bien du fer.
+\end{enumerate}
+\textbf{Observations :} même à la loupe, aucun atome n'est visible. Pourtant, le fer est constitué d'atomes de fer.
+\textbf{Interprétation :} les atomes sont tellement petits qu'aucun instrument d'optique ordinaire ne permet de les voir. Les calculs des physiciens montrent que dans \SI{1}{g} de fer, il y a environ $10^{22}$ atomes, c'est-à-dire \num{10000000000000000000000} atomes !
+\textbf{Conclusion :} compter les atomes un par un est matériellement impossible. Même en comptant un milliard d'atomes par seconde, il faudrait des millions d'années pour compter ceux d'un seul gramme de fer.
+\end{experience}
+
+\begin{aretenir}[L'échelle du monde microscopique]
+Un atome a un diamètre de l'ordre de $10^{-10}$ m (un dixième de milliardième de mètre). Dans un échantillon de matière visible à l'œil nu, le nombre d'atomes se compte en milliards de milliards de milliards. Le chimiste a donc besoin d'une \textbf{unité de comptage par paquets}.
+\end{aretenir}
+
+\courssub{L'analogie de la vie courante : compter par paquets}
+
+Dans la vie quotidienne, personne ne compte un par un les objets très nombreux ou vendus en grande quantité. On utilise des \textbf{unités de comptage} :
+
+\begin{itemize}
+\item les œufs se vendent à la \cle{douzaine} (12 œufs) ;
+\item le riz se vend au \cle{koro} (une boîte remplie de grains) ;
+\item les cahiers et les feuilles de papier se vendent à la \cle{rame} (500 feuilles) ;
+\item les allumettes se vendent à la \cle{boîte}, les sachets d'eau au \cle{paquet}.
+\end{itemize}
+
+L'idée du chimiste est exactement la même : au lieu de compter les atomes un par un, il les regroupe en « paquets » géants, toujours du même nombre. Ce paquet s'appelle la \cle{mole}.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, transform shape]
+% Panneau 1 : douzaine d'oeufs
+\draw[rounded corners, thick, popblue, fill=popblueL] (-0.2,-0.4) rectangle (4.2,2.6);
+\node[popdark, font=\bfseries] at (2,2.25) {Une douzaine d'œufs};
+\foreach \x in {0.6,1.4,2.2,3.0,3.8}{
+  \shade[ball color=popgold] (\x,0.3) circle (0.28);
+  \shade[ball color=popgold] (\x,1.1) circle (0.28);
+}
+\shade[ball color=popgold] (1.0,1.1) circle (0.28);
+\shade[ball color=popgold] (1.8,1.1) circle (0.28);
+\node[popdark] at (2,-0.7) {12 œufs};
+% Panneau 2 : koro de riz
+\draw[rounded corners, thick, poporange, fill=poporangeL] (5.0,-0.4) rectangle (9.4,2.6);
+\node[popdark, font=\bfseries] at (7.2,2.25) {Un koro de riz};
+\draw[thick, popdark, fill=popcream] (5.9,0.1) -- (5.9,1.5) -- (8.5,1.5) -- (8.5,0.1) -- cycle;
+\foreach \x/\y in {6.2/1.3,6.6/1.4,7.0/1.3,7.4/1.4,7.8/1.3,8.2/1.4,6.4/1.15,6.9/1.2,7.5/1.15,8.0/1.2}{
+  \fill[popgold!80!black] (\x,\y) circle (0.05);
+}
+\node[popdark] at (7.2,-0.7) {des milliers de grains};
+% Panneau 3 : mole d'atomes
+\draw[rounded corners, thick, popgreen, fill=popgreenL] (10.2,-0.4) rectangle (14.6,2.6);
+\node[popdark, font=\bfseries] at (12.4,2.25) {Une mole d'atomes};
+\foreach \x/\y in {10.8/0.3,11.6/0.5,12.4/0.3,13.2/0.5,14.0/0.3,11.2/1.1,12.0/1.3,12.8/1.1,13.6/1.3,11.0/1.8,12.2/1.9,13.4/1.8}{
+  \shade[ball color=popblue] (\x,\y) circle (0.16);
+}
+\node[popdark] at (12.4,-0.7) {\num{6,022e23} atomes};
+\end{tikzpicture}
+\legende{L'analogie des unités de comptage : comme on compte les œufs par douzaine et le riz au koro, le chimiste compte les atomes par mole. Une mole contient toujours le même nombre d'entités : \num{6,022e23}.}
+\end{popfigure}
+
+\courssub{La quantité de matière et la mole}
+
+\begin{definition}[La quantité de matière]
+La \cle{quantité de matière} est la grandeur physique, notée \cle{n}, qui exprime le nombre de « paquets » d'entités chimiques (atomes, molécules ou ions) contenus dans un échantillon. Son unité est la \cle{mole}, de symbole \cle{mol}.
+\end{definition}
+
+\begin{definition}[La mole]
+Une \cle{mole} est la quantité de matière d'un ensemble contenant \textbf{exactement} \num{6,022e23} entités identiques (atomes, molécules ou ions).
+\end{definition}
+
+Ainsi, dire « une mole d'atomes de fer », c'est dire « \num{6,022e23} atomes de fer », exactement comme dire « une douzaine d'œufs » signifie « 12 œufs ».
+
+\begin{exemplebox}[Des exemples d'entités chimiques]
+\begin{itemize}
+\item 1 mole d'\textbf{atomes} de fer (Fe) = \num{6,022e23} atomes de fer ;
+\item 1 mole de \textbf{molécules} d'eau (\ce{H2O}) = \num{6,022e23} molécules d'eau ;
+\item 1 mole d'\textbf{ions} sodium (\ce{Na+}) = \num{6,022e23} ions sodium ;
+\item 2 moles de molécules de dioxygène (\ce{O2}) = $2 \times \num{6,022e23} = \num{1,2044e24}$ molécules.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Précise toujours la nature de l'entité]
+Dire simplement « une mole d'oxygène » est ambigu et constitue une erreur fréquente au BEPC : s'agit-il d'atomes O ou de molécules \ce{O2} ? Or une molécule de dioxygène \ce{O2} contient 2 atomes d'oxygène. Donc :
+\[ \text{1 mole de molécules } \ce{O2} \text{ contient 2 moles d'atomes O.} \]
+Écris toujours « une mole d'atomes de fer », « une mole de molécules d'eau », « une mole d'ions \ce{Na+} ».
+\end{attention}
+
+\courssub{Le nombre d'Avogadro}
+
+\begin{definition}[Le nombre d'Avogadro (savoir admis)]
+Le \cle{nombre d'Avogadro}, noté \cle{$N_A$}, est le nombre d'entités contenues dans une mole :
+\[ N_A = \num{6,022e23} \text{ mol}^{-1} \]
+Cette valeur, fixée par le Système international d'unités, est admise : elle n'est pas à démontrer.
+\end{definition}
+
+L'unité mol$^{-1}$ se lit « par mole » : elle signifie qu'il y a \num{6,022e23} entités \textbf{dans chaque mole}.
+
+\begin{savaistu}[Un nombre astronomique]
+Le nombre d'Avogadro porte le nom du savant italien Amedeo Avogadro (1776-1856). Il est si grand qu'il dépasse toute imagination : une mole de grains de sable répandue sur le territoire du Cameroun le recouvrirait d'une couche de plusieurs mètres d'épaisseur ! Une mole de secondes correspond à environ 4 millions de fois l'âge de la Terre. C'est dire à quel point les atomes sont petits : il en faut \num{6,022e23} pour obtenir un échantillon pesable.
+\end{savaistu}
+
+\courssub{La relation fondamentale de comptage : $N = n \times N_A$}
+
+Raisonnons pas à pas. Si une mole contient $N_A$ entités, alors :
+\begin{itemize}
+\item 2 moles contiennent $2 \times N_A$ entités ;
+\item 0,5 mole contient $0,5 \times N_A$ entités ;
+\item $n$ moles contiennent $n \times N_A$ entités.
+\end{itemize}
+
+\begin{propriete}[Relation fondamentale de comptage]
+Le nombre $N$ d'entités chimiques contenues dans un échantillon est donné par :
+\[ N = n \times N_A \]
+où $N$ est le nombre d'entités (sans unité), $n$ la quantité de matière en mole (mol) et $N_A = \num{6,022e23}$ mol$^{-1}$.
+\end{propriete}
+
+\begin{methode}[Passer du nombre d'entités $N$ à la quantité de matière $n$]
+\begin{enumerate}
+\item Identifie l'entité chimique (atome, molécule ou ion) et note le nombre $N$ donné dans l'énoncé.
+\item Écris la relation $N = n \times N_A$.
+\item Isole la grandeur cherchée : $n = \dfrac{N}{N_A}$.
+\item Remplace $N_A$ par \num{6,022e23} mol$^{-1}$ et calcule.
+\item Vérifie que le résultat est exprimé en mole (mol) et qu'il est cohérent (un $N$ plus petit que $N_A$ donne $n < 1$ mol).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Combien d'atomes dans 0,5 mole de carbone ?]
+Un morceau de charbon contient 0,5 mole d'atomes de carbone. Calcule le nombre d'atomes de carbone qu'il contient. On donne $N_A = \num{6,022e23}$ mol$^{-1}$.
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+\item L'entité est l'atome de carbone ; la quantité de matière est $n = 0,5$ mol.
+\item On applique la relation fondamentale :
+\begin{align*}
+N &= n \times N_A \\
+N &= 0,5 \times \num{6,022e23} \\
+N &= \num{3,011e23} \text{ atomes de carbone.}
+\end{align*}
+\end{enumerate}
+\textbf{Conclusion :} 0,5 mole de carbone contient \num{3,011e23} atomes de carbone, c'est-à-dire la moitié du nombre d'Avogadro. Vérification : $n = \dfrac{N}{N_A} = \dfrac{\num{3,011e23}}{\num{6,022e23}} = 0,5$ mol. Le résultat est cohérent.
+\end{exoresolu}
+
+\courssub{Le pont entre le monde microscopique et le monde macroscopique}
+
+La mole est le \textbf{pont} qui relie deux mondes : le monde microscopique des atomes (invisible, infiniment petit) et le monde macroscopique de nos balances et de nos éprouvettes (visible, mesurable en grammes). Grâce à la mole, le chimiste peut préparer exactement le bon nombre d'atomes ou de molécules en pesant simplement une masse sur sa balance. C'est ce que nous exploiterons dans les sections suivantes avec la notion de masse molaire.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.95, transform shape]
+% Monde microscopique
+\draw[rounded corners, thick, popblue, fill=popblueL] (0,0) rectangle (4.2,3);
+\node[popdark, font=\bfseries, align=center] at (2.1,2.6) {Monde\\microscopique};
+\foreach \x/\y in {0.8/0.6,1.6/1.0,2.4/0.6,3.2/1.0,1.2/1.7,2.8/1.7,2.0/1.3}{
+  \shade[ball color=popblue] (\x,\y) circle (0.15);
+}
+\node[popdark, align=center] at (2.1,-0.5) {$N$ entités\\(atomes, molécules, ions)};
+% Monde macroscopique
+\draw[rounded corners, thick, poporange, fill=poporangeL] (10.2,0) rectangle (14.4,3);
+\node[popdark, font=\bfseries, align=center] at (12.3,2.6) {Monde\\macroscopique};
+% balance
+\draw[thick, popdark] (11.6,0.5) -- (13.0,0.5);
+\draw[thick, popdark] (12.3,0.5) -- (12.3,1.3);
+\draw[thick, popdark] (11.5,1.3) -- (13.1,1.3);
+\draw[thick, popdark, fill=popcream] (11.7,1.3) arc (180:360:0.6);
+\shade[ball color=popgold] (12.3,1.15) circle (0.18);
+\node[popdark, align=center] at (12.3,-0.5) {masse mesurable\\en grammes (balance)};
+% La mole au centre
+\draw[rounded corners, thick, popgreen, fill=popgreenL] (5.6,0.9) rectangle (8.8,2.1);
+\node[popdark, font=\bfseries, align=center] at (7.2,1.5) {LA MOLE\\$N_A = \num{6,022e23}$ mol$^{-1}$};
+% Flèches
+\draw[-{Stealth[length=3mm]}, very thick, popgreen] (4.2,1.5) -- (5.6,1.5);
+\draw[-{Stealth[length=3mm]}, very thick, popgreen] (8.8,1.5) -- (10.2,1.5);
+\node[popdark, align=center] at (7.2,0.3) {$N = n \times N_A$};
+\end{tikzpicture}
+\legende{Le pont micro-macro : la mole relie le nombre $N$ d'entités microscopiques à des quantités mesurables à notre échelle (masse en grammes).}
+\end{popfigure}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Une goutte d'eau contient \num{1,5e21} molécules d'eau. Calcule la quantité de matière correspondante en mole.
+\item Un clou en fer contient \num{9,03e22} atomes de fer. Combien de moles d'atomes de fer cela représente-t-il ?
+\item Combien de molécules de dioxygène \ce{O2} y a-t-il dans 3 moles de dioxygène ? Combien de moles d'atomes d'oxygène cela représente-t-il ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de jouer]
+\begin{enumerate}
+\item $n = \dfrac{N}{N_A} = \dfrac{\num{1,5e21}}{\num{6,022e23}} \approx \num{2,5e-3}$ mol, soit environ 0,0025 mole de molécules d'eau.
+\item $n = \dfrac{N}{N_A} = \dfrac{\num{9,03e22}}{\num{6,022e23}} = 0,15$ mol d'atomes de fer.
+\item $N = n \times N_A = 3 \times \num{6,022e23} = \num{1,8066e24}$ molécules de \ce{O2}. Chaque molécule contient 2 atomes d'oxygène, donc 3 moles de \ce{O2} contiennent $3 \times 2 = 6$ moles d'atomes O.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Les atomes sont microscopiques et innombrables : on les compte \textbf{par paquets}.
+\item La \cle{quantité de matière} $n$ s'exprime en \cle{mole} (mol) : 1 mole = exactement \num{6,022e23} entités identiques.
+\item Le \cle{nombre d'Avogadro} : $N_A = \num{6,022e23}$ mol$^{-1}$ (valeur admise).
+\item Relation fondamentale : $N = n \times N_A$, donc $n = \dfrac{N}{N_A}$.
+\item Toujours préciser la nature de l'entité : 1 mole de \ce{O2} contient 2 moles d'atomes O.
+\end{itemize}
+\end{aretenir}
+
+\coursec{La masse molaire atomique}
+
+\courssub{Du comptage invisible à la balance du chimiste}
+
+Dans la section précédente, nous avons compris \emph{pourquoi} les chimistes ont inventé la mole : pour compter des milliards de milliards d'atomes en manipulant des quantités visibles à l'œil nu. Mais une question pratique se pose immédiatement : \textbf{comment peser exactement une mole d'atomes d'un élément donné ?} Tu ne peux pas attraper un atome de fer avec une pince à épiler pour le mettre sur la balance du laboratoire ! Un atome est infiniment petit, sa masse est de l'ordre de $10^{-23}\,\text{g}$. Pourtant, grâce à une idée géniale et à une définition précise, nous allons voir comment passer de l'invisible au mesurable, simplement en lisant le tableau périodique.
+
+\courssub{La masse d'un atome : une donnée expérimentale}
+
+Commençons par une observation expérimentale. Grâce à la \textbf{spectrométrie de masse} (un appareil sophistiqué qui mesure la masse des atomes en les ionisant et en les déviant dans un champ magnétique), les physiciens ont pu déterminer la masse absolue d'un atome.
+
+\begin{experience}[Masse de l'atome de carbone par spectrométrie de masse]
+\textbf{Matériel :} Spectromètre de masse (document vidéo ou schématisé), échantillon de carbone pur.
+\textbf{Protocole :} On ionise les atomes de carbone (on leur arrache un électron pour obtenir des ions $\ce{C+}$). On les accélère par une différence de potentiel, puis on les fait traverser un champ magnétique. La courbure de leur trajectoire dépend de leur rapport masse/charge. On détecte l'impact.
+\textbf{Observation :} L'appareil indique une masse pour l'atome de carbone d'environ $1,99 \times 10^{-23}\,\text{g}$ (soit $\approx 2,0 \times 10^{-23}\,\text{g}$).
+\textbf{Interprétation :} Un seul atome de carbone a une masse de l'ordre de $10^{-23}\,\text{g}$. C'est impesable sur une balance de laboratoire classique (précision au mieux $0,001\,\text{g} = 10^{-3}\,\text{g}$).
+\textbf{Conclusion :} On ne peut pas peser un atome. Il faut en regrouper un nombre immense pour obtenir une masse macroscopique. Ce nombre, c'est le nombre d'Avogadro $N_{\text{A}} = 6,022 \times 10^{23}\,\text{mol}^{-1}$.
+\end{experience}
+
+\courssub{Définition de la masse molaire atomique}
+
+Puisqu'un atome est trop léger, regroupons-en exactement une mole ($N_{\text{A}}$ atomes). La masse de cet ensemble devient mesurable : c'est la \textbf{masse molaire atomique}.
+
+\begin{definition}[Masse molaire atomique]
+La \textbf{masse molaire atomique} d'un élément chimique, notée \cle{M}, est la masse d'une mole d'atomes de cet élément. Elle s'exprime en \textbf{grammes par mole} (\cle{g/mol} ou \cle{g$\cdot$mol$^{-1}$}).
+\[
+M = \frac{m}{n} \quad \text{donc} \quad m = M \times n
+\]
+où $m$ est la masse en grammes (g) et $n$ la quantité de matière en moles (mol).
+\end{definition}
+
+\courssub{Lire la masse molaire dans le tableau périodique}
+
+Bonne nouvelle : tu n'as pas à faire le calcul $M = N_{\text{A}} \times m_{\text{atome}}$ à chaque fois ! La masse molaire atomique est indiquée directement dans le \textbf{tableau périodique des éléments} (souvent en dessous ou à côté du symbole de l'élément). C'est la valeur numérique qui se rapproche du \textbf{nombre de masse} $A$ (nombre de protons + nombre de neutrons) de l'isotope le plus abondant.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.85, every node/.style={font=\small}]
+% Couleurs
+\colorlet{elembg}{popblueL}
+\colorlet{elemframe}{popblue}
+\colorlet{highlight}{poporange}
+% Style de case
+\tikzset{cell/.style={draw=elemframe, thick, fill=elembg, minimum width=2.2cm, minimum height=2.8cm, inner sep=2pt, rounded corners=2pt}}
+% Grille 3x2
+\foreach \i/\elem/\Z/\M in {
+    0/C/6/12,
+    1/H/1/1,
+    2/O/8/16,
+    3/Na/11/23,
+    4/Cl/17/35,5,
+    5/Fe/26/56
+} {
+    \pgfmathsetmacro{\col}{mod(\i,3)}
+    \pgfmathsetmacro{\row}{-floor(\i/3)}
+    \node[cell] (box\i) at (\col*2.4, \row*3.0) {};
+    % Symbole
+    \node[font=\bfseries\Large, text=popdark] at (box\i.north) [yshift=-0.3cm] {\elem};
+    % Z
+    \node[font=\tiny, text=popmuted, anchor=north west] at (box\i.north west) [xshift=0.15cm, yshift=-0.1cm] {Z = \Z};
+    % M
+    \node[font=\bfseries\large, text=highlight, anchor=south] at (box\i.south) [yshift=0.25cm] {M = \M\,g/mol};
+    % Masse atomique relative (souvent en haut à droite)
+    \node[font=\scriptsize, text=popdark, anchor=north east] at (box\i.north east) [xshift=-0.15cm, yshift=-0.1cm] {\M};
+}
+% Légendes explicatives
+\node[anchor=north west, text=popdark, font=\small] at (-0.5, 1.5) {\textbf{Extrait du tableau périodique (simplifié)}};
+\node[anchor=north west, text=popdark, font=\small] at (-0.5, 1.1) {Pour chaque élément :};
+\node[anchor=north west, text=popdark, font=\small] at (-0.5, 0.7) {\textbullet\ Symbole chimique (grand, centré)};
+\node[anchor=north west, text=popdark, font=\small] at (-0.5, 0.3) {\textbullet\ Numéro atomique Z (petit, coin sup. g.)};
+\node[anchor=north west, text=highlight, font=\small] at (-0.5, -0.1) {\textbullet\ \textbf{Masse molaire M en g/mol (gras, orange, bas)}};
+\node[anchor=north west, text=popdark, font=\small] at (-0.5, -0.5) {\textbullet\ Masse atomique relative (sans unité, coin sup. d.)};
+\end{tikzpicture}
+\legende{Extrait du tableau périodique : lecture de la masse molaire atomique M (en g/mol) pour six éléments usuels.}
+\end{popfigure}
+
+\begin{methode}[Lire la masse molaire atomique dans le tableau périodique]
+\begin{enumerate}
+    \item Repère le \textbf{symbole} de l'élément (ex. \ce{Fe} pour le fer).
+    \item Identifie la valeur numérique indiquée comme \textbf{masse molaire} ou \textbf{masse atomique relative} (souvent en bas de la case ou en petit chiffre).
+    \item Ajoute systématiquement l'unité \textbf{g/mol}.
+    \item \textbf{Exemples usuels à connaître par cœur} (BEPC) :
+    \begin{itemize}
+        \item $M(\ce{C}) = 12\,\text{g/mol}$
+        \item $M(\ce{H}) = 1\,\text{g/mol}$
+        \item $M(\ce{O}) = 16\,\text{g/mol}$
+        \item $M(\ce{Na}) = 23\,\text{g/mol}$
+        \item $M(\ce{Cl}) = 35,5\,\text{g/mol}$ (moyenne pondérée des isotopes $^{35}\ce{Cl}$ et $^{37}\ce{Cl}$)
+        \item $M(\ce{Fe}) = 56\,\text{g/mol}$
+    \end{itemize}
+\end{enumerate}
+\end{methode}
+
+\courssub{Lien avec le nombre de masse A}
+
+Tu as sans doute remarqué que la valeur numérique de $M$ (en g/mol) est \textbf{très proche du nombre de masse $A$} de l'atome (entier pour la plupart, sauf chlore, cuivre, etc. où c'est une moyenne).
+\begin{propriete}[Relation entre $M$ et $A$]
+Pour un élément pur (un seul isotope majeur), la masse molaire atomique $M$ (en g/mol) a la \textbf{même valeur numérique} que le nombre de masse $A$ (sans unité).
+\[
+M(\text{en g/mol}) \approx A \quad (\text{sans unité})
+\]
+\textit{Exemple :} Atome de fer $^{56}\ce{Fe}$ ($Z=26, N=30$) $\Rightarrow A = 56 \Rightarrow M(\ce{Fe}) = 56\,\text{g/mol}$.
+\end{propriete}
+
+\courssub{Vérification de la cohérence : le calcul « magique »}
+
+Revenons à notre expérience de spectrométrie. Si $m_{\text{atome}}(\ce{C}) \approx 2,0 \times 10^{-23}\,\text{g}$, alors la masse d'une mole d'atomes de carbone vaut :
+\[
+M(\ce{C}) = N_{\text{A}} \times m_{\text{atome}}(\ce{C}) \approx (6,022 \times 10^{23}\,\text{mol}^{-1}) \times (2,0 \times 10^{-23}\,\text{g}) \approx 12,0\,\text{g/mol}
+\]
+On retrouve exactement la valeur lue dans le tableau périodique ! C'est la preuve expérimentale que la définition de la mole et la valeur de $N_{\text{A}}$ sont cohérentes.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.0, every node/.style={font=\small}]
+% Balance
+% Pivot
+\draw[popdark, very thick] (0,0) -- (0,1.5) node[above] {\textbf{Balance idéale}};
+% Bras
+\draw[popdark, thick] (-3,1.5) -- (3,1.5);
+% Ficelles
+\draw[popdark, thick] (-3,1.5) -- (-3,0.5);
+\draw[popdark, thick] (3,1.5) -- (3,0.5);
+% Plateau Gauche : 1 mole de Fer
+\node[draw=popblue, thick, fill=popblueL, rounded corners, minimum width=3.5cm, minimum height=1.8cm] (plateauG) at (-3,-0.5) {};
+\node[align=center, text=popdark] at (-3,-0.5) {\textbf{1 mole de fer}\\\ce{Fe}\\(6,022$\times$10$^{23}$ atomes)};
+\node[draw=poporange, thick, fill=poporangeL, rounded corners, minimum width=2cm, minimum height=1cm] (poidsG) at (-3,-1.8) {56 g};
+\draw[popdark, thick] (-3,-0.5) -- (-3,-1.3);
+% Plateau Droit : Atomes (représentation symbolique)
+\node[draw=poppurple, thick, fill=poppurpleL, rounded corners, minimum width=3.5cm, minimum height=1.8cm] (plateauD) at (3,-0.5) {};
+\node[align=center, text=popdark] at (3,-0.5) {\textbf{Atomes de fer}\\\tiny $\bullet\,\bullet\,\bullet\,\bullet\,\bullet$\\\tiny $\bullet\,\bullet\,\bullet\,\bullet\,\bullet$\\\tiny $\cdots$ (6,022$\times$10$^{23}$)};
+\node[draw=poporange, thick, fill=poporangeL, rounded corners, minimum width=2cm, minimum height=1cm] (poidsD) at (3,-1.8) {56 g};
+\draw[popdark, thick] (3,-0.5) -- (3,-1.3);
+% Flèche équilibre
+\draw[<->, popgreen, thick] (-1.5,1.8) -- (1.5,1.8) node[midway, above] {\textbf{Équilibre}};
+% Légende interne
+\node[align=center, font=\tiny, text=popmuted] at (0,-2.8) {M(Fe) = 56 g/mol $\Leftrightarrow$ 1 mol Fe a une masse de 56 g};
+\end{tikzpicture}
+\legende{Analogie de la balance : 1 mole d'atomes de fer (6,022$\times$10$^{23}$ atomes) pèse exactement 56 g. C'est le sens concret de M(Fe) = 56 g/mol.}
+\end{popfigure}
+
+\begin{exemplebox}[Masse molaire du fer]
+$M(\ce{Fe}) = 56\,\text{g/mol}$ signifie concrètement :
+\begin{itemize}
+    \item Si tu pèses \textbf{56 g} de poudre de fer pur (limaille de fer), tu possèdes exactement \textbf{1 mole} d'atomes de fer.
+    \item Cela représente \textbf{$6,022 \times 10^{23}$ atomes de fer}.
+    \item Si tu pèses \textbf{28 g} de fer, tu as $0,5\,\text{mol}$ d'atomes de fer.
+    \item Si tu pèses \textbf{112 g} de fer, tu as $2\,\text{mol}$ d'atomes de fer.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Piège mortel au BEPC : L'unité !]
+\begin{itemize}
+    \item \textbf{FAUX :} « La masse molaire du fer est 56 grammes. » $\rightarrow$ \textbf{0 point}.
+    \item \textbf{VRAI :} « La masse molaire du fer est \textbf{56 g/mol}. » $\rightarrow$ \textbf{Point gagné}.
+\end{itemize}
+La masse molaire n'est \textbf{PAS} une masse, c'est une \textbf{masse par mole}. L'unité \textbf{g/mol} est \textbf{indissociable} de la valeur numérique. Oublier « /mol », c'est comme dire « La vitesse de la moto est 50 » sans dire « km/h ». C'est une erreur de physique, pas une simple omission.
+\end{attention}
+
+\begin{savaistu}[Avogadro et Perrin : une histoire de détermination]
+Le nombre $N_{\text{A}}$ porte le nom de l'Italien \textbf{Amedeo Avogadro} (1776--1856), qui a émis l'hypothèse (1811) que « volumes égaux de gaz contiennent le même nombre de particules ». Mais Avogadro n'a \textbf{jamais connu la valeur} de ce nombre !
+C'est le physicien français \textbf{Jean Perrin} (1870--1942), prix Nobel 1926, qui a \textbf{déterminé expérimentalement} la valeur de $N_{\text{A}}$ au début du XX$^{\text{e}}$ siècle (vers 1908--1913), en étudiant le mouvement brownien, l'équilibre sédimentation-diffusion et le rayonnement noir. Il a ainsi prouvé la réalité physique des atomes, que certains chimistes (comme Ostwald) considéraient encore comme de simples « fictions commodes ». Au Cameroun, les travaux de Perrin sont la base de notre enseignement de la structure de la matière.
+\end{savaistu}
+
+\courssub{Exercice résolu : Manipuler la masse molaire}
+
+\begin{exoresolu}[Calcul de masse et quantité de matière]
+\textbf{Énoncé :} Un élève pèse \SI{14,0}{g} d'azote (\ce{N}, $M = \SI{14,0}{g/mol}$) et \SI{32,0}{g} de dioxygène (\ce{O2}, $M = \SI{32,0}{g/mol}$ — on verra la masse molaire moléculaire à la section suivante).
+\begin{enumerate}
+    \item Calculer la quantité de matière $n(\ce{N})$ en moles.
+    \item Combien y a-t-il d'atomes d'azote dans cet échantillon ?
+    \item Comparer le nombre d'atomes d'azote et le nombre de molécules de dioxygène.
+\end{enumerate}
+
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Données :} $m(\ce{N}) = \SI{14,0}{g}$ ; $M(\ce{N}) = \SI{14,0}{g/mol}$.
+    \textbf{Formule :} $n = \dfrac{m}{M}$.
+    \textbf{Calcul :} $n(\ce{N}) = \dfrac{14,0}{14,0} = \mathbf{1,00\,mol}$.
+    
+    \item \textbf{Relation :} $N = n \times N_{\text{A}}$.
+    \textbf{Calcul :} $N(\text{atomes N}) = 1,00 \times 6,022 \times 10^{23} = \mathbf{6,02 \times 10^{23}\,\text{atomes}}$.
+    
+    \item Pour le dioxygène : $m(\ce{O2}) = \SI{32,0}{g}$ ; $M(\ce{O2}) = \SI{32,0}{g/mol}$.
+    $n(\ce{O2}) = \dfrac{32,0}{32,0} = \mathbf{1,00\,mol}$.
+    Nombre de molécules $\ce{O2}$ : $N(\ce{O2}) = 1,00 \times N_{\text{A}} = \mathbf{6,02 \times 10^{23}\,\text{molécules}}$.
+    \textbf{Conclusion :} Les deux échantillons contiennent le \textbf{même nombre d'entités} ($6,02 \times 10^{23}$), car ils correspondent tous deux à \textbf{1 mole}. C'est tout le sens de la mole !
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Entraînement immédiat}
+
+\begin{exercice}[Application directe]
+\textbf{Données :} $M(\ce{Al}) = \SI{27,0}{g/mol}$ ; $M(\ce{Cu}) = \SI{63,5}{g/mol}$ ; $N_{\text{A}} = 6,02 \times 10^{23}\,\text{mol}^{-1}$.
+\begin{enumerate}
+    \item Quelle est la masse de $2,00\,\text{mol}$ d'aluminium (\ce{Al}) ?
+    \item Quelle quantité de matière (en mol) correspond à \SI{127}{g} de cuivre (\ce{Cu}) ?
+    \item Combien y a-t-il d'atomes dans \SI{5,00}{g} d'aluminium ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Application directe]
+\begin{enumerate}
+    \item $m = n \times M = 2,00 \times 27,0 = \mathbf{54,0\,g}$.
+    \item $n = \dfrac{m}{M} = \dfrac{127}{63,5} = \mathbf{2,00\,mol}$.
+    \item $n(\ce{Al}) = \dfrac{5,00}{27,0} \approx 0,185\,\text{mol}$.
+    $N = n \times N_{\text{A}} = 0,185 \times 6,02 \times 10^{23} \approx \mathbf{1,11 \times 10^{23}\,\text{atomes}}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[Bilan : La masse molaire atomique]
+\begin{itemize}
+    \item \textbf{Notation :} $M$ (lettre majuscule).
+    \item \textbf{Unité :} \textbf{g/mol} (ou g$\cdot$mol$^{-1}$) — \emph{Jamais seulement « g » !}
+    \item \textbf{Définition :} Masse d'une mole d'atomes ($6,022 \times 10^{23}$ atomes).
+    \item \textbf{Lecture :} Directement dans le tableau périodique (valeur numérique $\approx$ nombre de masse $A$).
+    \item \textbf{Formule clé :} $n = \dfrac{m}{M}$ $\Leftrightarrow$ $m = n \times M$ $\Leftrightarrow$ $M = \dfrac{m}{n}$.
+    \item \textbf{Sens concret :} $M(\ce{Fe}) = 56\,\text{g/mol}$ $\Rightarrow$ \SI{56}{g} de fer contiennent $6,022 \times 10^{23}$ atomes de fer.
+\end{itemize}
+\end{aretenir}
+
+Tu maîtrises maintenant la masse molaire \emph{atomique}. Dans la prochaine section, nous verrons comment calculer la masse molaire des \textbf{molécules} (comme l'eau $\ce{H2O}$, le dioxyde de carbone $\ce{CO2}$ ou l'essence $\ce{C8H18}$) pour doser les réactifs d'une réaction chimique, par exemple pour préparer du savon ou comprendre la combustion dans le moteur de ton taxi-moto !
+
+\coursec{La masse molaire moléculaire}
+
+Dans la section précédente, tu as appris que chaque atome possède une \cle{masse molaire atomique} : c'est la masse d'une mole de ces atomes, exprimée en grammes par mole (\si{g/mol}). Par exemple, $M(\mathrm{H}) = 1~\si{g/mol}$, $M(\mathrm{C}) = 12~\si{g/mol}$ et $M(\mathrm{O}) = 16~\si{g/mol}$.
+
+Mais dans la vie courante, les atomes sont rarement seuls. L'eau que tu bois, le gaz carbonique qui sort du pot d'échappement d'une moto-taxi, le sucre que tu mets dans ton jus de foléré : ce sont des \cle{molécules}, c'est-à-dire des assemblages d'atomes. Question naturelle : combien pèse une mole de molécules ? C'est exactement ce que nous allons apprendre à calculer.
+
+\courssub{Définition et intuition}
+
+Imagine un panier de fruits au marché de Mokolo. Le panier contient 2 mangues et 1 ananas. Pour connaître la masse totale du panier, tu additionnes : 2 fois la masse d'une mangue, plus 1 fois la masse d'un ananas. Une molécule, c'est pareil : c'est un « panier d'atomes ». La molécule d'eau \ce{H2O} contient 2 atomes d'hydrogène et 1 atome d'oxygène. Sa masse molaire sera donc : 2 fois celle de l'hydrogène, plus 1 fois celle de l'oxygène.
+
+\begin{definition}[Masse molaire moléculaire]
+La \cle{masse molaire moléculaire} d'un composé, notée $M$, est la masse d'\textbf{une mole} de ses molécules. Elle s'exprime en \textbf{grammes par mole} (\si{g/mol} ou \si{g.mol^{-1}}).
+\end{definition}
+
+\begin{propriete}[Principe de calcul]
+La masse molaire moléculaire d'un composé est égale à la \textbf{somme des masses molaires atomiques} de tous les atomes présents dans sa formule brute, chacune étant multipliée par le nombre d'atomes correspondant (l'indice) :
+\[ M(\text{molécule}) = \sum \left( \text{indice} \times M(\text{atome}) \right) \]
+\end{propriete}
+
+\courssub{La méthode en trois étapes}
+
+\begin{methode}[Calculer une masse molaire moléculaire]
+Pour calculer la masse molaire moléculaire d'un composé à partir de sa formule brute :
+\begin{enumerate}
+\item \textbf{Identifier} les atomes présents dans la formule et relever leurs indices (le petit nombre en bas à droite de chaque symbole ; quand il n'y a rien, l'indice vaut 1).
+\item \textbf{Multiplier} la masse molaire atomique de chaque élément par son indice.
+\item \textbf{Additionner} tous les résultats obtenus. Le résultat s'exprime en \si{g/mol}.
+\end{enumerate}
+\end{methode}
+
+\courssub{Exemples guidés}
+
+\textbf{Exemple guidé 1 : l'eau \ce{H2O}.}\par
+Étape 1 : la formule contient 2 atomes d'hydrogène (H) et 1 atome d'oxygène (O).\par
+Étape 2 : $2 \times M(\mathrm{H}) = 2 \times 1 = 2$ et $1 \times M(\mathrm{O}) = 1 \times 16 = 16$.\par
+Étape 3 : on additionne.
+\[ M(\ce{H2O}) = 2 \times M(\mathrm{H}) + M(\mathrm{O}) = 2 \times 1 + 16 = 18~\si{g/mol} \]
+Une mole de molécules d'eau pèse donc 18 grammes.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+% Molécule d'eau : O au centre, H aux sommets (angle ~104.5 deg approx 105)
+\coordinate (O) at (0,0);
+\coordinate (H1) at (-0.95,0.55);
+\coordinate (H2) at (0.95,0.55);
+% Liaisons
+\draw[popline, line width=2pt] (O) -- (H1);
+\draw[popline, line width=2pt] (O) -- (H2);
+% Atomes (cercles ombrés)
+\shade[ball color=popblue] (O) circle (0.7);
+\node[white, font=\bfseries] at (O) {O};
+\shade[ball color=poporange] (H1) circle (0.4);
+\node[white, font=\bfseries, scale=0.8] at (H1) {H};
+\shade[ball color=poporange] (H2) circle (0.4);
+\node[white, font=\bfseries, scale=0.8] at (H2) {H};
+% Annotations calcul
+\draw[->, thick, popdark] (0,-0.8) -- (0,-1.3);
+\node[below, popdark, font=\small] at (0,-1.35) {$1 \times M(\mathrm{O}) = 16$};
+\draw[->, thick, popdark] (-1.5,0.7) -- (-2.2,1.2);
+\node[left, popdark, font=\small] at (-2.3,1.25) {$2 \times M(\mathrm{H}) = 2$};
+\draw[->, thick, popdark] (1.5,0.7) -- (2.2,1.2);
+\node[right, popdark, font=\small] at (2.3,1.25) {$2 \times M(\mathrm{H}) = 2$};
+% Bilan
+\node[draw=popgreen, thick, rounded corners, fill=popgreenL, align=center, font=\small] at (3.8,0) {$M(\ce{H2O}) = 2 + 16$\\ $= 18~\si{g/mol}$};
+\draw[->, very thick, popgreen] (1.8,0) -- (2.5,0);
+\end{tikzpicture}
+\end{center}
+\legende{Décompte visuel pour la molécule d'eau : 2 atomes d'hydrogène ($2 \times 1$) et 1 atome d'oxygène ($1 \times 16$), soit $M(\ce{H2O}) = 18~\si{g/mol}$.}
+\end{popfigure}
+
+\textbf{Exemple guidé 2 : le dioxyde de carbone \ce{CO2}.}\par
+La formule contient 1 atome de carbone et 2 atomes d'oxygène. Attention à l'indice 2 !
+\[ M(\ce{CO2}) = M(\mathrm{C}) + 2 \times M(\mathrm{O}) = 12 + 2 \times 16 = 44~\si{g/mol} \]
+
+\textbf{Exemple guidé 3 : le glucose \ce{C6H12O6}.}\par
+Le glucose est le sucre présent dans les fruits et dans notre sang. Sa formule contient 6 atomes de carbone, 12 atomes d'hydrogène et 6 atomes d'oxygène.
+\begin{align*}
+M(\ce{C6H12O6}) &= 6 \times M(\mathrm{C}) + 12 \times M(\mathrm{H}) + 6 \times M(\mathrm{O}) \\
+&= 6 \times 12 + 12 \times 1 + 6 \times 16 \\
+&= 72 + 12 + 96 \\
+&= 180~\si{g/mol}
+\end{align*}
+
+\begin{attention}[L'erreur classique : oublier l'indice]
+L'erreur la plus fréquente au BEPC est d'oublier de multiplier par l'indice. Par exemple, écrire :
+\[ M(\ce{CO2}) = 12 + 16 = 28~\si{g/mol} \quad \textbf{FAUX !} \]
+L'indice 2 de l'oxygène dans \ce{CO2} signifie qu'il y a \textbf{deux} atomes d'oxygène. Il faut écrire $12 + 2 \times 16 = 44~\si{g/mol}$. Astuce : souligne chaque indice dans la formule avant de commencer le calcul.
+\end{attention}
+
+\courssub{Cas des composés ioniques}
+
+Certains composés, comme le sel de cuisine, ne sont pas formés de molécules mais d'\textbf{ions} régulièrement empilés dans un cristal. On parle de \cle{composés ioniques}. Bonne nouvelle : le calcul de la masse molaire se fait \textbf{exactement de la même façon}, à partir de la formule brute. On parle alors simplement de \textbf{masse molaire} (ou masse molaire formulaique).
+
+\textbf{Exemple : le chlorure de sodium \ce{NaCl} (sel de cuisine).}\par
+La formule contient 1 atome de sodium (Na) et 1 atome de chlore (Cl).
+\[ M(\ce{NaCl}) = M(\mathrm{Na}) + M(\mathrm{Cl}) = 23 + 35,5 = 58,5~\si{g/mol} \]
+Une mole de sel pèse donc 58,5 grammes.
+
+\begin{experience}[Modéliser et peser une mole]
+\textbf{Matériel :} Kit de modèles moléculaires (type Molymod) ou boules de pâte à modeler de couleurs différentes + cure-dents ; balance de précision (0,1 g) ; échantillons : eau, sel, sucre (saccharose).
+\textbf{Protocole :}
+\begin{enumerate}
+\item Construis une molécule d'eau \ce{H2O}, une unité formulaire de sel \ce{NaCl} et une molécule de glucose \ce{C6H12O6} (ou saccharose \ce{C12H22O11} simplifié).
+\item Compte les atomes de chaque élément dans tes modèles.
+\item Calcule la masse molaire théorique $M$ pour chaque espèce.
+\item Sur la balance, masse exactement $M$ grammes de chaque substance réelle (ex: 18,0 g d'eau, 58,5 g de sel, 180 g de sucre).
+\end{enumerate}
+\textbf{Observations :} Les volumes obtenus sont très différents (l'eau est liquide, le sel et le sucre sont solides), mais chaque récipient contient \textbf{le même nombre d'entités} ($6,02 \times 10^{23}$).
+\textbf{Interprétation :} La mole permet de passer de l'infiniment petit (atomes) au macroscopique (grammes pesables au laboratoire).
+\textbf{Sécurité :} Ne pas goûter les échantillons du laboratoire (risque contamination). Se laver les mains après manipulation.
+\end{experience}
+
+\courssub{Le piège des parenthèses}
+
+Certaines formules contiennent des \textbf{parenthèses} suivies d'un indice, comme l'hydroxyde de calcium \ce{Ca(OH)2} (utilisé par les maçons dans la chaux, attention : produit irritant). L'indice placé après la parenthèse multiplie \textbf{tout} ce qui est à l'intérieur : \ce{Ca(OH)2} contient donc 1 atome de calcium, $2 \times 1 = 2$ atomes d'oxygène et $2 \times 1 = 2$ atomes d'hydrogène.
+
+\begin{exemplebox}[Calcul détaillé de $M(\ce{Ca(OH)2})$]
+On donne $M(\mathrm{Ca}) = 40~\si{g/mol}$, $M(\mathrm{O}) = 16~\si{g/mol}$, $M(\mathrm{H}) = 1~\si{g/mol}$.
+\begin{enumerate}
+\item Atomes présents : 1 Ca ; le groupe (OH) apparaît 2 fois, donc 2 O et 2 H.
+\item Multiplications : $1 \times 40 = 40$ ; $2 \times 16 = 32$ ; $2 \times 1 = 2$.
+\item Addition : on peut regrouper astucieusement :
+\[ M(\ce{Ca(OH)2}) = 40 + 2 \times (16 + 1) = 40 + 2 \times 17 = 40 + 34 = 74~\si{g/mol} \]
+\end{enumerate}
+Une mole d'hydroxyde de calcium pèse donc 74 grammes.
+\end{exemplebox}
+
+\begin{attention}[Sécurité au laboratoire]
+L'acide sulfurique \ce{H2SO4} (exercice 2) et l'hydroxyde de calcium \ce{Ca(OH)2} (exemple ci-dessus) sont des produits \textbf{corrosifs} et \textbf{irritants}.
+\begin{itemize}
+\item Porte toujours des lunettes de protection et une blouse.
+\item En cas de projection sur la peau ou dans les yeux : rince immédiatement à grande eau pendant 15 minutes et préviens l'enseignant.
+\item Ne verse jamais d'eau dans l'acide concentré (éclaboussures violentes), mais l'acide dans l'eau si dilution nécessaire.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan récapitulatif}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\node[draw=popblue, thick, rounded corners, inner sep=6pt, align=center]{
+\begin{tabular}{|c|c|c|c|}
+\hline
+\rowcolor{popblueL} \textbf{Formule brute} & \textbf{Décomposition} & \textbf{Calcul} & $\boldsymbol{M}$ (\si{g/mol}) \\
+\hline
+\ce{H2O} & 2 H et 1 O & $2 \times 1 + 16$ & 18 \\
+\hline
+\ce{CO2} & 1 C et 2 O & $12 + 2 \times 16$ & 44 \\
+\hline
+\ce{NaCl} & 1 Na et 1 Cl & $23 + 35,5$ & 58,5 \\
+\hline
+\ce{C6H12O6} & 6 C, 12 H et 6 O & $6 \times 12 + 12 \times 1 + 6 \times 16$ & 180 \\
+\hline
+\ce{Ca(OH)2} & 1 Ca, 2 O et 2 H & $40 + 2 \times (16+1)$ & 74 \\
+\hline
+\end{tabular}};
+\end{tikzpicture}
+\end{center}
+\legende{Tableau récapitulatif : de la formule brute à la masse molaire (moléculaire ou formulaique).}
+\end{popfigure}
+
+\begin{aretenir}[Ce qu'il faut retenir]
+\begin{itemize}
+\item La masse molaire $M$ est la masse d'une mole d'entités (molécules ou unités formulaires) ; elle s'exprime en \si{g/mol}.
+\item On la calcule en additionnant les masses molaires atomiques de tous les atomes de la formule brute, chacune \textbf{multipliée par son indice}.
+\item Un indice après une parenthèse multiplie tout le contenu de la parenthèse : \ce{Ca(OH)2} contient 2 O et 2 H.
+\item La méthode est identique pour les composés moléculaires (eau, gaz carbonique, glucose) et les composés ioniques (sel, hydroxyde de calcium).
+\end{itemize}
+\end{aretenir}
+
+\begin{savaistu}[Une gorgée d'eau... et un nombre astronomique]
+Une mole d'eau pèse seulement 18 grammes : c'est à peu près la masse d'\textbf{une petite gorgée d'eau} ! Pourtant, cette gorgée contient $6,022 \times 10^{23}$ molécules, soit plus de 600 000 milliards de milliards de molécules. Si tu répartissais ces molécules entre tous les habitants de la Terre, chacun en recevrait environ 75 000 milliards ! C'est pour cela que les chimistes ont inventé la mole : compter les atomes un par un serait tout simplement impossible.
+\end{savaistu}
+
+\begin{exoresolu}[Au marché de la chimie]
+\textbf{Énoncé.} Le sucre de canne est constitué de saccharose de formule \ce{C12H22O11}. On donne $M(\mathrm{C}) = 12~\si{g/mol}$, $M(\mathrm{H}) = 1~\si{g/mol}$ et $M(\mathrm{O}) = 16~\si{g/mol}$. Calcule la masse molaire moléculaire du saccharose.
+\tcblower
+\textbf{Solution détaillée.}\par
+Étape 1 — J'identifie les atomes : 12 atomes de carbone, 22 atomes d'hydrogène et 11 atomes d'oxygène.\par
+Étape 2 — Je multiplie chaque masse molaire atomique par son indice :
+\begin{align*}
+M(\ce{C12H22O11}) &= 12 \times M(\mathrm{C}) + 22 \times M(\mathrm{H}) + 11 \times M(\mathrm{O}) \\
+&= 12 \times 12 + 22 \times 1 + 11 \times 16 \\
+&= 144 + 22 + 176 \\
+&= 342~\si{g/mol}
+\end{align*}
+Étape 3 — Conclusion : une mole de saccharose pèse 342 grammes, soit un peu moins qu'une demi-livre de sucre.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+On donne $M(\mathrm{C}) = 12$, $M(\mathrm{H}) = 1$, $M(\mathrm{O}) = 16$, $M(\mathrm{N}) = 14$, $M(\mathrm{S}) = 32$, $M(\mathrm{Ca}) = 40$ et $M(\mathrm{Cl}) = 35,5$ (en \si{g/mol}).
+\begin{enumerate}
+\item Calcule la masse molaire du méthane \ce{CH4} (gaz de la biomasse, attention : inflammable).
+\item Calcule la masse molaire de l'acide sulfurique \ce{H2SO4} (produit corrosif, présent dans les batteries de voiture).
+\item Calcule la masse molaire du chlorure de calcium \ce{CaCl2} (utilisé pour sécher les gaz au laboratoire).
+\item Calcule la masse molaire de l'urée \ce{CO(NH2)2}, un engrais azoté très utilisé par les agriculteurs camerounais. Attention aux parenthèses !
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice « À toi de jouer »]
+\begin{enumerate}
+\item $M(\ce{CH4}) = 12 + 4 \times 1 = 16~\si{g/mol}$.
+\item $M(\ce{H2SO4}) = 2 \times 1 + 32 + 4 \times 16 = 2 + 32 + 64 = 98~\si{g/mol}$.
+\item $M(\ce{CaCl2}) = 40 + 2 \times 35,5 = 40 + 71 = 111~\si{g/mol}$.
+\item \ce{CO(NH2)2} contient 1 C, 1 O, $2 \times 1 = 2$ N et $2 \times 2 = 4$ H :
+\[ M = 12 + 16 + 2 \times 14 + 4 \times 1 = 12 + 16 + 28 + 4 = 60~\si{g/mol} \]
+\end{enumerate}
+\end{corrige}
+
+\coursec{La relation n = m/M}
+
+Nous savons désormais calculer la masse molaire \cle{M} d'un corps pur, atome ou molécule, à partir de la classification périodique. Cette grandeur, exprimée en \cle{g/mol}, est la clé qui ouvre la porte du monde microscopique. Mais comment passer concrètement de la masse \cle{m} que l'on pèse sur la balance du laboratoire (en grammes) à la quantité de matière \cle{n} (en moles) qui compte le nombre d'entités ? C'est l'objet de cette section fondamentale.
+
+\courssub{De la balance à la mole : une proportionnalité simple}
+
+\emph{Situation de départ.} Imaginons que tu pèses exactement \SI{56}{g} de fer (Fe) sur une balance de précision. En consultant la classification périodique, tu lis \cle{M(Fe) = 56 g/mol}. Combien de moles de fer as-tu devant toi ? Intuitivement, tu réponds : \textbf{1 mole}. Et si tu pèses \SI{112}{g} de fer ? C'est \textbf{2 moles}. Si tu pèses \SI{28}{g} ? C'est \textbf{0,5 mole}.
+
+\begin{experience}[Proportionnalité entre masse et quantité de matière]
+{Matériel : balance électronique (précision 0,01 g), échantillons de fer (limaille ou clous), de cuivre, d'eau distillée, coupelles de pesée.}
+{Protocole : 
+\begin{enumerate}
+\item Tarer la balance avec une coupelle vide.
+\item Peser trois masses différentes de fer : m₁ ≈ 28 g, m₂ ≈ 56 g, m₃ ≈ 112 g.
+\item Calculer la quantité de matière n correspondante pour chaque masse en utilisant la masse molaire M(Fe) = 56 g/mol.
+\item Recommencer avec de l'eau (M(H₂O) = 18 g/mol) pour des masses m₁' ≈ 9 g, m₂' ≈ 18 g, m₃' ≈ 36 g.
+\end{enumerate}
+}
+{Observations : On constate que dès que la masse double, la quantité de matière double aussi. Le rapport m/n reste constant et vaut la masse molaire M.}
+{Interprétation : La masse m d'un échantillon de corps pur est \textbf{proportionnelle} à sa quantité de matière n. Le coefficient de proportionnalité est la masse molaire M.}
+{Conclusion : m = n × M, d'où n = m/M.}
+\end{experience}
+
+Cette proportionnalité s'écrit mathématiquement :
+\[
+\frac{m}{n} = M \quad \text{ou encore} \quad m = n \times M
+\]
+D'où la relation fondamentale, appelée \cle{relation n = m/M} :
+
+\begin{propriete}[Relation entre quantité de matière, masse et masse molaire]
+Pour un corps pur de masse molaire \cle{M} (en \SI{}{\gram\per\mole}), la quantité de matière \cle{n} (en \SI{}{\mole}) contenue dans une masse \cle{m} (en \SI{}{\gram}) est donnée par :
+\[
+\boxed{n = \frac{m}{M}}
+\]
+Les deux formes dérivées, utiles selon la grandeur cherchée, sont :
+\[
+\boxed{m = n \times M} \qquad \text{et} \qquad \boxed{M = \frac{m}{n}}
+\]
+\emph{Note : Cette relation est admise par proportionnalité ; aucune démonstration formelle n'est exigible au BEPC.}
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.3, every node/.style={font=\small}, >=Stealth]
+% Triangle standard : m en haut, n bas gauche, M bas droite
+\node[draw, circle, fill=popgreenL, thick, minimum size=1.3cm, align=center] (m) at (0,2){\textbf{m}\\(\SI{}{\gram})};
+\node[draw, circle, fill=popblueL, thick, minimum size=1.3cm, align=center] (n) at (-1.7,-1){\textbf{n}\\(\SI{}{\mole})};
+\node[draw, circle, fill=poporangeL, thick, minimum size=1.3cm, align=center] (M) at (1.7,-1){\textbf{M}\\(\SI{}{\gram\per\mole})};
+
+% Arêtes du triangle avec opérations
+\draw[thick, popdark] (m) -- node[midway, left, sloped] {$\div$} (n);
+\draw[thick, popdark] (m) -- node[midway, right, sloped] {$\div$} (M);
+\draw[thick, popdark] (n) -- node[midway, below] {$\times$} (M);
+
+% Formules près des sommets
+\node[align=center, font=\footnotesize, text=popgreen] at (0, 3.2) {$m = n \times M$};
+\node[align=center, font=\footnotesize, text=popblue] at (-2.5, -1.8) {$n = \dfrac{m}{M}$};
+\node[align=center, font=\footnotesize, text=poporange] at (2.5, -1.8) {$M = \dfrac{m}{n}$};
+
+% Astuce
+\node[draw, rounded corners, fill=popcream, text width=6.5cm, align=center, font=\footnotesize] at (0, -3.2) {\textbf{Astuce du triangle :} Cache du doigt la grandeur cherchée. Les deux restantes te donnent la formule : si elles sont \textbf{côte à côte} $\rightarrow$ \textbf{multiplication} ; si l'une est \textbf{au-dessus} de l'autre $\rightarrow$ \textbf{division}.};
+\end{tikzpicture}
+\legende{Triangle de conversion n–m–M : un outil mnémotechnique pour retrouver les trois formules sans les apprendre par cœur.}
+\end{popfigure}
+
+\courssub{Les trois cas de figure au BEPC}
+
+Tout exercice de chimie quantitative en 3ème ramène à l'un de ces trois cas. La rigueur impose de \textbf{toujours vérifier les unités} avant de calculer : \cle{m en grammes (g)}, \cle{M en g/mol}, \cle{n en mol}. Si la masse est donnée en kg, mg ou t, convertis-la d'abord en grammes !
+
+\begin{exemplebox}[Cas 1 : Calculer n (connaître m et M) — Contexte : Eau de boisson]
+\textbf{Énoncé :} Une bouteille d'eau minérale « Vital » ou « Source du Pays » contient \SI{1,5}{L} d'eau, soit une masse d'environ \SI{1500}{g}. Quelle est la quantité de matière d'eau \ce{H2O} contenue dans cette bouteille ?
+\textbf{Données :} m = 1500 g ; M(H₂O) = 2×1 + 16 = 18 g/mol.
+\textbf{Formule :} n = m/M.
+\textbf{Calcul :} n = 1500 / 18 = \textbf{83,3 mol}.
+\textbf{Réponse :} Cette bouteille contient environ 83,3 mol de molécules d'eau.
+\end{exemplebox}
+
+\begin{exemplebox}[Cas 2 : Calculer m (connaître n et M) — Contexte : Cuisine / Pharmacie]
+\textbf{Énoncé :} Pour préparer un sirop de glucose à usage médical, il faut \num{0,25} mol de glucose \ce{C6H12O6}. Quelle masse faut-il peser ? (M(C)=12, M(H)=1, M(O)=16).
+\textbf{Données :} n = 0,25 mol ; M(\ce{C6H12O6}) = 6×12 + 12×1 + 6×16 = 180 g/mol.
+\textbf{Formule :} m = n × M.
+\textbf{Calcul :} m = 0,25 × 180 = \textbf{45 g}.
+\textbf{Réponse :} Il faut peser 45 g de glucose.
+\end{exemplebox}
+
+\begin{exemplebox}[Cas 3 : Calculer M (connaître m et n) — Identification d'un métal]
+\textbf{Énoncé :} On pèse \SI{10,0}{g} d'un métal inconnu. La quantité de matière de cet échantillon est \num{0,250} mol. Déterminer sa masse molaire et proposer son identité.
+\textbf{Données :} m = 10,0 g ; n = 0,250 mol.
+\textbf{Formule :} M = m/n.
+\textbf{Calcul :} M = 10,0 / 0,250 = \textbf{40,0 g/mol}.
+\textbf{Interprétation :} Dans la classification périodique, l'élément de masse molaire atomique la plus proche de 40 g/mol est le \textbf{Calcium (Ca)}, M(Ca) = 40,1 g/mol. C'est probablement du calcium.
+\end{exemplebox}
+
+\courssub{Le « pont de la mole » : de la masse mesurée au nombre d'entités}
+
+La mole est le trait d'union entre le monde macroscopique (ce qu'on pèse, ce qu'on voit) et le monde microscopique (atomes, molécules, ions). Le schéma ci-dessous résume la démarche complète pour passer du nombre d'entités \cle{N} à la masse \cle{m} (et inversement) en passant par la quantité de matière \cle{n}.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={font=\small}, >=Stealth]
+% Styles
+\tikzset{box/.style={draw, thick, rounded corners, minimum height=1.3cm, minimum width=2.8cm, align=center, fill=popcream},
+         arrow/.style={thick, -Stealth, popdark},
+         labelarrow/.style={midway, fill=white, inner sep=2pt, font=\footnotesize}}
+
+% Nodes : Masse (gauche), Mole (centre), Nombre (droite)
+\node[box, fill=popgreenL, align=center] (mass) at (-4.5,0){\textbf{Masse m}\\(mesurée à la balance)\\\SI{}{\gram}};
+\node[box, fill=popblueL, align=center] (mole) at (0,0){\textbf{Quantité de matière n}\\\SI{}{\mole}};
+\node[box, fill=poporangeL, align=center] (number) at (4.5,0){\textbf{Nombre d'entités N}\\(atomes, molécules, ions...)\\\textit{sans unité}};
+
+% Flèches Masse <-> Mole (deux flèches parallèles)
+\draw[arrow] ([yshift=3pt]mass.east) -- node[labelarrow, above] {Diviser par M : $n = \frac{m}{M}$} ([yshift=3pt]mole.west);
+\draw[arrow] ([yshift=-3pt]mole.west) -- node[labelarrow, below] {Multiplier par M : $m = n \times M$} ([yshift=-3pt]mass.east);
+
+% Flèches Mole <-> Nombre (deux flèches parallèles)
+\draw[arrow] ([yshift=3pt]mole.east) -- node[labelarrow, above] {Multiplier par $N_A$ : $N = n \times N_A$} ([yshift=3pt]number.west);
+\draw[arrow] ([yshift=-3pt]number.west) -- node[labelarrow, below] {Diviser par $N_A$ : $n = \frac{N}{N_A}$} ([yshift=-3pt]mole.east);
+
+% Boîte constantes
+\node[draw, dashed, rounded corners, fill=poppinkL, align=center, font=\footnotesize, text width=3.5cm] at (0, -2.5) {\textbf{Constantes de passage}\\$M$ (\SI{}{\gram\per\mole}) : masse molaire\\$N_A \approx 6,02 \times 10^{23}$ \SI{}{\per\mole} : nombre d'Avogadro};
+\draw[dashed, popmuted] (mole.south) -- ++(0,-0.4) -| (0,-2.5);
+\draw[dashed, popmuted] (mass.south) -- ++(0,-0.4) -| (-2,-2.5);
+\draw[dashed, popmuted] (number.south) -- ++(0,-0.4) -| (2,-2.5);
+\end{tikzpicture}
+\legende{Le « pont de la mole » : la balance donne la masse m (g), la division par M donne n (mol), la multiplication par $N_A$ donne le nombre N d'entités. (Le calcul avec $N_A$ est approfondi en 2nde).}
+\end{popfigure}
+
+\courssub{Méthode rigoureuse pour résoudre un exercice}
+
+\begin{methode}[Résolution type en 4 étapes (standard BEPC)]
+\textbf{Étape 1 : Lister les données.} Écris les grandeurs connues avec leur symbole, leur valeur \textbf{et leur unité}. Identifie la grandeur cherchée.
+\textbf{Étape 2 : Convertir les unités.} \emph{Point crucial !} Si la masse est en kg, mg ou t, convertis-la en \textbf{grammes (g)}. La masse molaire M doit être en \textbf{g/mol}.
+\textbf{Étape 3 : Choisir la formule.} Utilise le triangle n–m–M pour sélectionner la bonne relation (n = m/M, m = n×M ou M = m/n).
+\textbf{Étape 4 : Calculer et conclure.} Effectue le calcul, écris le résultat avec l'unité adaptée et une phrase de réponse complète.
+\end{methode}
+
+\begin{attention}[Pièges fréquents — Sois vigilant !]
+\begin{itemize}
+\item \textbf{Inverser la formule :} Écrire $n = M/m$ au lieu de $n = m/M$. \emph{Repère :} Si la masse augmente, la quantité de matière augmente. n est proportionnel à m, donc m au numérateur.
+\item \textbf{Oublier la conversion d'unités :} Laisser m = 2 kg dans la formule $n = m/M$ avec M en g/mol donne un résultat faux par un facteur 1000. \textbf{Toujours convertir en g avant de calculer.}
+\item \textbf{Confondre M et m :} M est une constante du corps pur (g/mol), m est la masse de l'échantillon pesé (g). Ne pas écrire « M = 5 g » pour un échantillon de 5 g.
+\item \textbf{Nombre de chiffres significatifs :} Au BEPC, on donne généralement le résultat avec le même nombre de chiffres significatifs que la donnée la moins précise (souvent 2 ou 3).
+\item \textbf{Sécurité au pesage :} Ne \textbf{jamais} verser de produit chimique directement sur le plateau de la balance. Utilise une coupelle de pesée (ou un papier plié), tare la balance avec le récipient vide, puis verse le produit dans la coupelle. Nettoie tout déversement immédiatement.
+\end{itemize}
+\end{attention}
+
+\begin{exoresolu}[Quantité de matière dans du gaz carbonique]
+\textbf{Énoncé :} On prélève \SI{22}{g} de dioxyde de carbone \ce{CO2} (gaz carbonique). Calculer la quantité de matière de cet échantillon. Données : M(C) = 12 g/mol ; M(O) = 16 g/mol.
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+\item \textbf{Données :} m = 22 g. Corps pur : \ce{CO2}. Cherché : n (en mol).
+\item \textbf{Masse molaire M(\ce{CO2}) :} M = 12 + 2×16 = \textbf{44 g/mol}.
+\item \textbf{Unités :} m en g, M en g/mol $\rightarrow$ Cohérent.
+\item \textbf{Formule :} $n = \frac{m}{M}$.
+\item \textbf{Calcul :} $n = \frac{22}{44} = 0,50$ mol.
+\end{enumerate}
+\textbf{Réponse :} L'échantillon de 22 g de \ce{CO2} correspond à \textbf{0,50 mol} de molécules de dioxyde de carbone.
+\end{exoresolu}
+
+\begin{savaistu}[La précision des balances et la mole — Contexte Cameroun]
+Les balances de laboratoire modernes (balances analytiques) affichent le \textbf{centième de gramme} (précision \SI{0,01}{g}), voire le dix-millième (\SI{0,0001}{g}) pour les plus perfectionnées (lycées scientifiques, laboratoires SONARA, ENEO, laboratoires de contrôle qualité).
+Avec une précision de \SI{0,01}{g} sur un corps de masse molaire \SI{100}{g/mol} (ex. \ce{CaCO3}, calcaire), la plus petite variation mesurable de quantité de matière est :
+$\Delta n = \frac{0,01}{100} = \num{1e-4}$ mol.
+Cela signifie qu'au lycée, nous manipulons couramment des quantités de matière de l'ordre de \textbf{$10^{-4}$ mol}, soit environ \num{6e19} entités ! La mole est bien l'outil qui rend « manipulable » l'infiniment petit.
+\textbf{Exemple concret :} Pour vérifier le remplissage d'une bonbonne de gaz butane (environ \SI{12,5}{kg} de gaz, M ≈ 58 g/mol), les techniciens pèsent la bonbonne : $n \approx \frac{12500}{58} \approx 215$ mol. Une erreur de \SI{100}{g} ne représente que 1,7 mol, soit moins de 1\%.
+\end{savaistu}
+
+\begin{exercice}[Entraînement — n = m/M]
+\begin{enumerate}
+\item Calculer la quantité de matière (en mol) dans : 
+      \begin{enumerate}
+      \item \SI{20}{g} de dioxygène \ce{O2} (gaz des bouteilles de soudure) ;
+      \item \SI{500}{mg} de dioxyde de carbone \ce{CO2} ;
+      \item \SI{2,5}{kg} d'eau (un bidon « Source du Pays » de 2,5 L).
+      \end{enumerate}
+\item Quelle masse (en g) faut-il peser pour obtenir : 
+      \begin{enumerate}
+      \item \num{0,50} mol de chlorure de sodium \ce{NaCl} (sel de cuisine) ;
+      \item \num{2,0} mol de glucose \ce{C6H12O6} (sucre de raisin).
+      \end{enumerate}
+\item Un échantillon de \SI{15,0}{g} d'un gaz pur correspond à \num{0,500} mol. Déterminer sa masse molaire et identifier ce gaz parmi : \ce{H2} (2 g/mol), \ce{N2} (28 g/mol), \ce{O2} (32 g/mol), \ce{CO2} (44 g/mol).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice d'entraînement]
+\begin{enumerate}
+\item a) M(\ce{O2}) = 32 g/mol. n = 20/32 = \textbf{0,625 mol}. \\
+      b) m = 500 mg = \textbf{0,500 g}. M(\ce{CO2}) = 44 g/mol. n = 0,500/44 = \textbf{1,14 $\times$ 10$^{-2}$ mol}. \\
+      c) m = 2,5 kg = \textbf{2500 g}. M(\ce{H2O}) = 18 g/mol. n = 2500/18 = \textbf{139 mol} (≈ \num{1,4e2} mol).
+\item a) M(\ce{NaCl}) = 23 + 35,5 = 58,5 g/mol. m = 0,50 × 58,5 = \textbf{29,25 g} (≈ 29 g). \\
+      b) M(\ce{C6H12O6}) = 180 g/mol. m = 2,0 × 180 = \textbf{360 g}.
+\item M = m/n = 15,0 / 0,500 = \textbf{30,0 g/mol}. Le gaz le plus proche est \ce{N2} (28 g/mol) ou \ce{NO} (30 g/mol). Si la liste impose \ce{N2}, \ce{O2}, \ce{CO2}, \ce{H2}, aucun ne correspond exactement à 30. \emph{Note :} Si l'énoncé donne M = 30 g/mol, c'est probablement du \ce{NO} (monoxyde d'azote) ou de l'éthane \ce{C2H6}. Vérifier les données du sujet. Ici, avec les choix proposés, il y a une incohérence volontaire pour tester la rigueur : l'élève doit calculer M = 30 g/mol et constater qu'aucun gaz de la liste ne correspond.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Applications et sécurité au laboratoire}
+
+Nous savons maintenant calculer une quantité de matière $n$ grâce à la relation fondamentale $n = \frac{m}{M}$. C'est un outil puissant, mais il ne prend tout son sens que lorsque l'on sait l'appliquer concrètement, avec rigueur et sécurité, au laboratoire comme dans la vie courante. Au Cameroun, que ce soit pour préparer un sérum physiologique à l'hôpital, doser un carburant à la SONARA ou simplement réussir sa cuisine, la mole est la passerelle entre l'invisible (les atomes) et le mesurable (les grammes).
+
+\courssub{Une expérience de classe : peser une quantité de matière connue}
+
+Commençons par vérifier expérimentalement la relation $n = \frac{m}{M}$. Nous allons « compter » des entités chimiques sans les voir, uniquement à l'aide d'une balance.
+
+\begin{experience}[Pesée de 0,1 mole de chlorure de sodium]
+\textbf{Matériel :} balance électronique (précision 0,01 g ou 0,001 g), coupelle de pesée (ou verre de montre), spatule en acier inoxydable, chlorure de sodium (sel de cuisine pur), blouse, gants.
+\par\textbf{Protocole :}
+\begin{enumerate}
+    \item Enfiler la blouse et les gants. Vérifier que la balance est sur une table stable, à l'abri des courants d'air.
+    \item Mettre la coupelle vide sur le plateau de la balance. Attendre la stabilisation de l'affichage.
+    \item Appuyer sur la touche \textbf{TARE} (ou « $\rightarrow$0$\leftarrow$). L'afficheur indique \SI{0,00}{g}. La masse de la coupelle est mémorisée et soustraite automatiquement.
+    \item À l'aide de la spatule, verser lentement le NaCl dans la coupelle jusqu'à approcher \SI{5,85}{g}. Ajouter les derniers grains un par un pour atteindre exactement \SI{5,85}{g} (ou \SI{5,850}{g} selon la précision).
+    \item Noter la masse $m$ affichée. Retirer la coupelle. Éteindre la balance. Ranger le matériel. Se laver les mains.
+\end{enumerate}
+\textbf{Observations :} La balance affiche une masse $m = \SI{5,85}{g}$ (valeur visée). Le sel est un solide blanc, cristallin, inodore.
+\par\textbf{Interprétation :} La masse molaire du NaCl est $M = M_{\text{Na}} + M_{\text{Cl}} = \num{23,0} + \num{35,5} = \SI{58,5}{g\cdot mol^{-1}}$. La quantité de matière pesée est :
+\[
+n = \frac{m}{M} = \frac{5,85}{58,5} = \SI{0,10}{mol}.
+\]
+Nous venons de mettre exactement $0,10 \times N_{\text{A}} \approx 6,0 \times 10^{22}$ paires d'ions $\ce{Na+}$ et $\ce{Cl-}$ dans la coupelle, sans en voir une seule ! La balance est l'outil qui « compte » les moles pour nous.
+\end{experience}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={transform shape}]
+    % Balance base
+    \draw[popdark, thick, fill=popmuted!20, rounded corners=3pt] (-2.5,-1.5) rectangle (2.5,-0.5);
+    % Balance display
+    \draw[popdark, thick, fill=popblue!10, rounded corners=2pt] (-1.5,0) rectangle (1.5,0.8);
+    \node[popdark, font=\ttfamily\small] at (0,0.4) {5.850 g};
+    % Weighing pan
+    \draw[popdark, thick, fill=popmuted!30] (-1.2,0.8) -- (-1.2,1.8) -- (1.2,1.8) -- (1.2,0.8) -- cycle;
+    \draw[popdark, thick] (-1.2,1.8) ellipse (1.2 and 0.15);
+    % Weighing boat (coupelle)
+    \draw[poporange, thick, fill=poporange!30] (-0.6,1.8) -- (-0.6,2.4) .. controls (-0.6,2.6) and (0.6,2.6) .. (0.6,2.4) -- (0.6,1.8);
+    \draw[poporange, thick] (-0.6,2.4) ellipse (0.6 and 0.15);
+    % Salt in boat
+    \foreach \x/\y in {-0.4/2.1, -0.2/2.2, 0.0/2.1, 0.2/2.2, 0.4/2.1, -0.3/2.0, 0.1/2.0, 0.3/2.0} {
+        \fill[white] (\x,\y) circle (0.04);
+    }
+    % Spatula
+    \draw[popmuted, thick] (2.5,2.0) -- (3.5,2.8);
+    \draw[popmuted, thick, fill=popmuted!50] (3.3,2.8) rectangle (3.7,3.0);
+    \node[popdark, right, font=\small] at (3.7,2.9) {Spatule};
+    % Lab coat (blouse) hanging
+    \draw[popblue, thick, fill=popblue!10] (-3.5,1.5) -- (-3.0,1.5) -- (-3.0,3.5) .. controls (-3.2,3.8) and (-3.8,3.8) .. (-4.0,3.5) -- (-4.0,1.5) -- cycle;
+    \draw[popblue, thick] (-3.7,1.5) -- (-3.7,2.2); \draw[popblue, thick] (-3.3,1.5) -- (-3.3,2.2);
+    \node[popdark, left, font=\small] at (-4.2,2.5) {Blouse};
+    % Pictograms on wall (simplified drawings)
+    \begin{scope}[shift={(-4.5, 4.0)}]
+        \draw[popred, thick, rotate=45] (-0.25,-0.25) rectangle (0.25,0.25);
+        \node[popred, font=\tiny, rotate=-45] at (0,0) {☠};
+        \node[popdark, below=0.1cm, font=\tiny, rotate=-45, align=center] at (0,-0.4) {Toxique};
+    \end{scope}
+    \begin{scope}[shift={(-3.8, 4.0)}]
+        \draw[popblue, thick, rotate=45] (-0.25,-0.25) rectangle (0.25,0.25);
+        \node[popblue, font=\tiny, rotate=-45] at (0,0) {☢};
+        \node[popdark, below=0.1cm, font=\tiny, rotate=-45, align=center] at (0,-0.4) {Corrosif};
+    \end{scope}
+    \begin{scope}[shift={(-3.1, 4.0)}]
+        \draw[poporange, thick, rotate=45] (-0.25,-0.25) rectangle (0.25,0.25);
+        \node[poporange, font=\tiny, rotate=-45] at (0,0) {🔥};
+        \node[popdark, below=0.1cm, font=\tiny, rotate=-45, align=center] at (0,-0.4) {Inflammable};
+    \end{scope}
+    \begin{scope}[shift={(-2.4, 4.0)}]
+        \draw[popgold, thick, rotate=45] (-0.25,-0.25) rectangle (0.25,0.25);
+        \node[popgold, font=\tiny, rotate=-45] at (0,0) {!};
+        \node[popdark, below=0.1cm, font=\tiny, rotate=-45, align=center] at (0,-0.4) {Irritant};
+    \end{scope}
+    \node[popdark, above, font=\small] at (0,4.5) {Pictogrammes de danger};
+    % Legend arrows
+    \draw[popdark, ->, thick] (0.5,1.5) -- (1.5,1.0) node[right, font=\small, popdark] {Plateau};
+    \draw[popdark, ->, thick] (0,2.5) -- (1.2,2.8) node[right, font=\small, poporange] {Coupelle tarée};
+    \draw[popdark, ->, thick] (-1.5,0.4) -- (-2.5,0.4) node[left, font=\small, popblue] {Afficheur (masse nette)};
+\end{tikzpicture}
+\legende{Poste de pesée sécurisé : balance électronique, coupelle tarée, spatule, blouse et affichage des pictogrammes de danger.}
+\end{popfigure}
+
+\courssub{Applications concrètes : du médicament à la cuisine}
+
+La relation $n = \frac{m}{M}$ n'est pas réservée au laboratoire de chimie. Elle est au cœur de nombreuses situations de la vie quotidienne au Cameroun.
+
+\begin{exemplebox}[Dosage d'un comprimé de paracétamol]
+Le paracétamol (acétaminophène) a pour formule brute $\ce{C8H9NO2}$. Sa masse molaire est :
+\[
+M = 8\times\num{12,0} + 9\times\num{1,0} + \num{14,0} + 2\times\num{16,0} = \SI{151}{g\cdot mol^{-1}}.
+\]
+Un comprimé standard dosé à \SI{500}{mg} de principe actif contient une masse $m = \SI{500}{mg} = \SI{0,500}{g}$.
+La quantité de matière de principe actif est :
+\[
+n = \frac{m}{M} = \frac{0,500}{151} \approx \SI{3,31e-3}{mol}.
+\]
+Cela correspond à environ $3,31 \times 10^{-3} \times 6,02 \times 10^{23} \approx \num{2,0e21}$ molécules de paracétamol. C'est cette quantité précise qui assure l'efficacité thérapeutique sans toxicité pour le foie.
+\end{exemplebox}
+
+\begin{savaistu}[Le sérum physiologique dans nos hôpitaux]
+Au Cameroun, comme partout dans le monde, le sérum physiologique (solutions de réhydratation, perfusion) contient \textbf{9 g de NaCl par litre} d'eau. Calculons sa concentration en quantité de matière (que vous appellerez « molarité » en 2nde) :
+\[
+n_{\text{NaCl}} = \frac{9,0}{58,5} \approx \SI{0,154}{mol}.
+\]
+La concentration est donc d'environ \textbf{0,154 mol/L}. Ce dosage précis assure l'isotonie : la solution a la même pression osmotique que le sang, évitant ainsi l'éclatement (hémolyse) ou le rétrécissement (création) des globules rouges. Une erreur de pesée (ex. 10 g au lieu de 9 g) rendrait la solution hypertonique, dangereuse pour le patient.
+\end{savaistu}
+
+Dans la cuisine aussi, on utilise implicitement la mole. Préparer une limonade avec « 100 g de sucre pour 1 L d'eau », c'est fixer $n_{\text{sucre}} = \frac{100}{342} \approx \SI{0,29}{mol}$ (le sucre de table est du saccharose $\ce{C12H22O11}$, $M \approx \SI{342}{g/mol}$). Si vous doublez la masse de sucre, vous doublez la quantité de matière, donc le nombre de molécules sucrantes : le goût change proportionnellement.
+
+\courssub{Travailler en sécurité au laboratoire}
+
+Manipuler des substances chimiques, même courantes comme le sel ou le sucre, impose une discipline stricte. Au BEPC, les consignes de sécurité font partie des savoir-faire évalués.
+
+\begin{methode}[Réaliser une pesée précise et sécurisée]
+\begin{enumerate}
+    \item \textbf{Préparation :} Enfiler la blouse (fermée), attacher les cheveux longs, porter des lunettes de protection si le produit est irritant/corrosif. Vérifier la propreté de la balance et de son environnement.
+    \item \textbf{Choix du récipient :} Utiliser \textbf{une coupelle de pesée} (verre de montre, godet en plastique, papier plié). \textbf{Jamais} directement sur le plateau de la balance.
+    \item \textbf{Tare :} Poser le récipient vide sur le plateau. Attendre la stabilisation. Appuyer sur \textbf{TARE} (affichage \SI{0,00}{g}).
+    \item \textbf{Pesée :} Avec une spatule propre, introduire le produit \textbf{progressivement} dans le récipient. Refermer immédiatement le flacon source après prélèvement.
+    \item \textbf{Lecture :} Noter la masse $m$ indiquée (masse nette du produit). Si on a dépassé la masse visée, \textbf{ne pas remettre l'excédent dans le flacon d'origine} (risque de contamination) : le jeter dans le bac de récupération prévu à cet effet.
+    \item \textbf{Calcul :} Calculer $n = \frac{m}{M}$ avec les unités cohérentes ($m$ en g, $M$ en g/mol).
+    \item \textbf{Rangement :} Nettoyer le plateau de la balance (pinceau doux) si des grains sont tombés. Ranger spatule, coupelle, produit. Éteindre la balance. Se laver les mains soigneusement.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Piège fréquent : peser directement sur le plateau]
+\textbf{Erreur :} Verser la poudre ou le liquide directement sur le plateau métallique ou en verre de la balance.
+\par\textbf{Conséquences :}
+\begin{itemize}
+    \item \textbf{Corrosion :} Acides, bases, sels hygroscopiques attaquent le métal ou collent au verre $\rightarrow$ balance HS, mesures faussées pour tous.
+    \item \textbf{Contamination croisée :} Résidus du produit précédent $\rightarrow$ impuretés dans votre échantillon.
+    \item \textbf{Perte de matière :} Poudre dispersée par vibration ou courant d'air $\rightarrow$ masse lue incorrecte.
+    \item \textbf{Risque chimique :} Contact peau/produit lors du nettoyage forcé.
+\end{itemize}
+\textbf{Règle d'or :} \textbf{Toujours} utiliser un récipient intermédiaire (coupelle, bécher, fiole) que l'on tare.
+\end{attention}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={transform shape}]
+    % Define styles for pictograms (CLP/GHS standard diamonds)
+    \tikzset{pictogram/.style={draw=popdark, very thick, fill=white, rotate=45, minimum size=1.8cm, inner sep=0}}
+    \tikzset{pictolabel/.style={below=0.2cm, font=\small\bfseries, popdark, align=center, rotate=-45}}
+    
+    % 1. Toxique (Skull and crossbones) - GHS06
+    \begin{scope}[shift={(0,0)}]
+        \node[pictogram] (p1) {};
+        \draw[popred, line width=2pt] (-0.3,0.2) .. controls (-0.3,0.5) and (0.3,0.5) .. (0.3,0.2); % Top of skull
+        \draw[popred, line width=2pt] (-0.3,0.2) -- (-0.3,-0.1) -- (-0.5,-0.1) -- (-0.5,-0.4) -- (0.5,-0.4) -- (0.5,-0.1) -- (0.3,-0.1) -- (0.3,0.2); % Jaw/face
+        \fill[popred] (-0.15,0.05) circle (0.07); \fill[popred] (0.15,0.05) circle (0.07); % Eyes
+        \draw[popred, line width=1.5pt] (-0.15,-0.15) -- (0.15,-0.15); % Nose/teeth line
+        \node[pictolabel, align=center] at (p1.south){Toxique\\ (Mortel)};
+    \end{scope}
+    
+    % 2. Corrosif (Corrosion) - GHS05
+    \begin{scope}[shift={(3,0)}]
+        \node[pictogram] (p2) {};
+        \draw[popblue, line width=2pt] (0,0.4) -- (0,-0.1); % Test tube
+        \draw[popblue, line width=2pt] (-0.25,0.4) -- (-0.25,0.1) .. controls (-0.25,-0.1) and (0.25,-0.1) .. (0.25,0.1) -- (0.25,0.4);
+        \draw[popblue, line width=2pt, ->] (0,0.05) -- (0,-0.35); % Drip
+        \draw[popblue, line width=1.5pt] (-0.3,-0.35) -- (0.3,-0.35); % Splash on surface
+        \draw[popblue, line width=1.5pt] (-0.2,-0.35) -- (-0.3,-0.5); \draw[popblue, line width=1.5pt] (0.2,-0.35) -- (0.3,-0.5);
+        \draw[poporange, line width=2pt] (-0.35,0.1) .. controls (-0.5,0.1) and (-0.5,-0.2) .. (-0.35,-0.2); % Hand
+        \draw[poporange, line width=2pt] (0.35,0.1) .. controls (0.5,0.1) and (0.5,-0.2) .. (0.35,-0.2); % Hand
+        \node[pictolabel, align=center] at (p2.south){Corrosif\\ (Atteinte peau/yeux)};
+    \end{scope}
+    
+    % 3. Inflammable (Flame) - GHS02
+    \begin{scope}[shift={(6,0)}]
+        \node[pictogram] (p3) {};
+        \draw[poporange, line width=2pt] 
+            (0,0.4) .. controls (-0.2,0.1) and (-0.3,-0.1) .. (0,-0.3)
+            .. controls (0.3,-0.1) and (0.2,0.1) .. (0,0.4);
+        \draw[poporange, line width=1.5pt] (-0.1,0.1) .. controls (-0.2,0.0) and (-0.1,-0.1) .. (0,-0.15);
+        \draw[poporange, line width=1.5pt] (0.1,0.1) .. controls (0.2,0.0) and (0.1,-0.1) .. (0,-0.15);
+        \node[pictolabel, align=center] at (p3.south){Inflammable\\ (Gaz, liquides, solides)};
+    \end{scope}
+    
+    % 4. Irritant / Nocif / Sensibilisant (Exclamation mark) - GHS07
+    \begin{scope}[shift={(9,0)}]
+        \node[pictogram] (p4) {};
+        \draw[popgold, line width=2.5pt] (0,0.3) -- (0,0.05);
+        \fill[popgold] (0,-0.2) circle (0.08);
+        \node[pictolabel, align=center] at (p4.south){Irritant /\\ Nocif / Sensibilisant};
+    \end{scope}
+\end{tikzpicture}
+\legende{Les quatre pictogrammes de danger (règlement CLP/GHS) les plus courants au laboratoire de 3ème. Apprenez à les reconnaître sur les flacons : Toxique (tête de mort), Corrosif (tube + main), Inflammable (flamme), Irritant/Nocif (point d'exclamation).}
+\end{popfigure}
+
+\begin{aretenir}[Consignes de sécurité indispensables (Check-list BEPC)]
+\begin{itemize}
+    \item \textbf{Blouse obligatoire} (coton, manches longues, fermée) : protège les vêtements et la peau des projections.
+    \item \textbf{Interdiction formelle} de manger, boire, mâcher du chewing-gum, \textbf{goûter ou sentir directement} un produit (technique du « éventail » si odeur nécessaire).
+    \item \textbf{Pesée :} Toujours sur coupelle tarée. Refermer les flacons immédiatement.
+    \item \textbf{Manipulation :} Produits volatils, toxiques ou odorants $\rightarrow$ sous \textbf{hotte aspirante} ou dans un local très aéré (portes/fenêtres ouvertes).
+    \item \textbf{Verrerie :} Vérifier l'absence d'ébréchures (risque de coupure, de fuite). Signaler \textbf{toute casse} au professeur immédiatement (balayette + pelle, pas les mains).
+    \item \textbf{Déchets :} Liquides dans le bac « déchets liquides », solides dans le bac « déchets solides », \textbf{jamais dans l'évier ni la poubelle classique}.
+    \item \textbf{Fin de séance :} Plan de travail nettoyé, matériel rangé, \textbf{mains lavées au savon} avant de sortir.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Complément pour la classe de 2nde : le volume molaire des gaz}
+
+\emph{(Ce paragraphe dépasse le programme strict de 3ème, mais prépare efficacement la suite. Il n'est pas exigible au BEPC 3ème.)}
+
+Pour les gaz, on ne pèse pas facilement (masse très faible). On mesure un \textbf{volume}. Dans les \textbf{conditions usuelles de température et de pression} (environ \SI{20}{\celsius} et \SI{1}{atm}, soit la pression atmosphérique normale à Yaoundé ou Douala), \textbf{tous les gaz} (idéaux) occupent à peu près le même volume par mole.
+
+\begin{propriete}[Volume molaire des gaz (Conditions usuelles) -- Hors programme 3ème]
+Dans les conditions usuelles ($T \approx \SI{20}{\celsius}$, $P = \SI{1}{atm}$), la quantité de matière $n$ (en mol), le volume $V$ (en L) et le volume molaire $V_{\text{m}}$ (en L/mol) sont liés par :
+\[
+n = \frac{V}{V_{\text{m}}} \qquad \text{avec} \qquad V_{\text{m}} \approx \SI{24}{L\cdot mol^{-1}}.
+\]
+\textbf{Attention :} $V_{\text{m}}$ dépend de la température et de la pression. En conditions normales (CNTP : \SI{0}{\celsius}, \SI{1}{atm}), $V_{\text{m}} = \SI{22,4}{L\cdot mol^{-1}}$. Vérifiez toujours les conditions données dans l'énoncé.
+\end{propriete}
+
+\begin{exemplebox}[Volume de dioxygène pour une combustion]
+Pour brûler complètement \SI{1}{mol} de méthane ($\ce{CH4}$), il faut \SI{2}{mol} de dioxygène ($\ce{O2}$) selon l'équation $\ce{CH4 + 2O2 -> CO2 + 2H2O}$.
+Le volume de dioxygène nécessaire dans les conditions usuelles est :
+\[
+V_{\ce{O2}} = n \times V_{\text{m}} = 2,0 \times 24 = \SI{48}{L}.
+\]
+C'est le volume qu'occuperait un gros sac poubelle standard. Cela explique pourquoi les moteurs thermiques (moto-taxi, groupe électrogène) ont besoin d'un gros filtre à air : ils « avalent » des dizaines de litres d'air par seconde pour brûler l'essence.
+\end{exemplebox}
+
+\courssub{Exercice résolu : du solide au gaz, la mole relie tout}
+
+\begin{exoresolu}[Préparation d'une solution et réaction gazeuse]
+\textbf{Énoncé :} On souhaite préparer \SI{250}{mL} d'une solution aqueuse de chlorure de sodium de concentration en quantité de matière $C = \SI{0,10}{mol\cdot L^{-1}}$ (solution « physiologique » diluée). On dispose de sel solide (NaCl, $M = \SI{58,5}{g\cdot mol^{-1}}$) et d'eau distillée.
+\begin{enumerate}
+    \item Calculer la masse $m$ de NaCl à peser.
+    \item Cette solution est utilisée pour produire du dihydrogène par électrolyse (électrolyse de l'eau acidifiée). Écrire l'équation de la réaction à la cathode. Calculer le volume de dihydrogène $\ce{H2}$ récupéré dans les conditions usuelles si on électrolyse la totalité de la solution en supposant un rendement de 100\% (1 mole d'eau $\rightarrow$ 1 mole $\ce{H2}$). Donnée : $V_{\text{m}} = \SI{24}{L\cdot mol^{-1}}$.
+\end{enumerate}
+\par\textbf{Solution détaillée :}
+\par\textbf{1. Masse de NaCl à peser.}
+La quantité de matière de NaCl nécessaire est :
+\[
+n_{\text{NaCl}} = C \times V_{\text{sol}} = \SI{0,10}{mol\cdot L^{-1}} \times \SI{0,250}{L} = \SI{0,025}{mol}.
+\]
+La masse correspondante est :
+\[
+m = n \times M = \SI{0,025}{mol} \times \SI{58,5}{g\cdot mol^{-1}} = \SI{1,4625}{g} \approx \SI{1,46}{g} \text{ (arrondi à la précision de la balance)}.
+\]
+\par\textbf{2. Volume de dihydrogène produit.}
+Équation à la cathode (réduction de l'eau) : $\ce{2H2O + 2e- -> H2 + 2HO-}$.
+On suppose que l'eau est en grand excès par rapport au sel. La quantité de matière d'eau dans \SI{250}{mL} est d'environ $\frac{250}{18} \approx \SI{13,9}{mol}$.
+D'après l'équation, \SI{2}{mol} d'eau donnent \SI{1}{mol} de $\ce{H2}$. La quantité max de $\ce{H2}$ est liée à la charge électrique passée, mais si on suppose l'électrolyse totale de l'eau (hypothèse théorique forte), $n_{\ce{H2}} = \frac{13,9}{2} \approx \SI{6,95}{mol}$.
+Volume dans les conditions usuelles :
+\[
+V_{\ce{H2}} = n_{\ce{H2}} \times V_{\text{m}} = 6,95 \times 24 \approx \SI{167}{L}.
+\]
+\textit{Note : En réalité, l'électrolyse s'arrête bien avant (concentration en sel, tension appliquée). Cet exemple montre la puissance du lien $n = m/M$ (solide) et $n = V/V_m$ (gaz).}
+\end{exoresolu}
+
+\begin{exercice}[Entraînement : Le gaz de cuisine (GPL)]
+Une bonbonne de gaz butane ($\ce{C4H10}$) contient \SI{12,5}{kg} de gaz liquéfié.
+Données : $M(\ce{C4H10}) = \SI{58}{g\cdot mol^{-1}}$ ; $V_{\text{m}} = \SI{24}{L\cdot mol^{-1}}$ (conditions usuelles).
+\begin{enumerate}
+    \item Calculer la quantité de matière de butane contenue dans la bonbonne.
+    \item Calculer le volume gazeux que ce butane occuperait s'il était entièrement vaporisé dans les conditions usuelles.
+    \item L'équation de la combustion complète est : $\ce{2C4H10 + 13O2 -> 8CO2 + 10H2O}$. Quelle quantité de matière de dioxygène $\ce{O2}$ est nécessaire pour brûler tout le butane de la bonbonne ? Quel volume d'air (contenant 21\% de $\ce{O2}$ en volume) cela représente-t-il ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Le gaz de cuisine (GPL)]
+\begin{enumerate}
+    \item $m = \SI{12,5}{kg} = \SI{12500}{g}$.
+    $n = \frac{m}{M} = \frac{12500}{58} \approx \SI{215,5}{mol}$.
+    \item $V = n \times V_{\text{m}} = 215,5 \times 24 \approx \SI{5172}{L} \approx \SI{5,2}{m^3}$.
+    C'est le volume d'une pièce de \SI{15}{m^2} au plafond haut ! D'où le danger en cas de fuite dans une cuisine close.
+    \item D'après l'équation : $2$ mol $\ce{C4H10}$ $\rightarrow$ $13$ mol $\ce{O2}$.
+    $n_{\ce{O2}} = \frac{13}{2} \times n_{\ce{C4H10}} = 6,5 \times 215,5 \approx \SI{1401}{mol}$.
+    $V_{\ce{O2}} = 1401 \times 24 \approx \SI{33624}{L}$.
+    Volume d'air nécessaire : $V_{\text{air}} = \frac{V_{\ce{O2}}}{0,21} \approx \frac{33624}{0,21} \approx \SI{160114}{L} \approx \SI{160}{m^3}$.
+    Cela montre l'importance cruciale de l'aération (fenêtres ouvertes, hotte) lors de l'utilisation d'un réchaud à gaz ou d'un groupe électrogène : il faut renouveler un volume d'air énorme pour éviter l'asphyxie ou l'intoxication au $\ce{CO}$ (combustion incomplète).
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{La mole : compter la matière invisible}
+
+\courssub{Pourquoi compter en moles ?}
+
+\begin{savaistu}[Une histoire de gros nombres]
+Au marché de Nkolbisson, on achète les œufs par \textbf{douzaine} (12), les crayons par \textbf{grosse} (144) et le riz par \textbf{sac} (50 kg). En chimie, les atomes et les molécules sont trop petits et trop nombreux pour être comptés un par un. Le chimiste a donc inventé son propre « paquet » : la \cle{mole} (symbole \textbf{mol}).
+\end{savaistu}
+
+\begin{definition}[La mole et le nombre d'Avogadro]
+Une \cle{mole} est la quantité de matière qui contient exactement \textbf{\num{6,022e23}} entités élémentaires (atomes, molécules, ions, électrons...). Ce nombre est la \cle{constante d'Avogadro}, notée $N_A$.
+\[ N_A = \num{6,022e23} \text{ mol}^{-1} \]
+\end{definition}
+
+\begin{propriete}[Lien entre nombre d'entités et quantité de matière]
+Pour un échantillon contenant $N$ entités élémentaires, la quantité de matière $n$ (en mol) est :
+\[ n = \frac{N}{N_A} \]
+\end{propriete}
+
+\begin{exemplebox}[Une mole d'eau]
+\SI{1}{mol} de molécules d'eau \ce{H2O} contient \num{6,022e23} molécules d'eau. Cela correspond à \SI{18}{g} d'eau (environ une cuillère à soupe).
+\end{exemplebox}
+
+\courssub{La masse molaire atomique}
+
+\begin{definition}[Masse molaire atomique]
+La \cle{masse molaire atomique} d'un élément, notée $M$ (ou $M_{\text{at}}$), est la masse d'une mole d'atomes de cet élément. Elle se lit directement dans le \textbf{tableau périodique} (valeur sous le symbole de l'élément). Son unité est le \textbf{gramme par mole} (\SI{}{g/mol} ou \SI{}{g.mol^{-1}}).
+\end{definition}
+
+\begin{attention}[Lecture du tableau périodique]
+La valeur indiquée dans le tableau périodique est une \textbf{moyenne pondérée} des isotopes naturels. C'est un nombre \emph{sans unité} dans le tableau, mais elle \textbf{représente} la masse molaire en \SI{}{g/mol}.
+\begin{itemize}
+\item Exemple : Carbone \ce{C} $\rightarrow$ 12 $\Rightarrow$ $M(\ce{C}) = \SI{12}{g/mol}$.
+\item Exemple : Chlore \ce{Cl} $\rightarrow$ 35,5 $\Rightarrow$ $M(\ce{Cl}) = \SI{35,5}{g/mol}$.
+\end{itemize}
+\end{attention}
+
+\courssub{La masse molaire moléculaire}
+
+\begin{definition}[Masse molaire moléculaire]
+La \cle{masse molaire moléculaire} d'un composé, notée $M$ (ou $M_{\text{mol}}$), est la masse d'une mole de molécules de ce composé. Elle se calcule en additionnant les masses molaires atomiques de \textbf{tous les atomes} présents dans la formule chimique, en tenant compte des indices (coefficients stœchiométriques).
+\end{definition}
+
+\begin{methode}[Calculer une masse molaire moléculaire]
+\begin{enumerate}
+\item Écrire la formule chimique du composé.
+\item Identifier chaque élément et le nombre d'atomes correspondant (indice en bas à droite).
+\item Multiplier la masse molaire atomique de chaque élément par son nombre d'atomes.
+\item Faire la somme de toutes les contributions.
+\item Exprimer le résultat en \SI{}{g/mol}.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Calcul de $M(\ce{C6H12O6})$ (glucose)]
+\begin{align*}
+M(\ce{C6H12O6}) &= 6 \times M(\ce{C}) + 12 \times M(\ce{H}) + 6 \times M(\ce{O}) \\
+&= 6 \times 12 + 12 \times 1 + 6 \times 16 \\
+&= 72 + 12 + 96 = \SI{180}{g/mol}
+\end{align*}
+\end{exemplebox}
+
+\courssub{La relation fondamentale $n = m/M$}
+
+\begin{propriete}[Relation entre quantité de matière, masse et masse molaire]
+Pour un échantillon de substance pure de masse $m$ (en \SI{}{g}), de quantité de matière $n$ (en \SI{}{mol}) et de masse molaire $M$ (en \SI{}{g/mol}) :
+\[ n = \frac{m}{M} \qquad \text{Formes dérivées :} \qquad m = n \times M \qquad ; \qquad M = \frac{m}{n} \]
+\end{propriete}
+
+\begin{aretenir}[Le triangle magique]
+\begin{center}
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2]
+\node[draw, fill=popblueL, rounded corners, minimum width=3cm, minimum height=2.5cm] (tri) {};
+\node[popdark, font=\Large\bfseries] at (0,0.8) {$m$};
+\node[popdark, font=\Large\bfseries] at (-1.2,-0.8) {$n$};
+\node[popdark, font=\Large\bfseries] at (1.2,-0.8) {$M$};
+\draw[popblue, thick, ->] (-0.2,0.2) -- (-1.0,-0.4);
+\draw[popblue, thick, ->] (0.2,0.2) -- (1.0,-0.4);
+\draw[popblue, thick, <->] (-1.0,-0.8) -- (1.0,-0.8);
+\node[popmuted, font=\small] at (0,-1.3) {Cacher la inconnue $\rightarrow$ opération visible};
+\end{tikzpicture}
+\legende{Le triangle de la mole : cacher la grandeur cherchée pour voir la formule.}
+\end{popfigure}
+\end{center}
+\end{aretenir}
+
+\begin{attention}[Pièges classiques au BEPC]
+\begin{itemize}
+\item \textbf{Unités obligatoires :} $m$ en \textbf{grammes (g)}, $n$ en \textbf{moles (mol)}, $M$ en \textbf{g/mol}. Pas de kg, pas de mg sans conversion !
+\item \textbf{Coefficients stœchiométriques :} Dans \ce{NaHCO3}, il y a 1 Na, 1 H, 1 C, \textbf{3 O}. Ne pas oublier le « 3 » devant l'oxygène.
+\item \textbf{Division par un décimal :} $m = \SI{8,4}{g}$, $n = \SI{0,2}{mol} \Rightarrow M = 8,4 / 0,2 = 8,4 \times 5 = \SI{42}{g/mol}$ ? \textbf{Non !} $8,4 \times 5 = 42$ est faux ($8 \times 5 = 40$, $0,4 \times 5 = 2$, total 42). Mais $\frac{8,4}{0,2} = \frac{84}{2} = 42$. Si la masse molaire théorique est 84, alors la masse pour 0,2 mol est $0,2 \times 84 = \SI{16,8}{g}$. \textbf{Vérifiez toujours la cohérence $m = n \times M$.}
+\end{itemize}
+\end{attention}
+
+\courssub{Situation d'apprentissage : Le défi du pharmacien de Deïdo}
+
+\courssub{Objectifs de l'activité}
+
+À la fin de cette activité d'intégration, tu seras capable de :
+
+\begin{itemize}
+\item extraire du tableau périodique les masses molaires atomiques utiles ($M(\ce{Na})$, $M(\ce{Cl})$, $M(\ce{C})$, $M(\ce{H})$, $M(\ce{O})$) ;
+\item calculer la \cle{masse molaire moléculaire} d'un composé à partir de sa formule chimique ;
+\item utiliser la relation $n = \dfrac{m}{M}$ sous toutes ses formes, en particulier $M = \dfrac{m}{n}$ ;
+\item identifier une substance inconnue par comparaison entre une masse molaire expérimentale et des masses molaires théoriques ;
+\item rédiger des consignes de sécurité adaptées à la manipulation de poudres inconnues au laboratoire ou en officine.
+\end{itemize}
+
+\begin{aretenir}[Compétence visée]
+Cette activité mobilise l'ensemble des savoir-faire de la leçon : lire le tableau périodique, calculer une masse molaire, exploiter la relation $n = \dfrac{m}{M}$ et adopter les bons gestes de sécurité. C'est exactement le type de tâche complexe que tu pourras rencontrer à l'évaluation harmonisée et au BEPC.
+\end{aretenir}
+
+\courssub{Situation}
+
+\textbf{Le défi du pharmacien de quartier.}
+
+Monsieur Etoundi est pharmacien dans le quartier Deïdo, à Douala. Un matin, en rangeant sa réserve, il découvre trois sachets de \textbf{poudres blanches} dont les étiquettes se sont décollées et perdues. Impossible de les distinguer à l'œil nu : les trois poudres se ressemblent beaucoup !
+
+Grâce à son carnet de commandes, il sait que ces trois sachets contiennent, dans un ordre inconnu :
+
+\begin{itemize}
+\item du \textbf{sel de cuisine}, de formule \ce{NaCl} (chlorure de sodium) ;
+\item du \textbf{sucre}, de formule \ce{C6H12O6} (glucose) ;
+\item du \textbf{bicarbonate de sodium}, de formule \ce{NaHCO3}, utilisé contre les brûlures d'estomac.
+\end{itemize}
+
+Pour les identifier sans les goûter (ce qui serait dangereux !), monsieur Etoundi pèse soigneusement chaque échantillon sur sa balance de précision et note les résultats sur sa fiche de pesée :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|X|c|c|}
+\hline
+\rowcolor{popblueL} \textbf{Échantillon} & \textbf{Aspect} & \textbf{Masse mesurée $m$} & \textbf{Quantité de matière $n$} \\
+\hline
+A & poudre blanche fine & \SI{11,7}{g} & \SI{0,2}{mol} \\
+\hline
+B & poudre blanche cristalline & \SI{36}{g} & \SI{0,2}{mol} \\
+\hline
+C & poudre blanche fine & \SI{16,8}{g} & \SI{0,2}{mol} \\
+\hline
+\end{tabularx}
+\end{center}
+
+Son technicien de laboratoire lui certifie que chaque échantillon contient \textbf{exactement \SI{0,2}{mol}} de substance. Monsieur Etoundi dispose également du tableau périodique affiché dans son laboratoire, d'où il relève :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Élément} & Na & Cl & C & H & O \\
+\hline
+\textbf{Masse molaire atomique (g/mol)} & 23 & 35,5 & 12 & 1 & 16 \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Problème à résoudre :} comment monsieur Etoundi peut-il identifier avec certitude chacune des trois poudres, sans jamais les goûter ni les sentir de près, en utilisant uniquement sa balance, son tableau périodique et ses connaissances sur la mole ?
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8]
+% Balance
+\draw[popdark, thick] (0,0) -- (6,0); % Base
+\draw[popdark, thick] (3,-0.2) -- (3,3); % Pied central
+\draw[popdark, thick] (2.5,3) -- (3.5,3); % Plateau supérieur pied
+\draw[popdark, thick] (1,3.5) -- (5,3.5); % Bras
+\draw[popdark, thick] (1,3.5) -- (1,4.5); % Fil gauche
+\draw[popdark, thick] (5,3.5) -- (5,4.5); % Fil droit
+% Plateau gauche
+\draw[poporange, fill=poporangeL, thick] (0.5,4.5) rectangle (1.5,5);
+\node at (1,4.75) {\small A};
+% Plateau droit
+\draw[popgreen, fill=popgreenL, thick] (4.5,4.5) rectangle (5.5,5);
+\node at (5,4.75) {\small B};
+% Poudres sur plateaux (points)
+\foreach \x in {0.7, 0.9, 1.1, 1.3} \foreach \y in {4.6, 4.8} \fill[popdark] (\x,\y) circle (0.05);
+\foreach \x in {4.7, 4.9, 5.1, 5.3} \foreach \y in {4.6, 4.8} \fill[popdark] (\x,\y) circle (0.05);
+% Échantillon C à côté
+\draw[poppurple, fill=poppurpleL, thick] (6.5,0) rectangle (8,1.5);
+\foreach \x in {6.7, 7.1, 7.5} \foreach \y in {0.3, 0.7, 1.1} \fill[popdark] (\x,\y) circle (0.05);
+\node at (7.25, -0.3) {\small Échantillon C};
+% Flèche balance
+\draw[popblue, thick, <->] (2.5,3.5) -- (3.5,3.5);
+\node[popblue, font=\small] at (3,3.9) {Équilibre};
+\end{tikzpicture}
+\legende{Schéma de principe : comparaison des masses pour une même quantité de matière (0,2 mol).}
+\end{popfigure}
+
+\courssub{Consignes}
+
+Travaille en groupe de trois ou quatre élèves. Réponds aux questions suivantes dans l'ordre, en rédigeant soigneusement tes calculs. Tu compléteras au fur et à mesure la \textbf{fiche d'identification} remise par le professeur.
+
+\begin{enumerate}
+\item \textbf{Masses molaires théoriques.} En utilisant les masses molaires atomiques du tableau périodique, calcule la masse molaire moléculaire de chacun des trois composés : $M(\ce{NaCl})$, $M(\ce{C6H12O6})$ et $M(\ce{NaHCO3})$. Présente chaque calcul en détaillant la somme des contributions de chaque atome.
+\item \textbf{Masses molaires expérimentales.} Pour chaque échantillon A, B et C, calcule la masse molaire expérimentale à l'aide de la relation $M = \dfrac{m}{n}$, en précisant l'unité du résultat.
+\item \textbf{Identification.} Compare les résultats des questions 1 et 2. Attribue à chaque échantillon (A, B, C) le nom et la formule de la substance qu'il contient. Justifie chaque attribution par une phrase complète.
+\item \textbf{Vérification.} Pour l'échantillon B, vérifie ton identification en calculant la masse que devrait contenir un échantillon de \SI{0,2}{mol} de glucose, à l'aide de la relation $m = n \times M$. Le résultat correspond-il à la fiche de pesée ?
+\item \textbf{Sécurité.} Rédige une liste d'au moins \textbf{quatre consignes de sécurité} que monsieur Etoundi aurait dû respecter avant et pendant la manipulation de ces poudres inconnues. Pour chaque consigne, explique en une phrase le danger qu'elle permet d'éviter.
+\item \textbf{Restitution.} Complète en groupe la fiche d'identification ci-dessous, puis présentez vos résultats à la classe.
+\end{enumerate}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Échantillon} & \textbf{$M_{\text{exp}}$ (g/mol)} & \textbf{Substance identifiée} & \textbf{Formule} \\
+\hline
+A & & & \\
+\hline
+B & & & \\
+\hline
+C & & & \\
+\hline
+\end{tabularx}
+\end{center}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Les outils de la leçon]
+\begin{itemize}
+\item \textbf{Masse molaire atomique} : masse d'une mole d'atomes d'un élément, lue directement dans le tableau périodique. Unité : gramme par mole (\SI{}{g/mol}).
+\item \textbf{Masse molaire moléculaire} : somme des masses molaires atomiques de tous les atomes de la formule, en tenant compte du nombre de chaque atome.
+\item \textbf{Relation fondamentale} :
+\[ n = \frac{m}{M} \qquad \text{et ses formes dérivées} \qquad m = n \times M \qquad ; \qquad M = \frac{m}{n} \]
+avec $n$ en mole (\SI{}{mol}), $m$ en gramme (\SI{}{g}) et $M$ en gramme par mole (\SI{}{g/mol}).
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges à éviter]
+\begin{itemize}
+\item Ne pas oublier de \textbf{multiplier} la masse molaire atomique par le nombre d'atomes présents dans la formule : dans \ce{C6H12O6}, il y a 6 atomes de carbone, 12 d'hydrogène et 6 d'oxygène !
+\item Vérifier la \textbf{cohérence des unités} : si $m$ est en grammes et $n$ en moles, alors $M$ s'exprime en \SI{}{g/mol}.
+\item Une masse molaire expérimentale doit être comparée aux masses molaires \textbf{théoriques calculées}, pas devinée.
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Le défi du pharmacien de Deïdo]
+Énoncé : trois échantillons de poudres blanches (A : \SI{11,7}{g} ; B : \SI{36}{g} ; C : \SI{16,8}{g}) contiennent chacun \SI{0,2}{mol}. Identifier chaque poudre parmi \ce{NaCl}, \ce{C6H12O6} et \ce{NaHCO3}, puis rédiger les consignes de sécurité.
+\tcblower
+\textbf{Étape 1 : calcul des masses molaires théoriques.}
+
+On additionne les masses molaires atomiques de tous les atomes de chaque formule :
+
+\begin{align*}
+M(\ce{NaCl}) &= M(\ce{Na}) + M(\ce{Cl}) = 23 + 35{,}5 = \SI{58,5}{g/mol} \\
+M(\ce{C6H12O6}) &= 6 \times M(\ce{C}) + 12 \times M(\ce{H}) + 6 \times M(\ce{O}) \\
+&= 6 \times 12 + 12 \times 1 + 6 \times 16 = 72 + 12 + 96 = \SI{180}{g/mol} \\
+M(\ce{NaHCO3}) &= M(\ce{Na}) + M(\ce{H}) + M(\ce{C}) + 3 \times M(\ce{O}) \\
+&= 23 + 1 + 12 + 3 \times 16 = 36 + 48 = \SI{84}{g/mol}
+\end{align*}
+
+\textbf{Étape 2 : calcul des masses molaires expérimentales.}
+
+On applique $M = \dfrac{m}{n}$ à chaque échantillon ($n = \SI{0,2}{mol}$ pour les trois) :
+
+\begin{align*}
+M_A &= \frac{11{,}7}{0{,}2} = \frac{117}{2} = \SI{58,5}{g/mol} \\
+M_B &= \frac{36}{0{,}2} = \frac{360}{2} = \SI{180}{g/mol} \\
+M_C &= \frac{16{,}8}{0{,}2} = \frac{168}{2} = \SI{84}{g/mol}
+\end{align*}
+
+\textbf{Étape 3 : identification par comparaison.}
+
+\begin{itemize}
+\item \textbf{Échantillon A :} $M_A = \SI{58,5}{g/mol} = M(\ce{NaCl})$. C'est le \textbf{sel de cuisine} (chlorure de sodium).
+\item \textbf{Échantillon B :} $M_B = \SI{180}{g/mol} = M(\ce{C6H12O6})$. C'est le \textbf{glucose} (sucre).
+\item \textbf{Échantillon C :} $M_C = \SI{84}{g/mol} = M(\ce{NaHCO3})$. C'est le \textbf{bicarbonate de sodium}.
+\end{itemize}
+
+\textbf{Étape 4 : vérification pour l'échantillon B (glucose).}
+
+On calcule la masse théorique attendue pour $n = \SI{0,2}{mol}$ de glucose ($M = \SI{180}{g/mol}$) :
+\[ m = n \times M = 0{,}2 \times 180 = \SI{36}{g} \]
+Le résultat correspond exactement à la masse mesurée sur la fiche de pesée (\SI{36}{g}). L'identification est confirmée.
+
+\textbf{Étape 5 : consignes de sécurité (exemples).}
+\begin{enumerate}
+\item \textbf{Ne jamais goûter une substance inconnue}, même si elle ressemble à du sel ou du sucre : risque d'intoxication, de brûlure chimique ou d'empoisonnement.
+\item \textbf{Ne pas sentir directement au-dessus du récipient} (pas d'olfaction directe) : risque d'irritation des voies respiratoires ou d'inhalation de poussières toxiques. Utiliser la technique du « éventail » avec la main si nécessaire.
+\item \textbf{Porter les Équipements de Protection Individuelle (EPI) :} blouse en coton, lunettes de protection, gants adaptés (nitrile) : protège la peau et les yeux des projections et du contact prolongé.
+\item \textbf{Étiqueter immédiatement chaque échantillon} (A, B, C) et consigner les masses dans un cahier de laboratoire : évite les confusions ultérieures, garantit la traçabilité et la reproductibilité (qualité SONARA/ENEO).
+\item \textbf{Travailler sur un plan de travail propre et sec}, à l'écart des réactifs alimentaires : évite la contamination croisée.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{aretenir}[Fiche d'identification complétée]
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Échantillon} & \textbf{$M_{\text{exp}}$ (g/mol)} & \textbf{Substance identifiée} & \textbf{Formule} \\
+\hline
+A & 58,5 & Sel de cuisine (chlorure de sodium) & \ce{NaCl} \\
+\hline
+B & 180 & Glucose (sucre) & \ce{C6H12O6} \\
+\hline
+C & 84 & Bicarbonate de sodium & \ce{NaHCO3} \\
+\hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\courssub{Bilan de la leçon}
+
+Cette leçon t'a permis de mettre en évidence plusieurs idées essentielles :
+
+\begin{itemize}
+\item La \textbf{masse molaire est une carte d'identité} d'une substance pure : deux poudres blanches d'aspect identique se distinguent sans ambiguïté par leur masse molaire.
+\item La relation $n = \dfrac{m}{M}$ relie trois grandeurs et s'utilise dans \textbf{trois sens} : calculer une quantité de matière ($n$), une masse ($m$), ou une masse molaire expérimentale ($M$).
+\item Le tableau périodique est un \textbf{outil de travail} indispensable : savoir y lire les masses molaires atomiques est la base de tout calcul de chimie quantitative.
+\item Les mathématiques servent la \textbf{sécurité et la qualité} : un simple calcul a permis d'identifier formellement les substances, comme le ferait un contrôle qualité au laboratoire de la SONARA ou en pharmacie.
+\item Manipuler des substances inconnues impose des \textbf{règles de sécurité strictes} (EPI, pas de goût/odorat direct, étiquetage), en laboratoire scolaire comme en officine professionnelle.
+\end{itemize}
+
+\courssub{Exercices d'application}
+
+\begin{exercice}[Entraînement au calcul de masse molaire]
+Calcule la masse molaire des composés suivants (données : $M(\ce{H})=1$ ; $M(\ce{C})=12$ ; $M(\ce{O})=16$ ; $M(\ce{Na})=23$ ; $M(\ce{Cl})=35,5$ ; $M(\ce{Ca})=40$ ; $M(\ce{S})=32$).
+\begin{enumerate}
+\item Dioxyde de carbone \ce{CO2}
+\item Eau \ce{H2O}
+\item Chlorure de calcium \ce{CaCl2}
+\item Acide sulfurique \ce{H2SO4}
+\item Carbonate de calcium \ce{CaCO3}
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{align*}
+M(\ce{CO2}) &= 12 + 2 \times 16 = \SI{44}{g/mol} \\
+M(\ce{H2O}) &= 2 \times 1 + 16 = \SI{18}{g/mol} \\
+M(\ce{CaCl2}) &= 40 + 2 \times 35{,}5 = \SI{111}{g/mol} \\
+M(\ce{H2SO4}) &= 2 \times 1 + 32 + 4 \times 16 = 2 + 32 + 64 = \SI{98}{g/mol} \\
+M(\ce{CaCO3}) &= 40 + 12 + 3 \times 16 = 40 + 12 + 48 = \SI{100}{g/mol}
+\end{align*}
+\end{corrige}
+
+\begin{exercice}[Utilisation de la relation $n = m/M$]
+On prélève \SI{22}{g} de dioxyde de carbone \ce{CO2} ($M = \SI{44}{g/mol}$).
+\begin{enumerate}
+\item Calcule la quantité de matière $n$ de cet échantillon.
+\item Quelle masse de \ce{CO2} contient \SI{0,5}{mol} ?
+\item On a un échantillon de \SI{11}{g} de \ce{CO2}. Quelle est sa quantité de matière ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 2]
+\begin{enumerate}
+\item $n = \frac{m}{M} = \frac{22}{44} = \SI{0,5}{mol}$.
+\item $m = n \times M = 0,5 \times 44 = \SI{22}{g}$.
+\item $n = \frac{11}{44} = \SI{0,25}{mol}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{exercice}[Identification d'un gaz au laboratoire]
+Au laboratoire de PCT du lycée de Bafoussam, un élève collecte un gaz dans une seringue graduée. Il pèse la seringue vide ($m_0 = \SI{25,0}{g}$) puis la seringue pleine de gaz ($m_1 = \SI{25,9}{g}$). Le volume de gaz est \SI{500}{mL} à température et pression ordinaires (on admet qu'à ces conditions, \SI{1}{mol} de gaz occupe \SI{24}{L}).
+\begin{enumerate}
+\item Calcule la masse $m$ du gaz collecté.
+\item Calcule la quantité de matière $n$ de gaz (en mol).
+\item Déduis la masse molaire $M$ de ce gaz.
+\item Le gaz est-il du dioxygène \ce{O2} ($M=\SI{32}{g/mol}$), du dioxyde de carbone \ce{CO2} ($M=\SI{44}{g/mol}$) ou du diazote \ce{N2} ($M=\SI{28}{g/mol}$) ? Justifie.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 3]
+\begin{enumerate}
+\item $m = m_1 - m_0 = 25,9 - 25,0 = \SI{0,9}{g}$.
+\item $V = \SI{500}{mL} = \SI{0,5}{L}$. $n = \frac{V}{V_m} = \frac{0,5}{24} \approx \SI{0,0208}{mol}$.
+\item $M = \frac{m}{n} = \frac{0,9}{0,0208} \approx \SI{43,3}{g/mol}$.
+\item La valeur expérimentale (\SI{43,3}{g/mol}) est très proche de la masse molaire théorique du \ce{CO2} (\SI{44}{g/mol}). C'est donc du \textbf{dioxyde de carbone}.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{La mole}
+
+\begin{savaistu}[Pourquoi compter en moles ?]
+En cuisine, on compte les œufs à la douzaine ; à la pharmacie, on achète les comprimés par boîte ; en chimie, les atomes et les molécules sont trop petits et trop nombreux pour être comptés un par un. Le chimiste a donc besoin d'une « grande unité » de comptage : la \cle{mole}. Au Cameroun, quand on achète une bonbonne de gaz butane (\SI{12,5}{kg}) pour la cuisinière, ou quand l'infirmière prépare une perfusion de glucose à l'hôpital de district, c'est bien en moles que les quantités de matière sont gérées en coulisses. Cette leçon te donne les outils pour passer du monde invisible (atomes) au monde mesurable (grammes sur une balance).
+\end{savaistu}
+
+\courssub{La mole et la quantité de matière}
+
+\begin{definition}[Quantité de matière et mole]
+La \cle{quantité de matière} est une grandeur physique qui exprime le nombre d'entités élémentaires (atomes, molécules, ions, électrons...) contenues dans un échantillon. Elle se note $n$ et son unité légale dans le Système International est la \cle{mole}, de symbole \textbf{mol} (sans « e » final dans les formules et les résultats de calcul).
+\end{definition}
+
+\begin{propriete}[Nombre d'Avogadro]
+Une mole de toute entité contient exactement le même nombre d'entités : le \cle{nombre d'Avogadro}, noté $N_A$.
+\[ N_A = \num{6,022e23} \text{ mol}^{-1} \]
+\textbf{Lien fondamental :} $N = n \times N_A$ où $N$ est le nombre d'entités (sans unité) et $n$ la quantité de matière en mol.
+\end{propriete}
+
+\courssub{Méthode 1 : Définir et identifier la mole et la quantité de matière}
+
+\begin{methode}[Reconnaître et utiliser la mole]
+\begin{enumerate}
+\item \cle{Identifier} ce qu'on compte : la mole est l'unité de la \cle{quantité de matière} ; elle regroupe un très grand nombre d'entités (atomes, molécules, ions).
+\item \cle{Retenir} la définition : une mole contient exactement $N_A = \num{6,022e23}$ entités (nombre d'Avogadro).
+\item \cle{Traduire} un énoncé : « 2 moles d'eau » signifie $2 \times \num{6,022e23} = \num{1,2044e24}$ molécules d'eau.
+\item \cle{Noter correctement} : la quantité de matière se note $n$ et s'exprime en \textbf{mol} (symbole sans « e » : on écrit \SI{2}{mol}, pas « 2 moles » dans un calcul).
+\item \cle{Vérifier} la cohérence : si $n$ augmente, le nombre d'entités $N = n \times N_A$ augmente proportionnellement.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Compter les molécules d'eau dans une gourde]
+Énoncé : une élève de 3ème boit chaque jour le contenu de sa gourde, soit environ \SI{0,5}{mol} de molécules d'eau. (1) Rappeler la définition de la mole. (2) Calculer le nombre de molécules d'eau bues chaque jour. On donne $N_A = \num{6,022e23}$ mol$^{-1}$.
+\tcblower
+Solution détaillée :
+\begin{enumerate}
+\item \textbf{Définition.} La \cle{mole} est la quantité de matière d'un ensemble contenant exactement $\num{6,022e23}$ entités élémentaires identiques (atomes, molécules ou ions). Ce nombre est le \cle{nombre d'Avogadro}, noté $N_A$.
+\item \textbf{Calcul du nombre de molécules.} Le nombre d'entités $N$ contenues dans une quantité de matière $n$ est :
+\[ N = n \times N_A \]
+Application numérique avec $n = \SI{0,5}{mol}$ :
+\begin{align*}
+N &= 0,5 \times \num{6,022e23} \\
+N &= \num{3,011e23} \text{ molécules}
+\end{align*}
+\end{enumerate}
+\textbf{Conclusion :} chaque jour, l'élève boit environ $\num{3,011e23}$ molécules d'eau, soit environ 301 100 milliards de milliards de molécules : c'est pourquoi on préfère compter en moles plutôt qu'en molécules !
+\end{exoresolu}
+
+\courssub{Masse molaire atomique}
+
+\begin{definition}[Masse molaire atomique]
+La \cle{masse molaire atomique} d'un élément chimique, notée $M$, est la masse d'une mole d'atomes de cet élément. Elle s'exprime en \textbf{grammes par mole} (\textbf{g/mol} ou g$\cdot$mol$^{-1}$). Sa valeur numérique est égale à la masse atomique relative (donnée par le tableau périodique, sans unité).
+\end{definition}
+
+\courssub{Méthode 2 : Déterminer une masse molaire atomique}
+
+\begin{methode}[Lire et utiliser la masse molaire atomique]
+\begin{enumerate}
+\item \cle{Repérer} l'élément dans le tableau périodique (ou dans les données de l'énoncé) : la masse molaire atomique $M$ est donnée en \textbf{g/mol}.
+\item \cle{Mémoriser} les valeurs usuelles : $M(\ce{H}) = 1$ ; $M(\ce{C}) = 12$ ; $M(\ce{N}) = 14$ ; $M(\ce{O}) = 16$ ; $M(\ce{Na}) = 23$ ; $M(\ce{Cl}) = 35,5$ ; $M(\ce{Fe}) = 56$ ; $M(\ce{Cu}) = 63,5$ (en g/mol).
+\item \cle{Interpréter} : $M(\ce{Fe}) = \SI{56}{g/mol}$ signifie qu'une mole d'atomes de fer pèse \SI{56}{g}.
+\item \cle{Ne pas confondre} avec le numéro atomique $Z$ (nombre de protons), qui n'a rien à voir avec la masse molaire.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Masse d'une mole de clous en fer]
+Énoncé : un quincaillier de Douala vend des clous en fer. (1) Donner la masse molaire atomique du fer. (2) Quelle est la masse de 3 moles d'atomes de fer ? (3) Combien d'atomes contiennent ces 3 moles ? On donne $M(\ce{Fe}) = \SI{56}{g/mol}$ et $N_A = \num{6,022e23}$ mol$^{-1}$.
+\tcblower
+Solution détaillée :
+\begin{enumerate}
+\item \textbf{Masse molaire atomique du fer.} D'après les données : $M(\ce{Fe}) = \SI{56}{g/mol}$. Cela signifie qu'une mole d'atomes de fer a une masse de \SI{56}{g}.
+\item \textbf{Masse de 3 moles de fer.} On utilise $m = n \times M$ :
+\begin{align*}
+m &= n \times M(\ce{Fe}) \\
+m &= 3 \times 56 \\
+m &= \SI{168}{g}
+\end{align*}
+\item \textbf{Nombre d'atomes.} On utilise $N = n \times N_A$ :
+\begin{align*}
+N &= 3 \times \num{6,022e23} \\
+N &= \num{1,8066e24} \text{ atomes}
+\end{align*}
+\end{enumerate}
+\textbf{Conclusion :} 3 moles d'atomes de fer ont une masse de \SI{168}{g} et contiennent $\num{1,8066e24}$ atomes de fer.
+\end{exoresolu}
+
+\courssub{Masse molaire moléculaire}
+
+\begin{definition}[Masse molaire moléculaire]
+La \cle{masse molaire moléculaire} d'un corps pur moléculaire, notée $M$, est la masse d'une mole de molécules de ce corps. Elle s'exprime en \textbf{g/mol}. Elle se calcule en additionnant les masses molaires atomiques de tous les atomes présents dans la formule chimique, chacun multiplié par son indice.
+\[ M(\text{molécule}) = \sum (\text{indice} \times M(\text{atome})) \]
+\end{definition}
+
+\courssub{Méthode 3 : Calculer une masse molaire moléculaire}
+
+\begin{methode}[Calculer la masse molaire d'une molécule]
+\begin{enumerate}
+\item \cle{Écrire} la formule chimique de la molécule et repérer le nombre d'atomes de chaque élément (attention aux indices : \ce{H2O} = 2 H et 1 O).
+\item \cle{Noter} les masses molaires atomiques de chaque élément (données de l'énoncé).
+\item \cle{Additionner} : la masse molaire moléculaire est la somme des masses molaires atomiques de tous les atomes, multipliées par leur indice.
+\item \cle{Présenter} le calcul en une ligne claire, puis donner le résultat en \textbf{g/mol}.
+\item \cle{Vérifier} l'ordre de grandeur : une petite molécule (eau, gaz) a une masse molaire entre 2 et 100 g/mol environ.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Masse molaire du butane, le gaz des bonbonnes]
+Énoncé : les bonbonnes de gaz domestique utilisées au Cameroun contiennent du butane de formule \ce{C4H10}. Calculer la masse molaire moléculaire du butane. On donne $M(\ce{C}) = \SI{12}{g/mol}$ et $M(\ce{H}) = \SI{1}{g/mol}$.
+\tcblower
+Solution détaillée :
+
+\textbf{Étape 1 — Lecture de la formule.} La molécule de butane \ce{C4H10} contient \textbf{4 atomes de carbone} et \textbf{10 atomes d'hydrogène}.
+
+\textbf{Étape 2 — Calcul de la masse molaire moléculaire.}
+\begin{align*}
+M(\ce{C4H10}) &= 4 \times M(\ce{C}) + 10 \times M(\ce{H}) \\
+M(\ce{C4H10}) &= 4 \times 12 + 10 \times 1 \\
+M(\ce{C4H10}) &= 48 + 10 \\
+M(\ce{C4H10}) &= \SI{58}{g/mol}
+\end{align*}
+
+\textbf{Étape 3 — Vérification.} L'ordre de grandeur (quelques dizaines de g/mol) est cohérent pour une petite molécule.
+
+\textbf{Conclusion :} la masse molaire moléculaire du butane est $M(\ce{C4H10}) = \SI{58}{g/mol}$ : une mole de butane pèse \SI{58}{g}.
+\end{exoresolu}
+
+\courssub{La relation fondamentale n = m/M}
+
+\begin{propriete}[Relation entre quantité de matière, masse et masse molaire]
+Pour un échantillon de corps pur de masse $m$ (en g), de quantité de matière $n$ (en mol) et de masse molaire $M$ (en g/mol) :
+\[ n = \dfrac{m}{M} \qquad \Leftrightarrow \qquad m = n \times M \qquad \Leftrightarrow \qquad M = \dfrac{m}{n} \]
+\textbf{Condition d'utilisation :} la masse $m$ doit impérativement être exprimée en \textbf{grammes}.
+\end{propriete}
+
+\courssub{Méthode 4 : Appliquer la relation n = m/M}
+
+\begin{methode}[Calculer une quantité de matière à partir d'une masse]
+\begin{enumerate}
+\item \cle{Relever} les données : la masse $m$ de l'échantillon (en grammes) et la masse molaire $M$ (en g/mol). Si $M$ n'est pas donnée, la calculer d'abord (méthode 3).
+\item \cle{Convertir} si nécessaire : la masse doit être en \textbf{grammes}. Si $m$ est en kg, multiplier par 1000 ; si $m$ est en mg, diviser par 1000.
+\item \cle{Appliquer} la formule : $n = \dfrac{m}{M}$.
+\item \cle{Rédiger} : formule littérale, application numérique avec les unités, résultat souligné avec son unité (mol).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Quantité de matière de sel dans la cuisine]
+Énoncé : pour préparer la sauce, maman verse \SI{11,7}{g} de sel de cuisine (chlorure de sodium \ce{NaCl}) dans la marmite. (1) Calculer la masse molaire du chlorure de sodium. (2) En déduire la quantité de matière de sel versée. On donne $M(\ce{Na}) = \SI{23}{g/mol}$ et $M(\ce{Cl}) = \SI{35,5}{g/mol}$.
+\tcblower
+Solution détaillée :
+
+\textbf{Étape 1 — Masse molaire de \ce{NaCl}.} La formule \ce{NaCl} contient 1 atome de sodium et 1 atome de chlore :
+\begin{align*}
+M(\ce{NaCl}) &= M(\ce{Na}) + M(\ce{Cl}) \\
+M(\ce{NaCl}) &= 23 + 35,5 \\
+M(\ce{NaCl}) &= \SI{58,5}{g/mol}
+\end{align*}
+
+\textbf{Étape 2 — Quantité de matière.} La masse $m = \SI{11,7}{g}$ est déjà en grammes. On applique la relation :
+\begin{align*}
+n &= \dfrac{m}{M(\ce{NaCl})} \\
+n &= \dfrac{11,7}{58,5} \\
+n &= \SI{0,2}{mol}
+\end{align*}
+
+\textbf{Conclusion :} maman a versé $n = \SI{0,2}{mol}$ de chlorure de sodium dans la marmite, soit $0,2 \times \num{6,022e23} \approx \num{1,2e23}$ entités \ce{NaCl}.
+\end{exoresolu}
+
+\courssub{Méthode 5 : Calculer une masse à partir d'une quantité de matière}
+
+\begin{methode}[Utiliser m = n x M (formule inversée)]
+\begin{enumerate}
+\item \cle{Identifier} ce que l'énoncé demande : une \textbf{masse} (en g) à partir d'une quantité de matière (en mol).
+\item \cle{Choisir} la bonne forme de la relation : $m = n \times M$.
+\item \cle{Calculer} $M$ si elle n'est pas donnée, en respectant les indices de la formule chimique.
+\item \cle{Poser} l'application numérique avec les unités et conclure par une phrase.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Peser le glucose pour une perfusion]
+Énoncé : à l'hôpital de district, une infirmière doit préparer une solution contenant \SI{0,1}{mol} de glucose de formule \ce{C6H12O6}. Quelle masse de glucose doit-elle peser sur la balance ? On donne $M(\ce{C}) = \SI{12}{g/mol}$, $M(\ce{H}) = \SI{1}{g/mol}$, $M(\ce{O}) = \SI{16}{g/mol}$.
+\tcblower
+Solution détaillée :
+
+\textbf{Étape 1 — Masse molaire du glucose \ce{C6H12O6}.} La molécule contient 6 atomes de carbone, 12 atomes d'hydrogène et 6 atomes d'oxygène :
+\begin{align*}
+M(\ce{C6H12O6}) &= 6 \times M(\ce{C}) + 12 \times M(\ce{H}) + 6 \times M(\ce{O}) \\
+M(\ce{C6H12O6}) &= 6 \times 12 + 12 \times 1 + 6 \times 16 \\
+M(\ce{C6H12O6}) &= 72 + 12 + 96 \\
+M(\ce{C6H12O6}) &= \SI{180}{g/mol}
+\end{align*}
+
+\textbf{Étape 2 — Masse à peser.} On utilise la forme $m = n \times M$ :
+\begin{align*}
+m &= n \times M(\ce{C6H12O6}) \\
+m &= 0,1 \times 180 \\
+m &= \SI{18}{g}
+\end{align*}
+
+\textbf{Conclusion :} l'infirmière doit peser \SI{18}{g} de glucose sur la balance pour obtenir \SI{0,1}{mol}.
+\end{exoresolu}
+
+\courssub{Exploitation d'une pesée au laboratoire et sécurité}
+
+\begin{experience}[Pesée d'un solide au laboratoire]
+\textbf{Matériel :} balance électronique (précision 0,1 g ou 0,01 g), coupelle de pesée (ou verre de montre), spatule en corne ou inox, produit chimique (ex. sulfate de cuivre \ce{CuSO4}), blouse, lunettes de protection, gants si produit irritant.
+\textbf{Protocole :}
+\begin{enumerate}
+\item Mettre la blouse et les lunettes.
+\item Allumer la balance, attendre la stabilisation à \SI{0,0}{g}.
+\item Poser la coupelle vide sur le plateau $\rightarrow$ tare (la balance affiche \SI{0,0}{g}).
+\item Prélever le produit avec une spatule propre et le verser doucement dans la coupelle jusqu'à obtention de la masse visée.
+\item Noter la masse $m$ affichée.
+\item Transférer le produit dans le récipient de réaction (bécher, ballon...).
+\item Nettoyer le plan de travail, laver la coupelle et la spatule, se laver les mains.
+\end{enumerate}
+\textbf{Observation :} la balance donne directement la masse nette du produit (grâce à la tare).
+\textbf{Interprétation :} cette masse $m$ (en g) permet de calculer la quantité de matière $n = m/M$ effectivement introduite dans l'expérience.
+\end{experience}
+
+\courssub{Méthode 6 : Exploiter une expérience de pesée au laboratoire en toute sécurité}
+
+\begin{methode}[Interpréter une pesée et respecter les consignes de sécurité]
+\begin{enumerate}
+\item \cle{Schématiser} la manipulation : balance, coupelle (ou verre de montre) tarée, spatule, produit chimique.
+\item \cle{Exploiter} la mesure : la masse affichée par la balance (après tare) est la masse $m$ du produit ; on en déduit $n = \dfrac{m}{M}$.
+\item \cle{Citer} les consignes de sécurité : porter une blouse et des lunettes, ne jamais goûter ni sentir directement un produit (technique du éventail si odeur nécessaire), utiliser une spatule propre, ne pas remettre le produit prélevé dans le flacon (risque de contamination), laver les mains après la séance.
+\item \cle{Conclure} en reliant le résultat à la situation concrète de l'énoncé.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Pesée du sulfate de cuivre au laboratoire du collège]
+Énoncé : lors d'une séance de TP, un groupe d'élèves de 3ème pèse \SI{16}{g} de sulfate de cuivre anhydre \ce{CuSO4} pour préparer une solution. (1) Faire le schéma légendé de la pesée. (2) Calculer la quantité de matière de sulfate de cuivre pesée. (3) Citer deux consignes de sécurité à respecter pendant cette manipulation. On donne $M(\ce{Cu}) = \SI{63,5}{g/mol}$, $M(\ce{S}) = \SI{32}{g/mol}$, $M(\ce{O}) = \SI{16}{g/mol}$.
+\tcblower
+Solution détaillée :
+
+\textbf{Étape 1 — Schéma de la pesée.}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.95]
+% Base balance
+\draw[fill=popblueL, draw=popdark, thick] (0,0) rectangle (4.5,1.2);
+% Écran
+\draw[fill=popcream, draw=popdark] (1.5,1.2) rectangle (3.5,1.8);
+\node[font=\small\bfseries, popdark] at (2.5,1.5) {16.0 g};
+% Coupelle (verre de montre)
+\draw[fill=popmuted!30, draw=popdark, thick] (1.0,1.8) -- (3.5,1.8) -- (3.3,2.5) -- (1.2,2.5) -- cycle;
+% Poudre bleue dans la coupelle
+\draw[fill=popblue!50, draw=none] (1.3,1.85) .. controls (1.6,2.2) and (2.8,2.2) .. (3.1,1.85) -- cycle;
+% Spatule
+\draw[fill=popgold, draw=popdark] (3.8,2.0) rectangle (5.5,2.2);
+\draw[fill=popgold, draw=popdark] (5.5,1.95) -- (6.2,1.8) -- (6.2,2.35) -- (5.5,2.2) -- cycle;
+\node[popdark, font=\small] at (6.3,2.1) {spatule};
+% Légendes
+\node[left, popdark, font=\small] at (-0.5,0.6) {1. Balance};
+\node[left, popdark, font=\small] at (-0.5,1.5) {2. Écran (affichage)};
+\node[right, popdark, font=\small] at (4.7,2.5) {3. Coupelle tarée};
+\node[right, popdark, font=\small] at (4.7,2.0) {4. Spatule};
+\node[right, popdark, font=\small] at (4.7,1.5) {5. \ce{CuSO4} (poudre bleue)};
+\draw[->, popdark, thick] (-0.3,0.6) -- (0.5,0.6);
+\draw[->, popdark, thick] (-0.3,1.5) -- (1.5,1.5);
+\draw[->, popdark, thick] (4.7,2.5) -- (3.3,2.4);
+\draw[->, popdark, thick] (4.7,2.0) -- (4.0,2.1);
+\draw[->, popdark, thick] (4.7,1.5) -- (2.5,2.1);
+\end{tikzpicture}
+\legende{Pesée de \SI{16}{g} de sulfate de cuivre anhydre : 1. Balance électronique ; 2. Affichage masse nette ; 3. Coupelle (verre de montre) tarée ; 4. Spatule ; 5. Produit prélevé.}
+\end{popfigure}
+
+\textbf{Étape 2 — Quantité de matière.} Calcul de la masse molaire de \ce{CuSO4} (1 Cu, 1 S, 4 O) :
+\begin{align*}
+M(\ce{CuSO4}) &= M(\ce{Cu}) + M(\ce{S}) + 4 \times M(\ce{O}) \\
+M(\ce{CuSO4}) &= 63,5 + 32 + 4 \times 16 \\
+M(\ce{CuSO4}) &= 63,5 + 32 + 64 = \SI{159,5}{g/mol}
+\end{align*}
+Application de la relation $n = \dfrac{m}{M}$ :
+\begin{align*}
+n &= \dfrac{m}{M(\ce{CuSO4})} = \dfrac{16}{159,5} \approx \SI{0,100}{mol}
+\end{align*}
+
+\textbf{Étape 3 — Sécurité.} Deux consignes obligatoires :
+\begin{itemize}
+\item Porter la blouse et les lunettes de protection (risque de projection de poudre, \ce{CuSO4} irritant pour les yeux et la peau).
+\item Ne jamais porter le produit à la bouche ni le sentir directement ; utiliser une spatule propre et sèche ; ne pas remettre l'excédent dans le flacon d'origine ; se laver les mains soigneusement après manipulation.
+\end{itemize}
+
+\textbf{Conclusion :} le groupe a pesé $n \approx \SI{0,10}{mol}$ de sulfate de cuivre, en respectant les règles de sécurité du laboratoire.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au BEPC]
+\begin{enumerate}
+\item \textbf{Oublier les indices dans le calcul de $M$.} Pour \ce{C4H10}, écrire $M = 12 + 1 = 13$ g/mol est faux : il faut multiplier chaque masse atomique par son indice : $M = 4 \times 12 + 10 \times 1 = \SI{58}{g/mol}$.
+\item \textbf{Confondre les unités de masse.} La formule $n = \dfrac{m}{M}$ exige $m$ en \textbf{grammes}. Si l'énoncé donne $m = \SI{0,0117}{kg}$, il faut convertir : $m = \SI{11,7}{g}$ avant tout calcul.
+\item \textbf{Écrire « mol » avec un « e » dans les calculs.} Le symbole de la mole est \textbf{mol} (sans « e »). On écrit $n = \SI{0,2}{mol}$, et non « 0,2 mole » dans l'application numérique.
+\item \textbf{Oublier la formule littérale avant l'application numérique.} Au BEPC, il faut d'abord écrire $n = \dfrac{m}{M}$, puis remplacer par les valeurs, puis donner le résultat avec son unité. Un résultat brut sans démarche perd des points.
+\item \textbf{Confondre masse molaire et nombre d'Avogadro.} $M$ s'exprime en g/mol et sert à passer de la masse à la quantité de matière ; $N_A = \num{6,022e23}$ mol$^{-1}$ sert à compter les entités ($N = n \times N_A$). Ne jamais mélanger les deux dans une même formule.
+\end{enumerate}
+\end{attention}
+
+\courssub{Exercices d'entraînement}
+
+\begin{exercice}[Le dioxyde de carbone]
+On considère un échantillon de dioxyde de carbone \ce{CO2} de masse $m = \SI{22}{g}$.
+Données : $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$.
+\begin{enumerate}
+\item Calculer la masse molaire $M(\ce{CO2})$.
+\item Calculer la quantité de matière $n$ de cet échantillon.
+\item Calculer le nombre de molécules \ce{CO2} contenues dans cet échantillon.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1 : Le dioxyde de carbone]
+\begin{enumerate}
+\item $M(\ce{CO2}) = M(\ce{C}) + 2 \times M(\ce{O}) = 12 + 2 \times 16 = \SI{44}{g/mol}$.
+\item $n = \dfrac{m}{M} = \dfrac{22}{44} = \SI{0,5}{mol}$.
+\item $N = n \times N_A = 0,5 \times \num{6,022e23} = \num{3,011e23}$ molécules.
+\end{enumerate}
+\end{corrige}
+
+\begin{exercice}[Préparation d'une solution de soude]
+Un élève doit préparer une solution contenant $n = \SI{0,05}{mol}$ d'hydroxyde de sodium \ce{NaOH} (soude caustique, attention : corrosif).
+Données : $M(\ce{Na}) = \SI{23}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$ ; $M(\ce{H}) = \SI{1}{g/mol}$.
+\begin{enumerate}
+\item Calculer la masse molaire $M(\ce{NaOH})$.
+\item Calculer la masse $m$ de soude que l'élève doit peser.
+\item Citer deux consignes de sécurité spécifiques à la manipulation de la soude caustique solide.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 2 : Préparation d'une solution de soude]
+\begin{enumerate}
+\item $M(\ce{NaOH}) = M(\ce{Na}) + M(\ce{O}) + M(\ce{H}) = 23 + 16 + 1 = \SI{40}{g/mol}$.
+\item $m = n \times M = 0,05 \times 40 = \SI{2,0}{g}$.
+\item \textbf{Sécurité :} Porter impérativement gants, lunettes et blouse (risque de brûlures chimiques graves) ; ne jamais verser d'eau sur la soude solide (éclaboussures violentes), mais verser la soude dans l'eau en remuant ; refermer le flacon immédiatement après usage.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{La mole}
+
+\begin{savaistu}[Pourquoi compter en moles ?]
+Au marché, on achète les œufs par douzaine (12), le riz par sac de \SI{50}{kg}, l'essence au litre. En chimie, les atomes et les molécules sont infiniment petits et nombreux : impossible de les compter un par un ! Le chimiste a besoin d'une « grande unité » de comptage, adaptée à l'infiniment petit. C'est la \cle{mole} (symbole \textbf{mol}), l'unité internationale de la \cle{quantité de matière} (symbole \textbf{$n$}).
+\end{savaistu}
+
+\begin{definition}[Mole et nombre d'Avogadro]
+La \textbf{mole} est la quantité de matière d'un système contenant autant d'entités élémentaires (atomes, molécules, ions, électrons...) qu'il y a d'atomes dans exactement \SI{12}{g} de carbone 12 (\ce{^{12}C}).
+Ce nombre est la constante d'Avogadro : $N_A = 6,022 \times 10^{23}$ \SI{}{mol^{-1}}.
+\[
+n = \frac{N}{N_A}
+\]
+où $N$ est le nombre d'entités et $n$ la quantité de matière en mol.
+\end{definition}
+
+\begin{exemplebox}[Analogie : la douzaine du chimiste]
+\begin{itemize}
+\item 1 douzaine d'œufs = 12 œufs.
+\item 1 mole d'atomes de carbone = $6,022 \times 10^{23}$ atomes de carbone.
+\item 1 mole de molécules d'eau = $6,022 \times 10^{23}$ molécules \ce{H2O}.
+\end{itemize}
+La mole permet de faire le lien entre le monde microscopique (atomes) et le monde macroscopique (grammes que l'on pèse au laboratoire).
+\end{exemplebox}
+
+\begin{propriete}[Masse molaire atomique $M$]
+La \textbf{masse molaire atomique} d'un élément est la masse d'une mole de ses atomes. Elle s'exprime en \SI{}{g/mol} (ou \SI{}{g.mol^{-1}}).
+Numériquement, elle est égale à la masse atomique relative (sans unité) figurant sur le tableau périodique.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+Élément & Masse atomique relative & Masse molaire $M$ (\SI{}{g/mol}) \\ \hline
+Hydrogène \ce{H} & 1 & 1 \\
+Carbone \ce{C} & 12 & 12 \\
+Oxygène \ce{O} & 16 & 16 \\
+Fer \ce{Fe} & 56 & 56 \\
+Chlore \ce{Cl} & 35,5 & 35,5 \\ \hline
+\end{tabularx}
+\end{center}
+\end{propriete}
+
+\begin{propriete}[Masse molaire moléculaire $M$]
+Pour un corps moléculaire de formule $\ce{A_x B_y}$, la masse molaire moléculaire est la somme des masses molaires atomiques pondérées par les indices de la formule :
+\[
+M(\ce{A_x B_y}) = x \cdot M(\ce{A}) + y \cdot M(\ce{B})
+\]
+\end{propriete}
+
+\begin{exemplebox}[Calcul de masses molaires moléculaires]
+\begin{itemize}
+\item Eau \ce{H2O} : $M = 2 \times 1 + 16 = \SI{18}{g/mol}$.
+\item Dioxyde de carbone \ce{CO2} : $M = 12 + 2 \times 16 = \SI{44}{g/mol}$.
+\item Chlorure de sodium \ce{NaCl} : $M = 23 + 35,5 = \SI{58,5}{g/mol}$.
+\item Butane \ce{C4H10} : $M = 4 \times 12 + 10 \times 1 = \SI{58}{g/mol}$.
+\item Saccharose \ce{C12H22O11} : $M = 12 \times 12 + 22 \times 1 + 11 \times 16 = \SI{342}{g/mol}$.
+\item Sulfate de cuivre \ce{CuSO4} : $M = 64 + 32 + 4 \times 16 = \SI{160}{g/mol}$.
+\item Glucose \ce{C6H12O6} : $M = 6 \times 12 + 12 \times 1 + 6 \times 16 = \SI{180}{g/mol}$.
+\item Carbonate de calcium \ce{CaCO3} : $M = 40 + 12 + 3 \times 16 = \SI{100}{g/mol}$.
+\item Aspirine \ce{C9H8O4} : $M = 9 \times 12 + 8 \times 1 + 4 \times 16 = \SI{180}{g/mol}$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{methode}[Calculer une quantité de matière $n$ (en mol)]
+\begin{enumerate}
+\item Identifier la masse $m$ de l'échantillon (en \textbf{grammes}). Si elle est en kg, la convertir : $1\,\text{kg} = 1000\,\text{g}$.
+\item Déterminer la masse molaire $M$ de l'espèce chimique (en \SI{}{g/mol}).
+\item Appliquer la relation fondamentale : $n = \dfrac{m}{M}$.
+\item Exprimer le résultat en \textbf{mol} avec le bon arrondi.
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Calculer une masse $m$ (en g) ou une masse molaire $M$ (en g/mol)]
+\begin{itemize}
+\item Masse : $m = n \times M$
+\item Masse molaire : $M = \dfrac{m}{n}$
+\end{itemize}
+Utilise le triangle mnémotechnique :
+\begin{center}
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2]
+\node[draw, circle, fill=popblue!20, minimum size=1.5cm] (m) at (0,1) {$m$ (g)};
+\node[draw, circle, fill=poporange!20, minimum size=1.5cm] (n) at (-1.3,-0.5) {$n$ (mol)};
+\node[draw, circle, fill=popgreen!20, minimum size=1.5cm] (M) at (1.3,-0.5) {$M$ (g/mol)};
+\draw[thick, popblue] (n) -- (M) node[midway, below] {$\times$};
+\draw[thick, popblue] (m) -- (n) node[midway, left] {$/$};
+\draw[thick, popblue] (m) -- (M) node[midway, right] {$/$};
+\end{tikzpicture}
+\legende{Le triangle $m = n \times M$ : on cache la grandeur cherchée, les deux autres donnent l'opération.}
+\end{popfigure}
+\end{center}
+\end{methode}
+
+\begin{attention}[Pièges à éviter]
+\begin{itemize}
+\item \textbf{Unités :} La masse $m$ doit \emph{impérativement} être en \textbf{grammes (g)}, pas en kg. $M$ en \SI{}{g/mol}. $n$ en \textbf{mol}.
+\item \textbf{Entités :} Précise toujours de quelles entités il s'agit : atomes (\ce{Fe}), molécules (\ce{H2O}, \ce{CO2}), motifs ioniques (\ce{NaCl}, \ce{CuSO4}).
+\item \textbf{Arrondis :} Respecte la précision demandée (unité, $10^{-3}$ mol, etc.). Ne pas arrondir les valeurs intermédiaires, seulement le résultat final.
+\item \textbf{Formule vs atomes :} $M(\ce{O2}) = 32\,\text{g/mol}$ (molécule diatomique), $M(\ce{O}) = 16\,\text{g/mol}$ (atome). Ne pas confondre.
+\end{itemize}
+\end{attention}
+
+\begin{experience}[Activité : Visualiser une mole]
+\textbf{Matériel :} Balance de précision, béchers, eau, sel (\ce{NaCl}), fer (limaille ou clous), cuivre (poudre ou fil), soufre.
+\textbf{Protocole :}
+\begin{enumerate}
+\item Peser \SI{18}{g} d'eau (1 mol), \SI{58,5}{g} de sel (1 mol), \SI{56}{g} de fer (1 mol), \SI{64}{g} de cuivre (1 mol), \SI{32}{g} de soufre (1 mol).
+\item Observer les volumes différents pour une même quantité de matière (1 mol).
+\end{enumerate}
+\textbf{Interprétation :} Une mole correspond à des masses différentes (masses molaires différentes) et des volumes différents, mais \textbf{au même nombre d'entités} ($N_A$). C'est ce qui permet de « compter » en pesant.
+\legende{Expérience : 1 mole de différentes substances. Masses et volumes varient, le nombre d'entités est constant.}
+\end{experience}
+
+\begin{exemplebox}[Exemple résolu : Du gaz dans une bonbonne]
+Une bonbonne de gaz butane \ce{C4H10} contient \SI{6}{kg} de gaz.
+$M(\ce{C4H10}) = 4 \times 12 + 10 \times 1 = \SI{58}{g/mol}$.
+$m = 6\,\text{kg} = 6000\,\text{g}$.
+$n = \dfrac{6000}{58} \approx 103,4\,\text{mol}$.
+Il y a environ \textbf{103 mol} de butane dans la bonbonne.
+\end{exemplebox}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : la mole]
+Pour chaque question, entoure la (ou les) bonne(s) réponse(s).
+\begin{enumerate}
+\item La mole est l'unité de :
+\begin{enumerate}
+\item la masse ; \item la quantité de matière ; \item le volume.
+\end{enumerate}
+\item Une mole d'atomes de carbone contient :
+\begin{enumerate}
+\item $6,022\times 10^{23}$ atomes ; \item 12 atomes ; \item $6,022\times 10^{-23}$ atomes.
+\end{enumerate}
+\item La masse molaire atomique du carbone est :
+\begin{enumerate}
+\item $M(\ce{C}) = \SI{12}{g}$ ; \item $M(\ce{C}) = \SI{12}{g/mol}$ ; \item $M(\ce{C}) = \SI{12}{mol/g}$.
+\end{enumerate}
+\item La relation qui lie la masse $m$, la quantité de matière $n$ et la masse molaire $M$ est :
+\begin{enumerate}
+\item $n = m \times M$ ; \item $n = \dfrac{m}{M}$ ; \item $n = \dfrac{M}{m}$.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux ? Justifie]
+Réponds par vrai ou faux, puis justifie ta réponse en une phrase ou par un calcul.
+\begin{enumerate}
+\item Une mole d'eau et une mole de fer contiennent le même nombre d'entités.
+\item Une mole d'eau et une mole de fer ont la même masse.
+\item La masse molaire moléculaire de l'eau \ce{H2O} est $M = \SI{18}{g/mol}$ (on donne $M(\ce{H}) = \SI{1}{g/mol}$ et $M(\ce{O}) = \SI{16}{g/mol}$).
+\item Dans \SI{56}{g} de fer ($M(\ce{Fe}) = \SI{56}{g/mol}$), il y a exactement une mole d'atomes de fer.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions à compléter]
+Recopie et complète les phrases suivantes avec les mots ou expressions qui conviennent : \emph{mole}, \emph{quantité de matière}, \emph{masse molaire}, \emph{nombre d'Avogadro}, \emph{entités}.
+\begin{enumerate}
+\item La \ldots\ldots\ldots\ldots est l'unité internationale de la \ldots\ldots\ldots\ldots ; son symbole est mol.
+\item Une mole contient exactement $6,022\times 10^{23}$ \ldots\ldots\ldots\ldots (atomes, molécules ou ions) : c'est le \ldots\ldots\ldots\ldots, noté $N_A$.
+\item La \ldots\ldots\ldots\ldots d'une espèce chimique est la masse d'une mole de cette espèce ; elle s'exprime en \SI{}{g/mol}.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+On donne : $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$ ; $M(\ce{Na}) = \SI{23}{g/mol}$ ; $M(\ce{Cl}) = \SI{35,5}{g/mol}$.
+\begin{enumerate}
+\item Calcule la masse molaire moléculaire du dioxyde de carbone \ce{CO2}.
+\item Calcule la masse molaire du sel de cuisine \ce{NaCl}.
+\item Quelle est la quantité de matière contenue dans \SI{44}{g} de \ce{CO2} ?
+\item Quelle est la masse de \num{0,5} mole de \ce{NaCl} ?
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Le sucre dans la boisson]
+Une élève dissout un morceau de sucre de masse $m = \SI{6}{g}$ dans son jus de foléré. Le sucre est le saccharose, de formule \ce{C12H22O11}.
+On donne : $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{H}) = \SI{1}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$.
+\begin{enumerate}
+\item Calcule la masse molaire moléculaire du saccharose.
+\item Calcule la quantité de matière de saccharose dissoute (arrondis à $10^{-3}$ mol).
+\item En déduire le nombre de molécules de saccharose dans le verre. On donne $N_A = 6,022\times 10^{23}$ \SI{}{mol^{-1}}.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[La craie du tableau]
+La craie utilisée au tableau est constituée de carbonate de calcium \ce{CaCO3}. Un bout de craie pèse \SI{5}{g}.
+On donne : $M(\ce{Ca}) = \SI{40}{g/mol}$ ; $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$.
+\begin{enumerate}
+\item Calcule la masse molaire du carbonate de calcium.
+\item Calcule la quantité de matière de \ce{CaCO3} dans ce bout de craie.
+\item Quelle masse de craie faudrait-il pour obtenir exactement \num{0,2} mole de \ce{CaCO3} ?
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Le gaz de la bonbonne]
+Le gaz domestique vendu en bonbonnes au Cameroun est essentiellement du butane \ce{C4H10}. Une recharge contient $m = \SI{6}{kg}$ de butane.
+On donne : $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{H}) = \SI{1}{g/mol}$.
+\begin{enumerate}
+\item Calcule la masse molaire moléculaire du butane.
+\item Convertis la masse de gaz en grammes, puis calcule la quantité de matière de butane contenue dans la bonbonne (arrondis à l'unité).
+\item La combustion complète d'une mole de butane dégage une certaine quantité de chaleur. Pourquoi est-il dangereux d'utiliser la bonbonne dans une cuisine mal aérée ? Cite une consigne de sécurité.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Le gaz mystère]
+Au laboratoire du collège, on pèse un échantillon de gaz inconnu : sa masse est $m = \SI{4,4}{g}$ et des mesures montrent qu'il contient $n = \num{0,1}$ mole.
+On donne : $M(\ce{O}) = \SI{16}{g/mol}$ ; $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{H}) = \SI{1}{g/mol}$.
+\begin{enumerate}
+\item Détermine la masse molaire $M$ de ce gaz.
+\item Calcule les masses molaires des gaz \ce{O2}, \ce{CO2} et \ce{CH4}.
+\item Identifie le gaz inconnu parmi ces trois gaz. Justifie ta réponse.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au BEPC}
+
+\begin{exercice}[Type BEPC 1 : le sulfate de cuivre au laboratoire]
+Au laboratoire du lycée, le professeur de PCT utilise du sulfate de cuivre \ce{CuSO4}, une poudre bleue, pour réaliser des expériences de chimie. Il prélève un échantillon de masse $m = \SI{32}{g}$.
+On donne : $M(\ce{Cu}) = \SI{64}{g/mol}$ ; $M(\ce{S}) = \SI{32}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$ ; $N_A = 6,022\times 10^{23}$ \SI{}{mol^{-1}}.
+\begin{enumerate}
+\item Définis les termes : mole ; masse molaire moléculaire.
+\item Calcule la masse molaire moléculaire du sulfate de cuivre \ce{CuSO4}.
+\item Calcule la quantité de matière de sulfate de cuivre contenue dans l'échantillon prélevé.
+\item En déduire le nombre de motifs \ce{CuSO4} présents dans cet échantillon.
+\item Quelle masse de sulfate de cuivre le professeur doit-il peser pour obtenir \num{0,5} mole de ce produit ?
+\item Le sulfate de cuivre est un produit irritant. Cite deux consignes de sécurité à respecter lors de sa manipulation au laboratoire.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type BEPC 2 : la tisane de maman]
+Pour soigner un petit rhume, une maman de quartier prépare une tisane sucrée. Elle y dissout $m = \SI{9}{g}$ de glucose, de formule \ce{C6H12O6}.
+On donne : $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{H}) = \SI{1}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$ ; $N_A = 6,022\times 10^{23}$ \SI{}{mol^{-1}}.
+\begin{enumerate}
+\item Rappelle la définition de la mole et donne la valeur du nombre d'Avogadro.
+\item Calcule la masse molaire moléculaire du glucose.
+\item Calcule la quantité de matière de glucose dissoute dans la tisane.
+\item Calcule le nombre de molécules de glucose contenues dans les \SI{9}{g} utilisés.
+\item Le glucose est aussi le sucre utilisé lors des perfusions à l'hôpital. Une poche de perfusion contient $n = \num{0,25}$ mole de glucose. Quelle masse de glucose contient-elle ?
+\item Explique, en deux ou trois phrases, pourquoi le chimiste préfère compter la matière en moles plutôt qu'en nombre de molécules.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type BEPC 3 : le clou en fer et l'aspirine]
+\textbf{Partie A : le clou en fer.} Un menuisier de Nkouloulou utilise un clou en fer de masse $m = \SI{2,8}{g}$. On donne : $M(\ce{Fe}) = \SI{56}{g/mol}$ ; $N_A = 6,022\times 10^{23}$ \SI{}{mol^{-1}}.
+\begin{enumerate}
+\item Calcule la quantité de matière d'atomes de fer contenue dans ce clou.
+\item Combien d'atomes de fer cela représente-t-il ?
+\item Un deuxième clou, plus gros, contient \num{0,15} mole d'atomes de fer. Quelle est sa masse ?
+\end{enumerate}
+\textbf{Partie B : l'aspirine (exercice avec document).} Sur la boîte d'un médicament acheté à la pharmacie, on lit : « Aspirine, principe actif : acide acétylsalicylique \ce{C9H8O4}, \SI{500}{mg} par comprimé ».
+On donne : $M(\ce{C}) = \SI{12}{g/mol}$ ; $M(\ce{H}) = \SI{1}{g/mol}$ ; $M(\ce{O}) = \SI{16}{g/mol}$.
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item Calcule la masse molaire moléculaire de l'aspirine \ce{C9H8O4}.
+\item Convertis la masse de principe actif en grammes, puis calcule la quantité de matière d'aspirine contenue dans un comprimé (arrondis à $10^{-3}$ mol).
+\item Un malade avale deux comprimés. Quelle quantité de matière d'aspirine absorbe-t-il ?
+\item Au laboratoire, on souhaite étudier ce médicament. Cite deux consignes de sécurité à respecter lors de la manipulation de produits chimiques en poudre.
+\end{enumerate}
+\end{exercice}
+
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : la mole]
+\begin{enumerate}
+\item \textbf{Réponse b.} La mole est l'unité internationale de la \cle{quantité de matière}. La masse s'exprime en gramme (g) et le volume en litre (L) ou en mètre cube (m$^3$).
+\item \textbf{Réponse a.} Une mole contient toujours $N_A = 6,022\times 10^{23}$ entités, quelle que soit l'espèce chimique. La réponse b (12 atomes) confond avec la définition basée sur \SI{12}{g} de carbone 12 ; la réponse c inverse le signe de l'exposant.
+\item \textbf{Réponse b.} $M(\ce{C}) = \SI{12}{g/mol}$. La réponse a est fausse car la masse molaire ne s'exprime pas en grammes ; la réponse c inverse l'unité.
+\item \textbf{Réponse b.} $n = \dfrac{m}{M}$. Vérification par les unités : $\dfrac{\text{g}}{\text{g/mol}} = \text{mol}$. Les réponses a et c ne donnent pas des moles.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux ?]
+\begin{enumerate}
+\item \textbf{Vrai.} Par définition, une mole contient toujours $N_A = 6,022\times 10^{23}$ entités, qu'il s'agisse de molécules d'eau ou d'atomes de fer.
+\item \textbf{Faux.} Une mole d'eau a une masse de $M(\ce{H2O}) = \SI{18}{g}$ alors qu'une mole de fer a une masse de $M(\ce{Fe}) = \SI{56}{g}$. Même nombre d'entités, mais masses différentes car les masses molaires sont différentes.
+\item \textbf{Vrai.} $M(\ce{H2O}) = 2\times M(\ce{H}) + M(\ce{O}) = 2\times 1 + 16 = \SI{18}{g/mol}$.
+\item \textbf{Vrai.} $n = \dfrac{m}{M} = \dfrac{56}{56} = \num{1,0}$ mol. La masse de l'échantillon est exactement égale à la masse molaire, donc il y a exactement une mole d'atomes de fer.
+\end{enumerate}
+\textbf{Point de vigilance :} la justification est exigée. « Vrai » ou « faux » seul ne rapporte aucun point : cite la définition de la mole ou fais le calcul.
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions à compléter]
+\begin{enumerate}
+\item La \cle{mole} est l'unité internationale de la \cle{quantité de matière} ; son symbole est mol.
+\item Une mole contient exactement $6,022\times 10^{23}$ \cle{entités} (atomes, molécules ou ions) : c'est le \cle{nombre d'Avogadro}, noté $N_A$.
+\item La \cle{masse molaire} d'une espèce chimique est la masse d'une mole de cette espèce ; elle s'exprime en \unit{g/mol}.
+\end{enumerate}
+\textbf{Point de vigilance :} ne confonds pas « masse molaire » (en \unit{g/mol}) et « masse » (en g). Le mot « molaire » signifie toujours « par mole ».
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item $M(\ce{CO2}) = M(\ce{C}) + 2\times M(\ce{O}) = 12 + 2\times 16 = \SI{44}{g/mol}$.
+\item $M(\ce{NaCl}) = M(\ce{Na}) + M(\ce{Cl}) = 23 + 35,5 = \SI{58,5}{g/mol}$.
+\item $n(\ce{CO2}) = \dfrac{m}{M} = \dfrac{44}{44} = \num{1,0}$ mol.
+\item $m(\ce{NaCl}) = n\times M = 0,5\times 58,5 = \SI{29,25}{g}$.
+\end{enumerate}
+\textbf{Point de vigilance :} pour la question 4, on utilise la relation inversée $m = n\times M$. Le triangle $m = n\times M$ permet de retrouver rapidement la bonne formule.
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Le sucre dans la boisson]
+\begin{enumerate}
+\item Masse molaire du saccharose \ce{C12H22O11} :
+\[ M = 12\times M(\ce{C}) + 22\times M(\ce{H}) + 11\times M(\ce{O}) = 12\times 12 + 22\times 1 + 11\times 16 = 144 + 22 + 176 = \SI{342}{g/mol}. \]
+\item Quantité de matière :
+\[ n = \dfrac{m}{M} = \dfrac{6}{342} \approx \num{0,0175}\ \text{mol} \approx \num{0,018}\ \text{mol (arrondi à } 10^{-3}\text{ mol)}. \]
+\item Nombre de molécules : on reprend la valeur \emph{non arrondie} de $n$ pour éviter les erreurs d'arrondi :
+\[ N = n\times N_A = \frac{6}{342}\times 6,022\times 10^{23} \approx 1,06\times 10^{22}\ \text{molécules}. \]
+\end{enumerate}
+\textbf{Point de vigilance :} à la question 3, si tu utilises la valeur arrondie \num{0,018} mol, tu obtiens $1,08\times 10^{22}$ : l'écart vient de l'arrondi. Garde toujours les valeurs exactes dans les calculs intermédiaires.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — La craie du tableau]
+\begin{enumerate}
+\item $M(\ce{CaCO3}) = M(\ce{Ca}) + M(\ce{C}) + 3\times M(\ce{O}) = 40 + 12 + 3\times 16 = 40 + 12 + 48 = \SI{100}{g/mol}$.
+\item $n = \dfrac{m}{M} = \dfrac{5}{100} = \num{0,050}$ mol de \ce{CaCO3}.
+\item $m = n\times M = 0,2\times 100 = \SI{20}{g}$ de craie.
+\end{enumerate}
+\textbf{Point de vigilance :} dans \ce{CaCO3}, il y a \textbf{trois} atomes d'oxygène : n'oublie pas le facteur 3 devant $M(\ce{O})$. C'est l'erreur la plus fréquente dans ce type de calcul.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Le gaz de la bonbonne]
+\begin{enumerate}
+\item $M(\ce{C4H10}) = 4\times M(\ce{C}) + 10\times M(\ce{H}) = 4\times 12 + 10\times 1 = 48 + 10 = \SI{58}{g/mol}$.
+\item Conversion : $m = 6\ \text{kg} = 6000\ \text{g}$ (car $1\ \text{kg} = 1000\ \text{g}$).
+\[ n = \dfrac{m}{M} = \dfrac{6000}{58} \approx 103,4\ \text{mol} \approx \textbf{103 mol (arrondi à l'unité)}. \]
+\item \textbf{Danger :} dans une cuisine mal aérée, la combustion du butane devient incomplète par manque de dioxygène et produit du \textbf{monoxyde de carbone \ce{CO}}, un gaz mortel, incolore et inodore. De plus, le butane est plus lourd que l'air : en cas de fuite, il s'accumule au sol et peut exploser au contact d'une étincelle.
+\textbf{Consigne de sécurité (une suffit) :} utiliser la bonbonne dans une cuisine bien aérée (portes et fenêtres ouvertes) ; vérifier régulièrement l'étanchéité du tuyau et du détendeur ; ne jamais stocker la bonbonne au sous-sol.
+\end{enumerate}
+\textbf{Point de vigilance :} la conversion kg $\rightarrow$ g est \emph{indispensable} avant d'appliquer $n = m/M$, car $M$ est en \unit{g/mol}. Oublier cette conversion donne $n \approx 0,103$ mol, résultat 1000 fois trop petit.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Le gaz mystère]
+\begin{enumerate}
+\item On utilise la relation inversée :
+\[ M = \dfrac{m}{n} = \dfrac{4,4}{0,1} = \SI{44}{g/mol}. \]
+\item Masses molaires des trois gaz candidats :
+\begin{itemize}
+\item $M(\ce{O2}) = 2\times 16 = \SI{32}{g/mol}$ ;
+\item $M(\ce{CO2}) = 12 + 2\times 16 = \SI{44}{g/mol}$ ;
+\item $M(\ce{CH4}) = 12 + 4\times 1 = \SI{16}{g/mol}$.
+\end{itemize}
+\item Le gaz inconnu a une masse molaire de \SI{44}{g/mol} : c'est donc le \textbf{dioxyde de carbone \ce{CO2}}, seul gaz de la liste dont la masse molaire correspond.
+\end{enumerate}
+\textbf{Point de vigilance :} la justification doit comparer explicitement la valeur calculée (\SI{44}{g/mol}) avec les masses molaires des trois gaz. Une identification sans comparaison chiffrée n'est pas acceptée.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type BEPC 1 : le sulfate de cuivre au laboratoire]
+\begin{enumerate}
+\item \textbf{Mole :} la mole est l'unité internationale de quantité de matière ; une mole contient exactement $N_A = 6,022\times 10^{23}$ entités élémentaires (atomes, molécules, ions ou motifs).
+\textbf{Masse molaire moléculaire :} c'est la masse d'une mole de molécules (ou de motifs) d'une espèce chimique ; elle s'exprime en \unit{g/mol}.
+\item $M(\ce{CuSO4}) = M(\ce{Cu}) + M(\ce{S}) + 4\times M(\ce{O}) = 64 + 32 + 4\times 16 = 64 + 32 + 64 = \SI{160}{g/mol}$.
+\item $n = \dfrac{m}{M} = \dfrac{32}{160} = \num{0,20}$ mol.
+\item $N = n\times N_A = 0,20\times 6,022\times 10^{23} = 1,2044\times 10^{23}$ motifs \ce{CuSO4} (soit environ $1,2\times 10^{23}$).
+\item $m = n\times M = 0,5\times 160 = \SI{80}{g}$ de sulfate de cuivre.
+\item Deux consignes de sécurité (au choix) : porter des \textbf{gants} et des \textbf{lunettes de protection} ; manipuler sous \textbf{hotte} ou dans un local aéré pour éviter d'inhaler les poussières irritantes ; se laver les mains après manipulation ; ne pas manger ni boire au laboratoire.
+\end{enumerate}
+\textbf{Barème indicatif (sur 6 pts) :} définitions 1 pt ; $M$ 1 pt ; $n$ 1 pt ; $N$ 1 pt ; $m$ 1 pt ; sécurité 1 pt.
+\textbf{Points de vigilance :} la définition de la mole doit citer le nombre d'Avogadro ; à la question 4, on parle de \emph{motifs} \ce{CuSO4} (composé ionique) et non de « molécules » ; toute réponse numérique sans unité est pénalisée.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type BEPC 2 : la tisane de maman]
+\begin{enumerate}
+\item La \cle{mole} est la quantité de matière d'un système contenant autant d'entités élémentaires qu'il y a d'atomes dans \SI{12}{g} de carbone 12. Le nombre d'Avogadro vaut $N_A = 6,022\times 10^{23}$ \unit{mol^{-1}}.
+\item $M(\ce{C6H12O6}) = 6\times 12 + 12\times 1 + 6\times 16 = 72 + 12 + 96 = \SI{180}{g/mol}$.
+\item $n = \dfrac{m}{M} = \dfrac{9}{180} = \num{0,050}$ mol de glucose.
+\item $N = n\times N_A = 0,050\times 6,022\times 10^{23} = 3,011\times 10^{22}$ molécules de glucose.
+\item $m = n\times M = 0,25\times 180 = \SI{45}{g}$ de glucose dans la poche de perfusion.
+\item Les molécules sont tellement petites que leur nombre dans un échantillon est astronomique (de l'ordre de $10^{22}$ ou $10^{23}$) : impossible de les compter une par une. La mole permet de « compter » les entités \textbf{en pesant} : une simple balance suffit, car la masse est proportionnelle au nombre d'entités via la masse molaire. C'est le pont entre le monde microscopique et le monde macroscopique.
+\end{enumerate}
+\textbf{Barème indicatif (sur 6 pts) :} définition 1 pt ; $M$ 1 pt ; $n$ 1 pt ; $N$ 1 pt ; $m$ 1 pt ; explication 1 pt.
+\textbf{Points de vigilance :} à la question 6, l'explication doit mentionner l'énormité du nombre de molécules \emph{et} le fait que la pesée permet de compter indirectement ; une réponse du type « c'est plus simple » est insuffisante.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Type BEPC 3 : le clou en fer et l'aspirine]
+\textbf{Partie A : le clou en fer.}
+\begin{enumerate}
+\item $n(\ce{Fe}) = \dfrac{m}{M} = \dfrac{2,8}{56} = \num{0,050}$ mol d'atomes de fer.
+\item $N = n\times N_A = 0,050\times 6,022\times 10^{23} = 3,011\times 10^{22}$ atomes de fer.
+\item $m = n\times M = 0,15\times 56 = \SI{8,4}{g}$.
+\end{enumerate}
+\textbf{Partie B : l'aspirine.}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item $M(\ce{C9H8O4}) = 9\times 12 + 8\times 1 + 4\times 16 = 108 + 8 + 64 = \SI{180}{g/mol}$.
+\item Conversion : $m = 500\ \text{mg} = \SI{0,500}{g}$ (car $1\ \text{g} = 1000\ \text{mg}$).
+\[ n = \dfrac{m}{M} = \dfrac{0,500}{180} \approx 2,78\times 10^{-3}\ \text{mol} \approx \num{0,003}\ \text{mol (arrondi à } 10^{-3}\text{ mol)}. \]
+\item Pour deux comprimés : $n_{\text{total}} = 2\times 2,78\times 10^{-3} \approx 5,56\times 10^{-3}$ mol (soit environ \num{0,006} mol).
+\item Deux consignes de sécurité (au choix) : porter \textbf{gants et lunettes} de protection ; manipuler les poudres sous \textbf{hotte} (ou avec un masque) pour ne pas les inhaler ; étiqueter clairement tous les contenants ; ne jamais goûter un produit chimique ; jeter les déchets dans le récipient prévu, pas dans l'évier.
+\end{enumerate}
+\textbf{Barème indicatif (sur 7 pts) :} Partie A : 3 pts (1 pt par question) ; Partie B : 4 pts ($M$ : 1 pt ; conversion + $n$ : 1 pt ; $n_{\text{total}}$ : 1 pt ; sécurité : 1 pt).
+\textbf{Points de vigilance :}
+\begin{itemize}
+\item La conversion mg $\rightarrow$ g (question 5) est le piège principal : sans elle, on trouve $n \approx 2,78$ mol, résultat absurde pour un comprimé.
+\item Pour le fer, on parle d'\textbf{atomes} ; pour l'aspirine, de \textbf{molécules} : précise toujours la nature des entités.
+\item À la question 6, utilise la valeur non arrondie de $n$ pour éviter l'accumulation des erreurs d'arrondi.
+\end{itemize}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept}, text width=2.6cm, align=center,
+  root concept/.append style={concept color=popblue, font=\large\bfseries, text=white},
+  level 1/.append style={level distance=3.6cm, sibling angle=60},
+  level 2/.append style={level distance=2.4cm, sibling angle=45}]
+\node[root concept]{La mole}
+  child[concept color=poporange]{ node[concept]{Pourquoi compter en moles ?}
+    child[concept color=poporangeL]{ node[concept, font=\small, text width=2.2cm]{Les atomes sont trop petits pour être comptés un par un} }
+    child[concept color=poporangeL]{ node[concept, font=\small, text width=2.2cm]{La mole est la « douzaine » du chimiste} }
+  }
+  child[concept color=popgreen]{ node[concept]{La mole et $N_A$}
+    child[concept color=popgreenL]{ node[concept, font=\small, text width=2.2cm]{$1$ mol $= \num{6,022e23}$ entités} }
+    child[concept color=popgreenL]{ node[concept, font=\small, text width=2.2cm]{Unité de quantité de matière $n$} }
+  }
+  child[concept color=poppurple]{ node[concept]{Masse molaire atomique $M$}
+    child[concept color=poppurpleL]{ node[concept, font=\small, text width=2.2cm]{Lue dans le tableau périodique} }
+    child[concept color=poppurpleL]{ node[concept, font=\small, text width=2.2cm]{Unité : \si{g/mol}} }
+  }
+  child[concept color=popgold]{ node[concept]{Masse molaire moléculaire}
+    child[concept color=popgoldL]{ node[concept, font=\small, text width=2.2cm]{Somme des $M$ des atomes de la formule} }
+    child[concept color=popgoldL]{ node[concept, font=\small, text width=2.2cm]{Ex. $M(\ce{H2O}) = 18$ \si{g/mol}} }
+  }
+  child[concept color=poppink]{ node[concept]{Relation $n = \dfrac{m}{M}$}
+    child[concept color=poppinkL]{ node[concept, font=\small, text width=2.2cm]{$n$ en mol, $m$ en g, $M$ en \si{g/mol}} }
+    child[concept color=poppinkL]{ node[concept, font=\small, text width=2.2cm]{Formes : $m = n \times M$ et $M = \dfrac{m}{n}$} }
+  }
+  child[concept color=popblue]{ node[concept]{Applications et sécurité}
+    child[concept color=popblueL]{ node[concept, font=\small, text width=2.2cm]{Pesées à la balance, fiole jaugée} }
+    child[concept color=popblueL]{ node[concept, font=\small, text width=2.2cm]{Blouse, lunettes, gants} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : la mole, les masses molaires et la relation fondamentale $n = m/M$.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+  \item La \cle{quantité de matière} $n$ mesure le nombre d'entités (atomes, molécules, ions) contenues dans un échantillon. Son unité est la \cle{mole} (symbole : mol).
+  \item Une \cle{mole} est la quantité de matière d'un système contenant exactement $N_A = \num{6,022e23}$ entités élémentaires. $N_A$ est le \cle{nombre d'Avogadro}.
+  \item La \cle{masse molaire atomique} $M$ d'un élément est la masse d'une mole d'atomes de cet élément. Elle se lit dans le tableau périodique et s'exprime en \si{g/mol}.
+  \item La \cle{masse molaire moléculaire} d'un composé est la masse d'une mole de ses molécules : c'est la somme des masses molaires atomiques de tous les atomes de la formule.
+\end{itemize}
+
+\textbf{Formules à connaître par cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|l|}
+\hline
+\rowcolor{popblueL} \textbf{Relation} & \textbf{Signification} & \textbf{Unités} \\
+\hline
+$n = \dfrac{m}{M}$ & quantité de matière à partir de la masse & $n$ en mol ; $m$ en g ; $M$ en \si{g/mol} \\
+\hline
+$m = n \times M$ & masse à partir de la quantité de matière & $m$ en g \\
+\hline
+$M = \dfrac{m}{n}$ & masse molaire d'une espèce inconnue & $M$ en \si{g/mol} \\
+\hline
+$N = n \times N_A$ & nombre d'entités dans l'échantillon & $N_A = \num{6,022e23}$ mol$^{-1}$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthodes express}
+\begin{itemize}
+  \item \emph{Calculer une masse molaire moléculaire} : écrire la formule, relever chaque $M$ dans le tableau, multiplier par le nombre d'atomes, additionner. Exemple : $M(\ce{CO2}) = 12 + 2 \times 16 = 44$ \si{g/mol}.
+  \item \emph{Calculer $n$} : vérifier que $m$ est en grammes (convertir si besoin), puis appliquer $n = m/M$ et arrondir raisonnablement.
+  \item \emph{Vérifier un résultat} : si $m < M$, alors $n < 1$ mol ; si $m > M$, alors $n > 1$ mol.
+  \item \emph{Sécurité} : toute pesée de produit chimique se fait avec blouse, lunettes et spatule propre ; jamais de produit à la bouche.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+  \item $\square$ Je sais définir la mole et donner la valeur du nombre d'Avogadro $N_A = \num{6,022e23}$ mol$^{-1}$.
+  \item $\square$ Je sais que la quantité de matière se note $n$ et s'exprime en mol.
+  \item $\square$ Je sais lire une masse molaire atomique dans le tableau périodique.
+  \item $\square$ Je connais par cœur quelques valeurs utiles : $M(\ce{H}) = 1$, $M(\ce{C}) = 12$, $M(\ce{O}) = 16$, $M(\ce{N}) = 14$ \si{g/mol}.
+  \item $\square$ Je sais calculer une masse molaire moléculaire à partir d'une formule chimique.
+  \item $\square$ Je connais la relation $n = \dfrac{m}{M}$ et ses deux formes dérivées.
+  \item $\square$ Je vérifie toujours que la masse $m$ est exprimée en grammes avant le calcul.
+  \item $\square$ Je sais calculer le nombre d'entités avec $N = n \times N_A$.
+  \item $\square$ Je pense à écrire l'unité (mol, g, \si{g/mol}) à côté de chaque résultat.
+  \item $\square$ Je contrôle l'ordre de grandeur de mon résultat ($m$ et $M$ proches $\Rightarrow n \approx 1$ mol).
+  \item $\square$ Je cite les règles de sécurité pour une pesée au laboratoire (blouse, lunettes, spatule).
+  \item $\square$ Je sais donner un exemple concret : une mole d'eau ($\SI{18}{g}$), c'est environ une cuillère à soupe d'eau.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
