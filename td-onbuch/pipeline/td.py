@@ -98,7 +98,8 @@ def job(sub, cat, L, lv):
     tag = f"{sub}/{L['id']}/{name}"
     if tex.with_suffix(".pdf").exists():
         return True
-    niveau = "Tle " + " ".join(L.get("series") or cat["series"]) if cat["classe"].startswith("Term") else "1re " + " ".join(L.get("series") or cat["series"])
+    ser = " ".join(L.get("series") or cat["series"])
+    niveau = "3ème" if cat["classe"].startswith("Trois") else ("Tle " + ser if cat["classe"].startswith("Term") else "1re " + ser)
     bf = d / f"{name}.ok.tex"
     if bf.exists():
         body = bf.read_text()
