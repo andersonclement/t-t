@@ -7,6 +7,26 @@ import cle_math
 BOX="methode|attention|aretenir|propriete|definition|exemplebox"
 ITEMS=re.compile(r"(\\begin\{(?:"+BOX+r")\}(?:\[[^\]\n]*\])?\n)((?:\s*\\item[^\n]*\n(?:(?!\s*\\(?:item|end))[^\n]*\n)*)+)(\\end\{(?:"+BOX+r")\})")
 FOREACH=re.compile(r"(\\foreach[^\n]*\bin\s*\{[^{}]*?)\s*\n\s*\}")
+
+COLMAP={"gray":"popmuted","grey":"popmuted","brown":"poporange!70!popdark","red":"poppink","yellow":"popgold","teal":"popblue!60!popgreen","cyan":"popblue!60!popgreen","turquoise":"popblue!60!popgreen","violet":"poppurple","lime":"popgreen","amber":"popgold","navy":"popink","black":"popdark","lightgray":"popmuted!20","darkgray":"popmuted!80!popdark","white":"white","beige":"popcream","cream":"popcream","rose":"poppink","lilac":"poppurple!40","indigo":"popink"}
+_defined={}
+def defined_for(d):
+    if d not in _defined:
+        t=open(os.path.join(d,"preamble.tex")).read()
+        _defined[d]=set(re.findall(r"\\(?:definecolor|colorlet)\{(pop[A-Za-z]+)\}",t))
+    return _defined[d]
+def fix_colors(s,d):
+    ok=defined_for(d)
+    def r(m):
+        full=m.group(0)
+        if full in ok: return full
+        base=m.group(1); light=m.group(2)=="L"
+        key=base.lower()
+        if key in COLMAP:
+            c=COLMAP[key]
+            return (c+"!18") if light and "!" not in c else c
+        return full
+    return re.sub(r"\bpop([a-z]+)(L?)\b",r,s)
 def fix(s):
     s=ITEMS.sub(lambda m:m.group(1)+"\\begin{enumerate}\n"+m.group(2)+"\\end{enumerate}\n"+m.group(3),s)
     s=FOREACH.sub(r"\1}",s)
@@ -61,7 +81,7 @@ def fix(s):
 for d in sys.argv[1:]:
     ch=0
     for f in glob.glob(f"{d}/build/N*/*.rev.tex")+glob.glob(f"{d}/build/M*/*.rev.tex"):
-        s=open(f).read(); t=fix(s)
+        s=open(f).read(); t=fix_colors(fix(s),d)
         if t!=s: open(f,"w").write(t); ch+=1
     errs=sorted(glob.glob(f"{d}/build/*/*.err"))
     ok=0
