@@ -2,6 +2,8 @@
 """Correctifs sûrs et idempotents appliqués aux build/*/*.rev.tex d'un pipeline, puis revalidation des .err.
 python3 autofix_all.py <pipeline-dir> [...]"""
 import re,glob,sys,subprocess,os
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
+import cle_math
 BOX="methode|attention|aretenir|propriete|definition|exemplebox"
 ITEMS=re.compile(r"(\\begin\{(?:"+BOX+r")\}(?:\[[^\]\n]*\])?\n)((?:\s*\\item[^\n]*\n(?:(?!\s*\\(?:item|end))[^\n]*\n)*)+)(\\end\{(?:"+BOX+r")\})")
 FOREACH=re.compile(r"(\\foreach[^\n]*\bin\s*\{[^{}]*?)\s*\n\s*\}")
@@ -30,6 +32,10 @@ def fix(s):
         s=s.replace("step/.style","stepbox/.style")
         s=re.sub(r"\[[^\]\n]*\]",lambda m:re.sub(r"(?<=[\[,\s])step(?=[,\]\s])","stepbox",m.group(0)),s)
     s=s.replace("\\UAL\\ ","UAL ").replace("\\UAL","UAL").replace("\\milli\\meter\\mercure","\\milli\\meter\\of{Hg}")
+    s=re.sub(r"\\cle\{([^{}$]*[\^_][^{}$]*)\}",lambda m:"\\cle{$"+m.group(1)+"$}",s)
+    s=cle_math.fix(s)
+    s=re.sub(r"^\\(attention|aretenir|definition|propriete|methode)\[([^\]\n]*)\][ \t]*(.+)$",lambda m:"\\begin{"+m.group(1)+"}["+m.group(2)+"]\n"+m.group(3)+"\n\\end{"+m.group(1)+"}",s,flags=re.M)
+    s=re.sub(r"label=(?!\{)((?:above|below|left|right)[a-z ]*:)(\$[^$]*\$)",lambda m:"label={"+m.group(1)+m.group(2)+"}",s)
     s=re.sub(r"\{groupplots\}","{groupplot}",s)
     s=re.sub(r"\\SI\{([0-9.,]+)\}\{-+\}\{([0-9.,]+)\}",r"\\SIrange{\1}{\2}",s)
     s=re.sub(r"\{km\$\^2\$\}",r"{\\kilo\\meter\\squared}",s); s=re.sub(r"\{m\$\^2\$\}",r"{\\meter\\squared}",s)
