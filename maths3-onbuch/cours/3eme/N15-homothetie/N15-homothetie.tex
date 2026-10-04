@@ -1,0 +1,2969 @@
+% Homothétie — Mathématiques 3ème — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N15-homothetie.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{3ème}
+\newcommand{\DOCMODULE}{Mathématiques – classe de 3ème}
+\newcommand{\DOCLECON}{N15}
+\newcommand{\DOCTITRE}{Homothétie}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Homothétie}{Mathématiques}{3ème}{Mathématiques – classe de 3ème}{N15}{2 séances (fiche de progression harmonisée)}{Cette leçon introduit l'homothétie, transformation géométrique qui agrandit ou réduit les figures depuis un point fixe appelé centre. Elle permet de construire l'image d'un point, de reconnaître et d'utiliser les agrandissements et réductions dans des situations concrètes de la vie courante.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir une homothétie par son centre et son rapport
+\item construire l'image d'un point par une homothétie de centre et de rapport donnés
+\item déterminer le centre et le rapport d'une homothétie à partir d'un point et de son image
+\item reconnaître un agrandissement et une réduction et calculer le coefficient correspondant
+\item calculer les dimensions d'une figure agrandie ou réduite (longueurs, aires)
+\item appliquer l'homothétie à des situations concrètes (photocopies, plans, cartes, maquettes)
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Découverte et définition de l'homothétie
+\item Construction de l'image d'un point
+\item Agrandissement et réduction
+\item Propriétés de l'homothétie
+\item Homothétie et situations concrètes de la vie courante
+\item Synthèse et compléments
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir une homothétie par son centre et son rapport
+\item construire l'image d'un point par une homothétie de centre et de rapport donnés
+\item déterminer le centre et le rapport d'une homothétie à partir d'un point et de son image
+\item reconnaître un agrandissement et une réduction et calculer le coefficient correspondant
+\item calculer les dimensions d'une figure agrandie ou réduite (longueurs, aires)
+\item appliquer l'homothétie à des situations concrètes (photocopies, plans, cartes, maquettes)
+\item rédiger et justifier une démarche de construction ou de calcul en utilisant le vocabulaire approprié
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Alignement de points et colinéarité de vecteurs (4ème)
+\item Proportionnalité et tableaux de proportionnalité (5ème-4ème)
+\item Notion de vecteur et écriture vectorielle simple
+\item Théorème de Thalès et configurations de base (3ème, début d'année)
+\item Calcul d'aires de figures usuelles (triangle, rectangle, disque)
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Découverte et définition de l'homothétie}
+
+\courssub{Situation d'accroche : l'agrandissement à la photocopieuse}
+
+Mama Fotso veut agrandir la photo d'identité de son fils pour son dossier d'inscription au lycée : la photo mesure 4 cm $\times$ 5 cm et le formulaire exige une photo deux fois plus grande. Au cybercafé de Nkongsamba, l'opérateur place la photo sur la photocopieuse et règle le taux d'agrandissement à 200 \%. Comment prévoir les dimensions de la nouvelle photo ? Où faut-il placer l'original pour que la copie soit bien cadrée ?
+
+Autre expérience, que tu as sûrement déjà vécue : le soir, quand on place la main entre une lampe et un mur, l'ombre de la main projetée sur le mur est beaucoup plus grande que la main elle-même. Pourtant, l'ombre a exactement la même \emph{forme} que la main : les doigts restent des doigts, les angles sont conservés, seules les tailles changent. La lampe joue le rôle d'un point fixe, et chaque point de la main est « envoyé » sur un point de l'ombre, sur la même ligne partant de la lampe.
+
+Ces deux situations — la photocopieuse et l'ombre projetée — ont la même structure mathématique :
+\begin{itemize}
+\item il y a un \cle{point fixe} (la source lumineuse, le coin de référence de la photocopieuse) ;
+\item chaque point $M$ de l'objet est transformé en un point $M'$ situé \emph{sur la droite joignant le point fixe à $M$} ;
+\item toutes les distances au point fixe sont multipliées par \emph{le même nombre}.
+\end{itemize}
+
+Cette transformation géométrique porte un nom : c'est l'\cle{homothétie}. Dans cette leçon, nous allons la définir rigoureusement, apprendre à construire l'image d'un point, distinguer agrandissement et réduction, puis l'appliquer à des situations concrètes de la vie courante. À la fin de la leçon, tu seras capable de répondre précisément aux questions de Mama Fotso.
+
+\textbf{Problématique :} comment décrire mathématiquement un agrandissement ou une réduction, et comment prévoir la position et les dimensions de l'image d'une figure ?
+
+\courssub{Activité de découverte : l'ombre d'un segment}
+
+\begin{experience}[De la lampe à la mathématisation]
+Imaginons une lampe placée en un point $O$, et une petite règle $[AB]$ de 3 cm placée à 6 cm de la lampe, parallèlement à un mur situé à 18 cm de la lampe.
+\begin{enumerate}
+\item La lumière part de $O$, rase l'extrémité $A$ de la règle et frappe le mur en un point $A'$. Que peux-tu dire des points $O$, $A$ et $A'$ ? Ils sont \emph{alignés}.
+\item De même, $O$, $B$ et l'ombre $B'$ sont alignés.
+\item Le mur est 3 fois plus loin de $O$ que la règle ($18 = 3 \times 6$). On admet (et le théorème de Thalès le justifie) que l'ombre $A'B'$ mesure alors $3 \times 3 = 9$ cm.
+\end{enumerate}
+Chaque distance issue de $O$ a été multipliée par $3$ : $OA' = 3 \times OA$ et $OB' = 3 \times OB$. On dit que $A'$ et $B'$ sont les images de $A$ et $B$ par l'homothétie de centre $O$ et de rapport $3$.
+\end{experience}
+
+Cette activité contient l'essentiel de la définition : un centre $O$, un rapport (ici $3$), et des images situées sur les demi-droites issues de $O$. Reste à écrire cela proprement, avec le langage des vecteurs, qui permet aussi de gérer le cas où l'image est « de l'autre côté » de $O$.
+
+\courssub{Définition de l'homothétie}
+
+Rappelons d'abord une notation de la leçon sur les vecteurs : si $k$ est un nombre réel et $\vec{u}$ un vecteur, le vecteur $k\,\vec{u}$ est le vecteur :
+\begin{itemize}
+\item de même direction que $\vec{u}$ ;
+\item de même sens que $\vec{u}$ si $k > 0$, de sens opposé si $k < 0$ ;
+\item de longueur $|k|$ fois celle de $\vec{u}$.
+\end{itemize}
+
+\begin{definition}[Homothétie de centre $O$ et de rapport $k$]
+Soit $O$ un point du plan et $k$ un nombre réel \textbf{non nul}.
+On appelle \cle{homothétie} de \cle{centre} $O$ et de \cle{rapport} $k$ la transformation qui, à tout point $M$ du plan, associe le point $M'$ défini par :
+\[ \overrightarrow{OM'} = k \, \overrightarrow{OM}. \]
+Le point $M'$ est appelé l'\cle{image} du point $M$. On note souvent $M' = h(M)$, où $h$ désigne l'homothétie.
+\end{definition}
+
+Décortiquons cette égalité vectorielle $\overrightarrow{OM'} = k\,\overrightarrow{OM}$. Elle dit trois choses à la fois :
+\begin{enumerate}
+\item \textbf{Direction :} les vecteurs $\overrightarrow{OM}$ et $\overrightarrow{OM'}$ ont la même direction, donc les points $O$, $M$ et $M'$ sont sur une même droite.
+\item \textbf{Sens :} si $k > 0$, $M'$ est du même côté que $M$ par rapport à $O$ (sur la demi-droite $[OM)$) ; si $k < 0$, $M'$ est de l'autre côté de $O$.
+\item \textbf{Longueur :} en passant aux distances, $OM' = |k| \times OM$.
+\end{enumerate}
+
+\begin{aretenir}[Vocabulaire]
+Dans une homothétie :
+\begin{itemize}
+\item le point fixe $O$ s'appelle le \cle{centre} de l'homothétie ;
+\item le nombre réel non nul $k$ s'appelle le \cle{rapport} ;
+\item $M$ est le point de départ (l'antécédent), $M'$ est son \cle{image} ;
+\item la relation fondamentale est $\overrightarrow{OM'} = k\,\overrightarrow{OM}$, qui entraîne $OM' = |k| \cdot OM$.
+\end{itemize}
+\end{aretenir}
+
+\begin{exemplebox}[Un premier calcul d'image]
+Soit $O$ un point fixe et $M$ un point tel que $OM = 3$ cm. On considère l'homothétie $h$ de centre $O$ et de rapport $k = 2$.
+\begin{itemize}
+\item Relation : $\overrightarrow{OM'} = 2\,\overrightarrow{OM}$.
+\item Distance : $OM' = |2| \times OM = 2 \times 3 = 6$ cm.
+\item Position : comme $k = 2 > 0$, $M'$ est sur la demi-droite $[OM)$, à 6 cm de $O$.
+\end{itemize}
+Pour placer $M'$ : on trace la demi-droite $[OM)$ et on reporte 6 cm à partir de $O$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1,>=Stealth]
+\coordinate (O) at (0,0);
+\coordinate (M) at (1.5,0.9);
+\coordinate (Mp) at (3,1.8);
+\coordinate (N) at (1.2,-1);
+\coordinate (Np) at (2.4,-2);
+% demi-droites
+\draw[popmuted,dashed] (O) -- ($(O)!1.35!(M)$);
+\draw[popmuted,dashed] (O) -- ($(O)!1.35!(N)$);
+% vecteurs
+\draw[->,popblue,thick] (O) -- (M);
+\draw[->,popblue,thick] (O) -- (Mp);
+\draw[->,poporange,thick] (O) -- (N);
+\draw[->,poporange,thick] (O) -- (Np);
+% points
+\fill[popdark] (O) circle (1.6pt) node[below left] {$O$};
+\fill[popblue] (M) circle (1.6pt) node[above right] {$M$};
+\fill[popblue] (Mp) circle (1.6pt) node[above right] {$M'$};
+\fill[poporange] (N) circle (1.6pt) node[below left] {$N$};
+\fill[poporange] (Np) circle (1.6pt) node[below right] {$N'$};
+\node[popblue] at (0.55,0.55) {\small $\vec{u}$};
+\node[popblue] at (2.1,1.55) {\small $2\vec{u}$};
+\end{tikzpicture}
+\end{center}
+\legende{Homothétie de centre $O$ et de rapport $k = 2$ : $\overrightarrow{OM'} = 2\overrightarrow{OM}$ et $\overrightarrow{ON'} = 2\overrightarrow{ON}$. Les images sont du même côté que les points, deux fois plus loin de $O$.}
+\end{popfigure}
+
+\courssub{Conséquence immédiate : l'alignement}
+
+\begin{propriete}[Alignement de $O$, $M$ et $M'$]
+Soit $h$ une homothétie de centre $O$. Pour tout point $M$ distinct de $O$, d'image $M' = h(M)$, les points $O$, $M$ et $M'$ sont \textbf{alignés}.
+\end{propriete}
+
+\begin{experience}[Justification]
+Cette propriété découle directement de la définition ; montrons-la pas à pas.
+\begin{enumerate}
+\item Par définition de l'homothétie, $\overrightarrow{OM'} = k\,\overrightarrow{OM}$.
+\item Or deux vecteurs dont l'un est le produit de l'autre par un nombre réel sont \emph{colinéaires} : $\overrightarrow{OM'}$ et $\overrightarrow{OM}$ sont colinéaires.
+\item Deux vecteurs colinéaires ayant la même origine $O$ sont portés par la même droite : les points $O$, $M$ et $M'$ appartiennent donc à une même droite, la droite $(OM)$.
+\end{enumerate}
+Conclusion : l'image d'un point $M$ se trouve toujours quelque part sur la droite $(OM)$. C'est la propriété que l'on utilise en premier pour construire une image.
+\end{experience}
+
+\begin{attention}[Piège : le côté de $M'$ par rapport à $O$]
+Erreur très fréquente : croire que $M'$ est \emph{toujours} du même côté que $M$ par rapport à $O$. C'est faux !
+\begin{itemize}
+\item Si $k > 0$ : $M'$ est bien sur la demi-droite $[OM)$, du même côté que $M$.
+\item Si $k < 0$ : $M'$ est sur la demi-droite \emph{opposée} à $[OM)$, de l'autre côté de $O$.
+\end{itemize}
+Avant de placer $M'$, regarde toujours le \textbf{signe} du rapport $k$. Par exemple, pour $k = -\dfrac{1}{2}$ et $OM = 4$ cm, on a $OM' = \dfrac{1}{2} \times 4 = 2$ cm, mais $M'$ est placé \emph{de l'autre côté} de $O$.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1,>=Stealth]
+\coordinate (O) at (0,0);
+\coordinate (M) at (2,1.2);
+\coordinate (Mp) at (-1,-0.6);
+\coordinate (N) at (1.6,-1.2);
+\coordinate (Np) at (-0.8,0.6);
+% droites
+\draw[popmuted,dashed] ($(O)!-0.85!(M)$) -- ($(O)!1.25!(M)$);
+\draw[popmuted,dashed] ($(O)!-0.85!(N)$) -- ($(O)!1.25!(N)$);
+% vecteurs
+\draw[->,popblue,thick] (O) -- (M);
+\draw[->,poppink,thick] (O) -- (Mp);
+\draw[->,poporange,thick] (O) -- (N);
+\draw[->,popgreen,thick] (O) -- (Np);
+% points
+\fill[popdark] (O) circle (1.6pt) node[above left] {$O$};
+\fill[popblue] (M) circle (1.6pt) node[above right] {$M$};
+\fill[poppink] (Mp) circle (1.6pt) node[below left] {$M'$};
+\fill[poporange] (N) circle (1.6pt) node[below right] {$N$};
+\fill[popgreen] (Np) circle (1.6pt) node[above left] {$N'$};
+\end{tikzpicture}
+\end{center}
+\legende{Homothétie de centre $O$ et de rapport $k = -\dfrac{1}{2}$ : les images $M'$ et $N'$ sont de l'autre côté de $O$, deux fois plus proches de $O$ ($OM' = \dfrac{1}{2}OM$).}
+\end{popfigure}
+
+\courssub{Cas particuliers et image du centre}
+
+Intéressons-nous maintenant à quelques valeurs remarquables du rapport $k$.
+
+\textbf{Cas où $k = 1$ : l'identité.} Si $k = 1$, la relation devient $\overrightarrow{OM'} = \overrightarrow{OM}$, c'est-à-dire $M' = M$ : chaque point est sa propre image. L'homothétie de rapport $1$ ne transforme rien ; on dit que tout point est \cle{invariant}. C'est une homothétie un peu « paresseuse », mais elle existe bien.
+
+\textbf{Cas où $k = -1$ : la symétrie centrale.} Si $k = -1$, la relation devient $\overrightarrow{OM'} = -\overrightarrow{OM}$, autrement dit $O$ est le milieu de $[MM']$. On retrouve exactement la définition de la \cle{symétrie centrale} de centre $O$, étudiée en classe de 6\textsuperscript{e} et 5\textsuperscript{e} !
+
+\begin{savaistu}[La symétrie centrale est une homothétie]
+Tu connais la symétrie centrale depuis le cycle primaire : l'image de $M$ par la symétrie de centre $O$ est le point $M'$ tel que $O$ soit le milieu de $[MM']$. Avec le langage des homothéties, cela s'écrit simplement : la symétrie centrale de centre $O$ est l'homothétie de centre $O$ et de rapport $k = -1$. C'est un bel exemple de la puissance des mathématiques : une notion nouvelle (l'homothétie) englobe et généralise une notion ancienne (la symétrie centrale). Le mot « homothétie » vient du grec \emph{homos} (semblable) et \emph{thesis} (position) : il désigne des figures « semblablement placées » par rapport au centre.
+\end{savaistu}
+
+\textbf{Pourquoi $k = 0$ est exclu.} Si l'on posait $k = 0$, la relation donnerait $\overrightarrow{OM'} = \vec{0}$, c'est-à-dire $M' = O$ pour \emph{tous} les points $M$ : le plan entier serait écrasé sur un seul point. Ce n'est plus une transformation intéressante (on ne pourrait pas « revenir en arrière »). C'est pourquoi la définition impose $k \neq 0$.
+
+\textbf{Image du centre $O$.} Quelle est l'image du point $O$ lui-même ? Appliquons la définition avec $M = O$ :
+\[ \overrightarrow{OO'} = k\,\overrightarrow{OO} = k\,\vec{0} = \vec{0}, \]
+donc $O' = O$. Le centre est toujours sa propre image, quel que soit le rapport $k$.
+
+\begin{propriete}[Point invariant]
+Dans toute homothétie de centre $O$ et de rapport $k \neq 0$, le centre $O$ est sa propre image : on dit que $O$ est un point \cle{invariant}. De plus, si $k \neq 1$, $O$ est le \textbf{seul} point invariant.
+\end{propriete}
+
+\begin{exoresolu}[Placer des images et exploiter les cas particuliers]
+Sur une feuille, on place un point $O$ et un point $A$ tel que $OA = 4$ cm.
+\begin{enumerate}
+\item Construire l'image $A_1$ de $A$ par l'homothétie de centre $O$ et de rapport $k = 2$.
+\item Construire l'image $A_2$ de $A$ par l'homothétie de centre $O$ et de rapport $k = -\dfrac{1}{2}$.
+\item Quelle est l'image de $A$ par l'homothétie de centre $O$ et de rapport $-1$ ? Et quelle est l'image de $O$ dans chacune de ces homothéties ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item $k = 2 > 0$ : $A_1$ est sur la demi-droite $[OA)$ et $OA_1 = 2 \times OA = 2 \times 4 = 8$ cm. On trace la demi-droite $[OA)$ et on reporte 8 cm depuis $O$.
+\item $k = -\dfrac{1}{2} < 0$ : $A_2$ est sur la demi-droite \emph{opposée} à $[OA)$, et $OA_2 = \left|-\dfrac{1}{2}\right| \times OA = \dfrac{1}{2} \times 4 = 2$ cm. On prolonge la droite $(OA)$ de l'autre côté de $O$ et on reporte 2 cm.
+\item Pour $k = -1$, l'image de $A$ est le symétrique de $A$ par rapport à $O$ : c'est le point $A_3$ tel que $O$ soit le milieu de $[AA_3]$, avec $OA_3 = 4$ cm de l'autre côté de $O$. Dans les trois homothéties, l'image de $O$ est $O$ lui-même : le centre est toujours invariant.
+\end{enumerate}
+Vérification de cohérence : dans les trois cas, $O$, $A$ et l'image sont alignés, comme l'affirme la propriété d'alignement.
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item L'homothétie de centre $O$ et de rapport $k \neq 0$ transforme $M$ en $M'$ tel que $\overrightarrow{OM'} = k\,\overrightarrow{OM}$.
+\item Conséquences : $O$, $M$, $M'$ alignés ; $OM' = |k| \cdot OM$.
+\item $k > 0$ : $M'$ du même côté que $M$ ; $k < 0$ : $M'$ de l'autre côté de $O$.
+\item $k = 1$ : tout point est invariant ; $k = -1$ : symétrie centrale ; $k = 0$ : exclu.
+\item Le centre $O$ est toujours sa propre image.
+\end{itemize}
+Dans la section suivante, nous apprendrons une méthode de construction précise de l'image d'un point, puis nous verrons comment l'homothétie agrandit ou réduit les figures — ce qui nous permettra enfin de répondre à la question de Mama Fotso.
+\end{aretenir}
+
+\coursec{Construction de l'image d'un point}
+
+Dans la section précédente, nous avons découvert l'\cle{homothétie} : étant donné un point $O$ (le \cle{centre}) et un nombre réel non nul $k$ (le \cle{rapport}), l'homothétie $h(O\,;k)$ transforme tout point $M$ en un point $M'$ tel que $\overrightarrow{OM'} = k \times \overrightarrow{OM}$. Nous avons compris le sens de cette égalité vectorielle. Reste maintenant la question pratique, celle que te posera ton professeur au BEPC : \emph{comment construire concrètement ce point $M'$ sur ta feuille ?} C'est toute l'ambition de cette section. Tu vas apprendre à construire $M'$ à la règle graduée, sur quadrillage, à la règle et au compas, et même à faire le chemin inverse : retrouver le rapport $k$ à partir d'une figure.
+
+\courssub{Le principe général de la construction}
+
+Reprenons l'égalité $\overrightarrow{OM'} = k\,\overrightarrow{OM}$. Elle contient \textbf{deux informations indépendantes} qu'il faut traiter séparément :
+
+\begin{itemize}
+\item \textbf{La valeur absolue $|k|$ donne la distance} : $OM' = |k| \times OM$. C'est elle qui dit \og à quelle distance de $O$ placer $M'$ \fg.
+\item \textbf{Le signe de $k$ donne la position} : si $k > 0$, $M'$ est du \emph{même côté} que $M$ par rapport à $O$ (sur la demi-droite $[OM)$) ; si $k < 0$, $M'$ est de \emph{l'autre côté} (sur la demi-droite opposée à $[OM)$).
+\end{itemize}
+
+Dans tous les cas, $O$, $M$ et $M'$ sont \cle{alignés} : la première chose à faire est donc toujours de tracer la droite $(OM)$.
+
+\begin{methode}[Construire l'image $M'$ de $M$ par $h(O\,;k)$]
+Pour construire le point $M'$, image du point $M$ par l'homothétie de centre $O$ et de rapport $k$ :
+\begin{enumerate}
+\item Tracer la droite $(OM)$ ;
+\item Mesurer (ou calculer) la distance $OM$, puis calculer $OM' = |k| \times OM$ ;
+\item Placer $M'$ sur la droite $(OM)$, à la distance $OM'$ de $O$ :
+\begin{itemize}
+\item \textbf{du côté de $M$} (sur la demi-droite $[OM)$) si $k > 0$ ;
+\item \textbf{de l'autre côté} (sur la demi-droite opposée à $[OM)$) si $k < 0$.
+\end{itemize}
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Les deux rôles du rapport $k$]
+Le rapport $k$ joue \textbf{deux rôles différents} qu'il ne faut jamais confondre :
+\begin{itemize}
+\item son \textbf{signe} indique la \emph{position} de $M'$ (même côté ou côté opposé) ;
+\item sa \textbf{valeur absolue} indique la \emph{distance} (par combien on multiplie $OM$).
+\end{itemize}
+Erreur fréquente : pour $k = -2$ et $OM = 3$~cm, écrire \og $OM' = -6$~cm \fg. Une distance est toujours positive ! La bonne rédaction est : $OM' = |-2| \times 3 = 6$~cm, et $M'$ est placé de l'autre côté de $O$ parce que $k < 0$.
+\end{attention}
+
+\courssub{Construction lorsque le rapport est positif ($k > 0$)}
+
+Lorsque $k > 0$, la construction est la plus intuitive : $M'$ est sur la demi-droite $[OM)$, c'est-à-dire \og dans le prolongement du regard \fg\ depuis $O$ vers $M$. On mesure $OM$, on multiplie par $k$, et on reporte.
+
+\begin{exemplebox}[Construction pour $k = 3$]
+Soit $O$ et $M$ deux points tels que $OM = 2$~cm. Construisons $M'$, image de $M$ par $h(O\,;3)$.
+\begin{enumerate}
+\item On trace la demi-droite $[OM)$.
+\item On calcule : $OM' = 3 \times OM = 3 \times 2 = 6$~cm.
+\item Comme $k = 3 > 0$, on place $M'$ sur la demi-droite $[OM)$, à $6$~cm de $O$.
+\end{enumerate}
+Le point $M'$ est trois fois plus loin de $O$ que $M$, dans la même direction : c'est un \cle{agrandissement}.
+\end{exemplebox}
+
+\courssub{Construction lorsque le rapport est négatif ($k < 0$)}
+
+Lorsque $k < 0$, le point $M'$ \og traverse \fg\ le centre $O$ : il se trouve sur la demi-droite \emph{opposée} à $[OM)$. La distance, elle, se calcule avec $|k|$.
+
+\begin{exemplebox}[Construction pour $k = -2$]
+Soit $O$ et $M$ deux points tels que $OM = 2,5$~cm. Construisons $M'$, image de $M$ par $h(O\,;-2)$.
+\begin{enumerate}
+\item On trace la droite $(OM)$ et on prolonge de l'autre côté de $O$ : on obtient la demi-droite opposée à $[OM)$.
+\item On calcule : $OM' = |-2| \times OM = 2 \times 2,5 = 5$~cm.
+\item Comme $k = -2 < 0$, on place $M'$ sur la demi-droite \textbf{opposée} à $[OM)$, à $5$~cm de $O$.
+\end{enumerate}
+Le point $O$ se trouve alors \emph{entre} $M$ et $M'$.
+\end{exemplebox}
+
+\begin{attention}[Piège classique au BEPC]
+Pour $k < 0$, beaucoup d'élèves placent $M'$ du même côté que $M$ par habitude. Retiens ceci : \textbf{un rapport négatif fait passer $M'$ de l'autre côté du centre}. Avant de poser ton compas ou ta règle, demande-toi toujours : \og le rapport est-il positif ou négatif ? \fg
+\end{attention}
+
+\courssub{Construction sur quadrillage, sans règle graduée}
+
+Sur une feuille quadrillée (ou sur le papier millimétré), on peut construire l'image d'un point \textbf{sans aucune mesure}, en comptant les carreaux. L'idée est de décomposer le déplacement de $O$ vers $M$ en un déplacement horizontal et un déplacement vertical, puis de multiplier chacun par $k$.
+
+\begin{methode}[Construire $M'$ sur quadrillage]
+\begin{enumerate}
+\item Repérer le déplacement de $O$ vers $M$ : par exemple \og 4 carreaux vers la droite et 2 carreaux vers le haut \fg.
+\item Multiplier chaque déplacement par $k$ (avec le signe !). Pour $k = \dfrac{3}{2}$ : $4 \times \dfrac{3}{2} = 6$ carreaux vers la droite et $2 \times \dfrac{3}{2} = 3$ carreaux vers le haut.
+\item À partir de $O$, effectuer ce nouveau déplacement : on arrive en $M'$.
+\end{enumerate}
+Si $k < 0$, les directions s'inversent : \og droite \fg\ devient \og gauche \fg\ et \og haut \fg\ devient \og bas \fg.
+\end{methode}
+
+\begin{exemplebox}[Image de $A$ pour $k = \dfrac{3}{2}$ sur quadrillage]
+Sur le quadrillage ci-dessous, pour aller de $O$ à $A$, on se déplace de 4 carreaux vers la droite et 2 carreaux vers le haut. Pour $k = \dfrac{3}{2}$, on multiplie : $4 \times \dfrac{3}{2} = 6$ et $2 \times \dfrac{3}{2} = 3$. Le point $A'$ se trouve donc à 6 carreaux à droite et 3 carreaux au-dessus de $O$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.75]
+\draw[step=1,popline!45,very thin] (-1,-1) grid (8,5);
+\draw[->,popmuted] (-1,0) -- (8.3,0);
+\draw[->,popmuted] (0,-1) -- (0,5.3);
+% Vecteur OA décomposé
+\draw[->,popblue,thick] (0,0) -- (4,0);
+\draw[->,popblue,thick] (4,0) -- (4,2);
+\node[popblue,below] at (2,0) {\small 4 carreaux};
+\node[popblue,right] at (4,1) {\small 2 carreaux};
+% Vecteur OA' décomposé
+\draw[->,poporange,thick,dashed] (0,0) -- (6,0);
+\draw[->,poporange,thick,dashed] (6,0) -- (6,3);
+\node[poporange,below left] at (5.4,-0.1) {\small 6 carreaux};
+\node[poporange,right] at (6,1.5) {\small 3 carreaux};
+% Points
+\fill[popdark] (0,0) circle (2.2pt) node[below left] {$O$};
+\fill[popblue] (4,2) circle (2.2pt) node[above left] {$A$};
+\fill[poporange] (6,3) circle (2.2pt) node[above right] {$A'$};
+% Alignement
+\draw[poppink,thin] (-0.8,-0.4) -- (7.2,3.6);
+\node[poppink] at (7.4,3.75) {\small $(OA)$};
+\end{tikzpicture}
+\end{center}
+\legende{Construction de $A'$, image de $A$ par $h\left(O\,;\dfrac{3}{2}\right)$, en comptant les carreaux : les déplacements sont multipliés par $\dfrac{3}{2}$. On vérifie que $O$, $A$ et $A'$ sont alignés.}
+\end{popfigure}
+
+Remarque la vérification offerte par la figure : les trois points $O$, $A$ et $A'$ doivent être alignés. Si ton point $A'$ n'est pas sur la droite $(OA)$, c'est qu'un comptage est faux.
+
+\courssub{Construction à la règle et au compas pour des rapports simples}
+
+Pour les rapports entiers ou fractionnaires simples ($2$, $3$, $\dfrac{1}{2}$, \ldots), le compas permet une construction précise, sans graduation.
+
+\begin{methode}[Rapports simples à la règle et au compas]
+\begin{itemize}
+\item \textbf{Rapport $k = 2$ :} on reporte la longueur $OM$ une fois de plus à partir de $M$, sur la demi-droite $[OM)$. Alors $OM' = 2\,OM$.
+\item \textbf{Rapport $k = 3$ :} on reporte la longueur $OM$ deux fois de suite à partir de $M$. Alors $OM' = 3\,OM$.
+\item \textbf{Rapport $k = \dfrac{1}{2}$ :} on construit la \cle{médiatrice} du segment $[OM]$ ; son intersection avec $[OM]$ est le milieu $M'$, et $OM' = \dfrac{1}{2}OM$.
+\item \textbf{Rapport $k = -2$ :} on reporte la longueur $OM$ deux fois de suite à partir de $O$, mais sur la demi-droite \emph{opposée} à $[OM)$.
+\end{itemize}
+\end{methode}
+
+\begin{exoresolu}[Construction au compas]
+Énoncé. Soit $O$ et $B$ deux points tels que $OB = 3$~cm. Construire à la règle et au compas le point $B'$, image de $B$ par l'homothétie $h\left(O\,;-\dfrac{1}{2}\right)$.
+\tcblower
+Solution détaillée.
+\begin{enumerate}
+\item On calcule la distance : $OB' = \left|-\dfrac{1}{2}\right| \times OB = \dfrac{1}{2} \times 3 = 1,5$~cm.
+\item Le rapport est négatif : $B'$ sera sur la demi-droite \textbf{opposée} à $[OB)$.
+\item On trace la droite $(OB)$. On construit la médiatrice du segment $[OB]$ : elle coupe $[OB]$ en son milieu $I$, avec $OI = 1,5$~cm.
+\item On prend le compas écarté de la largeur $OI$ ; on pique en $O$ et on trace un arc qui coupe la demi-droite opposée à $[OB)$ en $B'$.
+\end{enumerate}
+On a bien $OB' = 1,5$~cm et $B'$ de l'autre côté de $O$ : la construction est terminée. Vérification : $\dfrac{OB'}{OB} = \dfrac{1,5}{3} = \dfrac{1}{2} = |k|$, et $B'$ est du côté opposé car $k < 0$.
+\end{exoresolu}
+
+\courssub{Problème inverse : retrouver le rapport $k$}
+
+Voici maintenant l'exercice \og miroir \fg, très classique au BEPC : sur une figure, on te donne le centre $O$, un point $M$ et son image $M'$, tous alignés, avec des mesures. On te demande de retrouver le rapport $k$ de l'homothétie.
+
+\begin{methode}[Retrouver le rapport à partir d'une figure]
+\begin{enumerate}
+\item Mesurer les distances $OM$ et $OM'$ sur la figure.
+\item Calculer la valeur absolue du rapport : $|k| = \dfrac{OM'}{OM}$.
+\item Déterminer le signe :
+\begin{itemize}
+\item $k > 0$ si $M$ et $M'$ sont du \textbf{même côté} de $O$ ;
+\item $k < 0$ si $M$ et $M'$ sont de \textbf{part et d'autre} de $O$ (c'est-à-dire si $O$ est entre $M$ et $M'$).
+\end{itemize}
+\item Conclure : $k = +\dfrac{OM'}{OM}$ ou $k = -\dfrac{OM'}{OM}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Deux situations contrastées]
+\textbf{Situation 1.} $O$, $M$, $M'$ alignés dans cet ordre, avec $OM = 2$~cm et $OM' = 5$~cm. Les points $M$ et $M'$ sont du même côté de $O$, donc :
+\[ k = +\dfrac{OM'}{OM} = \dfrac{5}{2} = 2,5. \]
+\textbf{Situation 2.} $M$, $O$, $M'$ alignés dans cet ordre ($O$ entre $M$ et $M'$), avec $OM = 2$~cm et $OM' = 5$~cm. Les points sont de part et d'autre de $O$, donc :
+\[ k = -\dfrac{OM'}{OM} = -\dfrac{5}{2} = -2,5. \]
+Les distances sont identiques dans les deux cas : seul le \emph{signe} change, et c'est la \emph{position} qui le décide.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05]
+% Cas 1 : k > 0
+\draw[popline] (-0.5,0) -- (6.5,0);
+\fill[popdark] (0,0) circle (2pt) node[below] {$O$};
+\fill[popblue] (2,0) circle (2pt) node[below] {$M$};
+\fill[poporange] (5,0) circle (2pt) node[below] {$M'$};
+\draw[popblue,thick] (0,0.25) -- (2,0.25) node[midway,above,popblue] {\small $OM = 2$~cm};
+\draw[poporange,thick] (0,-0.55) -- (5,-0.55) node[midway,below,poporange] {\small $OM' = 5$~cm};
+\node[popdark] at (3,1.1) {\small \textbf{Cas 1 :} $M$ et $M'$ du même côté, $k = +\dfrac{5}{2}$};
+% Cas 2 : k < 0
+\begin{scope}[yshift=-3.2cm]
+\draw[popline] (-4.5,0) -- (3.5,0);
+\fill[popblue] (-4,0) circle (2pt) node[below] {$M$};
+\fill[popdark] (0,0) circle (2pt) node[below] {$O$};
+\fill[poporange] (2.5,0) circle (2pt) node[below] {$M'$};
+\draw[popblue,thick] (-4,0.25) -- (0,0.25) node[midway,above,popblue] {\small $OM = 4$~cm};
+\draw[poporange,thick] (0,-0.55) -- (2.5,-0.55) node[midway,below,poporange] {\small $OM' = 2$~cm};
+\node[popdark] at (-0.5,1.1) {\small \textbf{Cas 2 :} $O$ entre $M$ et $M'$, $k = -\dfrac{2}{4} = -\dfrac{1}{2}$};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{Détermination du rapport $k$ à partir de $O$, $M$, $M'$ alignés : on calcule $\dfrac{OM'}{OM}$, puis on choisit le signe selon la position de $M'$ par rapport à $O$ et $M$.}
+\end{popfigure}
+
+\begin{exoresolu}[Retrouver le rapport d'une homothétie]
+Énoncé. Sur une figure, les points $P$, $O$ et $P'$ sont alignés dans cet ordre. On mesure $OP = 3$~cm et $OP' = 7,5$~cm. Le point $P'$ est l'image de $P$ par une homothétie de centre $O$. Déterminer son rapport $k$.
+\tcblower
+Solution détaillée.
+\begin{enumerate}
+\item \textbf{Valeur absolue :} $|k| = \dfrac{OP'}{OP} = \dfrac{7,5}{3} = 2,5$.
+\item \textbf{Signe :} les points sont alignés dans l'ordre $P$, $O$, $P'$, donc $O$ est \emph{entre} $P$ et $P'$ : les points $P$ et $P'$ sont de part et d'autre de $O$. Le rapport est donc négatif.
+\item \textbf{Conclusion :} $k = -2,5$.
+\end{enumerate}
+Vérification : $\overrightarrow{OP'} = -2,5\,\overrightarrow{OP}$ donne bien $OP' = 2,5 \times 3 = 7,5$~cm, avec $P'$ du côté opposé à $P$. La réponse est cohérente.
+\end{exoresolu}
+
+\courssub{Vérifier sa construction : mesure et calcul}
+
+Une construction géométrique n'est jamais terminée tant qu'on ne l'a pas \textbf{vérifiée}. C'est un réflexe de bon élève, et c'est souvent un point gagné au BEPC.
+
+\begin{methode}[Vérifier une construction d'homothétie]
+Après avoir placé $M'$, effectue les trois contrôles suivants :
+\begin{enumerate}
+\item \textbf{Alignement :} les points $O$, $M$ et $M'$ sont-ils alignés ? (Pose ta règle sur $O$ et $M$ : $M'$ doit être dessus.)
+\item \textbf{Distance :} mesure $OM'$ et vérifie que $\dfrac{OM'}{OM} = |k|$.
+\item \textbf{Position :} $M'$ est-il du bon côté de $O$ ? (Même côté que $M$ si $k > 0$, côté opposé si $k < 0$.)
+\end{enumerate}
+Si l'un des trois contrôles échoue, reprends la construction à l'étape correspondante.
+\end{methode}
+
+\begin{attention}[Erreurs fréquentes à éviter]
+\begin{itemize}
+\item Placer $M'$ tel que $MM' = k \times OM$ au lieu de $OM' = |k| \times OM$ : c'est toujours à partir du \textbf{centre $O$} qu'on mesure, jamais à partir de $M$.
+\item Oublier le signe : pour $k < 0$, mesurer la bonne distance mais du mauvais côté.
+\item Écrire une distance négative : $OM' = |k| \times OM$ est toujours positif.
+\item Dans le problème inverse, donner $|k|$ sans préciser le signe : la réponse est alors incomplète.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[L'homothétie derrière l'appareil photo]
+Quand tu fais un \emph{zoom} avec ton téléphone pour photographier les chutes de la Lobé à Kribi ou un match au stade de Japoma, l'image formée sur le capteur est une homothétie de la scène réelle : le centre est le point où convergent les rayons lumineux dans l'objectif. Et comme l'image se forme \emph{à l'envers} sur le capteur, le rapport est... négatif ! C'est le processeur du téléphone qui la remet à l'endroit. Les agrandissements de photos d'identité pour tes dossiers scolaires fonctionnent sur le même principe, avec un rapport $k > 1$.
+\end{savaistu}
+
+Tu sais désormais construire l'image d'un point dans toutes les situations : rapport positif ou négatif, avec règle graduée, sur quadrillage ou au compas, et tu sais même remonter de la figure au rapport. Dans la prochaine section, nous verrons comment ces constructions se traduisent en \textbf{agrandissements et réductions} de figures entières.
+
+\coursec{Agrandissement et réduction}
+
+Dans la section précédente, nous avons appris à construire l'image d'un point par une homothétie de centre $O$ et de rapport $k$. Nous savons maintenant placer $M'$ sur la droite $(OM)$ de sorte que $\overrightarrow{OM'} = k\,\overrightarrow{OM}$. Mais que se passe-t-il réellement à la figure entière lorsque $k$ varie ? Pourquoi parle-t-on d'\emph{agrandissement} ou de \emph{réduction} ? C'est ce que nous allons découvrir en reliant la valeur numérique du rapport $k$ à la transformation visible de la figure.
+
+\courssub{Le rapport et la nature de l'homothétie}
+
+Rappelons qu'une homothétie est entièrement définie par son centre $O$ et son rapport $k$ (un nombre réel non nul). Le signe de $k$ indique la position relative de $M$ et $M'$ par rapport à $O$ (même côté si $k>0$, côtés opposés si $k<0$). C'est la \textbf{valeur absolue} $|k|$ qui dicte la modification des dimensions.
+
+\begin{definition}[Agrandissement et réduction]
+Soit $\mathcal{H}$ une homothétie de centre $O$ et de rapport $k \neq 0$.
+\begin{itemize}
+    \item Si $|k| > 1$, $\mathcal{H}$ est un \textbf{agrandissement} de \textbf{coefficient} $c = |k|$.
+    \item Si $0 < |k| < 1$, $\mathcal{H}$ est une \textbf{réduction} de \textbf{coefficient} $c = |k|$.
+    \item Si $|k| = 1$, c'est une symétrie centrale (si $k=-1$) ou l'identité (si $k=1$) : les dimensions ne changent pas.
+\end{itemize}
+Le coefficient $c = |k|$ est toujours un nombre strictement positif. Il indique \emph{combien de fois} les longueurs sont multipliées.
+\end{definition}
+
+\begin{exemplebox}[Interprétation concrète : la photocopieuse]
+Imagine une photocopieuse dans un cybercafé à Yaoundé.
+\begin{itemize}
+    \item \textbf{Réglage 200\%} : le document sort deux fois plus grand. C'est une homothétie de rapport $k = 2$ (donc $|k|=2>1$). C'est un \textbf{agrandissement de coefficient 2}.
+    \item \textbf{Réglage 50\%} : le document sort deux fois plus petit. C'est une homothétie de rapport $k = 0,5$ (donc $|k|=0,5<1$). C'est une \textbf{réduction de coefficient 0,5} (ou $\frac{1}{2}$).
+    \item \textbf{Réglage 150\%} : rapport $k = 1,5$, agrandissement de coefficient $1,5$.
+\end{itemize}
+Au quotidien, on parle en pourcentage : $k \times 100\%$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+% Homothétie centre O, rapport 2
+\coordinate (O) at (0,0);
+\coordinate (A) at (1.5, 0.5);
+\coordinate (B) at (2.5, 2);
+\coordinate (C) at (0.5, 1.8);
+% Images
+\coordinate (A') at (3, 1);
+\coordinate (B') at (5, 4);
+\coordinate (C') at (1, 3.6);
+
+% Axes et grille légère
+\draw[popmuted, very thin] (-0.5,-0.5) grid (5.5, 4.5);
+
+% Droites (OM)
+\draw[popgray, dashed] (O) -- (6, 2) node[above right] {$(OA)$};
+\draw[popgray, dashed] (O) -- (6.25, 5) node[above right] {$(OB)$};
+\draw[popgray, dashed] (O) -- (1.25, 4.5) node[above left] {$(OC)$};
+
+% Triangle initial ABC
+\draw[popblue, thick] (A) -- (B) -- (C) -- cycle;
+\node[popblue] at (A) {$\bullet$}; \node[above left, popblue] at (A) {$A$};
+\node[popblue] at (B) {$\bullet$}; \node[above right, popblue] at (B) {$B$};
+\node[popblue] at (C) {$\bullet$}; \node[left, popblue] at (C) {$C$};
+
+% Triangle image A'B'C'
+\draw[poporange, thick] (A') -- (B') -- (C') -- cycle;
+\node[poporange] at (A') {$\bullet$}; \node[below right, poporange] at (A') {$A'$};
+\node[poporange] at (B') {$\bullet$}; \node[above right, poporange] at (B') {$B'$};
+\node[poporange] at (C') {$\bullet$}; \node[left, poporange] at (C') {$C'$};
+
+% Centre O
+\fill[popdark] (O) circle (2pt) node[below left] {$O$};
+
+% Longueurs
+\draw[<->, popgreen] (A) -- node[above, sloped, popgreen] {$AB$} (B);
+\draw[<->, popgreen] (A') -- node[above, sloped, popgreen] {$A'B' = 2 \times AB$} (B');
+
+% Aire (hachures)
+\fill[popblue!15, pattern=north east lines, pattern color=popblue] (A) -- (B) -- (C) -- cycle;
+\fill[poporange!15, pattern=north west lines, pattern color=poporange] (A') -- (B') -- (C') -- cycle;
+
+% Légendes aires
+\node[popblue, align=center] at (1.5, 1) {Aire $\mathcal{A}$};
+\node[poporange, align=center] at (3.5, 3) {Aire $\mathcal{A}' = 4\mathcal{A}$};
+\end{tikzpicture}
+\legende{Homothétie de centre $O$ et de rapport $k=2$ (agrandissement). Les longueurs sont doublées, l'aire est quadruplée.}
+\end{popfigure}
+
+\courssub{Effet sur les longueurs et les aires}
+
+C'est la propriété fondamentale qui permet de résoudre tous les problèmes concrets liés aux plans, cartes et maquettes.
+
+\begin{propriete}[Effet d'une homothétie sur les longueurs et les aires -- Admis en 3ème]
+Soit $\mathcal{H}$ une homothétie de rapport $k \neq 0$.
+\begin{enumerate}
+    \item \textbf{Longueurs :} Pour tout segment $[AB]$, son image $[A'B']$ a pour longueur $A'B' = |k| \times AB$. \emph{Toutes les longueurs sont multipliées par $|k|$.}
+    \item \textbf{Aires :} Pour toute figure plane d'aire $\mathcal{A}$, l'aire $\mathcal{A}'$ de son image est $\mathcal{A}' = k^2 \times \mathcal{A}$. \emph{Toutes les aires sont multipliées par $k^2$ (donc par $|k|^2$).}
+\end{enumerate}
+\emph{Remarque :} La démonstration rigoureuse utilise les coordonnées ou le produit scalaire (programme de Seconde). En 3ème, on admet cette propriété en la vérifiant sur des exemples simples (carré, rectangle, triangle rectangle).
+\end{propriete}
+
+\begin{experience}[Découverte : l'aire sur papier quadrillé]
+\emph{Matériel :} Papier millimétré, règle, crayon.
+\begin{enumerate}
+    \item Dessine un rectangle $ABCD$ de $3\,\text{cm} \times 2\,\text{cm}$ (aire $6\,\text{cm}^2$). Compte les petits carrés.
+    \item Choisis un centre $O$ et construis l'image $A'B'C'D'$ par l'homothétie de rapport $k=2$.
+    \item Mesure les côtés de $A'B'C'D'$ : $6\,\text{cm} \times 4\,\text{cm}$. Calcule son aire : $24\,\text{cm}^2$.
+    \item Compte les petits carrés dans $A'B'C'D'$ : tu en trouves $24$.
+    \item \textbf{Constat :} Longueurs $\times 2$, Aire $\times 4 = 2^2$.
+    \item Recommence avec $k=3$ (longueurs $\times 3$, aire $\times 9$) et $k=\frac{1}{2}$ (longueurs $\div 2$, aire $\div 4$).
+\end{enumerate}
+\textbf{Conclusion :} Le coefficient d'aire est le \textbf{carré} du coefficient de longueur ($k^2$).
+\end{experience}
+
+\begin{attention}[Piège classique : l'aire n'est pas multipliée par $k$ !]
+C'est l'erreur n°1 au BEPC. Si $k=2$, les longueurs sont multipliées par $2$, mais l'aire est multipliée par $2^2 = 4$, \textbf{pas par 2}.
+\begin{itemize}
+    \item Raison : l'aire est une grandeur de dimension 2 (longueur $\times$ largeur). Chaque dimension est multipliée par $|k|$, donc le produit est multiplié par $|k| \times |k| = k^2$.
+    \item Si $k=-3$, les longueurs sont $\times 3$, l'aire est $\times (-3)^2 = 9$. Le signe de $k$ n'affecte pas l'aire.
+\end{itemize}
+\end{attention}
+
+\begin{exemplebox}[Photo d'identité agrandie pour un concours]
+Une photo d'identité mesure $4\,\text{cm} \times 5\,\text{cm}$. On veut l'agrandir à $200\%$ pour une affiche.
+\begin{enumerate}
+    \item \textbf{Rapport de l'homothétie :} $200\% = 2$, donc $k = 2$. C'est un agrandissement de coefficient $2$.
+    \item \textbf{Nouvelles dimensions :}
+    \begin{align*}
+        \text{Largeur}' &= 2 \times 4 = 8\,\text{cm} \\
+        \text{Hauteur}' &= 2 \times 5 = 10\,\text{cm}
+    \end{align*}
+    \item \textbf{Aires :}
+    \begin{align*}
+        \mathcal{A}_{\text{initiale}} &= 4 \times 5 = 20\,\text{cm}^2 \\
+        \mathcal{A}_{\text{finale}} &= 8 \times 10 = 80\,\text{cm}^2 \quad (\text{ou } k^2 \times 20 = 4 \times 20 = 80\,\text{cm}^2)
+    \end{align*}
+    L'aire a bien été multipliée par $4$ ($=k^2$), pas par $2$.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7]
+% Photo originale
+\draw[popblue, thick, fill=popblue!10] (0,0) rectangle (4,5);
+\node[popblue, align=center] at (2, 2.5) {Photo originale\\$4\,\text{cm} \times 5\,\text{cm}$\\Aire $= 20\,\text{cm}^2$};
+
+% Flèche transformation
+\draw[poporange, thick, ->] (5, 2.5) -- node[above] {\textbf{Agrandissement 200\% ($k=2$)}} (7, 2.5);
+
+% Photo agrandie
+\draw[poporange, thick, fill=poporange!10] (8,0) rectangle (16,10);
+\node[poporange, align=center] at (12, 5) {Photo agrandie\\$8\,\text{cm} \times 10\,\text{cm}$\\Aire $= 80\,\text{cm}^2 = 4 \times 20$};
+\end{tikzpicture}
+\legende{Agrandissement d'une photo à 200\% : dimensions $\times 2$, aire $\times 4$.}
+\end{popfigure}
+
+\begin{exoresolu}[Carte du Cameroun et distance réelle]
+\emph{Énoncé :} Sur une carte du Cameroun à l'échelle $\frac{1}{1\,000\,000}$, la distance entre Yaoundé et Douala mesure $2,5\,\text{cm}$. Quelle est la distance réelle en kilomètres ?
+
+\emph{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Identifier l'homothétie :} La carte est l'image du terrain réel par une homothétie de \textbf{réduction}. Le rapport $k$ est l'échelle : $k = \frac{1}{1\,000\,000}$. Le coefficient de réduction est $c = |k| = \frac{1}{1\,000\,000}$.
+    \item \textbf{Relation des longueurs :} $\text{Longueur sur carte} = |k| \times \text{Longueur réelle}$.
+    \item \textbf{Calcul :}
+    \begin{align*}
+        2,5\,\text{cm} &= \frac{1}{1\,000\,000} \times \text{Distance réelle} \\
+        \text{Distance réelle} &= 2,5 \times 1\,000\,000\,\text{cm} \\
+        &= 2\,500\,000\,\text{cm}
+    \end{align*}
+    \item \textbf{Conversion en km :} $1\,\text{km} = 100\,000\,\text{cm}$.
+    \[
+    \text{Distance réelle} = \frac{2\,500\,000}{100\,000} = 25\,\text{km}.
+    \]
+    \textbf{Réponse :} La distance réelle Yaoundé--Douala est d'environ $25\,\text{km}$ (distance à vol d'oiseau).
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Échelle et homothétie : applications concrètes de la vie courante}
+
+Le concept d'\textbf{échelle} utilisé en géographie, en architecture, en modélisme ou en topographie n'est rien d'autre que le rapport d'une homothétie de réduction (ou d'agrandissement pour les plans de puces électroniques).
+
+\begin{aretenir}[Lien Échelle -- Homothétie]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Contexte} & \textbf{Échelle écrite} & \textbf{Rapport $k$ de l'homothétie} \\
+\hline
+Plan de maison (architecte) & $1/100$ ou $1:100$ & $k = \frac{1}{100}$ (réduction) \\
+\hline
+Carte routière / topographique & $1/200\,000$ & $k = \frac{1}{200\,000}$ (réduction) \\
+\hline
+Carte du Cameroun (MINDCAF) & $1/1\,000\,000$ & $k = \frac{1}{1\,000\,000}$ (réduction) \\
+\hline
+Maquette de stade (modélisme) & $1/500$ & $k = \frac{1}{500}$ (réduction) \\
+\hline
+Plan de puce électronique & $100/1$ ou $100:1$ & $k = 100$ (agrandissement) \\
+\hline
+\end{tabular}
+\end{center}
+\textbf{Règle de conversion :} \quad $\text{Dimension sur le plan} = |k| \times \text{Dimension réelle}$.
+\end{aretenir}
+
+\begin{methode}[Résoudre un problème d'échelle / homothétie]
+\begin{enumerate}
+    \item \textbf{Identifier} si c'est un agrandissement ($|k|>1$) ou une réduction ($|k|<1$) et noter le rapport $k$ (souvent l'échelle).
+    \item \textbf{Repérer} la grandeur connue (sur le plan / sur le terrain) et la grandeur cherchée.
+    \item \textbf{Appliquer} la formule : $\text{Image} = |k| \times \text{Objet}$ (pour les longueurs) ou $\text{Aire image} = k^2 \times \text{Aire objet}$.
+    \item \textbf{Convertir} les unités si nécessaire (cm $\leftrightarrow$ m $\leftrightarrow$ km, cm$^2$ $\leftrightarrow$ m$^2$ $\leftrightarrow$ ha $\leftrightarrow$ km$^2$).
+    \item \textbf{Conclure} par une phrase.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Maquette du stade omnisport de Yaoundé]
+Une association de modélisme construit une maquette du stade au $1/500^{\text{ème}}$. La longueur réelle du terrain est de $105\,\text{m}$.
+\begin{enumerate}
+    \item \textbf{Rapport :} $k = \frac{1}{500}$ (réduction).
+    \item \textbf{Longueur sur maquette :} $L_{\text{maq}} = \frac{1}{500} \times 105\,\text{m} = 0,21\,\text{m} = 21\,\text{cm}$.
+    \item \textbf{Si la largeur réelle est $68\,\text{m}$ :} $l_{\text{maq}} = \frac{68}{500} = 0,136\,\text{m} = 13,6\,\text{cm}$.
+    \item \textbf{Aire réelle du terrain :} $\mathcal{A}_{\text{réel}} = 105 \times 68 = 7\,140\,\text{m}^2$.
+    \item \textbf{Aire sur maquette :} $\mathcal{A}_{\text{maq}} = k^2 \times \mathcal{A}_{\text{réel}} = \frac{1}{250\,000} \times 7\,140 = 0,02856\,\text{m}^2 = 285,6\,\text{cm}^2$.
+    \item \textbf{Vérification :} $21 \times 13,6 = 285,6\,\text{cm}^2$. C'est cohérent.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{savaistu}[Le cadastre et le MINDCAF]
+Au Cameroun, le \textbf{MINDCAF} (Ministère des Domaines, du Cadastre et des Affaires Foncières) gère le cadastre. Les \textbf{plans cadastraux} sont des homothéties de réduction des parcelles réelles. L'échelle standard est souvent $1/500$ en zone urbaine et $1/2000$ ou $1/5000$ en zone rurale.
+Un géomètre-topographe mesure le terrain (arpentage), puis trace le plan à l'échelle. Si un litige foncier survient (ex: deux voisins se disputent une limite), on utilise le plan cadastral (la figure réduite) pour retrouver les dimensions réelles grâce à l'inverse de l'homothétie : $\text{Réel} = \frac{1}{|k|} \times \text{Plan}$. C'est une application directe de nos formules !
+\end{savaistu}
+
+\courssub{Conservation des angles et similitude}
+
+Au-delà des longueurs et des aires, l'homothétie préserve la \emph{forme} de la figure. C'est la base de la géométrie des figures semblables (programme approfondi en Seconde).
+
+\begin{propriete}[Conservation des angles et parallélisme]
+Une homothétie conserve :
+\begin{itemize}
+    \item Les \textbf{angles} (mesure inchangée).
+    \item Le \textbf{parallélisme} : l'image d'une droite est une droite parallèle à la droite initiale (sauf si la droite passe par le centre $O$, auquel cas elle est confondue avec son image).
+    \item L'\textbf{alignement} : trois points alignés ont des images alignées.
+    \item Le \textbf{milieu} : l'image du milieu d'un segment est le milieu de l'image du segment.
+\end{itemize}
+\end{propriete}
+
+\begin{aretenir}[Figures semblables]
+Une figure et son image par une homothétie (de rapport $k \neq 0, \pm 1$) sont \textbf{semblables} : elles ont \emph{exactement la même forme}, mais pas la même taille.
+\begin{itemize}
+    \item Les angles correspondants sont égaux.
+    \item Les longueurs correspondantes sont proportionnelles (coefficient de proportionnalité $|k|$).
+    \item Les aires sont proportionnelles (coefficient $k^2$).
+\end{itemize}
+C'est pour cela qu'un plan de maison « ressemble » à la maison réelle, et qu'une carte du Cameroun « ressemble » au pays : ce sont des homothéties (réductions) du réel.
+\end{aretenir}
+
+\begin{exoresolu}[Vérification de similitude sur un triangle]
+\emph{Énoncé :} Soit un triangle $ABC$ tel que $AB=3\,\text{cm}$, $AC=4\,\text{cm}$, $BC=5\,\text{cm}$ (triangle rectangle en $A$). On construit son image $A'B'C'$ par l'homothétie de centre $O$ (quelconque) et de rapport $k=-1,5$. Montrer que $A'B'C'$ est rectangle et calculer son aire.
+
+\emph{Solution :}
+\begin{enumerate}
+    \item \textbf{Nature :} $|k|=1,5 > 1$, c'est un agrandissement de coefficient $1,5$. Le signe moins indique que $O$ est entre chaque point et son image (rotation de $180^\circ$ autour de $O$).
+    \item \textbf{Longueurs :}
+    \begin{align*}
+        A'B' &= 1,5 \times 3 = 4,5\,\text{cm} \\
+        A'C' &= 1,5 \times 4 = 6\,\text{cm} \\
+        B'C' &= 1,5 \times 5 = 7,5\,\text{cm}
+    \end{align*}
+    \item \textbf{Angles :} L'homothétie conserve les angles. Comme $\widehat{BAC} = 90^\circ$, alors $\widehat{B'A'C'} = 90^\circ$. Le triangle $A'B'C'$ est rectangle en $A'$.
+    \item \textbf{Aire :}
+    \begin{align*}
+        \mathcal{A}_{ABC} &= \frac{3 \times 4}{2} = 6\,\text{cm}^2 \\
+        \mathcal{A}_{A'B'C'} &= k^2 \times \mathcal{A}_{ABC} = (-1,5)^2 \times 6 = 2,25 \times 6 = 13,5\,\text{cm}^2.
+    \end{align*}
+    \emph{Vérification :} $\frac{4,5 \times 6}{2} = 13,5\,\text{cm}^2$. \checkmark
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Entraînement : Échelle et surfaces]
+\begin{enumerate}
+    \item Un plan de maison est dressé à l'échelle $1/100$. Sur le plan, une chambre mesure $3,5\,\text{cm} \times 4\,\text{cm}$. Calculer la surface réelle de la chambre en $\text{m}^2$.
+    \item Une carte au $1/200\,000$ représente un lac rectangulaire de $4\,\text{cm} \times 3\,\text{cm}$. Quelle est la superficie réelle du lac en $\text{km}^2$ ?
+    \item On agrandit un logo d'entreprise (hauteur $2\,\text{cm}$, largeur $3\,\text{cm}$) pour une banderole. La banderole doit faire $1,2\,\text{m}$ de hauteur. Quel est le rapport de l'homothétie ? Quelle sera la largeur de la banderole ? Par combien l'aire a-t-elle été multipliée ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Entraînement]
+\begin{enumerate}
+    \item \textbf{Chambre :} $k=1/100$. Réelles : $L = 100 \times 3,5 = 350\,\text{cm} = 3,5\,\text{m}$ ; $l = 100 \times 4 = 400\,\text{cm} = 4\,\text{m}$. Surface $= 3,5 \times 4 = 14\,\text{m}^2$.
+    \item \textbf{Lac :} $k=1/200\,000$. Réelles : $L = 200\,000 \times 4 = 800\,000\,\text{cm} = 8\,\text{km}$ ; $l = 200\,000 \times 3 = 600\,000\,\text{cm} = 6\,\text{km}$. Superficie $= 8 \times 6 = 48\,\text{km}^2$. (Ou : Aire carte $=12\,\text{cm}^2$, Aire réelle $= 12 \times (200\,000)^2\,\text{cm}^2 = 48 \times 10^{10}\,\text{cm}^2 = 48\,\text{km}^2$).
+    \item \textbf{Logo :} Hauteur initiale $2\,\text{cm}$, finale $120\,\text{cm}$. $k = \frac{120}{2} = 60$ (agrandissement). Largeur finale $= 60 \times 3 = 180\,\text{cm} = 1,8\,\text{m}$. Aire multipliée par $k^2 = 3600$.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Synthèse : ce qu'il faut retenir absolument}
+
+\begin{aretenir}[Bilan : Agrandissement / Réduction]
+\begin{itemize}
+    \item \textbf{Rapport $k$ :} $|k|>1 \Rightarrow$ Agrandissement (coeff $|k|$) \quad ; \quad $0<|k|<1 \Rightarrow$ Réduction (coeff $|k|$).
+    \item \textbf{Longueurs :} $\times |k|$.
+    \item \textbf{Aires :} $\times k^2$ (attention : $k^2 = |k|^2$, le signe disparaît).
+    \item \textbf{Échelle} $= \frac{1}{\text{dénominateur}} = k$ (souvent réduction).
+    \item \textbf{Forme conservée :} Angles égaux, droites parallèles $\rightarrow$ Figures \textbf{semblables}.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Check-list avant le BEPC]
+\begin{itemize}
+    \item Ne jamais confondre « multiplier les longueurs par $k$ » et « multiplier l'aire par $k$ ». \textbf{Aire $\times k^2$}.
+    \item Vérifier les unités : cm, m, km pour les longueurs ; cm$^2$, m$^2$, ha, km$^2$ pour les aires. $1\,\text{m} = 100\,\text{cm}$ mais $1\,\text{m}^2 = 10\,000\,\text{cm}^2$ !
+    \item L'échelle $1/n$ correspond à $k = 1/n$ (réduction). L'échelle $n/1$ correspond à $k = n$ (agrandissement).
+    \item Si $k<0$, la figure est « retournée » (rotation de $180^\circ$ autour de $O$), mais les longueurs et aires dépendent de $|k|$.
+\end{itemize}
+\end{attention}
+
+\coursec{Propriétés de l'homothétie}
+
+Dans la section précédente, nous avons vu qu'une homothétie de rapport $k$ réalise un \cle{agrandissement} (si $|k|>1$) ou une \cle{réduction} (si $|k|<1$) d'une figure : toutes les longueurs sont multipliées par $|k|$. Mais une homothétie fait bien plus que « changer la taille » : elle transforme les figures de manière très régulière, en \emph{conservant leur forme}. C'est précisément ce que nous allons étudier maintenant : les \cle{propriétés de conservation} de l'homothétie. Ces propriétés sont d'une grande puissance pratique : elles permettent de démontrer que des droites sont parallèles, que des points sont alignés, et elles éclairent d'un jour nouveau le théorème de Thalès que tu as étudié au chapitre précédent.
+
+\courssub{Conservation de l'alignement et des angles}
+
+\textbf{Intuition.} Prends une photographie d'un paysage de la région de l'Ouest : les cases du village, la route qui les traverse. Si tu agrandis cette photo au cybercafé, les cases restent des cases, la route reste droite, et les angles entre les murs ne changent pas. L'agrandissement a changé les \emph{tailles}, mais pas les \emph{formes}. L'homothétie se comporte exactement comme cet agrandissement photographique.
+
+\begin{propriete}[Propriétés de conservation (admises)]
+Soit $h$ une homothétie de centre $O$ et de rapport $k$ ($k\neq 0$).
+\begin{itemize}
+\item \textbf{Conservation de l'alignement :} si trois points $A$, $B$, $C$ sont alignés, alors leurs images $A'$, $B'$, $C'$ par $h$ sont aussi alignées.
+\item \textbf{Conservation des angles :} l'image d'un angle est un angle de \textbf{même mesure}. Autrement dit, si $A'$, $B'$, $C'$ sont les images de $A$, $B$, $C$, alors $\widehat{A'B'C'} = \widehat{ABC}$.
+\item \textbf{Image d'une droite :} l'image d'une droite $(d)$ est une droite $(d')$ \textbf{parallèle} à $(d)$.
+\end{itemize}
+\end{propriete}
+
+\begin{attention}[Ce qui est conservé... et ce qui ne l'est pas]
+Une homothétie conserve l'\cle{alignement}, les \cle{angles} et le \cle{parallélisme}, mais elle ne conserve \textbf{pas} les longueurs en général : les longueurs sont multipliées par $|k|$. Ce n'est donc \textbf{pas une isométrie} (contrairement à la symétrie ou à la translation), sauf dans le cas particulier $|k|=1$.
+\end{attention}
+
+\begin{exemplebox}[Conservation de l'alignement]
+Soit $h$ l'homothétie de centre $O$ et de rapport $k=2$. Trois points $A$, $B$, $C$ sont alignés sur une droite $(d)$, avec $B$ entre $A$ et $C$. Leurs images $A'$, $B'$, $C'$ vérifient :
+\[ \overrightarrow{OA'} = 2\overrightarrow{OA}, \qquad \overrightarrow{OB'} = 2\overrightarrow{OB}, \qquad \overrightarrow{OC'} = 2\overrightarrow{OC}. \]
+Les points $A'$, $B'$, $C'$ sont alignés sur une droite $(d')$ parallèle à $(d)$, et $B'$ est entre $A'$ et $C'$ : l'ordre des points est également conservé.
+\end{exemplebox}
+
+\courssub{Image d'un segment : longueur multipliée par $|k|$}
+
+C'est la propriété centrale de cette leçon : elle chiffre précisément l'effet d'une homothétie sur les longueurs.
+
+\begin{propriete}[Image d'un segment]
+Soit $h$ une homothétie de rapport $k$. Si $A'$ et $B'$ sont les images respectives de $A$ et $B$ par $h$, alors :
+\[ \overrightarrow{A'B'} = k\,\overrightarrow{AB} \qquad \text{et donc} \qquad A'B' = |k| \times AB. \]
+En particulier, les droites $(A'B')$ et $(AB)$ sont \textbf{parallèles}.
+\end{propriete}
+
+\begin{experience}[Justification guidée de $\overrightarrow{A'B'} = k\,\overrightarrow{AB}$]
+Cette justification utilise la relation de Chasles sur les vecteurs ; suis chaque étape attentivement.
+\begin{enumerate}
+\item Par définition de l'homothétie de centre $O$ et de rapport $k$ :
+\[ \overrightarrow{OA'} = k\,\overrightarrow{OA} \qquad \text{et} \qquad \overrightarrow{OB'} = k\,\overrightarrow{OB}. \]
+\item Écrivons $\overrightarrow{A'B'}$ en passant par le point $O$ (relation de Chasles) :
+\[ \overrightarrow{A'B'} = \overrightarrow{A'O} + \overrightarrow{OB'} = \overrightarrow{OB'} - \overrightarrow{OA'}. \]
+\item Remplaçons $\overrightarrow{OA'}$ et $\overrightarrow{OB'}$ par leurs expressions :
+\[ \overrightarrow{A'B'} = k\,\overrightarrow{OB} - k\,\overrightarrow{OA} = k\left(\overrightarrow{OB} - \overrightarrow{OA}\right). \]
+\item Or $\overrightarrow{OB} - \overrightarrow{OA} = \overrightarrow{AO} + \overrightarrow{OB} = \overrightarrow{AB}$. On conclut :
+\[ \overrightarrow{A'B'} = k\,\overrightarrow{AB}. \]
+\item En passant aux longueurs : $A'B' = |k| \times AB$. De plus, comme $\overrightarrow{A'B'}$ et $\overrightarrow{AB}$ sont colinéaires, les droites $(A'B')$ et $(AB)$ sont parallèles. $\blacksquare$
+\end{enumerate}
+\end{experience}
+
+\begin{exemplebox}[Calcul de longueurs]
+Soit $h$ une homothétie de rapport $k = -3$. Un segment $[AB]$ a pour longueur $AB = \SI{2,5}{cm}$. Son image $[A'B']$ vérifie :
+\[ A'B' = |k| \times AB = |-3| \times 2,5 = 3 \times 2,5 = \SI{7,5}{cm}, \]
+et $(A'B')$ est parallèle à $(AB)$. Remarque que le rapport négatif signifie que la figure image est « de l'autre côté » du centre, mais c'est bien $|k|=3$ qui intervient dans le calcul des longueurs.
+\end{exemplebox}
+
+\courssub{Le lien fondamental avec le théorème de Thalès}
+
+Tu as étudié le théorème de Thalès : si deux droites sécantes en $A$ sont coupées par deux droites parallèles $(BC)$ et $(MN)$, alors $\dfrac{AM}{AB} = \dfrac{AN}{AC} = \dfrac{MN}{BC}$. Regardons cette configuration avec nos yeux d'« homothéticien ».
+
+\begin{propriete}[Thalès et homothétie]
+Toute configuration de Thalès correspond à une homothétie dont le centre est le point d'intersection des droites sécantes. Plus précisément, si $(BC) \parallel (MN)$ avec $M \in (AB)$ et $N \in (AC)$, alors l'homothétie de centre $A$ et de rapport $k = \dfrac{AM}{AB}$ transforme :
+\begin{itemize}
+\item $B$ en $M$ et $C$ en $N$ ;
+\item la droite $(BC)$ en la droite $(MN)$, d'où $(BC) \parallel (MN)$ ;
+\item et l'on retrouve $MN = |k| \times BC$.
+\end{itemize}
+Réciproquement, une homothétie de centre $A$ qui envoie $B$ sur $M$ envoie la droite $(BC)$ sur une droite parallèle passant par $M$ : on retrouve la configuration de Thalès.
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1,>=Stealth]
+\coordinate (A) at (0,0);
+\coordinate (B) at (4.5,1.5);
+\coordinate (C) at (3.6,-2.2);
+\coordinate (M) at ($(A)!0.55!(B)$);
+\coordinate (N) at ($(A)!0.55!(C)$);
+% Grand triangle
+\draw[thick,popblue] (A) -- (B) -- (C) -- cycle;
+% Petit triangle (image)
+\draw[very thick,poporange] (A) -- (M) -- (N) -- cycle;
+% Pointilles de prolongement
+\draw[dashed,popmuted] (B) -- ($(A)!1.15!(B)$);
+\draw[dashed,popmuted] (C) -- ($(A)!1.15!(C)$);
+% Points
+\foreach \p/\pos/\col in {A/left/popdark, B/right/popblue, C/below/popblue, M/above left/poporange, N/below left/poporange}
+  \fill[\col] (\p) circle (1.8pt) node[\pos] {\small $\p$};
+% Annotation parallèles
+\node[popblue] at (4.6,-0.5) {\small $(BC)$};
+\node[poporange] at (2.0,-0.9) {\small $(MN)$};
+\node[popdark,align=left] at (5.6,2.2) {\small $h$ de centre $A$,\\ \small rapport $k=\dfrac{AM}{AB}$};
+\end{tikzpicture}
+\end{center}
+\legende{Configuration de Thalès : le petit triangle $AMN$ est l'image du grand triangle $ABC$ par l'homothétie de centre $A$ et de rapport $k=\frac{AM}{AB}$. Les côtés $(MN)$ et $(BC)$ sont parallèles.}
+\end{popfigure}
+
+\begin{exoresolu}[Retrouver une longueur grâce à l'homothétie]
+Sur la figure ci-dessus, on donne $AB = \SI{10}{cm}$, $AM = \SI{4}{cm}$ et $BC = \SI{7}{cm}$. Les droites $(MN)$ et $(BC)$ sont parallèles. Calculer $MN$.
+\tcblower
+\textbf{Solution détaillée.}
+
+L'homothétie $h$ de centre $A$ qui transforme $B$ en $M$ a pour rapport :
+\[ k = \dfrac{AM}{AB} = \dfrac{4}{10} = 0,4. \]
+Comme $M \in (AB)$, $N \in (AC)$ et $(MN) \parallel (BC)$, cette homothétie transforme $C$ en $N$, donc le segment $[BC]$ en le segment $[MN]$. D'après la propriété de l'image d'un segment :
+\[ MN = |k| \times BC = 0,4 \times 7 = \SI{2,8}{cm}. \]
+\textbf{Conclusion :} $MN = \SI{2,8}{cm}$. On retrouve exactement le résultat que donnerait le théorème de Thalès : $\dfrac{MN}{BC} = \dfrac{AM}{AB}$, donc $MN = \dfrac{4}{10} \times 7 = 2,8$ cm.
+\end{exoresolu}
+
+\courssub{Image d'une figure : des côtés correspondants parallèles}
+
+Puisque l'image d'une droite est une droite parallèle, l'image d'un polygone est un polygone dont chaque côté est parallèle au côté correspondant, avec des longueurs multipliées par $|k|$ et des angles conservés. On dit que les deux figures sont \cle{semblables} : elles ont la même forme, mais pas la même taille.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.9,>=Stealth]
+\coordinate (O) at (0,0);
+\coordinate (A) at (2.2,0.6);
+\coordinate (B) at (3.4,1.8);
+\coordinate (C) at (2.8,3.2);
+\coordinate (D) at (1.4,2.6);
+\coordinate (A2) at ($(O)!1.7!(A)$);
+\coordinate (B2) at ($(O)!1.7!(B)$);
+\coordinate (C2) at ($(O)!1.7!(C)$);
+\coordinate (D2) at ($(O)!1.7!(D)$);
+% Rayons depuis O
+\draw[dashed,popmuted] (O) -- (A2);
+\draw[dashed,popmuted] (O) -- (B2);
+\draw[dashed,popmuted] (O) -- (C2);
+\draw[dashed,popmuted] (O) -- (D2);
+% Quadrilateres
+\draw[very thick,popblue] (A) -- (B) -- (C) -- (D) -- cycle;
+\draw[very thick,poporange] (A2) -- (B2) -- (C2) -- (D2) -- cycle;
+% Points
+\fill[popdark] (O) circle (2pt) node[below left] {\small $O$};
+\foreach \p/\pos in {A/below, B/right, C/above, D/left}
+  \fill[popblue] (\p) circle (1.8pt) node[\pos] {\small $\p$};
+\fill[poporange] (A2) circle (1.8pt) node[below] {\small $A'$};
+\fill[poporange] (B2) circle (1.8pt) node[right] {\small $B'$};
+\fill[poporange] (C2) circle (1.8pt) node[above] {\small $C'$};
+\fill[poporange] (D2) circle (1.8pt) node[left] {\small $D'$};
+\node[popdark] at (3.2,-1.2) {\small $(AB) \parallel (A'B')$, \ $(BC) \parallel (B'C')$, \ etc.};
+\end{tikzpicture}
+\end{center}
+\legende{Le quadrilatère $A'B'C'D'$ est l'image du quadrilatère $ABCD$ par l'homothétie de centre $O$ et de rapport $k = 1,7$. Les côtés correspondants sont parallèles et les longueurs sont multipliées par $1,7$.}
+\end{popfigure}
+
+\begin{methode}[Montrer que deux droites sont parallèles grâce à une homothétie]
+Pour démontrer que deux droites $(d)$ et $(d')$ sont parallèles, on peut exhiber une homothétie transformant l'une en l'autre :
+\begin{enumerate}
+\item Repérer un point $O$ tel que les points de $(d)$ et leurs correspondants sur $(d')$ soient alignés avec $O$.
+\item Vérifier qu'il existe un même nombre $k$ tel que $\overrightarrow{OM'} = k\,\overrightarrow{OM}$ pour deux couples de points correspondants $(M, M')$ et $(N, N')$ avec $M \neq N$.
+\item Conclure : $(d')$ est l'image de $(d)$ par l'homothétie de centre $O$ et de rapport $k$, donc $(d) \parallel (d')$.
+\end{enumerate}
+C'est une alternative élégante au raisonnement classique par la réciproque du théorème de Thalès.
+\end{methode}
+
+\begin{methode}[Justifier qu'une figure est l'image d'une autre]
+Pour montrer qu'une figure $\mathcal{F}'$ est l'image d'une figure $\mathcal{F}$ par une homothétie :
+\begin{enumerate}
+\item Identifier les couples de points correspondants $(A, A')$, $(B, B')$, $(C, C')$, \dots
+\item Montrer que les droites $(AA')$, $(BB')$, $(CC')$, \dots sont concourantes en un point $O$ : ce sera le centre.
+\item Calculer les rapports $\dfrac{OA'}{OA}$, $\dfrac{OB'}{OB}$, \dots et vérifier qu'ils sont tous égaux (en valeur absolue) à un même nombre $|k|$, avec le bon signe selon la position des points par rapport à $O$.
+\item Conclure et, si demandé, exploiter les conséquences : côtés parallèles, longueurs multipliées par $|k|$, angles conservés.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Justifier une homothétie et exploiter ses propriétés]
+Soit $O$ un point, et quatre points tels que $A' \in (OA)$, $B' \in (OB)$ avec $OA = \SI{3}{cm}$, $OA' = \SI{7,5}{cm}$, $OB = \SI{4}{cm}$, $OB' = \SI{10}{cm}$, $A$ et $A'$ étant du même côté de $O$ (de même pour $B$ et $B'$). On donne $AB = \SI{5}{cm}$ et $\widehat{OAB} = 70°$.
+\begin{enumerate}
+\item Montrer que $A'$ et $B'$ sont les images de $A$ et $B$ par une homothétie de centre $O$ dont on précisera le rapport.
+\item En déduire la position relative des droites $(AB)$ et $(A'B')$, la longueur $A'B'$ et la mesure de $\widehat{OA'B'}$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{1.} Les points $O$, $A$, $A'$ sont alignés dans cet ordre, de même que $O$, $B$, $B'$. Calculons les rapports :
+\[ \dfrac{OA'}{OA} = \dfrac{7,5}{3} = 2,5 \qquad \text{et} \qquad \dfrac{OB'}{OB} = \dfrac{10}{4} = 2,5. \]
+Les rapports sont égaux et les points sont du même côté de $O$, donc :
+\[ \overrightarrow{OA'} = 2,5\,\overrightarrow{OA} \qquad \text{et} \qquad \overrightarrow{OB'} = 2,5\,\overrightarrow{OB}. \]
+$A'$ et $B'$ sont donc les images de $A$ et $B$ par l'homothétie $h$ de centre $O$ et de rapport $k = 2,5$.
+
+\textbf{2.} Exploitons les propriétés de l'homothétie :
+\begin{itemize}
+\item \textbf{Parallélisme :} l'image de la droite $(AB)$ est la droite $(A'B')$, donc $(AB) \parallel (A'B')$.
+\item \textbf{Longueur :} $A'B' = |k| \times AB = 2,5 \times 5 = \SI{12,5}{cm}$.
+\item \textbf{Angle :} l'homothétie conserve les angles, donc $\widehat{OA'B'} = \widehat{OAB} = 70°$.
+\end{itemize}
+\end{exoresolu}
+
+\begin{attention}[Erreurs fréquentes à éviter]
+\begin{itemize}
+\item \textbf{Oublier la valeur absolue :} si $k = -2$ et $AB = 6$ cm, alors $A'B' = |-2| \times 6 = 12$ cm, et non $-12$ cm : une longueur est toujours positive !
+\item \textbf{Croire que les longueurs sont conservées :} une homothétie de rapport $k \neq \pm 1$ n'est pas une isométrie. Seuls l'alignement, les angles et le parallélisme sont conservés ; les longueurs sont multipliées par $|k|$.
+\item \textbf{Mal choisir le centre :} dans une configuration de Thalès, le centre de l'homothétie est le \emph{point d'intersection des droites sécantes}, pas un point quelconque de la figure.
+\item \textbf{Conclure trop vite au parallélisme :} pour affirmer que $(A'B') \parallel (AB)$ par homothétie, il faut d'abord avoir justifié que $A'$ et $B'$ sont bien les images de $A$ et $B$ par une \emph{même} homothétie (même centre, même rapport).
+\end{itemize}
+\end{attention}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Une homothétie \textbf{conserve} : l'alignement, les angles, le parallélisme.
+\item Une homothétie \textbf{ne conserve pas} les longueurs : elle les multiplie par $|k|$.
+\item Image d'un segment : $\overrightarrow{A'B'} = k\,\overrightarrow{AB}$, donc $A'B' = |k| \times AB$ et $(A'B') \parallel (AB)$.
+\item Image d'une droite : une droite \textbf{parallèle} à la droite initiale.
+\item Toute configuration de Thalès est une homothétie dont le centre est le point d'intersection des sécantes : les deux résultats sont deux visages d'une même réalité.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[Pour s'entraîner]
+Soit $h$ une homothétie de centre $O$ et de rapport $k = -\dfrac{1}{2}$. Un triangle $ABC$ a pour dimensions $AB = \SI{8}{cm}$, $AC = \SI{6}{cm}$ et $\widehat{BAC} = 50°$. On note $A'$, $B'$, $C'$ les images de $A$, $B$, $C$.
+\begin{enumerate}
+\item Calculer $A'B'$ et $A'C'$.
+\item Quelle est la mesure de $\widehat{B'A'C'}$ ? Justifier.
+\item Que peut-on dire des droites $(BC)$ et $(B'C')$ ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $A'B' = |k| \times AB = \dfrac{1}{2} \times 8 = \SI{4}{cm}$ et $A'C' = \dfrac{1}{2} \times 6 = \SI{3}{cm}$.
+\item L'homothétie conserve les angles, donc $\widehat{B'A'C'} = \widehat{BAC} = 50°$.
+\item L'image de la droite $(BC)$ est la droite $(B'C')$, donc $(BC) \parallel (B'C')$.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Pourquoi ces propriétés sont-elles si utiles ?]
+Les propriétés de l'homothétie sont à la base de la \cle{cartographie} : une carte du Cameroun est une réduction du territoire réel, et c'est parce que la réduction conserve les angles et l'alignement que tu peux mesurer des directions sur la carte et t'y fier. Les agrandissements de plans d'architecture, les photocopies à $150\,\%$ ou $75\,\%$, les projections de diapositives en classe : toutes ces situations sont des homothéties, et c'est la conservation des angles qui garantit que la figure reproduite n'est pas déformée.
+\end{savaistu}
+
+\coursec{Homothétie et situations concrètes de la vie courante}
+
+Dans la section précédente, nous avons établi les propriétés fondamentales de l'homothétie : conservation de l'alignement, des angles, multiplication des longueurs par $|k|$ et des aires par $k^2$. Ces résultats ne sont pas de simples curiosités géométriques : ils gouvernent une multitude de situations que tu rencontres chaque jour sans même t'en rendre compte. Quand tu photocopies un document, quand tu lis un plan de ville, quand un architecte présente la maquette d'un bâtiment, quand une lampe projette ton ombre sur un mur, c'est toujours une homothétie qui est à l'œuvre. Cette section te montre comment reconnaître, modéliser et exploiter ces situations, avec une démarche rigoureuse que tu pourras rédiger au BEPC.
+
+\courssub{Photocopies et impressions : pourcentage et rapport d'homothétie}
+
+\begin{experience}[Découverte]
+Sur le panneau de commande d'une photocopieuse, on lit souvent : \og 50 \% \fg{}, \og 75 \% \fg{}, \og 100 \% \fg{}, \og 150 \% \fg{}, \og 200 \% \fg{}. Que signifient ces nombres ? Prenons un document dont la longueur est 20 cm. Après une copie à 150 \%, mesure : la nouvelle longueur est 30 cm. Après une copie à 75 \%, elle est 15 cm. Le pourcentage affiché indique donc la proportion de la longueur d'origine que l'on obtient sur la copie.
+\end{experience}
+
+\begin{definition}[Pourcentage de reproduction et rapport]
+Une photocopieuse réglée à $p$ \% effectue une homothétie de rapport
+\[ k = \dfrac{p}{100}. \]
+Toutes les longueurs du document sont multipliées par $k$. Si $k>1$ (pourcentage supérieur à 100 \%), c'est un \cle{agrandissement} ; si $0<k<1$, c'est une \cle{réduction} ; si $k=1$, le document est reproduit à l'identique.
+\end{definition}
+
+\begin{exemplebox}[Deux réglages classiques]
+\begin{itemize}
+\item Réglage à 150 \% : $k = \dfrac{150}{100} = 1,5$. Un document de 20 cm de long donne une copie de $20 \times 1,5 = 30$ cm.
+\item Réglage à 75 \% : $k = \dfrac{75}{100} = 0,75$. Un document de 20 cm de long donne une copie de $20 \times 0,75 = 15$ cm.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Le pourcentage ne s'applique pas aux aires !]
+Le rapport $k$ multiplie les \emph{longueurs}. Les \emph{aires} sont multipliées par $k^2$. Ainsi, une copie à 50 \% ne donne pas une feuille \og deux fois moins grande \fg{} en surface : son aire est multipliée par $0,5^2 = 0,25$, soit le quart de l'aire initiale. C'est d'ailleurs pourquoi deux pages A4 réduites à environ 71 \% ($k^2 \approx 0,5$) tiennent sur une seule page A4.
+\end{attention}
+
+\courssub{Plans et échelles}
+
+\begin{definition}[Échelle d'un plan]
+Un plan est une réduction de la réalité par une homothétie de rapport $k$, appelé \cle{échelle} du plan et notée souvent $\dfrac{1}{n}$ (par exemple $\dfrac{1}{500}$). On a la relation fondamentale :
+\[ \text{distance sur le plan} = \text{échelle} \times \text{distance réelle}. \]
+L'échelle s'exprime sans unité, à condition que les deux distances soient exprimées dans la \textbf{même unité}.
+\end{definition}
+
+\begin{aretenir}[Les deux sens de calcul]
+\begin{itemize}
+\item \textbf{De la réalité vers le plan} : on multiplie par l'échelle : $d_{\text{plan}} = \dfrac{1}{n} \times d_{\text{réelle}}$.
+\item \textbf{Du plan vers la réalité} : on divise par l'échelle, c'est-à-dire qu'on multiplie par son inverse : $d_{\text{réelle}} = n \times d_{\text{plan}}$.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Ne pas inverser le sens !]
+C'est l'erreur la plus fréquente au BEPC. Pour passer du plan à la réalité, on \textbf{divise} par l'échelle (ou on multiplie par son inverse). Sur un plan au $\dfrac{1}{500}$, 1 cm sur le plan représente 500 cm en réalité, et non l'inverse. Vérifie toujours la cohérence : la distance réelle doit être \emph{plus grande} que la distance sur le plan.
+\end{attention}
+
+\begin{exemplebox}[Lecture d'un plan de Douala]
+Sur un plan de la ville de Douala à l'échelle $\dfrac{1}{\num{20000}}$, la distance entre la gare de Bessengué et le marché Mboppi est de 6 cm. Quelle est la distance réelle ?
+\[ d_{\text{réelle}} = \num{20000} \times 6 = \num{120000} \text{ cm} = \num{1200} \text{ m} = 1,2 \text{ km}. \]
+Réciproquement, une avenue de 800 m de long sera représentée par :
+\[ d_{\text{plan}} = \dfrac{800 \text{ m}}{\num{20000}} = \dfrac{\num{80000} \text{ cm}}{\num{20000}} = 4 \text{ cm}. \]
+\end{exemplebox}
+
+\courssub{Maquettes et modèles réduits}
+
+Une maquette est un modèle réduit d'un objet réel (bâtiment, stade, avion), obtenu par une homothétie de rapport $k<1$. Toutes les longueurs sont multipliées par $k$, les angles sont conservés : la maquette est donc fidèle à l'original, simplement plus petite.
+
+\begin{exemplebox}[Maquette d'un stade de football]
+Un stade rectangulaire de 120 m de long et 80 m de large est représenté par une maquette à l'échelle $\dfrac{1}{200}$. Dimensions de la maquette :
+\[ \text{Longueur} : 120 \times \dfrac{1}{200} = 0,6 \text{ m} = 60 \text{ cm} \qquad ; \qquad \text{Largeur} : 80 \times \dfrac{1}{200} = 0,4 \text{ m} = 40 \text{ cm}. \]
+La maquette tient donc sur une table de 60 cm par 40 cm.
+\end{exemplebox}
+
+\begin{savaistu}[Les maquettes des architectes de Yaoundé]
+À Yaoundé, les architectes qui conçoivent les bâtiments publics (ministères, hôpitaux, salles de spectacle) présentent leurs projets aux décideurs sous forme de maquettes, souvent à l'échelle $\dfrac{1}{200}$. À cette échelle, un immeuble réel de 40 m de haut est représenté par une tour de 20 cm : on peut alors examiner le projet sous tous les angles, vérifier l'harmonie des volumes et corriger les erreurs avant de dépenser le moindre franc dans la construction. L'homothétie garantit que la maquette est géométriquement fidèle au futur bâtiment.
+\end{savaistu}
+
+\courssub{Projection d'ombres : la source lumineuse comme centre d'homothétie}
+
+\begin{experience}[Observation]
+Approche ta main d'une lampe de poche allumée dans une pièce sombre : son ombre sur le mur grandit. Éloigne-la : l'ombre rétrécit. Les rayons lumineux partent tous d'un même point $S$ (la source), passent par les extrémités de l'objet et viennent \og dessiner \fg{} l'ombre sur l'écran. On reconnaît exactement la configuration d'une homothétie de centre $S$.
+\end{experience}
+
+\begin{propriete}[Ombre portée et homothétie]
+Lorsqu'un objet placé parallèlement à un écran est éclairé par une source lumineuse ponctuelle $S$, son ombre sur l'écran est l'image de l'objet par l'homothétie de centre $S$ et de rapport
+\[ k = \dfrac{\text{distance de } S \text{ à l'écran}}{\text{distance de } S \text{ à l'objet}}. \]
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+% Source lumineuse
+\fill[popgold] (0,1.5) circle (0.12);
+\node[above, popdark] at (0,1.65) {\small $S$ (lampe)};
+% Objet vertical
+\draw[line width=2pt, popblue] (2,0.7) -- (2,2.3);
+\node[right, popblue] at (2.05,1.5) {\small objet};
+\fill[popblue] (2,0.7) circle (0.05) node[below left, popdark]{\scriptsize $A$};
+\fill[popblue] (2,2.3) circle (0.05) node[above left, popdark]{\scriptsize $B$};
+% Écran
+\draw[line width=2pt, popdark] (5,0) -- (5,3.2);
+\node[right, popdark] at (5,3.1) {\small écran};
+% Ombre
+\draw[line width=3pt, poporange] (5,0.375) -- (5,2.625);
+\node[left, poporange] at (4.95,1.5) {\small ombre};
+\fill[poporange] (5,0.375) circle (0.05) node[below left, popdark]{\scriptsize $A'$};
+\fill[poporange] (5,2.625) circle (0.05) node[above left, popdark]{\scriptsize $B'$};
+% Rayons lumineux
+\draw[popgold, dashed, ->] (0,1.5) -- (2,0.7);
+\draw[popgold, dashed, ->] (0,1.5) -- (2,2.3);
+\draw[popgold, dashed, ->] (2,0.7) -- (5.6,0.15);
+\draw[popgold, dashed, ->] (2,2.3) -- (5.6,2.85);
+% Distances
+\draw[<->, popmuted] (0,-0.3) -- (2,-0.3) node[midway, below]{\scriptsize $d_1$};
+\draw[<->, popmuted] (0,-0.7) -- (5,-0.7) node[midway, below]{\scriptsize $d_2$};
+\end{tikzpicture}
+\end{center}
+\legende{L'ombre $A'B'$ est l'image de l'objet $AB$ par l'homothétie de centre $S$ et de rapport $k=\dfrac{d_2}{d_1}$.}
+\end{popfigure}
+
+\begin{exemplebox}[Calcul d'une ombre]
+Une lampe $S$ est placée à 1 m d'une baguette verticale de 30 cm, et à 3 m d'un mur parallèle à la baguette. Le rapport de l'homothétie est $k = \dfrac{3}{1} = 3$. La hauteur de l'ombre est donc :
+\[ 30 \times 3 = 90 \text{ cm}. \]
+L'ombre est trois fois plus grande que la baguette.
+\end{exemplebox}
+
+\courssub{Méthode de résolution d'un problème d'échelle}
+
+\begin{methode}[Résoudre un problème d'échelle en 4 étapes]
+\begin{enumerate}
+\item \textbf{Identifier le rapport} : repérer dans l'énoncé l'échelle ou le pourcentage, et l'écrire sous forme de rapport d'homothétie $k$ (par exemple échelle $\dfrac{1}{500}$ donne $k=\dfrac{1}{500}$ ; réglage 75 \% donne $k=0,75$).
+\item \textbf{Écrire la relation de proportionnalité} : $d_{\text{image}} = k \times d_{\text{réelle}}$, en précisant le sens du calcul (réalité vers plan, ou plan vers réalité).
+\item \textbf{Calculer} en convertissant d'abord toutes les longueurs dans la même unité.
+\item \textbf{Conclure} par une phrase rédigée, avec l'unité adaptée à la situation (cm pour un plan, m ou km pour la réalité).
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.0,>=Stealth]
+% Plan rectangulaire
+\draw[line width=1.5pt, popblue, fill=popblueL] (0,0) rectangle (6,4);
+\node[popdark] at (3,2) {\small Parcelle (plan)};
+\draw[<->, popdark] (0,-0.4) -- (6,-0.4) node[midway, below]{\small 12 cm};
+\draw[<->, popdark] (-0.4,0) -- (-0.4,4) node[midway, left]{\small 8 cm};
+\node[popdark, font=\small] at (3,4.5) {Plan à l'échelle $1/500$};
+% Flèches de conversion
+\draw[->, line width=1.5pt, poporange] (6.6,2.8) -- (8.4,2.8) node[midway, above]{\scriptsize $\times 500$};
+\draw[->, line width=1.5pt, poporange] (8.4,1.2) -- (6.6,1.2) node[midway, below]{\scriptsize $\div 500$};
+% Réalité
+\draw[line width=1.5pt, popgreen, fill=popgreenL] (9,0.4) rectangle (13,3.6);
+\node[popdark] at (11,2) {\small Parcelle réelle};
+\draw[<->, popdark] (9,0) -- (13,0) node[midway, below]{\small 60 m};
+\draw[<->, popdark] (13.4,0.4) -- (13.4,3.6) node[midway, right]{\small 40 m};
+\end{tikzpicture}
+\end{center}
+\legende{Passage du plan à la réalité (multiplication par 500) et retour (division par 500).}
+\end{popfigure}
+
+\courssub{Problème de synthèse guidé}
+
+\begin{exoresolu}[Dimensions et aire d'une parcelle sur un plan au 1/500]
+\textbf{Énoncé.} Sur le plan d'un quartier de Bafoussam, dressé à l'échelle $\dfrac{1}{500}$, la parcelle de la famille Kamdem est un rectangle de 8 cm de large et 12 cm de long.
+\begin{enumerate}
+\item Calculer les dimensions réelles de la parcelle.
+\item Calculer l'aire réelle de la parcelle en mètres carrés.
+\item La famille veut clôturer la parcelle. Calculer la longueur de clôture nécessaire.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{1. Dimensions réelles.} Le rapport de l'homothétie (du plan vers la réalité) est l'inverse de l'échelle : $k = 500$. On applique la relation $d_{\text{réelle}} = 500 \times d_{\text{plan}}$ :
+\begin{align*}
+\text{Largeur réelle} &= 500 \times 8 = \num{4000} \text{ cm} = 40 \text{ m},\\
+\text{Longueur réelle} &= 500 \times 12 = \num{6000} \text{ cm} = 60 \text{ m}.
+\end{align*}
+La parcelle mesure en réalité 40 m sur 60 m.
+
+\textbf{2. Aire réelle.} L'aire d'un rectangle est le produit de ses dimensions :
+\[ \mathcal{A} = 40 \times 60 = \num{2400} \text{ m}^2. \]
+\emph{Vérification par la propriété des aires :} l'aire sur le plan est $8 \times 12 = 96$ cm$^2$, et les aires sont multipliées par $k^2 = 500^2 = \num{250000}$. Donc $\mathcal{A} = 96 \times \num{250000} = \num{24000000}$ cm$^2 = \num{2400}$ m$^2$ (car $1$ m$^2 = \num{10000}$ cm$^2$). Les deux méthodes concordent.
+
+\textbf{3. Longueur de clôture.} Il faut le périmètre réel :
+\[ \mathcal{P} = 2 \times (40 + 60) = 2 \times 100 = 200 \text{ m}. \]
+Il faut 200 m de clôture.
+
+\textbf{Conclusion.} La parcelle réelle mesure 40 m sur 60 m, son aire est de $\num{2400}$ m$^2$ et il faut 200 m de clôture pour l'entourer.
+\end{exoresolu}
+
+\begin{attention}[Aire du plan et aire réelle : le piège du carré]
+Pour les aires, on ne multiplie \textbf{jamais} par l'échelle $k$, mais par $k^2$. Sur un plan au $\dfrac{1}{500}$, une aire de 96 cm$^2$ sur le plan ne correspond pas à $96 \times 500$ cm$^2$ en réalité, mais à $96 \times 500^2 = 96 \times \num{250000}$ cm$^2$. Oublier le carré fait perdre presque tous les points de la question au BEPC.
+\end{attention}
+
+\begin{exercice}[À toi de jouer]
+\begin{enumerate}
+\item Une photocopieuse est réglée à 125 \%. Quelle sera la longueur, sur la copie, d'un segment de 16 cm du document original ?
+\item Sur une carte à l'échelle $\dfrac{1}{\num{50000}}$, deux villages sont distants de 7 cm. Quelle est la distance réelle en kilomètres ?
+\item Une lampe est placée à 2 m d'un poteau de 1,5 m et à 6 m d'un mur parallèle au poteau. Quelle est la hauteur de l'ombre du poteau sur le mur ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $k = \dfrac{125}{100} = 1,25$ ; longueur de la copie : $16 \times 1,25 = 20$ cm.
+\item Distance réelle : $7 \times \num{50000} = \num{350000}$ cm $= \num{3500}$ m $= 3,5$ km.
+\item Rapport : $k = \dfrac{6}{2} = 3$ ; hauteur de l'ombre : $1,5 \times 3 = 4,5$ m.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Pourcentage de photocopie $p$ \% $\Longleftrightarrow$ rapport $k = \dfrac{p}{100}$ (150 \% $\Leftrightarrow k=1,5$ ; 75 \% $\Leftrightarrow k=0,75$).
+\item Plan : $d_{\text{plan}} = \text{échelle} \times d_{\text{réelle}}$ ; du plan vers la réalité, on \textbf{divise} par l'échelle.
+\item Les longueurs sont multipliées par $|k|$, les aires par $k^2$.
+\item L'ombre d'un objet éclairé par une source ponctuelle $S$ est son image par l'homothétie de centre $S$.
+\item Toute démarche se rédige en 4 étapes : rapport, relation, calcul, conclusion avec unité.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Synthèse et compléments}
+
+Après avoir exploré l'homothétie à travers des situations concrètes — plans de maisons, cartes routières, ombres portées — nous allons maintenant structurer l'ensemble des acquis. Cette synthèse te servira de \textbf{feuille de révision} pour le BEPC : elle rassemble les définitions exactes, les propriétés à connaître par cœur, la rédaction type attendue en examen, et ouvre une porte vers la géométrie analytique de Seconde.
+
+\courssub{Bilan de la leçon : les quatre piliers de l'homothétie}
+
+Rappelons les notions essentielles que nous avons construites pas à pas. Une homothétie est \textbf{entièrement définie} par deux données : un centre $O$ (point fixe) et un rapport $k$ (nombre réel non nul).
+
+\begin{aretenir}[Les quatre piliers à maîtriser]
+\begin{enumerate}
+    \item \textbf{Définition :} L'homothétie de centre $O$ et de rapport $k \in \mathbb{R}^*$ est la transformation qui, à tout point $M$, associe un point $M'$ tel que $\overrightarrow{OM'} = k \overrightarrow{OM}$.
+    \item \textbf{Construction de l'image d'un point $M$ :}
+    \begin{itemize}
+        \item Tracer la droite $(OM)$.
+        \item Reporter la distance $OM$ sur cette droite en partant de $O$ : si $k>0$, $M'$ est du même côté que $M$ ; si $k<0$, $M'$ est du côté opposé.
+        \item La distance $OM'$ vaut $|k| \times OM$.
+    \end{itemize}
+    \item \textbf{Agrandissement / Réduction :} C'est la valeur absolue $|k|$ qui décide.
+    \begin{itemize}
+        \item $|k| > 1$ : \textbf{agrandissement} (l'image est plus grande que l'original).
+        \item $|k| = 1$ : \textbf{isométrie} (conservation des longueurs) : symétrie centrale si $k=-1$, identité si $k=1$.
+        \item $0 < |k| < 1$ : \textbf{réduction} (l'image est plus petite).
+    \end{itemize}
+    \item \textbf{Propriétés de conservation (invariants) :} Quelle que soit la valeur de $k$ :
+    \begin{itemize}
+        \item \textbf{Alignement :} $O$, $M$ et $M'$ sont alignés.
+        \item \textbf{Parallélisme :} Une droite et son image sont parallèles (ou confondues si elles passent par $O$).
+        \item \textbf{Mesure des angles :} Les angles sont conservés (figure semblable à l'originale).
+        \item \textbf{Milieux :} L'image du milieu d'un segment est le milieu de l'image du segment.
+        \item \textbf{Rapport de longueurs :} Pour tout segment $[AB]$, $A'B' = |k| \times AB$.
+        \item \textbf{Aires :} L'aire de l'image d'une figure plane vaut $k^2$ fois l'aire de la figure initiale.
+    \end{itemize}
+\end{enumerate}
+\end{aretenir}
+
+\courssub{Tableau récapitulatif : effet du rapport $k$ sur la figure}
+
+Ce tableau est ton \textbf{aide-mémoire visuel} pour le BEPC. Il résume l'effet du signe et de la valeur absolue de $k$ sur la position de l'image, les longueurs et les aires.
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[
+    scale=0.82,
+    transform shape,
+    cell/.style={rectangle, draw=popline, minimum height=1.0cm, align=center, text width=2.7cm, font=\small},
+    header/.style={cell, fill=popblue, text=white, font=\bfseries\small},
+    row1/.style={cell, fill=popcream},
+    row2/.style={cell, fill=white},
+]
+% En-têtes
+\node[header] (h1) at (0,0) {Valeur et signe de $k$};
+\node[header] (h2) at (3,0) {Position de $M'$ par rapport à $O$ et $M$};
+\node[header] (h3) at (6,0) {Effet sur les longueurs ($\times |k|$)};
+\node[header] (h4) at (9,0) {Effet sur les aires ($\times k^2$)};
+\node[header] (h5) at (12,0) {Nom de la transformation};
+
+% Ligne k > 1
+\node[row1, align=center] (r11) at (0,-1.0){$k > 1$ \\(ex. $k=3$)};
+\node[row1, align=center] (r12) at (3,-1.0){$M'$ sur la demi-droite $[OM)$ \\ $M'$ \textbf{au-delà} de $M$ (éloigné de $O$)};
+\node[row1, align=center] (r13) at (6,-1.0){Allongement \\ (Agrandissement)};
+\node[row1] (r14) at (9,-1.0) {Aire multipliée par $k^2 > 1$};
+\node[row1] (r15) at (12,-1.0) {Agrandissement};
+
+% Ligne k = 1
+\node[row2] (r21) at (0,-2.0) {$k = 1$};
+\node[row2] (r22) at (3,-2.0) {$M' = M$ (point fixe)};
+\node[row2] (r23) at (6,-2.0) {Conservées ($|k|=1$)};
+\node[row2] (r24) at (9,-2.0) {Conservée ($k^2=1$)};
+\node[row2] (r25) at (12,-2.0) {Identité};
+
+% Ligne 0 < k < 1
+\node[row1, align=center] (r31) at (0,-3.0){$0 < k < 1$ \\(ex. $k=0,5$)};
+\node[row1, align=center] (r32) at (3,-3.0){$M'$ sur la demi-droite $[OM)$ \\ $M'$ \textbf{entre} $O$ et $M$ (rapproché de $O$)};
+\node[row1, align=center] (r33) at (6,-3.0){Raccourcissement \\ (Réduction)};
+\node[row1] (r34) at (9,-3.0) {Aire multipliée par $k^2 < 1$};
+\node[row1] (r35) at (12,-3.0) {Réduction};
+
+% Ligne -1 < k < 0
+\node[row2, align=center] (r41) at (0,-4.0){$-1 < k < 0$ \\(ex. $k=-0,5$)};
+\node[row2, align=center] (r42) at (3,-4.0){$M'$ sur la demi-droite opposée à $[OM)$ \\ $M'$ \textbf{entre} $O$ et le symétrique de $M$};
+\node[row2, align=center] (r43) at (6,-4.0){Raccourcissement \\ (Réduction + rotation $180^\circ$)};
+\node[row2] (r44) at (9,-4.0) {Aire multipliée par $k^2 < 1$};
+\node[row2] (r45) at (12,-4.0) {Réduction + symétrie centrale};
+
+% Ligne k = -1
+\node[row1] (r51) at (0,-5.0) {$k = -1$};
+\node[row1] (r52) at (3,-5.0) {$M'$ symétrique de $M$ par rapport à $O$};
+\node[row1] (r53) at (6,-5.0) {Conservées ($|k|=1$)};
+\node[row1] (r54) at (9,-5.0) {Conservée ($k^2=1$)};
+\node[row1] (r55) at (12,-5.0) {Symétrie centrale};
+
+% Ligne k < -1
+\node[row2, align=center] (r61) at (0,-6.0){$k < -1$ \\(ex. $k=-3$)};
+\node[row2, align=center] (r62) at (3,-6.0){$M'$ sur la demi-droite opposée à $[OM)$ \\ $M'$ \textbf{au-delà} du symétrique de $M$};
+\node[row2, align=center] (r63) at (6,-6.0){Allongement \\ (Agrandissement + rotation $180^\circ$)};
+\node[row2] (r64) at (9,-6.0) {Aire multipliée par $k^2 > 1$};
+\node[row2] (r65) at (12,-6.0) {Agrandissement + symétrie centrale};
+\end{tikzpicture}
+\legende{Tableau de synthèse : influence du rapport $k$ sur l'homothétie.}
+\end{popfigure}
+
+\courssub{Liens avec les transformations déjà connues}
+
+L'homothétie \textbf{englobe} deux transformations que tu maîtrises depuis la 5ème et la 4ème. Les reconnaître comme des cas particuliers te fait gagner du temps en résolution de problèmes.
+
+\begin{propriete}[Cas particuliers de l'homothétie]
+\begin{itemize}
+    \item \textbf{Homothétie de rapport $k = 1$ :} C'est l'\textbf{identité}. Tout point est son propre image : $M' = M$. La figure ne bouge pas.
+    \item \textbf{Homothétie de rapport $k = -1$ :} C'est la \textbf{symétrie centrale} de centre $O$. Le point $M'$ est le symétrique de $M$ par rapport à $O$ ; $O$ est le milieu de $[MM']$. Les longueurs et les aires sont conservées, l'orientation est inversée (rotation d'un demi-tour).
+\end{itemize}
+\end{propriete}
+
+\begin{attention}[Piège fréquent : confusion identité / symétrie centrale]
+Ne confonds pas « $k=1$ » (rien ne change) et « $k=-1$ » (rotation de $180^\circ$ autour de $O$). Dans un énoncé, si on te dit « homothétie de rapport $-1$ », écris explicitement : « C'est une symétrie centrale de centre $O$ ». Cela montre au correcteur que tu fais le lien entre les chapitres.
+\end{attention}
+
+\courssub{Rédiger une justification complète : modèle de copie pour le BEPC}
+
+Au BEPC, une réponse juste mais mal justifiée perd des points. Voici le \textbf{modèle type} à reproduire (en l'adaptant aux lettres du problème) pour toute question « Construire l'image » ou « Justifier que... ».
+
+\begin{methode}[Rédaction type — Justification d'une homothétie]
+\textbf{Énoncé type :} « Construire l'image $M'$ du point $M$ par l'homothétie $h$ de centre $O$ et de rapport $k = -2$. Justifier la construction. »
+
+\textbf{Étapes de la rédaction :}
+\begin{enumerate}
+    \item \textbf{Citer la définition :} « Soit $h$ l'homothétie de centre $O$ et de rapport $k = -2$. Par définition, pour tout point $M$, son image $M'$ vérifie $\overrightarrow{OM'} = -2 \overrightarrow{OM}$. »
+    \item \textbf{En déduire l'alignement et le sens :} « Donc les points $O$, $M$ et $M'$ sont alignés. Comme $k = -2 < 0$, les vecteurs $\overrightarrow{OM}$ et $\overrightarrow{OM'}$ sont de sens contraires : $M'$ se trouve sur la droite $(OM)$, du côté opposé à $M$ par rapport à $O$. »
+    \item \textbf{Calculer la distance :} « De plus, $OM' = |k| \times OM = 2 \times OM$. »
+    \item \textbf{Décrire la construction (si demandée) :} « Construction : je trace la droite $(OM)$. Je repère le point $M'$ sur cette droite, du côté opposé à $M$ par rapport à $O$, tel que $OM' = 2 \times OM$ (à la règle ou au compas). »
+    \item \textbf{Conclusion :} « Le point $M'$ ainsi obtenu est bien l'image de $M$ par $h$. »
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Application du modèle]
+Soit un triangle $ABC$ et une homothétie $h$ de centre $O$ et de rapport $k = \frac{1}{2}$.
+\textbf{Question :} Construire le triangle $A'B'C'$, image de $ABC$ par $h$. Justifier pour le point $A$.
+
+\textbf{Rédaction attendue :}
+\begin{quote}
+« Soit $h$ l'homothétie de centre $O$ de rapport $k = \frac{1}{2}$.
+L'image $A'$ de $A$ vérifie $\overrightarrow{OA'} = \frac{1}{2} \overrightarrow{OA}$.
+Donc $O$, $A$, $A'$ sont alignés. Comme $k > 0$, $A'$ est sur la demi-droite $[OA)$.
+De plus $OA' = \frac{1}{2} OA$.
+Je trace $(OA)$, je prends $A'$ sur $[OA)$ tel que $OA' = \frac{1}{2} OA$.
+$A'$ est bien l'image de $A$ par $h$. »
+\end{quote}
+\end{exemplebox}
+
+\courssub{Complément (ouverture Seconde) : L'homothétie dans un repère}
+
+\begin{attention}[Hors programme BEPC — Préparation 2nde]
+\emph{Ce paragraphe n'est \textbf{pas exigible} au BEPC. Il est donné pour satisfaire ta curiosité et préparer la transition vers la Seconde, où la géométrie analytique (coordonnées, vecteurs) devient l'outil principal.}
+\end{attention}
+
+Dans un repère orthonormé $(O; \vec{i}, \vec{j})$ dont l'origine est \textbf{le centre de l'homothétie}, les coordonnées de l'image s'obtiennent par une multiplication simple.
+
+\begin{propriete}[Coordonnées de l'image dans un repère centré en $O$]
+Soit $h$ l'homothétie de centre $O(0;0)$ et de rapport $k$.
+Si $M(x ; y)$, alors son image $M'(x' ; y')$ a pour coordonnées :
+\[
+x' = k \cdot x \qquad \text{et} \qquad y' = k \cdot y
+\]
+En notation vectorielle : $\overrightarrow{OM'} = k \overrightarrow{OM} \iff \begin{pmatrix} x' \\ y' \end{pmatrix} = k \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} kx \\ ky \end{pmatrix}$.
+\end{propriete}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+% Repère
+\draw[->, popline] (-1,0) -- (5,0) node[right] {$x$};
+\draw[->, popline] (0,-1) -- (0,7) node[above] {$y$};
+\foreach \x in {1,2,3,4} \draw (\x, -0.1) -- (\x, 0.1) node[below, font=\tiny] {\x};
+\foreach \y in {1,2,3,4,5,6} \draw (-0.1, \y) -- (0.1, \y) node[left, font=\tiny] {\y};
+
+% Points
+\coordinate (O) at (0,0);
+\coordinate (M) at (1,2);
+\coordinate (Mp) at (3,6);
+
+% Vecteurs
+\draw[popblue, thick, ->] (O) -- (M) node[midway, above left, popblue] {$\overrightarrow{OM}$};
+\draw[poporange, thick, ->] (O) -- (Mp) node[midway, above right, poporange] {$\overrightarrow{OM'} = 3\overrightarrow{OM}$};
+
+% Points
+\fill[popblue] (M) circle (3pt) node[above left] {$M(1\,;\,2)$};
+\fill[poporange] (Mp) circle (3pt) node[above right] {$M'(3\,;\,6)$};
+\fill[popdark] (O) circle (3pt) node[below left] {$O(0\,;\,0)$};
+
+% Grille pointillée pour repérage
+\draw[popmuted, very thin, dashed] (M) -- (1,0);
+\draw[popmuted, very thin, dashed] (M) -- (0,2);
+\draw[popmuted, very thin, dashed] (Mp) -- (3,0);
+\draw[popmuted, very thin, dashed] (Mp) -- (0,6);
+
+% Annotation k=3
+\node[poppurple, font=\bfseries] at (2.5, 3.5) {$k=3$};
+\end{tikzpicture}
+\legende{Homothétie $h(O; 3)$ dans un repère : $M(1;2) \mapsto M'(3;6)$. Les coordonnées sont multipliées par $3$.}
+\end{popfigure}
+
+\begin{exemplebox}[Exemple chiffré : rapport négatif dans un repère]
+Soit l'homothétie $h$ de centre $O(0;0)$ et de rapport $k = -2$.
+Le point $A(3 ; -1)$ a pour image $A'$ telle que :
+\[
+x_{A'} = -2 \times 3 = -6 \quad ; \quad y_{A'} = -2 \times (-1) = 2
+\]
+Donc $A'(-6 ; 2)$.
+\textit{Vérification :} $O$, $A$, $A'$ sont alignés (pente $OA = -1/3$, pente $OA' = 2/-6 = -1/3$). $A'$ est bien du côté opposé à $A$ par rapport à $O$. $OA' = \sqrt{40} = 2\sqrt{10} = 2 \times OA$.
+\end{exemplebox}
+
+\courssub{Ouverture : Composée de deux homothéties de même centre}
+
+\begin{attention}[Hors programme BEPC — Préparation 2nde]
+\emph{Cette propriété n'est pas au programme de 3ème. Elle illustre la structure de groupe des homothéties de même centre.}
+\end{attention}
+
+Si tu appliques deux homothéties successives \textbf{de même centre $O$}, le résultat est encore une homothétie de centre $O$, dont le rapport est le \textbf{produit des deux rapports}.
+
+\begin{propriete}[Composée de deux homothéties de même centre]
+Soit $h_1$ l'homothétie de centre $O$ et de rapport $k_1$, et $h_2$ l'homothétie de centre $O$ et de rapport $k_2$.
+La transformation composée $h_2 \circ h_1$ (on fait $h_1$ puis $h_2$) est l'homothétie de centre $O$ et de rapport $k = k_1 \times k_2$.
+\end{propriete}
+
+\begin{exemplebox}[Illustration]
+Une homothétie de rapport $2$ (agrandissement) suivie d'une homothétie de rapport $0,5$ (réduction) de même centre ramène la figure à sa taille initiale : $2 \times 0,5 = 1$ (identité).
+Une homothétie de rapport $-2$ suivie d'une homothétie de rapport $-0,5$ donne une homothétie de rapport $1$ (identité) : les deux inversions de sens s'annulent.
+\end{exemplebox}
+
+\begin{savaistu}[L'homothétie au lycée : la géométrie analytique prend le relais]
+En Seconde et Première, l'homothétie ne se fait plus seulement à la règle et au compas. Elle devient un \textbf{calcul sur les coordonnées} ou sur les \textbf{vecteurs}.
+\begin{itemize}
+    \item On écrit $M'(kx ; ky)$ dans un repère d'origine $O$.
+    \item On l'utilise pour démontrer des théorèmes (ex: droite d'Euler, cercles neuf points) en calculant les coordonnées des centres de gravité, orthocentres, etc.
+    \item En Terminale, elle s'étend au plan complexe : $z' = k z$ (si centre est l'origine) ou $z' = a + k(z-a)$ (centre $a$). C'est la base des \textbf{similitudes directes} (rotation + homothétie), outil puissant pour résoudre des problèmes de géométrie difficiles.
+\end{itemize}
+Ce que tu apprends aujourd'hui (alignement, parallélisme, conservation des angles, rapport des aires) reste \textbf{exactement vrai} et constitue le socle intuitif de ces calculs futurs.
+\end{savaistu}
+
+\begin{exoresolu}[Exercice de synthèse BEPC]
+\textbf{Énoncé :} Dans un repère orthonormé $(O; I, J)$, on donne les points $A(2; 1)$, $B(4; 1)$, $C(2; 4)$.
+On considère l'homothétie $h$ de centre $O$ et de rapport $k = -1,5$.
+\begin{enumerate}
+    \item Déterminer les coordonnées des points $A'$, $B'$, $C'$, images respectives de $A$, $B$, $C$ par $h$.
+    \item Quelle est la nature du triangle $A'B'C'$ ? Justifier.
+    \item Calculer l'aire du triangle $A'B'C'$ sachant que l'aire de $ABC$ est $3$ unités d'aire.
+\end{enumerate}
+
+\tcblower
+\textbf{Solution détaillée :}
+
+\noindent \textbf{1. Coordonnées des images.}
+On applique la formule $M'(k x_M ; k y_M)$ avec $k = -1,5 = -\frac{3}{2}$.
+\begin{align*}
+A'( -1,5 \times 2 \; ; \; -1,5 \times 1 ) &= A'(-3 ; -1,5) \\
+B'( -1,5 \times 4 \; ; \; -1,5 \times 1 ) &= B'(-6 ; -1,5) \\
+C'( -1,5 \times 2 \; ; \; -1,5 \times 4 ) &= C'(-3 ; -6)
+\end{align*}
+
+\noindent \textbf{2. Nature du triangle $A'B'C'$.}
+$h$ est une homothétie. Elle conserve les angles et le parallélisme.
+Le triangle $ABC$ est rectangle en $A$ car $\overrightarrow{AB} = (2;0)$ et $\overrightarrow{AC} = (0;3)$ sont orthogonaux (produit scalaire nul).
+Donc $A'B'C'$ est l'image de $ABC$ par une homothétie : c'est un \textbf{triangle rectangle en $A'$}.
+De plus, comme $|k| = 1,5 \neq 1$, ce n'est pas un triangle isométrique à $ABC$, mais un triangle \textbf{semblable} à $ABC$ (agrandi et retourné).
+
+\noindent \textbf{3. Aire de $A'B'C'$.}
+L'aire de l'image par une homothétie de rapport $k$ est multipliée par $k^2$.
+Ici $k = -1,5$, donc $k^2 = (-1,5)^2 = 2,25$.
+$\mathcal{A}_{A'B'C'} = k^2 \times \mathcal{A}_{ABC} = 2,25 \times 3 = 6,75$ unités d'aire.
+\end{exoresolu}
+
+\courssub{Check-list finale pour le BEPC : es-tu prêt(e) ?}
+
+\begin{itemize}
+    \item [$\checkmark$] Je sais \textbf{définir} une homothétie par son centre et son rapport (notation $h(O; k)$).
+    \item [$\checkmark$] Je sais \textbf{construire} l'image d'un point (règle, compas, alignement, distance $|k|\times OM$).
+    \item [$\checkmark$] Je distingue \textbf{agrandissement} ($|k|>1$), \textbf{réduction} ($|k|<1$), \textbf{symétrie centrale} ($k=-1$), \textbf{identité} ($k=1$).
+    \item [$\checkmark$] Je connais les \textbf{propriétés de conservation} : alignement $O-M-M'$, parallélisme des droites, égalité des angles, milieu $\to$ milieu, longueurs $\times |k|$, aires $\times k^2$.
+    \item [$\checkmark$] Je sais \textbf{rédiger une justification complète} (définition $\to$ alignement/sens $\to$ distance $\to$ construction $\to$ conclusion).
+    \item [$\checkmark$] Je sais \textbf{calculer des coordonnées} dans un repère centré en $O$ (complément Seconde) : $M'(kx; ky)$.
+\end{itemize}
+
+\textbf{Bravo !} Tu as maintenant toutes les clés pour aborder sereinement les exercices d'homothétie du BEPC. La rigueur dans la rédaction (préciser $O$ et $k$ à chaque fois) et la maîtrise du tableau récapitulatif feront la différence. Au travail !
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+Cette activité d'intégration vise à mobiliser l'ensemble des connaissances et compétences acquises au cours de la leçon sur l'homothétie dans une situation concrète et mesurable : la réalisation du plan réduit de la salle de classe. Elle permet de :
+\begin{itemize}
+    \item Construire l'image d'une figure (la salle) par une homothétie de centre et de rapport choisis.
+    \item Calculer des dimensions réelles à partir de dimensions réduites (et inversement) en utilisant la valeur absolue du rapport $|k|$.
+    \item Calculer une aire réelle à partir de l'aire sur le plan en utilisant le facteur $k^2$.
+    \item Rédiger une démarche mathématique complète, justifiée, avec unités, et la communiquer oralement.
+    \item Comparer les choix d'échelles (rapports) et analyser leur influence sur la précision et la lisibilité du plan.
+\end{itemize}
+
+\courssub{Situation}
+\emph{Contexte :} Au Lycée Bilingue de Dschang, la classe de 3ème A compte 52 élèves. Pour préparer la rentrée et optimiser l'agencement des bancs (de type \og bancs deux places \fg{} fournis par le MINEDUB), le professeur principal demande aux élèves de réaliser un plan précis de la salle de classe sur une feuille A4 (21 cm $\times$ 29,7 cm). Ce plan servira de base pour proposer un nouveau dispositif de placement respectant les distances de sécurité (au moins 1 m entre les rangs) et facilitant la circulation.
+
+\emph{Données réelles mesurées par la classe (moyennes arrondies) :}
+\begin{itemize}
+    \item La salle est un rectangle de longueur $L = 9,50$ m et de largeur $l = 7,20$ m.
+    \item Le tableau occupe tout le grand côté (longueur $9,50$ m) du mur du fond.
+    \item La porte d'entrée (largeur $0,90$ m) est centrée sur le grand côté opposé au tableau.
+    \item Deux fenêtres (chacune $1,50$ m de large) sont percées dans le mur latéral gauche : la première s'étend de $2$ m à $3,50$ m à partir du bas du mur, la deuxième de $5$ m à $6,50$ m.
+    \item Le coin en bas à gauche de la salle (côté porte, mur latéral gauche) est choisi comme origine pour les mesures.
+\end{itemize}
+
+\emph{Contrainte technique :} Le plan doit tenir dans une marge de 2 cm sur chaque bord de la feuille A4 (zone utile : $17$ cm $\times$ $25,7$ cm).
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8]
+    % Feuille A4 zone utile
+    \draw[popblue, thick] (0,0) rectangle (17, 25.7);
+    \node[popblue, above right] at (0,25.7) {Zone utile A4 (17 $\times$ 25,7 cm)};
+    % Salle réelle (représentée schématiquement à côté pour comparaison)
+    \begin{scope}[shift={(20,0)}, x=0.01cm, y=0.01cm] % 1cm = 1m environ pour le schéma réel
+        \draw[popdark, thick] (0,0) rectangle (950, 720); % 9.5m x 7.2m en cm
+        % Tableau (grand côté du fond)
+        \draw[poporange, line width=3pt] (0,720) -- (950,720);
+        \node[poporange, above] at (475, 730) {Tableau 9,50 m};
+        % Porte (grand côté opposé, centrée)
+        \draw[popgreen, line width=3pt] (430,0) -- (520,0);
+        \node[popgreen, below] at (475, -30) {Porte 0,90 m};
+        % Fenêtres (mur latéral gauche)
+        \draw[poppurple, line width=3pt] (0, 200) -- (0, 350);
+        \draw[poppurple, line width=3pt] (0, 500) -- (0, 650);
+        \node[poppurple, left] at (-50, 425) {Fenêtres};
+        % Dimensions
+        \draw[|<->|, popmuted] (0,-80) -- (950,-80);
+        \node[popmuted, below] at (475, -100) {950 cm};
+        \draw[|<->|, popmuted] (-80,0) -- (-80,720);
+        \node[popmuted, left, rotate=90] at (-110, 360) {720 cm};
+    \end{scope}
+    % Flèche homothétie
+    \draw[->, thick, poppink] (10, 12) -- (18, 12) node[midway, above] {Homothétie $h(O, k)$};
+    \node[poppink] at (14, 10) {$0 < k < 1$ : réduction};
+\end{tikzpicture}
+\legende{Schéma de principe : passage de la salle réelle (mesures en cm) au plan sur feuille A4 par homothétie.}
+\end{popfigure}
+
+\courssub{Consignes}
+Travailler par groupes de 4 à 5 élèves. Chaque groupe rend une fiche de synthèse rédigée (une page recto) et présente son travail à l'oral (3 min maximum).
+
+\begin{enumerate}
+    \item \textbf{Choix de l'échelle (rapport $k$) :} Déterminer le plus grand rapport $k$ (sous forme de fraction $1/n$ avec $n$ entier) permettant d'inscrire le rectangle de la salle dans la zone utile de la feuille A4. Justifier le choix par un calcul d'encadrement. Préciser si l'homothétie est un agrandissement ou une réduction.
+    \item \textbf{Centre de l'homothétie :} Proposer un point $O$, centre de l'homothétie (par exemple un coin de la salle ou le centre de la salle), et justifier ce choix pour faciliter la construction du plan. Donner les coordonnées de $O$ dans le repère de la salle.
+    \item \textbf{Construction du plan :} Sur une feuille A4 (fournie), réaliser la construction à la règle et au compas de l'image de la salle (rectangle), du tableau, de la porte et des fenêtres par l'homothétie $h(O, k)$. Légender le plan (échelle, centre $O$, rapport $k$, noms des points images).
+    \item \textbf{Calculs de dimensions :} Calculer les dimensions sur le plan (en cm) du rectangle de la salle, de la porte et d'une fenêtre. Vérifier par la mesure sur votre construction.
+    \item \textbf{Calcul d'aires :} Calculer l'aire du rectangle de la salle sur votre plan (en cm$^2$). En déduire l'aire réelle de la salle (en m$^2$) en utilisant la relation entre aires et rapport d'homothétie. Comparer avec le calcul direct $L \times l$.
+    \item \textbf{Analyse critique :} Si l'on avait choisi une échelle $1/100$ au lieu de votre échelle optimale, quelles auraient été les dimensions du plan ? Aurait-on pu distinguer la porte (largeur sur le plan) ? Discuter de l'intérêt du choix du \og plus grand rapport possible \fg.
+    \item \textbf{Rédaction finale :} Rédiger la conclusion de l'activité en répondant à la question : \og Quelle est l'échelle retenue pour le plan officiel de la classe ? \fg{} en précisant centre, rapport, dimensions du plan et aire réelle vérifiée.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+\begin{aretenir}[Rappels de cours — Homothétie]
+    \begin{itemize}
+        \item \textbf{Définition :} Soit $O$ un point et $k$ un nombre réel non nul. L'homothétie de centre $O$ et de rapport $k$ transforme tout point $M$ en un point $M'$ tel que $\overrightarrow{OM'} = k \overrightarrow{OM}$. On la note $h(O, k)$.
+        \item \textbf{Construction de l'image $M'$ de $M$ :}
+              \begin{enumerate}
+                  \item Tracer la droite $(OM)$.
+                  \item Si $k > 0$ : $M'$ est sur la demi-droite $[OM)$ et $OM' = |k| \times OM$.
+                  \item Si $k < 0$ : $M'$ est sur la demi-droite opposée à $[OM)$ et $OM' = |k| \times OM$.
+              \end{enumerate}
+        \item \textbf{Agrandissement / Réduction :} Si $|k| > 1$, c'est un agrandissement. Si $|k| < 1$, c'est une réduction. Dans cette activité, $|k| < 1$ : c'est une réduction.
+        \item \textbf{Propriétés fondamentales :}
+              \begin{itemize}
+                  \item L'image d'un segment est un segment parallèle au segment initial ; les longueurs sont multipliées par $|k|$.
+                  \item L'image d'une droite est une droite parallèle (ou confondue si la droite passe par $O$).
+                  \item L'image d'un angle est un angle de même mesure (conservation des angles).
+                  \item \textbf{Aires :} l'aire de l'image d'une figure plane est multipliée par $k^2$.
+              \end{itemize}
+        \item \textbf{Échelle :} une échelle $1/n$ correspond à un rapport d'homothétie de valeur absolue $|k| = 1/n$ : $1$ cm sur le plan représente $n$ cm dans la réalité.
+    \end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+\begin{exoresolu}[Corrigé type — Groupe de référence]
+\emph{Énoncé :} Réaliser le plan de la salle de classe (9,50 m $\times$ 7,20 m) sur feuille A4 (zone utile 17 cm $\times$ 25,7 cm) par homothétie. Construire, calculer, vérifier.
+
+\tcblower
+
+\textbf{1. Choix de l'échelle (rapport $k$)}
+\par On convertit les dimensions réelles en centimètres : $L = 950$ cm, $l = 720$ cm.
+\par Zone utile du plan : $L_{\text{plan}} \le 17$ cm et $l_{\text{plan}} \le 25,7$ cm (on oriente la feuille en portrait : la longueur de la salle le long des 17 cm, la largeur le long des 25,7 cm ; on pourrait aussi faire l'inverse).
+\par Pour une homothétie de rapport $k$ (réduction, donc $0 < k < 1$), on a $L_{\text{plan}} = k \times 950$ et $l_{\text{plan}} = k \times 720$.
+\par Il faut :
+\[
+\begin{cases}
+k \times 950 \le 17 \\
+k \times 720 \le 25,7
+\end{cases}
+\iff
+\begin{cases}
+k \le \dfrac{17}{950} \approx 0,01789 \\
+k \le \dfrac{25,7}{720} \approx 0,03569
+\end{cases}
+\]
+\par La contrainte la plus forte est celle de la longueur : $k \le \dfrac{17}{950}$.
+\par On cherche une échelle de la forme $1/n$ (avec $n$ entier) telle que $\dfrac{1}{n} \le \dfrac{17}{950}$, c'est-à-dire $n \ge \dfrac{950}{17} \approx 55,88$.
+\par Le plus petit entier convenable est donc $n = 56$. En pratique, on préfère une échelle \og ronde \fg{} facile à utiliser : on teste les valeurs usuelles.
+\begin{itemize}
+    \item Échelle $1/50$ : $950 / 50 = 19$ cm $> 17$ cm : \textbf{trop grand, refusé}.
+    \item Échelle $1/75$ : $950 / 75 \approx 12,67$ cm $< 17$ cm : \textbf{accepté}.
+\end{itemize}
+\par \textbf{Choix :} l'échelle $1/75$ est la plus grande échelle usuelle qui convient.
+\par Vérification complète : $L_{\text{plan}} = 950 / 75 \approx 12,67$ cm ($< 17$ cm) et $l_{\text{plan}} = 720 / 75 = 9,6$ cm ($< 25,7$ cm). \textbf{Le plan tient dans la zone utile.}
+\par Rapport d'homothétie : $k = \dfrac{1}{75}$. Comme $|k| < 1$, il s'agit d'une \textbf{réduction} ; comme $k > 0$, il n'y a pas de renversement.
+
+\textbf{2. Choix du centre $O$}
+\par On choisit le coin en bas à gauche de la salle (côté porte, mur gauche) comme centre $O$.
+\par \emph{Justification :} ce point est un sommet du rectangle de la salle, et son image par l'homothétie est lui-même ($O' = O$, car $\overrightarrow{OO'} = k\overrightarrow{OO} = \vec{0}$). Cela \og ancre \fg{} le plan dans un coin de la zone utile, simplifie la construction (un point de moins à construire) et permet de reporter toutes les mesures le long des deux côtés du rectangle issus de $O$. Coordonnées dans le repère de la salle : $O(0\,;0)$.
+
+\textbf{3. Construction du plan (procédure)}
+\par Notons $OABC$ le rectangle de la salle réelle : $O(0\,;0)$, $A(950\,;0)$ (coin côté porte, mur droit), $B(0\,;720)$ (coin côté tableau, mur gauche), $C(950\,;720)$ (coin côté tableau, mur droit), les coordonnées étant exprimées en cm.
+\begin{enumerate}
+    \item Sur la feuille A4, placer le point $O$ à 2 cm du bord gauche et 2 cm du bord bas (marges imposées).
+    \item Tracer deux demi-droites perpendiculaires $[Ox)$ (horizontale, vers la droite) et $[Oy)$ (verticale, vers le haut) : ce sont les axes du plan.
+    \item Sur $[Ox)$, reporter $OA' = k \times OA = \dfrac{950}{75} \approx 12,67$ cm, que l'on arrondit à $12,7$ cm à la règle. On obtient $A'$, image de $A$.
+    \item Sur $[Oy)$, reporter $OB' = k \times OB = \dfrac{720}{75} = 9,6$ cm. On obtient $B'$, image de $B$.
+    \item Construire le rectangle $OA'C'B'$ en menant par $A'$ la parallèle à $(Oy)$ et par $B'$ la parallèle à $(Ox)$ ; leur intersection est $C'$, image de $C$. (Propriété : l'image d'un rectangle par une homothétie est un rectangle, car les angles sont conservés.)
+    \item \textbf{Tableau :} il occupe le grand côté du fond, segment $[BC]$. Son image est le segment $[B'C']$ (côté supérieur du rectangle, de longueur $12,67$ cm). Le tracer en trait épais.
+    \item \textbf{Porte :} elle est centrée sur le côté $[OA]$. Son milieu réel $P$ est à $\dfrac{950}{2} = 475$ cm de $O$. Son image $P'$ vérifie $OP' = \dfrac{475}{75} \approx 6,33$ cm sur $[OA')$. La largeur réelle de la porte est $90$ cm, donc sa largeur sur le plan est $\dfrac{90}{75} = 1,2$ cm. Tracer le segment de $1,2$ cm centré en $P'$ sur le côté $[OA']$.
+    \item \textbf{Fenêtres :} elles sont sur le mur gauche, segment $[OB]$. Fenêtre 1 : de $200$ cm à $350$ cm ; fenêtre 2 : de $500$ cm à $650$ cm. Leurs images sont sur $[OB')$ :
+    \begin{align*}
+        \text{Fenêtre 1 (bas) : } & 200/75 \approx 2,67 \text{ cm} &
+        \text{Fenêtre 1 (haut) : } & 350/75 \approx 4,67 \text{ cm} \\
+        \text{Fenêtre 2 (bas) : } & 500/75 \approx 6,67 \text{ cm} &
+        \text{Fenêtre 2 (haut) : } & 650/75 \approx 8,67 \text{ cm}
+    \end{align*}
+    \item Tracer en trait épais les deux segments de fenêtres sur le côté $[OB']$ aux hauteurs calculées. Chaque fenêtre mesure $\dfrac{150}{75} = 2$ cm sur le plan.
+    \item Légender : échelle $1/75$, centre $O$, rapport $k = 1/75$, points $A'$, $B'$, $C'$.
+\end{enumerate}
+
+\textbf{4. Calculs de dimensions sur le plan (vérification)}
+\par Rapport $k = \dfrac{1}{75}$. Pour chaque élément : dimension sur le plan $=$ dimension réelle $\times \, k$.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Élément} & \textbf{Dimension réelle (cm)} & \textbf{Calcul : dim. $\times k$} & \textbf{Sur le plan (cm)} \\ \hline
+Longueur salle & 950 & $950 \times \frac{1}{75}$ & $\approx 12,67$ \\ \hline
+Largeur salle & 720 & $720 \times \frac{1}{75}$ & $9,6$ \\ \hline
+Largeur porte & 90 & $90 \times \frac{1}{75}$ & $1,2$ \\ \hline
+Largeur fenêtre & 150 & $150 \times \frac{1}{75}$ & $2,0$ \\ \hline
+Position fenêtre 1 (bas) & 200 & $200 \times \frac{1}{75}$ & $\approx 2,67$ \\ \hline
+Position fenêtre 1 (haut) & 350 & $350 \times \frac{1}{75}$ & $\approx 4,67$ \\ \hline
+\end{tabularx}
+\end{center}
+\par \emph{Mesure sur la construction (à la règle) :} $12,7$ cm ; $9,6$ cm ; $1,2$ cm ; $2,0$ cm. \textbf{Conformité parfaite} avec les calculs (à la précision de la règle près).
+
+\textbf{5. Calcul d'aires}
+\par \emph{Aire sur le plan :}
+\[
+\mathcal{A}_{\text{plan}} = L_{\text{plan}} \times l_{\text{plan}} = \frac{950}{75} \times \frac{720}{75} = \frac{950 \times 720}{75^2} = \frac{684\,000}{5\,625} = 121,6 \text{ cm}^2.
+\]
+\par \emph{Aire réelle déduite du plan} (propriété : l'aire est multipliée par $k^2$, donc $\mathcal{A}_{\text{plan}} = k^2 \times \mathcal{A}_{\text{réelle}}$) :
+\[
+\mathcal{A}_{\text{réelle}} = \frac{\mathcal{A}_{\text{plan}}}{k^2} = 121,6 \times 75^2 = 121,6 \times 5\,625 = 684\,000 \text{ cm}^2.
+\]
+\par Conversion en m$^2$ : $684\,000 \text{ cm}^2 = 68,4 \text{ m}^2$ (car $1 \text{ m}^2 = 10\,000 \text{ cm}^2$).
+\par \emph{Vérification par calcul direct :}
+\[
+\mathcal{A}_{\text{direct}} = L \times l = 9,50 \times 7,20 = 68,4 \text{ m}^2.
+\]
+\par \textbf{Résultats identiques.} La propriété des aires ($\times k^2$) est validée expérimentalement.
+
+\textbf{6. Analyse critique : échelle 1/100}
+\par Si l'on avait choisi $k = \dfrac{1}{100}$ :
+\begin{itemize}
+    \item Dimensions du plan : $L_{\text{plan}} = 9,5$ cm, $l_{\text{plan}} = 7,2$ cm : un tout petit plan perdu au centre de la feuille A4, avec beaucoup d'espace inutilisé.
+    \item Largeur de la porte sur le plan : $90 / 100 = 0,9$ cm $= 9$ mm.
+    \item Largeur d'une fenêtre sur le plan : $150 / 100 = 1,5$ cm.
+\end{itemize}
+\par \textbf{Problème :} avec une porte de $9$ mm et une épaisseur de trait d'environ $0,5$ mm, la représentation devient peu lisible et les mesures sur le plan perdent en précision (une erreur de $1$ mm sur le plan correspond à $10$ cm dans la réalité à l'échelle $1/100$, contre $7,5$ cm à l'échelle $1/75$). L'échelle $1/75$ donne une porte de $1,2$ cm, bien plus lisible. \textbf{Conclusion :} choisir le plus grand rapport possible (c'est-à-dire la plus grande échelle compatible avec la feuille) maximise la lisibilité et la précision du plan.
+
+\textbf{7. Conclusion}
+\par L'échelle retenue pour le plan officiel de la classe est l'échelle $1/75$ : homothétie de centre $O$ (coin inférieur gauche de la salle) et de rapport $k = \dfrac{1}{75}$. Le plan obtenu est un rectangle de $12,67$ cm $\times$ $9,6$ cm, et l'aire réelle de la salle, vérifiée de deux façons, est $68,4 \text{ m}^2$.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+    % Echelle 1/75 : plan 12.67 cm x 9.6 cm
+    \def\Lplan{12.67}
+    \def\lplan{9.6}
+    \def\marge{0.5}
+    % Cadre feuille
+    \draw[popline, thin, dashed] (-\marge, -\marge) rectangle (\Lplan+\marge, \lplan+\marge);
+    \node[popmuted, font=\tiny, anchor=south west] at (-\marge, \lplan+\marge) {Zone utile de la feuille A4};
+    % Rectangle Salle
+    \draw[popdark, very thick] (0,0) rectangle (\Lplan, \lplan);
+    % Centre O
+    \fill[poppink] (0,0) circle (1.5pt);
+    \node[poppink, anchor=north east, font=\small] at (0,0) {$O$};
+    % Axes
+    \draw[->, popmuted, thin] (0,0) -- (\Lplan+1,0) node[right, font=\tiny] {$x$ (longueur 9,50 m)};
+    \draw[->, popmuted, thin] (0,0) -- (0,\lplan+1) node[above, font=\tiny] {$y$ (largeur 7,20 m)};
+    % Points principaux
+    \node[popdark, anchor=north west, font=\small] at (\Lplan, 0) {$A'$};
+    \node[popdark, anchor=south east, font=\small] at (0, \lplan) {$B'$};
+    \node[popdark, anchor=south west, font=\small] at (\Lplan, \lplan) {$C'$};
+    % Tableau (grand côté du fond : B'C')
+    \draw[poporange, line width=2.5pt] (0,\lplan) -- (\Lplan,\lplan);
+    \node[poporange, above, font=\small] at (\Lplan/2, \lplan) {Tableau (9,50 m)};
+    % Porte (côté OA', centrée)
+    \pgfmathsetmacro{\porteCentre}{\Lplan/2}
+    \pgfmathsetmacro{\porteLargeur}{1.2} % 90/75
+    \draw[popgreen, line width=2.5pt] (\porteCentre-\porteLargeur/2, 0) -- (\porteCentre+\porteLargeur/2, 0);
+    \node[popgreen, below, font=\small] at (\porteCentre, 0) {Porte (0,90 m)};
+    % Fenêtres (mur gauche OB')
+    \pgfmathsetmacro{\fA}{2.67} \pgfmathsetmacro{\fB}{4.67}
+    \pgfmathsetmacro{\fC}{6.67} \pgfmathsetmacro{\fD}{8.67}
+    \draw[poppurple, line width=2.5pt] (0,\fA) -- (0,\fB);
+    \draw[poppurple, line width=2.5pt] (0,\fC) -- (0,\fD);
+    \node[poppurple, left, font=\small, rotate=90, anchor=south] at (-0.3, \fA) {Fenêtre 1};
+    \node[poppurple, left, font=\small, rotate=90, anchor=south] at (-0.3, \fC) {Fenêtre 2};
+    % Echelle
+    \node[popblue, fill=popcream, rounded corners, font=\small, anchor=south east] at (\Lplan, -\marge) {Échelle 1/75 ($k=\frac{1}{75}$)};
+\end{tikzpicture}
+\legende{Plan de la salle de classe à l'échelle 1/75 (construction géométrique par homothétie de centre $O$).}
+\end{popfigure}
+
+\begin{definition}[Fiche technique du plan de la salle 3ème A — Lycée Bilingue de Dschang]
+\begin{itemize}
+    \item \textbf{Échelle retenue :} $1/75$ (rapport d'homothétie $k = \dfrac{1}{75}$).
+    \item \textbf{Type :} réduction sans renversement ($0 < k < 1$).
+    \item \textbf{Centre d'homothétie :} coin inférieur gauche de la salle (origine des mesures), point $O$ ; son image $O' = O$ est placée à 2 cm des bords gauche et bas de la feuille.
+    \item \textbf{Dimensions du plan :} longueur $\approx 12,67$ cm $\times$ largeur $9,6$ cm.
+    \item \textbf{Aire de la salle (vérifiée) :} $68,4 \text{ m}^2$.
+    \item \textbf{Éléments représentés :} rectangle de la salle ; tableau (côté supérieur, $12,67$ cm) ; porte (côté inférieur, centrée, largeur $1,2$ cm) ; deux fenêtres (côté gauche, largeur $2$ cm chacune, positions $2,67$ cm--$4,67$ cm et $6,67$ cm--$8,67$ cm).
+    \item \textbf{Utilisation :} ce plan permet de tester des configurations de bancs (banc deux places $\approx 1,20$ m $\times$ $0,40$ m, soit $1,6$ cm $\times$ $0,53$ cm sur le plan) en respectant l'espace de circulation de $1$ m (soit $\approx 1,33$ cm sur le plan).
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Erreurs fréquentes à éviter]
+\begin{itemize}
+    \item \textbf{Confondre $k$ et $1/k$ :} pour passer du réel au plan, on \emph{multiplie} par $k = \frac{1}{75}$ ; pour passer du plan au réel, on \emph{divise} par $k$ (c'est-à-dire multiplier par $75$).
+    \item \textbf{Oublier le carré pour les aires :} les longueurs sont multipliées par $|k|$, mais les aires par $k^2$. Ici $k^2 = \frac{1}{5\,625}$ : une erreur classique consiste à diviser l'aire réelle par $75$ au lieu de $5\,625$.
+    \item \textbf{Mélanger les unités :} convertir toutes les mesures dans la même unité (ici le cm) avant d'appliquer le rapport. Rappel : $1 \text{ m}^2 = 10\,000 \text{ cm}^2$.
+    \item \textbf{Mal placer le centre $O$ :} si $O$ est choisi hors de la feuille ou sans lien avec la figure, la construction devient inutilement compliquée. Choisir de préférence un sommet de la figure.
+    \item \textbf{Oublier les conditions d'application :} une homothétie exige un rapport $k \neq 0$ ; le signe de $k$ indique la position de l'image par rapport au centre.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Les plans et les homothéties au Cameroun]
+Les architectes, géomètres-topographes et agents du cadastre utilisent quotidiennement des homothéties (sans toujours prononcer ce mot !) : un plan de parcelle au $1/200$, une carte routière au $1/1\,000\,000$, le plan d'une maison au $1/50$ sont autant d'images d'homothéties de rapport inférieur à $1$. Inversement, le plan d'une pièce électronique au $10/1$ est un agrandissement ($k = 10$). Le photocopieur aussi : les touches \og réduire à 71 \% \fg{} ou \og agrandir à 141 \% \fg{} appliquent des homothéties de rapports $0,71$ et $1,41$ — et l'aire du document est alors multipliée par $0,71^2 \approx 0,50$ ou $1,41^2 \approx 2$.
+\end{savaistu}
+
+\courssub{Bilan de l'activité}
+Cette activité a permis de concrétiser les notions abstraites de l'homothétie :
+\begin{itemize}
+    \item \textbf{Construction géométrique :} les élèves ont manipulé la règle et le compas pour construire des images de points alignés avec le centre $O$, validant la définition vectorielle $\overrightarrow{OM'} = k \overrightarrow{OM}$.
+    \item \textbf{Calcul proportionnel :} le passage du réel au plan (et inversement) a mobilisé la proportionnalité (multiplication par $|k|$ pour les longueurs, par $k^2$ pour les aires), renforçant le lien entre géométrie et calcul numérique.
+    \item \textbf{Choix du rapport (échelle) :} la recherche du \og plus grand $k$ possible \fg{} a introduit une contrainte d'optimisation réelle (maximiser la lisibilité dans un cadre donné), typique des métiers du bâtiment (architectes, géomètres-topographes au Cameroun).
+    \item \textbf{Rigueur de la rédaction :} l'exigence d'une fiche de synthèse avec unités (cm, m, m$^2$), justifications des choix (centre, échelle) et vérification croisée (mesure graphique contre calcul) a entraîné les élèves à la démarche scientifique attendue au BEPC et dans la vie professionnelle.
+    \item \textbf{Erreurs fréquentes corrigées :} confusion entre $k$ et $1/k$ (échelle), oubli du carré pour les aires ($k$ au lieu de $k^2$), mauvaise gestion des unités (m contre cm), placement incorrect du centre $O$ hors de la feuille.
+\end{itemize}
+\par L'ancrage dans l'environnement immédiat de l'élève (sa propre salle de classe) a donné du sens à la notion d'homothétie, la transformant en outil concret de représentation et de décision (aménagement de l'espace).
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Homothétie}
+
+\courssub{Méthodes et exercices résolus}
+
+\begin{methode}[Construire l'image d'un point par une homothétie]
+\textbf{Objectif :} Donné un centre $O$, un rapport $k \neq 0$ et un point $M$, construire $M' = h_{O,k}(M)$.
+\begin{enumerate}
+    \item \textbf{Tracer la droite $(OM)$.} L'image $M'$ appartient à cette droite (alignement $O, M, M'$).
+    \item \textbf{Repérer le sens :}
+    \begin{itemize}
+        \item Si $k > 0$ : $M'$ est du \textbf{même côté} de $O$ que $M$ (vecteurs $\overrightarrow{OM}$ et $\overrightarrow{OM'}$ même sens).
+        \item Si $k < 0$ : $M'$ est du \textbf{côté opposé} de $O$ par rapport à $M$ (vecteurs sens contraires).
+    \end{itemize}
+    \item \textbf{Construire la longueur $OM' = |k| \times OM$.}
+    \begin{itemize}
+        \item Si $|k|$ est un entier (ex: $2, 3$) : reporter $|k|$ fois la longueur $OM$ sur la droite.
+        \item Si $|k|$ est une fraction (ex: $\frac{1}{2}, \frac{2}{3}$) : utiliser le théorème de Thalès (construction par parallèles) ou la règle de proportionnalité.
+        \item Si $|k|$ est un nombre décimal : calculer $OM'$ numériquement et reporter au compas.
+    \end{itemize}
+    \item \textbf{Vérifier :} $\overrightarrow{OM'} = k \cdot \overrightarrow{OM}$.
+\end{enumerate}
+\cle{Réflexe} : Toujours tracer le rayon $(OM)$ ou la droite $(OM)$ en premier. Le signe de $k$ dicte le côté par rapport à $O$.
+\end{methode}
+
+\begin{exoresolu}[Construction de l'image d'un point]
+\textbf{Énoncé :} Soit un point $O$, un segment $[AB]$ de longueur $4\,\text{cm}$ et un point $M$ tel que $OM = 3\,\text{cm}$. L'angle $\widehat{AOM} = 60^\circ$.
+Construire les points $M_1, M_2, M_3$ images de $M$ par les homothéties de centre $O$ et de rapports respectifs :
+$k_1 = 2$, $k_2 = -\frac{1}{2}$, $k_3 = 1,5$.
+\tcblower
+\textbf{Solution détaillée :}
+\paragraph{1. Mise en place du repère et du point $M$.}
+On trace le segment $[OA]$ de longueur $4\,\text{cm}$ (arbitraire pour la figure, mais $OM=3\,\text{cm}$ est fixé). On construit l'angle $\widehat{AOM}=60^\circ$ et on reporte $OM=3\,\text{cm}$ sur le second côté de l'angle. On obtient le point $M$.
+
+\paragraph{2. Image $M_1$ par $h_{O, 2}$ (Agrandissement, $k>0$).}
+\begin{itemize}
+    \item $k_1 = 2 > 0 \implies M_1$ est sur le rayon $[OM)$ (même côté que $M$ par rapport à $O$).
+    \item $OM_1 = |2| \times OM = 2 \times 3 = 6\,\text{cm}$.
+    \item Au compas, on prend l'ouverture $6\,\text{cm}$, on pointe en $O$ et on coupe le rayon $[OM)$ en $M_1$.
+\end{itemize}
+\paragraph{3. Image $M_2$ par $h_{O, -\frac{1}{2}}$ (Réduction + symétrie centrale, $k<0$).}
+\begin{itemize}
+    \item $k_2 = -\frac{1}{2} < 0 \implies M_2$ est sur la droite $(OM)$ mais du \textbf{côté opposé} de $O$ par rapport à $M$ (sur le prolongement de $[MO]$ au-delà de $O$).
+    \item $OM_2 = |-\frac{1}{2}| \times OM = \frac{1}{2} \times 3 = 1,5\,\text{cm}$.
+    \item On prolonge $[MO]$ au-delà de $O$. Au compas, ouverture $1,5\,\text{cm}$, pointe en $O$, on coupe cette demi-droite en $M_2$.
+\end{itemize}
+\paragraph{4. Image $M_3$ par $h_{O, 1,5}$ (Agrandissement, $k>0$).}
+\begin{itemize}
+    \item $k_3 = 1,5 > 0 \implies M_3$ est sur le rayon $[OM)$.
+    \item $OM_3 = 1,5 \times 3 = 4,5\,\text{cm}$.
+    \item Au compas, ouverture $4,5\,\text{cm}$, pointe en $O$, on coupe $[OM)$ en $M_3$.
+\end{itemize}
+\paragraph{Conclusion :} Les points $M_1, M_3$ sont alignés avec $O$ et $M$ du même côté ($k>0$). $M_2$ est aligné mais du côté opposé ($k<0$). On a bien $OM_1=6\,\text{cm}$, $OM_2=1,5\,\text{cm}$, $OM_3=4,5\,\text{cm}$.
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+\coordinate (O) at (0,0);
+\coordinate (A) at (4,0);
+\coordinate (M) at (60:3); % 3cm at 60 deg
+\coordinate (M1) at (60:6);
+\coordinate (M2) at (240:1.5); % opposite direction
+\coordinate (M3) at (60:4.5);
+% Axes/Rays
+\draw[popmuted, thin] (O) -- ++(60:7);
+\draw[popmuted, thin] (O) -- ++(240:3);
+\draw[popmuted, thin] (O) -- (A);
+% Points
+\foreach \p/\label/\pos in {O/O/below left, A/A/below, M/M/above right, M1/M_1/above right, M2/M_2/below left, M3/M_3/above right}
+    \fill[popblue] (\p) circle (2pt) node[\pos] {$\label$};
+% Segments
+\draw[popblue, thick] (O) -- (M);
+\draw[poporange, thick] (O) -- (M1);
+\draw[popgreen, thick] (O) -- (M2);
+\draw[poppurple, thick] (O) -- (M3);
+% Angle mark
+\draw[popdark] (0.5,0) arc (0:60:0.5) node[midway, right=2pt] {$60^\circ$};
+% Length labels
+\node[popblue, above, sloped] at (60:1.5) {$OM=3$};
+\node[poporange, above, sloped] at (60:4.5) {$OM_1=6$};
+\node[popgreen, below, sloped] at (240:0.75) {$OM_2=1,5$};
+\node[poppurple, above, sloped] at (60:3.75) {$OM_3=4,5$};
+\end{tikzpicture}
+\legende{Construction des images $M_1, M_2, M_3$ de $M$ par homothéties de centre $O$.}
+\end{popfigure}
+\end{exoresolu}
+
+\begin{methode}[Déterminer le centre et le rapport d'une homothétie]
+\textbf{Objectif :} Données deux figures $F$ et $F'$ telles que $F' = h(F)$, trouver le centre $O$ et le rapport $k$.
+\begin{enumerate}
+    \item \textbf{Identifier au moins deux paires de points correspondants} $(A, A')$ et $(B, B')$ (sommets de polygones, centre et point d'un cercle, etc.).
+    \item \textbf{Trouver le centre $O$ :} C'est l'intersection des droites $(AA')$ et $(BB')$. (Si les droites sont parallèles, c'est une translation, pas une homothétie).
+    \item \textbf{Calculer le rapport $k$ :} $k = \dfrac{OA'}{OA} = \dfrac{OB'}{OB}$ (rapport signé : même signe si $A'$ et $A$ même côté de $O$, signe contraire sinon).
+    \item \textbf{Vérifier la cohérence :} Vérifier que pour une troisième paire $(C, C')$, les points $O, C, C'$ sont alignés et $\dfrac{OC'}{OC} = k$.
+\end{enumerate}
+\cle{Astuce} : Sur une figure géométrique, prolonger les segments joignant les points correspondants jusqu'à leur intersection pour trouver $O$.
+\end{methode}
+
+\begin{exoresolu}[Identification d'une homothétie]
+\textbf{Énoncé :} On donne deux triangles $ABC$ et $A'B'C'$ sur la figure ci-contre (non fournie, données chiffrées).
+On sait que : $A(1;2), B(4;2), C(1;5)$ et $A'(3;4), B'(9;4), C'(3;10)$ dans un repère orthonormé.
+Démontrer que le triangle $A'B'C'$ est l'image du triangle $ABC$ par une homothétie. Préciser son centre et son rapport.
+\tcblower
+\textbf{Solution détaillée :}
+\paragraph{1. Recherche du centre $O$ (intersection de $(AA')$ et $(BB')$).}
+\begin{itemize}
+    \item Droite $(AA')$ : $A(1;2), A'(3;4)$. Vecteur directeur $\vec{u} = \overrightarrow{AA'} = (2;2)$. Paramétrique : $\begin{cases} x = 1 + 2t \\ y = 2 + 2t \end{cases} \implies y = x + 1$.
+    \item Droite $(BB')$ : $B(4;2), B'(9;4)$. Vecteur directeur $\vec{v} = \overrightarrow{BB'} = (5;2)$. Paramétrique : $\begin{cases} x = 4 + 5s \\ y = 2 + 2s \end{cases}$.
+    \item Intersection : $y = x+1 \implies 2+2s = 4+5s+1 \implies 2s - 5s = 3 \implies -3s = 3 \implies s = -1$.
+    \item Alors $x = 4 + 5(-1) = -1$ et $y = 2 + 2(-1) = 0$.
+    \item Le centre est $O(-1;0)$.
+\end{itemize}
+\paragraph{2. Vérification de l'alignement de $O, C, C'$.}
+$\overrightarrow{OC} = (1-(-1); 5-0) = (2;5)$.
+$\overrightarrow{OC'} = (3-(-1); 10-0) = (4;10) = 2 \times (2;5) = 2\overrightarrow{OC}$.
+Les vecteurs sont colinéaires $\implies O, C, C'$ alignés. De plus $C'$ est du même côté que $C$ par rapport à $O$ (coefficient $2 > 0$).
+
+\paragraph{3. Calcul du rapport $k$.}
+$k = \dfrac{OA'}{OA} = \dfrac{\|\overrightarrow{OA'}\|}{\|\overrightarrow{OA}\|}$ (avec signe).
+$\overrightarrow{OA} = (2;2) \implies OA = \sqrt{8} = 2\sqrt{2}$.
+$\overrightarrow{OA'} = (4;4) \implies OA' = \sqrt{32} = 4\sqrt{2}$.
+$k = \dfrac{4\sqrt{2}}{2\sqrt{2}} = 2$.
+Vérification avec $B$ : $\overrightarrow{OB} = (5;2), OB = \sqrt{29}$. $\overrightarrow{OB'} = (10;4) = 2\overrightarrow{OB} \implies OB' = 2\sqrt{29}$. $k=2$. OK.
+Vérification avec $C$ : $\overrightarrow{OC'} = 2\overrightarrow{OC} \implies k=2$. OK.
+
+\paragraph{Conclusion :} Le triangle $A'B'C'$ est l'image de $ABC$ par l'homothétie de centre $O(-1;0)$ et de rapport $k=2$. C'est un \textbf{agrandissement} ( $|k|>1$ ) qui conserve l'orientation ($k>0$).
+\end{exoresolu}
+
+\begin{methode}[Calculer des longueurs grâce aux propriétés de l'homothétie]
+\textbf{Objectif :} Utiliser les relations métriques : $A'B' = |k| \times AB$, $S' = k^2 \times S$ (aire), $V' = |k|^3 \times V$ (volume).
+\begin{enumerate}
+    \item \textbf{Identifier l'homothétie :} Centre $O$, rapport $k$ (donné ou calculé via $k = \frac{OM'}{OM}$).
+    \item \textbf{Repérer les segments correspondants :} Si $M' = h(M)$ et $N' = h(N)$, alors $M'N' = |k| \times MN$ et $(M'N') \parallel (MN)$.
+    \item \textbf{Écrire l'égalité des rapports :} $\dfrac{M'N'}{MN} = |k| = \dfrac{OM'}{OM} = \dfrac{ON'}{ON}$.
+    \item \textbf{Résoudre l'inconnue :} Isoler la longueur cherchée.
+    \item \textbf{Conclure avec unité.}
+\end{enumerate}
+\cle{Attention} : Le rapport des longueurs est la \textbf{valeur absolue} $|k|$. Le rapport des aires est $k^2$ (toujours positif). Le rapport des volumes est $|k|^3$.
+\end{methode}
+
+\begin{exoresolu}[Calcul de longueurs dans une figure homothétique]
+\textbf{Énoncé :} Soit un triangle $ABC$. Par l'homothétie $h$ de centre $A$ et de rapport $k = \frac{3}{2}$, on obtient le triangle $AB'C'$ (avec $B' = h(B), C' = h(C)$).
+On donne $AB = 6\,\text{cm}$, $AC = 8\,\text{cm}$, $BC = 10\,\text{cm}$.
+\begin{enumerate}
+    \item Calculer $AB', AC', B'C'$.
+    \item Calculer l'aire du triangle $AB'C'$ sachant que l'aire de $ABC$ est $24\,\text{cm}^2$.
+    \item Les droites $(BC)$ et $(B'C')$ sont-elles parallèles ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\paragraph{1. Calcul des longueurs.}
+L'homothétie a pour centre $A$, donc $A$ est point fixe : $A' = A$.
+Le rapport est $k = \frac{3}{2} > 0$ (agrandissement, même orientation).
+Propriété fondamentale : Pour tout couple de points $M, N$, $M'N' = |k| \times MN$.
+\begin{itemize}
+    \item $AB' = |k| \times AB = \frac{3}{2} \times 6 = 9\,\text{cm}$.
+    \item $AC' = |k| \times AC = \frac{3}{2} \times 8 = 12\,\text{cm}$.
+    \item $B'C' = |k| \times BC = \frac{3}{2} \times 10 = 15\,\text{cm}$.
+\end{itemize}
+\paragraph{2. Calcul de l'aire.}
+Propriété : L'aire de l'image est $k^2$ fois l'aire de l'antécédent.
+$\mathcal{A}_{AB'C'} = k^2 \times \mathcal{A}_{ABC} = \left(\frac{3}{2}\right)^2 \times 24 = \frac{9}{4} \times 24 = 9 \times 6 = 54\,\text{cm}^2$.
+\paragraph{3. Parallélisme.}
+Propriété : L'image d'une droite ne passant pas par le centre est une droite \textbf{parallèle} à la droite initiale.
+La droite $(BC)$ ne passe pas par $A$ (centre). Son image est la droite $(B'C')$.
+Donc \textbf{$(B'C') \parallel (BC)$}.
+\paragraph{Conclusion :} $AB'=9\,\text{cm}, AC'=12\,\text{cm}, B'C'=15\,\text{cm}$. Aire $= 54\,\text{cm}^2$. $(B'C') \parallel (BC)$.
+\end{exoresolu}
+
+\begin{methode}[Caractériser agrandissement / réduction et orientation]
+\textbf{Objectif :} À partir du rapport $k$, dire si l'homothétie est un agrandissement ou une réduction, et si elle conserve ou inverse l'orientation.
+\begin{enumerate}
+    \item \textbf{Regarder la valeur absolue $|k|$ :}
+    \begin{itemize}
+        \item Si $|k| > 1$ $\implies$ \textbf{Agrandissement} (l'image est plus grande que l'antécédent).
+        \item Si $|k| < 1$ $\implies$ \textbf{Réduction} (l'image est plus petite).
+        \item Si $|k| = 1$ $\implies$ Symétrie centrale ($k=-1$) ou Identité ($k=1$).
+    \end{itemize}
+    \item \textbf{Regarder le signe de $k$ :}
+    \begin{itemize}
+        \item Si $k > 0$ $\implies$ \textbf{Même orientation} (les points correspondants sont du même côté du centre). Les figures sont "dans le même sens".
+        \item Si $k < 0$ $\implies$ \textbf{Orientation inversée} (symétrie centrale par rapport à $O$ composée avec homothétie de rapport $|k|$). Les figures sont "tête-bêche".
+    \end{itemize}
+    \item \textbf{Rédiger la phrase de conclusion type :} "C'est un agrandissement (ou réduction) de rapport $k$ qui conserve (ou inverse) l'orientation."
+\end{enumerate}
+\cle{Repère visuel} : $k=2$ : Agrandissement, même sens. $k=-2$ : Agrandissement, sens inverse (rotation $180^\circ$). $k=0,5$ : Réduction, même sens. $k=-0,5$ : Réduction, sens inverse.
+\end{methode}
+
+\begin{exoresolu}[Classification d'homothéties]
+\textbf{Énoncé :} Pour chacun des rapports suivants, préciser s'il s'agit d'un agrandissement ou d'une réduction, et si l'orientation est conservée ou inversée. Dessiner un schéma rapide pour illustrer.
+\begin{enumerate}
+    \item $k_1 = 3$
+    \item $k_2 = -\frac{1}{4}$
+    \item $k_3 = -1$
+    \item $k_4 = 0,8$
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|X|X|X|}\hline
+\textbf{Rapport $k$} & \textbf{Valeur absolue $|k|$} & \textbf{Type (Taille)} & \textbf{Signe / Orientation} \\ \hline
+$k_1 = 3$ & $|3| = 3 > 1$ & \textbf{Agrandissement} & $k>0 \implies$ \textbf{Conservée} \\ \hline
+$k_2 = -\frac{1}{4}$ & $|-\frac{1}{4}| = 0,25 < 1$ & \textbf{Réduction} & $k<0 \implies$ \textbf{Inversée} \\ \hline
+$k_3 = -1$ & $|-1| = 1$ & \textbf{Isométrie} (Taille conservée) & $k<0 \implies$ \textbf{Inversée} (Symétrie centrale) \\ \hline
+$k_4 = 0,8$ & $|0,8| = 0,8 < 1$ & \textbf{Réduction} & $k>0 \implies$ \textbf{Conservée} \\ \hline
+\end{tabularx}
+\end{center}
+\paragraph{Illustration (schémas mentaux) :}
+\begin{itemize}
+    \item \textbf{$k_1=3$ :} Triangle initial $\to$ Triangle 3 fois plus grand, même "sens" (pointe vers le haut par ex).
+    \item \textbf{$k_2=-\frac{1}{4}$ :} Triangle initial $\to$ Triangle 4 fois plus petit, "retourné" (pointe vers le bas si centre au milieu).
+    \item \textbf{$k_3=-1$ :} Symétrie centrale : même taille, retourné (rotation $180^\circ$ autour de $O$).
+    \item \textbf{$k_4=0,8$ :} Triangle initial $\to$ Triangle un peu plus petit (80\%), même sens.
+\end{itemize}
+\end{exoresolu}
+
+\begin{methode}[Résoudre un problème concret : Échelle, ombre, carte]
+\textbf{Objectif :} Modéliser une situation réelle (carte, plan d'architecte, ombre portée) par une homothétie.
+\begin{enumerate}
+    \item \textbf{Identifier l'homothétie :}
+    \begin{itemize}
+        \item \textbf{Carte / Plan :} Centre = point de vue (ou centre de projection), Rapport $k = \frac{1}{\text{échelle}}$ (souvent $k < 1$, réduction).
+        \item \textbf{Ombre portée :} \textbf{Attention !} Ombre du \textbf{Soleil} = droites parallèles (Thalès), \textbf{PAS} homothétie (centre à l'infini). Ombre d'une \textbf{lampe} (source ponctuelle) = Homothétie (centre = lampe).
+        \item \textbf{Architecture / Maquette :} Centre = centre de la maquette (point de projection choisi), Rapport $k = \frac{\text{Taille maquette}}{\text{Taille réelle}}$.
+    \end{itemize}
+    \item \textbf{Écrire la relation de proportionnalité :} $\frac{\text{Dimension image}}{\text{Dimension réel}} = |k|$.
+    \item \textbf{Calculer l'inconnue.}
+    \item \textbf{Vérifier l'ordre de grandeur et l'unité.}
+\end{enumerate}
+\cle{Piège fréquent} : Confondre "Échelle 1/1000" (1 cm sur carte = 1000 cm réel) et rapport d'homothétie. Si carte = image, réel = antécédent : $k = \frac{1}{1000}$.
+\end{methode}
+
+\begin{exoresolu}[Problème concret : Plan d'architecte et Maquette]
+\textbf{Énoncé :} Un architecte conçoit une maquette d'un immeuble au 1/50ème.
+La hauteur réelle de l'immeuble est de $45\,\text{m}$. La base de l'immeuble est un rectangle de $30\,\text{m} \times 20\,\text{m}$.
+\begin{enumerate}
+    \item Quelle est la hauteur de la maquette en centimètres ?
+    \item Quelles sont les dimensions de la base de la maquette ?
+    \item Si une fenêtre mesure $2\,\text{cm}$ de large sur la maquette, quelle est sa largeur réelle ?
+    \item Préciser le centre et le rapport de l'homothétie qui transforme l'immeuble réel en maquette.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\paragraph{Modélisation :} La maquette est l'image de l'immeuble réel par une homothétie de rapport $k$.
+\paragraph{1. Détermination du rapport $k$.}
+Échelle 1/50ème signifie : 1 unité sur la maquette = 50 unités en réel.
+La maquette est \textbf{plus petite} que le réel $\implies$ C'est une \textbf{réduction}.
+$|k| = \frac{1}{50}$. Comme c'est une réduction "dans le même sens" (pas de miroir), $k = \frac{1}{50}$.
+\paragraph{2. Hauteur de la maquette.}
+$H_{\text{maquette}} = |k| \times H_{\text{réel}} = \frac{1}{50} \times 45\,\text{m} = 0,9\,\text{m} = \textbf{90 cm}$.
+\paragraph{3. Dimensions de la base.}
+$L_{\text{maquette}} = \frac{1}{50} \times 30\,\text{m} = 0,6\,\text{m} = \textbf{60 cm}$.
+$l_{\text{maquette}} = \frac{1}{50} \times 20\,\text{m} = 0,4\,\text{m} = \textbf{40 cm}$.
+\paragraph{4. Largeur réelle de la fenêtre.}
+Ici on a l'image (maquette) et on cherche l'antécédent (réel).
+$L_{\text{réel}} = \frac{L_{\text{maquette}}}{|k|} = L_{\text{maquette}} \times 50 = 2\,\text{cm} \times 50 = 100\,\text{cm} = \textbf{1 m}$.
+\paragraph{5. Centre et rapport de l'homothétie.}
+L'homothétie transforme le \textbf{Réel (antécédent)} $\to$ \textbf{Maquette (image)}.
+\begin{itemize}
+    \item \textbf{Centre :} Le centre de l'homothétie est le point de projection choisi par l'architecte (souvent le centre de gravité de la base ou un coin de référence). Notons-le $O$. C'est l'unique point fixe de la transformation.
+    \item \textbf{Rapport :} $k = \frac{1}{50}$.
+\end{itemize}
+\paragraph{Conclusion :} Hauteur maquette $90\,\text{cm}$, Base $60\,\text{cm} \times 40\,\text{cm}$, Fenêtre réelle $1\,\text{m}$. Homothétie de centre $O$ (point de projection) et rapport $k=1/50$.
+\end{exoresolu}
+
+\begin{methode}[Démontrer des alignements ou parallélismes par homothétie]
+\textbf{Objectif :} Utiliser la définition et les propriétés pour écrire une preuve géométrique rigoureuse.
+\begin{enumerate}
+    \item \textbf{Énoncer l'homothétie :} "Soit $h$ l'homothétie de centre $O$ et de rapport $k$ telle que $A' = h(A)$ et $B' = h(B)$."
+    \item \textbf{Pour un alignement ($O, M, M'$ alignés) :} Citer la définition : "Par définition d'une homothétie, le centre $O$ et un point $M$ et son image $M'$ sont alignés."
+    \item \textbf{Pour un parallélisme ($(AB) \parallel (A'B')$) :} Citer la propriété : "L'image d'une droite ne passant pas par le centre est une droite parallèle à cette droite." Vérifier que $O \notin (AB)$.
+    \item \textbf{Pour un milieu / rapport de longueurs :} Utiliser $\frac{A'B'}{AB} = |k|$ ou le fait que l'image du milieu est le milieu de l'image.
+    \item \textbf{Conclure clairement.}
+\end{enumerate}
+\cle{Rigueur} : Ne jamais dire "c'est évident sur la figure". Toujours citer la propriété ou la définition utilisée.
+\end{methode}
+
+\begin{exoresolu}[Démonstration géométrique]
+\textbf{Énoncé :} Soit un triangle $ABC$. On note $I$ le milieu de $[AB]$ et $J$ le milieu de $[AC]$.
+Soit $h$ l'homothétie de centre $A$ et de rapport $k = \frac{1}{2}$.
+\begin{enumerate}
+    \item Quelles sont les images de $B$ et $C$ par $h$ ? Justifier.
+    \item En déduire la nature de la figure $IJCB$ et la relation entre $(IJ)$ et $(BC)$.
+    \item Comparer les longueurs $IJ$ et $BC$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\paragraph{1. Images de $B$ et $C$.}
+$h$ est l'homothétie de centre $A$, rapport $k = \frac{1}{2}$.
+\begin{itemize}
+    \item Image de $B$ : $B'$ tel que $\overrightarrow{AB'} = \frac{1}{2}\overrightarrow{AB}$.
+    Or $I$ est le milieu de $[AB]$, donc $\overrightarrow{AI} = \frac{1}{2}\overrightarrow{AB}$.
+    Par unicité du point sur la droite $(AB)$, \textbf{$B' = I$}.
+    \item Image de $C$ : $C'$ tel que $\overrightarrow{AC'} = \frac{1}{2}\overrightarrow{AC}$.
+    Or $J$ est le milieu de $[AC]$, donc $\overrightarrow{AJ} = \frac{1}{2}\overrightarrow{AC}$.
+    Par unicité, \textbf{$C' = J$}.
+\end{itemize}
+\paragraph{2. Nature de $IJCB$ et parallélisme.}
+\begin{itemize}
+    \item La droite $(BC)$ ne passe pas par le centre $A$ (sommets d'un triangle non plat).
+    \item Son image par $h$ est la droite $(IJ)$ (puisque $I=h(B), J=h(C)$).
+    \item \textbf{Propriété :} L'image d'une droite ne passant pas par le centre est une droite \textbf{parallèle} à la droite initiale.
+    \item Donc \textbf{$(IJ) \parallel (BC)$}.
+    \item Le quadrilatère $IJCB$ a $(IJ) \parallel (BC)$, c'est un \textbf{trapèze}.
+\end{itemize}
+\paragraph{3. Comparaison $IJ$ et $BC$.}
+Propriété des longueurs : $IJ = |k| \times BC = \frac{1}{2} BC$.
+Donc \textbf{$IJ = \frac{1}{2} BC$} (ou $BC = 2 IJ$).
+\paragraph{Conclusion :} On a retrouvé le théorème du milieu (ligne des milieux) par l'homothétie : $I$ et $J$ sont les images de $B$ et $C$ par $h_{A, 1/2}$, donc $(IJ) \parallel (BC)$ et $IJ = \frac{1}{2} BC$.
+\end{exoresolu}
+
+\begin{methode}[Image d'un cercle, d'une droite, d'un segment par homothétie]
+\textbf{Objectif :} Décrire et construire l'image de figures usuelles.
+\begin{enumerate}
+    \item \textbf{Segment $[AB]$ :} Image = segment $[A'B']$ où $A'=h(A), B'=h(B)$. $[A'B'] \parallel [AB]$ et $A'B' = |k| AB$.
+    \item \textbf{Droite $(AB)$ :}
+    \begin{itemize}
+        \item Si $O \in (AB)$ : Image = la droite $(AB)$ elle-même (invariance globale).
+        \item Si $O \notin (AB)$ : Image = droite $(A'B')$ \textbf{parallèle} à $(AB)$.
+    \end{itemize}
+    \item \textbf{Cercle $\mathcal{C}(O_C, R)$ :}
+    \begin{itemize}
+        \item Image = Cercle $\mathcal{C}'(O_C', R')$ de centre $O_C' = h(O_C)$ et de rayon $R' = |k| \times R$.
+        \item Si $O = O_C$ (centre homothétie = centre cercle) : Cercles concentriques.
+    \end{itemize}
+    \item \textbf{Construction :} Construire les images de 2 ou 3 points caractéristiques (centre, extrémités, points de passage) et tracer la figure image.
+\end{enumerate}
+\cle{Propriété clé} : L'homothétie transforme un cercle en cercle, une droite en droite, un segment en segment. Elle conserve les angles (mesure) et le parallélisme.
+\end{methode}
+
+\begin{exoresolu}[Image d'un cercle et d'une droite]
+\textbf{Énoncé :} Soit un cercle $\mathcal{C}$ de centre $\Omega$ et de rayon $R = 3\,\text{cm}$. Soit une droite $(\Delta)$ tangente à $\mathcal{C}$ au point $T$.
+On considère l'homothétie $h$ de centre $O$ (distinct de $\Omega$) et de rapport $k = -2$.
+\begin{enumerate}
+    \item Construire l'image $\mathcal{C}'$ du cercle $\mathcal{C}$. Préciser son centre et son rayon.
+    \item Construire l'image $(\Delta)'$ de la droite $(\Delta)$.
+    \item Les figures $\mathcal{C}'$ et $(\Delta)'$ sont-elles tangentes ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\paragraph{1. Image du cercle $\mathcal{C}$.}
+\begin{itemize}
+    \item Centre : $\Omega' = h(\Omega)$. $\overrightarrow{O\Omega'} = -2 \overrightarrow{O\Omega}$. $\Omega'$ est sur la droite $(O\Omega)$, du côté opposé à $\Omega$ par rapport à $O$ (car $k<0$), et $O\Omega' = 2 \times O\Omega$.
+    \item Rayon : $R' = |k| \times R = 2 \times 3 = 6\,\text{cm}$.
+    \item $\mathcal{C}'$ est le cercle de centre $\Omega'$ et de rayon $6\,\text{cm}$.
+\end{itemize}
+\paragraph{2. Image de la droite $(\Delta)$.}
+\begin{itemize}
+    \item Le centre $O$ n'est pas sur $(\Delta)$ (généralement, et rien ne dit qu'il y est). On suppose $O \notin (\Delta)$.
+    \item L'image $(\Delta)'$ est une droite \textbf{parallèle} à $(\Delta)$.
+    \item Elle passe par l'image $T' = h(T)$ du point de tangence $T$.
+    \item Construction de $T'$ : $T'$ sur $(OT)$, côté opposé à $T$ par rapport à $O$, $OT' = 2 \times OT$.
+    \item On trace par $T'$ la parallèle à $(\Delta)$.
+\end{itemize}
+\paragraph{3. Tangence conservée ?}
+\begin{itemize}
+    \item L'homothétie conserve les \textbf{intersections} et les \textbf{contacts} (elle est bijective et continue).
+    \item $\mathcal{C}$ et $(\Delta)$ ont un unique point commun : $T$ (tangence).
+    \item Leurs images $\mathcal{C}'$ et $(\Delta)'$ ont pour unique point commun $T' = h(T)$.
+    \item Donc $\mathcal{C}'$ et $(\Delta)'$ sont \textbf{tangentes} en $T'$.
+    \item \textit{Note géométrique :} Comme $k=-2$, le cercle a été "retourné" et agrandi. La tangente est devenue une tangente parallèle de l'autre côté du centre $\Omega'$ par rapport à la configuration initiale si $O$ est entre les deux cercles, etc. Mais la propriété de tangence est conservée.
+\end{itemize}
+\paragraph{Conclusion :} $\mathcal{C}'$ cercle centre $\Omega'$ rayon $6\,\text{cm}$. $(\Delta)'$ parallèle à $(\Delta)$ passant par $T'$. Elles sont tangentes en $T'$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au BEPC]
+\begin{enumerate}
+    \item \textbf{Confondre le signe de $k$ et la valeur absolue pour les longueurs.}
+    Écrire $M'N' = k \times MN$ au lieu de $M'N' = |k| \times MN$.
+    \textit{Exemple :} $k=-2, MN=3 \implies M'N' = 6$ (pas $-6$). La longueur est toujours positive.
+    \item \textbf{Oublier de vérifier que le centre n'est pas sur la droite pour le parallélisme.}
+    Dire "$(AB) \parallel (A'B')$" sans préciser "car $O \notin (AB)$". Si $O \in (AB)$, l'image est la même droite, pas une parallèle distincte.
+    \item \textbf{Inverser le rapport dans les problèmes concrets (Échelle).}
+    Échelle 1/100 : $k = 1/100$ (réduction réel $\to$ carte). Ne pas écrire $k=100$.
+    \textit{Astuce :} Image = Carte (petit), Antécédent = Réel (grand) $\implies |k| < 1$.
+    \item \textbf{Ne pas justifier l'alignement $O, M, M'$.}
+    Dans une construction ou une démonstration, l'alignement n'est pas "visible", il se \textbf{démontre} par la définition : $\overrightarrow{OM'} = k \overrightarrow{OM} \implies$ vecteurs colinéaires $\implies$ points alignés.
+    \item \textbf{Confondre Homothétie et Translation (ou Rotation).}
+    Si les droites $(AA')$ et $(BB')$ sont \textbf{parallèles} (ne se coupent pas), ce n'est \textbf{PAS} une homothétie (c'est une translation ou une composition). L'homothétie a un centre unique (point fixe).
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Exercices d'application et de synthèse : Homothétie}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : Image d'un point]
+Soit une homothétie $h$ de centre $O$ et de rapport $k = -2$. Pour un point $M$ tel que $OM = 3\,\text{cm}$, laquelle des affirmations suivantes est exacte ?
+\begin{enumerate}
+\item $M'$ est sur la demi-droite $[OM)$ et $OM' = 6\,\text{cm}$.
+\item $M'$ est sur la demi-droite opposée à $[OM)$ et $OM' = 6\,\text{cm}$.
+\item $M'$ est sur la demi-droite $[OM)$ et $OM' = 1,5\,\text{cm}$.
+\item $M'$ est sur la demi-droite opposée à $[OM)$ et $OM' = 1,5\,\text{cm}$.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Vrai ou Faux : Agrandissement et réduction]
+On considère une homothétie de rapport $k$. Pour chaque affirmation, répondre \textbf{Vrai} ou \textbf{Faux} et justifier brièvement.
+\begin{enumerate}
+\item Si $k = 1,5$, c'est un agrandissement.
+\item Si $k = -0,8$, c'est une réduction.
+\item Si $k = -1$, les distances sont conservées.
+\item Si $0 < k < 1$, l'image d'un segment est plus grand que le segment initial.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Calcul direct : Rapport et distances]
+Soit $h$ l'homothétie de centre $O$ qui transforme $A$ en $A'$.
+\begin{enumerate}
+\item Si $OA = 4\,\text{cm}$ et $OA' = 10\,\text{cm}$ avec $A$ et $A'$ du même côté de $O$, déterminer le rapport $k$ de $h$.
+\item Si $k = -\dfrac{3}{2}$ et $OB = 6\,\text{cm}$, calculer $OB'$.
+\item Si $k = \dfrac{1}{3}$ et $OC' = 5\,\text{cm}$, calculer $OC$.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Définition et vocabulaire]
+Compléter les phrases suivantes pour qu'elles soient mathématiquement exactes :
+\begin{enumerate}
+\item L'homothétie de centre $O$ et de rapport $k$ transforme tout point $M$ en un point $M'$ tel que $\overrightarrow{OM'} = \dots$
+\item Si $k > 1$, l'homothétie est un \dots ; si $0 < k < 1$, c'est une \dots
+\item Le centre d'homothétie est le seul point \dots
+\item L'image d'une droite ne passant pas par le centre d'homothétie est une droite \dots à la droite initiale.
+\end{enumerate}
+\end{exercice}
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Construction et mesures : Triangle image]
+Soit un triangle $ABC$ tel que $AB = 4\,\text{cm}$, $AC = 5\,\text{cm}$, $BC = 6\,\text{cm}$. Son périmètre est $15\,\text{cm}$ et son aire est $10\,\text{cm}^2$.
+On considère l'homothétie $h$ de centre $O$ et de rapport $k = -1,5$.
+\begin{enumerate}
+\item Construire le triangle $A'B'C'$, image de $ABC$ par $h$. (Laisser la construction apparente).
+\item Calculer les longueurs $A'B'$, $A'C'$, $B'C'$.
+\item Calculer le périmètre et l'aire du triangle $A'B'C'$.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Échelle et cartes : Plan de Yaoundé]
+Sur un plan de la ville de Yaoundé dressé à l'échelle $\dfrac{1}{20\,000}$, la distance entre le quartier \emph{Mvog-Ada} et le quartier \emph{Essos} mesure $7,5\,\text{cm}$.
+\begin{enumerate}
+\item Calculer la distance réelle entre ces deux quartiers en kilomètres.
+\item Sur une autre carte de la même région à l'échelle $\dfrac{1}{50\,000}$, quelle sera la distance (en cm) entre ces deux quartiers ?
+\item Quel est le rapport de l'homothétie qui transforme la première carte en la seconde ? Préciser s'il s'agit d'un agrandissement ou d'une réduction.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Photocopieuse : Rapport et pourcentage]
+Une photocopieuse agrandit un document rectangulaire de dimensions $12\,\text{cm} \times 18\,\text{cm}$ en un document de dimensions $18\,\text{cm} \times 27\,\text{cm}$.
+\begin{enumerate}
+\item Vérifier que cette transformation est une homothétie (montrer que les rapports de correspondance sont égaux).
+\item Déterminer le rapport $k$ de cette homothétie.
+\item Quel est le pourcentage d'agrandissement affiché sur la machine ?
+\item Calculer le rapport des aires (aire image / aire initiale).
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Construction à partir de distances alignées]
+Les points $O$, $M$ et $M'$ sont alignés dans cet ordre. On a $OM = 4\,\text{cm}$ et $OM' = 10\,\text{cm}$.
+\begin{enumerate}
+\item Déterminer le rapport $k$ de l'homothétie $h$ de centre $O$ qui envoie $M$ sur $M'$.
+\item On donne un point $N$ tel que $ON = 3\,\text{cm}$ et $(ON)$ forme un angle de $60^\circ$ avec $(OM)$. Construire le point $N'$, image de $N$ par $h$.
+\item Calculer la longueur $MN$ si $M'N' = 7,5\,\text{cm}$.
+\end{enumerate}
+\end{exercice}
+\courssub{Je me prépare au BEPC}
+
+\begin{exercice}[Ombre et lampe : Modélisation par homothétie]
+Une lampe ponctuelle $L$ est placée à $1,2\,\text{m}$ d'un objet vertical $AB$ de hauteur $30\,\text{cm}$ ($A$ au sol, $B$ au sommet). L'ombre de cet objet est projetée sur un mur vertical situé à $3,6\,\text{m}$ de la lampe. Le sol est horizontal et le mur est perpendiculaire au sol. On note $A'$ l'ombre de $A$ (au sol au pied du mur) et $B'$ l'ombre de $B$ sur le mur.
+\begin{enumerate}
+\item Faire un schéma de la situation en vue de côté (profil). Placer les points $L, A, B, A', B'$.
+\item Montrer que la transformation qui associe à l'objet $AB$ son ombre $A'B'$ est une homothétie. Préciser son centre et son rapport $k$.
+\item Calculer la hauteur $A'B'$ de l'ombre sur le mur.
+\item Si l'on éloigne l'objet de la lampe (en le gardant vertical), que devient la hauteur de l'ombre ? Justifier.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Agrandissement d'un logo pour une enseigne]
+Une entreprise de télécommunications (type MTN ou Orange) souhaite agrandir son logo triangulaire pour une enseigne publicitaire. Le logo initial est un triangle rectangle $RST$ rectangle en $S$, avec $RS = 8\,\text{cm}$ et $ST = 6\,\text{cm}$. L'enseigne finale doit avoir une hypoténuse $R'T'$ mesurant $5\,\text{m}$.
+\begin{enumerate}
+\item Calculer la longueur de l'hypoténuse $RT$ du logo initial.
+\item Déterminer le rapport $k$ de l'homothétie qui transforme le logo initial en l'enseigne.
+\item Calculer les dimensions (en mètres) des deux autres côtés de l'enseigne $R'S'$ et $S'T'$.
+\item L'aire du logo initial est peinte avec une peinture spéciale coûtant $500\,\text{FCFA}$ le $\text{cm}^2$. L'enseigne utilise la même peinture au $\text{m}^2$ au même prix unitaire (conversion : $1\,\text{m}^2 = 10\,000\,\text{cm}^2$). Calculer le coût de la peinture pour l'enseigne.
+\end{enumerate}
+\end{exercice}
+\begin{exercice}[Homothétie et pavage : Dallage d'une cour]
+On souhaite paver une cour rectangulaire $ABCD$ ($AB = 12\,\text{m}$, $AD = 8\,\text{m}$) avec des carreaux carrés identiques. On commence par poser un carreau modèle $M_0$ de côté $20\,\text{cm}$ au centre de la cour. On utilise une homothétie de centre $O$ (centre de la cour) pour définir la grille de pose.
+\begin{enumerate}
+\item Quel doit être le rapport $k$ de l'homothétie pour que l'image du carreau modèle $M_0$ ait un côté de $1\,\text{m}$ (taille réelle de pose) ?
+\item En partant du carreau central de côté $1\,\text{m}$, on applique des translations pour couvrir la cour. Combien de carreaux de $1\,\text{m}$ de côté sont nécessaires pour couvrir toute la cour ?
+\item En réalité, les carreaux achetés ont un côté de $40\,\text{cm}$. On les pose directement sans homothétie intermédiaire. Quel est le rapport de l'homothétie directe qui transforme le carreau modèle $M_0$ ($20\,\text{cm}$) en carreau posé ($40\,\text{cm}$) ?
+\item Combien de carreaux de $40\,\text{cm}$ de côté sont nécessaires pour couvrir la cour ? (On admet que les dimensions de la cour sont des multiples exactes de $40\,\text{cm}$).
+\end{enumerate}
+\end{exercice}
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : Image d'un point]
+La bonne réponse est la \textbf{proposition 2}.
+
+\textbf{Justification :} Par définition de l'homothétie de centre $O$ et de rapport $k$, l'image $M'$ de $M$ vérifie $\overrightarrow{OM'} = k\,\overrightarrow{OM}$.
+\begin{itemize}
+\item Comme $k = -2 < 0$, les vecteurs $\overrightarrow{OM'}$ et $\overrightarrow{OM}$ sont de sens contraires : $M'$ se trouve sur la demi-droite \textbf{opposée} à $[OM)$.
+\item Pour les distances : $OM' = |k| \times OM = |-2| \times 3 = 2 \times 3 = 6\,\text{cm}$.
+\end{itemize}
+Les propositions 1 et 3 sont fausses car elles placent $M'$ du mauvais côté ; la proposition 4 donne une distance erronée (elle divise au lieu de multiplier).
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou Faux : Agrandissement et réduction]
+\begin{enumerate}
+\item \textbf{Vrai.} $|k| = \num{1,5} > 1$ : les longueurs sont multipliées par $\num{1,5}$, c'est un agrandissement.
+\item \textbf{Vrai.} $|k| = |-\num{0,8}| = \num{0,8} < 1$ : les longueurs sont multipliées par $\num{0,8}$, c'est une réduction. Le signe négatif indique seulement que l'image est de l'autre côté du centre ; il n'intervient pas dans la comparaison des tailles.
+\item \textbf{Vrai.} $|k| = |-1| = 1$ : les longueurs sont conservées ($OM' = OM$). L'homothétie de rapport $-1$ est la symétrie centrale de centre $O$.
+\item \textbf{Faux.} Si $0 < k < 1$, alors $|k| < 1$ : c'est une réduction. L'image d'un segment est donc \textbf{plus petite} que le segment initial.
+\end{enumerate}
+\textbf{Point de vigilance :} c'est la \emph{valeur absolue} du rapport qui décide de l'agrandissement ou de la réduction, jamais son signe.
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Calcul direct : Rapport et distances]
+Cet exercice regroupe trois situations indépendantes.
+\begin{enumerate}
+\item \textbf{Cas 1 :} $A$ et $A'$ sont du même côté de $O$, donc $k > 0$ et $k = \dfrac{OA'}{OA} = \dfrac{10}{4} = \num{2,5}$.
+\item \textbf{Cas 2 :} On donne $k = \dfrac{3}{2}$. $OB' = |k| \times OB = \dfrac{3}{2} \times 6 = \dfrac{18}{2} = 9\,\text{cm}$.
+\item \textbf{Cas 3 :} On donne $|k| = \dfrac{1}{3}$. On sait que $OC' = |k| \times OC$, donc $OC = \dfrac{OC'}{|k|} = 5 \div \dfrac{1}{3} = 5 \times 3 = 15\,\text{cm}$.
+\end{enumerate}
+\textbf{Point de vigilance :} dans le cas 3, on cherche la longueur \emph{initiale} à partir de la longueur \emph{image} : il faut \textbf{diviser} par $|k|$, et non multiplier.
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Définition et vocabulaire]
+\begin{enumerate}
+\item $\overrightarrow{OM'} = k\,\overrightarrow{OM}$.
+\item Si $|k| > 1$, l'homothétie est un \textbf{agrandissement} ; si $|k| < 1$, c'est une \textbf{réduction}. (Le signe de $k$ précise l'orientation : $k>0$ même côté, $k<0$ côté opposé).
+\item Le centre d'homothétie est le seul point \textbf{invariant} (on dit aussi \textbf{fixe}) : $\overrightarrow{OO'} = k\,\overrightarrow{OO} = \vec{0}$, donc $O' = O$.
+\item L'image d'une droite ne passant pas par le centre est une droite \textbf{parallèle} à la droite initiale.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Construction et mesures : Triangle image]
+\begin{enumerate}
+\item \textbf{Construction :} pour chaque sommet $X \in \{A, B, C\}$ :
+\begin{itemize}
+\item tracer la droite $(OX)$ ;
+\item comme $k = -\num{1,5} < 0$, placer $X'$ sur la demi-droite \textbf{opposée} à $[OX)$ ;
+\item reporter la distance $OX' = \num{1,5} \times OX$.
+\end{itemize}
+Relier ensuite $A'$, $B'$ et $C'$. Le triangle $A'B'C'$ est de l'autre côté de $O$ par rapport à $ABC$.
+\item Les longueurs sont multipliées par $|k| = \num{1,5}$ :
+\[A'B' = \num{1,5} \times 4 = 6\,\text{cm} \quad ; \quad A'C' = \num{1,5} \times 5 = \num{7,5}\,\text{cm} \quad ; \quad B'C' = \num{1,5} \times 6 = 9\,\text{cm}.\]
+\item \textbf{Périmètre :} $P' = |k| \times P = \num{1,5} \times 15 = \num{22,5}\,\text{cm}$.
+
+\textbf{Aire :} $\mathcal{A}' = k^2 \times \mathcal{A} = (\num{1,5})^2 \times 10 = \num{2,25} \times 10 = \num{22,5}\,\text{cm}^2$.
+\end{enumerate}
+\textbf{Point de vigilance :} le périmètre est multiplié par $|k|$, mais l'aire est multipliée par $k^2$ : ne pas confondre les deux règles.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Échelle et cartes : Plan de Yaoundé]
+\begin{enumerate}
+\item Distance réelle $= \num{7,5} \times 20\,000 = 150\,000\,\text{cm}$. Or $150\,000\,\text{cm} = 1\,500\,\text{m} = \num{1,5}\,\text{km}$.
+\item Distance sur la deuxième carte $= \dfrac{150\,000}{50\,000} = 3\,\text{cm}$.
+\item Le rapport de l'homothétie qui transforme la première carte en la seconde est :
+\[k = \dfrac{\text{échelle}_2}{\text{échelle}_1} = \dfrac{1/50\,000}{1/20\,000} = \dfrac{20\,000}{50\,000} = \dfrac{2}{5} = \num{0,4}.\]
+Vérification : $\num{7,5} \times \num{0,4} = 3\,\text{cm}$, conforme à la question 2. Comme $0 < k < 1$, il s'agit d'une \textbf{réduction}.
+\end{enumerate}
+\textbf{Point de vigilance :} plus le dénominateur de l'échelle est grand, plus la carte est « petite » (réduite). Une échelle $1/50\,000$ réduit davantage qu'une échelle $1/20\,000$.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Photocopieuse : Rapport et pourcentage]
+\begin{enumerate}
+\item Rapport des longueurs : $\dfrac{18}{12} = \num{1,5}$. Rapport des largeurs : $\dfrac{27}{18} = \num{1,5}$. Les deux rapports sont égaux : toutes les dimensions sont multipliées par le même nombre, c'est donc bien une homothétie.
+\item $k = \num{1,5}$.
+\item L'augmentation relative est $k - 1 = \num{0,5}$, soit un pourcentage d'agrandissement de $\num{0,5} \times 100 = 50\,\%$. (La machine affiche le coefficient $150\,\%$, ce qui correspond bien à un agrandissement de $50\,\%$.)
+\item Rapport des aires $= k^2 = (\num{1,5})^2 = \num{2,25}$. Vérification : aire initiale $= 12 \times 18 = 216\,\text{cm}^2$ ; aire image $= 18 \times 27 = 486\,\text{cm}^2$ ; et $\dfrac{486}{216} = \num{2,25}$.
+\end{enumerate}
+\textbf{Point de vigilance :} ne pas confondre le coefficient affiché ($150\,\%$) avec le pourcentage d'augmentation ($50\,\%$).
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Construction à partir de distances alignées]
+\begin{enumerate}
+\item $O$, $M$, $M'$ sont alignés dans cet ordre, donc $M$ et $M'$ sont du même côté de $O$ : $k > 0$.
+\[k = \dfrac{OM'}{OM} = \dfrac{10}{4} = \num{2,5}.\]
+\item Comme $k > 0$, $N'$ est sur la demi-droite $[ON)$. On trace la demi-droite $[ON)$ formant un angle de $60^\circ$ avec $(OM)$, on place $N$ tel que $ON = 3\,\text{cm}$, puis on reporte sur cette même demi-droite :
+\[ON' = k \times ON = \num{2,5} \times 3 = \num{7,5}\,\text{cm}.\]
+\item L'homothétie multiplie les longueurs par $|k|$ : $M'N' = |k| \times MN$, donc
+\[MN = \dfrac{M'N'}{|k|} = \dfrac{\num{7,5}}{\num{2,5}} = 3\,\text{cm}.\]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Ombre et lampe : Modélisation par homothétie]
+\begin{enumerate}
+\item \textbf{Schéma de profil :} le sol est une droite horizontale, le mur une droite verticale. $L$ est sur le sol ; $A$ est sur le sol à $\num{1,2}\,\text{m}$ de $L$ ; $B$ est au-dessus de $A$ à $\num{0,30}\,\text{m}$ ; $A'$ est au pied du mur, à $\num{3,6}\,\text{m}$ de $L$ ; $B'$ est l'intersection du rayon $(LB)$ avec le mur.
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, >=Stealth]
+\draw[thick] (-0.5,0) -- (4.5,0) node[right] {Sol};
+\draw[thick, fill=popblueL!40] (3.6,0) rectangle (3.8,1.6);
+\node[above] at (3.7,1.6) {Mur};
+\fill[poporange] (0,0) circle (2.5pt) node[below left] {$L$};
+\draw[very thick, popblue] (1.2,0) -- (1.2,0.3);
+\fill[popblue] (1.2,0) circle (1.5pt) node[below] {$A$};
+\fill[popblue] (1.2,0.3) circle (1.5pt) node[above left] {$B$};
+\draw[very thick, poppink] (3.6,0) -- (3.6,0.9);
+\fill[poppink] (3.6,0) circle (1.5pt) node[below left] {$A'$};
+\fill[poppink] (3.6,0.9) circle (1.5pt) node[above left] {$B'$};
+\draw[dashed, poporange, thick] (0,0) -- (3.6,0.9);
+\draw[<->, popmuted] (0,-0.45) -- (1.2,-0.45) node[midway, below] {\small $\num{1,2}\,\text{m}$};
+\draw[<->, popmuted] (0,-0.85) -- (3.6,-0.85) node[midway, below] {\small $\num{3,6}\,\text{m}$};
+\draw[<->, popmuted] (1.35,0) -- (1.35,0.3) node[midway, right] {\small $\num{0,30}\,\text{m}$};
+\end{tikzpicture}
+\legende{Vue de profil : l'ombre $A'B'$ est l'image de l'objet $AB$ par l'homothétie de centre $L$.}
+\end{popfigure}
+\item Les points $L$, $A$, $A'$ sont alignés (sur le sol) et les points $L$, $B$, $B'$ sont alignés (le rayon lumineux est rectiligne). De plus, l'objet $(AB)$ et son ombre $(A'B')$ sont tous deux verticaux, donc $(AB) \parallel (A'B')$. La correspondance $A \mapsto A'$, $B \mapsto B'$ est donc une homothétie de \textbf{centre $L$}. Son rapport est :
+\[k = \dfrac{LA'}{LA} = \dfrac{\num{3,6}}{\num{1,2}} = 3.\]
+$k > 0$ car $A$ et $A'$ sont du même côté de $L$ ; comme $k > 1$, c'est un agrandissement.
+\item $A'B' = |k| \times AB = 3 \times \num{0,30} = \num{0,90}\,\text{m}$, soit $90\,\text{cm}$.
+\item Si l'on éloigne l'objet de la lampe, la distance $LA$ augmente tandis que $LA' = \num{3,6}\,\text{m}$ reste fixe. Le rapport $k = \dfrac{LA'}{LA}$ diminue donc, et comme $A'B' = k \times AB$, la hauteur de l'ombre \textbf{diminue}. (C'est ce qu'on observe quand on éloigne un objet d'une lampe : son ombre sur le mur rapetisse.)
+\end{enumerate}
+\textbf{Barème indicatif (sur 4 points) :} schéma correct et codé : 1 pt ; identification du centre et calcul du rapport avec justification : 1 pt ; calcul de $A'B'$ avec la formule des longueurs : 1 pt ; analyse du sens de variation avec justification : 1 pt.
+
+\textbf{Points de vigilance :} citer l'alignement des points ($L$, $A$, $A'$ d'une part ; $L$, $B$, $B'$ d'autre part) pour justifier l'homothétie ; convertir toutes les longueurs dans la même unité avant de calculer le rapport.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Agrandissement d'un logo pour une enseigne]
+\begin{enumerate}
+\item Le triangle $RST$ est rectangle en $S$. D'après le théorème de Pythagore :
+\[RT^2 = RS^2 + ST^2 = 8^2 + 6^2 = 64 + 36 = 100 \implies RT = \sqrt{100} = 10\,\text{cm}.\]
+\item Conversion : $R'T' = 5\,\text{m} = 500\,\text{cm}$. Le rapport est :
+\[k = \dfrac{R'T'}{RT} = \dfrac{500}{10} = 50.\]
+\item Les longueurs sont multipliées par $k = 50$ :
+\[R'S' = 50 \times 8 = 400\,\text{cm} = 4\,\text{m} \quad ; \quad S'T' = 50 \times 6 = 300\,\text{cm} = 3\,\text{m}.\]
+Vérification avec Pythagore : $4^2 + 3^2 = 16 + 9 = 25 = 5^2$ : cohérent avec $R'T' = 5\,\text{m}$.
+\item Aire du logo initial : $\mathcal{A} = \dfrac{RS \times ST}{2} = \dfrac{8 \times 6}{2} = 24\,\text{cm}^2$.
+
+Aire de l'enseigne : $\mathcal{A}' = k^2 \times \mathcal{A} = 50^2 \times 24 = 2\,500 \times 24 = 60\,000\,\text{cm}^2 = 6\,\text{m}^2$.
+
+Coût de la peinture : $60\,000\,\text{cm}^2 \times 500\,\text{FCFA/cm}^2 = \textbf{30\,000\,000 FCFA}$.
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 points) :} Pythagore correctement appliqué : 1 pt ; conversion $5\,\text{m} = 500\,\text{cm}$ et rapport $k = 50$ : 1 pt ; dimensions $R'S'$ et $S'T'$ en mètres : 1 pt ; aire initiale et utilisation de $k^2$ : 1 pt ; coût final avec unité : 1 pt.
+
+\textbf{Points de vigilance :} convertir les unités \emph{avant} de calculer le rapport ; l'aire est multipliée par $k^2 = 2\,500$ et non par $k = 50$ ; ne pas oublier que le triangle est rectangle pour le calcul de l'aire ($\dfrac{\text{base} \times \text{hauteur}}{2}$).
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Homothétie et pavage : Dallage d'une cour]
+\begin{enumerate}
+\item Côté du carreau modèle : $20\,\text{cm}$ ; côté visé : $1\,\text{m} = 100\,\text{cm}$.
+\[k = \dfrac{100}{20} = 5.\]
+\item Aire de la cour : $12 \times 8 = 96\,\text{m}^2$. Aire d'un carreau de $1\,\text{m}$ de côté : $1\,\text{m}^2$. Nombre de carreaux : $\dfrac{96}{1} = \textbf{96 carreaux}$. (Vérification par les dimensions : $12 \times 8 = 96$ carreaux.)
+\item Rapport de l'homothétie directe du modèle ($20\,\text{cm}$) vers le carreau posé ($40\,\text{cm}$) :
+\[k_{\text{direct}} = \dfrac{40}{20} = 2.\]
+\item Côté d'un carreau : $40\,\text{cm} = \num{0,4}\,\text{m}$.
+Nombre de carreaux sur la longueur : $12 \div \num{0,4} = 30$ ; sur la largeur : $8 \div \num{0,4} = 20$.
+Total : $30 \times 20 = \textbf{600 carreaux}$.
+\end{enumerate}
+\textbf{Barème indicatif (sur 4 points) :} rapport $k = 5$ avec conversion : 1 pt ; nombre de carreaux de $1\,\text{m}$ : 1 pt ; rapport direct $k = 2$ : 1 pt ; dénombrement $30 \times 20 = 600$ : 1 pt.
+
+\textbf{Points de vigilance :} pour le dénombrement de carreaux, diviser chaque dimension de la cour par le côté du carreau puis multiplier les résultats (ne pas diviser l'aire de la cour par le \emph{côté} du carreau) ; toujours travailler dans la même unité.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+root concept/.append style={concept color=popink, font=\large\bfseries},
+level 1/.append style={level distance=3.6cm, sibling angle=60},
+level 1 concept/.append style={font=\footnotesize\bfseries}]
+\node[root concept]{Homothétie}
+child[concept color=popblue]{ node[align=center]{Définition\\ $M' = h(M)$ : $O$, $M$, $M'$ alignés\\ $\overrightarrow{OM'} = k\,\overrightarrow{OM}$} }
+child[concept color=poporange]{ node[align=center]{Rapport $k$\\ $k>1$ : agrandissement\\ $0<k<1$ : réduction\\ $k<0$ : sens opposé} }
+child[concept color=popgreen]{ node[align=center]{Construction\\ Tracer $(OM)$\\ Reporter $OM' = |k|\times OM$} }
+child[concept color=poppurple]{ node[align=center]{Propriétés\\ Conserve alignement\\ Multiplie longueurs par $|k|$\\ Multiplie aires par $k^2$} }
+child[concept color=poppink]{ node[align=center]{Image de figures\\ Droite $\to$ droite parallèle\\ Cercle $\to$ cercle} }
+child[concept color=popgold]{ node[align=center]{Vie courante\\ Photocopies, plans,\\ cartes, maquettes,\\ écrans, zoom} };
+\end{tikzpicture}
+\end{center}
+\legende{Carte mentale de la leçon : l'homothétie en un coup d'œil.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+\item Une \cle{homothétie} de \cle{centre} $O$ et de \cle{rapport} $k$ ($k\neq 0$) transforme tout point $M$ en un point $M'$ tel que :
+\[\overrightarrow{OM'} = k\,\overrightarrow{OM}\]
+\item Les points $O$, $M$ et $M'$ sont toujours \cle{alignés}.
+\item Si $k>0$, $M'$ est du même côté de $O$ que $M$ ; si $k<0$, $M'$ est de l'autre côté.
+\end{itemize}
+
+\textbf{Formules à connaître par cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Situation} & \textbf{Résultat} \\ \hline
+Relation vectorielle & $\overrightarrow{OM'} = k\,\overrightarrow{OM}$ \\ \hline
+Distance au centre & $OM' = |k|\times OM$ \\ \hline
+Longueurs & toutes multipliées par $|k|$ \\ \hline
+Aires & toutes multipliées par $k^2$ \\ \hline
+Agrandissement & $|k|>1$ \\ \hline
+Réduction & $0<|k|<1$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Propriétés essentielles}
+\begin{itemize}
+\item L'homothétie conserve l'\cle{alignement} et les \cle{angles}.
+\item L'image d'une droite est une droite \cle{parallèle} à la droite de départ.
+\item L'image d'un segment $[AB]$ est un segment $[A'B']$ avec $A'B' = |k|\times AB$.
+\end{itemize}
+
+\textbf{Méthodes express}
+\begin{enumerate}
+\item \textbf{Construire $M'$} : tracer la droite $(OM)$, puis reporter la longueur $|k|\times OM$ à partir de $O$, du bon côté selon le signe de $k$.
+\item \textbf{Trouver le rapport} : calculer $k = \dfrac{OM'}{OM}$ (avec le signe : $+$ si même sens, $-$ sinon).
+\item \textbf{Trouver le centre} : c'est le point d'intersection des droites $(MM')$, $(NN')$, \dots
+\item \textbf{Aires} : ne jamais oublier d'élever le rapport au carré.
+\end{enumerate}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le BEPC]
+Avant l'épreuve, vérifie que tu sais :
+\begin{itemize}
+\item[$\square$] Écrire la relation $\overrightarrow{OM'} = k\,\overrightarrow{OM}$ et l'exploiter.
+\item[$\square$] Construire l'image d'un point pour $k>0$ et pour $k<0$.
+\item[$\square$] Distinguer agrandissement ($|k|>1$) et réduction ($0<|k|<1$).
+\item[$\square$] Calculer le rapport $k$ à partir de deux longueurs $OM$ et $OM'$.
+\item[$\square$] Déterminer le centre d'une homothétie par intersection de droites.
+\item[$\square$] Utiliser $A'B' = |k|\times AB$ pour calculer des longueurs.
+\item[$\square$] Multiplier les aires par $k^2$ (et non par $k$).
+\item[$\square$] Dire que l'image d'une droite est une droite parallèle.
+\item[$\square$] Justifier que $O$, $M$, $M'$ sont alignés dans une démonstration.
+\item[$\square$] Reconnaître une homothétie dans une situation concrète (plan, photocopie, maquette, carte).
+\item[$\square$] Rédiger une justification complète : hypothèses, propriété utilisée, conclusion.
+\item[$\square$] Vérifier le signe de $k$ pour placer correctement l'image.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

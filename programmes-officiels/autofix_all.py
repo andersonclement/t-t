@@ -51,7 +51,7 @@ def fix(s):
     s="\n".join(fix_style(l) for l in s.split("\n"))
     # style nommé "step" (réservé par TikZ)
     if re.search(r"\bstep/\.style",s):
-        s=s.replace("step/.style","stepbox/.style")
+        s=re.sub(r"(?<![A-Za-z])step/\.style","stepbox/.style",s)
         s=re.sub(r"\[[^\]\n]*\]",lambda m:re.sub(r"(?<=[\[,\s])step(?=[,\]\s])","stepbox",m.group(0)),s)
     s=s.replace("\\UAL\\ ","UAL ").replace("\\UAL","UAL").replace("\\milli\\meter\\mercure","\\milli\\meter\\of{Hg}")
     s=re.sub(r"\\cle\{([^{}$]*[\^_][^{}$]*)\}",lambda m:"\\cle{$"+m.group(1)+"$}",s)
@@ -67,6 +67,10 @@ def fix(s):
     s=re.sub(r"(\bat\s*)\(((?:\d+\*|-)?\([^()]*\)[^,()]*),",lambda m:m.group(1)+"({"+m.group(2)+"},",s)
     for bad in ("exemplechiffre","situation","hypothese","justify","exemple","probleme","remarque","astuce","rappel"):
         s=s.replace("{"+bad+"}","{"+("exemplebox" if bad!="justify" else "center")+"}") if bad not in ("justify",) else s.replace("\\begin{justify}","").replace("\\end{justify}","")
+    s=re.sub(r"(\\begin\{lstlisting\}\[[^\]\n]*caption=\{)([^{}]*)(\})",lambda m:m.group(1)+re.sub(r"(?<!\\)_",r"\\_",m.group(2))+m.group(3),s)
+    s=re.sub(r"(arc\s*\([^()]*?:[^()]*?:)\s*([^()]*?)\s+and\s+([^()]*?)\)",lambda m:(m.group(1)+"{"+m.group(2).strip()+"} and {"+m.group(3).strip()+"})") if not m.group(2).strip().startswith("{") else m.group(0),s)
+    s=re.sub(r"(ellipse\s*\()\s*([^(){}]*?)\s+and\s+([^(){}]*?)\)",lambda m:m.group(1)+"{"+m.group(2)+"} and {"+m.group(3)+"})",s)
+    s=re.sub(r"\\texttt\{([^{}]*)\}",lambda m:"\\texttt{"+re.sub(r"(?<!\\)\^",r"\\^{}",m.group(1))+"}",s)
     s=re.sub(r"\{groupplots\}","{groupplot}",s)
     s=re.sub(r"\\SI\{([0-9.,]+)\}\{-+\}\{([0-9.,]+)\}",r"\\SIrange{\1}{\2}",s)
     s=re.sub(r"\{km\$\^2\$\}",r"{\\kilo\\meter\\squared}",s); s=re.sub(r"\{m\$\^2\$\}",r"{\\meter\\squared}",s)
