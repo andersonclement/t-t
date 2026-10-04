@@ -17,6 +17,19 @@ def fix(s):
     s=re.sub(r"\(voir \\(aretenir|definition|propriete|methode|attention) (ci-dessus|ci-dessous)\)",r"(voir l'encadré \2)",s)
     s=re.sub(r"(\\begin\{[a-z]+\}\[)([^\]\n]*)(\])",lambda m:m.group(1)+re.sub(r"(?<!\\)&",r"\\&",m.group(2))+m.group(3),s)
     s=re.sub(r"\\texttt\{([^{}]*)\}",lambda m:"\\texttt{"+re.sub(r"(?<!\\)_",r"\\_",m.group(1))+"}",s)
+    s=re.sub(r"\\begin\{tikzpicture\}.*?\\end\{tikzpicture\}",lambda m:re.sub(r"\n[ \t]*\n","\n",m.group(0)),s,flags=re.S)
+    # style TikZ fermé par ] au lieu de }
+    def fix_style(l):
+        if "/.style={" in l and l.count("{")-l.count("}")==1:
+            l2=re.sub(r"\](,?)\s*$",r"}\1",l)
+            return l2
+        return l
+    s="\n".join(fix_style(l) for l in s.split("\n"))
+    # style nommé "step" (réservé par TikZ)
+    if re.search(r"\bstep/\.style",s):
+        s=s.replace("step/.style","stepbox/.style")
+        s=re.sub(r"\[[^\]\n]*\]",lambda m:re.sub(r"(?<=[\[,\s])step(?=[,\]\s])","stepbox",m.group(0)),s)
+    s=s.replace("\\UAL\\ ","UAL ").replace("\\UAL","UAL").replace("\\milli\\meter\\mercure","\\milli\\meter\\of{Hg}")
     s=re.sub(r"\{groupplots\}","{groupplot}",s)
     s=re.sub(r"\\SI\{([0-9.,]+)\}\{-+\}\{([0-9.,]+)\}",r"\\SIrange{\1}{\2}",s)
     s=re.sub(r"\{km\$\^2\$\}",r"{\\kilo\\meter\\squared}",s); s=re.sub(r"\{m\$\^2\$\}",r"{\\meter\\squared}",s)
