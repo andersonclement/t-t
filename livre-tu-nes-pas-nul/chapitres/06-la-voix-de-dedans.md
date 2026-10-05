@@ -1,0 +1,90 @@
+# 5. La voix de dedans
+
+En janvier, à Bafoussam, le froid arrive avec la nuit. Il descend des collines dès que le soleil tombe, entre dans les maisons par les fentes des persiennes et s'installe sur les draps, si bien qu'on se couche en pull. Divine Nfor a gardé celui du handball, aux manches trop longues, qu'elle tire sur ses mains. Le dîner est fini depuis longtemps. Sa mère, rentrée tard de sa garde à l'hôpital, lui a demandé comment s'était passée la journée ; Divine a répondu « fine », puis, parce que sa mère attendait encore, « ça va ». Deux mots pour la même chose, comme on paierait deux fois le même article dans deux monnaies différentes. Son père, au bout de la table, refaisait des colonnes de chiffres sur un bloc de bureau. Personne n'a parlé de la dictée.
+
+Elle est dans le sac, pliée en quatre, entre le cahier de mathématiques et la trousse. Un texte d'une quinzaine de lignes sur un marché du samedi, lu deux fois par le professeur de français, la seconde fois plus lentement. Divine a écrit vite, en serrant le stylo, en entendant chaque mot une demi-seconde trop tard, comme s'il lui parvenait d'une autre pièce. Ce matin, la copie est revenue avec vingt-trois petits cercles rouges. Le rouge ne commente pas : il entoure. Vingt-trois fois, net, rond, exactement au bon endroit, ce qui est presque pire. La note, en bas de la page, elle ne l'a pas regardée longtemps. Elle n'avait pas besoin de la lire pour la connaître.
+
+La famille est arrivée de Bamenda il y a trois ans. Divine pense en anglais. Elle compte en anglais, y compris les moutons, les nuits où le sommeil traîne, et il lui arrive de rêver en pidgin. Mais elle passe ses journées en français. Elle le parle bien, elle le comprend presque toujours ; c'est à l'écrit qu'il lui tend des pièges, des pièges qu'elle ne voit qu'après, quand quelqu'un les a entourés.
+
+Elle éteint. La maison fait ses bruits de nuit : le réfrigérateur qui démarre et s'arrête, une moto au loin qui monte la côte en peinant, la radio d'un voisin qui ne dort jamais. Et dans le noir, la voix commence.
+
+*Twenty-three. Twenty-three mistakes. I can't even write down what someone reads to me.*
+
+Elle parle d'abord en anglais, parce que c'est la langue la plus proche de l'os. Puis, au bout d'un moment, sans prévenir, elle passe au français, comme pour être sûre d'être comprise des deux côtés de la tête.
+
+*Vingt-trois. Même pas capable d'écrire ce qu'on me dicte. Je suis nulle. Je suis nulle, c'est tout.*
+
+Dans les deux langues, elle dit exactement la même chose. La voix est bilingue, elle aussi ; elle a eu trois ans pour apprendre. Divine se tourne vers le mur. Elle sait qu'en décembre elle avait seize en mathématiques, que c'était l'une des meilleures notes de la classe, et qu'elle avait été contente pendant au moins deux jours. La voix ne le mentionne pas. La voix ne lit que le rouge.
+
+\*
+
+Je ne crois pas qu'on naisse avec cette voix. Je crois qu'on la ramasse. Elle est faite de phrases entendues : celle d'un professeur pressé, celle d'un parent fatigué, le rire d'un banc entier, un mot écrit un jour en capitales sur un cahier qui n'était pas le sien. Ces phrases ont été dites une fois, souvent sans y penser, par quelqu'un qui les a oubliées le lendemain. Celui qui les a reçues les garde. Il les répète la nuit, de sa propre voix, et au bout de quelques années il ne sait plus qu'elles viennent d'ailleurs. Il croit qu'il pense. Il récite.
+
+Si Divine écoutait bien, elle reconnaîtrait un accent. Pas celui de Bamenda : celui d'une fille de sa première classe à Bafoussam qui, le premier mois, avait répété en l'imitant la façon dont Divine prononçait « heureusement ». Tout le banc avait ri. Divine aussi, un peu après les autres, pour ne pas être la seule à ne pas rire. Ce n'était rien, une seconde dans une matinée. La fille a changé de lycée l'année suivante ; elle ne se souviendrait sans doute pas de la scène si on la lui racontait. Mais certaines nuits, quand la voix dit *nulle*, elle le dit avec cette petite pointe moqueuse qui traîne sur la fin du mot, et Divine ne comprend pas pourquoi ce mot-là lui fait plus mal en français.
+
+Un mot écrit sur un cahier, on peut au moins le voir. Il est là, à l'encre, sur la couverture ; on peut le montrer à quelqu'un, le barrer, coller quelque chose par-dessus. La voix de dedans n'a pas de papier. Elle se réécrit chaque soir, et chaque soir de ta propre écriture, ce qui lui donne une autorité terrible : comment douter d'une phrase que tu prononces toi-même ? C'est là que se trouve le piège. Que tu l'entendes souvent ne la rend pas plus vraie ; cela la rend seulement plus familière, comme une chanson qu'on finit par fredonner sans l'avoir aimée. Ce que tu te dis la nuit ne prouve pas ce que tu crois. Cela prouve que tu l'as beaucoup entendu.
+
+Je ne vais pas te demander de faire taire cette voix. Je ne sais pas faire ça, et je me méfie de ceux qui prétendent le savoir. Ce qu'on peut faire, en revanche, c'est l'écouter de plus près, comme on relit une copie avant de la rendre : en cherchant où elle se trompe.
+
+\*
+
+Des psychologues ont consacré beaucoup de travaux à une question qui paraît simple : comment expliquons-nous nos échecs. Ou plus exactement : quelle histoire nous racontons ensuite à leur sujet. Ce qu'ils ont observé, c'est que cette histoire pèse, parfois autant que l'échec. Une explication peut placer la cause en toi ou hors de toi. Elle peut la rendre durable ou passagère, la faire porter sur un point précis ou sur tout, et te laisser une prise ou aucune. Selon l'histoire qu'on s'est racontée le soir, on ne fait pas la même chose le lendemain matin.
+
+Prends la phrase de la voix : *je suis nulle*. Regarde-la comme on regarde une explication. La cause est en Divine, entièrement. Elle est permanente : « je suis », et non « j'ai été ce matin ». Elle porte sur tout, pas sur l'orthographe, pas sur la dictée de janvier, sur Divine en entier, mathématiques comprises. Et elle ne laisse aucune prise, puisqu'on ne peut rien faire contre ce que l'on est. C'est une explication parfaite, au sens où une porte bien fermée est parfaite. Elle ne laisse rien passer, pas même la question suivante.
+
+Maintenant, une autre phrase : *je n'ai pas encore automatisé l'accord du participe passé avec « avoir » quand le complément est placé avant*. Elle est plus longue, moins jolie, et franchement moins dramatique. Personne ne pleure dans son lit pour une phrase pareille. Mais elle dit où se trouve le problème, depuis quand à peu près il dure, et ce qu'il faudrait faire pour qu'il cesse. Elle laisse la porte entrouverte. La seconde phrase n'est pas plus gentille que la première. Elle est plus exacte.
+
+Être précis avec soi n'a rien de confortable. L'exactitude oblige à regarder les fautes une par une au lieu de se noyer dans le total, et elle oblige aussi à reconnaître ce qui dépend de toi. « Je n'ai pas encore automatisé » ne rejette la faute sur personne, ni sur le professeur, ni sur la langue, ni sur le déménagement. Elle dit seulement ce qui manque, et où.
+
+Dans le noir, Divine refait la dictée de mémoire. Elle se souvient de quelques cercles. « Les mangues qu'elle avait cueilli », sans e : elle entend encore la phrase dans la bouche du professeur, elle se souvient d'avoir hésité, d'avoir pensé, sans le formuler, à l'anglais, où le participe ne s'accorde avec rien ni personne, et d'avoir choisi l'anglais sans le savoir. « Addresse » avec deux d, parce que *address*. « Example » avec un a, parce que *example*. Ces deux fautes-là sont peut-être les seules de la page qui viennent d'un savoir en trop plutôt que d'un savoir en moins : celle qui écrit *example* sait déjà écrire ce mot dans une autre langue, il ne lui reste qu'à apprendre où passe la frontière. Mais la voix ne fait pas ce genre de tri. Pour elle, vingt-trois est un bloc. Vingt-trois, dit dans le noir, pèse comme une seule pierre.
+
+Ce qui arrive quand cette pierre revient tous les soirs, des chercheurs l'ont étudié, et l'histoire de leurs travaux mérite d'être racontée avec ses détours. Dans les années 1960, Martin Seligman et Steven Maier ont observé, au cours d'expériences sur des animaux, que ceux qui avaient d'abord subi des situations désagréables sans aucun moyen de les faire cesser finissaient par ne plus essayer, même plus tard, quand une issue était à leur portée. Ils ont appelé cela l'impuissance apprise : à force de constater que rien de ce qu'on fait ne change rien, on apprendrait à ne plus rien faire. L'idée a été reprise partout, jusque dans les salles des professeurs. Puis, en 2016, près de cinquante ans plus tard, les deux mêmes chercheurs sont revenus sur leur théorie à la lumière de travaux plus récents. Leur nouvelle lecture, pour la dire simplement et avec prudence : la passivité serait plutôt la réaction de départ face à une difficulté qui dure, et ce qui s'apprend, c'est la sortie. Il faut avoir vu, au moins une fois, que ce qu'on fait change quelque chose.
+
+J'aime qu'une théorie célèbre ait été corrigée par ceux-là mêmes qui l'avaient construite. Et j'aime ce que cette correction suggère pour toi. Si chaque dictée est vécue comme une sentence sur laquelle tu n'as aucune prise, il est presque normal que tu cesses d'essayer. Cela ressemble à de la paresse et n'en est pas : n'importe qui, devant un mur assez longtemps, finit par s'asseoir. Pour retrouver de la prise, un discours ne suffit pas, ni un élan de motivation qui tient jusqu'au lendemain midi. Il faut une poignée. Une règle, comprise, appliquée, vérifiée sur la dictée suivante. Un cercle rouge de moins, à un endroit précis, dont tu sais pourquoi il n'y est plus.
+
+\*
+
+Il y a encore un détail dans la voix de Divine. Elle dit « je ». *Je suis nulle.* Les reproches les plus durs, on se les fait souvent à la première personne, de l'intérieur, collé contre la faute, sans aucun recul, comme quand on essaie de lire une page le nez sur le papier.
+
+Des expériences menées par une équipe de psychologues américains suggèrent que, dans les moments difficiles, se parler à soi-même en employant son prénom, ou « tu », plutôt que « je », aide à prendre un peu de distance : on regarde alors sa situation un peu comme on regarderait celle d'un autre, et l'on y voit plus clair. L'effet n'a rien de magique et ne remplace rien. Mais l'essai coûte une phrase. *Je suis nulle* devient : « Divine, tu as fait vingt-trois fautes, et beaucoup se ressemblent. » La seconde version est déjà une phrase qu'on pourrait dire à une amie sans la blesser ni lui mentir. C'est peut-être une raison de plus pour laquelle ce livre te dit « tu » : il essaie, de l'extérieur, de te tenir à la bonne distance de ta propre copie.
+
+Il faut que je parle ici d'une idée que tu as peut-être déjà croisée sur une affiche, dans une vidéo ou dans la bouche d'un adulte bien intentionné : la « mentalité de croissance ». Elle vient des travaux de la psychologue Carol Dweck. Dans sa forme la plus simple, elle oppose deux manières de voir : penser que l'intelligence est une quantité fixe, distribuée une fois pour toutes, ou penser qu'elle se développe avec le travail. Sur le fond, la seconde vision est plus exacte que la première. Les capacités se travaillent ; tout ce livre repose là-dessus.
+
+Mais l'idée a connu un destin de slogan, et il faut regarder ce que la recherche en dit. Des études menées à grande échelle, et des synthèses qui en rassemblent beaucoup d'autres, suggèrent que les interventions destinées à enseigner cette mentalité ont, en moyenne, des effets modestes sur les résultats scolaires. Ces effets semblent plus nets chez certains élèves en difficulté, et dans des établissements où l'entourage rend vraiment l'effort possible, où l'on a le droit de se tromper sans être moqué. Ailleurs, ils sont faibles, parfois à peine mesurables.
+
+Le slogan peut même faire pire que rien. Quand on dit à un élève qui échoue qu'il « n'a pas le bon état d'esprit », on lui fabrique une sentence de plus. Hier il était mauvais en orthographe ; aujourd'hui il est mauvais en mentalité. La voix de dedans adore ce genre de cadeau. Elle range la nouvelle phrase à côté des anciennes, bien pliée, et la ressort la nuit.
+
+Ce livre n'a pas besoin du slogan. Il n'a pas besoin non plus que tu te répètes devant un miroir des phrases flatteuses en espérant que la voix finira par y croire. Elle n'y croira pas. La voix n'est pas bête : elle reconnaît un mensonge, c'est même sa spécialité. Remplacer une phrase fausse par une autre phrase fausse, plus douce, revient à lui donner raison. Ce dont tu as besoin, c'est de méthodes et de vérité. La vérité, dans le cas de Divine, tient en une ligne : vingt-trois fautes, dont beaucoup du même genre, dans une langue qu'elle écrit tous les jours depuis trois ans seulement. La phrase ne console pas. On peut travailler dessus.
+
+\*
+
+Il faut maintenant que je te dise une chose sur un autre ton.
+
+Parfois la voix ne se contente plus de commenter une dictée. Elle ne s'arrête plus, ni le soir ni le matin. Le sommeil s'en va, ou au contraire on ne voudrait plus faire que dormir. Plus rien n'a de goût, ni la nourriture, ni le sport, ni les amis. Et parfois vient l'idée de disparaître, ou de se faire du mal. Si c'est ton cas, ou si cela y ressemble, même de loin, on n'est plus dans une affaire de méthode, et aucun exercice de ce livre ne suffira. Parles-en à un adulte de confiance : un parent, un professeur, l'infirmerie du lycée, un médecin, un responsable religieux si c'est quelqu'un à qui tu te fies. Aujourd'hui, pas après les examens. Tu n'as pas besoin de trouver les bons mots ; « ça ne va pas, et ça dure » suffit pour commencer. Si la personne à qui tu parles ne comprend pas, parles-en à une autre. Demander de l'aide, dans ce cas-là, est exactement ce qu'il faut faire.
+
+### Ce soir, essaie ceci
+
+Prends ton cahier de brouillon et ouvre-le à une page neuve. En haut, écris la date.
+
+Puis écris, mot pour mot, la phrase que ta voix intérieure t'a dite aujourd'hui. Pas une version arrangée, pas celle que tu oserais montrer : la vraie, avec ses mots à elle, même s'ils sont durs, même si elle te l'a dite dans une autre langue que le français. Si elle t'en a dit plusieurs, choisis celle qui est revenue le plus souvent. Écris-la, et ne la commente pas.
+
+En dessous, réécris-la en la rendant précise. Quatre questions t'y aident : quoi exactement, dans quelle matière, sur quel point, depuis quand. « Je suis nul en anglais » deviendra peut-être « Je confonds encore le prétérit et le present perfect, depuis le début de l'année ». « Je ne comprends rien en physique » deviendra « Je ne sais pas quelle formule choisir dans les exercices sur la vitesse, depuis la dernière séquence ». Si tu n'arrives pas à répondre à l'une des quatre questions, note-le aussi : c'est une information, et elle te servira.
+
+Ensuite, la troisième phrase. Pense à ton meilleur ami, ou à ta meilleure amie, qui viendrait s'asseoir à côté de toi avec exactement la même copie, les mêmes cercles rouges, la même note. Ce que tu lui dirais, tu ne le dirais pas pour le consoler à tout prix : tu ne lui mentirais pas, tu tiens trop à lui pour ça. Tu lui dirais sans doute ce qui ne va pas, et aussi par où commencer. Écris cette phrase-là, en lui disant « tu ».
+
+Relis maintenant les trois phrases, lentement, l'une après l'autre. Tu remarqueras peut-être que la première est la plus courte, la plus sûre d'elle, et la moins renseignée. Elle juge sans avoir enquêté. La deuxième est plus longue et plus ennuyeuse ; la troisième est souvent plus juste qu'on ne l'aurait cru. Celle qui est vraie n'est pas toujours la plus douce, mais ce n'est presque jamais la première.
+
+Demain soir, recommence avec la phrase du jour. Ne cherche pas à faire disparaître la première ligne : elle reviendra. Tu t'entraînes seulement à ne plus la laisser écrire seule. Dans trois jours, relis les trois pages d'un coup. Il se peut que la même phrase revienne chaque soir, avec le même flou. C'est souvent le signe qu'elle désigne une seule marche, toujours la même, et que cette marche mérite qu'on s'en occupe pour de bon.
+
+\*
+
+Il est plus de 23 h quand Divine se relève. Le froid a gagné le sol de la chambre ; elle cherche ses sandales du bout du pied, ne les trouve pas, renonce. Elle prend son téléphone sur la chaise et allume la lampe torche. Le faisceau est blanc, étroit, un peu cru. Il passe sur le sac, sur la porte de l'armoire, puis sur l'étagère où, sous deux manuels, dort un carnet bleu qu'elle avait acheté au marché à la rentrée pour y recopier des paroles de chansons. Une seule page a servi. Elle la tourne.
+
+Elle s'assoit par terre, le dos contre le lit, le téléphone coincé entre son genou et le carnet pour que la lumière tombe au bon endroit. Elle déplie la dictée. Les vingt-trois cercles sont toujours là, aussi rouges qu'à midi. Elle commence par le premier. Sur une ligne, elle recopie la phrase fautive telle qu'elle l'a écrite ; à côté, la règle. Pour la règle, elle hésite, puis l'écrit d'abord en anglais, pour elle, parce qu'en anglais elle la comprend du premier coup : *the past participle agrees with the object when the object comes first*. En dessous, plus petit, la même règle en français.
+
+Deuxième ligne. Troisième. À la quatrième, elle s'arrête : c'est la même faute que la première, sur un autre verbe. Elle trace une petite flèche de l'une à l'autre. À côté d'« addresse », elle écrit *address* d'un côté, *adresse* de l'autre, et entoure le second d de l'anglais, celui que le français n'a pas, au stylo bleu, sans appuyer.
+
+La voix n'est pas partie. Elle parle encore, plus bas, comme la radio du voisin à travers le mur : on l'entend, on ne distingue plus tous les mots. À la septième ligne, le téléphone signale que la batterie faiblit. Divine éteint la lampe torche, glisse la dictée dans le carnet en guise de marque-page et pose le tout sur la chaise. Il reste seize lignes.
+
+> **Pour le cahier**
+> Recopie ta phrase intérieure du jour. En dessous, réécris-la avec un « pas encore » et un détail précis. Exemple de forme : « Je ne sais pas encore accorder les participes avec avoir. »
