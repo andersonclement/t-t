@@ -1,0 +1,2916 @@
+% Représentation graphique d’une fonction numérique — Mathématiques 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N16-representation-graphique-fonction-numerique.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Première technique}
+\newcommand{\DOCLECON}{N16}
+\newcommand{\DOCTITRE}{Représentation graphique d’une fonction numérique}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Représentation graphique d’une fonction numérique}{Mathématiques}{1re Tech}{Mathématiques – classe de Première technique}{N16}{3 séances (fiche de progression harmonisée)}{Cette leçon étudie les asymptotes (verticales, horizontales, obliques) d'une courbe et propose une méthode complète d'étude et de représentation graphique d'une fonction numérique. Elle mobilise les limites, la dérivation et le tableau de variation pour construire des courbes précises et interprétables dans des situations concrètes.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais reconnaître graphiquement et par le calcul une asymptote verticale
+\item je sais déterminer une asymptote horizontale à partir d'une limite finie en l'infini
+\item je sais déterminer une asymptote oblique d'une fonction rationnelle par division ou par limite de f(x) − (ax + b)
+\item je sais étudier la position relative d'une courbe et de son asymptote
+\item je sais dresser le tableau de variation complet d'une fonction en y intégrant les limites aux bornes
+\item je sais construire la représentation graphique d'une fonction en plaçant asymptotes, points remarquables et tangentes horizontales
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Asymptotes verticales
+\item Asymptotes horizontales
+\item Asymptotes obliques
+\item Plan d'étude d'une fonction
+\item Étude complète : exemple guidé
+\item Applications à la vie courante
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais reconnaître graphiquement et par le calcul une asymptote verticale
+\item je sais déterminer une asymptote horizontale à partir d'une limite finie en l'infini
+\item je sais déterminer une asymptote oblique d'une fonction rationnelle par division ou par limite de f(x) − (ax + b)
+\item je sais étudier la position relative d'une courbe et de son asymptote
+\item je sais dresser le tableau de variation complet d'une fonction en y intégrant les limites aux bornes
+\item je sais construire la représentation graphique d'une fonction en plaçant asymptotes, points remarquables et tangentes horizontales
+\item je sais rédiger et justifier une démarche complète d'étude de fonction
+\item je sais appliquer l'étude d'une fonction à une situation concrète de la vie courante (coût, recette, température)
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Limites de fonctions en un point et en l'infini (leçons précédentes de Première)
+\item Dérivées des fonctions usuelles et sens de variation
+\item Fonctions polynômes et fonctions rationnelles, domaine de définition
+\item Équations de droites et lecture graphique (classe de Seconde)
+\item Division euclidienne de polynômes
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Asymptotes verticales}
+
+\textbf{Situation d'accroche.} Une entreprise de transformation de manioc à Bafoussam produit du gari. Le coût moyen de production d'un sac, en milliers de FCFA, est donné par
+\[ C(x)=\dfrac{2x+50}{x} \]
+où $x$ est le nombre de sacs produits par jour. Le directeur fait deux observations surprenantes. D'une part, plus il produit, plus le coût moyen se rapproche de $2$ milliers de FCFA (soit \SI{2000}{FCFA}) sans jamais descendre en dessous. D'autre part, lorsqu'il envisage de produire très peu de sacs, le coût moyen \emph{explose} : pour $x=1$ sac, $C(1)=52$ milliers de FCFA ; pour $x=0{,}1$ sac, $C(0{,}1)=502$ milliers de FCFA !
+
+\textbf{Problématique.} Comment traduire mathématiquement ces comportements ? La courbe de $C$ possède-t-elle des « lignes d'approche » vers lesquelles elle se colle sans jamais les toucher ? C'est toute la problématique des \cle{asymptotes} et de la \cle{représentation graphique} des fonctions. Dans cette première section, nous étudions les lignes d'approche \emph{verticales}.
+
+\courssub{Rappel : limites infinies en un point réel}
+
+Avant de parler d'asymptote, rappelons le langage des limites en un point. Soit $f$ une fonction définie au voisinage d'un réel $a$, sauf éventuellement en $a$ lui-même.
+
+\begin{itemize}
+\item On dit que $f(x)$ tend vers $+\infty$ quand $x$ tend vers $a$ \textbf{par valeurs supérieures} (ou « à droite »), et on note
+\[ \lim_{\substack{x\to a\\ x>a}} f(x)=+\infty \qquad\text{ou}\qquad \lim_{x\to a^{+}} f(x)=+\infty, \]
+lorsque $f(x)$ devient aussi grand que l'on veut dès que $x$ est suffisamment proche de $a$, tout en restant strictement supérieur à $a$.
+\item On définit de même la \textbf{limite à gauche} (par valeurs inférieures), notée $\lim_{x\to a^{-}} f(x)$, en prenant $x<a$.
+\item On dit que $f$ admet une limite en $a$ lorsque les limites à gauche et à droite existent et sont égales.
+\end{itemize}
+
+\begin{exemplebox}[Limites à gauche et à droite de la fonction inverse en $0$]
+Pour $f(x)=\dfrac{1}{x}$ :
+\[ \lim_{x\to 0^{+}}\dfrac{1}{x}=+\infty \qquad\text{et}\qquad \lim_{x\to 0^{-}}\dfrac{1}{x}=-\infty. \]
+En effet, si $x=0{,}001$ alors $\dfrac{1}{x}=1000$ ; si $x=-0{,}001$ alors $\dfrac{1}{x}=-1000$. Les deux limites sont différentes : la fonction inverse n'a pas de limite en $0$.
+\end{exemplebox}
+
+\begin{attention}[Bien distinguer gauche et droite]
+Une limite infinie en un point peut n'exister que d'un seul côté, ou être $+\infty$ d'un côté et $-\infty$ de l'autre. Il faut donc \textbf{toujours préciser} si l'on étudie $x\to a^{+}$ ou $x\to a^{-}$. Écrire simplement « $\lim_{x\to a}f(x)=\infty$ » sans préciser le côté est une rédaction insuffisante au Probatoire.
+\end{attention}
+
+\courssub{Définition d'une asymptote verticale}
+
+\textbf{Intuition.} Reprenons l'exemple du gari : $C(x)=\dfrac{2x+50}{x}=2+\dfrac{50}{x}$. Quand $x$ se rapproche de $0$ par valeurs positives, $\dfrac{50}{x}$ devient immense : $C(x)\to +\infty$. Graphiquement, la courbe monte de plus en plus haut en se « collant » à l'axe des ordonnées (la droite d'équation $x=0$), sans jamais le toucher puisque $C(0)$ n'existe pas. Cette droite est appelée \cle{asymptote verticale}.
+
+\begin{definition}[Asymptote verticale]
+Soit $f$ une fonction de courbe représentative $\mathcal{C}_f$ dans un repère, et $a$ un réel. On dit que la droite d'équation $x=a$ est une \cle{asymptote verticale} à $\mathcal{C}_f$ si l'une au moins des quatre conditions suivantes est réalisée :
+\[ \lim_{x\to a^{+}} f(x)=+\infty ;\quad \lim_{x\to a^{+}} f(x)=-\infty ;\quad \lim_{x\to a^{-}} f(x)=+\infty ;\quad \lim_{x\to a^{-}} f(x)=-\infty. \]
+Autrement dit : dès que $f$ admet une \textbf{limite infinie} en $a$, à gauche ou à droite, la droite $x=a$ est asymptote verticale à $\mathcal{C}_f$.
+\end{definition}
+
+\begin{aretenir}[Interprétation graphique]
+La courbe $\mathcal{C}_f$ « s'approche » de la droite verticale $x=a$ aussi près que l'on veut, mais \textbf{ne la touche jamais} : en effet, si la limite est infinie en $a$, alors $f(a)$ n'est pas défini (ou la fonction n'est pas continue en $a$). On dit que la courbe admet une \emph{branche infinie} dirigée vers cette droite.
+\end{aretenir}
+
+\courssub{Lien avec le domaine de définition : les valeurs interdites}
+
+Où faut-il chercher les asymptotes verticales ? La réponse est simple : parmi les \cle{valeurs interdites} de la fonction, c'est-à-dire les réels qui ne sont pas dans le domaine de définition mais qui sont « au bord » de celui-ci.
+
+\begin{propriete}[Cas typique : fonction rationnelle]
+Soit $f=\dfrac{P}{Q}$ une fonction rationnelle (quotient de deux polynômes). Si $a$ est un réel tel que
+\[ Q(a)=0 \qquad\text{et}\qquad P(a)\neq 0, \]
+alors les limites de $f$ en $a$ (à gauche et à droite) sont infinies : la droite d'équation $x=a$ est une \cle{asymptote verticale} à $\mathcal{C}_f$.
+\end{propriete}
+
+\textbf{Justification (formatrice).} Quand $x$ tend vers $a$, le numérateur $P(x)$ tend vers $P(a)\neq 0$ (un nombre fini non nul), tandis que le dénominateur $Q(x)$ tend vers $0$. Un quotient dont le numérateur reste proche d'un nombre non nul et dont le dénominateur devient arbitrairement petit devient arbitrairement grand en valeur absolue : la limite est infinie. Le \emph{signe} de l'infini dépend du signe de $P(a)$ et du signe de $Q(x)$ de chaque côté de $a$, d'où la nécessité d'étudier séparément la limite à gauche et la limite à droite.
+
+\begin{methode}[Repérer les asymptotes verticales d'une fonction rationnelle $f=\dfrac{P}{Q}$]
+\begin{enumerate}
+\item \textbf{Déterminer le domaine de définition} : résoudre l'équation $Q(x)=0$. Ses solutions sont les valeurs interdites.
+\item Pour chaque valeur interdite $a$, \textbf{vérifier que $P(a)\neq 0$}.
+\item \textbf{Calculer les limites} $\lim_{x\to a^{+}} f(x)$ et $\lim_{x\to a^{-}} f(x)$ en étudiant le signe du numérateur et du dénominateur de chaque côté de $a$.
+\item \textbf{Conclure} : si au moins une de ces limites est infinie, la droite $x=a$ est asymptote verticale à $\mathcal{C}_f$.
+\end{enumerate}
+\end{methode}
+
+\courssub{Exemple fondateur : $f(x)=\dfrac{1}{x-2}$}
+
+Étudions en détail la fonction $f$ définie par $f(x)=\dfrac{1}{x-2}$.
+
+\textbf{Étape 1 : domaine.} Le dénominateur s'annule pour $x-2=0$, c'est-à-dire $x=2$. Donc $D_f=\mathbb{R}\setminus\{2\}$.
+
+\textbf{Étape 2 : numérateur.} Le numérateur est constant égal à $1$, donc non nul : on est dans le cas typique.
+
+\textbf{Étape 3 : limites.}
+\begin{itemize}
+\item Si $x\to 2^{+}$ (par exemple $x=2{,}001$), alors $x-2>0$ et $x-2\to 0^{+}$, donc $\displaystyle\lim_{x\to 2^{+}}\dfrac{1}{x-2}=+\infty$.
+\item Si $x\to 2^{-}$ (par exemple $x=1{,}999$), alors $x-2<0$ et $x-2\to 0^{-}$, donc $\displaystyle\lim_{x\to 2^{-}}\dfrac{1}{x-2}=-\infty$.
+\end{itemize}
+
+\textbf{Conclusion.} La droite d'équation $x=2$ est asymptote verticale à la courbe de $f$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-2, xmax=6, ymin=-6, ymax=6,
+  xtick={-2,-1,1,2,3,4,5,6}, ytick={-6,-4,-2,2,4,6},
+  grid=both, grid style={popline!40},
+  clip=true]
+  \addplot[popcurve,domain=-2:1.85,samples=120]{1/(x-2)};
+  \addplot[popcurve,domain=2.15:6,samples=120]{1/(x-2)};
+  \addplot[red, dashed, thick] coordinates {(2,-6) (2,6)};
+  \draw[->, red, thick] (axis cs:2.35,3.5) -- (axis cs:2.08,5.3);
+  \draw[->, red, thick] (axis cs:1.65,-3.5) -- (axis cs:1.92,-5.3);
+  \node[red] at (axis cs:2.25,5.7) {\small $x=2$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x)=\dfrac{1}{x-2}$ : la droite $x=2$ (pointillés rouges) est asymptote verticale ; les flèches indiquent les branches infinies.}
+\end{popfigure}
+
+\courssub{Exemple chiffré : $f(x)=\dfrac{x+1}{x-3}$}
+
+\begin{exoresolu}[Montrer que $x=3$ est asymptote verticale]
+\textbf{Énoncé.} Soit $f$ la fonction définie par $f(x)=\dfrac{x+1}{x-3}$.
+\begin{enumerate}
+\item Déterminer le domaine de définition de $f$.
+\item Calculer les limites de $f$ à gauche et à droite de $3$.
+\item En déduire une asymptote verticale à la courbe $\mathcal{C}_f$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item $f$ est définie si et seulement si $x-3\neq 0$, c'est-à-dire $x\neq 3$. Donc $D_f=\mathbb{R}\setminus\{3\}=]-\infty\,;3[\,\cup\,]3\,;+\infty[$.
+\item Le numérateur en $x=3$ vaut $3+1=4>0$ : il est non nul, on est dans le cas typique.
+\begin{itemize}
+\item Quand $x\to 3^{+}$ : $x-3>0$ et $x-3\to 0^{+}$, le numérateur tend vers $4>0$, donc
+\[ \lim_{x\to 3^{+}}\dfrac{x+1}{x-3}=+\infty. \]
+\item Quand $x\to 3^{-}$ : $x-3<0$ et $x-3\to 0^{-}$, donc
+\[ \lim_{x\to 3^{-}}\dfrac{x+1}{x-3}=-\infty. \]
+\end{itemize}
+\item Puisque les limites de $f$ en $3$ sont infinies, la droite d'équation $x=3$ est \textbf{asymptote verticale} à $\mathcal{C}_f$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Les quatre configurations graphiques}
+
+Selon le signe de l'infini à gauche et à droite de $a$, la courbe adopte l'une des quatre configurations résumées ci-dessous.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.62, every node/.style={font=\small}]
+% Config 1 : +infini des deux côtés
+\begin{scope}[shift={(0,0)}]
+  \draw[->, popmuted] (-2.2,0) -- (2.2,0);
+  \draw[->, popmuted] (0,-0.4) -- (0,3.2);
+  \draw[red, dashed, thick] (0,-0.4) -- (0,3.2);
+  \draw[popblue, thick, domain=0.35:2, samples=60] plot (\x, {0.5/\x});
+  \draw[popblue, thick, domain=-2:-0.35, samples=60] plot (\x, {0.5/abs(\x)});
+  \node at (0,-1) {$+\infty$ des deux côtés};
+\end{scope}
+% Config 2 : -infini des deux côtés
+\begin{scope}[shift={(6,0)}]
+  \draw[->, popmuted] (-2.2,0) -- (2.2,0);
+  \draw[->, popmuted] (0,-3.2) -- (0,0.6);
+  \draw[red, dashed, thick] (0,-3.2) -- (0,0.6);
+  \draw[popblue, thick, domain=0.35:2, samples=60] plot (\x, {-0.5/\x});
+  \draw[popblue, thick, domain=-2:-0.35, samples=60] plot (\x, {-0.5/abs(\x)});
+  \node at (0,-3.9) {$-\infty$ des deux côtés};
+\end{scope}
+% Config 3 : -infini à gauche, +infini à droite
+\begin{scope}[shift={(12,0)}]
+  \draw[->, popmuted] (-2.2,0) -- (2.2,0);
+  \draw[->, popmuted] (0,-3) -- (0,3);
+  \draw[red, dashed, thick] (0,-3) -- (0,3);
+  \draw[popblue, thick, domain=0.3:2, samples=60] plot (\x, {0.5/\x});
+  \draw[popblue, thick, domain=-2:-0.3, samples=60] plot (\x, {0.5/\x});
+  \node at (0,-3.7) {$-\infty$ à gauche, $+\infty$ à droite};
+\end{scope}
+% Config 4 : +infini à gauche, -infini à droite
+\begin{scope}[shift={(18,0)}]
+  \draw[->, popmuted] (-2.2,0) -- (2.2,0);
+  \draw[->, popmuted] (0,-3) -- (0,3);
+  \draw[red, dashed, thick] (0,-3) -- (0,3);
+  \draw[popblue, thick, domain=0.3:2, samples=60] plot (\x, {-0.5/\x});
+  \draw[popblue, thick, domain=-2:-0.3, samples=60] plot (\x, {-0.5/\x});
+  \node at (0,-3.7) {$+\infty$ à gauche, $-\infty$ à droite};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{Les quatre configurations possibles de branches infinies le long d'une asymptote verticale $x=a$.}
+\end{popfigure}
+
+\courssub{Piège fréquent : valeur interdite ne signifie pas toujours asymptote}
+
+\begin{attention}[Une valeur interdite ne donne pas toujours une asymptote verticale]
+Si le dénominateur s'annule en $a$ \textbf{et que le numérateur s'annule aussi} en $a$, la limite en $a$ peut être \emph{finie} : il n'y a alors \textbf{pas} d'asymptote verticale, mais un « trou » dans la courbe (on parle de \emph{prolongement par continuité}).
+
+\textbf{Exemple 1.} $g(x)=\dfrac{x^2-4}{x-2}$. La valeur $2$ est interdite, mais pour $x\neq 2$ :
+\[ g(x)=\dfrac{(x-2)(x+2)}{x-2}=x+2 \quad\Longrightarrow\quad \lim_{x\to 2} g(x)=4. \]
+Limite finie : pas d'asymptote verticale en $x=2$, seulement un point manquant $(2\,;4)$.
+
+\textbf{Exemple 2.} La fonction $h(x)=\dfrac{\sin x}{x}$ n'est pas définie en $0$, pourtant $\lim_{x\to 0}\dfrac{\sin x}{x}=1$ (limite finie) : la courbe n'a pas d'asymptote verticale en $0$, on peut prolonger $h$ par continuité en posant $h(0)=1$.
+
+\textbf{Réflexe à acquérir :} devant une valeur interdite $a$, \emph{toujours calculer la limite} avant de conclure. C'est la limite infinie qui crée l'asymptote, pas la valeur interdite elle-même.
+\end{attention}
+
+\courssub{Retour à la situation d'accroche}
+
+Pour l'entreprise de Bafoussam, $C(x)=\dfrac{2x+50}{x}$ est définie pour $x>0$. Quand $x\to 0^{+}$, le numérateur tend vers $50>0$ et le dénominateur vers $0^{+}$, donc
+\[ \lim_{x\to 0^{+}} C(x)=+\infty. \]
+La droite $x=0$ (l'axe des ordonnées) est donc \textbf{asymptote verticale} à la courbe du coût moyen : produire une quantité quasi nulle fait exploser le coût moyen. C'est exactement ce que le directeur observait !
+
+\begin{savaistu}[Asymptotes verticales en économie]
+En économie, le \emph{coût moyen} de production $C_M(x)=\dfrac{C(x)}{x}$ « explose » presque toujours quand la production $x$ tend vers $0$, car les charges fixes (loyer de l'atelier, machines, salaires) sont réparties sur très peu d'unités : la courbe du coût moyen admet une asymptote verticale en $x=0$. C'est pourquoi un artisan menuisier de Douala qui ne fabriquerait qu'une seule table par mois devrait la vendre à un prix exorbitant pour couvrir ses frais ! Les asymptotes verticales apparaissent aussi en physique (force gravitationnelle $\dfrac{k}{r^2}$ quand la distance $r$ tend vers $0$) et en électricité.
+\end{savaistu}
+
+\begin{exercice}[À vous de jouer]
+Soit $f$ la fonction définie par $f(x)=\dfrac{2x-1}{x+4}$.
+\begin{enumerate}
+\item Déterminer le domaine de définition de $f$.
+\item Calculer $\lim_{x\to -4^{+}} f(x)$ et $\lim_{x\to -4^{-}} f(x)$.
+\item La courbe de $f$ admet-elle une asymptote verticale ? Justifier.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item $f$ est définie si et seulement si $x+4\neq 0$, soit $x\neq -4$. Donc $D_f=\mathbb{R}\setminus\{-4\}$.
+\item Le numérateur en $x=-4$ vaut $2\times(-4)-1=-9<0$.
+\begin{itemize}
+\item Si $x\to -4^{+}$ : $x+4\to 0^{+}$ (positif), numérateur proche de $-9$ (négatif), donc $\lim_{x\to -4^{+}} f(x)=-\infty$.
+\item Si $x\to -4^{-}$ : $x+4\to 0^{-}$ (négatif), quotient de deux quantités négatives, donc $\lim_{x\to -4^{-}} f(x)=+\infty$.
+\end{itemize}
+\item Les limites en $-4$ sont infinies : la droite d'équation $x=-4$ est asymptote verticale à la courbe de $f$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel sur les asymptotes verticales]
+\begin{itemize}
+\item La droite $x=a$ est \cle{asymptote verticale} à $\mathcal{C}_f$ si et seulement si $f$ admet une \textbf{limite infinie} en $a$ (à gauche ou à droite).
+\item Pour une fonction rationnelle $f=\dfrac{P}{Q}$ : on résout $Q(x)=0$ (valeurs interdites), puis on \textbf{calcule les limites} en chaque racine.
+\item Si $Q(a)=0$ et $P(a)\neq 0$ : asymptote verticale $x=a$ assurée.
+\item Si $Q(a)=0$ et $P(a)=0$ : la limite peut être finie (simplification possible) — \textbf{pas d'asymptote}, mais un trou.
+\item Le signe de l'infini se détermine par une étude de signes du numérateur et du dénominateur de chaque côté de $a$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Asymptotes horizontales}
+
+Après avoir analysé le comportement de la courbe au voisinage des valeurs interdites (\cle{asymptotes verticales}), nous allons maintenant observer ce qui se passe « au bout » de la courbe, lorsque $x$ devient très grand positivement ($+\infty$) ou très grand négativement ($-\infty$). C'est l'étude des \textbf{\cle{asymptotes horizontales}}. Elles renseignent sur la tendance à long terme d'un phénomène : \cle{coût moyen} stabilisé, concentration limite, population maximale supportable, etc.
+
+\courssub{Rappel : limites finies en $+\infty$ et en $-\infty$}
+
+Rappelons la définition intuitive et rigoureuse : une fonction $f$ admet une limite finie $\ell$ en $+\infty$ (resp. $-\infty$) si, lorsque $x$ prend des valeurs arbitrairement grandes (resp. arbitrairement petites), $f(x)$ se rapproche arbitrairement de $\ell$. On note :
+\[
+\lim_{x \to +\infty} f(x) = \ell \qquad \text{ou} \qquad \lim_{x \to -\infty} f(x) = \ell.
+\]
+Pour les fonctions usuelles (puissances, rationnelles), on utilise les règles de priorité : le terme de plus haut degré l'emporte.
+
+\begin{exemplebox}[Rappel de calcul de limites]
+Soit $f(x) = \dfrac{3x^2 - 2x + 1}{x^2 + 5}$.
+Les termes de plus haut degré sont $3x^2$ au numérateur et $x^2$ au dénominateur.
+\[
+\lim_{x \to \pm\infty} f(x) = \lim_{x \to \pm\infty} \frac{3x^2}{x^2} = 3.
+\]
+\end{exemplebox}
+
+\courssub{Définition : asymptote horizontale}
+
+\begin{definition}[Asymptote horizontale]
+Soit $f$ une fonction définie sur un intervalle de la forme $]a ; +\infty[$ (resp. $]-\infty ; b[$).
+Si $\displaystyle \lim_{x \to +\infty} f(x) = b$ (resp. $\displaystyle \lim_{x \to -\infty} f(x) = b$) avec $b \in \mathbb{R}$, alors la droite $\mathcal{H}$ d'équation \textbf{$y = b$} est une \textbf{asymptote horizontale} à la courbe $\mathcal{C}_f$ en $+\infty$ (resp. en $-\infty$).
+\end{definition}
+
+\emph{Remarque :} Une courbe peut avoir une asymptote horizontale différente en $+\infty$ et en $-\infty$ (ex : $f(x) = \arctan x$ a $y = \pi/2$ en $+\infty$ et $y = -\pi/2$ en $-\infty$). Pour les fonctions rationnelles, elles sont identiques dans les deux sens.
+
+\courssub{Cas des fonctions rationnelles}
+
+C'est le cas le plus fréquent en Première technique. La règle est une conséquence directe des propriétés des limites.
+
+\begin{propriete}[Limite en $\pm\infty$ d'une fonction rationnelle]
+Soit $f(x) = \dfrac{P(x)}{Q(x)}$ une fonction rationnelle, avec $P$ et $Q$ des polynômes de degrés respectifs $p$ et $q$, et $a_p$, $b_q$ leurs \cle{coefficients directeurs}.
+\begin{itemize}
+  \item Si $p < q$ : $\displaystyle \lim_{x \to \pm\infty} f(x) = 0$. L'axe des abscisses ($y=0$) est asymptote horizontale.
+  \item Si $p = q$ : $\displaystyle \lim_{x \to \pm\infty} f(x) = \dfrac{a_p}{b_q}$. La droite $y = \dfrac{a_p}{b_q}$ est asymptote horizontale.
+  \item Si $p > q$ : la limite est $\pm\infty$ (selon les signes). \textbf{Il n'y a pas d'asymptote horizontale} (on étudiera les \cle{asymptotes obliques} en Section 3).
+\end{itemize}
+\end{propriete}
+
+\emph{Preuve (admise au Probatoire, mais simple à expliquer) :} On factorise par $x^q$ (le plus haut degré du dénominateur) au numérateur et au dénominateur. Les termes en $1/x$, $1/x^2$, etc. tendent vers $0$. Il ne reste que le quotient des termes de plus haut degré.
+
+\courssub{Interprétation graphique}
+
+Graphiquement, une asymptote horizontale $y = b$ signifie que la courbe $\mathcal{C}_f$ se « plaque » contre la droite horizontale $y = b$ lorsque l'on s'éloigne vers la droite ($+\infty$) ou vers la gauche ($-\infty$). La distance verticale entre la courbe et la droite, $|f(x) - b|$, tend vers $0$.
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-6, xmax=6, ymin=-3, ymax=5,
+    xtick={-5,-4,...,5}, ytick={-2,-1,...,4},
+    grid=major, grid style={popline},
+    clip=false,
+    domain=-5.5:-1.2, samples=200,
+]
+% Asymptote horizontale y=2
+\addplot[dashed, poporange, thick, domain=-5.5:5.5] {2} node[right, pos=0.95, poporange] {$y=2$};
+% Asymptote verticale x=1 (rappel)
+\addplot[dashed, poppurple, thick, domain=-3:4] ({1}, x) node[above, pos=0.9, poppurple] {$x=1$};
+% Branche gauche
+\addplot[popblue, very thick, domain=-5.5:-1.2] {(2*x+1)/(x-1)};
+% Branche milieu (gauche de x=1)
+\addplot[popblue, very thick, domain=-1:0.9] {(2*x+1)/(x-1)};
+% Branche droite (droite de x=1)
+\addplot[popblue, very thick, domain=1.1:5.5] {(2*x+1)/(x-1)};
+% Flèches d'approche
+\draw[popblue, ->, thick] (-5.2, 1.6) -- (-5.2, 1.9);
+\draw[popblue, ->, thick] (5.2, 2.4) -- (5.2, 2.1);
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f(x)=\frac{2x+1}{x-1}$ avec ses asymptotes horizontale $y=2$ (orange) et verticale $x=1$ (violet). La courbe se plaque sur $y=2$ aux extrémités.}
+\end{popfigure}
+
+\courssub{Position relative : au-dessus ou au-dessous ?}
+
+Savoir que la courbe tend vers $y=b$ ne suffit pas pour tracer correctement : faut-il la tracer \emph{au-dessus} ou \emph{en dessous} de l'asymptote ? On étudie le signe de la différence $f(x) - b$.
+
+\begin{methode}[Position relative par rapport à l'asymptote horizontale $y=b$]
+\begin{enumerate}
+  \item Calculer l'expression de $f(x) - b$ et la simplifier (mettre au même dénominateur).
+  \item Étudier le signe de cette expression sur les intervalles concernés ($+\infty$ et/ou $-\infty$).
+  \item Conclure :
+  \begin{itemize}
+    \item Si $f(x) - b > 0$ : la courbe est \textbf{au-dessus} de l'asymptote.
+    \item Si $f(x) - b < 0$ : la courbe est \textbf{en dessous} de l'asymptote.
+  \end{itemize}
+\end{enumerate}
+\end{methode}
+
+\courssub{Exemple guidé : $f(x) = \dfrac{2x+1}{x-1}$}
+
+\begin{exoresolu}[Étude complète des asymptotes de $f(x)=\frac{2x+1}{x-1}$]
+\textbf{Énoncé :} On considère la fonction $f$ définie sur $\mathbb{R}^* = ]-\infty;1[ \cup ]1;+\infty[$ par $f(x) = \dfrac{2x+1}{x-1}$.
+\begin{enumerate}
+  \item Déterminer les asymptotes horizontales.
+  \item Étudier la position relative de la courbe $\mathcal{C}_f$ par rapport à ces asymptotes.
+\end{enumerate}
+
+\textbf{Solution détaillée :}
+
+\textit{1. Asymptotes horizontales.}
+$f$ est une fonction rationnelle. Degrés : numérateur degré 1 (coeff. 2), dénominateur degré 1 (coeff. 1). Comme $p = q = 1$ :
+\[
+\lim_{x \to +\infty} f(x) = \frac{2}{1} = 2 \quad \text{et} \quad \lim_{x \to -\infty} f(x) = \frac{2}{1} = 2.
+\]
+La droite $\mathcal{H}$ d'équation \textbf{$y = 2$} est asymptote horizontale à $\mathcal{C}_f$ en $+\infty$ \textbf{et} en $-\infty$.
+
+\textit{2. Position relative par rapport à $y=2$.}
+Calculons $f(x) - 2$ :
+\begin{align*}
+f(x) - 2 &= \frac{2x+1}{x-1} - 2 \\
+&= \frac{2x+1 - 2(x-1)}{x-1} \\
+&= \frac{2x+1 - 2x + 2}{x-1} \\
+&= \frac{3}{x-1}.
+\end{align*}
+Étudions le signe de $\dfrac{3}{x-1}$ :
+\begin{itemize}
+  \item Sur $]-\infty ; 1[$ : $x-1 < 0$, donc $\dfrac{3}{x-1} < 0$. \textbf{$f(x) - 2 < 0$} $\Rightarrow$ $\mathcal{C}_f$ est \textbf{en dessous} de $y=2$.
+  \item Sur $]1 ; +\infty[$ : $x-1 > 0$, donc $\dfrac{3}{x-1} > 0$. \textbf{$f(x) - 2 > 0$} $\Rightarrow$ $\mathcal{C}_f$ est \textbf{au-dessus} de $y=2$.
+\end{itemize}
+
+\textbf{Conclusion :} En $-\infty$, la courbe arrive par en dessous de $y=2$ ; en $+\infty$, elle arrive par au-dessus. (Voir figure ci-dessus).
+\end{exoresolu}
+
+\courssub{Application concrète : coût moyen de production}
+
+En gestion d'entreprise ou en économie industrielle, le \textbf{coût moyen} unitaire est une fonction rationnelle classique.
+
+\begin{exemplebox}[Coût moyen d'une usine]
+Une usine produit $x$ pièces (en milliers). Le coût total de production (en millions de FCFA) est modélisé par $C_T(x) = 2x + 50$ (coût variable $2x$ + coût fixe $50$). Le coût moyen unitaire (en milliers de FCFA par pièce) est :
+\[
+C_m(x) = \frac{C_T(x)}{x} = \frac{2x + 50}{x} = 2 + \frac{50}{x}, \quad x > 0.
+\]
+\begin{enumerate}
+  \item Déterminer l'asymptote horizontale de la courbe représentant $C_m$.
+  \item Interpréter économiquement cette asymptote.
+  \item Étudier la position relative.
+\end{enumerate}
+
+\textbf{Résolution :}
+\begin{enumerate}
+  \item $\displaystyle \lim_{x \to +\infty} C_m(x) = \lim_{x \to +\infty} \left(2 + \frac{50}{x}\right) = 2$. L'asymptote horizontale est $y = 2$.
+  \item \textbf{Interprétation :} Lorsque la production $x$ devient très grande, le coût fixe (50 millions) est « dilué » sur un grand nombre de pièces. Le coût moyen tend vers le coût variable unitaire : \textbf{2 000 FCFA par pièce}. C'est le \emph{coût marginal} ou \emph{plancher} du coût moyen.
+  \item $C_m(x) - 2 = \dfrac{50}{x}$. Pour $x > 0$, $\dfrac{50}{x} > 0$. Donc $C_m(x) > 2$. La courbe est \textbf{toujours au-dessus} de son asymptote. Le coût moyen décroît vers 2 000 FCFA sans jamais l'atteindre.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel=$x$ (milliers de pièces), ylabel=$C_m(x)$ (k FCFA),
+    xmin=0, xmax=30, ymin=0, ymax=55,
+    xtick={0,5,10,15,20,25,30}, ytick={0,10,20,30,40,50},
+    grid=major, grid style={popline},
+    clip=false,
+    domain=0.5:30, samples=200,
+]
+% Asymptote horizontale y=2
+\addplot[dashed, poporange, thick, domain=0:30] {2} node[right, pos=0.95, poporange] {$y = 2$ (2 000 FCFA)};
+% Courbe Cm(x) = 2 + 50/x
+\addplot[popblue, very thick, domain=0.5:30] {2 + 50/x};
+% Point notable x=10
+\addplot[only marks, mark=*, popgreen, mark size=2.5] coordinates {(10, 7)};
+\node[above right, popgreen] at (axis cs:10,7) {$C_m(10)=7$ k FCFA};
+% Flèche d'approche
+\draw[popblue, ->, thick] (25, 4) -- (25, 2.5);
+\end{axis}
+\end{tikzpicture}
+\legende{Évolution du coût moyen $C_m(x) = 2 + 50/x$. La courbe décroît et se plaque sur l'asymptote $y=2$ (coût variable unitaire).}
+\end{popfigure}
+
+\begin{savaistu}[Le « seuil de rentabilité » et les asymptotes]
+Dans l'exemple ci-dessus, l'asymptote horizontale représente une \textbf{borne inférieure inatteignable} pour le coût moyen. En gestion, on cherche souvent le volume de production $x$ à partir duquel le coût moyen devient « acceptable » (ex : inférieur à 3 000 FCFA). Cela revient à résoudre l'inéquation $2 + 50/x < 3 \iff 50/x < 1 \iff x > 50$ (soit 50 000 pièces). L'asymptote donne la cible théorique ; l'étude de la position relative et des inéquations donne les seuils opérationnels réels.
+\end{savaistu}
+
+\begin{attention}[Piège majeur : une courbe PEUT couper son asymptote horizontale !]
+C'est l'erreur n°1 en examen. L'asymptote horizontale décrit le comportement \textbf{à l'infini} ($x \to \pm\infty$). Elle n'interdit \textbf{pas} à la courbe de la croiser pour des valeurs finies de $x$.
+
+\textbf{Contre-exemple :} $f(x) = \dfrac{x}{x^2+1}$.
+\begin{itemize}
+  \item $\lim_{x \to \pm\infty} f(x) = 0$. Asymptote horizontale : $y=0$ (axe des abscisses).
+  \item $f(0) = 0$. La courbe \textbf{coupe} son asymptote à l'origine !
+  \item Pour $x>0$, $f(x)>0$ (au-dessus) ; pour $x<0$, $f(x)<0$ (en dessous).
+\end{itemize}
+\textbf{Règle d'or :} L'étude de la position relative ($f(x)-b$) se fait \emph{séparément} sur $]-\infty; ...[$ et $]...; +\infty[$. Ne jamais écrire « la courbe est au-dessus de son asymptote » sans préciser l'intervalle de $x$.
+\end{attention}
+
+\courssub{Synthèse de la section}
+
+\begin{aretenir}[Asymptotes horizontales — Ce qu'il faut retenir pour le Probatoire]
+\begin{itemize}
+  \item \textbf{Définition :} $y=b$ asymptote horizontale en $+\infty$ $\iff$ $\lim_{x\to+\infty}f(x)=b$ (de même pour $-\infty$).
+  \item \textbf{Fonction rationnelle $P/Q$ :} comparer degrés $p$ et $q$.
+  \begin{itemize}
+    \item $p < q \Rightarrow y=0$.
+    \item $p = q \Rightarrow y = \frac{\text{coeff directeur } P}{\text{coeff directeur } Q}$.
+    \item $p > q \Rightarrow$ pas d'asymptote horizontale (voir Section 3 : obliques).
+  \end{itemize}
+  \item \textbf{Position relative :} calculer $f(x)-b$, en étudier le signe sur chaque intervalle de définition non borné.
+  \item \textbf{Attention :} la courbe peut croiser son asymptote horizontale (ex : $f(x)=\frac{\sin x}{x}$, $f(x)=\frac{x}{x^2+1}$).
+  \item \textbf{Contexte technique :} coût moyen $\to$ coût variable, concentration $\to$ seuil limite, rendement $\to$ rendement maximal.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Asymptotes obliques}
+
+Après avoir étudié les asymptotes horizontales, qui correspondent au cas où la courbe se rapproche d'une droite parallèle à l'axe des abscisses ($y = \ell$), nous abordons maintenant le cas plus général où la courbe s'éloigne à l'infini mais suit une direction inclinée. C'est la situation typique des \cle{fonctions rationnelles} où le degré du numérateur dépasse d'exactement une unité le degré du dénominateur.
+
+\courssub{Définition et intuition géométrique}
+
+\begin{definition}[Asymptote oblique]
+Soit $f$ une fonction définie sur un intervalle de la forme $]A, +\infty[$. La droite $\mathcal{D}$ d'équation $y = ax + b$ avec $a \neq 0$ est une \cle{asymptote oblique} à la courbe $\mathcal{C}_f$ en $+\infty$ si l'écart entre la courbe et la droite tend vers $0$ lorsque $x$ tend vers $+\infty$ :
+\[
+\lim_{x \to +\infty} \bigl[ f(x) - (ax + b) \bigr] = 0.
+\]
+La définition est analogue en $-\infty$ (sur un intervalle $]-\infty, B[$).
+\end{definition}
+
+\emph{Intuition :} L'asymptote horizontale est un cas particulier ($a=0$). Ici, la courbe « suit » une droite inclinée. L'écart vertical $f(x) - (ax+b)$ se réduit comme une peau de chagrin, même si $f(x)$ et $ax+b$ tendent tous deux vers $+\infty$ ou $-\infty$.
+
+\begin{experience}[Théorème : Critère d'asymptote oblique (Démonstration guidée)]
+On suppose que $f$ peut s'écrire sous la forme $f(x) = ax + b + g(x)$ sur $]A, +\infty[$ avec $\lim_{x\to+\infty} g(x) = 0$.
+\begin{enumerate}
+    \item Exprimer l'écart $f(x) - (ax+b)$ en fonction de $g(x)$.
+    \item Calculer la limite de cet écart quand $x \to +\infty$.
+    \item Conclure sur le fait que $y = ax+b$ est asymptote oblique.
+\end{enumerate}
+\tcblower
+\textbf{Solution guidée :}
+\begin{enumerate}
+    \item Par hypothèse, $f(x) - (ax+b) = g(x)$.
+    \item $\lim_{x\to+\infty} [f(x) - (ax+b)] = \lim_{x\to+\infty} g(x) = 0$.
+    \item D'après la définition, la droite $y = ax+b$ est bien une asymptote oblique à $\mathcal{C}_f$ en $+\infty$.
+\end{enumerate}
+\emph{Remarque :} Ce théorème montre qu'il suffit d'écrire $f$ sous la forme « partie affine + reste tendant vers 0 » pour identifier l'asymptote. C'est exactement ce que réalise la division euclidienne pour une fonction rationnelle.
+\end{experience}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, >=Stealth]
+    % Axes
+    \draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
+    \draw[->] (0,-0.5) -- (0,5.5) node[above] {$y$};
+    % Asymptote oblique y = 0.8x + 1
+    \draw[popblue, dashed, thick, domain=0:5] plot (\x, {0.8*\x + 1}) node[right, black, font=\small] {$y = ax+b$};
+    % Courbe f(x) = 0.8x + 1 + 2/(x+0.5)
+    \draw[poporange, thick, domain=0.1:5, samples=100] plot (\x, {0.8*\x + 1 + 2/(\x+0.5)});
+    % Vertical gaps at x=1, 2, 3, 4
+    \foreach \xval/\col in {1/popgreen, 2/popgreen!70!black, 3/poporange, 4/popred} {
+        \pgfmathsetmacro{\ycurve}{0.8*\xval + 1 + 2/(\xval+0.5)}
+        \pgfmathsetmacro{\yasym}{0.8*\xval + 1}
+        \draw[\col, thick] (\xval, \yasym) -- (\xval, \ycurve);
+        \node[\col, right] at (\xval, {(\ycurve+\yasym)/2}) {$\delta_{\xval}$};
+    }
+    % Labels
+    \node[below] at (1,0) {$x_1$};
+    \node[below] at (4,0) {$x_4$};
+    \node[align=center, popmuted, font=\small] at (5, 2.5) {L'écart vertical\\$\delta_x = f(x)-(ax+b)$\\tend vers $0$};
+\end{tikzpicture}
+\legende{Zoom progressif : l'écart vertical $\delta_x = f(x) - (ax+b)$ diminue quand $x$ augmente. La courbe (orange) se colle à l'asymptote (bleu pointillé).}
+\end{popfigure}
+
+\courssub{Recherche d'une asymptote oblique}
+
+Deux méthodes permettent de déterminer les coefficients $a$ et $b$. La première est algébrique, privilégiée pour les fonctions rationnelles en Première. La seconde, par les limites, est plus générale et sera systématique en Terminale.
+
+\begin{methode}[Méthode 1 : Division euclidienne (Fonctions rationnelles)]
+\emph{Utilisable quand $f(x) = \frac{P(x)}{Q(x)}$ avec $\deg P = \deg Q + 1$.}
+\begin{enumerate}
+    \item Effectuer la division euclidienne de $P(x)$ par $Q(x)$ : $P(x) = Q(x)(ax+b) + R(x)$ avec $\deg R < \deg Q$.
+    \item Écrire $f(x) = ax + b + \frac{R(x)}{Q(x)}$.
+    \item Vérifier que $\lim_{x\to\pm\infty} \frac{R(x)}{Q(x)} = 0$ (toujours vrai car $\deg R < \deg Q$).
+    \item L'asymptote oblique est la droite $y = ax + b$ (avec $a \neq 0$ car $\deg P > \deg Q$).
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Méthode 2 : Par les limites (Généralisable — Terminale)]
+\emph{Fonctionne pour toute fonction $f$ admettant une asymptote oblique en $\pm\infty$.}
+\begin{enumerate}
+    \item Calculer $a = \lim_{x\to\pm\infty} \frac{f(x)}{x}$ (direction asymptotique). Si la limite est infinie ou nulle, il n'y a pas d'asymptote oblique (cas horizontal ou parabolique).
+    \item Calculer $b = \lim_{x\to\pm\infty} \bigl[ f(x) - ax \bigr]$ (ordonnée à l'origine).
+    \item Si les deux limites sont finies, l'asymptote est $y = ax + b$.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Piège fréquent : Confondre direction asymptotique et asymptote]
+Trouver $a = \lim \frac{f(x)}{x}$ ne suffit \textbf{pas}. Il est impératif de vérifier que $b = \lim [f(x) - ax]$ existe et est finie.
+\emph{Exemple :} $f(x) = \sqrt{x^2+1}$. $\lim_{x\to+\infty} \frac{f(x)}{x} = 1$ (direction $y=x$), et $f(x)-x = \frac{1}{\sqrt{x^2+1}+x} \to 0$, donc $y=x$ est bien asymptote.
+\emph{Contre-exemple :} $f(x) = x + \sqrt{x}$. $\frac{f(x)}{x} \to 1$, mais $f(x)-x = \sqrt{x} \to +\infty$. \textbf{Pas d'asymptote oblique} (la courbe s'éloigne indéfiniment de la droite $y=x$).
+\end{attention}
+
+\courssub{Position relative de la courbe et de son asymptote}
+
+Une fois l'asymptote $y = ax+b$ trouvée, on étudie le signe de la différence $f(x) - (ax+b)$ pour savoir si la courbe est \textbf{au-dessus} ($>0$) ou \textbf{en-dessous} ($<0$) de son asymptote. Pour une fonction rationnelle issue d'une division euclidienne $f(x) = ax+b+\frac{R(x)}{Q(x)}$, il suffit d'étudier le signe du quotient $\frac{R(x)}{Q(x)}$ (souvent plus simple que le signe de $f(x)-(ax+b)$ directement).
+
+\begin{exoresolu}[Étude complète : $f(x) = \frac{x^2+x+1}{x+1}$]
+\emph{Soit $f$ définie sur $\mathbb{R}\setminus\{-1\}$ par $f(x) = \frac{x^2+x+1}{x+1}$.}
+\begin{enumerate}
+    \item \textbf{Domaine et asymptote verticale :} $D_f = \mathbb{R}\setminus\{-1\}$. $x=-1$ annule le dénominateur, numérateur $=1 \neq 0$.
+    \[
+    \lim_{x\to -1^-} f(x) = -\infty, \quad \lim_{x\to -1^+} f(x) = +\infty.
+    \]
+    La droite $x=-1$ est une asymptote verticale.
+    \item \textbf{Asymptote oblique en $\pm\infty$ :} $\deg(\text{num})=2$, $\deg(\text{dén})=1$. Division euclidienne :
+    \[
+    (x^2+x+1) = (x+1)(x) + 1 \quad \Rightarrow \quad f(x) = x + \frac{1}{x+1}.
+    \]
+    Comme $\lim_{x\to\pm\infty} \frac{1}{x+1} = 0$, l'asymptote oblique est $\mathcal{D} : y = x$ (même droite en $+\infty$ et $-\infty$).
+    \item \textbf{Vérification par les limites (Méthode 2) :}
+    $a = \lim_{x\to\pm\infty} \frac{f(x)}{x} = \lim \frac{x^2+x+1}{x^2+x} = 1$.
+    $b = \lim_{x\to\pm\infty} (f(x) - x) = \lim \frac{1}{x+1} = 0$.
+    Asymptote : $y = x$. (Confirme la division).
+    \item \textbf{Position relative :} $f(x) - x = \frac{1}{x+1}$.
+    \begin{itemize}
+        \item Si $x > -1$, $x+1 > 0 \Rightarrow f(x) - x > 0$ : $\mathcal{C}_f$ est \textbf{au-dessus} de $\mathcal{D}$.
+        \item Si $x < -1$, $x+1 < 0 \Rightarrow f(x) - x < 0$ : $\mathcal{C}_f$ est \textbf{en-dessous} de $\mathcal{D}$.
+    \end{itemize}
+    \item \textbf{Intersections avec les axes :} $f(0)=1$ (point $(0,1)$). $f(x)=0 \Leftrightarrow x^2+x+1=0$, $\Delta = -3 < 0$ : pas d'intersection avec $Ox$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=10cm,
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-5, xmax=5, ymin=-5, ymax=5,
+    xtick={-5,-4,-3,-2,-1,1,2,3,4,5}, ytick={-5,-4,-3,-2,-1,1,2,3,4,5},
+    tick label style={font=\footnotesize},
+    grid=major, grid style={popline},
+    clip=false,
+    samples=200,
+    restrict y to domain=-6:6
+]
+    % Asymptote verticale x = -1
+    \addplot[popred, dashed, thick, domain=-5:5] ({-1}, \x) node[above left, black, font=\small] {$x=-1$};
+    % Asymptote oblique y = x
+    \addplot[popblue, dashed, thick, domain=-5:5] (\x, \x) node[above right, black, font=\small] {$y=x$};
+    % Branche gauche x < -1
+    \addplot[poporange, very thick, domain=-5:-1.2] (\x, {\x + 1/(\x+1)});
+    % Branche droite x > -1
+    \addplot[poporange, very thick, domain=-0.8:5] (\x, {\x + 1/(\x+1)});
+    % Point (0,1)
+    \addplot[only marks, mark=*, mark size=2, popgreen] coordinates {(0,1)};
+    \node[popgreen, above left, font=\small] at (axis cs:0,1) {$(0,1)$};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f(x)=x+\frac{1}{x+1}$, asymptote oblique $y=x$ (bleu pointillé) et asymptote verticale $x=-1$ (rouge pointillé). La courbe est au-dessus de $y=x$ pour $x>-1$ et en-dessous pour $x<-1$.}
+\end{popfigure}
+
+\courssub{Remarque importante : Unicité de l'asymptote non verticale}
+
+\begin{propriete}[Unicité de l'asymptote en $+\infty$ (ou $-\infty$)]
+Une courbe $\mathcal{C}_f$ ne peut avoir \textbf{au plus une} asymptote non verticale (horizontale ou oblique) en $+\infty$, et au plus une en $-\infty$.
+\end{propriete}
+
+\emph{Justification :} Si $y=ax+b$ et $y=a'x+b'$ sont deux asymptotes en $+\infty$, alors $f(x)-(ax+b)\to 0$ et $f(x)-(a'x+b')\to 0$. En soustrayant, $(a-a')x + (b-b') \to 0$. Cela force $a=a'$ puis $b=b'$.
+
+\begin{aretenir}[Bilan : Asymptotes obliques]
+\begin{itemize}
+    \item \textbf{Définition :} $y=ax+b$ ($a\neq 0$) est asymptote oblique en $+\infty$ $\iff$ $\lim_{x\to+\infty}[f(x)-(ax+b)]=0$.
+    \item \textbf{Méthode rationnelle (1re Tech) :} Division euclidienne $\to f(x)=ax+b+\frac{R(x)}{Q(x)}$.
+    \item \textbf{Méthode limites (Généralisable) :} $a=\lim\frac{f(x)}{x}$, $b=\lim[f(x)-ax]$.
+    \item \textbf{Position relative :} Signe de $f(x)-(ax+b)$ (signe du reste $\frac{R(x)}{Q(x)}$ pour les fractions).
+    \item \textbf{Unicité :} Une seule asymptote (horizontale ou oblique) par « bout » de courbe ($+\infty$ et $-\infty$).
+\end{itemize}
+\end{aretenir}
+
+\coursec{Plan d'étude d'une fonction}
+
+Dans les sections précédentes, nous avons appris à détecter les trois types d'asymptotes (verticales, horizontales, obliques) qui guident le tracé d'une courbe aux « bords » de son domaine. Mais connaître les asymptotes ne suffit pas pour dessiner une courbe complète : il faut aussi savoir où la fonction \cle{croît}, où elle \cle{décroît}, où elle passe par un \cle{maximum} ou un \cle{minimum}, et où elle coupe les axes. Toutes ces informations doivent être rassemblées dans un ordre précis : c'est exactement l'objet du \cle{plan d'étude d'une fonction}. C'est la démarche complète attendue au Probatoire technique dans la partie « problème » de l'épreuve.
+
+\courssub{Vue d'ensemble : les sept étapes}
+
+Étudier une fonction, c'est comme inspecter un véhicule avant un long trajet : on ne commence pas par n'importe quoi, on suit une check-list dans un ordre logique. Chaque étape fournit des informations utilisées par les étapes suivantes.
+
+\begin{methode}[Fiche récapitulative : le plan d'étude en 7 étapes]
+Pour étudier complètement une fonction $f$ et tracer sa courbe représentative $\mathcal{C}_f$ :
+\begin{enumerate}
+\item \textbf{Domaine de définition} : déterminer $D_f$ en repérant les valeurs interdites (dénominateur nul, quantité sous une racine carrée négative).
+\item \textbf{Limites aux bornes} : calculer les limites de $f$ aux bornes de $D_f$ et en déduire les \cle{asymptotes} éventuelles (verticales, horizontales, obliques).
+\item \textbf{Parité} : tester si $f$ est paire ou impaire ; si oui, réduire le domaine d'étude à la moitié de $D_f$.
+\item \textbf{Dérivée} : calculer $f'(x)$ et étudier son \cle{signe} sur $D_f$.
+\item \textbf{Tableau de variation} : rassembler dans un tableau le signe de $f'$, le sens de variation de $f$, les limites aux bornes et les extrema.
+\item \textbf{Points remarquables} : déterminer les intersections avec les axes, les extrema et les tangentes horizontales.
+\item \textbf{Tracé} : dessiner d'abord les asymptotes, placer les points remarquables, puis tracer les branches de la courbe en respectant le tableau de variation.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  node distance=0.55cm,
+  etape/.style={rectangle, rounded corners=3pt, draw=popblue, fill=popblueL, text width=6.4cm, align=center, font=\small, inner sep=4pt},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}]
+\node[etape] (e1) {\textbf{Étape 1} : domaine de définition $D_f$};
+\node[etape, below=of e1] (e2) {\textbf{Étape 2} : limites aux bornes $\Rightarrow$ asymptotes};
+\node[etape, below=of e2] (e3) {\textbf{Étape 3} : parité ? réduire le domaine d'étude};
+\node[etape, below=of e3] (e4) {\textbf{Étape 4} : calcul de $f'$ et étude de son signe};
+\node[etape, below=of e4] (e5) {\textbf{Étape 5} : tableau de variation complet};
+\node[etape, below=of e5] (e6) {\textbf{Étape 6} : points remarquables (axes, extrema)};
+\node[etape, below=of e6] (e7) {\textbf{Étape 7} : tracé de la courbe $\mathcal{C}_f$};
+\draw[fleche] (e1) -- (e2);
+\draw[fleche] (e2) -- (e3);
+\draw[fleche] (e3) -- (e4);
+\draw[fleche] (e4) -- (e5);
+\draw[fleche] (e5) -- (e6);
+\draw[fleche] (e6) -- (e7);
+\end{tikzpicture}
+\legende{Organigramme des sept étapes du plan d'étude d'une fonction.}
+\end{popfigure}
+
+\courssub{Étape 1 : déterminer le domaine de définition}
+
+L'intuition est simple : avant de parcourir un terrain, on repère les zones interdites. Le \cle{domaine de définition} $D_f$ est l'ensemble des réels $x$ pour lesquels $f(x)$ existe. Deux interdits à surveiller au programme de Première technique :
+\begin{itemize}
+\item un \textbf{dénominateur ne doit jamais être nul} : pour $f(x)=\dfrac{2x+1}{x-1}$, la valeur $x=1$ est interdite ;
+\item une \textbf{quantité sous une racine carrée doit être positive ou nulle} : pour $g(x)=\sqrt{x-3}$, il faut $x-3\geq 0$, donc $x\geq 3$.
+\end{itemize}
+
+\begin{exemplebox}[Domaine de définition]
+Pour $f(x)=\dfrac{2x+1}{x-1}$ : le dénominateur s'annule en $x=1$. Donc
+\[ D_f=\mathbb{R}\setminus\{1\}=]-\infty\,;\,1[\ \cup\ ]1\,;\,+\infty[. \]
+\emph{Rédaction justifiée} : « $f(x)$ existe si et seulement si $x-1\neq 0$, c'est-à-dire $x\neq 1$. Donc $D_f=\mathbb{R}\setminus\{1\}$. »
+\end{exemplebox}
+
+\courssub{Étape 2 : limites aux bornes et asymptotes}
+
+On calcule ensuite la limite de $f$ en \textbf{chaque borne} du domaine : en $-\infty$, en $+\infty$, et à gauche et à droite de chaque valeur interdite. C'est ici que les sections précédentes prennent tout leur sens :
+\begin{itemize}
+\item limite infinie en une valeur finie $a$ $\Rightarrow$ \cle{asymptote verticale} $x=a$ ;
+\item limite finie $\ell$ en $\pm\infty$ $\Rightarrow$ \cle{asymptote horizontale} $y=\ell$ ;
+\item $f(x)-(ax+b)\to 0$ en $\pm\infty$ $\Rightarrow$ \cle{asymptote oblique} $y=ax+b$.
+\end{itemize}
+
+\begin{attention}[Erreur fréquente : oublier des bornes]
+L'erreur la plus coûteuse au Probatoire est d'oublier les limites aux bornes du domaine dans le tableau de variation. Si $D_f=\mathbb{R}\setminus\{1\}$, il y a \textbf{quatre} limites à calculer : en $-\infty$, en $1^{-}$, en $1^{+}$ et en $+\infty$. Un tableau de variation sans ces quatre valeurs est incomplet et fait perdre des points, même si le sens de variation est juste.
+\end{attention}
+
+\courssub{Étape 3 : parité, pour travailler moins}
+
+\begin{definition}[Rappel : fonction paire, fonction impaire]
+Soit $f$ de domaine $D_f$ symétrique par rapport à $0$.
+\begin{itemize}
+\item $f$ est \cle{paire} si pour tout $x\in D_f$ : $f(-x)=f(x)$. Sa courbe est symétrique par rapport à l'axe des ordonnées.
+\item $f$ est \cle{impaire} si pour tout $x\in D_f$ : $f(-x)=-f(x)$. Sa courbe est symétrique par rapport à l'origine.
+\end{itemize}
+\end{definition}
+
+Si la fonction est paire ou impaire, on étudie $f$ seulement sur la moitié du domaine (par exemple sur $[0\,;\,+\infty[$) et on complète le tracé par symétrie. Si elle n'est ni paire ni impaire (cas le plus fréquent pour les fonctions rationnelles du Probatoire), on l'écrit clairement et on étudie sur tout $D_f$.
+
+\courssub{Étape 4 : calcul de la dérivée et étude de son signe}
+
+La dérivée est le « détecteur de pente » de la fonction : là où $f'>0$, la fonction monte ; là où $f'<0$, elle descend. Pour une fonction rationnelle $f=\dfrac{u}{v}$, on utilise la formule
+\[ f'(x)=\frac{u'(x)\,v(x)-u(x)\,v'(x)}{[v(x)]^{2}}. \]
+Comme le dénominateur $[v(x)]^2$ est toujours positif (sur $D_f$), le signe de $f'$ est le signe du numérateur : c'est un point de rédaction à justifier explicitement.
+
+\courssub{Étape 5 : le tableau de variation complet}
+
+Le tableau de variation est la \textbf{carte d'identité} de la fonction : il résume le signe de $f'$, le sens de variation, les limites aux bornes et les extrema. Une valeur interdite se matérialise par une double barre verticale dans le tableau (séparation de deux colonnes).
+
+\begin{exoresolu}[Étude des variations de $f(x)=\dfrac{2x+1}{x-1}$]
+Énoncé : on considère $f(x)=\dfrac{2x+1}{x-1}$ définie sur $D_f=\mathbb{R}\setminus\{1\}$. Étudier les variations de $f$ et dresser son tableau de variation complet.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Limites aux bornes.} En l'infini, $f(x)=\dfrac{2x+1}{x-1}$ se comporte comme $\dfrac{2x}{x}=2$ :
+\[ \lim_{x\to\pm\infty} f(x)=2 \quad\Rightarrow\quad \text{asymptote horizontale } y=2. \]
+En $x=1$ : le numérateur vaut $2(1)+1=3>0$. Le dénominateur $x-1$ tend vers $0$ en étant négatif à gauche, positif à droite :
+\[ \lim_{x\to 1^{-}} f(x)=-\infty, \qquad \lim_{x\to 1^{+}} f(x)=+\infty \quad\Rightarrow\quad \text{asymptote verticale } x=1. \]
+
+\textbf{Dérivée.} Avec $u=2x+1$ et $v=x-1$ : $u'=2$, $v'=1$.
+\begin{align*}
+f'(x) &= \frac{u'(x)v(x) - u(x)v'(x)}{[v(x)]^2} \\
+      &= \frac{2(x-1) - (2x+1)\times 1}{(x-1)^2} \\
+      &= \frac{2x-2-2x-1}{(x-1)^2} \\
+      &= \frac{-3}{(x-1)^2}.
+\end{align*}
+Pour tout $x\in D_f$, $(x-1)^2>0$, donc $f'(x)<0$ : $f$ est \textbf{strictement décroissante} sur chacun des intervalles $]-\infty\,;\,1[$ et $]1\,;\,+\infty[$.
+
+\textbf{Tableau de variation complet} (avec les quatre limites aux bornes, la valeur interdite $1$ dédouble sa colonne) :
+\begin{center}
+\begin{tabular}{|c|c|c||c|c|cc|}\hline
+$x$ & $-\infty$ & & $1^{-}$ & $1^{+}$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $-$ & & $-$ & & \\ \hline
+$f$ & $2$ & $\searrow$ & $-\infty$ & $+\infty$ & $\searrow$ & $2$ \\ \hline
+\end{tabular}
+\end{center}
+La double barre verticale entre les colonnes $1^{-}$ et $1^{+}$ rappelle que $f$ n'est pas définie en $x=1$ et que les limites sont infinies de signes contraires.
+\end{exoresolu}
+
+\begin{attention}[Piège de rédaction]
+Une fonction décroissante sur $]-\infty\,;\,1[$ et sur $]1\,;\,+\infty[$ n'est \textbf{pas} décroissante « sur $\mathbb{R}\setminus\{1\}$ » : on ne peut pas comparer, par exemple, $f(0)=-1$ et $f(2)=5$. Rédige toujours les variations \emph{intervalle par intervalle}, séparés par la valeur interdite.
+\end{attention}
+
+\courssub{Étape 6 : points remarquables}
+
+Avant de tracer, on place les points qui « accrochent » la courbe :
+\begin{itemize}
+\item \textbf{Intersection avec l'axe des ordonnées} : on calcule $f(0)$ (si $0\in D_f$). Ici $f(0)=\dfrac{1}{-1}=-1$ : la courbe passe par $(0\,;\,-1)$.
+\item \textbf{Intersection avec l'axe des abscisses} : on résout $f(x)=0$. Une fraction est nulle quand son numérateur est nul (et dénominateur non nul) : $2x+1=0$ donne $x=-\dfrac{1}{2}$. La courbe passe par $\left(-\dfrac{1}{2}\,;\,0\right)$.
+\item \textbf{Extrema et tangentes horizontales} : là où $f'(x)=0$ (avec changement de signe), la courbe admet un extremum et une tangente horizontale. Ici $f'(x)=\dfrac{-3}{(x-1)^2}$ ne s'annule jamais : pas d'extremum, pas de tangente horizontale.
+\end{itemize}
+
+\begin{attention}[Tangente horizontale $\neq$ asymptote horizontale]
+Ne confonds pas ces deux notions :
+\begin{itemize}
+\item une \textbf{tangente horizontale} est une droite qui \emph{touche} la courbe en un point précis, là où $f'(x)=0$ (notion \emph{locale}) ;
+\item une \textbf{asymptote horizontale} est une droite dont la courbe se \emph{rapproche} quand $x\to\pm\infty$, quand la limite est finie (notion \emph{globale}, à l'infini).
+\end{itemize}
+La courbe de $f(x)=\dfrac{2x+1}{x-1}$ possède une asymptote horizontale $y=2$ mais aucune tangente horizontale.
+\end{attention}
+
+\courssub{Étape 7 : le tracé de la courbe}
+
+Le tracé se fait dans un ordre précis, comme la construction d'un bâtiment : les fondations d'abord, les murs ensuite.
+
+\begin{methode}[Ordre de tracé de la courbe]
+\begin{enumerate}
+\item Tracer les \textbf{asymptotes} en pointillés (verticales, horizontales, obliques) : ce sont les « murs » que la courbe ne franchit pas.
+\item Placer les \textbf{points remarquables} : intersections avec les axes, extrema.
+\item Tracer chaque \textbf{branche} en respectant le tableau de variation : sens de variation, limites aux bornes (la courbe « colle » aux asymptotes).
+\item Si la fonction est paire ou impaire, compléter par \textbf{symétrie}.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel=$x$, ylabel=$y$,
+  xmin=-5, xmax=7, ymin=-6, ymax=8,
+  xtick={-4,-2,1,2,4,6}, ytick={-4,-2,2,4,6},
+  grid=both, grid style={popline!40},
+  samples=200, clip=true]
+\addplot[popcurve, domain=-5:0.85] {(2*x+1)/(x-1)};
+\addplot[popcurve, domain=1.15:7] {(2*x+1)/(x-1)};
+\addplot[dashed, poporange, domain=-5:7] {2};
+\draw[dashed, poporange] (axis cs:1,-6) -- (axis cs:1,8);
+\addplot[only marks, mark=*, popdark] coordinates {(0,-1) (-0.5,0)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x)=\dfrac{2x+1}{x-1}$ : asymptotes $x=1$ et $y=2$ en pointillés, points remarquables $(0\,;\,-1)$ et $\left(-\tfrac{1}{2}\,;\,0\right)$.}
+\end{popfigure}
+
+\courssub{Rédiger et justifier : la compétence évaluée}
+
+Au Probatoire technique, chaque étape doit être \textbf{annoncée et justifiée par une phrase}. Voici le modèle de rédaction attendu :
+\begin{itemize}
+\item « $f(x)$ existe si et seulement si $x-1\neq 0$, donc $D_f=\mathbb{R}\setminus\{1\}$. »
+\item « $\lim\limits_{x\to 1^{+}}f(x)=+\infty$, donc la droite $x=1$ est asymptote verticale à $\mathcal{C}_f$. »
+\item « Pour tout $x\in D_f$, $(x-1)^2>0$, donc $f'(x)=\dfrac{-3}{(x-1)^2}<0$ : $f$ est strictement décroissante sur $]-\infty\,;\,1[$ et sur $]1\,;\,+\infty[$. »
+\item « $f(x)=0\Leftrightarrow 2x+1=0\Leftrightarrow x=-\dfrac{1}{2}$, donc $\mathcal{C}_f$ coupe l'axe des abscisses au point $\left(-\dfrac{1}{2}\,;\,0\right)$. »
+\end{itemize}
+La règle d'or : \textbf{une affirmation mathématique = une justification}. Le mot « donc » doit toujours être précédé d'une raison.
+
+\begin{savaistu}[Un classique du Probatoire technique]
+Au Probatoire et au Baccalauréat techniques, la partie « problème » de l'épreuve de mathématiques s'ouvre presque toujours par l'étude complète d'une fonction rationnelle du type $f(x)=\dfrac{ax+b}{cx+d}$ ou $f(x)=\dfrac{ax^2+bx+c}{x+d}$. Le plan d'étude en sept étapes que tu viens d'apprendre est exactement la grille de correction utilisée par les examinateurs : domaine, limites et asymptotes, dérivée, tableau de variation, points remarquables, tracé. Maîtriser ce plan, c'est sécuriser une part importante des points du problème — et les questions économiques ou techniques qui suivent (coût moyen, bénéfice, rendement) s'appuient directement sur cette étude.
+\end{savaistu}
+
+\begin{exercice}[Pour s'entraîner]
+Soit $g(x)=\dfrac{x-3}{x+2}$.
+\begin{enumerate}
+\item Déterminer le domaine de définition $D_g$.
+\item Calculer les limites aux bornes de $D_g$ et en déduire les asymptotes.
+\item Calculer $g'(x)$ et dresser le tableau de variation complet de $g$.
+\item Déterminer les intersections de la courbe avec les axes.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $g(x)$ existe ssi $x+2\neq 0$, donc $D_g=\mathbb{R}\setminus\{-2\}$.
+\item $\lim\limits_{x\to\pm\infty}g(x)=1$ : asymptote horizontale $y=1$. En $-2$ : numérateur $=-5<0$ ; $\lim\limits_{x\to -2^{-}}g(x)=+\infty$ et $\lim\limits_{x\to -2^{+}}g(x)=-\infty$ : asymptote verticale $x=-2$.
+\item $g'(x)=\dfrac{(1)(x+2)-(x-3)(1)}{(x+2)^2}=\dfrac{5}{(x+2)^2}>0$ sur $D_g$ : $g$ strictement croissante sur $]-\infty\,;\,-2[$ et sur $]-2\,;\,+\infty[$. Tableau : de $1$ vers $+\infty$ sur le premier intervalle, de $-\infty$ vers $1$ sur le second, double barre en $-2$.
+\item $g(0)=-\dfrac{3}{2}$ : point $\left(0\,;\,-\tfrac{3}{2}\right)$ ; $g(x)=0\Leftrightarrow x=3$ : point $(3\,;\,0)$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Étude complète : exemple guidé}
+
+Après avoir établi le \textbf{plan d'étude systématique} d'une fonction, nous allons l'appliquer pas à pas sur un exemple classique du programme de Première technique. Cette étude intégrale constitue le modèle de rédaction attendu au Probatoire : chaque étape est justifiée, les calculs sont détaillés et la conclusion (tableau de variation + tracé) est rigoureuse.
+
+\courssub{Présentation de la fonction et domaine de définition}
+
+On considère la fonction $f$ définie sur $\mathbb{R}\setminus\{1\}$ par :
+\[
+f(x) = \frac{x^2 - 2x + 2}{x - 1}
+\]
+
+\begin{definition}[Domaine de définition]
+Le domaine de définition $D_f$ d'une fonction rationnelle $f(x) = \frac{P(x)}{Q(x)}$ est l'ensemble des réels pour lesquels le dénominateur $Q(x)$ est non nul.
+\end{definition}
+
+Ici, $Q(x) = x - 1$. Le dénominateur s'annule pour $x = 1$.
+\cle{Domaine de définition :} $D_f = \mathbb{R} \setminus \{1\} = ]-\infty; 1[ \cup ]1; +\infty[$.
+
+\courssub{Recherche des asymptotes}
+
+\paragraph{1. Asymptote verticale.}
+Le point $x=1$ est exclu du domaine. On étudie les limites aux abords de cette valeur interdite.
+
+\begin{align*}
+\lim_{x \to 1^-} f(x) &= \lim_{x \to 1^-} \frac{x^2 - 2x + 2}{x - 1} \\
+\text{Numérateur : } &1^2 - 2(1) + 2 = 1 > 0 \\
+\text{Dénominateur : } &x - 1 \to 0^- \\
+\Rightarrow \lim_{x \to 1^-} f(x) &= -\infty \\[1em]
+\lim_{x \to 1^+} f(x) &= \lim_{x \to 1^+} \frac{x^2 - 2x + 2}{x - 1} \\
+\text{Dénominateur : } &x - 1 \to 0^+ \\
+\Rightarrow \lim_{x \to 1^+} f(x) &= +\infty
+\end{align*}
+
+\begin{propriete}[Asymptote verticale]
+La droite d'équation $x = 1$ est une asymptote verticale à la courbe $\mathcal{C}_f$.
+\end{propriete}
+
+\paragraph{2. Asymptotes horizontales et obliques (limites à $\pm\infty$).}
+Le degré du numérateur (2) est supérieur d'une unité au degré du dénominateur (1). Il n'y a \textbf{pas d'asymptote horizontale} (limite infinie), mais une \textbf{asymptote oblique}. On effectue la division euclidienne du numérateur par le dénominateur.
+
+\begin{experience}[Division euclidienne : $x^2 - 2x + 2$ divisé par $x - 1$]
+\begin{center}
+\begin{tabular}{r|l}
+$x^2 - 2x + 2$ & $x - 1$ \\
+$-(x^2 - x)$  & $x - 1$ \\
+\hline
+$-x + 2$      & \\
+$-(-x + 1)$   & \\
+\hline
+$1$           &
+\end{tabular}
+\end{center}
+Quotient : $x - 1$ \quad Reste : $1$.
+\end{experience}
+
+On en déduit l'écriture factorisée :
+\[
+f(x) = x - 1 + \frac{1}{x - 1}
+\]
+
+\begin{propriete}[Asymptote oblique]
+Puisque $\lim_{x \to \pm\infty} \frac{1}{x-1} = 0$, la droite $\mathcal{D}$ d'équation \cle{$y = x - 1$} est une asymptote oblique à $\mathcal{C}_f$ aux deux infinis.
+\end{propriete}
+
+\courssub{Position de la courbe par rapport à l'asymptote oblique}
+
+Pour tracer correctement les branches, il faut savoir si la courbe se trouve \textbf{au-dessus} ou \textbf{en-dessous} de son asymptote oblique.
+
+\begin{align*}
+f(x) - (x - 1) &= \left(x - 1 + \frac{1}{x-1}\right) - (x - 1) \\
+&= \frac{1}{x - 1}
+\end{align*}
+
+\begin{aretenir}[Position relative]
+\begin{itemize}
+    \item Sur $]-\infty; 1[$ : $x - 1 < 0 \Rightarrow \frac{1}{x-1} < 0 \Rightarrow f(x) < x - 1$.
+    La courbe $\mathcal{C}_f$ est \textbf{sous} l'asymptote $\mathcal{D}$.
+    \item Sur $]1; +\infty[$ : $x - 1 > 0 \Rightarrow \frac{1}{x-1} > 0 \Rightarrow f(x) > x - 1$.
+    La courbe $\mathcal{C}_f$ est \textbf{au-dessus} de l'asymptote $\mathcal{D}$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Étude de la dérivée et variations}
+
+$f$ est dérivable sur $D_f$ comme quotient de fonctions polynomiales (dénominateur non nul).
+\[
+f'(x) = \frac{(2x - 2)(x - 1) - (x^2 - 2x + 2)(1)}{(x - 1)^2}
+\]
+
+Calculons le numérateur $N(x)$ :
+\begin{align*}
+N(x) &= (2x - 2)(x - 1) - (x^2 - 2x + 2) \\
+&= 2(x-1)^2 - (x^2 - 2x + 2) \\
+&= 2(x^2 - 2x + 1) - x^2 + 2x - 2 \\
+&= 2x^2 - 4x + 2 - x^2 + 2x - 2 \\
+&= x^2 - 2x \\
+&= x(x - 2)
+\end{align*}
+
+Donc :
+\[
+f'(x) = \frac{x(x - 2)}{(x - 1)^2}
+\]
+
+\begin{attention}[Piège fréquent : le signe du dénominateur]
+Le dénominateur est $(x-1)^2$. Un \textbf{carré est toujours strictement positif} sur $D_f$ (car $x \neq 1$).
+$\Rightarrow$ Le signe de $f'(x)$ est \textbf{exactement le signe du numérateur $x(x-2)$}.
+Ne perdez jamais de temps à étudier le signe de $(x-1)^2$ : il est $>0$ partout sur le domaine.
+\end{attention}
+
+Étudions le signe de $N(x) = x(x-2)$ sur $D_f$ :
+\begin{itemize}
+    \item Zéros du numérateur : $x = 0$ et $x = 2$ (appartiennent à $D_f$).
+    \item Trinôme du second degré, coefficient directeur $a=1>0$ : $N(x) \le 0$ entre les racines, $N(x) \ge 0$ à l'extérieur.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{|c|ccccccccc|}\hline
+$x$ & $-\infty$ & & $0$ & & $1$ & & $2$ & & $+\infty$ \\ \hline
+$x$ & $-$ & & $0$ & $+$ & $+$ & $||$ & $+$ & $+$ & $+$ \\
+$x-2$ & $-$ & & $-$ & $-$ & $-$ & $||$ & $-$ & $0$ & $+$ \\
+$N(x)=x(x-2)$ & $+$ & & $0$ & $-$ & $-$ & $||$ & $-$ & $0$ & $+$ \\
+$f'(x)$ & $+$ & & $0$ & $-$ & $-$ & $||$ & $-$ & $0$ & $+$ \\ \hline
+\end{tabular}
+\end{center}
+
+\courssub{Tableau de variation complet}
+
+On calcule les valeurs aux extrema et les limites aux bornes du domaine.
+
+\begin{itemize}
+    \item $f(0) = \frac{0 - 0 + 2}{0 - 1} = -2$ \quad (Maximum local)
+    \item $f(2) = \frac{4 - 4 + 2}{2 - 1} = 2$ \quad (Minimum local)
+    \item $\lim_{x \to -\infty} f(x) = -\infty$ (car $f(x) \sim x$)
+    \item $\lim_{x \to 1^-} f(x) = -\infty$
+    \item $\lim_{x \to 1^+} f(x) = +\infty$
+    \item $\lim_{x \to +\infty} f(x) = +\infty$
+\end{itemize}
+
+\begin{popfigure}
+\centering
+\begin{tabular}{|c|c|c|c|c|c||c|c|c|c|c|}\hline
+$x$ & $-\infty$ & & $0$ & & $1$ & $1$ & & $2$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & & $||$ & $-$ & $0$ & $+$ & \\ \hline
+$f(x)$ & $-\infty$ & $\nearrow$ & $-2$ & $\searrow$ & $-\infty$ & $+\infty$ & $\searrow$ & $2$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\legende{Tableau de variation de $f$ sur $D_f$. La double barre verticale $||$ marque l'interdiction $x=1$ (asymptote verticale).}
+\end{popfigure}
+
+\courssub{Tracé de la courbe représentative $\mathcal{C}_f$}
+
+Nous disposons de tous les éléments pour tracer la courbe dans un repère orthogonal :
+\begin{itemize}
+    \item Asymptote verticale : $x = 1$ (pointillés).
+    \item Asymptote oblique : $y = x - 1$ (pointillés). Elle passe par $A(0;-1)$ et $B(1;0)$.
+    \item Points remarquables : Maximum $M(0;-2)$, Minimum $m(2;2)$.
+    \item Position relative : Branche de gauche sous l'asymptote oblique, branche de droite au-dessus.
+    \item Intersection avec l'axe des ordonnées : $f(0) = -2$ (point $M$).
+    \item Pas d'intersection avec l'axe des abscisses (numérateur $x^2-2x+2 = (x-1)^2+1 > 0$ toujours).
+\end{itemize}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[scale=0.85, >=Stealth]
+    \draw[->, thick] (-5,0) -- (5,0) node[right] {$x$};
+    \draw[->, thick] (0,-5) -- (0,5) node[above] {$y$};
+    \foreach \x in {-4,-3,-2,-1,1,2,3,4} \draw (\x,0.1) -- (\x,-0.1) node[below] {\small $\x$};
+    \foreach \y in {-4,-3,-2,-1,1,2,3,4} \draw (0.1,\y) -- (-0.1,\y) node[left] {\small $\y$};
+    
+    \draw[popmuted, dashed, thick] (1,-5) -- (1,5) node[above right] {$x=1$};
+    \draw[popmuted, dashed, thick] (-5,-6) -- (5,4) node[above right] {$y=x-1$};
+    
+    \draw[popblue, very thick, domain=-4:0.6, samples=200, smooth] plot (\x, {(\x*\x - 2*\x + 2)/(\x - 1)});
+    \draw[popblue, very thick, domain=0.6:0.99, samples=100, smooth] plot (\x, {(\x*\x - 2*\x + 2)/(\x - 1)});
+    \draw[popblue, very thick, domain=1.01:1.5, samples=100, smooth] plot (\x, {(\x*\x - 2*\x + 2)/(\x - 1)});
+    \draw[popblue, very thick, domain=1.5:4, samples=200, smooth] plot (\x, {(\x*\x - 2*\x + 2)/(\x - 1)});
+    
+    \fill[poporange] (0,-2) circle (3pt) node[below left] {$M(0;-2)$};
+    \fill[popgreen] (2,2) circle (3pt) node[above right] {$m(2;2)$};
+    
+    \draw[popblue, ->] (-4, -3.5) -- (-4.5, -4.2);
+    \draw[popblue, ->] (0.99, -4.5) -- (0.9, -5);
+    \draw[popblue, ->] (1.01, 4.5) -- (1.1, 5);
+    \draw[popblue, ->] (4, 3.5) -- (4.5, 4.2);
+\end{tikzpicture}
+\legende{Courbe $\mathcal{C}_f$ de $f(x) = \frac{x^2-2x+2}{x-1}$ avec ses asymptotes et extrema.}
+\end{popfigure}
+
+\begin{methode}[Vérifier la cohérence du tracé avant de rendre]
+\begin{enumerate}
+    \item \textbf{Asymptotes :} La courbe s'en approche-t-elle sans la couper (sauf cas particuliers) ? Respecte-t-elle la position relative (au-dessus / en-dessous) trouvée algébriquement ?
+    \item \textbf{Variations :} La courbe monte-t-elle quand $f'>0$ et descend-elle quand $f'<0$ ? Les extrema sont-ils bien placés (creux / bosse) ?
+    \item \textbf{Concavité (optionnel mais visuel) :} La branche de gauche est-elle convexe (au-dessus de ses tangentes) ou concave ? Ici $f''(x) = \frac{2}{(x-1)^3}$. Sur $]-\infty;1[$, $f''<0$ (concave), sur $]1;+\infty[$, $f''>0$ (convexe). Le tracé doit refléter ce changement de courbure au niveau de l'asymptote verticale.
+    \item \textbf{Points particuliers :} L'ordonnée à l'origine, les intersections avec l'axe des abscisses (s'il y en a) sont-elles visibles ?
+\end{enumerate}
+\end{methode}
+
+\begin{savaistu}[L'hyperbole « déformée »]
+La fonction $f(x) = \frac{ax^2+bx+c}{dx+e}$ (degré numérateur = degré dénominateur + 1) a toujours une courbe qui est une \textbf{hyperbole} par rapport à ses asymptotes (une verticale, une oblique).
+Si on change de repère en prenant l'asymptote oblique comme nouvel axe des abscisses et l'asymptote verticale comme nouvel axe des ordonnées, l'équation devient $Y = \frac{k}{X}$ (hyperbole homographique classique). Ici, avec $X = x-1$ et $Y = f(x) - (x-1)$, on trouve $Y = \frac{1}{X}$. C'est pour cela que les deux branches sont symétriques par rapport au centre de l'hyperbole (intersection des asymptotes : $I(1;0)$).
+\end{savaistu}
+
+\begin{exemplebox}[Rédaction type « Copie d'examen — Probatoire »]
+\textbf{Exercice :} Étudier la fonction $f(x) = \frac{x^2 - 2x + 2}{x - 1}$ et tracer sa courbe représentative $\mathcal{C}_f$.
+
+\textbf{Solution :}
+
+\noindent\textbf{1. Domaine de définition.} $f$ est une fonction rationnelle. $D_f = \{ x \in \mathbb{R} \mid x - 1 \neq 0 \} = \mathbb{R} \setminus \{1\}$.
+
+\noindent\textbf{2. Asymptotes.}
+\begin{itemize}
+    \item \textit{Verticale :} $x=1$ n'est pas dans $D_f$. $\lim_{x\to 1^-} f(x) = -\infty$, $\lim_{x\to 1^+} f(x) = +\infty$. La droite $x=1$ est asymptote verticale.
+    \item \textit{Oblique :} Division euclidienne : $x^2-2x+2 = (x-1)(x-1) + 1$. Donc $f(x) = x-1 + \frac{1}{x-1}$.
+    $\lim_{x\to\pm\infty} (f(x) - (x-1)) = 0$. La droite $y = x-1$ est asymptote oblique aux deux infinis.
+\end{itemize}
+
+\noindent\textbf{3. Position par rapport à l'asymptote oblique.}
+$f(x) - (x-1) = \frac{1}{x-1}$.
+Sur $]-\infty;1[$, $f(x) < x-1$ (courbe sous asymptote).
+Sur $]1;+\infty[$, $f(x) > x-1$ (courbe au-dessus asymptote).
+
+\noindent\textbf{4. Dérivée et variations.}
+$f'(x) = \frac{(2x-2)(x-1) - (x^2-2x+2)}{(x-1)^2} = \frac{x^2-2x}{(x-1)^2} = \frac{x(x-2)}{(x-1)^2}$.
+Le dénominateur $(x-1)^2 > 0$ sur $D_f$. Signe de $f'$ = signe de $x(x-2)$.
+\begin{itemize}
+    \item $f'(x) > 0$ sur $]-\infty;0[$ et $]2;+\infty[$ $\Rightarrow$ $f$ croissante.
+    \item $f'(x) < 0$ sur $]0;1[$ et $]1;2[$ $\Rightarrow$ $f$ décroissante.
+    \item $f'(0)=0$, $f'(2)=0$.
+\end{itemize}
+
+\noindent\textbf{5. Extrema.}
+$f(0) = -2$ : Maximum local (puisque $f'$ passe de $+$ à $-$).
+$f(2) = 2$ : Minimum local (puisque $f'$ passe de $-$ à $+$).
+
+\noindent\textbf{6. Limites aux bornes.}
+$\lim_{x\to -\infty} f(x) = -\infty$ ; $\lim_{x\to 1^-} f(x) = -\infty$ ; $\lim_{x\to 1^+} f(x) = +\infty$ ; $\lim_{x\to +\infty} f(x) = +\infty$.
+
+\noindent\textbf{7. Tableau de variation.} (Insérer le tableau ci-dessus).
+
+\noindent\textbf{8. Tracé de $\mathcal{C}_f$.} (Insérer le graphique ci-dessus avec repère, asymptotes pointillées, points $M(0;-2)$ et $m(2;2)$, branches respectant variations et positions relatives).
+\end{exemplebox}
+
+\begin{exoresolu}[Application concrète : Modélisation d'un coût moyen]
+\textbf{Énoncé :} Dans une usine de transformation de bois, le coût total de production (en milliers de FCFA) pour $x$ tonnes de planches est modélisé par $C(x) = x^2 - 2x + 2$ pour $x > 0$. Le coût moyen par tonne est $f(x) = \frac{C(x)}{x-1}$ (on suppose une contrainte technique imposant $x \neq 1$). Étudier l'évolution du coût moyen.
+
+\textbf{Solution :}
+C'est exactement la fonction étudiée ci-dessus, restreinte à $]0;1[ \cup ]1;+\infty[$.
+\begin{itemize}
+    \item Sur $]0;1[$ : Le coût moyen décroît de $+\infty$ (quand $x\to 1^-$) jusqu'à... attention, sur $]0;1[$, $f$ est décroissante (car $f'<0$). $\lim_{x\to 0^+} f(x) = -2$ ? Non, $f(0)=-2$ mais $x>0$. $\lim_{x\to 0^+} f(x) = -2$. Le coût moyen est \textbf{négatif} ? Problème de modélisation : $C(x)$ devrait être positif. Ici $C(x) = (x-1)^2+1 \ge 1 > 0$. Mais $f(x) = \frac{C(x)}{x-1}$. Pour $x \in ]0;1[$, dénominateur négatif $\Rightarrow f(x) < 0$. Coût moyen négatif = impossible physiquement.
+    \item \textbf{Conclusion technique :} Le modèle n'est valide que pour $x > 1$ (production supérieure à 1 tonne). Sur $]1;+\infty[$, le coût moyen diminue de $+\infty$ jusqu'au minimum $2$ (atteint pour $x=2$ tonnes), puis augmente indéfiniment.
+    \item \textbf{Optimum :} Produire \textbf{2 tonnes} minimise le coût moyen à \textbf{2000 FCFA/tonne}.
+\end{itemize}
+\tcblower
+\textbf{Analyse :} Cet exemple montre l'importance de \textbf{recontextualiser les résultats mathématiques} dans la réalité technique (domaine de définition physique, signe des grandeurs). Un mathématicien trace la courbe sur $\mathbb{R}\setminus\{1\}$ ; l'ingénieur ne retient que la branche $x>1$.
+\end{exoresolu}
+
+\begin{exercice}[Entraînement au Probatoire]
+Soit la fonction $g$ définie sur $\mathbb{R}\setminus\{-1\}$ par $g(x) = \frac{x^2 + 2x + 5}{x + 1}$.
+\begin{enumerate}
+    \item Déterminer les asymptotes à la courbe $\mathcal{C}_g$.
+    \item Étudier les variations de $g$ et dresser son tableau de variation.
+    \item Tracer $\mathcal{C}_g$ et ses asymptotes dans un repère orthogonal.
+    \item Résoudre graphiquement l'inéquation $g(x) \le 4$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Entraînement]
+\begin{enumerate}
+    \item $D_g = \mathbb{R}\setminus\{-1\}$. Asymptote verticale $x=-1$.
+    Division : $x^2+2x+5 = (x+1)(x+1) + 4 \Rightarrow g(x) = x+1 + \frac{4}{x+1}$.
+    Asymptote oblique : $y = x+1$.
+    \item $g'(x) = \frac{(2x+2)(x+1) - (x^2+2x+5)}{(x+1)^2} = \frac{x^2+2x-3}{(x+1)^2} = \frac{(x+3)(x-1)}{(x+1)^2}$.
+    Signe de $g'$ = signe de $(x+3)(x-1)$.
+    Variations : $\nearrow$ sur $]-\infty;-3]$, $\searrow$ sur $[-3;-1[$ et $]-1;1]$, $\nearrow$ sur $[1;+\infty[$.
+    Max en $-3$ : $g(-3) = -2$. Min en $1$ : $g(1) = 4$.
+    Limites : $\pm\infty$ aux bornes.
+    \item Tracé : Asymptotes $x=-1$, $y=x+1$. Points $(-3;-2)$ (max), $(1;4)$ (min). Branche gauche sous asymptote, branche droite au-dessus.
+    \item $g(x) \le 4 \Leftrightarrow$ points de la courbe sous ou sur la droite $y=4$.
+    Lecture graphique : $]-1; 1]$ (car $g(1)=4$ et $g$ décroît de $+\infty$ à $4$ sur $]-1;1]$).
+    Attention : sur $]-\infty;-1[$, $g(x) \le -2 < 4$ toujours vrai. Solution : $]-\infty;-1[ \cup ]-1; 1]$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Applications à la vie courante}
+
+Après avoir maîtrisé la méthode complète d'étude d'une fonction — domaine, limites, asymptotes, variations, tableau de valeurs et tracé — nous sommes désormais en mesure d'exploiter ces outils pour analyser des situations réelles. En entreprise, en laboratoire ou sur un chantier, les grandeurs techniques (coût, température, concentration, rentabilité) s'expriment souvent sous forme de fonctions, le plus souvent rationnelles. La compréhension de leurs asymptotes et de leurs variations permet alors de prendre des décisions éclairées : fixer un volume de production minimal, prévoir le temps de refroidissement d'une pièce, ou déterminer la posologie d'un médicament. Cette section montre comment le formalisme mathématique devient un levier d'action concret.
+
+\courssub{Coût moyen de production et rentabilité : l'asymptote horizontale comme objectif}
+
+Dans toute activité de production (usine de ciment, menuiserie, boulangerie, raffinerie), le coût total $C_T(x)$ pour fabriquer $x$ unités se décompose généralement en deux parties :
+\begin{itemize}
+    \item des \textbf{coûts fixes} ($b$) : loyer, assurance, salaires permanents, amortissement des machines. Ils ne dépendent pas du volume produit.
+    \item des \textbf{coûts variables} ($ax$) : matières premières, énergie, main-d'œuvre à la tâche. Ils sont proportionnels à la quantité $x$.
+\end{itemize}
+On a donc $C_T(x) = ax + b$, avec $a > 0$ (coût marginal unitaire) et $b > 0$ (charges fixes).
+Le \textbf{coût moyen} par unité produite est la fonction :
+\[
+C_m(x) = \frac{C_T(x)}{x} = \frac{ax + b}{x} = a + \frac{b}{x}, \quad x > 0.
+\]
+
+\begin{propriete}[Comportement du coût moyen]
+La fonction $C_m(x) = a + \frac{b}{x}$ (avec $a,b > 0$) est \textbf{strictement décroissante} sur $]0; +\infty[$.
+Elle admet une \textbf{asymptote horizontale} d'équation $y = a$ lorsque $x \to +\infty$.
+\emph{Preuve :} $C_m'(x) = -\frac{b}{x^2} < 0$ pour $x>0$, donc $C_m$ décroît. De plus $\lim_{x\to+\infty} C_m(x) = a$.
+\end{propriete}
+
+\emph{Interprétation économique :} Produire davantage permet de « diluer » les charges fixes $b$ sur un plus grand nombre d'unités. Le coût moyen se rapproche du coût marginal $a$, mais ne descendra jamais en dessous. L'asymptote $y=a$ représente le \textbf{plancher incompressible} du coût unitaire.
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=0.55\linewidth,
+    axis lines=middle,
+    xlabel={$x$ (quantité produite, en centaines d'unités)}, ylabel={$C_m(x)$ (coût moyen, en kFCFA)},
+    domain=1:100, samples=200,
+    xmin=0, xmax=105, ymin=0, ymax=55,
+    xtick={0,25,50,75,100}, ytick={0,2,3,4,5,10,20,50},
+    clip=false,
+    axis line style={popdark},
+    tick style={popdark},
+    xlabel style={anchor=north east, popdark},
+    ylabel style={anchor=north east, popdark},
+]
+% Asymptote horizontale y = 2
+\addplot[dashed, poporange, thick, domain=0:100] {2} node[right=2mm, pos=0.95, poporange, font=\small] {Asymptote $y=2$ (coût marginal $a$)};
+% Seuil de rentabilité y = 3
+\addplot[dashed, popgreen, thick, domain=0:100] {3} node[left=2mm, pos=0.05, popgreen, font=\small] {Seuil visé $y=3$};
+% Courbe C_m(x) = 2 + 50/x
+\addplot[popcurve, very thick, domain=1:100] {2 + 50/x};
+% Zone rentable : x >= 50 (C_m <= 3). Remplissage entre courbe et y=3 de 50 à 100.
+\addplot[popgreenL!40, fill opacity=0.3, draw=none, domain=50:100] {3} \closedcycle;
+% Point caractéristique (50, 3)
+\addplot[only marks, mark=*, mark size=2.5, popgreen] coordinates {(50,3)};
+\node[above right=2mm, popgreen, font=\small] at (axis cs:50,3) {$A(50;3)$};
+% Flèche annotation zone rentable
+\node[popgreen, font=\small, align=center] at (axis cs:75, 2.5) {Zone rentable\\$C_m(x) \le 3$};
+\end{axis}
+\end{tikzpicture}
+\legende{Coût moyen $C_m(x) = 2 + \frac{50}{x}$ : la zone verte (hachurée) montre les volumes de production où le coût moyen reste sous le seuil de 3 kFCFA. L'asymptote orange $y=2$ est la limite théorique inaccessible.}
+\end{popfigure}
+
+\begin{methode}[Traduire une contrainte de rentabilité en inéquation]
+Pour déterminer le volume minimal à produire afin d'atteindre un coût moyen cible $C_{\text{cible}}$ :
+\begin{enumerate}
+    \item Écrire la fonction coût moyen $C_m(x) = \frac{ax+b}{x}$ (identifier $a$ et $b$ d'après l'énoncé).
+    \item Traduire la contrainte : « coût moyen $\le$ seuil » $\iff$ $C_m(x) \le C_{\text{cible}}$.
+    \item Résoudre l'inéquation $\frac{ax+b}{x} \le C_{\text{cible}}$ sur le domaine $x > 0$.
+    \item \textbf{Interpréter} la solution : arrondir à l'entier supérieur si $x$ compte des objets indivisibles, et redonner l'unité (sacs, tonnes, pièces).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Seuil de rentabilité pour une production de sacs de ciment]
+Une cimenterie a des charges fixes de 50\,000 FCFA par jour et un coût variable de 2\,000 FCFA par sac produit.
+Le directeur veut que le coût moyen par sac ne dépasse pas 3\,000 FCFA.
+Quelle est la production journalière minimale à atteindre ?
+\tcblower
+\textbf{1. Modélisation.}
+$x$ : nombre de sacs produits par jour ($x > 0$).
+Coût total : $C_T(x) = 2000x + 50000$ (en FCFA).
+Coût moyen : $C_m(x) = \frac{2000x + 50000}{x} = 2000 + \frac{50000}{x}$.
+Ici $a = 2000$, $b = 50000$.
+
+\textbf{2. Inéquation.}
+$C_m(x) \le 3000 \iff 2000 + \frac{50000}{x} \le 3000$.
+
+\textbf{3. Résolution.}
+$\frac{50000}{x} \le 1000$.
+Comme $x > 0$, on multiplie par $x$ sans changer le sens :
+$50000 \le 1000x \iff x \ge \frac{50000}{1000} = 50$.
+
+\textbf{4. Conclusion interprétée.}
+L'usine doit produire \textbf{au minimum 50 sacs par jour} pour que le coût moyen revienne à 3\,000 FCFA ou moins.
+Si elle produit 100 sacs, le coût moyen tombe à $2000 + 500 = 2500$ FCFA.
+L'asymptote horizontale $y=2000$ indique qu'on ne pourra jamais descendre sous 2\,000 FCFA/sac, quel que soit le volume.
+\end{exoresolu}
+
+\courssub{Modélisation simple de la recette et du bénéfice}
+
+Si l'on vend $x$ unités à un prix unitaire $p(x)$ qui décroît avec la quantité (loi de l'offre et de la demande), la \textbf{recette} est $R(x) = x \cdot p(x)$.
+Souvent, on modélise le prix par une fonction rationnelle simple : $p(x) = \frac{k}{x+c}$ ou $p(x) = p_0 - \frac{m}{x}$.
+Le \textbf{bénéfice} (profit) est alors $B(x) = R(x) - C_T(x)$.
+L'étude de $B(x)$ (souvent rationnelle) permet de trouver :
+\begin{itemize}
+    \item le \textbf{seuil de rentabilité} (point mort) : $B(x) = 0$,
+    \item la \textbf{production optimale} : maximum de $B(x)$ (annulation de la dérivée $B'(x)=0$).
+\end{itemize}
+
+\begin{exemplebox}[Bénéfice sur un marché saturé]
+Un artisan fabrique $x$ meubles par mois. Il les vend au prix unitaire $p(x) = \frac{500\,000}{x+10}$ (FCFA).
+Ses coûts : $C_T(x) = 1\,000x + 20\,000$.
+Recette : $R(x) = x \cdot \frac{500\,000}{x+10} = \frac{500\,000x}{x+10}$.
+Bénéfice : $B(x) = \frac{500\,000x}{x+10} - (1\,000x + 20\,000)$.
+On ramène au même dénominateur :
+$B(x) = \frac{500\,000x - (1\,000x+20\,000)(x+10)}{x+10}
+= \frac{-1\,000x^2 + 470\,000x - 200\,000}{x+10}$.
+Le numérateur est un trinôme du second degré à coefficients $a=-1000$, $b=470\,000$, $c=-200\,000$.
+$\Delta = 470\,000^2 - 4(-1000)(-200\,000) > 0$. Les deux racines sont positives (environ $0,43$ et $469,57$).
+Le trinôme est positif entre ses racines. Comme $x+10 > 0$, $B(x) \ge 0$ pour $x \in [1; 469]$ (valeurs entières).
+Le maximum de $B(x)$ (production optimale) s'obtient en annulant la dérivée ou par le sommet du trinôme au numérateur : $x = \frac{470\,000}{2000} = 235$ meubles.
+\end{exemplebox}
+
+\courssub{Phénomènes physiques et biologiques : l'asymptote comme équilibre naturel}
+
+De nombreux phénomènes d'évolution temporelle tendent vers une valeur limite : c'est l'asymptote horizontale. Elle représente un \textbf{état d'équilibre} ou une \textbf{valeur cible} que le système approche sans jamais l'atteindre exactement en temps fini.
+
+\textbf{1. Refroidissement d'un corps (Loi de Newton simplifiée).}\par
+Une tasse de café à $90^\circ\text{C}$ dans une pièce à $20^\circ\text{C}$ refroidit. La différence de température avec l'ambiance décroît exponentiellement. Un modèle rationnel simple (approximation de Padé d'ordre 1 de l'exponentielle) est :
+\[
+T(t) = 20 + \frac{70}{1 + 0,02\,t}, \quad t \ge 0.
+\]
+\begin{itemize}
+    \item $T(0) = 90^\circ\text{C}$ (température initiale).
+    \item $\lim_{t\to+\infty} T(t) = 20^\circ\text{C}$ : l'asymptote horizontale $y=20$ est la \textbf{température ambiante}.
+    \item La courbe est strictement décroissante, convexe, au-dessus de l'asymptote.
+\end{itemize}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=0.55\linewidth,
+    axis lines=middle,
+    xlabel={$t$ (min)}, ylabel={$T(t)\ (^\circ\text{C})$},
+    domain=0:100, samples=200,
+    xmin=0, xmax=105, ymin=15, ymax=95,
+    xtick={0,20,40,60,80,100}, ytick={20,30,40,50,60,70,80,90},
+    clip=false,
+    axis line style={popdark},
+    tick style={popdark},
+    xlabel style={anchor=north east, popdark},
+    ylabel style={anchor=north east, popdark},
+]
+% Asymptote horizontale T = 20
+\addplot[dashed, poporange, thick, domain=0:100] {20} node[right=2mm, pos=0.95, poporange, font=\small] {Température ambiante $20^\circ\text{C}$};
+% Courbe T(t) = 20 + 70/(1+0.02t)
+\addplot[popcurve, very thick, domain=0:100] {20 + 70/(1+0.02*x)};
+% Point initial
+\addplot[only marks, mark=*, mark size=2.5, popblue] coordinates {(0,90)};
+\node[above left=2mm, popblue, font=\small] at (axis cs:0,90) {$T(0)=90$};
+% Annotation
+\node[popdark, font=\small, align=center] at (axis cs:50, 70) {Refroidissement\\rapide au début};
+\node[popdark, font=\small, align=center] at (axis cs:80, 25) {Ralentissement\\progressif};
+\end{axis}
+\end{tikzpicture}
+\legende{Évolution de la température $T(t) = 20 + \frac{70}{1+0,02t}$ : la courbe bleue tend vers l'asymptote orange (température ambiante). Le refroidissement est rapide au début, puis de plus en plus lent.}
+\end{popfigure}
+
+\textbf{2. Concentration d'un médicament dans le sang.}\par
+Après une injection ou une prise orale, la concentration $C(t)$ (en mg/L) augmente, atteint un pic (efficacité maximale), puis diminue vers 0 (élimination). Un modèle rationnel classique (modèle à un compartiment avec absorption d'ordre zéro ou premier ordre simplifié) est :
+\[
+C(t) = \frac{k \cdot t}{t^2 + a t + b} \quad \text{ou} \quad C(t) = \frac{A t}{t^2 + B} \quad (A, B > 0).
+\]
+\begin{itemize}
+    \item $C(0) = 0$.
+    \item $\lim_{t\to+\infty} C(t) = 0$ : l'asymptote horizontale est l'axe des abscisses ($y=0$), concentration nulle (élimination totale).
+    \item Il existe un \textbf{maximum} pour $t = \sqrt{B}$ (instant du pic de concentration).
+    \item La courbe en « cloche » permet de définir la \textbf{fenêtre thérapeutique} : intervalle de temps où $C_{\text{min}} \le C(t) \le C_{\text{max}}$ (efficacité sans toxicité).
+\end{itemize}
+
+\begin{exemplebox}[Pic de concentration]
+Modèle simplifié : $C(t) = \frac{50t}{t^2 + 25}$ ($t$ en heures, $C$ en mg/L).
+Domaine : $[0; +\infty[$. Asymptote horizontale $y=0$.
+Dérivée : $C'(t) = \frac{50(t^2+25) - 50t(2t)}{(t^2+25)^2} = \frac{1250 - 50t^2}{(t^2+25)^2}$.
+$C'(t) = 0 \iff t^2 = 25 \iff t = 5$ (car $t\ge0$).
+$C'(t) > 0$ sur $[0;5[$, $C'(t) < 0$ sur $]5;+\infty[$.
+Maximum en $t=5$ h : $C(5) = \frac{250}{50} = 5$ mg/L.
+Le pic est atteint au bout de 5 heures. La concentration redescend ensuite vers 0.
+\end{exemplebox}
+
+\courssub{De la mathématique à la décision : rédiger une conclusion interprétative}
+
+Au Probatoire et dans la vie professionnelle, \textbf{un résultat mathématique brut ne suffit jamais}. Il faut le « traduire » dans le langage du métier.
+
+\begin{aretenir}[Structure d'une conclusion interprétative]
+Une conclusion complète comporte \textbf{trois} éléments indissociables :
+\begin{enumerate}
+    \item \textbf{Le résultat mathématique précis} (valeur, intervalle, inégalité, coordonnées du point).
+    \item \textbf{L'unité physique} et le sens de la variable (FCFA, $^\circ$C, mg/L, sacs, heures...).
+    \item \textbf{La décision ou la recommandation concrète} (produire au moins $x$, attendre $t$ heures, ne pas dépasser la dose...).
+\end{enumerate}
+\end{aretenir}
+
+\begin{attention}[Erreur fréquente : la réponse « mathématique nue »]
+\emph{Exercice :} « Déterminer le nombre minimal de pièces à usiner pour que le coût moyen soit inférieur à 1500 FCFA. »
+\begin{itemize}
+    \item \textbf{Mauvaise réponse :} « $x \ge 200$ » ou « $x \in [200; +\infty[$ ». \emph{(Note zéro ou partielle : pas d'unité, pas de phrase, pas de décision).}
+    \item \textbf{Bonne réponse :} « L'inéquation $C_m(x) \le 1500$ donne $x \ge 200$. \textbf{L'atelier doit usiner au minimum 200 pièces} pour atteindre cet objectif de coût moyen. »
+    \item \textbf{Meilleure réponse (avec marge de sécurité) :} « ... Il faut produire \textbf{au moins 200 pièces}. En pratique, on visera 220 pièces pour absorber d'éventuels rebuts. »
+\end{itemize}
+\textbf{Sanction au Probatoire :} Perte de 1 à 2 points sur l'item « Rédiger et justifier une démarche, une réponse ou une conclusion » si l'interprétation contextuelle manque.
+\end{attention}
+
+\begin{savaistu}[Les ingénieurs de la SONARA et les coûts moyens]
+À la Société Nationale de Raffinage (SONARA) de Limbé, les ingénieurs process modélisent en permanence le \textbf{coût moyen de traitement du baril de pétrole brut}. La fonction $C_m(x) = a + \frac{b}{x}$ (où $x$ est le débit en barils/jour) guide les décisions d'investissement :
+\begin{itemize}
+    \item Si la demande prévoit un débit $x$ tel que $C_m(x)$ est encore loin de l'asymptote $a$, \textbf{l'usine n'est pas assez grande} : on construit une unité supplémentaire pour augmenter $x$ et faire baisser le coût moyen.
+    \item Si $x$ est déjà très grand et $C_m(x) \approx a$, agrandir encore coûte cher (investissement $b$ énorme) pour un gain marginal minuscule. \textbf{On privilégie alors l'optimisation énergétique (baisse de $a$) plutôt que l'agrandissement.}
+\end{itemize}
+C'est l'application directe de l'analyse de l'asymptote horizontale et de la convexité de la courbe du coût moyen !
+\end{savaistu}
+
+\begin{exercice}[Application : Gestion d'un poulailler]
+Un éleveur a des charges fixes mensuelles de 150\,000 FCFA (loyer, gardien, électricité). Chaque poussin coûte 500 FCFA à l'achat et 300 FCFA/mois en alimentation. Il revend le poulet adulte 3\,500 FCFA après 2 mois.
+\begin{enumerate}
+    \item Exprimer le coût total $C_T(x)$ pour élever $x$ poussins sur 2 mois.
+    \item Exprimer le coût moyen $C_m(x)$ et son asymptote horizontale. Interpréter.
+    \item Écrire la fonction bénéfice $B(x)$ sur 2 mois.
+    \item Résoudre $B(x) \ge 0$ (seuil de rentabilité) et conclure en phrase complète.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Gestion d'un poulailler]
+\begin{enumerate}
+    \item Coût variable par poussin sur 2 mois : $500 + 2\times300 = 1100$ FCFA.
+    $C_T(x) = 1100x + 150000$.
+    \item $C_m(x) = \frac{1100x + 150000}{x} = 1100 + \frac{150000}{x}$.
+    Asymptote horizontale : $y = 1100$ FCFA. C'est le coût variable incompressible par poulet (achat + alimentation). Les charges fixes (150\,000) se diluent en produisant plus.
+    \item Recette $R(x) = 3500x$.
+    Bénéfice $B(x) = R(x) - C_T(x) = 3500x - (1100x + 150000) = 2400x - 150000$.
+    \item $B(x) \ge 0 \iff 2400x \ge 150000 \iff x \ge \frac{150000}{2400} = 62{,}5$.
+    Comme $x$ est un nombre entier de poussins, $x \ge 63$.
+    \textbf{Conclusion :} L'éleveur doit élever \textbf{au minimum 63 poussins par cycle de 2 mois} pour ne pas perdre d'argent. S'il en élève 100, son bénéfice sera de $2400\times100 - 150000 = 90\,000$ FCFA.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, tu seras capable de :
+\begin{itemize}
+\item mobiliser l'\cle{étude complète d'une fonction} (domaine, limites, asymptotes, dérivée, variations, tracé) dans un contexte économique réel ;
+\item interpréter une \cle{asymptote verticale} et une \cle{asymptote horizontale} en langage de la vie courante ;
+\item résoudre graphiquement puis algébriquement une inéquation issue d'une situation concrète ;
+\item \cle{rédiger et justifier} une conclusion professionnelle (note à un directeur) en appuyant chaque affirmation sur un résultat mathématique ;
+\item travailler en groupe, comparer des démarches et argumenter.
+\end{itemize}
+
+\courssub{Situation}
+
+À Bafoussam, dans la région de l'Ouest, madame \textbf{Ngo Bassa} dirige un petit atelier de transformation du manioc en \textbf{gari}. Chaque jour, l'atelier produit $x$ sacs de gari. Les charges de l'atelier se répartissent en deux catégories :
+\begin{itemize}
+\item des \textbf{charges fixes} (loyer du hangar, salaire du gardien, amortissement de la presse et de la marmite) qui s'élèvent à \SI{50000}{FCFA} par jour, quelle que soit la production ;
+\item des \textbf{charges variables} (achat du manioc, bois de chauffe, main-d'œuvre journalière) estimées à \SI{2000}{FCFA} par sac produit.
+\end{itemize}
+
+Le \textbf{coût moyen de production} d'un sac, noté $C(x)$ et exprimé en \textbf{milliers de FCFA}, est le coût total journalier divisé par le nombre de sacs produits. Le coût total journalier, en milliers de FCFA, est $2x + 50$ (soit $2x$ milliers de charges variables et $50$ milliers de charges fixes). On admet donc que, pour $x \geq 1$ :
+\[ C(x) = \frac{2x + 50}{x} \]
+
+Madame Ngo Bassa vend chaque sac au prix fixe de \SI{3000}{FCFA} (soit 3 milliers de FCFA). Elle se pose deux questions :
+\begin{itemize}
+\item pourquoi le coût moyen baisse-t-il quand la production augmente, et jusqu'où peut-il descendre ?
+\item à partir de combien de sacs par jour l'atelier est-il \textbf{bénéficiaire}, c'est-à-dire à partir de quand le prix de vente dépasse-t-il le coût moyen de production ?
+\end{itemize}
+
+Par groupes de quatre, vous êtes les conseillers techniques de l'atelier : à vous de répondre, calculs et graphique à l'appui.
+
+\courssub{Consignes}
+
+\textbf{Partie A — Domaine, limites et asymptotes.}
+\begin{enumerate}
+\item Justifier que le domaine d'étude de la fonction $C$ est $D = [1\,;\,+\infty[$, puis que la fonction $C$ est définie sur $]0\,;\,+\infty[$.
+\item Calculer la limite de $C(x)$ lorsque $x$ tend vers $0$ par valeurs supérieures. En déduire l'existence d'une asymptote dont on précisera l'équation. Interpréter ce résultat en langage économique (que se passe-t-il quand on produit très peu de sacs ?).
+\item Calculer la limite de $C(x)$ lorsque $x$ tend vers $+\infty$. En déduire l'existence d'une asymptote dont on précisera l'équation. Interpréter : pourquoi le coût moyen ne peut-il jamais descendre en dessous de \SI{2000}{FCFA} ?
+\end{enumerate}
+
+\textbf{Partie B — Variations et tableau.}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item Montrer que, pour tout $x > 0$, $C'(x) = -\dfrac{50}{x^{2}}$. En déduire le sens de variation de $C$ sur $[1\,;\,+\infty[$.
+\item Dresser le tableau de variations complet de $C$ sur $[1\,;\,+\infty[$ (on y fera figurer $C(1) = 52$ et la limite en $+\infty$).
+\end{enumerate}
+
+\textbf{Partie C — Tracé et seuil de rentabilité.}
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item Sur papier millimétré, tracer dans un repère orthogonal (1 cm pour 5 sacs en abscisse, 1 cm pour 5 milliers de FCFA en ordonnée) : les deux asymptotes, puis la courbe de $C$ à l'aide d'un tableau de valeurs ($x = 1\,;\,5\,;\,10\,;\,25\,;\,50\,;\,100$).
+\item Tracer la droite d'équation $y = 3$ (prix de vente). Déterminer graphiquement à partir de quelle production le prix de vente dépasse le coût moyen.
+\item Retrouver ce résultat par le calcul en résolvant l'inéquation $C(x) < 3$.
+\end{enumerate}
+
+\textbf{Partie D — Note au directeur.}
+\begin{enumerate}
+\setcounter{enumi}{8}
+\item Rédiger une note de cinq lignes maximum à madame Ngo Bassa, recommandant un niveau de production journalier. Chaque affirmation doit être justifiée par un résultat mathématique obtenu dans les parties précédentes (asymptote, variation, inéquation).
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de l'activité]
+\begin{itemize}
+\item \textbf{Limite en $0^{+}$ :} si le numérateur tend vers un nombre non nul et le dénominateur vers $0^{+}$, alors le quotient tend vers $+\infty$ ou $-\infty$ : la droite $x = 0$ est \cle{asymptote verticale}.
+\item \textbf{Limite en $+\infty$ :} si $\lim\limits_{x \to +\infty} f(x) = \ell$ (nombre fini), alors la droite $y = \ell$ est \cle{asymptote horizontale} à la courbe en $+\infty$.
+\item \textbf{Astuce de calcul :} pour $x \neq 0$, $\dfrac{2x+50}{x} = 2 + \dfrac{50}{x}$, ce qui simplifie le calcul des limites et de la dérivée.
+\item \textbf{Dérivée :} $\left(\dfrac{1}{x}\right)' = -\dfrac{1}{x^{2}}$ ; le signe de $f'$ donne le sens de variation de $f$.
+\item \textbf{Seuil de rentabilité :} l'atelier est bénéficiaire lorsque $\text{prix de vente} > \text{coût moyen}$, c'est-à-dire $C(x) < 3$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé complet de l'activité]
+On étudie $C(x) = \dfrac{2x+50}{x}$ pour $x \geq 1$, où $C(x)$ est le coût moyen d'un sac en milliers de FCFA. Questions : domaine et asymptotes, variations, tracé, seuil de rentabilité, note au directeur.
+\tcblower
+\textbf{Partie A — Domaine, limites et asymptotes.}
+
+\textbf{1.} La production $x$ est un nombre de sacs, donc $x \geq 1$ : le domaine d'étude est $D = [1\,;\,+\infty[$. Mathématiquement, $C$ est un quotient dont le dénominateur $x$ s'annule en $0$ : $C$ est définie sur $]0\,;\,+\infty[$.
+
+\textbf{2.} On écrit $C(x) = 2 + \dfrac{50}{x}$. Quand $x$ tend vers $0$ par valeurs supérieures, $\dfrac{50}{x}$ tend vers $+\infty$, donc :
+\[ \lim_{x \to 0^{+}} C(x) = +\infty \]
+La droite d'équation $x = 0$ (l'axe des ordonnées) est \textbf{asymptote verticale} à la courbe.
+\emph{Interprétation économique :} quand la production est très faible, les charges fixes (\SI{50000}{FCFA}) sont réparties sur très peu de sacs : le coût moyen d'un sac devient énorme. Produire presque rien coûte extrêmement cher par sac.
+
+\textbf{3.} Quand $x$ tend vers $+\infty$, $\dfrac{50}{x}$ tend vers $0$, donc :
+\[ \lim_{x \to +\infty} C(x) = 2 \]
+La droite d'équation $y = 2$ est \textbf{asymptote horizontale} à la courbe en $+\infty$.
+\emph{Interprétation économique :} même en produisant énormément, le coût moyen ne descendra jamais en dessous de \SI{2000}{FCFA} par sac, car chaque sac coûte toujours au minimum \SI{2000}{FCFA} de charges variables (manioc, bois, main-d'œuvre). Les charges fixes finissent par devenir négligeables par sac.
+
+\textbf{Partie B — Variations.}
+
+\textbf{4.} $C(x) = 2 + 50 \times \dfrac{1}{x}$, donc pour tout $x > 0$ :
+\[ C'(x) = 50 \times \left(-\frac{1}{x^{2}}\right) = -\frac{50}{x^{2}} \]
+Pour tout $x > 0$, $x^{2} > 0$, donc $C'(x) < 0$ : la fonction $C$ est \textbf{strictement décroissante} sur $[1\,;\,+\infty[$.
+
+\textbf{5.} $C(1) = \dfrac{2 + 50}{1} = 52$. Tableau de variations :
+
+\begin{center}
+\begin{tabular}{|c|ccc|}
+\hline
+$x$ & $1$ & & $+\infty$ \\ \hline
+$C'(x)$ & & $-$ & \\ \hline
+$C$ & $52$ & $\searrow$ & $2$ \\ \hline
+\end{tabular}
+\end{center}
+
+Le coût moyen passe de \SI{52000}{FCFA} par sac (pour 1 sac par jour) et décroît vers \SI{2000}{FCFA} sans jamais l'atteindre.
+
+\textbf{Partie C — Tracé et seuil de rentabilité.}
+
+\textbf{6.} Tableau de valeurs :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} $x$ (sacs) & $1$ & $5$ & $10$ & $25$ & $50$ & $100$ \\ \hline
+$C(x)$ (milliers de FCFA) & $52$ & $12$ & $7$ & $4$ & $3$ & $2{,}5$ \\ \hline
+\end{tabularx}
+\end{center}
+
+On place les points, on trace les asymptotes $x = 0$ et $y = 2$ en pointillés, puis la courbe qui décroît en s'approchant de $y = 2$ (voir la figure ci-après).
+
+\textbf{7.} Graphiquement, la courbe passe en dessous de la droite $y = 3$ à partir de $x = 50$ sacs environ : l'atelier devient bénéficiaire dès que la production dépasse 50 sacs par jour.
+
+\textbf{8.} Par le calcul, pour $x > 0$ :
+\begin{align*}
+C(x) < 3 &\iff 2 + \frac{50}{x} < 3 \\
+&\iff \frac{50}{x} < 1 \\
+&\iff 50 < x \quad (\text{car } x > 0, \text{ le sens de l'inégalité est conservé}) \\
+&\iff x > 50
+\end{align*}
+Le \textbf{seuil de rentabilité} est donc de \textbf{50 sacs par jour} : l'atelier est bénéficiaire dès le 51\textsuperscript{e} sac. Vérification : $C(50) = 2 + \dfrac{50}{50} = 3$ (équilibre exact) et $C(51) = 2 + \dfrac{50}{51} \approx 2{,}98 < 3$.
+
+\textbf{Partie D — Note au directeur (modèle de rédaction).}
+
+\emph{« Madame, l'étude mathématique du coût moyen $C(x) = 2 + \frac{50}{x}$ montre qu'il est strictement décroissant (dérivée $-\frac{50}{x^2} < 0$) : plus vous produisez, moins chaque sac coûte cher. Ce coût ne pourra jamais passer sous \SI{2000}{FCFA} (asymptote horizontale $y = 2$). La résolution de $C(x) < 3$ donne $x > 50$ : il faut produire au moins 51 sacs par jour pour être bénéficiaire au prix de vente de \SI{3000}{FCFA}. Nous recommandons une production d'au moins 60 sacs par jour afin de dégager une marge de sécurité. »}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+width=0.9\linewidth, height=6.5cm,
+axis lines=middle,
+xlabel={$x$ (sacs)}, ylabel={$C(x)$ (milliers de FCFA)},
+xmin=0, xmax=105, ymin=0, ymax=14,
+xtick={0,25,50,75,100}, ytick={2,3,4,7,12},
+grid=both, grid style={popline!40},
+legend style={at={(0.97,0.97)}, anchor=north east, font=\small}
+]
+\addplot[popcurve, domain=3.6:100, samples=200]{2 + 50/x};
+\addlegendentry{$y = C(x)$}
+\addplot[poporange, dashed, domain=0:105, samples=2]{2};
+\addlegendentry{asymptote $y = 2$}
+\addplot[popgreen, thick, domain=0:105, samples=2]{3};
+\addlegendentry{prix de vente $y = 3$}
+\addplot[mark=*, poppink, only marks] coordinates {(50,3)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe du coût moyen, asymptote horizontale $y = 2$ et droite du prix de vente $y = 3$. Le point rose $(50\,;\,3)$ marque le seuil de rentabilité.}
+\end{popfigure}
+
+\begin{attention}[Erreurs fréquentes à éviter pendant l'activité]
+\begin{itemize}
+\item Diviser par $x$ dans l'inéquation $\frac{50}{x} < 1$ sans préciser que $x > 0$ : le sens de l'inégalité dépend du signe du facteur par lequel on multiplie !
+\item Affirmer que le coût moyen « atteint » \SI{2000}{FCFA} : il s'en \emph{approche} sans jamais l'atteindre (asymptote horizontale).
+\item Confondre coût total et coût moyen : $C(x)$ est le coût \emph{par sac}, pas la dépense journalière totale.
+\item Oublier les unités dans la rédaction : $C(x)$ est en \emph{milliers} de FCFA, donc $C(x) = 3$ signifie \SI{3000}{FCFA}.
+\item Tracer la courbe à gauche de l'asymptote verticale $x = 0$ : le domaine d'étude est $[1\,;\,+\infty[$, la courbe n'existe que pour $x \geq 1$.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence que :
+\begin{itemize}
+\item l'\textbf{asymptote verticale} $x = 0$ traduit l'explosion du coût moyen quand la production est trop faible : les charges fixes doivent être réparties sur un nombre suffisant de sacs ;
+\item l'\textbf{asymptote horizontale} $y = 2$ donne la \emph{borne infranchissable} du coût moyen : les charges variables par sac ;
+\item la \textbf{dérivée} et le \textbf{tableau de variations} justifient rigoureusement la stratégie « produire plus pour payer moins cher par sac » ;
+\item le \textbf{tracé de la courbe} permet de lire graphiquement un seuil de rentabilité, que le calcul (inéquation) confirme avec exactitude : ici 50 sacs par jour ;
+\item les mathématiques de Première technique fournissent des outils concrets d'\textbf{aide à la décision} pour un entrepreneur, et la qualité de la rédaction (note justifiée) est aussi importante que l'exactitude des calculs.
+\end{itemize}
+
+\begin{savaistu}[Le gari, filière stratégique au Cameroun]
+Le Cameroun est l'un des grands producteurs de manioc d'Afrique centrale, et la transformation en gari occupe des milliers de petits ateliers, notamment dans l'Ouest et le Littoral. Les organisations de producteurs utilisent précisément ce type de calcul de \emph{coût moyen} et de \emph{seuil de rentabilité} pour fixer les prix et dimensionner les équipements : les fonctions rationnelles que tu étudies en classe sont un outil quotidien des gestionnaires de ces unités de transformation.
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Représentation graphique d'une fonction numérique}
+
+\courssub{Méthode 1 : Rechercher une asymptote verticale}
+
+\begin{methode}[Montrer qu'une droite $x = a$ est asymptote verticale]
+Pour montrer que la droite d'équation $x = a$ est \cle{asymptote verticale} à la courbe $\mathcal{C}_f$ :
+\begin{enumerate}
+\item Vérifier que $a$ est une \cle{valeur interdite} de $f$ (valeur qui annule le dénominateur pour une fonction rationnelle, ou borne finie du domaine de définition).
+\item Calculer la limite de $f(x)$ quand $x$ tend vers $a$ par valeurs supérieures ($a^+$) et par valeurs inférieures ($a^-$).
+\item Si l'une au moins de ces limites est infinie ($+\infty$ ou $-\infty$), conclure par la phrase : « la droite d'équation $x = a$ est asymptote verticale à $\mathcal{C}_f$ ».
+\end{enumerate}
+\textbf{Réflexe :} pour une fonction rationnelle $f(x)=\dfrac{P(x)}{Q(x)}$ avec $P$ et $Q$ premiers entre eux, les candidats sont les racines réelles du dénominateur $Q(x)=0$.
+\end{methode}
+
+\begin{exoresolu}[Asymptote verticale d'une fonction homographique]
+Soit $f$ la fonction définie par $f(x)=\dfrac{2x+1}{x-3}$ et $\mathcal{C}_f$ sa courbe représentative.
+\begin{enumerate}
+\item Déterminer l'ensemble de définition de $f$.
+\item Montrer que la droite d'équation $x=3$ est asymptote verticale à $\mathcal{C}_f$.
+\end{enumerate}
+\tcblower
+\textbf{1. Ensemble de définition.} $f$ est définie si et seulement si le dénominateur est non nul : $x-3\neq 0$, c'est-à-dire $x\neq 3$. Donc :
+\[ D_f=\mathbb{R}\setminus\{3\}=]-\infty\,;3[\,\cup\,]3\,;+\infty[. \]
+
+\textbf{2. Asymptote verticale.} Étudions la limite en $3$, valeur interdite.
+\begin{itemize}
+\item Numérateur : quand $x\to 3$, $2x+1\to 2\times 3+1=7 \neq 0$.
+\item Dénominateur : quand $x\to 3$, $x-3\to 0$.
+\end{itemize}
+Il faut préciser le signe du dénominateur selon le sens d'approche :
+\begin{itemize}
+\item Si $x\to 3^+$ ($x>3$), alors $x-3>0$, donc $x-3\to 0^+$ et $\displaystyle\lim_{x\to 3^+}f(x)=\frac{7}{0^+}=+\infty$.
+\item Si $x\to 3^-$ ($x<3$), alors $x-3<0$, donc $x-3\to 0^-$ et $\displaystyle\lim_{x\to 3^-}f(x)=\frac{7}{0^-}=-\infty$.
+\end{itemize}
+\textbf{Conclusion :} comme la limite de $f$ en $3$ est infinie (les deux limites latérales sont infinies), la droite d'équation $x=3$ est asymptote verticale à la courbe $\mathcal{C}_f$.
+\end{exoresolu}
+
+\courssub{Méthode 2 : Rechercher une asymptote horizontale}
+
+\begin{methode}[Montrer qu'une droite $y = b$ est asymptote horizontale]
+Pour montrer que la droite d'équation $y=b$ est \cle{asymptote horizontale} à $\mathcal{C}_f$ en $+\infty$ (ou $-\infty$) :
+\begin{enumerate}
+\item Calculer la limite de $f(x)$ quand $x\to +\infty$ (puis quand $x\to -\infty$ si le domaine le permet).
+\item Si cette limite est un \cle{nombre fini} $b$, conclure : « la droite d'équation $y=b$ est asymptote horizontale à $\mathcal{C}_f$ en $+\infty$ » (respectivement en $-\infty$).
+\end{enumerate}
+\textbf{Réflexe de calcul :} pour une fonction rationnelle, factoriser par la plus grande puissance de $x$ au numérateur et au dénominateur, puis simplifier. Rappels utiles : $\displaystyle\lim_{x\to\pm\infty}\frac{1}{x}=0$ et $\displaystyle\lim_{x\to\pm\infty}\frac{1}{x^2}=0$.
+\end{methode}
+
+\begin{exoresolu}[Asymptote horizontale d'une fonction rationnelle]
+Soit $g$ la fonction définie sur $\mathbb{R}\setminus\{1\}$ par $g(x)=\dfrac{3x-2}{x-1}$. Déterminer les limites de $g$ en $+\infty$ et en $-\infty$, puis en déduire une asymptote horizontale à $\mathcal{C}_g$.
+\tcblower
+On a une forme indéterminée « $\dfrac{\infty}{\infty}$ ». On lève l'indétermination en factorisant par $x$ (plus haute puissance, pour $x\neq 0$) :
+\[ g(x)=\frac{x\left(3-\dfrac{2}{x}\right)}{x\left(1-\dfrac{1}{x}\right)}=\frac{3-\dfrac{2}{x}}{1-\dfrac{1}{x}}. \]
+Or $\displaystyle\lim_{x\to+\infty}\frac{2}{x}=0$ et $\displaystyle\lim_{x\to+\infty}\frac{1}{x}=0$, donc :
+\[ \lim_{x\to+\infty}g(x)=\frac{3-0}{1-0}=3. \]
+Le même calcul donne $\displaystyle\lim_{x\to-\infty}g(x)=3$.
+\textbf{Conclusion :} la limite est finie et vaut $3$ en $+\infty$ et en $-\infty$ : la droite d'équation $y=3$ est asymptote horizontale à $\mathcal{C}_g$ en $+\infty$ et en $-\infty$.
+\end{exoresolu}
+
+\courssub{Méthode 3 : Rechercher une asymptote oblique}
+
+\begin{propriete}[Coefficients d'une asymptote oblique]
+Si la courbe $\mathcal{C}_f$ admet une asymptote oblique $\Delta$ d'équation $y=ax+b$ ($a\neq 0$) en $+\infty$, alors ses coefficients sont donnés par :
+\[ a = \lim_{x\to+\infty}\frac{f(x)}{x} \qquad\text{et}\qquad b = \lim_{x\to+\infty}\big(f(x)-ax\big). \]
+Mêmes formules en $-\infty$ si le domaine le permet.
+\end{propriete}
+
+\begin{methode}[Montrer qu'une droite $y = ax+b$ est asymptote oblique]
+Pour montrer que la droite $\Delta$ d'équation $y=ax+b$ ($a\neq 0$) est \cle{asymptote oblique} à $\mathcal{C}_f$ en $+\infty$ :
+\begin{enumerate}
+\item Former la différence $f(x)-(ax+b)$.
+\item Calculer la limite de cette différence quand $x\to+\infty$.
+\item Si $\displaystyle\lim_{x\to+\infty}\big[f(x)-(ax+b)\big]=0$, conclure : « $\Delta$ est asymptote oblique à $\mathcal{C}_f$ en $+\infty$ ».
+\item (Position relative) Étudier le signe de $f(x)-(ax+b)$ : s'il est positif, la courbe est \emph{au-dessus} de l'asymptote ; s'il est négatif, elle est \emph{en dessous}.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Asymptote oblique et position relative]
+Soit $f$ la fonction définie sur $\mathbb{R}\setminus\{0\}$ par $f(x)=x+1+\dfrac{2}{x}$.
+\begin{enumerate}
+\item Montrer que la droite $\Delta$ d'équation $y=x+1$ est asymptote oblique à $\mathcal{C}_f$ en $+\infty$ et en $-\infty$.
+\item Étudier la position de $\mathcal{C}_f$ par rapport à $\Delta$.
+\end{enumerate}
+\tcblower
+\textbf{1. Asymptote oblique.} On calcule la différence :
+\[ f(x)-(x+1)=\frac{2}{x}. \]
+Or $\displaystyle\lim_{x\to+\infty}\frac{2}{x}=0$ et $\displaystyle\lim_{x\to-\infty}\frac{2}{x}=0$.
+\textbf{Conclusion :} la droite $\Delta$ d'équation $y=x+1$ est asymptote oblique à $\mathcal{C}_f$ en $+\infty$ et en $-\infty$.
+
+\textbf{2. Position relative.} Le signe de $f(x)-(x+1)=\dfrac{2}{x}$ est le signe de $x$ (car $2>0$) :
+\begin{itemize}
+\item Si $x>0$, alors $\dfrac{2}{x}>0$ : la courbe $\mathcal{C}_f$ est \textbf{au-dessus} de $\Delta$ sur $]0\,;+\infty[$.
+\item Si $x<0$, alors $\dfrac{2}{x}<0$ : la courbe $\mathcal{C}_f$ est \textbf{en dessous} de $\Delta$ sur $]-\infty\,;0[$.
+\end{itemize}
+\end{exoresolu}
+
+\courssub{Méthode 4 : Dresser le plan d'étude complet d'une fonction}
+
+\begin{methode}[Plan d'étude d'une fonction au Probatoire]
+Une étude de fonction se rédige toujours dans le même ordre rigoureux :
+\begin{enumerate}
+\item \textbf{Ensemble de définition} $D_f$ : chercher les valeurs interdites (dénominateur nul, radicande négatif pour une racine carrée, argument $\leq 0$ pour un logarithme).
+\item \textbf{Limites aux bornes} de $D_f$ : en $\pm\infty$ et aux valeurs interdites (limites latérales) ; en déduire les \cle{asymptotes} (verticales, horizontales, obliques).
+\item \textbf{Dérivabilité et dérivée} : justifier que $f$ est dérivable sur $D_f$ (somme, produit, quotient, composée de fonctions dérivables), calculer $f'(x)$ et le simplifier.
+\item \textbf{Signe de $f'(x)$} : résoudre l'inéquation $f'(x)>0$ (et $f'(x)<0$) ; dresser le \cle{tableau de variations} complet (bornes du domaine, limites, double barre $\|$ pour les valeurs interdites, valeurs exactes des extrema).
+\item \textbf{Éléments de la courbe} : points remarquables (intersections avec les axes : $f(0)$ si $0\in D_f$, solutions de $f(x)=0$), tangentes horizontales ($f'(x)=0$), équations des asymptotes.
+\item \textbf{Tracé} de $\mathcal{C}_f$ : placer d'abord les asymptotes (pointillés) et les points remarquables, puis esquisser la courbe en respectant strictement le tableau de variations.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Étude complète d'une fonction homographique]
+Soit $f$ la fonction définie par $f(x)=\dfrac{x+2}{x-1}$ et $\mathcal{C}_f$ sa courbe dans un repère orthonormé.
+\begin{enumerate}
+\item Déterminer $D_f$ et les limites de $f$ aux bornes de $D_f$. Préciser les asymptotes.
+\item Calculer $f'(x)$ et dresser le tableau de variations de $f$.
+\item Tracer les asymptotes et l'allure de $\mathcal{C}_f$.
+\end{enumerate}
+\tcblower
+\textbf{1. Domaine, limites, asymptotes.} Le dénominateur s'annule pour $x-1=0 \Leftrightarrow x=1$, donc $D_f=\mathbb{R}\setminus\{1\}$.
+
+\emph{En $1$ (valeur interdite) :} le numérateur tend vers $3$ ; $x-1\to 0^+$ si $x\to 1^+$ et $0^-$ si $x\to 1^-$. Donc :
+\[ \lim_{x\to 1^+}f(x)=+\infty \quad\text{et}\quad \lim_{x\to 1^-}f(x)=-\infty. \]
+La droite d'équation $x=1$ est \textbf{asymptote verticale}.
+
+\emph{En l'infini :} $f(x)=\dfrac{1+\frac{2}{x}}{1-\frac{1}{x}}\to 1$, donc $\displaystyle\lim_{x\to+\infty}f(x)=1$ et $\displaystyle\lim_{x\to-\infty}f(x)=1$. La droite d'équation $y=1$ est \textbf{asymptote horizontale} en $+\infty$ et en $-\infty$.
+
+\textbf{2. Dérivée et variations.} $f$ est dérivable sur $D_f$ (quotient de fonctions dérivables, dénominateur non nul). Posons $u(x)=x+2$, $v(x)=x-1$ :
+\[ f'(x)=\frac{u'v-uv'}{v^2}=\frac{(1)(x-1)-(x+2)(1)}{(x-1)^2}=\frac{x-1-x-2}{(x-1)^2}=\frac{-3}{(x-1)^2}. \]
+Pour tout $x\in D_f$, $(x-1)^2>0$, donc $f'(x)<0$ : $f$ est strictement décroissante sur $]-\infty\,;1[$ et sur $]1\,;+\infty[$.
+
+\begin{center}
+\begin{tabular}{|c|c|cc||cc|}\hline
+$x$ & $-\infty$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $-$ & \text{||} & $-$ & \\ \hline
+$f$ & $1$ & $\searrow$ & \text{||} & $\searrow$ & $1$ \\ \hline
+\end{tabular}
+\end{center}
+(En $1^-$ : $f(x)\to-\infty$ ; en $1^+$ : $f(x)\to+\infty$.)
+
+\textbf{3. Tracé.} Points remarquables : $f(0)=-2$ (intersection avec l'axe des ordonnées) et $f(x)=0\Leftrightarrow x=-2$ (intersection avec l'axe des abscisses).
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\draw[popline,->] (-4.5,0)--(4.5,0) node[below left]{$x$};
+\draw[popline,->] (0,-4)--(0,4.5) node[below left]{$y$};
+\draw[poporange,dashed,thick] (1,-4)--(1,4.5) node[above right]{$x=1$};
+\draw[popgreen,dashed,thick] (-4.5,1)--(4.5,1) node[above left]{$y=1$};
+\draw[popblue,very thick,domain=-4.2:0.55,samples=100] plot(\x,{(\x+2)/(\x-1)});
+\draw[popblue,very thick,domain=1.32:4.2,samples=100] plot(\x,{(\x+2)/(\x-1)});
+\fill[popdark] (0,-2) circle(1.5pt) node[below left]{$-2$};
+\fill[popdark] (-2,0) circle(1.5pt) node[above left]{$-2$};
+\end{tikzpicture}
+\legende{Courbe de $f(x)=\dfrac{x+2}{x-1}$ avec ses deux asymptotes}
+\end{popfigure}
+\textbf{Conclusion :} $\mathcal{C}_f$ admet les asymptotes $x=1$ (verticale) et $y=1$ (horizontale), et $f$ est décroissante sur chaque intervalle de son domaine.
+\end{exoresolu}
+
+\courssub{Méthode 5 : Étudier une fonction polynôme et tracer sa courbe}
+
+\begin{methode}[Étude d'une fonction polynôme de degré 3]
+\begin{enumerate}
+\item $D_f=\mathbb{R}$ (un polynôme est défini et dérivable sur $\mathbb{R}$).
+\item Limites en $\pm\infty$ : la limite d'un polynôme est celle de son \cle{terme de plus haut degré} (coefficient dominant $\times$ $x^n$).
+\item Calculer $f'(x)$ (polynôme de degré 2), résoudre $f'(x)=0$ avec le discriminant $\Delta$ (ou factorisation).
+\item Signe de $f'$ selon le signe du trinôme (règle du signe : $a(x-x_1)(x-x_2)$ a le signe de $a$ à l'extérieur des racines, signe contraire entre les racines), puis tableau de variations avec les valeurs exactes des extrema ($f(x_1)$, $f(x_2)$).
+\item Tracer la courbe en plaçant les extrema, les intersections avec les axes (si faciles) et quelques points supplémentaires.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Étude d'une fonction cubique]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x)=x^3-3x+1$.
+\begin{enumerate}
+\item Calculer les limites de $f$ en $+\infty$ et en $-\infty$.
+\item Étudier les variations de $f$ et dresser son tableau de variations.
+\end{enumerate}
+\tcblower
+\textbf{1. Limites.} Pour $x\neq 0$, $f(x)=x^3\left(1-\dfrac{3}{x^2}+\dfrac{1}{x^3}\right)$. La parenthèse tend vers $1$ :
+\[ \lim_{x\to+\infty}f(x)=+\infty \quad\text{et}\quad \lim_{x\to-\infty}f(x)=-\infty. \]
+Il n'y a pas d'asymptote horizontale (limites infinies).
+
+\textbf{2. Variations.} $f$ est dérivable sur $\mathbb{R}$ et $f'(x)=3x^2-3=3(x^2-1)=3(x-1)(x+1)$.
+$f'(x)=0\Leftrightarrow x=1$ ou $x=-1$. Le trinôme $f'(x)$ (coefficient dominant $3>0$) est positif à l'extérieur des racines et négatif entre les racines :
+\begin{itemize}
+\item $f'(x)>0$ sur $]-\infty\,;-1[$ et $]1\,;+\infty[$ : $f$ croissante ;
+\item $f'(x)<0$ sur $]-1\,;1[$ : $f$ décroissante.
+\end{itemize}
+Valeurs : $f(-1)=(-1)^3-3(-1)+1=-1+3+1=3$ (maximum local) ; $f(1)=1-3+1=-1$ (minimum local).
+
+\begin{center}
+\begin{tabular}{|c|ccccccc|}\hline
+$x$ & $-\infty$ & & $-1$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $-\infty$ & $\nearrow$ & $3$ & $\searrow$ & $-1$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+\textbf{Conclusion :} $f$ admet un maximum local $3$ en $x=-1$ et un minimum local $-1$ en $x=1$.
+\end{exoresolu}
+
+\courssub{Méthode 6 : Appliquer l'étude de fonction à une situation concrète}
+
+\begin{methode}[Modéliser et exploiter une situation de la vie courante]
+\begin{enumerate}
+\item \textbf{Identifier} la grandeur étudiée (coût, recette, température, durée, concentration) et la variable, puis préciser le domaine \emph{réel} (souvent $x\geq 0$, ou un intervalle borné par le contexte physique/économique).
+\item \textbf{Étudier} la fonction sur ce domaine : dérivée, variations, limites aux bornes du domaine réel, asymptotes si pertinent.
+\item \textbf{Interpréter} les résultats en langage courant : un minimum de $f$ correspond au coût minimal ou à la température la plus basse ; un maximum au bénéfice maximal ; une asymptote horizontale $y=b$ traduit une \cle{stabilisation} de la grandeur vers la valeur $b$ pour de grandes valeurs de la variable.
+\item \textbf{Conclure} par une phrase répondant à la question posée, avec l'unité.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Coût unitaire moyen dans un atelier de Douala]
+Un atelier de confection produit $x$ dizaines de pagnes par semaine ($x\in[1\,;10]$). Le coût unitaire moyen, en milliers de FCFA, est donné par :
+\[ C(x)=x+2+\frac{9}{x}. \]
+\begin{enumerate}
+\item Étudier les variations de $C$ sur $[1\,;10]$.
+\item En déduire la production qui rend le coût unitaire minimal, et ce coût minimal.
+\end{enumerate}
+\tcblower
+\textbf{1. Variations.} $C$ est dérivable sur $[1\,;10]$ (somme de fonctions dérivables, $x\neq 0$ sur l'intervalle) et :
+\[ C'(x)=1-\frac{9}{x^2}=\frac{x^2-9}{x^2}=\frac{(x-3)(x+3)}{x^2}. \]
+Sur $[1\,;10]$, $x^2>0$ et $x+3>0$, donc $C'(x)$ a le signe de $x-3$ :
+\begin{itemize}
+\item si $1\leq x<3$, $C'(x)<0$ : $C$ est décroissante ;
+\item si $3<x\leq 10$, $C'(x)>0$ : $C$ est croissante ;
+\item $C'(3)=0$ : $C$ admet un minimum en $x=3$.
+\end{itemize}
+Valeures : $C(1)=1+2+9=12$ ; $C(3)=3+2+3=8$ ; $C(10)=10+2+0,9=12,9$.
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $1$ & & $3$ & & $10$ \\ \hline
+$C'(x)$ & & $-$ & $0$ & $+$ & \\ \hline
+$C$ & $12$ & $\searrow$ & $8$ & $\nearrow$ & $\num{12,9}$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{2. Interprétation.} Le minimum de $C$ est atteint pour $x=3$, c'est-à-dire $3$ dizaines $=30$ pagnes par semaine. Le coût unitaire minimal est $C(3)=8$ milliers de FCFA, soit \textbf{\SI{8000}{FCFA} par pagne}.
+\textbf{Conclusion :} l'atelier a intérêt à produire $30$ pagnes par semaine pour minimiser son coût unitaire, qui vaut alors \SI{8000}{FCFA}.
+\end{exoresolu}
+
+\begin{savaistu}[Étymologie et histoire]
+Le mot \emph{asymptote} vient du grec \og \textit{asumptôtos} \fg{} qui signifie \og qui ne tombe pas ensemble \fg{} (privatif \textit{a-}, \textit{sun} « avec », \textit{ptôtos} « qui tombe »). Apollonius de Perge (III\textsuperscript{e} s. av. J.-C.) a le premier étudié ces droites que les courbes (coniques, spirales) approchent indéfiniment sans jamais les couper (ou en les coupant infiniment loin). Au Probatoire, on retient trois types : verticale (limite infinie en un point fini), horizontale (limite finie à l'infini), oblique (écart à une droite $y=ax+b$ qui tend vers $0$ à l'infini).
+\end{savaistu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Conclure à une asymptote verticale sans vérifier que la limite est infinie.} Une valeur interdite ne suffit pas : il faut calculer la limite (latérale) et obtenir $+\infty$ ou $-\infty$ avant de conclure. Exemple : $f(x)=\frac{\sin x}{x}$ en $0$ (valeur interdite mais limite finie $=1$, pas d'asymptote).
+\item \textbf{Oublier le signe du dénominateur en une valeur interdite.} En $x\to 3$ pour $\dfrac{7}{x-3}$, écrire « limite infinie » sans distinguer $3^+$ et $3^-$ est incomplet : les limites à gauche et à droite sont de signes opposés ($+\infty$ et $-\infty$). Il faut les deux.
+\item \textbf{Confondre asymptote horizontale et oblique.} Asymptote horizontale : $\lim f(x)=b$ (fini). Asymptote oblique $y=ax+b$ ($a\neq 0$) : $\lim\big[f(x)-(ax+b)\big]=0$. Ne pas mélanger les deux définitions ; chercher $a$ et $b$ par les limites $\lim f(x)/x$ et $\lim f(x)-ax$ si l'asymptote n'est pas donnée.
+\item \textbf{Se tromper dans la dérivée d'un quotient.} La formule est $\left(\dfrac{u}{v}\right)'=\dfrac{u'v-uv'}{v^2}$ : attention à l'ordre $u'v-uv'$ (le signe moins) et au carré $v^2$ au dénominateur. Simplifier $f'$ \emph{avant} d'étudier son signe.
+\item \textbf{Dresser un tableau de variations sans les limites ni les valeurs interdites.} Le tableau doit contenir toutes les bornes du domaine, les limites aux bornes, une double barre $\|$ (ou \text{||}) en face des valeurs interdites, et les images exactes des extrema. Une fonction décroissante sur $]-\infty\,;1[$ et sur $]1\,;+\infty[$ n'est \emph{pas} « décroissante sur $\mathbb{R}$ » : ne jamais réunir les intervalles autour d'une valeur interdite.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : Asymptote verticale]
+Soit la fonction $f$ définie sur $\mathbb{R}\setminus\{-2\}$ par $f(x)=\dfrac{x^2+1}{x+2}$.
+Parmi les affirmations suivantes, laquelle est \textbf{vraie} ?
+\begin{enumerate}
+\item La droite $x=-2$ est une asymptote verticale à la courbe $\mathcal{C}_f$.
+\item La droite $x=2$ est une asymptote verticale à la courbe $\mathcal{C}_f$.
+\item La courbe $\mathcal{C}_f$ n'admet pas d'asymptote verticale.
+\item La droite $y=-2$ est une asymptote horizontale à la courbe $\mathcal{C}_f$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai / Faux justifié]
+Dire si les affirmations suivantes sont vraies ou fausses. Justifier chaque réponse.
+\begin{enumerate}
+\item Si $x=3$ est une valeur interdite de la fonction $f$, alors la droite $x=3$ est nécessairement une asymptote verticale à la courbe représentative de $f$.
+\item Une courbe ne coupe jamais son asymptote horizontale.
+\item Si $\lim\limits_{x\to+\infty}\bigl(f(x)-(2x+1)\bigr)=0$, alors la droite $y=2x+1$ est une asymptote oblique à la courbe de $f$ en $+\infty$.
+\item La fonction $f(x)=\dfrac{1}{x}$ admet une asymptote oblique.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs de limites et asymptotes horizontales]
+Déterminer, s'il en existe, les asymptotes horizontales des courbes représentatives des fonctions suivantes :
+\begin{enumerate}
+\item $f_1(x)=\dfrac{3x-1}{x+2}$ sur $]-\infty;-2[\cup]-2;+\infty[$.
+\item $f_2(x)=\dfrac{x^2+3x+3}{x+2}$ sur $]-\infty;-2[\cup]-2;+\infty[$.
+\item $f_3(x)=\dfrac{2x+1}{x^2-4}$ sur son ensemble de définition.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Recherche d'asymptote oblique]
+On considère la fonction $f$ définie par $f(x)=2x+1+\dfrac{3}{x-1}$ sur $D_f=]-\infty;1[\cup]1;+\infty[$.
+\begin{enumerate}
+\item Vérifier que la droite $\mathcal{D}$ d'équation $y=2x+1$ est une asymptote oblique à la courbe $\mathcal{C}_f$ en $+\infty$ et en $-\infty$.
+\item Étudier la position de $\mathcal{C}_f$ par rapport à $\mathcal{D}$ (au-dessus ou en dessous) pour $x>1$ et pour $x<1$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Asymptotes verticales et horizontales]
+Soit la fonction $f$ définie par $f(x)=\dfrac{3x-1}{x+2}$ sur $D_f=]-\infty;-2[\cup]-2;+\infty[$.
+\begin{enumerate}
+\item Déterminer les limites de $f$ aux bornes de son ensemble de définition.
+\item En déduire les équations des asymptotes verticales et horizontales à la courbe $\mathcal{C}_f$.
+\item Construire le tableau de variations de $f$ (on admet que $f'(x)=\dfrac{7}{(x+2)^2}$).
+\item Tracer $\mathcal{C}_f$ et ses asymptotes dans un repère orthonormé.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Asymptote oblique : étude complète]
+Soit la fonction $f$ définie par $f(x)=\dfrac{x^2+3x+3}{x+2}$ sur $D_f=]-\infty;-2[\cup]-2;+\infty[$.
+\begin{enumerate}
+\item Effectuer la division euclidienne du numérateur par le dénominateur pour écrire $f(x)$ sous la forme $ax+b+\dfrac{c}{x+2}$.
+\item En déduire l'équation de l'asymptote oblique $\mathcal{D}$ à $\mathcal{C}_f$.
+\item Étudier la position de $\mathcal{C}_f$ par rapport à $\mathcal{D}$.
+\item Calculer $f'(x)$ et dresser le tableau de variations de $f$.
+\item Tracer $\mathcal{C}_f$ et $\mathcal{D}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Fonction rationnelle : asymptotes et variations]
+Soit $f(x)=\dfrac{x^2-4}{x-1}$ définie sur $D_f=]-\infty;1[\cup]1;+\infty[$.
+\begin{enumerate}
+\item Chercher les asymptotes verticales et obliques de $\mathcal{C}_f$.
+\item Déterminer les intersections de $\mathcal{C}_f$ avec les axes des coordonnées.
+\item Calculer la dérivée $f'(x)$ et établir le tableau de variations de $f$.
+\item Tracer la courbe $\mathcal{C}_f$ et ses asymptotes.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Application : Coût moyen de production]
+Dans une entreprise de menuiserie à Douala, le coût total de production (en milliers de FCFA) pour $x$ centaines de chaises est modélisé par $C(x)=x^2+10x+100$ pour $x>0$.
+Le coût moyen unitaire est $C_m(x)=\dfrac{C(x)}{x}$.
+\begin{enumerate}
+\item Exprimer $C_m(x)$ sous la forme $ax+b+\dfrac{c}{x}$.
+\item Déterminer les asymptotes de la courbe représentant $C_m$.
+\item Étudier les variations de $C_m$ sur $]0;+\infty[$.
+\item Quelle production permet de minimiser le coût moyen ? Donner la valeur minimale.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Étude complète type Probatoire : Fonction rationnelle]
+\emph{Durée conseillée : 35 min.}
+Soit la fonction $f$ définie sur $D_f=]-\infty;-2[\cup]-2;+\infty[$ par $f(x)=\dfrac{x^2+3x+3}{x+2}$.
+On note $\mathcal{C}_f$ sa courbe représentative dans un repère orthonormé $(O;\vec{\imath},\vec{\jmath})$.
+\begin{enumerate}
+\item \textbf{Domaine et symétrie.} Préciser $D_f$. La fonction est-elle paire, impaire, ou aucune des deux ?
+\item \textbf{Limites et asymptotes.}
+\begin{enumerate}
+\item Calculer les limites de $f$ aux bornes de $D_f$.
+\item En déduire l'équation de l'asymptote verticale.
+\item Effectuer la division euclidienne de $x^2+3x+3$ par $x+2$. En déduire l'équation de l'asymptote oblique $\mathcal{D}$.
+\item Étudier la position de $\mathcal{C}_f$ par rapport à $\mathcal{D}$.
+\end{enumerate}
+\item \textbf{Dérivée et variations.}
+\begin{enumerate}
+\item Calculer $f'(x)$ et la simplifier.
+\item Dresser le tableau de variations de $f$ sur $D_f$.
+\end{enumerate}
+\item \textbf{Intersections et points particuliers.}
+\begin{enumerate}
+\item Déterminer les coordonnées des points d'intersection de $\mathcal{C}_f$ avec les axes des coordonnées.
+\item Montrer que $\mathcal{C}_f$ ne coupe pas son asymptote oblique.
+\end{enumerate}
+\item \textbf{Tracé.} Construire le repère, tracer les asymptotes, placer les points caractéristiques et tracer $\mathcal{C}_f$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Problème concret : Bénéfice d'un menuisier]
+\emph{Durée conseillée : 30 min.}
+Un menuisier de Douala fabrique et vend des sacs en bois. Son bénéfice total (en FCFA) pour la vente de $x$ sacs ($x>0$) est modélisé par la fonction $B(x)=-x^2+40x-100$.
+Le bénéfice moyen par sac est $b(x)=\dfrac{B(x)}{x}$.
+\begin{enumerate}
+\item Exprimer $b(x)$ sous la forme $ax+b+\dfrac{c}{x}$.
+\item Déterminer l'ensemble de définition de $b$ et calculer les limites aux bornes.
+\item Trouver les asymptotes de la courbe $\mathcal{C}_b$ représentative de $b$.
+\item Calculer $b'(x)$ et dresser le tableau de variations de $b$ sur $]0;+\infty[$.
+\item Quel nombre de sacs faut-il vendre pour maximiser le bénéfice moyen ? Quelle est la valeur de ce maximum ?
+\item Interpréter le résultat dans le contexte de l'entreprise.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Lecture graphique et reconstruction de fonction]
+\emph{Durée conseillée : 25 min.}
+On donne ci-dessous le tracé de la courbe $\mathcal{C}_f$ d'une fonction $f$ définie sur $\mathbb{R}\setminus\{1\}$.
+La courbe admet deux asymptotes : une verticale $\mathcal{V}$ et une oblique $\mathcal{D}$.
+\begin{center}
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, domain=-4:6]
+\draw[popline, thin] (-4.5,0) -- (6.5,0) node[right] {$x$};
+\draw[popline, thin] (0,-4.5) -- (0,5.5) node[above] {$y$};
+\foreach \x in {-4,-3,-2,-1,1,2,3,4,5,6} \draw (\x,0.1) -- (\x,-0.1) node[below] {\small $\x$};
+\foreach \y in {-4,-3,-2,-1,1,2,3,4,5} \draw (0.1,\y) -- (-0.1,\y) node[left] {\small $\y$};
+% Asymptote verticale x=1
+\draw[popmuted, dashed, thick] (1,-4.5) -- (1,5.5) node[above] {$\mathcal{V}$};
+% Asymptote oblique y=x
+\draw[popmuted, dashed, thick] (-4.5,-4.5) -- (5.5,5.5) node[right] {$\mathcal{D}$};
+% Branche gauche (x<1) : hyperbole au-dessus de y=x, passant par (-1, -2) environ ? f(x)=x+1/(x-1)
+% f(-4) = -4 + 1/-5 = -4.2
+% f(-2) = -2 + 1/-3 = -2.33
+% f(0) = 0 + 1/-1 = -1
+% f(0.5) = 0.5 + 1/-0.5 = -1.5
+% f(0.9) = 0.9 + 1/-0.1 = -9.1
+\draw[popcurve, thick, samples=100, domain=-4:0.9] plot (\x, {\x + 1/(\x-1)});
+% Branche droite (x>1)
+% f(1.1) = 1.1 + 1/0.1 = 11.1
+% f(1.5) = 1.5 + 1/0.5 = 3.5
+% f(2) = 2 + 1 = 3
+% f(3) = 3 + 0.5 = 3.5
+% f(5) = 5 + 0.25 = 5.25
+\draw[popcurve, thick, samples=100, domain=1.1:6] plot (\x, {\x + 1/(\x-1)});
+% Points caractéristiques
+\fill[popblue] (0,-1) circle (2pt) node[below left] {$A(0;-1)$};
+\fill[popblue] (-1, -1.5) circle (2pt) node[below] {$B$}; % approx
+\fill[popblue] (2, 3) circle (2pt) node[above right] {$C(2;3)$};
+\end{tikzpicture}
+\legende{Courbe $\mathcal{C}_f$ avec asymptotes $\mathcal{V}$ et $\mathcal{D}$}
+\end{popfigure}
+\end{center}
+\begin{enumerate}
+\item Lire sur le graphique l'équation de l'asymptote verticale $\mathcal{V}$.
+\item L'asymptote oblique $\mathcal{D}$ passe par l'origine et par le point $(2;2)$. Déterminer son équation.
+\item La courbe passe par les points $A(0;-1)$ et $C(2;3)$. Vérifier que ces points appartiennent à la courbe de la fonction $f(x)=x+\dfrac{1}{x-1}$.
+\item En utilisant les asymptotes et les points $A$ et $C$, justifier que la fonction $f(x)=x+\dfrac{1}{x-1}$ est une expression possible pour la courbe tracée.
+\item Étudier la position de $\mathcal{C}_f$ par rapport à $\mathcal{D}$ pour $x>1$ et pour $x<1$.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{corrige}[Exercice 1 — QCM : Asymptote verticale]
+La bonne réponse est la \textbf{réponse 1} : la droite $x=-2$ est une asymptote verticale à $\mathcal{C}_f$.
+
+\emph{Justification.} $-2$ est une valeur interdite (elle annule le dénominateur $x+2$). Le numérateur en $-2$ vaut $(-2)^2+1=5\neq 0$. On calcule :
+\[ \lim_{\substack{x\to -2\\x>-2}}\frac{x^2+1}{x+2}=\frac{5}{0^+}=+\infty \qquad\text{et}\qquad \lim_{\substack{x\to -2\\x<-2}}\frac{x^2+1}{x+2}=\frac{5}{0^-}=-\infty. \]
+La limite étant infinie en $-2$, la droite d'équation $x=-2$ est asymptote verticale.
+
+La réponse 2 est fausse car $2$ n'annule pas le dénominateur. La réponse 4 est fausse car le degré du numérateur (2) est supérieur à celui du dénominateur (1) : il n'y a pas d'asymptote horizontale.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai / Faux justifié]
+\begin{enumerate}
+\item \textbf{Faux.} Une valeur interdite ne donne une asymptote verticale que si la limite de $f$ en cette valeur est \cle{infinie}. Contre-exemple : $f(x)=\dfrac{x^2-9}{x-3}$ n'est pas définie en $3$, mais $f(x)=x+3$ pour $x\neq 3$, donc $\lim\limits_{x\to 3}f(x)=6$ (finie) : pas d'asymptote verticale (trou dans le graphe).
+\item \textbf{Faux.} Une courbe \emph{peut} couper son asymptote horizontale. L'asymptote décrit le comportement à l'infini, rien n'interdit un croisement pour des valeurs finies de $x$. Contre-exemple classique : $f(x)=\dfrac{x}{x^2+1}$. On a $\lim\limits_{x\to\pm\infty}f(x)=0$, donc $y=0$ (axe des abscisses) est asymptote horizontale. Or $f(0)=0$, la coupe donc en l'origine.
+\item \textbf{Vrai.} C'est exactement la définition : si $\lim\limits_{x\to+\infty}\bigl(f(x)-(ax+b)\bigr)=0$, alors la droite $y=ax+b$ est asymptote oblique à $\mathcal{C}_f$ en $+\infty$. Ici $a=2$ et $b=1$.
+\item \textbf{Faux.} $f(x)=\dfrac{1}{x}$ admet une asymptote verticale $x=0$ (car $\lim\limits_{x\to 0^+}\dfrac1x=+\infty$) et une asymptote horizontale $y=0$ (car $\lim\limits_{x\to\pm\infty}\dfrac1x=0$), mais aucune asymptote oblique (le coefficient directeur serait $a=\lim\limits_{x\to\pm\infty}\frac{f(x)}{x}=0$, ce qui ramène à l'horizontale).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Calculs de limites et asymptotes horizontales]
+\begin{enumerate}
+\item $f_1(x)=\dfrac{3x-1}{x+2}$. Pour $x\to\pm\infty$, on factorise par les termes de plus haut degré :
+\[ \lim_{x\to\pm\infty}f_1(x)=\lim_{x\to\pm\infty}\frac{3x}{x}=3. \]
+La droite $y=3$ est asymptote horizontale en $-\infty$ et en $+\infty$.
+
+\item $f_2(x)=\dfrac{x^2+3x+3}{x+2}$. Le numérateur est de degré 2, le dénominateur de degré 1 :
+\[ \lim_{x\to\pm\infty}f_2(x)=\lim_{x\to\pm\infty}\frac{x^2}{x}=\lim_{x\to\pm\infty}x=\pm\infty. \]
+Les limites sont infinies : il n'y a \textbf{pas d'asymptote horizontale} (il existe en revanche une asymptote oblique, voir exercice 6).
+
+\item $f_3(x)=\dfrac{2x+1}{x^2-4}$. Le dénominateur domine :
+\[ \lim_{x\to\pm\infty}f_3(x)=\lim_{x\to\pm\infty}\frac{2x}{x^2}=\lim_{x\to\pm\infty}\frac{2}{x}=0. \]
+La droite $y=0$ (l'axe des abscisses) est asymptote horizontale en $-\infty$ et en $+\infty$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Recherche d'asymptote oblique]
+\begin{enumerate}
+\item On calcule la différence entre la fonction et la droite :
+\[ f(x)-(2x+1)=\frac{3}{x-1}. \]
+Or $\lim\limits_{x\to+\infty}\dfrac{3}{x-1}=0$ et $\lim\limits_{x\to-\infty}\dfrac{3}{x-1}=0$.
+Donc $\lim\limits_{x\to\pm\infty}\bigl(f(x)-(2x+1)\bigr)=0$ : la droite $\mathcal{D}$ d'équation $y=2x+1$ est \cle{asymptote oblique} à $\mathcal{C}_f$ en $+\infty$ et en $-\infty$.
+
+\item Le signe de $f(x)-(2x+1)=\dfrac{3}{x-1}$ donne la position relative :
+\begin{itemize}
+\item Si $x>1$ : $x-1>0$, donc $\dfrac{3}{x-1}>0$ : $\mathcal{C}_f$ est \textbf{au-dessus} de $\mathcal{D}$.
+\item Si $x<1$ : $x-1<0$, donc $\dfrac{3}{x-1}<0$ : $\mathcal{C}_f$ est \textbf{en dessous} de $\mathcal{D}$.
+\end{itemize}
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je m'entraîne}
+
+\begin{corrige}[Exercice 5 — Asymptotes verticales et horizontales]
+\begin{enumerate}
+\item \textbf{Limites aux bornes.} Le numérateur en $-2$ vaut $3\times(-2)-1=-7\neq 0$.
+\[ \lim_{\substack{x\to -2\\x<-2}}\frac{3x-1}{x+2}=\frac{-7}{0^-}=+\infty \;;\qquad \lim_{\substack{x\to -2\\x>-2}}\frac{3x-1}{x+2}=\frac{-7}{0^+}=-\infty. \]
+\[ \lim_{x\to-\infty}f(x)=\lim_{x\to-\infty}\frac{3x}{x}=3 \;;\qquad \lim_{x\to+\infty}f(x)=3. \]
+
+\item \textbf{Asymptotes.} Limites infinies en $-2$ : la droite $x=-2$ est \cle{asymptote verticale}. Limites finies égales à $3$ en $\pm\infty$ : la droite $y=3$ est \cle{asymptote horizontale} en $-\infty$ et en $+\infty$.
+
+\item \textbf{Tableau de variations.} $f'(x)=\dfrac{7}{(x+2)^2}>0$ sur chaque intervalle de $D_f$ (un carré est toujours strictement positif et $7>0$). Donc $f$ est strictement croissante sur $]-\infty;-2[$ et sur $]-2;+\infty[$.
+
+\begin{center}
+\begin{tabular}{|c|cc||ccc|}\hline
+$x$ & $-\infty$ & & $-2$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & \textbar\textbar & $+$ & \\ \hline
+$f$ & $3$ & $\nearrow$ & \textbar\textbar $+\infty$ & $\nearrow$ & $3$ \\ \hline
+\end{tabular}
+\end{center}
+(En $-2$ par valeurs inférieures, $f(x)\to+\infty$ ; par valeurs supérieures, $f(x)\to-\infty$.)
+
+\item \textbf{Tracé.} Points utiles : $f(0)=-\dfrac12$, $f(1)=\dfrac{2}{3}$, $f(-4)=\dfrac{13}{2}=6{,}5$, $f(-3)=10$.
+\begin{center}
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[width=0.85\linewidth, height=7cm, axis lines=middle, xlabel=$x$, ylabel=$y$, xmin=-9, xmax=5, ymin=-6, ymax=10, samples=100, grid=both, grid style={popline!40}]
+\addplot[popmuted, dashed] coordinates {(-2,-6) (-2,10)};
+\addplot[popmuted, dashed] coordinates {(-9,3) (5,3)};
+\addplot[popcurve, domain=-9:-2.4] {(3*x-1)/(x+2)};
+\addplot[popcurve, domain=-1.6:5] {(3*x-1)/(x+2)};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f(x)=\dfrac{3x-1}{x+2}$ et ses asymptotes $x=-2$ et $y=3$}
+\end{popfigure}
+\end{center}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Asymptote oblique : étude complète]
+\begin{enumerate}
+\item \textbf{Division euclidienne} de $x^2+3x+3$ par $x+2$ :
+\[ x^2+3x+3=(x+2)(x+1)+1. \]
+Vérification : $(x+2)(x+1)+1=x^2+3x+2+1=x^2+3x+3$. \checkmark
+Donc $f(x)=x+1+\dfrac{1}{x+2}$, c'est-à-dire $a=1$, $b=1$, $c=1$.
+
+\item \textbf{Asymptote oblique.} $f(x)-(x+1)=\dfrac{1}{x+2}$ et $\lim\limits_{x\to\pm\infty}\dfrac{1}{x+2}=0$.
+Donc la droite $\mathcal{D}$ d'équation $y=x+1$ est asymptote oblique en $-\infty$ et en $+\infty$.
+
+\item \textbf{Position relative.} Le signe de $f(x)-(x+1)=\dfrac{1}{x+2}$ :
+\begin{itemize}
+\item si $x>-2$ : $\dfrac{1}{x+2}>0$, $\mathcal{C}_f$ est \textbf{au-dessus} de $\mathcal{D}$ ;
+\item si $x<-2$ : $\dfrac{1}{x+2}<0$, $\mathcal{C}_f$ est \textbf{en dessous} de $\mathcal{D}$.
+\end{itemize}
+
+\item \textbf{Dérivée et variations.} À partir de $f(x)=x+1+\dfrac{1}{x+2}$ :
+\[ f'(x)=1-\frac{1}{(x+2)^2}=\frac{(x+2)^2-1}{(x+2)^2}=\frac{x^2+4x+3}{(x+2)^2}=\frac{(x+1)(x+3)}{(x+2)^2}. \]
+Le dénominateur est strictement positif ; le signe de $f'$ est celui de $(x+1)(x+3)$, positif à l'extérieur des racines $-3$ et $-1$, négatif entre les deux.
+Valeurs remarquables : $f(-3)=-3+1+\dfrac{1}{-1}=-3$ et $f(-1)=-1+1+\dfrac{1}{1}=1$.
+Limites : en $-2$ par valeurs inférieures, $\dfrac{1}{x+2}\to-\infty$ donc $f(x)\to-\infty$ ; par valeurs supérieures, $f(x)\to+\infty$. En $\pm\infty$, $f(x)\to\pm\infty$.
+
+\begin{center}
+\begin{tabular}{|c|cc|cc||cc|cc|c|}\hline
+$x$ & $-\infty$ & & $-3$ & & $-2$ & & $-1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & \textbar\textbar & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $-\infty$ & $\nearrow$ & $-3$ & $\searrow$ & \textbar\textbar $-\infty$ / $+\infty$ & $\searrow$ & $1$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+(En $-2$ : limite $-\infty$ à gauche, $+\infty$ à droite.)
+
+\item \textbf{Tracé.} On trace l'asymptote verticale $x=-2$, l'asymptote oblique $y=x+1$, on place les extrema $(-3;-3)$ et $(-1;1)$, puis les deux branches.
+\begin{center}
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[width=0.85\linewidth, height=8cm, axis lines=middle, xlabel=$x$, ylabel=$y$, xmin=-8, xmax=4, ymin=-8, ymax=6, samples=100, grid=both, grid style={popline!40}]
+\addplot[popmuted, dashed] coordinates {(-2,-8) (-2,6)};
+\addplot[popmuted, dashed, domain=-8:4] {x+1};
+\addplot[popcurve, domain=-8:-2.35] {(x^2+3*x+3)/(x+2)};
+\addplot[popcurve, domain=-1.65:4] {(x^2+3*x+3)/(x+2)};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f$ avec les asymptotes $x=-2$ et $y=x+1$}
+\end{popfigure}
+\end{center}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Fonction rationnelle : asymptotes et variations]
+\begin{enumerate}
+\item \textbf{Asymptote verticale.} $1$ est valeur interdite et le numérateur en $1$ vaut $1-4=-3\neq 0$ :
+\[ \lim_{\substack{x\to 1\\x>1}}\frac{x^2-4}{x-1}=\frac{-3}{0^+}=-\infty \;;\qquad \lim_{\substack{x\to 1\\x<1}}\frac{x^2-4}{x-1}=\frac{-3}{0^-}=+\infty. \]
+La droite $x=1$ est asymptote verticale.
+
+\textbf{Asymptote oblique.} Division euclidienne : $x^2-4=(x-1)(x+1)-3$. Vérification : $(x-1)(x+1)-3=x^2-1-3=x^2-4$. \checkmark
+Donc $f(x)=x+1-\dfrac{3}{x-1}$. Comme $\lim\limits_{x\to\pm\infty}\dfrac{-3}{x-1}=0$, la droite $y=x+1$ est asymptote oblique en $-\infty$ et en $+\infty$.
+
+\item \textbf{Intersections avec les axes.}
+\begin{itemize}
+\item Axe des ordonnées : $f(0)=\dfrac{-4}{-1}=4$. Point $(0\,;4)$.
+\item Axe des abscisses : $f(x)=0\iff x^2-4=0\iff x=2$ ou $x=-2$. Points $(2\,;0)$ et $(-2\,;0)$.
+\end{itemize}
+
+\item \textbf{Dérivée et variations.} À partir de $f(x)=x+1-\dfrac{3}{x-1}$ :
+\[ f'(x)=1+\frac{3}{(x-1)^2}. \]
+Pour tout $x\neq 1$, $\dfrac{3}{(x-1)^2}>0$, donc $f'(x)>1>0$ : $f$ est \textbf{strictement croissante} sur $]-\infty;1[$ et sur $]1;+\infty[$.
+Limites à l'infini : $\lim\limits_{x\to\pm\infty}f(x)=\lim\limits_{x\to\pm\infty}\dfrac{x^2}{x}=\pm\infty$.
+
+\begin{center}
+\begin{tabular}{|c||cc|cc|c|}\hline
+$x$ & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & \textbar\textbar & $+$ & \\ \hline
+$f$ & \textbar\textbar $+\infty$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\quad
+\begin{tabular}{|c|cc||c|cc|}\hline
+$x$ & $-\infty$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & \textbar\textbar & $+$ & \\ \hline
+$f$ & $-\infty$ & $\nearrow$ & \textbar\textbar $-\infty$ / $+\infty$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+(En $1$ : limite $+\infty$ à gauche, $-\infty$ à droite.)
+
+\item \textbf{Tracé.} On trace les asymptotes $x=1$ et $y=x+1$, on place les points $(-2;0)$, $(0;4)$, $(2;0)$, puis on trace les deux branches croissantes en suivant les asymptotes.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Application : Coût moyen de production]
+\begin{enumerate}
+\item $C_m(x)=\dfrac{x^2+10x+100}{x}=x+10+\dfrac{100}{x}$. Donc $a=1$, $b=10$, $c=100$.
+
+\item \textbf{Asymptotes.}
+\begin{itemize}
+\item En $0^+$ : $\lim\limits_{x\to 0^+}C_m(x)=\lim\limits_{x\to 0^+}\dfrac{100}{x}=+\infty$ : la droite $x=0$ (axe des ordonnées) est \cle{asymptote verticale}.
+\item À l'infini : $C_m(x)-(x+10)=\dfrac{100}{x}\to 0$ quand $x\to+\infty$ : la droite $y=x+10$ est \cle{asymptote oblique}.
+\end{itemize}
+
+\item \textbf{Variations.} $C_m'(x)=1-\dfrac{100}{x^2}=\dfrac{x^2-100}{x^2}=\dfrac{(x-10)(x+10)}{x^2}$.
+Sur $]0;+\infty[$, $x+10>0$ et $x^2>0$, donc $C_m'(x)$ a le signe de $x-10$ :
+$C_m'(x)<0$ sur $]0;10[$ et $C_m'(x)>0$ sur $]10;+\infty[$.
+$C_m$ est donc décroissante sur $]0;10]$ puis croissante sur $[10;+\infty[$.
+
+\begin{center}
+\begin{tabular}{|c||cc|cc|c|}\hline
+$x$ & $0$ & & $10$ & & $+\infty$ \\ \hline
+$C_m'(x)$ & \textbar\textbar & $-$ & $0$ & $+$ & \\ \hline
+$C_m$ & \textbar\textbar $+\infty$ & $\searrow$ & $30$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+
+\item \textbf{Minimum.} Le coût moyen est minimal pour $x=10$, soit une production de $10\times 100=1\,000$ chaises. La valeur minimale est
+\[ C_m(10)=10+10+\frac{100}{10}=30 \text{ (milliers de FCFA)}, \]
+soit un coût moyen minimal de $30\,000$ FCFA par centaine de chaises (c'est-à-dire $300$ FCFA par chaise en coût moyen).
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{corrige}[Exercice 9 — Étude complète type Probatoire : Fonction rationnelle]
+\emph{Barème indicatif sur 10 points : question 1 : 1 pt ; question 2 : 3,5 pts ; question 3 : 2,5 pts ; question 4 : 1,5 pt ; question 5 : 1,5 pt.}
+
+\begin{enumerate}
+\item \textbf{Domaine et symétrie.} $D_f=]-\infty;-2[\cup]-2;+\infty[$ (valeur interdite $x=-2$).
+Symétrie : $D_f$ n'est pas symétrique par rapport à $0$ (par exemple $2\in D_f$ mais $-2\notin D_f$), donc $f$ n'est \textbf{ni paire ni impaire}.
+
+\item \textbf{Limites et asymptotes.}
+\begin{enumerate}
+\item Limites aux bornes :
+\[ \lim_{\substack{x\to -2\\x<-2}}f(x)=-\infty \;;\quad \lim_{\substack{x\to -2\\x>-2}}f(x)=+\infty \;;\quad \lim_{x\to-\infty}f(x)=-\infty \;;\quad \lim_{x\to+\infty}f(x)=+\infty. \]
+(En $-2$, le numérateur vaut $4-6+3=1>0$ ; le signe de $x+2$ donne le résultat. À l'infini, $f(x)\sim\dfrac{x^2}{x}=x$.)
+
+\item Les limites en $-2$ sont infinies : la droite $x=-2$ est \cle{asymptote verticale}.
+
+\item Division euclidienne : $x^2+3x+3=(x+2)(x+1)+1$, donc
+\[ f(x)=x+1+\frac{1}{x+2}. \]
+Comme $\lim\limits_{x\to\pm\infty}\bigl(f(x)-(x+1)\bigr)=\lim\limits_{x\to\pm\infty}\dfrac{1}{x+2}=0$, la droite $\mathcal{D}$ : $y=x+1$ est \cle{asymptote oblique} en $-\infty$ et en $+\infty$.
+
+\item Position : $f(x)-(x+1)=\dfrac{1}{x+2}$.
+Si $x>-2$, $\mathcal{C}_f$ est au-dessus de $\mathcal{D}$ ; si $x<-2$, $\mathcal{C}_f$ est en dessous de $\mathcal{D}$.
+\end{enumerate}
+
+\item \textbf{Dérivée et variations.}
+\begin{enumerate}
+\item $f'(x)=1-\dfrac{1}{(x+2)^2}=\dfrac{(x+2)^2-1}{(x+2)^2}=\dfrac{(x+1)(x+3)}{(x+2)^2}$.
+
+\item Signe de $f'$ : celui de $(x+1)(x+3)$. Avec $f(-3)=-3$ et $f(-1)=1$ :
+
+\begin{center}
+\begin{tabular}{|c|cc|cc||cc|cc|c|}\hline
+$x$ & $-\infty$ & & $-3$ & & $-2$ & & $-1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & \textbar\textbar & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $-\infty$ & $\nearrow$ & $-3$ & $\searrow$ & \textbar\textbar $-\infty$ / $+\infty$ & $\searrow$ & $1$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+(En $-2$ : $-\infty$ à gauche, $+\infty$ à droite.)
+\end{enumerate}
+
+\item \textbf{Intersections et points particuliers.}
+\begin{enumerate}
+\item Axe des ordonnées : $f(0)=\dfrac{3}{2}$, point $\left(0\,;\dfrac{3}{2}\right)$.
+Axe des abscisses : $f(x)=0\iff x^2+3x+3=0$ ; discriminant $\Delta=9-12=-3<0$ : pas de solution, donc \textbf{pas d'intersection} avec l'axe des abscisses.
+
+\item $\mathcal{C}_f$ coupe $\mathcal{D}$ si et seulement si $f(x)=x+1$, c'est-à-dire $\dfrac{1}{x+2}=0$ : impossible (une fraction nulle exige un numérateur nul, or $1\neq 0$). Donc $\mathcal{C}_f$ \textbf{ne coupe jamais} son asymptote oblique.
+\end{enumerate}
+
+\item \textbf{Tracé.} Repère orthonormé, asymptotes $x=-2$ et $y=x+1$ en pointillés, points $(-3;-3)$, $(-1;1)$, $\left(0;\tfrac32\right)$, puis les deux branches.
+\begin{center}
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[width=0.85\linewidth, height=8cm, axis lines=middle, xlabel=$x$, ylabel=$y$, xmin=-8, xmax=4, ymin=-8, ymax=6, samples=100, grid=both, grid style={popline!40}]
+\addplot[popmuted, dashed] coordinates {(-2,-8) (-2,6)};
+\addplot[popmuted, dashed, domain=-8:4] {x+1};
+\addplot[popcurve, domain=-8:-2.35] {(x^2+3*x+3)/(x+2)};
+\addplot[popcurve, domain=-1.65:4] {(x^2+3*x+3)/(x+2)};
+\addplot[only marks, mark=*, popblue] coordinates {(-3,-3) (-1,1) (0,1.5)};
+\end{axis}
+\end{tikzpicture}
+\legende{Construction complète de $\mathcal{C}_f$}
+\end{popfigure}
+\end{center}
+\end{enumerate}
+
+\textbf{Points de vigilance (Probatoire).}
+\begin{itemize}
+\item Pour l'asymptote verticale, il faut \emph{calculer explicitement} les limites en $-2$ (à gauche et à droite) et conclure par la phrase : « la limite est infinie, donc la droite $x=-2$ est asymptote verticale ».
+\item Pour l'asymptote oblique, citer la définition : $\lim\bigl(f(x)-(ax+b)\bigr)=0$.
+\item Ne pas oublier la double barre de valeur interdite dans le tableau de variations.
+\item La position courbe/asymptote se justifie par le \emph{signe} de $f(x)-(x+1)$, pas par une lecture graphique.
+\end{itemize}
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Problème concret : Bénéfice d'un menuisier]
+\emph{Barème indicatif sur 10 points : question 1 : 1 pt ; question 2 : 2 pts ; question 3 : 2 pts ; question 4 : 2,5 pts ; question 5 : 1,5 pt ; question 6 : 1 pt.}
+
+\begin{enumerate}
+\item $b(x)=\dfrac{-x^2+40x-100}{x}=-x+40-\dfrac{100}{x}$. Donc $a=-1$, $b=40$, $c=-100$.
+
+\item \textbf{Ensemble de définition.} $x$ est un nombre de sacs avec $x>0$ et $x$ au dénominateur : $D_b=]0;+\infty[$.
+
+\textbf{Limites aux bornes.}
+\[ \lim_{x\to 0^+}b(x)=\lim_{x\to 0^+}\left(-\frac{100}{x}\right)=-\infty \;;\qquad \lim_{x\to+\infty}b(x)=\lim_{x\to+\infty}(-x)=-\infty. \]
+
+\item \textbf{Asymptotes.}
+\begin{itemize}
+\item $\lim\limits_{x\to 0^+}b(x)=-\infty$ : la droite $x=0$ (axe des ordonnées) est \cle{asymptote verticale}.
+\item $b(x)-(-x+40)=-\dfrac{100}{x}\to 0$ quand $x\to+\infty$ : la droite $y=-x+40$ est \cle{asymptote oblique} en $+\infty$.
+\end{itemize}
+
+\item \textbf{Dérivée et variations.}
+\[ b'(x)=-1+\frac{100}{x^2}=\frac{100-x^2}{x^2}=\frac{(10-x)(10+x)}{x^2}. \]
+Sur $]0;+\infty[$, $x^2>0$ et $10+x>0$, donc $b'(x)$ a le signe de $10-x$ :
+$b'(x)>0$ sur $]0;10[$ et $b'(x)<0$ sur $]10;+\infty[$.
+
+\begin{center}
+\begin{tabular}{|c||cc|cc|c|}\hline
+$x$ & $0$ & & $10$ & & $+\infty$ \\ \hline
+$b'(x)$ & \textbar\textbar & $+$ & $0$ & $-$ & \\ \hline
+$b$ & \textbar\textbar $-\infty$ & $\nearrow$ & $20$ & $\searrow$ & $-\infty$ \\ \hline
+\end{tabular}
+\end{center}
+
+\item \textbf{Maximum.} Le bénéfice moyen est maximal pour $x=10$ sacs, et vaut
+\[ b(10)=-10+40-\frac{100}{10}=-10+40-10=20 \text{ FCFA par sac}. \]
+
+\item \textbf{Interprétation.} Le menuisier a intérêt à vendre exactement $10$ sacs : c'est là que le bénéfice \emph{moyen} par sac est le plus élevé ($20$ FCFA). Au-delà de $10$ sacs, les coûts croissants font diminuer le bénéfice moyen ; en dessous, les frais fixes ($100$ FCFA) ne sont pas suffisamment amortis.
+\end{enumerate}
+
+\textbf{Points de vigilance.} Bien justifier le signe de $b'$ en écrivant $b'(x)$ sous forme d'un seul quotient ; ne pas confondre bénéfice moyen maximal et bénéfice total maximal ; conclure par une phrase en lien avec le contexte.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Lecture graphique et reconstruction de fonction]
+\emph{Barème indicatif sur 10 points : question 1 : 1 pt ; question 2 : 2 pts ; question 3 : 2 pts ; question 4 : 3 pts ; question 5 : 2 pts.}
+
+\begin{enumerate}
+\item \textbf{Asymptote verticale.} Sur le graphique, la courbe « explose » de part et d'autre de la droite verticale passant par $x=1$ : $\mathcal{V}$ a pour équation $x=1$.
+
+\item \textbf{Équation de $\mathcal{D}$.} $\mathcal{D}$ passe par $(0;0)$ et $(2;2)$. Son coefficient directeur est $a=\dfrac{2-0}{2-0}=1$ et son ordonnée à l'origine est $b=0$. Donc $\mathcal{D}$ : $y=x$.
+
+\item \textbf{Vérification des points.} Pour $f(x)=x+\dfrac{1}{x-1}$ :
+\[ f(0)=0+\frac{1}{0-1}=-1 \quad\Rightarrow\quad A(0;-1)\in\mathcal{C}_f. \checkmark \]
+\[ f(2)=2+\frac{1}{2-1}=2+1=3 \quad\Rightarrow\quad C(2;3)\in\mathcal{C}_f. \checkmark \]
+
+\item \textbf{Cohérence avec le graphique.}
+\begin{itemize}
+\item Ensemble de définition : $f$ est définie sur $\mathbb{R}\setminus\{1\}$, ce qui correspond à la valeur interdite lue.
+\item Asymptote verticale : $\lim\limits_{x\to 1^+}\dfrac{1}{x-1}=+\infty$ et $\lim\limits_{x\to 1^-}\dfrac{1}{x-1}=-\infty$, donc la droite $x=1$ est bien asymptote verticale : cohérent avec $\mathcal{V}$.
+\item Asymptote oblique : $f(x)-x=\dfrac{1}{x-1}\to 0$ quand $x\to\pm\infty$, donc la droite $y=x$ est asymptote oblique : cohérent avec $\mathcal{D}$.
+\item Les points $A$ et $C$ appartiennent à la courbe (question 3).
+\end{itemize}
+Toutes les caractéristiques lues graphiquement sont retrouvées par le calcul : $f(x)=x+\dfrac{1}{x-1}$ est bien une expression possible de la fonction représentée.
+
+\item \textbf{Position de $\mathcal{C}_f$ par rapport à $\mathcal{D}$.} On étudie le signe de $f(x)-x=\dfrac{1}{x-1}$ :
+\begin{itemize}
+\item si $x>1$ : $x-1>0$, donc $f(x)-x>0$ : $\mathcal{C}_f$ est \textbf{au-dessus} de $\mathcal{D}$ ;
+\item si $x<1$ : $x-1<0$, donc $f(x)-x<0$ : $\mathcal{C}_f$ est \textbf{en dessous} de $\mathcal{D}$.
+\end{itemize}
+C'est conforme au graphique : la branche de droite monte au-dessus de $\mathcal{D}$, la branche de gauche reste en dessous.
+\end{enumerate}
+
+\textbf{Points de vigilance.} Une lecture graphique donne une \emph{conjecture} ; c'est la vérification par le calcul (limites, images des points) qui \emph{justifie} l'expression de $f$. Toujours rédiger la position relative par une étude de signe.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    mindmap,
+    grow cyclic,
+    every node/.style={concept, execute at begin node=\hskip0pt},
+    concept color=popblue,
+    level 1/.style={level distance=4.5cm, sibling angle=60},
+    level 2/.style={level distance=3cm, sibling angle=45},
+    texte court/.style={font=\small, text width=2.2cm, align=center}
+]
+\node[concept, concept color=popblue, texte court, align=center]{Représentation\\ graphique\\ d'une fonction}
+    child[concept color=poporange] { node[concept, texte court, align=center]{Asymptotes\\ verticales}
+        child { node[texte court] {$x \to a \Rightarrow f(x) \to \pm\infty$} }
+        child { node[texte court] {Recherche : zéros dénominateur, domaine} }
+    }
+    child[concept color=popgreen] { node[concept, texte court, align=center]{Asymptotes\\ horizontales}
+        child { node[texte court] {$x \to \pm\infty \Rightarrow f(x) \to \ell$} }
+        child { node[texte court] {Droite $y = \ell$} }
+    }
+    child[concept color=poppurple] { node[concept, texte court, align=center]{Asymptotes\\ obliques}
+        child { node[texte court] {$x \to \pm\infty \Rightarrow f(x) \sim ax+b$} }
+        child { node[texte court] {$a = \lim \frac{f(x)}{x},\ b = \lim (f(x)-ax)$} }
+    }
+    child[concept color=poppink] { node[concept, texte court, align=center]{Plan d'étude\\ complet}
+        child { node[texte court] {Domaine, Parité, Périodicité} }
+        child { node[texte court] {Limites, Asymptotes} }
+        child { node[texte court] {Dérivée, Variations} }
+        child { node[texte court] {Tableau, Courbe} }
+    }
+    child[concept color=popgold] { node[concept, texte court, align=center]{Exemple\\ guidé}
+        child { node[texte court] {Fonction rationnelle} }
+        child { node[texte court] {Fonction racine} }
+    }
+    child[concept color=popdark] { node[concept, texte court, align=center]{Applications\\ concrètes}
+        child { node[texte court] {Coûts, Rentabilité} }
+        child { node[texte court] {Physique, Électricité} }
+    };
+\end{tikzpicture}
+\legende{Carte mentale : Représentation graphique d'une fonction numérique (Première Technique)}
+\end{popfigure}
+
+\begin{bilan}
+\courssub{Définitions clés}
+\begin{itemize}
+    \item \cle{Asymptote verticale (AV)} : La droite d'équation $x = a$ est une asymptote verticale à $\mathcal{C}_f$ si $\lim\limits_{x \to a^{\pm}} f(x) = +\infty$ ou $-\infty$.
+    \item \cle{Asymptote horizontale (AH)} : La droite d'équation $y = \ell$ est une asymptote horizontale si $\lim\limits_{x \to +\infty} f(x) = \ell$ ou $\lim\limits_{x \to -\infty} f(x) = \ell$ ($\ell \in \mathbb{R}$).
+    \item \cle{Asymptote oblique (AO)} : La droite d'équation $y = ax + b$ ($a \neq 0$) est une asymptote oblique si $\lim\limits_{x \to \pm\infty} \big(f(x) - (ax+b)\big) = 0$.
+\end{itemize}
+
+\courssub{Théorèmes \& Formules à connaître par cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Type} & \textbf{Caractérisation / Calcul} \\\hline
+Verticale $x=a$ & $\lim\limits_{x \to a^-} f(x) = \pm\infty$ \textbf{ou} $\lim\limits_{x \to a^+} f(x) = \pm\infty$ \\\hline
+Horizontale $y=\ell$ & $\lim\limits_{x \to +\infty} f(x) = \ell$ \textbf{et/ou} $\lim\limits_{x \to -\infty} f(x) = \ell$ \\\hline
+Oblique $y=ax+b$ & $a = \lim\limits_{x \to \pm\infty} \dfrac{f(x)}{x}$ \quad ($a \neq 0$) \\
+& $b = \lim\limits_{x \to \pm\infty} \big(f(x) - ax\big)$ \\\hline
+Position relative & Étudier le signe de $f(x) - (ax+b)$ pour savoir si $\mathcal{C}_f$ est \emph{au-dessus} ($>0$) ou \emph{en-dessous} ($<0$) de l'asymptote. \\\hline
+\end{tabularx}
+\end{center}
+
+\courssub{Méthodes express}
+\begin{enumerate}
+    \item \textbf{AV} : Chercher les valeurs interdites (zéros dénominateur, bord domaine). Calculer les limites unilatérales.
+    \item \textbf{AH} : Calculer $\lim\limits_{x \to +\infty} f(x)$ et $\lim\limits_{x \to -\infty} f(x)$. Si finies $\Rightarrow y = \ell$.
+    \item \textbf{AO} (si pas d'AH) : Calculer $a = \lim\frac{f(x)}{x}$. Si $a \neq 0$ et fini, calculer $b = \lim(f(x)-ax)$.
+    \item \textbf{Plan d'étude complet} : 
+    \begin{enumerate}
+        \item Domaine $D_f$ (parité, périodicité).
+        \item Limites aux bornes de $D_f$ $\rightarrow$ Asymptotes.
+        \item Dérivée $f'$, signe de $f'$ $\rightarrow$ Tableau de variations.
+        \item Valeurs remarquables (intersections axes, extremums).
+        \item Tracé du repère, asymptotes (pointillés), courbe.
+    \end{enumerate}
+\end{enumerate}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+    \item $\square$ Savoir donner la définition précise des 3 types d'asymptotes (AV, AH, AO).
+    \item $\square$ Savoir rechercher les AV : identifier les valeurs interdites et calculer les limites unilatérales.
+    \item $\square$ Savoir rechercher les AH : calculer les limites à $+\infty$ et $-\infty$.
+    \item $\square$ Savoir rechercher les AO : calculer $a = \lim\frac{f(x)}{x}$ puis $b = \lim(f(x)-ax)$ (si $a \neq 0$).
+    \item $\square$ Savoir déterminer la position relative de la courbe par rapport à son asymptote oblique (signe de $f(x)-(ax+b)$).
+    \item $\square$ Construire un tableau de variations complet et correct (valeurs exactes, flèches $\nearrow/\searrow$, doubles barres $||$ pour valeurs interdites).
+    \item $\square$ Tracer le repère orthonormé (échelle adaptée, unités, noms axes) et placer les asymptotes en pointillés.
+    \item $\square$ Tracer la courbe en respectant les variations, les asymptotes, les points caractéristiques et la convexité (si étudiée).
+    \item $\square$ Lire graphiquement : antécédents, images, sens de variation, position par rapport à une droite.
+    \item $\square$ Modéliser une situation concrète (coût, rentabilité, physique) par une fonction et interpréter les résultats (seuil de rentabilité, optimum).
+    \item $\square$ Justifier chaque étape par une phrase : « Donc la droite $x=a$ est une asymptote verticale car... »
+    \item $\square$ Vérifier la cohérence : domaine, limites, variations, tracé.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

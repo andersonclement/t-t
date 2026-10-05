@@ -1,0 +1,2817 @@
+% Coniques — Mathématiques Tle Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N16-coniques.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Terminale technique}
+\newcommand{\DOCLECON}{N16}
+\newcommand{\DOCTITRE}{Coniques}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Coniques}{Mathématiques}{Tle Tech}{Mathématiques – classe de Terminale technique}{N16}{4 séances (fiche de progression harmonisée)}{Cette leçon présente les coniques (ellipse, parabole, hyperbole) comme sections d'un cône et comme lieux géométriques définis par foyer, directrice et excentricité. L'élève apprend à reconnaître une conique, à établir son équation réduite, à la construire et à déterminer l'équation d'une tangente en un point.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais décrire les coniques comme sections planes d'un cône de révolution et citer leurs propriétés élémentaires.
+\item À la fin de cette leçon, je sais définir une conique par son foyer, sa directrice et son excentricité (définition monofocale).
+\item À la fin de cette leçon, je sais distinguer ellipse, parabole et hyperbole à partir de la valeur de l'excentricité e.
+\item À la fin de cette leçon, je sais établir et reconnaître l'équation réduite d'une ellipse, d'une parabole et d'une hyperbole.
+\item À la fin de cette leçon, je sais déterminer les éléments caractéristiques d'une conique (centre, sommets, foyers, directrices, asymptotes) à partir de son équation.
+\item À la fin de cette leçon, je sais écrire l'équation de la tangente en un point d'une conique donnée par son équation réduite.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Présentation générale des coniques et propriétés
+\item Équation réduite de l'ellipse
+\item Équation réduite de la parabole
+\item Équation réduite de l'hyperbole
+\item Tangente en un point à une conique
+\item Construction d'une conique et applications
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais décrire les coniques comme sections planes d'un cône de révolution et citer leurs propriétés élémentaires.
+\item À la fin de cette leçon, je sais définir une conique par son foyer, sa directrice et son excentricité (définition monofocale).
+\item À la fin de cette leçon, je sais distinguer ellipse, parabole et hyperbole à partir de la valeur de l'excentricité e.
+\item À la fin de cette leçon, je sais établir et reconnaître l'équation réduite d'une ellipse, d'une parabole et d'une hyperbole.
+\item À la fin de cette leçon, je sais déterminer les éléments caractéristiques d'une conique (centre, sommets, foyers, directrices, asymptotes) à partir de son équation.
+\item À la fin de cette leçon, je sais écrire l'équation de la tangente en un point d'une conique donnée par son équation réduite.
+\item À la fin de cette leçon, je sais construire point par point une conique (méthode du jardinier pour l'ellipse, pliage ou foyer-directrice pour la parabole).
+\item À la fin de cette leçon, je sais modéliser une situation concrète de la vie courante (trajectoire, antenne, pont) par une conique et justifier ma démarche.
+\item À la fin de cette leçon, je sais rédiger et justifier une démarche complète de résolution de problème sur les coniques.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Coordonnées d'un point, distance de deux points et distance d'un point à une droite dans un repère orthonormé (Seconde/Première)
+\item Équations de droites : forme cartésienne et réduite, parallélisme et perpendicularité
+\item Équations du second degré et formes canoniques des trinômes
+\item Vecteurs, produit scalaire et projection orthogonale (Première)
+\item Notion de lieu géométrique (cercle, médiatrice) et symétries
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Présentation générale des coniques et propriétés}
+
+\courssub{Situation d'accroche et problématique}
+
+Lors du lancement d'un ballon de football au stade Ahmadou Ahidjo de Yaoundé, la trajectoire du ballon dessine une courbe en arc que les physiciens appellent \cle{parabole}. De même, l'ombre portée d'un disque sur un mur éclaire une \cle{ellipse}, et les antennes paraboliques de la CRTV captent les ondes grâce à une propriété remarquable de la parabole. Ces courbes, appelées \cle{coniques}, apparaissent partout : ponts, phares de voitures, orbites des satellites, arcs de certains bâtiments de Douala.
+
+\textbf{Problématique :} comment obtenir les équations de ces courbes, comment les construire et comment tracer leurs tangentes ? C'est l'objet de cette leçon. Dans cette première section, nous découvrons d'où viennent les coniques, comment on les définit rigoureusement et quelles sont leurs propriétés générales.
+
+\courssub{Les coniques comme sections d'un cône de révolution}
+
+\textbf{Intuition.} Prenons un cône de révolution (comme un chapeau pointu ou un entonnoir double) et coupons-le par un plan, comme on tranche un pain avec un couteau plat. Selon l'inclinaison du couteau, le bord de la tranche n'a pas la même forme : c'est cette forme que les Grecs ont appelée \emph{conique}, c'est-à-dire \og section du cône \fg.
+
+\begin{definition}[Conique comme section plane]
+On appelle \cle{conique} toute courbe obtenue en coupant un cône de révolution (à deux nappes) par un plan ne passant pas par le sommet. Selon la position du plan :
+\begin{itemize}
+\item si le plan coupe une seule nappe en étant oblique par rapport à l'axe, la section est une \cle{ellipse} (un cercle si le plan est perpendiculaire à l'axe) ;
+\item si le plan est parallèle à une génératrice du cône, la section est une \cle{parabole} ;
+\item si le plan coupe les deux nappes, la section est une \cle{hyperbole} (courbe à deux branches).
+\end{itemize}
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+% Cône double
+\draw[popline] (0,2.2) ellipse (1.5 and 0.45);
+\draw[popline] (0,-2.2) ellipse (1.5 and 0.45);
+\draw[popline] (-1.5,2.2) -- (0,0) -- (1.5,-2.2);
+\draw[popline] (1.5,2.2) -- (0,0) -- (-1.5,-2.2);
+\draw[popmuted,dashed] (0,2.6) -- (0,-2.6) node[below]{\footnotesize axe};
+\node[popdark] at (0.15,0.15) {\footnotesize $S$};
+% Plan ellipse
+\draw[popblue,thick] (-1.9,1.15) -- (1.9,0.55);
+\draw[popblue,fill=popblueL,opacity=0.7] (0,0.85) ellipse (1.05 and 0.28);
+\node[popblue] at (2.6,1.1) {\footnotesize ellipse};
+% Plan parabole
+\draw[poporange,thick] (-2.2,-0.5) -- (0.6,2.3);
+\node[poporange] at (-2.6,-0.55) {\footnotesize parabole};
+\node[poporange] at (-2.6,-0.95) {\footnotesize (plan $\parallel$ génératrice)};
+% Plan hyperbole
+\draw[poppurple,thick] (0.75,2.5) -- (0.75,-2.5);
+\node[poppurple] at (1.9,-2.4) {\footnotesize hyperbole};
+\node[poppurple] at (1.9,-2.8) {\footnotesize (deux nappes)};
+\end{tikzpicture}
+\end{center}
+\legende{Un cône de révolution coupé par trois plans : ellipse, parabole, hyperbole.}
+\end{popfigure}
+
+\begin{attention}[Cas dégénérés]
+Si le plan passe par le \cle{sommet} du cône, la section n'est plus une courbe ordinaire : on obtient un \textbf{point} (plan ne touchant le cône qu'au sommet), une \textbf{droite} (plan tangent au cône le long d'une génératrice) ou \textbf{deux droites sécantes} (plan coupant les deux nappes en passant par le sommet). Ce sont les \emph{coniques dégénérées}, que nous exclurons de notre étude.
+\end{attention}
+
+\begin{savaistu}[Apollonius de Perga]
+C'est le mathématicien grec \textbf{Apollonius de Perga} (vers 262 -- 190 av. J.-C.) qui a étudié systématiquement ces courbes dans son traité \emph{Les Coniques}, et qui leur a donné leurs noms : ellipse (\og il manque \fg), parabole (\og à côté, égal \fg), hyperbole (\og au-delà \fg). Ces mots correspondent en fait aux trois cas de l'excentricité : $e<1$, $e=1$, $e>1$, que nous allons découvrir.
+\end{savaistu}
+
+\courssub{Définition monofocale : foyer, directrice, excentricité}
+
+\textbf{Intuition.} Couper un cône, ce n'est pas pratique pour tracer une courbe sur le plan d'un atelier ! Les mathématiciens ont trouvé une définition purement plane, avec une règle et un point fixe : on compare la distance d'un point $M$ à un point fixe $F$ (le \emph{foyer}) et sa distance à une droite fixe $D$ (la \emph{directrice}).
+
+\begin{definition}[Définition monofocale d'une conique]
+Soit $F$ un point du plan, $D$ une droite ne passant pas par $F$ ($F \notin D$) et $e$ un réel strictement positif. La \cle{conique} de \cle{foyer} $F$, de \cle{directrice} $D$ et d'\cle{excentricité} $e$ est l'ensemble des points $M$ du plan tels que :
+\[ MF = e \times d(M,D) \]
+où $d(M,D)$ est la distance de $M$ à la droite $D$ (c'est-à-dire $MH$, avec $H$ le projeté orthogonal de $M$ sur $D$).
+\end{definition}
+
+\begin{propriete}[Classification selon l'excentricité]
+La nature de la conique dépend uniquement de la valeur de $e$ :
+\begin{itemize}
+\item si $0 < e < 1$ : la conique est une \cle{ellipse} ;
+\item si $e = 1$ : la conique est une \cle{parabole} ;
+\item si $e > 1$ : la conique est une \cle{hyperbole}.
+\end{itemize}
+Le cas $e = 0$ est un cas limite : il correspond au \textbf{cercle}.
+\end{propriete}
+
+\begin{propriete}[Lien entre les deux définitions (admise)]
+Toute section plane d'un cône de révolution est une conique au sens foyer-directrice, et réciproquement toute conique définie par un foyer, une directrice et une excentricité peut s'obtenir comme section d'un cône de révolution. Cette équivalence, admise, justifie que les deux points de vue décrivent les mêmes courbes.
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[width=0.95\linewidth, height=7cm, axis lines=middle, xlabel={$x$}, ylabel={$y$},
+xmin=-2.5, xmax=4.5, ymin=-3.2, ymax=3.2, xtick={-2,-1,1,2,3,4}, ytick=\empty,
+legend style={at={(0.02,0.98)}, anchor=north west, font=\footnotesize}]
+% Directrice x = -1
+\addplot[popmuted, thick, dashed] coordinates {(-1,-3.2) (-1,3.2)};
+\node[popmuted, font=\footnotesize] at (axis cs:-1.15,2.6) {$D$};
+% Ellipse e=0.5 : foyer (0,0), directrice x=-1 => centre (1/3,0), a=2/3, b=sqrt(3)/3
+\addplot[popblue, thick, domain=0:360, samples=200] ({0.3333+0.6667*cos(x)}, {0.5774*sin(x)});
+% Parabole e=1 : y^2 = 2x+1
+\addplot[poporange, thick, domain=-2.8:2.8, samples=100] ({(x^2-1)/2}, {x});
+% Hyperbole e=1.5 : foyer (0,0), directrice x=-1 => centre (-1.8,0), a=1.2, b=sqrt(1.8)
+\addplot[poppurple, thick, domain=-2.5:2.5, samples=100] ({-1.8+1.2*cosh(x)}, {1.34164*sinh(x)});
+\addplot[poppurple, thick, domain=-2.5:2.5, samples=100] ({-1.8-1.2*cosh(x)}, {1.34164*sinh(x)});
+% Foyer
+\addplot[only marks, mark=*, popdark] coordinates {(0,0)};
+\node[popdark, font=\footnotesize, below right] at (axis cs:0,0) {$F$};
+\legend{, ellipse $e=0{,}5$, parabole $e=1$, hyperbole $e=1{,}5$,}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Trois coniques de même foyer $F$ et même directrice $D$ : seule l'excentricité change.}
+\end{popfigure}
+
+\begin{exoresolu}[Vérifier qu'un point appartient à une conique]
+\textbf{Énoncé.} Soit la conique de foyer $F(0\,;\,0)$, de directrice $D$ d'équation $x = 4$ et d'excentricité $e = \dfrac{1}{2}$. Le point $M(2\,;\,0)$ appartient-il à cette conique ? Quelle est sa nature ?
+\tcblower
+\textbf{Solution.} On calcule les deux distances :
+\begin{align*}
+MF &= \sqrt{(2-0)^2 + (0-0)^2} = 2 \\
+d(M,D) &= |2 - 4| = 2
+\end{align*}
+On vérifie la relation de définition : $e \times d(M,D) = \dfrac{1}{2} \times 2 = 1 \neq 2 = MF$. Donc $M$ \textbf{n'appartient pas} à la conique. Comme $e = \dfrac{1}{2} < 1$, cette conique est une \textbf{ellipse}.
+\end{exoresolu}
+
+\begin{attention}[Excentricité et paramètre : deux notions distinctes]
+Ne pas confondre l'\cle{excentricité} $e$ (nombre sans unité qui fixe la \emph{nature} de la conique) et le \cle{paramètre} $p$ de la parabole (distance du foyer à la directrice, qui fixe sa \emph{taille}). De plus, $e = 0$ ne donne pas une parabole : c'est le cas limite du \textbf{cercle}. Retenir : $e < 1$ ellipse, $e = 1$ parabole, $e > 1$ hyperbole.
+\end{attention}
+
+\courssub{Définitions bifocales de l'ellipse et de l'hyperbole}
+
+\textbf{Intuition.} Les jardiniers tracent des plates-bandes ovales avec deux piquets et une corde : la corde, de longueur fixe, est tendue autour des deux piquets, et on guide le traceur en gardant la corde tendue. La somme des distances aux deux piquets reste constante : c'est exactement la définition bifocale de l'ellipse.
+
+\begin{definition}[Définition bifocale de l'ellipse]
+Soient $F$ et $F'$ deux points distincts du plan (les \cle{foyers}) et $a$ un réel tel que $2a > FF'$. L'\cle{ellipse} de foyers $F$ et $F'$ est l'ensemble des points $M$ du plan tels que :
+\[ MF + MF' = 2a \]
+\end{definition}
+
+\begin{definition}[Définition bifocale de l'hyperbole]
+Soient $F$ et $F'$ deux points distincts et $a$ un réel tel que $0 < 2a < FF'$. L'\cle{hyperbole} de foyers $F$ et $F'$ est l'ensemble des points $M$ du plan tels que :
+\[ |MF - MF'| = 2a \]
+\end{definition}
+
+\begin{propriete}[Équivalence avec la définition monofocale (admise en partie)]
+La définition bifocale de l'ellipse (resp. de l'hyperbole) est équivalente à la définition monofocale avec $e < 1$ (resp. $e > 1$). En notant $2c = FF'$ la distance focale, l'excentricité vaut $e = \dfrac{c}{a}$, et la directrice associée au foyer $F$ est perpendiculaire à la droite $(FF')$.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : de la définition bifocale à l'équation de l'ellipse]
+Plaçons $F(c\,;\,0)$ et $F'(-c\,;\,0)$, et soit $M(x\,;\,y)$ tel que $MF + MF' = 2a$ avec $a > c$.
+\begin{enumerate}
+\item Écrire les distances : $MF = \sqrt{(x-c)^2 + y^2}$ et $MF' = \sqrt{(x+c)^2 + y^2}$.
+\item Isoler un radical : $\sqrt{(x-c)^2+y^2} = 2a - \sqrt{(x+c)^2+y^2}$, puis élever au carré. Après simplification, on obtient : $a\sqrt{(x+c)^2+y^2} = a^2 + cx$.
+\item Élever de nouveau au carré : $a^2\big[(x+c)^2+y^2\big] = a^4 + 2a^2cx + c^2x^2$.
+\item Regrouper : $(a^2 - c^2)x^2 + a^2 y^2 = a^2(a^2 - c^2)$.
+\item Poser $b^2 = a^2 - c^2$ (possible car $a > c$) et diviser par $a^2 b^2$ :
+\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \]
+C'est l'\cle{équation réduite} de l'ellipse, étudiée dans la section suivante. On retrouve $e = \dfrac{c}{a} < 1$ : cohérent avec la définition monofocale.
+\end{enumerate}
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+\draw[popblue, thick] (0,0) ellipse (3 and 2);
+\fill[popdark] (-2.236,0) circle (1.5pt) node[below left]{\footnotesize $F'$};
+\fill[popdark] (2.236,0) circle (1.5pt) node[below right]{\footnotesize $F$};
+\fill[poporange] (1.8,1.6) circle (1.5pt) node[above right]{\footnotesize $M$};
+\draw[poporange, thick] (-2.236,0) -- (1.8,1.6) node[midway, above left, font=\footnotesize]{$MF'$};
+\draw[poporange, thick] (2.236,0) -- (1.8,1.6) node[midway, above right, font=\footnotesize]{$MF$};
+\draw[popline, ->] (-3.5,0) -- (3.5,0);
+\draw[popline, ->] (0,-2.5) -- (0,2.5);
+\fill[popgreen] (3,0) circle (1.2pt) node[below right]{\footnotesize $A$};
+\fill[popgreen] (-3,0) circle (1.2pt) node[below left]{\footnotesize $A'$};
+\fill[popgreen] (0,2) circle (1.2pt) node[above right]{\footnotesize $B$};
+\fill[popgreen] (0,-2) circle (1.2pt) node[below right]{\footnotesize $B'$};
+\node[popdark, font=\footnotesize] at (0,-2.9) {$MF + MF' = 2a$ (méthode du jardinier)};
+\end{tikzpicture}
+\end{center}
+\legende{Définition bifocale de l'ellipse : la somme $MF + MF'$ est constante.}
+\end{popfigure}
+
+\begin{exemplebox}[Vérification numérique]
+Soit l'ellipse de foyers $F(3\,;\,0)$ et $F'(-3\,;\,0)$, avec $2a = 10$. Le point $M(4\,;\,2{,}4)$ vérifie :
+\[ MF = \sqrt{1^2 + 2{,}4^2} = \sqrt{6{,}76} = 2{,}6 \quad ; \quad MF' = \sqrt{7^2 + 2{,}4^2} = \sqrt{54{,}76} = 7{,}4 \]
+et $MF + MF' = 2{,}6 + 7{,}4 = 10 = 2a$ : le point $M$ appartient bien à l'ellipse. Ici $c = 3$, $a = 5$, donc $e = \dfrac{3}{5} = 0{,}6 < 1$.
+\end{exemplebox}
+
+\courssub{Propriétés de symétrie et vocabulaire}
+
+\begin{propriete}[Symétries des coniques]
+\begin{itemize}
+\item L'\textbf{ellipse} et l'\textbf{hyperbole} admettent \textbf{deux axes de symétrie} (la droite $(FF')$ et sa médiatrice) et un \textbf{centre de symétrie} (le milieu de $[FF']$) : ce sont des \cle{coniques à centre}.
+\item La \textbf{parabole} admet \textbf{un seul axe de symétrie} : la perpendiculaire à la directrice passant par le foyer. Elle n'a pas de centre de symétrie.
+\end{itemize}
+\end{propriete}
+
+\begin{aretenir}[Vocabulaire essentiel]
+\begin{itemize}
+\item \cle{Sommets} : points d'intersection de la conique avec ses axes de symétrie (l'ellipse en a 4, l'hyperbole 2, la parabole 1).
+\item \cle{Grand axe} de l'ellipse : segment $[A'A]$ de longueur $2a$ passant par les foyers ; \cle{petit axe} : segment $[B'B]$ de longueur $2b$.
+\item \cle{Distance focale} : distance $FF' = 2c$ entre les deux foyers.
+\item \cle{Paramètre} $p$ de la parabole : distance du foyer à la directrice.
+\item Relation fondamentale de l'ellipse : $a^2 = b^2 + c^2$ ; de l'hyperbole : $c^2 = a^2 + b^2$.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item Dans l'ellipse, la relation est $a^2 = b^2 + c^2$ (c'est $a$ le plus grand) ; dans l'hyperbole, c'est $c^2 = a^2 + b^2$ (c'est $c$ le plus grand). Ne pas les inverser !
+\item La condition $2a > FF'$ est indispensable pour l'ellipse : si $2a = FF'$, l'ensemble des points se réduit au segment $[FF']$.
+\item La parabole n'a qu'\textbf{un} foyer et \textbf{une} directrice : lui chercher un deuxième foyer est une erreur.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Des orbites képleriennes aux satellites]
+En 1609, l'astronome \textbf{Johannes Kepler} découvre que les planètes décrivent des \textbf{ellipses dont le Soleil occupe un foyer} : c'est la première loi de Kepler. Les satellites de télécommunication qui desservent le Cameroun suivent la même loi : leur orbite est une ellipse dont un foyer est le centre de la Terre. Les antennes paraboliques, elles, concentrent les ondes reçues au foyer de la parabole : c'est la même propriété focale qui fait chauffer les fours solaires et qui concentre la lumière dans les phares de voitures !
+\end{savaistu}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Une conique a pour foyer $F(0\,;\,0)$, pour directrice la droite $x = 6$ et pour excentricité $e = 2$. Quelle est sa nature ? Le point $M(4\,;\,0)$ appartient-il à cette conique ?
+\item Soit une ellipse de foyers $F(4\,;\,0)$ et $F'(-4\,;\,0)$ telle que $2a = 10$. Déterminer $c$, $a$, $b$ et l'excentricité $e$.
+\item Un jardinier de Bafoussam veut tracer une ellipse de grand axe \SI{6}{m} avec deux piquets distants de \SI{4}{m}. Quelle longueur de corde doit-il utiliser ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item $e = 2 > 1$ : c'est une \textbf{hyperbole}. Pour $M(4\,;\,0)$ : $MF = 4$ et $e \times d(M,D) = 2 \times |4-6| = 4$. On a $MF = e \times d(M,D)$ : $M$ \textbf{appartient} à l'hyperbole.
+\item $2c = FF' = 8$ donc $c = 4$ ; $2a = 10$ donc $a = 5$ ; $b^2 = a^2 - c^2 = 25 - 16 = 9$ donc $b = 3$ ; $e = \dfrac{c}{a} = \dfrac{4}{5} = 0{,}8$.
+\item La corde tendue entre les deux piquets et le traceur a pour longueur $2a + FF' = 2a + 2c = 6 + 4 = \SI{10}{m}$ (la partie utile $MF + MF' = 2a = \SI{6}{m}$).
+\end{enumerate}
+\end{corrige}
+
+\coursec{Équation réduite de l'ellipse}
+
+Dans la section précédente, nous avons présenté les coniques comme courbes obtenues par section d'un cône par un plan, et nous avons donné la définition bifocale de l'ellipse : c'est l'ensemble des points $M$ du plan tels que $MF + MF' = 2a$, où $F$ et $F'$ sont deux points fixes appelés \cle{foyers} et $2a$ une constante supérieure à $FF'$. Cette définition est géométrique ; pour travailler efficacement (calculer, construire, résoudre des problèmes d'atelier ou de mécanique), il nous faut la traduire par une \cle{équation}. C'est l'objet de cette section : choisir un bon repère, établir l'équation réduite de l'ellipse, puis apprendre à lire sur cette équation tous les éléments géométriques de la courbe.
+
+\courssub{Choix du repère adapté}
+
+Toute la démarche repose sur une idée simple : une équation est d'autant plus simple que le repère est bien choisi. L'ellipse possède deux axes de symétrie perpendiculaires : la droite $(FF')$ qui porte les foyers (le \cle{grand axe}) et la médiatrice du segment $[FF']$ (le \cle{petit axe}). Leur point d'intersection $O$, milieu de $[FF']$, est le \cle{centre} de l'ellipse.
+
+\begin{methode}[Choix du repère]
+\begin{enumerate}
+\item On prend pour origine $O$ le milieu de $[FF']$, centre de symétrie de l'ellipse.
+\item On prend pour axe des abscisses la droite $(FF')$, orientée de $F'$ vers $F$.
+\item On prend pour axe des ordonnées la médiatrice de $[FF']$.
+\end{enumerate}
+Dans ce repère orthonormé, les foyers ont pour coordonnées $F(c\,;0)$ et $F'(-c\,;0)$, où $c = OF$ est la \cle{distance focale} (on a donc $FF' = 2c$).
+\end{methode}
+
+Grâce aux symétries, si un point $M(x\,;y)$ appartient à l'ellipse, alors ses symétriques $(-x\,;y)$, $(x\,;-y)$ et $(-x\,;-y)$ aussi : l'équation cherchée ne devra donc contenir que des carrés $x^2$ et $y^2$. C'est exactement ce que nous allons vérifier.
+
+\courssub{De la définition bifocale à l'équation réduite}
+
+\begin{propriete}[Équation réduite de l'ellipse — démonstration exigible]
+Soit l'ellipse de foyers $F(c\,;0)$ et $F'(-c\,;0)$, ensemble des points $M$ tels que $MF + MF' = 2a$ (avec $a > c > 0$). Dans le repère $(O\,;\vec{\imath},\vec{\jmath})$ décrit ci-dessus, un point $M(x\,;y)$ appartient à l'ellipse si et seulement si :
+\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \qquad \text{avec} \qquad b^2 = a^2 - c^2. \]
+Cette démonstration (double élévation au carré) est formatrice et peut être demandée au Probatoire/Baccalauréat technique.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : de $MF + MF' = 2a$ à l'équation réduite]
+Soit $M(x\,;y)$ un point du plan. Suivons les étapes.
+
+\textbf{Étape 1 : exprimer les distances.}
+\[ MF = \sqrt{(x-c)^2 + y^2} \qquad \text{et} \qquad MF' = \sqrt{(x+c)^2 + y^2}. \]
+La condition $MF + MF' = 2a$ s'écrit :
+\[ \sqrt{(x-c)^2 + y^2} + \sqrt{(x+c)^2 + y^2} = 2a. \]
+
+\textbf{Étape 2 : isoler un radical et élever au carré.}
+\[ \sqrt{(x+c)^2 + y^2} = 2a - \sqrt{(x-c)^2 + y^2}. \]
+En élevant au carré :
+\begin{align*}
+(x+c)^2 + y^2 &= 4a^2 - 4a\sqrt{(x-c)^2 + y^2} + (x-c)^2 + y^2 \\
+x^2 + 2cx + c^2 &= 4a^2 - 4a\sqrt{(x-c)^2 + y^2} + x^2 - 2cx + c^2 \\
+4cx - 4a^2 &= -4a\sqrt{(x-c)^2 + y^2} \\
+a^2 - cx &= a\sqrt{(x-c)^2 + y^2}.
+\end{align*}
+
+\textbf{Étape 3 : élever une seconde fois au carré.}
+\begin{align*}
+(a^2 - cx)^2 &= a^2\left[(x-c)^2 + y^2\right] \\
+a^4 - 2a^2cx + c^2x^2 &= a^2x^2 - 2a^2cx + a^2c^2 + a^2y^2 \\
+a^4 + c^2x^2 &= a^2x^2 + a^2c^2 + a^2y^2 \\
+a^2(a^2 - c^2) &= x^2(a^2 - c^2) + a^2y^2.
+\end{align*}
+
+\textbf{Étape 4 : poser $b^2 = a^2 - c^2$ (possible car $a > c$, donc $b^2 > 0$).}
+\[ a^2 b^2 = b^2 x^2 + a^2 y^2. \]
+En divisant les deux membres par $a^2b^2 \neq 0$ :
+\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1. \]
+Réciproquement, on vérifie que tout point dont les coordonnées satisfont cette équation vérifie bien $MF + MF' = 2a$ (les étapes se remontent, les quantités manipulées étant positives). La démonstration est terminée.
+\end{experience}
+
+\begin{definition}[Équation réduite d'une ellipse]
+L'\cle{équation réduite} d'une ellipse de centre $O$, dont le grand axe est l'axe des abscisses, est :
+\[ \frac{x^2}{a^2} + \frac{y^2}{b^2} = 1 \qquad \text{avec } a \geq b > 0. \]
+\begin{itemize}
+\item $a$ est le \cle{demi-grand axe} ;
+\item $b$ est le \cle{demi-petit axe} ;
+\item la \cle{relation fondamentale} relie $a$, $b$ et la distance focale $c = OF$ :
+\[ c^2 = a^2 - b^2. \]
+\end{itemize}
+\end{definition}
+
+\begin{aretenir}[Les trois nombres clés]
+Pour une ellipse d'équation réduite $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$ avec $a \geq b > 0$ :
+\[ c^2 = a^2 - b^2, \qquad FF' = 2c, \qquad MF + MF' = 2a. \]
+Le plus grand des deux dénominateurs est toujours $a^2$.
+\end{aretenir}
+
+\courssub{Sommets, foyers et excentricité}
+
+\begin{definition}[Sommets de l'ellipse]
+Les \cle{sommets} sont les points d'intersection de l'ellipse avec ses axes de symétrie :
+\begin{itemize}
+\item sur le grand axe $(Ox)$ : $A(a\,;0)$ et $A'(-a\,;0)$ ; on a $AA' = 2a$ ;
+\item sur le petit axe $(Oy)$ : $B(0\,;b)$ et $B'(0\,;-b)$ ; on a $BB' = 2b$.
+\end{itemize}
+On les obtient directement depuis l'équation : pour $y = 0$, $\dfrac{x^2}{a^2} = 1$ donne $x = \pm a$ ; pour $x = 0$, $\dfrac{y^2}{b^2} = 1$ donne $y = \pm b$.
+\end{definition}
+
+\begin{definition}[Excentricité]
+L'\cle{excentricité} de l'ellipse est le nombre :
+\[ e = \frac{c}{a}. \]
+Comme $0 < c < a$, on a toujours $0 < e < 1$ pour une ellipse. L'excentricité mesure l'\emph{aplatissement} : plus $e$ est proche de $0$, plus l'ellipse ressemble à un cercle ; plus $e$ est proche de $1$, plus elle est allongée.
+\end{definition}
+
+\begin{savaistu}[Excentricité et orbites]
+L'orbite de la Terre autour du Soleil est une ellipse d'excentricité $e \approx 0{,}017$ : presque un cercle ! Celle de la comète de Halley a une excentricité $e \approx 0{,}967$ : elle est extrêmement allongée, ce qui explique qu'elle ne soit visible que tous les 76 ans environ. Le Soleil occupe l'un des foyers de l'ellipse (première loi de Kepler).
+\end{savaistu}
+
+\begin{propriete}[Directrices — complément utile]
+À chaque foyer est associée une droite appelée \cle{directrice}. Pour l'ellipse d'équation $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$, les directrices ont pour équations :
+\[ x = \frac{a}{e} \qquad \text{et} \qquad x = -\frac{a}{e}. \]
+Comme $e < 1$, on a $\dfrac{a}{e} > a$ : les directrices sont donc situées \emph{à l'extérieur} de l'ellipse, de part et d'autre du grand axe. Pour tout point $M$ de l'ellipse, $\dfrac{MF}{d(M\,;D)} = e$. Ce résultat est donné à titre de complément ; il éclaire le rôle unificateur de l'excentricité pour toutes les coniques.
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.85,>=Stealth]
+% axes
+\draw[->,popmuted] (-6.2,0) -- (6.2,0) node[below right] {$x$};
+\draw[->,popmuted] (0,-3.8) -- (0,3.8) node[above left] {$y$};
+% ellipse x^2/25 + y^2/9 = 1 : a=5, b=3, c=4
+\draw[popblue,very thick] (0,0) ellipse (5 and 3);
+% centre
+\fill[popdark] (0,0) circle (1.5pt) node[below left] {$O$};
+% foyers
+\fill[poporange] (4,0) circle (2pt) node[below] {$F(4\,;0)$};
+\fill[poporange] (-4,0) circle (2pt) node[below] {$F'(-4\,;0)$};
+% sommets
+\fill[popgreen] (5,0) circle (2pt) node[above right] {$A(5\,;0)$};
+\fill[popgreen] (-5,0) circle (2pt) node[above left] {$A'(-5\,;0)$};
+\fill[popgreen] (0,3) circle (2pt) node[above right] {$B(0\,;3)$};
+\fill[popgreen] (0,-3) circle (2pt) node[below right] {$B'(0\,;-3)$};
+% point M et rayons focaux
+\coordinate (M) at (3,2.4);
+\fill[poppurple] (M) circle (2pt) node[above right] {$M$};
+\draw[poppurple,thick] (4,0) -- (M) node[midway,right] {\footnotesize $MF$};
+\draw[poppurple,thick] (-4,0) -- (M) node[midway,left] {\footnotesize $MF'$};
+% demi-axes
+\draw[popgold,thick,<->] (0,-0.35) -- (5,-0.35) node[midway,below] {\footnotesize $a$};
+\draw[popgold,thick,<->] (-0.35,0) -- (-0.35,3) node[midway,left] {\footnotesize $b$};
+\draw[poporange,thick,<->] (0,0.35) -- (4,0.35) node[midway,above] {\footnotesize $c$};
+\end{tikzpicture}
+\end{center}
+\legende{Ellipse d'équation $\dfrac{x^2}{25} + \dfrac{y^2}{9} = 1$ : $a = 5$, $b = 3$, $c = \sqrt{25-9} = 4$. Pour tout point $M$ de la courbe, $MF + MF' = 2a = 10$.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.9\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-6.5, xmax=6.5, ymin=-6.5, ymax=6.5,
+  xtick={-5,0,5}, ytick={-5,0,5},
+  legend style={at={(0.02,0.98)}, anchor=north west, font=\small},
+  samples=200
+]
+% e = 0.2 : b = a sqrt(1-e^2) = 5*sqrt(0.96) ≈ 4.899
+\addplot[popblue,very thick,domain=0:360] ({5*cos(x)},{4.899*sin(x)});
+\addlegendentry{$e = 0{,}2$}
+% e = 0.6 : b = 5*sqrt(0.64) = 4
+\addplot[poporange,very thick,domain=0:360] ({5*cos(x)},{4*sin(x)});
+\addlegendentry{$e = 0{,}6$}
+% e = 0.9 : b = 5*sqrt(0.19) ≈ 2.179
+\addplot[poppurple,very thick,domain=0:360] ({5*cos(x)},{2.179*sin(x)});
+\addlegendentry{$e = 0{,}9$}
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Trois ellipses de même demi-grand axe $a = 5$ et d'excentricités croissantes. Plus $e$ se rapproche de $1$, plus le petit axe $b = a\sqrt{1-e^2}$ diminue et plus l'ellipse s'aplatit.}
+\end{popfigure}
+
+\courssub{Lecture d'une équation : reconnaître et déterminer les éléments}
+
+\begin{propriete}[Reconnaissance]
+Toute équation de la forme $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$ (avec $a > 0$, $b > 0$) définit une ellipse centrée à l'origine, d'axes les axes de coordonnées.
+\begin{itemize}
+\item Si $a > b$ : le grand axe est $(Ox)$, les foyers sont $F(c\,;0)$ et $F'(-c\,;0)$ avec $c = \sqrt{a^2 - b^2}$.
+\item Si $b > a$ : le grand axe est $(Oy)$, les foyers sont $F(0\,;c)$ et $F'(0\,;-c)$ avec $c = \sqrt{b^2 - a^2}$.
+\item Si $a = b$ : l'équation s'écrit $x^2 + y^2 = a^2$ : c'est un cercle de centre $O$ (cas limite, $e = 0$).
+\end{itemize}
+\end{propriete}
+
+\begin{methode}[Déterminer les éléments d'une ellipse à partir de son équation]
+\begin{enumerate}
+\item Écrire l'équation sous la forme $\dfrac{x^2}{(\ldots)^2} + \dfrac{y^2}{(\ldots)^2} = 1$ (le second membre doit valoir exactement $1$).
+\item Identifier les deux dénominateurs : \textbf{le plus grand est $a^2$}, l'autre est $b^2$. En déduire $a$ et $b$.
+\item Calculer la distance focale : $c = \sqrt{a^2 - b^2}$.
+\item Placer les foyers sur l'axe portant $a^2$ : si $a^2$ est sous $x^2$, foyers $F(c\,;0)$ et $F'(-c\,;0)$ ; si $a^2$ est sous $y^2$, foyers $F(0\,;c)$ et $F'(0\,;-c)$.
+\item Calculer l'excentricité $e = \dfrac{c}{a}$ et vérifier que $0 < e < 1$.
+\item Donner les sommets sur le grand axe et le petit axe.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Exemple chiffré de référence]
+Soit l'ellipse d'équation $\dfrac{x^2}{25} + \dfrac{y^2}{16} = 1$.
+\begin{itemize}
+\item Le plus grand dénominateur est $25$, sous $x^2$ : donc $a^2 = 25$, $a = 5$, et le grand axe est $(Ox)$.
+\item $b^2 = 16$ donc $b = 4$.
+\item Relation fondamentale : $c = \sqrt{a^2 - b^2} = \sqrt{25 - 16} = \sqrt{9} = 3$.
+\item Foyers : $F(3\,;0)$ et $F'(-3\,;0)$.
+\item Excentricité : $e = \dfrac{c}{a} = \dfrac{3}{5} = 0{,}6 < 1$. 
+\item Sommets : $A(5\,;0)$, $A'(-5\,;0)$, $B(0\,;4)$, $B'(0\,;-4)$.
+\item Directrices (complément) : $x = \dfrac{a}{e} = \dfrac{25}{3}$ et $x = -\dfrac{25}{3}$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Piège : le grand axe n'est pas toujours $(Ox)$]
+C'est le \textbf{plus grand dénominateur} qui donne $a^2$, pas forcément celui sous $x^2$. Par exemple, pour $\dfrac{x^2}{9} + \dfrac{y^2}{25} = 1$ : on a $a^2 = 25$ sous $y^2$, donc $a = 5$, $b = 3$, $c = \sqrt{25-9} = 4$, et les foyers sont $F(0\,;4)$ et $F'(0\,;-4)$ sur l'axe des ordonnées. Écrire $F(4\,;0)$ serait une erreur classique au Probatoire. Autre piège : ne pas confondre $c^2 = a^2 - b^2$ (ellipse) avec une somme ; pour l'ellipse, $c$ se calcule toujours par une \emph{différence}.
+\end{attention}
+
+\begin{exoresolu}[Détermination complète des éléments d'une ellipse]
+\textbf{Énoncé.} Une entreprise de menuiserie de Douala doit découper une table ovale dont le contour est l'ellipse d'équation $9x^2 + 25y^2 = 225$ (unité : le décimètre). Déterminer le centre, les demi-axes, les sommets, les foyers et l'excentricité de cette ellipse.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Étape 1 : mise sous forme réduite.} On divise les deux membres par $225$ :
+\[ \frac{9x^2}{225} + \frac{25y^2}{225} = 1 \quad \Longleftrightarrow \quad \frac{x^2}{25} + \frac{y^2}{9} = 1. \]
+
+\textbf{Étape 2 : identification.} Le plus grand dénominateur est $25$, sous $x^2$ : donc $a^2 = 25$, $a = 5$, et $b^2 = 9$, $b = 3$. Le centre est $O(0\,;0)$ et le grand axe est l'axe des abscisses.
+
+\textbf{Étape 3 : distance focale et foyers.}
+\[ c = \sqrt{a^2 - b^2} = \sqrt{25 - 9} = \sqrt{16} = 4. \]
+Les foyers sont $F(4\,;0)$ et $F'(-4\,;0)$.
+
+\textbf{Étape 4 : sommets.} $A(5\,;0)$, $A'(-5\,;0)$ sur le grand axe ; $B(0\,;3)$, $B'(0\,;-3)$ sur le petit axe.
+
+\textbf{Étape 5 : excentricité.}
+\[ e = \frac{c}{a} = \frac{4}{5} = 0{,}8. \]
+On a bien $0 < e < 1$ : c'est cohérent pour une ellipse.
+
+\textbf{Conclusion concrète.} La table mesure $2a = 10$ dm de long (soit \SI{1}{m}) et $2b = 6$ dm de large (soit \SI{0,6}{m}). Pour tracer l'ellipse sur le panneau par la méthode dite « du jardinier », l'ouvrier plantera deux piquets aux foyers (distant de $2c = 8$ dm) et utilisera une corde de longueur $2a = 10$ dm.
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+\begin{enumerate}
+\item Déterminer les sommets, les foyers et l'excentricité de l'ellipse d'équation $\dfrac{x^2}{169} + \dfrac{y^2}{144} = 1$.
+\item Mêmes questions pour l'ellipse d'équation $x^2 + 4y^2 = 4$ (penser à mettre sous forme réduite).
+\item Déterminer l'équation réduite de l'ellipse de centre $O$, de grand axe sur $(Ox)$, telle que $a = 6$ et $e = \dfrac{1}{3}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $a^2 = 169$ donc $a = 13$ ; $b^2 = 144$ donc $b = 12$ ; $c = \sqrt{169 - 144} = \sqrt{25} = 5$. Sommets : $A(13\,;0)$, $A'(-13\,;0)$, $B(0\,;12)$, $B'(0\,;-12)$. Foyers : $F(5\,;0)$, $F'(-5\,;0)$. Excentricité : $e = \dfrac{5}{13}$.
+\item On divise par $4$ : $\dfrac{x^2}{4} + \dfrac{y^2}{1} = 1$. Donc $a = 2$, $b = 1$, $c = \sqrt{4-1} = \sqrt{3}$. Sommets : $A(2\,;0)$, $A'(-2\,;0)$, $B(0\,;1)$, $B'(0\,;-1)$. Foyers : $F(\sqrt{3}\,;0)$, $F'(-\sqrt{3}\,;0)$. Excentricité : $e = \dfrac{\sqrt{3}}{2} \approx 0{,}87$.
+\item $e = \dfrac{c}{a}$ donc $c = ae = 6 \times \dfrac{1}{3} = 2$. Alors $b^2 = a^2 - c^2 = 36 - 4 = 32$. L'équation réduite est $\dfrac{x^2}{36} + \dfrac{y^2}{32} = 1$.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[Bilan de la section]
+\begin{itemize}
+\item L'équation réduite d'une ellipse de centre $O$ et de grand axe $(Ox)$ est $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$ avec $a \geq b > 0$.
+\item Relation fondamentale : $c^2 = a^2 - b^2$ ; foyers $F(c\,;0)$, $F'(-c\,;0)$ ; excentricité $e = \dfrac{c}{a} < 1$.
+\item Le plus grand dénominateur est toujours $a^2$ et indique l'axe qui porte les foyers.
+\item Sommets : $A(a\,;0)$, $A'(-a\,;0)$, $B(0\,;b)$, $B'(0\,;-b)$ ; directrices (complément) : $x = \pm \dfrac{a}{e}$.
+\end{itemize}
+Dans la section suivante, nous appliquerons la même démarche à la parabole, conique dont l'équation réduite est encore plus simple.
+\end{aretenir}
+
+\coursec{Équation réduite de la parabole}
+
+Dans la section précédente, nous avons étudié l'\cle{ellipse}, conique d'excentricité $e < 1$, dont l'équation réduite $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$ fait intervenir deux foyers. Nous franchissons maintenant le seuil $e = 1$ : la conique obtenue n'est plus fermée, elle possède un seul foyer et une \cle{directrice}. C'est la \cle{parabole}, courbe que vous connaissez déjà sans le savoir : c'est la trajectoire d'un ballon lancé en l'air, le câble d'un pont suspendu, le profil d'une antenne satellite. Cette section a pour but de définir rigoureusement la parabole, d'établir son \cle{équation réduite} $y^2 = 2px$, et d'en dégager les propriétés essentielles.
+
+\courssub{Définition de la parabole}
+
+\courssub{Intuition}
+
+Imaginez, dans un atelier, un point fixe $F$ (une lampe) et une droite $D$ (un mur). Cherchons tous les points $M$ du plan qui sont \emph{aussi loin de la lampe que du mur}. Intuitivement, ces points se répartissent sur une courbe qui « s'éloigne » entre la lampe et le mur, en s'ouvrant du côté de la lampe : c'est la parabole. Le point de la courbe le plus proche du mur, situé exactement à mi-chemin entre $F$ et $D$, est appelé le \cle{sommet}.
+
+\begin{definition}[Parabole]
+Soit $F$ un point du plan, appelé \cle{foyer}, et $D$ une droite ne passant pas par $F$, appelée \cle{directrice}. La \cle{parabole} de foyer $F$ et de directrice $D$ est l'ensemble des points $M$ du plan équidistants de $F$ et de $D$ :
+\[ \mathcal{P} = \{\, M \text{ du plan } \mid MF = d(M, D) \,\}. \]
+On appelle \cle{paramètre} de la parabole le nombre $p = d(F, D)$, distance du foyer à la directrice. L'\cle{excentricité} de la parabole vaut $e = 1$, car $\dfrac{MF}{d(M,D)} = 1$ pour tout point $M$ de la courbe.
+\end{definition}
+
+\begin{aretenir}[Vocabulaire de la parabole]
+\begin{itemize}
+\item Le \cle{sommet} $S$ est le point de la parabole le plus proche de la directrice : c'est le milieu du segment perpendiculaire mené de $F$ à $D$.
+\item La droite $(SF)$, perpendiculaire à la directrice, est l'\cle{axe de symétrie} de la parabole.
+\item Le paramètre $p$ mesure l'« ouverture » : plus $p$ est grand, plus la parabole est ouverte.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Choix du repère adapté}
+
+Pour obtenir une équation simple, on choisit le repère le plus naturel possible :
+\begin{itemize}
+\item l'\textbf{origine} est le sommet $S$ de la parabole ;
+\item l'\textbf{axe des abscisses} est l'axe de symétrie $(SF)$, orienté de $S$ vers $F$ ;
+\item l'\textbf{axe des ordonnées} est la perpendiculaire en $S$ à cet axe.
+\end{itemize}
+Comme $S$ est le milieu du segment joignant $F$ à sa projection sur $D$, et que $d(F,D) = p$, on obtient immédiatement, dans ce repère orthonormé $(S\,;\vec{\imath},\vec{\jmath})$ :
+\[ F\left(\dfrac{p}{2}\,;\,0\right) \qquad \text{et} \qquad D : x = -\dfrac{p}{2}. \]
+
+\courssub{Équation réduite de la parabole}
+
+\begin{propriete}[Théorème : équation réduite de la parabole]
+Dans le repère orthonormé d'origine le sommet $S$ et d'axe des abscisses l'axe focal $(SF)$, la parabole de paramètre $p$ a pour \cle{équation réduite} :
+\[ y^2 = 2px. \]
+Son foyer est $F\left(\dfrac{p}{2}\,;\,0\right)$ et sa directrice a pour équation $x = -\dfrac{p}{2}$. \emph{Cette démonstration est exigible au Probatoire / Baccalauréat technique.}
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de l'équation réduite]
+Soit $M(x\,;\,y)$ un point du plan. On travaille dans le repère adapté défini ci-dessus.
+
+\textbf{Étape 1 : exprimer $MF$.} Le foyer est $F\left(\dfrac{p}{2}\,;\,0\right)$, donc :
+\[ MF = \sqrt{\left(x-\dfrac{p}{2}\right)^2 + y^2}. \]
+
+\textbf{Étape 2 : exprimer $d(M,D)$.} La directrice $D$ a pour équation $x = -\dfrac{p}{2}$. La distance de $M(x\,;\,y)$ à cette droite verticale est :
+\[ d(M,D) = \left|x + \dfrac{p}{2}\right|. \]
+
+\textbf{Étape 3 : traduire la condition $MF = d(M,D)$.} Les deux quantités étant positives, on peut élever au carré :
+\begin{align*}
+MF^2 &= d(M,D)^2 \\
+\left(x-\dfrac{p}{2}\right)^2 + y^2 &= \left(x+\dfrac{p}{2}\right)^2 \\
+x^2 - px + \dfrac{p^2}{4} + y^2 &= x^2 + px + \dfrac{p^2}{4} \\
+y^2 &= 2px.
+\end{align*}
+
+\textbf{Étape 4 : conclusion.} Réciproquement, tout point dont les coordonnées vérifient $y^2 = 2px$ satisfait $MF^2 = d(M,D)^2$, donc $MF = d(M,D)$. L'équation $y^2 = 2px$ caractérise donc exactement la parabole. \hfill$\blacksquare$
+\end{experience}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item Ne pas confondre $p$ (distance foyer--directrice) et $\dfrac{p}{2}$ (distance sommet--foyer). Dans $y^2 = 2px$, le foyer a pour abscisse $\dfrac{p}{2}$, \textbf{pas} $p$.
+\item L'équation $y^2 = 2px$ n'est \textbf{pas} une fonction : à chaque $x > 0$ correspondent deux valeurs $y = \sqrt{2px}$ et $y = -\sqrt{2px}$. C'est précisément ce qui traduit la symétrie par rapport à l'axe des abscisses.
+\item L'équation réduite n'est valable que dans le repère adapté (sommet à l'origine, axe focal comme axe des abscisses). Une parabole translatée a une équation de la forme $(y-y_0)^2 = 2p(x-x_0)$.
+\end{itemize}
+\end{attention}
+
+\courssub{Étude d'un exemple complet : la parabole $y^2 = 4x$}
+
+\begin{exemplebox}[Lecture des éléments de $y^2 = 4x$]
+On identifie $2p = 4$, donc $p = 2$. On en déduit :
+\begin{itemize}
+\item sommet : $O(0\,;\,0)$ ;
+\item foyer : $F\left(\dfrac{p}{2}\,;\,0\right) = F(1\,;\,0)$ ;
+\item directrice : $D : x = -\dfrac{p}{2}$, c'est-à-dire $x = -1$.
+\end{itemize}
+Vérifions la définition sur le point $M(1\,;\,2)$ : on a $y^2 = 4 = 4\times 1$, donc $M$ est sur la parabole. Et effectivement : $MF = 2$ (distance verticale de $M$ à $F$) et $d(M,D) = 1-(-1) = 2$. On a bien $MF = d(M,D)$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1,>=Stealth]
+% axes
+\draw[->,popmuted] (-2.2,0) -- (4.5,0) node[below left]{$x$};
+\draw[->,popmuted] (0,-2.8) -- (0,2.8) node[below left]{$y$};
+% directrice
+\draw[poporange,thick] (-1,-2.6) -- (-1,2.6) node[above]{$D : x=-1$};
+% parabole y^2 = 4x
+\draw[popblue,very thick,domain=-2.4:2.4,samples=100] plot ({0.25*\x*\x},{\x});
+% foyer
+\fill[popink] (1,0) circle (2pt) node[below right]{$F(1\,;\,0)$};
+% sommet
+\fill[popink] (0,0) circle (2pt) node[below left]{$O$};
+% point M(1,2)
+\fill[popgreen] (1,2) circle (2pt) node[above right]{$M(1\,;\,2)$};
+% segment MF
+\draw[popgreen,thick] (1,0) -- (1,2) node[midway,right]{$MF=2$};
+% distance a la directrice
+\draw[popgreen,thick,dashed] (1,2) -- (-1,2) node[midway,above]{$d(M,D)=2$};
+\fill[popgreen] (-1,2) circle (1.5pt) node[below left]{$H$};
+\end{tikzpicture}
+\end{center}
+\legende{Parabole d'équation $y^2 = 4x$ : sommet $O$, foyer $F(1\,;\,0)$, directrice $x=-1$. Le point $M(1\,;\,2)$ vérifie $MF = d(M,D) = 2$.}
+\end{popfigure}
+
+\courssub{Méthode d'identification et variantes}
+
+\begin{methode}[Identifier et placer les éléments d'une parabole $y^2 = 2px$]
+\begin{enumerate}
+\item Mettre l'équation sous la forme $y^2 = 2px$ et \textbf{lire} la valeur de $p$ (attention : $p$ est la moitié du coefficient de $x$).
+\item Placer le \textbf{sommet} $S(0\,;\,0)$ à l'origine.
+\item Placer le \textbf{foyer} $F\left(\dfrac{p}{2}\,;\,0\right)$ sur l'axe des abscisses.
+\item Tracer la \textbf{directrice} $D : x = -\dfrac{p}{2}$, symétrique du foyer par rapport au sommet.
+\item Vérifier : le sommet est le milieu du segment perpendiculaire mené de $F$ à $D$.
+\item Tracer la courbe en utilisant la symétrie par rapport à l'axe des abscisses et quelques points.
+\end{enumerate}
+\end{methode}
+
+Selon la position du foyer et l'orientation de l'axe, on obtient quatre formes d'équations réduites :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}\hline
+\rowcolor{popblueL} \textbf{Équation} & \textbf{Ouverture} & \textbf{Foyer} & \textbf{Directrice} \\ \hline
+$y^2 = 2px$ & vers la droite & $F\left(\tfrac{p}{2}\,;\,0\right)$ & $x = -\tfrac{p}{2}$ \\ \hline
+$y^2 = -2px$ & vers la gauche & $F\left(-\tfrac{p}{2}\,;\,0\right)$ & $x = \tfrac{p}{2}$ \\ \hline
+$x^2 = 2py$ & vers le haut & $F\left(0\,;\,\tfrac{p}{2}\right)$ & $y = -\tfrac{p}{2}$ \\ \hline
+$x^2 = -2py$ & vers le bas & $F\left(0\,;\,-\tfrac{p}{2}\right)$ & $y = \tfrac{p}{2}$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Lecture du paramètre]
+Pour $y^2 = 12x$, on a $2p = 12$ donc $p = 6$ et le foyer est $F(3\,;\,0)$, \textbf{pas} $F(6\,;\,0)$ ni $F(12\,;\,0)$. Erreur très fréquente au Probatoire / Baccalauréat technique : toujours diviser le coefficient par $2$, puis encore par $2$ pour obtenir l'abscisse du foyer.
+\end{attention}
+
+\courssub{Lien avec la fonction carrée}
+
+Vous connaissez depuis longtemps la courbe de la fonction $f(x) = ax^2$, appelée « parabole ». Ce n'est pas un hasard : c'est bien une conique au sens de cette leçon.
+
+\begin{propriete}[La parabole $y = ax^2$ est une conique]
+La courbe d'équation $y = ax^2$ (avec $a > 0$) s'écrit $x^2 = \dfrac{1}{a}\,y$. C'est la parabole de paramètre
+\[ p = \dfrac{1}{2a}, \]
+de sommet $O(0\,;\,0)$, de foyer $F\left(0\,;\,\dfrac{1}{4a}\right)$ et de directrice $y = -\dfrac{1}{4a}$.
+\end{propriete}
+
+\begin{exemplebox}[La fonction carrée vue comme conique]
+La parabole $y = x^2$ (cas $a = 1$) a pour paramètre $p = \dfrac{1}{2}$, pour foyer $F\left(0\,;\,\dfrac{1}{4}\right)$ et pour directrice $y = -\dfrac{1}{4}$. Vérification sur le point $M(1\,;\,1)$ : $MF = \sqrt{1 + \dfrac{9}{16}} = \dfrac{5}{4}$ et $d(M,D) = 1 + \dfrac{1}{4} = \dfrac{5}{4}$. L'égalité est bien vérifiée.
+\end{exemplebox}
+
+\courssub{Propriété de réflexion : l'antenne parabolique}
+
+\begin{propriete}[Propriété focale de la parabole (admise)]
+Tout rayon parallèle à l'axe de symétrie d'une parabole se réfléchit sur la courbe en passant par le foyer. Réciproquement, tout rayon issu du foyer se réfléchit parallèlement à l'axe. Cette propriété est admise ; elle sera justifiée par la tangente (section 5).
+\end{propriete}
+
+C'est le principe de l'\cle{antenne parabolique} : les ondes satellites arrivent parallèlement à l'axe, frappent la surface parabolique et convergent toutes vers le foyer, où est placé le récepteur. Dans un phare de voiture, c'est l'inverse : l'ampoule est au foyer et les rayons lumineux ressortent en un faisceau parallèle.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.2,>=Stealth]
+% parabole y^2 = 4x restreinte
+\draw[popblue,very thick,domain=-2.2:2.2,samples=100] plot ({0.25*\x*\x},{\x});
+% foyer
+\fill[popink] (1,0) circle (2.5pt) node[below right]{$F$ (récepteur)};
+% rayons paralleles entrants et reflechis
+\foreach \y in {1.5, 0.9, -0.9, -1.5} {
+  \draw[poporange,thick,->] (4.2,\y) -- ({0.25*\y*\y},\y);
+  \draw[popgreen,thick,->] ({0.25*\y*\y},\y) -- (1,0);
+}
+% axe
+\draw[popmuted,dashed,->] (-0.5,0) -- (4.6,0) node[below left]{axe};
+\node[poporange] at (4.2,1.9) {\small ondes parallèles};
+\end{tikzpicture}
+\end{center}
+\legende{Principe de l'antenne parabolique : les ondes arrivant parallèlement à l'axe sont toutes réfléchies vers le foyer $F$, où se trouve le récepteur.}
+\end{popfigure}
+
+\begin{savaistu}[La parabole autour de nous]
+Les phares des voitures, les projecteurs des stades et les antennes de la CRTV utilisent la propriété focale de la parabole pour concentrer ou capter les ondes et la lumière. Au Cameroun, les paraboles satellite que l'on voit sur les toits de Yaoundé ou de Douala sont des sections de paraboloïdes, surfaces obtenues en faisant tourner une parabole autour de son axe. Le mot « parabole » vient du grec \emph{parabolê} (« comparaison, application »), terme introduit par Apollonios de Perga il y a plus de deux mille ans.
+\end{savaistu}
+
+\courssub{Exercices résolus}
+
+\begin{exoresolu}[Éléments d'une parabole et appartenance d'un point]
+On considère la parabole $\mathcal{P}$ d'équation $y^2 = 8x$.
+\begin{enumerate}
+\item Déterminer le paramètre $p$, le foyer $F$ et la directrice $D$ de $\mathcal{P}$.
+\item Le point $M(2\,;\,4)$ appartient-il à $\mathcal{P}$ ? Justifier de deux façons.
+\end{enumerate}
+\tcblower
+\textbf{1.} On identifie $2p = 8$, donc $p = 4$. Le sommet est $O(0\,;\,0)$, le foyer est $F\left(\dfrac{p}{2}\,;\,0\right) = F(2\,;\,0)$ et la directrice a pour équation $x = -\dfrac{p}{2}$, c'est-à-dire $D : x = -2$.
+
+\textbf{2. Première méthode (équation).} On calcule $y^2 = 4^2 = 16$ et $8x = 8 \times 2 = 16$. Comme $16 = 16$, les coordonnées de $M$ vérifient l'équation : $M \in \mathcal{P}$.
+
+\textbf{Deuxième méthode (définition).} $MF = \sqrt{(2-2)^2 + (4-0)^2} = 4$ et $d(M,D) = 2 - (-2) = 4$. Comme $MF = d(M,D)$, le point $M$ appartient bien à la parabole.
+\end{exoresolu}
+
+\begin{exoresolu}[Déterminer l'équation d'une parabole]
+Une antenne parabolique a la forme d'une parabole de sommet $O(0\,;\,0)$, d'axe $(Ox)$, et son récepteur est placé au foyer $F(3\,;\,0)$. Déterminer l'équation réduite de cette parabole et l'équation de sa directrice.
+\tcblower
+Le foyer est $F\left(\dfrac{p}{2}\,;\,0\right) = F(3\,;\,0)$, donc $\dfrac{p}{2} = 3$, c'est-à-dire $p = 6$. L'équation réduite est :
+\[ y^2 = 2px = 12x. \]
+La directrice a pour équation $x = -\dfrac{p}{2}$, c'est-à-dire $x = -3$. Le récepteur doit donc être placé à 3 unités du sommet, sur l'axe de l'antenne.
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+\begin{enumerate}
+\item Pour chaque parabole, donner le paramètre, le foyer et la directrice : \quad a) $y^2 = 6x$ \quad b) $y^2 = -10x$ \quad c) $x^2 = 4y$.
+\item Déterminer l'équation réduite de la parabole de sommet $O$ et de directrice $x = -5$.
+\item La parabole $y = 2x^2$ est une conique : déterminer son paramètre $p$ et son foyer.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : À vous de jouer]
+\textbf{1.} a) $2p = 6$ donc $p = 3$ ; $F\left(\tfrac{3}{2}\,;\,0\right)$ ; $D : x = -\tfrac{3}{2}$. \quad b) $y^2 = -2px$ avec $p = 5$ ; ouverture vers la gauche ; $F\left(-\tfrac{5}{2}\,;\,0\right)$ ; $D : x = \tfrac{5}{2}$. \quad c) $x^2 = 2py$ avec $p = 2$ ; ouverture vers le haut ; $F(0\,;\,1)$ ; $D : y = -1$.
+
+\textbf{2.} La directrice $x = -5$ donne $\dfrac{p}{2} = 5$, donc $p = 10$. L'équation est $y^2 = 20x$, de foyer $F(5\,;\,0)$.
+
+\textbf{3.} $y = 2x^2$ s'écrit $x^2 = \dfrac{1}{2}y$, donc $2p = \dfrac{1}{2}$ et $p = \dfrac{1}{4}$. Le foyer est $F\left(0\,;\,\dfrac{1}{8}\right)$ et la directrice $y = -\dfrac{1}{8}$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel sur la parabole]
+\begin{itemize}
+\item La parabole est l'ensemble des points $M$ tels que $MF = d(M,D)$ ; son excentricité est $e = 1$.
+\item Dans le repère adapté (sommet à l'origine, axe focal en abscisse) : $y^2 = 2px$, avec $F\left(\dfrac{p}{2}\,;\,0\right)$ et $D : x = -\dfrac{p}{2}$.
+\item Quatre orientations possibles : $y^2 = \pm 2px$ (horizontale) et $x^2 = \pm 2py$ (verticale).
+\item La courbe $y = ax^2$ est la parabole de paramètre $p = \dfrac{1}{2a}$.
+\item Propriété focale (admise) : les rayons parallèles à l'axe convergent au foyer après réflexion — principe des antennes et des phares.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Équation réduite de l'hyperbole}
+
+Dans la section précédente, nous avons étudié la parabole, ensemble des points équidistants d'un foyer et d'une droite directrice. Nous passons maintenant à la troisième et dernière conique : l'\cle{hyperbole}. Si l'ellipse correspondait à une \emph{somme} de distances constante ($MF + MF' = 2a$), l'hyperbole correspond à une \emph{différence} de distances constante. Cette courbe à deux branches apparaît dans de nombreuses situations techniques : trajectoire d'une particule repoussée, localisation d'une source sonore ou sismique par différence de temps d'arrivée (principe des systèmes de radionavigation), forme des tours de refroidissement des centrales, ou encore la courbe bien connue de la fonction inverse.
+
+\courssub{Définition géométrique et choix du repère}
+
+\begin{definition}[Hyperbole]
+Soient $F$ et $F'$ deux points distincts du plan, et $a$ un réel strictement positif tel que $2a < FF'$. L'\cle{hyperbole} de \cle{foyers} $F$ et $F'$ et de \cle{grand axe} $2a$ est l'ensemble des points $M$ du plan tels que :
+\[ \left| MF - MF' \right| = 2a. \]
+Le milieu $O$ du segment $[FF']$ est le \cle{centre} de l'hyperbole. On note $c = OF = OF'$, de sorte que $FF' = 2c$. La condition $2a < FF'$ s'écrit donc $a < c$.
+\end{definition}
+
+\begin{attention}[La condition $2a < FF'$ est indispensable]
+Si $2a = FF'$, l'ensemble des points vérifiant $|MF - MF'| = 2a$ est la droite $(FF')$ privée du segment ouvert $]FF'[$ : ce n'est plus une hyperbole. Si $2a > FF'$, l'ensemble est vide (conséquence de l'inégalité triangulaire : $\big|MF - MF'\big| \leq FF'$ pour tout point $M$). Retenez : pour l'hyperbole, on a toujours $a < c$, alors que pour l'ellipse on avait $a > c$.
+\end{attention}
+
+Comme pour l'ellipse, la clé d'une équation simple est le choix d'un bon repère.
+
+\begin{aretenir}[Choix du repère adapté]
+On choisit le repère orthonormé $(O\,;\vec{\imath},\vec{\jmath})$ tel que :
+\begin{itemize}
+\item l'origine $O$ est le \textbf{centre} de l'hyperbole (milieu de $[FF']$) ;
+\item l'axe des abscisses est l'\textbf{axe focal} $(FF')$, orienté de $F'$ vers $F$.
+\end{itemize}
+Dans ce repère : $F(c\,;0)$ et $F'(-c\,;0)$ avec $c > 0$.
+\end{aretenir}
+
+\courssub{Théorème : équation réduite de l'hyperbole}
+
+\begin{propriete}[Équation réduite de l'hyperbole]
+Dans le repère adapté (origine au centre, axe focal comme axe des abscisses), l'hyperbole de foyers $F(c\,;0)$ et $F'(-c\,;0)$ et de grand axe $2a$ admet pour \cle{équation réduite} :
+\[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \qquad \text{avec } a > 0,\ b > 0 \ \text{et}\ \boxed{b^2 = c^2 - a^2}. \]
+La relation fondamentale de l'hyperbole s'écrit donc :
+\[ c^2 = a^2 + b^2. \]
+Cette démonstration est formatrice et peut être demandée au Probatoire sous forme guidée.
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de l'équation réduite]
+Partons de la définition $|MF - MF'| = 2a$ avec $M(x\,;y)$, $F(c\,;0)$, $F'(-c\,;0)$.
+
+\textbf{Étape 1 : exprimer les distances.}
+\[ MF = \sqrt{(x-c)^2 + y^2}, \qquad MF' = \sqrt{(x+c)^2 + y^2}. \]
+
+\textbf{Étape 2 : supposons d'abord $MF' - MF = 2a$} (branche de droite, $M$ plus proche de $F$). Alors :
+\[ \sqrt{(x+c)^2 + y^2} = 2a + \sqrt{(x-c)^2 + y^2}. \]
+
+\textbf{Étape 3 : élever au carré} (les deux membres sont positifs, l'équivalence est conservée).
+\begin{align*}
+(x+c)^2 + y^2 &= 4a^2 + 4a\sqrt{(x-c)^2+y^2} + (x-c)^2 + y^2 \\
+x^2 + 2cx + c^2 &= 4a^2 + 4a\sqrt{(x-c)^2+y^2} + x^2 - 2cx + c^2 \\
+4cx - 4a^2 &= 4a\sqrt{(x-c)^2+y^2} \\
+cx - a^2 &= a\sqrt{(x-c)^2+y^2}.
+\end{align*}
+
+\textbf{Étape 4 : élever à nouveau au carré.}
+\begin{align*}
+c^2x^2 - 2a^2cx + a^4 &= a^2\left[(x-c)^2 + y^2\right] = a^2x^2 - 2a^2cx + a^2c^2 + a^2y^2 \\
+c^2x^2 - a^2x^2 - a^2y^2 &= a^2c^2 - a^4 \\
+(c^2 - a^2)\,x^2 - a^2y^2 &= a^2(c^2 - a^2).
+\end{align*}
+
+\textbf{Étape 5 : poser $b^2 = c^2 - a^2$} (possible car $c > a$, donc $c^2 - a^2 > 0$). On obtient :
+\[ b^2 x^2 - a^2 y^2 = a^2 b^2 \quad \Longleftrightarrow \quad \frac{x^2}{a^2} - \frac{y^2}{b^2} = 1 \quad (\text{en divisant par } a^2b^2 \neq 0). \]
+
+Le cas $MF - MF' = 2a$ (branche de gauche) conduit au même résultat. Réciproquement, on vérifie que tout point satisfaisant cette équation appartient à l'hyperbole. \hfill$\blacksquare$
+\end{experience}
+
+\begin{attention}[Piège classique au Probatoire : le signe de la relation fondamentale]
+Pour l'\textbf{ellipse} : $c^2 = a^2 - b^2$ (signe $-$). Pour l'\textbf{hyperbole} : $c^2 = a^2 + b^2$ (signe $+$). C'est l'erreur la plus fréquente dans les copies. Moyen mnémotechnique : pour l'hyperbole, $c$ est le \emph{plus grand} des trois nombres ($c > a$ et $c > b$), donc $c^2$ est la \emph{somme} des deux autres carrés.
+\end{attention}
+
+\courssub{Sommets, excentricité et forme de la courbe}
+
+\begin{definition}[Sommets et excentricité]
+\begin{itemize}
+\item Les \cle{sommets} de l'hyperbole sont les points d'intersection avec l'axe focal : $A(a\,;0)$ et $A'(-a\,;0)$. On a bien $AA' = 2a$.
+\item L'hyperbole ne rencontre \textbf{jamais} l'axe des ordonnées : en effet, pour $x = 0$, l'équation donne $-\dfrac{y^2}{b^2} = 1$, impossible dans $\mathbb{R}$.
+\item L'\cle{excentricité} est le nombre $e = \dfrac{c}{a}$. Comme $c > a$, on a toujours $\boxed{e > 1}$.
+\end{itemize}
+\end{definition}
+
+L'excentricité mesure l'« ouverture » de l'hyperbole : plus $e$ est proche de $1$, plus les branches sont resserrées autour de l'axe focal ; plus $e$ est grand, plus les branches sont largement écartées. Rappelons qu'à l'inverse, l'ellipse a une excentricité $e < 1$ et la parabole $e = 1$ : l'excentricité classe ainsi les trois coniques.
+
+\courssub{Les asymptotes et le rectangle fondamental}
+
+Contrairement à l'ellipse, qui est une courbe fermée et bornée, l'hyperbole s'étend à l'infini. Mais elle ne part pas n'importe comment : ses deux branches se rapprochent indéfiniment de deux droites fixes, appelées \cle{asymptotes}.
+
+\begin{propriete}[Asymptotes de l'hyperbole]
+L'hyperbole d'équation réduite $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$ admet deux asymptotes, droites d'équations :
+\[ y = \frac{b}{a}\,x \qquad \text{et} \qquad y = -\frac{b}{a}\,x. \]
+\end{propriete}
+
+\begin{experience}[Justification de l'existence des asymptotes]
+\textbf{Étape 1.} Les deux droites $y = \dfrac{b}{a}x$ et $y = -\dfrac{b}{a}x$ ont pour équation commune, en factorisant :
+\[ \frac{x^2}{a^2} - \frac{y^2}{b^2} = \left(\frac{x}{a} - \frac{y}{b}\right)\left(\frac{x}{a} + \frac{y}{b}\right) = 0. \]
+
+\textbf{Étape 2.} L'équation de l'hyperbole s'écrit donc :
+\[ \left(\frac{x}{a} - \frac{y}{b}\right)\left(\frac{x}{a} + \frac{y}{b}\right) = 1. \]
+
+\textbf{Étape 3.} Quand $M(x\,;y)$ s'éloigne à l'infini sur la branche de droite, $x \to +\infty$. Pour que le produit des deux facteurs reste égal à $1$ (fini), l'un des deux facteurs doit tendre vers $0$. Ainsi $\dfrac{x}{a} - \dfrac{y}{b} \to 0$, c'est-à-dire $y \to \dfrac{b}{a}x$ : le point $M$ se rapproche indéfiniment de la droite $y = \dfrac{b}{a}x$ sans jamais l'atteindre. Le raisonnement est identique pour les autres parties de la courbe. \hfill$\blacksquare$
+\end{experience}
+
+\begin{definition}[Rectangle fondamental]
+Le \cle{rectangle fondamental} est le rectangle de sommets $(a\,;b)$, $(a\,;-b)$, $(-a\,;b)$, $(-a\,;-b)$, de dimensions $2a \times 2b$. Ses \textbf{diagonales} sont précisément les deux asymptotes de l'hyperbole. C'est l'outil pratique de construction de la courbe.
+\end{definition}
+
+\begin{methode}[Tracer une hyperbole en quatre étapes]
+\begin{enumerate}
+\item \textbf{Placer les sommets} $A(a\,;0)$ et $A'(-a\,;0)$ sur l'axe des abscisses.
+\item \textbf{Construire le rectangle fondamental} de côtés $2a$ (horizontal) et $2b$ (vertical), centré en $O$.
+\item \textbf{Tracer les diagonales} de ce rectangle, prolongées en pointillés : ce sont les asymptotes $y = \pm \dfrac{b}{a}x$.
+\item \textbf{Esquisser les deux branches} : chacune part d'un sommet, s'écarte du centre et se colle progressivement aux asymptotes, sans jamais les toucher. On peut placer les foyers $F(c\,;0)$ et $F'(-c\,;0)$ avec $c = \sqrt{a^2+b^2}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Hyperbole d'équation $\dfrac{x^2}{9} - \dfrac{y^2}{4} = 1$]
+On lit $a^2 = 9$ et $b^2 = 4$, donc $a = 3$ et $b = 2$. Alors :
+\[ c^2 = a^2 + b^2 = 9 + 4 = 13 \quad \Rightarrow \quad c = \sqrt{13} \approx 3{,}61. \]
+Sommets : $A(3\,;0)$ et $A'(-3\,;0)$. Foyers : $F(\sqrt{13}\,;0)$ et $F'(-\sqrt{13}\,;0)$. Excentricité : $e = \dfrac{\sqrt{13}}{3} \approx 1{,}20 > 1$. Asymptotes : $y = \dfrac{2}{3}x$ et $y = -\dfrac{2}{3}x$. Rectangle fondamental : sommets $(3\,;2)$, $(3\,;-2)$, $(-3\,;2)$, $(-3\,;-2)$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.85,>=Stealth]
+% Grille et axes
+\draw[popline,very thin] (-5.5,-4.2) grid (5.5,4.2);
+\draw[->,thick,popdark] (-5.8,0) -- (5.8,0) node[below right]{$x$};
+\draw[->,thick,popdark] (0,-4.4) -- (0,4.4) node[above left]{$y$};
+\node[below left,popdark] at (0,0) {$O$};
+% Rectangle fondamental
+\draw[poporange,dashed,thick] (-3,-2) rectangle (3,2);
+% Asymptotes
+\draw[poporange,dashed,thick,domain=-5.5:5.5] plot (\x,{0.6667*\x});
+\draw[poporange,dashed,thick,domain=-5.5:5.5] plot (\x,{-0.6667*\x});
+\node[poporange] at (5.1,3.9) {$y=\frac{2}{3}x$};
+\node[poporange] at (5.1,-3.9) {$y=-\frac{2}{3}x$};
+% Hyperbole x^2/9 - y^2/4 = 1
+\draw[popblue,very thick,domain=3:5.5,samples=60] plot (\x,{2*sqrt(max(0,\x*\x/9-1))});
+\draw[popblue,very thick,domain=3:5.5,samples=60] plot (\x,{-2*sqrt(max(0,\x*\x/9-1))});
+\draw[popblue,very thick,domain=-5.5:-3,samples=60] plot (\x,{2*sqrt(max(0,\x*\x/9-1))});
+\draw[popblue,very thick,domain=-5.5:-3,samples=60] plot (\x,{-2*sqrt(max(0,\x*\x/9-1))});
+% Sommets
+\fill[popblue] (3,0) circle (2.2pt) node[below right,popdark]{$A(3\,;0)$};
+\fill[popblue] (-3,0) circle (2.2pt) node[below left,popdark]{$A'(-3\,;0)$};
+% Foyers
+\fill[popink] (3.606,0) circle (2.2pt) node[below,popdark]{$F$};
+\fill[popink] (-3.606,0) circle (2.2pt) node[below,popdark]{$F'$};
+\node[popdark] at (3.606,-0.65) {\footnotesize $\sqrt{13}$};
+% Coins du rectangle
+\fill[poporange] (3,2) circle (1.6pt);
+\fill[poporange] (3,-2) circle (1.6pt);
+\fill[poporange] (-3,2) circle (1.6pt);
+\fill[poporange] (-3,-2) circle (1.6pt);
+\node[poporange,above right] at (3,2) {\footnotesize $(a\,;b)$};
+\end{tikzpicture}
+\end{center}
+\legende{Hyperbole $\dfrac{x^2}{9}-\dfrac{y^2}{4}=1$ : sommets $A$ et $A'$, foyers $F$ et $F'$, rectangle fondamental (pointillés orange) dont les diagonales sont les asymptotes.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.92\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-9, xmax=9, ymin=-7, ymax=7,
+  xtick={-6,-3,3,6}, ytick={-4,-2,2,4},
+  clip=true
+]
+\addplot[popblue,very thick,domain=3:9,samples=80] {2*sqrt(max(0,x^2/9-1))};
+\addplot[popblue,very thick,domain=3:9,samples=80] {-2*sqrt(max(0,x^2/9-1))};
+\addplot[popblue,very thick,domain=-9:-3,samples=80] {2*sqrt(max(0,x^2/9-1))};
+\addplot[popblue,very thick,domain=-9:-3,samples=80] {-2*sqrt(max(0,x^2/9-1))};
+\addplot[poporange,dashed,thick,domain=-9:9] {2*x/3};
+\addplot[poporange,dashed,thick,domain=-9:9] {-2*x/3};
+\node[popblue,font=\footnotesize] at (axis cs:6.5,3.2) {hyperbole};
+\node[poporange,font=\footnotesize,rotate=33] at (axis cs:-6.5,-3.4) {asymptote};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{À grande distance du centre, les branches de l'hyperbole (bleu) se confondent presque avec leurs asymptotes (pointillés orange) sans jamais les toucher.}
+\end{popfigure}
+
+\courssub{Cas particulier : l'hyperbole équilatère}
+
+\begin{definition}[Hyperbole équilatère]
+Une hyperbole est dite \cle{équilatère} lorsque $a = b$. Son équation réduite devient :
+\[ x^2 - y^2 = a^2. \]
+Ses asymptotes $y = x$ et $y = -x$ sont alors \textbf{perpendiculaires} (le rectangle fondamental est un carré). Son excentricité vaut $e = \dfrac{c}{a} = \dfrac{\sqrt{a^2+a^2}}{a} = \sqrt{2}$.
+\end{definition}
+
+\begin{savaistu}[Le lien avec la fonction inverse]
+La courbe de la fonction inverse $y = \dfrac{k}{x}$ (avec $k \neq 0$), que tu connais depuis la classe de Seconde, est une hyperbole équilatère dont les asymptotes sont les axes du repère ! En effet, en effectuant une rotation de $45°$ du repère, l'équation $xy = k$ se transforme en $X^2 - Y^2 = 2k$, qui est bien de la forme $x^2 - y^2 = a^2$. En électricité et en physique technique, la relation pression--volume $PV = \text{constante}$ des gaz (loi de Mariotte), ou l'intensité en fonction de la résistance $I = \dfrac{U}{R}$ à tension constante, donnent des courbes en hyperbole équilatère : c'est un outil quotidien du technicien.
+\end{savaistu}
+
+\courssub{Exercices résolus}
+
+\begin{exoresolu}[Déterminer les éléments d'une hyperbole]
+On considère l'hyperbole d'équation $\dfrac{x^2}{16} - \dfrac{y^2}{9} = 1$. Déterminer ses sommets, ses foyers, son excentricité et ses asymptotes, puis vérifier que le point $M(5\,;\tfrac{9}{4})$ appartient à l'hyperbole.
+\tcblower
+\textbf{Solution.} On identifie $a^2 = 16$ et $b^2 = 9$, donc $a = 4$ et $b = 3$.
+
+\textbf{Sommets :} $A(4\,;0)$ et $A'(-4\,;0)$.
+
+\textbf{Foyers :} $c^2 = a^2 + b^2 = 16 + 9 = 25$, donc $c = 5$. D'où $F(5\,;0)$ et $F'(-5\,;0)$.
+
+\textbf{Excentricité :} $e = \dfrac{c}{a} = \dfrac{5}{4} = 1{,}25 > 1$ : cohérent pour une hyperbole.
+
+\textbf{Asymptotes :} $y = \dfrac{b}{a}x = \dfrac{3}{4}x$ et $y = -\dfrac{3}{4}x$.
+
+\textbf{Vérification pour $M(5\,;\tfrac{9}{4})$ :}
+\[ \frac{5^2}{16} - \frac{(9/4)^2}{9} = \frac{25}{16} - \frac{81/16}{9} = \frac{25}{16} - \frac{9}{16} = \frac{16}{16} = 1. \]
+Le point $M$ appartient bien à l'hyperbole. Remarquons au passage que $M$ a pour abscisse $x = 5 = c$ : c'est le point de l'hyperbole situé à la verticale du foyer $F$.
+\end{exoresolu}
+
+\begin{exoresolu}[Problème concret : localisation par différence de distances]
+Deux capteurs sismiques sont placés en $F'(-5\,;0)$ et $F(5\,;0)$ (unité : km). Une secousse est enregistrée, et la différence des distances de l'épicentre $M$ aux deux capteurs vaut $|MF - MF'| = 6$ km. Déterminer l'équation réduite de la courbe sur laquelle se trouve l'épicentre, ainsi que son excentricité.
+\tcblower
+\textbf{Solution.} L'ensemble des points $M$ tels que $|MF - MF'| = 2a$ est une hyperbole de foyers $F$ et $F'$.
+
+On a $2c = FF' = 10$ donc $c = 5$, et $2a = 6$ donc $a = 3$. On vérifie la condition d'existence : $2a = 6 < 10 = FF'$, c'est-à-dire $a < c$. 
+
+Relation fondamentale (attention au signe $+$) :
+\[ b^2 = c^2 - a^2 = 25 - 9 = 16 \quad \Rightarrow \quad b = 4. \]
+
+L'équation réduite est donc :
+\[ \frac{x^2}{9} - \frac{y^2}{16} = 1. \]
+
+Excentricité : $e = \dfrac{c}{a} = \dfrac{5}{3} \approx 1{,}67 > 1$.
+
+L'épicentre se trouve quelque part sur cette hyperbole ; un troisième capteur permettrait de déterminer une seconde hyperbole et de localiser $M$ à l'intersection des deux courbes : c'est le principe des systèmes de radionavigation.
+\end{exoresolu}
+
+\begin{attention}[Erreurs fréquentes à éviter]
+\begin{itemize}
+\item \textbf{Confondre les relations fondamentales} : ellipse $c^2 = a^2 - b^2$, hyperbole $c^2 = a^2 + b^2$. Vérifie toujours que $c > a$ pour une hyperbole.
+\item \textbf{Écrire $b^2 = a^2 - c^2$} : c'est impossible, car $c > a$ donnerait $b^2 < 0$.
+\item \textbf{Chercher une intersection avec l'axe des ordonnées} : l'hyperbole $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$ n'en a pas. Si l'énoncé donne $\dfrac{y^2}{b^2} - \dfrac{x^2}{a^2} = 1$, c'est l'axe focal qui est vertical : les sommets sont alors sur l'axe des $y$.
+\item \textbf{Faire toucher les asymptotes} : les branches s'en approchent indéfiniment mais ne les coupent jamais.
+\item \textbf{Oublier la condition $e > 1$} : si tu trouves $e < 1$ dans un calcul d'hyperbole, tu as fait une erreur.
+\end{itemize}
+\end{attention}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Pour chaque hyperbole, déterminer $a$, $b$, $c$, les sommets, les foyers, l'excentricité et les asymptotes :
+\[ \text{a) }\ \frac{x^2}{25} - \frac{y^2}{144} = 1 \qquad ; \qquad \text{b) }\ x^2 - y^2 = 9. \]
+\item Déterminer l'équation réduite de l'hyperbole de foyers $F(6\,;0)$, $F'(-6\,;0)$ et de grand axe $2a = 8$.
+\item Une hyperbole a pour asymptotes $y = \pm \dfrac{1}{2}x$ et passe par le sommet $A(4\,;0)$. Déterminer son équation réduite et son excentricité.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\textbf{1.a)} $a = 5$, $b = 12$, $c = \sqrt{25+144} = 13$. Sommets $(\pm 5\,;0)$, foyers $(\pm 13\,;0)$, $e = \dfrac{13}{5} = 2{,}6$, asymptotes $y = \pm \dfrac{12}{5}x$.
+
+\textbf{1.b)} $x^2 - y^2 = 9 \Leftrightarrow \dfrac{x^2}{9} - \dfrac{y^2}{9} = 1$ : hyperbole équilatère, $a = b = 3$, $c = 3\sqrt{2}$, sommets $(\pm 3\,;0)$, foyers $(\pm 3\sqrt{2}\,;0)$, $e = \sqrt{2}$, asymptotes $y = \pm x$ (perpendiculaires).
+
+\textbf{2.} $c = 6$, $a = 4$, donc $b^2 = c^2 - a^2 = 36 - 16 = 20$. Équation : $\dfrac{x^2}{16} - \dfrac{y^2}{20} = 1$.
+
+\textbf{3.} Sommet $A(4\,;0)$ donc $a = 4$. Pente des asymptotes : $\dfrac{b}{a} = \dfrac{1}{2}$ donc $b = 2$. Équation : $\dfrac{x^2}{16} - \dfrac{y^2}{4} = 1$. Alors $c^2 = 16 + 4 = 20$, $c = 2\sqrt{5}$ et $e = \dfrac{2\sqrt{5}}{4} = \dfrac{\sqrt{5}}{2} \approx 1{,}12$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel sur l'hyperbole]
+\begin{itemize}
+\item Définition : $|MF - MF'| = 2a$ avec $2a < FF'$, donc $a < c$.
+\item Équation réduite : $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$ avec $c^2 = a^2 + b^2$ (signe $+$ !).
+\item Sommets $A(a\,;0)$, $A'(-a\,;0)$ ; foyers $F(c\,;0)$, $F'(-c\,;0)$ ; excentricité $e = \dfrac{c}{a} > 1$.
+\item Asymptotes $y = \pm \dfrac{b}{a}x$ : diagonales du rectangle fondamental $2a \times 2b$.
+\item Cas $a = b$ : hyperbole équilatère, asymptotes perpendiculaires, $e = \sqrt{2}$, famille de la courbe $y = \dfrac{k}{x}$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Tangente en un point à une conique}
+
+\courssub{Transition depuis l'équation réduite de l'hyperbole}
+Dans la section précédente, nous avons établi les équations réduites des trois coniques : ellipse, parabole et hyperbole. Nous savons désormais reconnaître une conique à partir de son équation cartésienne et en déduire ses éléments caractéristiques (foyers, sommets, asymptotes). La question naturelle qui se pose maintenant est : \emph{comment tracer la droite qui « effleure » la courbe en un point donné ?} Cette droite est la \cle{tangente}. Elle joue un rôle central en mécanique (contact sans glissement), en optique (réflexion sur un miroir parabolique) et en construction géométrique.
+
+\courssub{Définition intuitive et rigoureuse}
+\begin{definition}[Tangente en un point d'une conique]
+Soit $\mathcal{C}$ une conique et $M_0$ un point de $\mathcal{C}$. On appelle \cle{tangente} à $\mathcal{C}$ en $M_0$ la position limite de la sécante $(M_0M)$ lorsque le point $M$ de $\mathcal{C}$ tend vers $M_0$ (en restant distinct de $M_0$).
+\end{definition}
+
+\begin{experience}[Approche dynamique avec GeoGebra]
+Dans un logiciel de géométrie dynamique, placez un point $M$ mobile sur une ellipse. Tracez la droite $(M_0M)$. Animez $M$ vers $M_0$ : la sécante pivote et se stabilise sur une droite unique, la tangente. Cette expérience montre que la tangente est bien la limite des sécantes.
+\end{experience}
+
+\courssub{Règle du dédoublement (admise au Probatoire)}
+Pour une conique dont l'équation est sous forme \cle{réduite} (centrée à l'origine, axes alignés sur les axes du repère), il existe une règle mnémotechnique très efficace pour écrire l'équation de la tangente sans calcul de dérivée.
+
+\begin{propriete}[Règle du dédoublement -- Admise]
+Soit une conique d'équation réduite $F(x,y)=0$ où $F$ est un polynôme du second degré en $x$ et $y$. L'équation de la tangente en un point $M_0(x_0;y_0)$ \textbf{appartenant à la conique} s'obtient en effectuant les remplacements systématiques suivants dans $F(x,y)=0$ :
+\begin{itemize}
+    \item $x^2 \longrightarrow x_0 x$
+    \item $y^2 \longrightarrow y_0 y$
+    \item $xy \longrightarrow \frac{1}{2}(x_0 y + x y_0)$ (cas des coniques tournées, hors programme réduit)
+    \item $x \longrightarrow \frac{x + x_0}{2}$  (terme linéaire en $x$)
+    \item $y \longrightarrow \frac{y + y_0}{2}$  (terme linéaire en $y$)
+\end{itemize}
+\emph{Remarque :} Pour la parabole $y^2=2px$, le terme en $x$ s'écrit $2p \cdot x$ ; le remplacement $x \to \frac{x+x_0}{2}$ donne bien $p(x+x_0)$.
+\end{propriete}
+
+\begin{attention}[Condition d'appartenance indispensable]
+La règle du dédoublement ne produit une \emph{tangente} que si $M_0(x_0;y_0)$ satisfait l'équation de la conique. Si $M_0$ est extérieur, la droite obtenue est la \cle{polaire} de $M_0$ par rapport à la conique ; elle ne touche pas la courbe. Vérifiez toujours l'appartenance avant d'appliquer la règle.
+\end{attention}
+
+\courssub{Équations réduites des tangentes aux trois coniques}
+Appliquons la règle à chaque conique réduite.
+
+\begin{propriete}[Tangente à l'ellipse]
+L'ellipse d'équation réduite $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$ ($a>0,\;b>0$). En $M_0(x_0;y_0)$ sur l'ellipse, la tangente a pour équation :
+\[
+\frac{x_0 x}{a^2}+\frac{y_0 y}{b^2}=1.
+\]
+\end{propriete}
+
+\begin{propriete}[Tangente à la parabole]
+La parabole d'équation réduite $y^2=2px$ ($p>0$). En $M_0(x_0;y_0)$ sur la parabole, la tangente a pour équation :
+\[
+y_0 y = p(x+x_0).
+\]
+\end{propriete}
+
+\begin{propriete}[Tangente à l'hyperbole]
+L'hyperbole d'équation réduite $\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=1$ ($a>0,\;b>0$). En $M_0(x_0;y_0)$ sur l'hyperbole, la tangente a pour équation :
+\[
+\frac{x_0 x}{a^2}-\frac{y_0 y}{b^2}=1.
+\]
+\end{propriete}
+
+\begin{savaistu}[Propriété optique de l'ellipse]
+Un rayon lumineux émis depuis un foyer $F$ d'une ellipse, après réflexion sur la paroi (la tangente en le point d'incidence), passe toujours par l'autre foyer $F'$. Cela signifie que la tangente en un point $M$ de l'ellipse fait des angles égaux avec les vecteurs $\overrightarrow{MF}$ et $\overrightarrow{MF'}$. Cette propriété est exploitée dans les \emph{lithotriteurs} médicaux : des ondes de choc focalisées sur un calcul rénal (placé au foyer $F$) convergent vers le second foyer où se trouve l'appareil, permettant de briser le calcul sans chirurgie invasive.
+\end{savaistu}
+
+\courssub{Méthode pas à pas pour déterminer une tangente}
+\begin{methode}[Détermination de la tangente en un point $M_0$]
+\begin{enumerate}
+    \item \textbf{Vérifier l'appartenance :} substituer les coordonnées de $M_0$ dans l'équation de la conique. Si l'égalité n'est pas satisfaite, $M_0$ n'est pas sur la courbe $\rightarrow$ la formule ne donne pas une tangente.
+    \item \textbf{Identifier la forme réduite :} écrire l'équation sous la forme canonique (ellipse, parabole ou hyperbole) pour lire $a$, $b$, $p$.
+    \item \textbf{Appliquer la règle du dédoublement :} remplacer $x^2$, $y^2$, $x$, $y$ selon le tableau ci-dessus, ou utiliser directement la formule toute faite.
+    \item \textbf{Simplifier :} réduire l'équation obtenue sous forme cartésienne $ax+by+c=0$ ou forme réduite $y=mx+p$.
+    \item \textbf{(Optionnel) Tracer :} placer $M_0$, tracer la droite, vérifier graphiquement le contact unique.
+\end{enumerate}
+\end{methode}
+
+\courssub{Exemples résolus détaillés}
+\begin{exoresolu}[Tangente à une ellipse]
+\emph{Énoncé :} Déterminer l'équation de la tangente à l'ellipse $\mathcal{E} : \dfrac{x^2}{25}+\dfrac{y^2}{9}=1$ au point $M_0\!\left(3;\dfrac{12}{5}\right)$.
+
+\emph{Solution :}
+\begin{enumerate}
+    \item \textbf{Vérification :} $\dfrac{3^2}{25}+\dfrac{(12/5)^2}{9}=\dfrac{9}{25}+\dfrac{144/25}{9}=\dfrac{9}{25}+\dfrac{16}{25}=1$. $M_0\in\mathcal{E}$.
+    \item \textbf{Paramètres :} $a^2=25$, $b^2=9$.
+    \item \textbf{Formule :} $\dfrac{x_0 x}{a^2}+\dfrac{y_0 y}{b^2}=1$ $\Rightarrow$ $\dfrac{3x}{25}+\dfrac{\frac{12}{5}y}{9}=1$.
+    \item \textbf{Simplification :} $\dfrac{3x}{25}+\dfrac{12y}{45}=1$ $\Rightarrow$ $\dfrac{3x}{25}+\dfrac{4y}{15}=1$.
+    Multiplier par le PPCM $75$ : $9x+20y=75$.
+    \item \textbf{Réponse :} La tangente a pour équation $9x+20y=75$ (ou $y=-\frac{9}{20}x+\frac{15}{4}$).
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Tangente à une parabole]
+\emph{Énoncé :} Trouver la tangente à la parabole $\mathcal{P}: y^2=4x$ au point $M_0(1;2)$.
+
+\emph{Solution :}
+\begin{enumerate}
+    \item \textbf{Vérification :} $2^2=4\times1$ $\checkmark$.
+    \item \textbf{Paramètre :} $2p=4 \Rightarrow p=2$.
+    \item \textbf{Formule :} $y_0 y = p(x+x_0)$ $\Rightarrow$ $2y = 2(x+1)$.
+    \item \textbf{Simplification :} $y = x+1$.
+    \item \textbf{Réponse :} La tangente est la droite $y=x+1$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+% Ellipse x^2/9 + y^2/4 = 1
+\draw[thick, popblue] (0,0) ellipse (3 and 2);
+% Point M0(1.8, 1.6)
+\coordinate (M0) at (1.8, 1.6);
+\fill[poporange] (M0) circle (2pt) node[above right] {$M_0$};
+% Tangent line: x + 2y = 5 -> intercepts (5,0) and (0,2.5)
+\draw[popgreen, thick] (5,0) -- (0,2.5) node[midway, above left] {Tangente};
+% Normal line: slope 2, through M0: y - 1.6 = 2(x - 1.8) -> y = 2x - 2
+\draw[poppurple, thick, dashed] (0.5,-1) -- (2.5,3) node[midway, above right] {Normale};
+% Axes
+\draw[->] (-3.5,0) -- (3.5,0) node[right] {$x$};
+\draw[->] (0,-2.5) -- (0,2.5) node[above] {$y$};
+% Foci: c = sqrt(9-4) = sqrt(5) approx 2.236
+\coordinate (F1) at (-2.236,0);
+\coordinate (F2) at (2.236,0);
+\fill[popred] (F1) circle (1.5pt) node[below] {$F$};
+\fill[popred] (F2) circle (1.5pt) node[below] {$F'$};
+\end{tikzpicture}
+\legende{Ellipse $\frac{x^2}{9}+\frac{y^2}{4}=1$ avec la tangente (verte) et la normale (violette pointillée) en $M_0(1,8;1,6)$. Les foyers $F$ et $F'$ illustrent la propriété optique.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-1, xmax=5,
+    ymin=-3, ymax=5,
+    xtick={0,1,2,3,4},
+    ytick={-2,-1,0,1,2,3,4},
+    grid=major,
+    grid style={popline},
+    width=\linewidth,
+    height=0.6\linewidth,
+    clip=false,
+    enlargelimits=0.1
+]
+% Parabole y^2 = 4x  -> x = y^2/4
+\addplot[popcurve, domain=-3:3, samples=200, thick] ({x^2/4}, x);
+% Tangente y = x + 1
+\addplot[popgreen, domain=-1:4, samples=2, thick] (x, x+1);
+% Point M0(1,2)
+\addplot[only marks, mark=*, mark size=2, poporange] coordinates {(1,2)};
+\node[above right] at (axis cs:1,2) {$M_0(1;2)$};
+% Legend
+\addlegendentry{$y^2=4x$};
+\addlegendentry{Tangente $y=x+1$};
+\end{axis}
+\end{tikzpicture}
+\legende{Parabole $y^2=4x$ et sa tangente en $M_0(1;2)$ d'équation $y=x+1$.}
+\end{popfigure}
+
+\courssub{Tangentes issues d'un point extérieur (complément)}
+Soit un point $A(x_A;y_A)$ \emph{extérieur} à une conique $\mathcal{C}$. Les droites passant par $A$ et tangentes à $\mathcal{C}$ se déterminent en écrivant qu'une droite $y-y_A=m(x-x_A)$ (ou $x=x_A$ si verticale) a un \emph{unique} point d'intersection avec $\mathcal{C}$ (discriminant nul). Cela conduit à une équation du second degré en $m$ (ou en l'ordonnée du point de contact). Les deux solutions réelles correspondent aux deux tangentes.
+
+\begin{exemplebox}[Tangentes à l'ellipse depuis un point extérieur]
+Soit $\mathcal{E}:\frac{x^2}{9}+\frac{y^2}{4}=1$ et $A(5;0)$. Chercher les tangentes issues de $A$.
+\emph{Résolution :} Une droite par $A$ (non verticale) : $y=m(x-5)$. Intersection avec $\mathcal{E}$ :
+$\frac{x^2}{9}+\frac{m^2(x-5)^2}{4}=1$. Multiplier par $36$ : $4x^2+9m^2(x-5)^2=36$.
+Équation du second degré en $x$ : $(4+9m^2)x^2 -90m^2 x + (225m^2-36)=0$.
+Tangence $\Leftrightarrow \Delta'=0$ (avec $\Delta' = (45m^2)^2 - (4+9m^2)(225m^2-36)$) :
+$2025m^4 - (900m^2 - 144 + 2025m^4 - 324m^2) = 0 \;\Leftrightarrow\; -576m^2 + 144 = 0 \;\Leftrightarrow\; m^2 = \frac{1}{4}$.
+Donc $m=\frac{1}{2}$ ou $m=-\frac{1}{2}$.
+Les tangentes sont : $y=\frac{1}{2}(x-5)$ et $y=-\frac{1}{2}(x-5)$, soit $x-2y-5=0$ et $x+2y-5=0$.
+\end{exemplebox}
+
+\courssub{Erreurs fréquentes et pièges à éviter}
+\begin{attention}[Pièges classiques]
+\begin{itemize}
+    \item Oublier de vérifier que $M_0$ appartient à la conique avant d'appliquer le dédoublement.
+    \item Confondre les formules : signe $+$ pour l'ellipse, signe $-$ pour l'hyperbole.
+    \item Ne pas simplifier l'équation finale (laisser des fractions) alors que l'énoncé demande une équation cartésienne à coefficients entiers.
+    \item Croire que la règle du dédoublement fonctionne pour toute équation de conique (ex. : conique décalée ou tournée) ; elle ne s'applique qu'aux équations \emph{réduites} (centrées à l'origine, axes parallèles aux axes du repère).
+    \item Pour les tangentes depuis un point extérieur : oublier le cas d'une tangente verticale (équation $x = x_A$) si le point extérieur a une abscisse compatible.
+\end{itemize}
+\end{attention}
+
+\courssub{Synthèse et savoir-faire attendus}
+\begin{aretenir}[Compétences clés pour le Probatoire]
+\begin{itemize}
+    \item Connaître par cœur les trois formules de tangente réduite (ellipse, parabole, hyperbole).
+    \item Savoir appliquer la méthode en 4 étapes (vérification, identification, dédoublement, simplification).
+    \item Être capable de déterminer les tangentes issues d'un point extérieur (résolution par discriminant nul).
+    \item Comprendre la propriété optique de l'ellipse et de la parabole (réflexion par rapport à la tangente) pour les applications concrètes.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Exercices d'entraînement}
+\begin{exercice}[Exercice 1]
+Déterminer l'équation de la tangente à l'hyperbole $\mathcal{H}:\frac{x^2}{16}-\frac{y^2}{9}=1$ au point $M_0(5; \frac{9}{4})$.
+\end{exercice}
+
+\begin{exercice}[Exercice 2]
+Trouver les équations des tangentes à la parabole $y^2=8x$ qui passent par le point $A(-2;4)$.
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+Vérification : $\frac{25}{16}-\frac{81/16}{9}=\frac{25}{16}-\frac{9}{16}=1$ $\checkmark$.
+Formule : $\frac{5x}{16}-\frac{\frac{9}{4}y}{9}=1$ $\Rightarrow$ $\frac{5x}{16}-\frac{y}{4}=1$.
+Multiplier par $16$ : $5x-4y=16$.
+\end{corrige}
+
+\begin{corrige}[Exercice 2]
+Parabole $y^2=8x$ $\Rightarrow$ $2p=8$, $p=4$.
+Droite par $A(-2;4)$ (non verticale) : $y-4=m(x+2)$.
+Intersection : $(m(x+2)+4)^2=8x$.
+Équation en $x$ : $m^2x^2 + (4m^2+8m-8)x + (4m^2+16m+16)=0$.
+$\Delta=0$ $\Rightarrow$ $(4m^2+8m-8)^2 -4m^2(4m^2+16m+16)=0$.
+Simplification : $16(m^2+2m-2)^2 - 16m^2(m+2)^2 = 0$.
+Factorisation (différence de carrés) : $16[(m^2+2m-2) - m(m+2)] \cdot [(m^2+2m-2) + m(m+2)] = 0$.
+Le premier facteur vaut $-4 \neq 0$. Le second donne $2m^2+4m-2=0 \;\Leftrightarrow\; m^2+2m-1=0$.
+Solutions : $m = -1 + \sqrt{2}$ et $m = -1 - \sqrt{2}$.
+Tangentes :
+$y-4 = (-1+\sqrt{2})(x+2)$  et  $y-4 = (-1-\sqrt{2})(x+2)$.
+\end{corrige}
+
+\coursec{Construction d'une conique et applications}
+
+Dans les sections précédentes, nous avons établi les équations réduites des coniques et déterminé l'équation de la tangente en un point. Une question essentielle pour le technicien se pose maintenant : comment \emph{construire} matériellement ces courbes ? Le maçon qui trace une arche, le géomètre qui implante un virage routier, l'antenniste qui profile un réflecteur parabolique ont besoin de méthodes fiables, réalisables sur le terrain ou sur plan. Cette section présente les techniques classiques de construction des trois coniques, puis montre comment mener une démarche complète de modélisation, compétence clé pour le Baccalauréat technique.
+
+\courssub{Construction de l'ellipse par la méthode du jardinier}
+
+\textbf{Intuition.} L'ellipse est l'ensemble des points $M$ tels que $MF + MF' = 2a$, où $F$ et $F'$ sont les foyers et $2a$ une constante ($a > c$). Une corde inextensible de longueur $2a$, fixée à ses deux extrémités en $F$ et $F'$, matérialise exactement cette condition : si l'on tend la corde avec un stylet, la pointe du stylet est un point $M$ vérifiant $MF + MF' = 2a$.
+
+\begin{methode}[Méthode du jardinier (tracé de l'ellipse)]
+\begin{enumerate}
+\item Planter deux piquets aux foyers $F$ et $F'$, distants de $2c$.
+\item Fixer aux piquets une corde (non élastique) de longueur $2a$, avec $2a > 2c$.
+\item Tendre la corde avec un stylet (piquet, craie, doigt) et faire glisser le stylet en gardant la corde tendue.
+\item La pointe du stylet décrit l'\cle{ellipse} de foyers $F$, $F'$ et de grand axe $2a$.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Condition d'existence]
+Dans la méthode du jardinier, la longueur de la corde doit être \textbf{strictement supérieure} à la distance $FF'$ : $2a > 2c$, c'est-à-dire $a > c$. Si $2a = 2c$, le stylet ne peut glisser que sur le segment $[FF']$ (ellipse dégénérée en segment) ; si $2a < 2c$, la corde ne peut même pas être tendue : il n'y a \textbf{pas d'ellipse}.
+\end{attention}
+
+\begin{exemplebox}[Exemple chiffré : ellipse d'équation $\dfrac{x^2}{25} + \dfrac{y^2}{16} = 1$]
+On lit $a^2 = 25$ et $b^2 = 16$, donc $a = 5$, $b = 4$ et $c = \sqrt{a^2 - b^2} = \sqrt{25-16} = 3$.
+\begin{itemize}
+\item Longueur de la corde : $2a = 10$.
+\item Distance entre les piquets : $2c = 6$, donc $F(-3\,;\,0)$ et $F'(3\,;\,0)$.
+\item Demi-petit axe : $b = 4$ (hauteur maximale de la plate-bande).
+\end{itemize}
+On plante deux piquets distants de $6$ unités, on tend une corde de $10$ unités : le tracé obtenu est exactement l'ellipse d'équation $\dfrac{x^2}{25} + \dfrac{y^2}{16} = 1$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.55,>=Stealth]
+\draw[popline] (-7,0) -- (7,0);
+\draw[popline] (0,-4.5) -- (0,4.5);
+\draw[popblue,thick] (0,0) ellipse (5 and 4);
+\fill[popink] (-3,0) circle (2.5pt) node[below left] {$F$};
+\fill[popink] (3,0) circle (2.5pt) node[below right] {$F'$};
+\coordinate (M) at ({5*cos(55)},{4*sin(55)});
+\fill[poporange] (M) circle (2.5pt) node[above right] {$M$};
+\draw[poporange,thick] (-3,0) -- (M) node[midway,above left,sloped] {\small $MF$};
+\draw[poporange,thick] (3,0) -- (M) node[midway,above right,sloped] {\small $MF'$};
+\draw[<->,popmuted] (-3,-0.6) -- (3,-0.6) node[midway,below] {\small $2c$};
+\node[popblue] at (0,-5.3) {$MF + MF' = 2a$ (longueur de la corde)};
+\end{tikzpicture}
+\end{center}
+\legende{Méthode du jardinier : la corde tendue en $M$ impose $MF + MF' = 2a$.}
+\end{popfigure}
+
+\begin{savaistu}[La corde du jardinier au Cameroun]
+Les jardiniers des espaces verts — y compris ceux qui entretiennent les parterres des grands bâtiments publics de Yaoundé — et les maçons camerounais utilisent concrètement la méthode de la corde pour tracer des plates-bandes elliptiques ou des margelles de puits ovales : deux piquets, une corde, une machette ou un morceau de craie, et l'ellipse apparaît. C'est la même technique que celle décrite par les mathématiciens depuis l'Antiquité !
+\end{savaistu}
+
+\courssub{Construction point par point d'une ellipse à partir de son équation réduite}
+
+Quand on dispose de l'équation réduite $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$, on peut construire l'ellipse \cle{point par point} dans un repère orthonormé.
+
+\begin{methode}[Tracé point par point de l'ellipse]
+\begin{enumerate}
+\item Placer les sommets : $A(a\,;\,0)$, $A'(-a\,;\,0)$, $B(0\,;\,b)$, $B'(0\,;\,-b)$.
+\item Exploiter les \cle{symétries} : l'ellipse est symétrique par rapport aux deux axes et au centre $O$. Il suffit donc de calculer des points du \textbf{premier quadrant} ($x \ge 0, y \ge 0$).
+\item Isoler $y$ : pour $x \in [0, a]$, $y = b\sqrt{1 - \dfrac{x^2}{a^2}}$.
+\item Dresser un tableau de valeurs pour quelques abscisses $x \in [0\,;\,a]$, placer les points, puis compléter par symétrie axiale et centrale.
+\item Relier les points par une courbe régulière.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Construction de l'ellipse $\dfrac{x^2}{25} + \dfrac{y^2}{16} = 1$]
+Construire point par point cette ellipse dans un repère orthonormé (unité : \SI{1}{cm}).
+\tcblower
+On a $a = 5$, $b = 4$. Pour le premier quadrant : $y = 4\sqrt{1 - \dfrac{x^2}{25}}$.
+\begin{center}
+\begin{tabular}{|c|cccccc|}\hline
+$x$ & $0$ & $1$ & $2$ & $3$ & $4$ & $5$ \\ \hline
+$y$ & $4$ & $3{,}92$ & $3{,}67$ & $3{,}20$ & $2{,}40$ & $0$ \\ \hline
+\end{tabular}
+\end{center}
+Détail d'un calcul : pour $x = 3$, $y = 4\sqrt{1 - \tfrac{9}{25}} = 4\sqrt{\tfrac{16}{25}} = 4 \times \tfrac{4}{5} = 3{,}2$.
+On place les six points du premier quadrant, on complète par symétrie par rapport aux axes (24 points au total), puis on trace la courbe. Les sommets sont $A(5\,;\,0)$, $A'(-5\,;\,0)$, $B(0\,;\,4)$, $B'(0\,;\,-4)$.
+\end{exoresolu}
+
+\courssub{Construction de la parabole point par point}
+
+\textbf{Intuition.} La parabole est l'ensemble des points $M$ équidistants du foyer $F$ et de la directrice $D$ : $MF = d(M, D)$. Si $H$ est le projeté orthogonal de $M$ sur $D$, alors $MF = MH$ : le point $M$ appartient à la \cle{médiatrice} du segment $[FH]$.
+
+\begin{methode}[Construction de la parabole (foyer et directrice)]
+Pour chaque point $H$ de la directrice $D$ :
+\begin{enumerate}
+\item Tracer la perpendiculaire à $D$ passant par $H$ (c'est la parallèle à l'axe de la parabole) ;
+\item Tracer la médiatrice du segment $[FH]$ (intersection de deux arcs de cercle de centres $F$ et $H$ et de même rayon $> FH/2$, ou à l'équerre et au compas) ;
+\item L'intersection $M$ de cette perpendiculaire et de cette médiatrice est un point de la parabole, car $MF = MH$.
+\end{enumerate}
+En répétant pour plusieurs points $H$, on obtient autant de points de la parabole, que l'on relie ensuite.
+\end{methode}
+
+\begin{attention}[Piège fréquent]
+Ne pas confondre la médiatrice de $[FH]$ avec la perpendiculaire à $D$ en $H$ : ce sont deux droites différentes dont l'\emph{intersection} donne le point $M$. De plus, la médiatrice de $[FH]$ est en réalité la \textbf{tangente} à la parabole en $M$ : c'est le lien profond entre construction et tangente vu à la section précédente.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.9,>=Stealth]
+\draw[popink,thick] (-1.2,-2.6) -- (-1.2,2.6) node[above] {$D$};
+\fill[popink] (1,0) circle (2pt) node[below right] {$F$};
+\draw[popline,dashed] (-1.2,0) -- (1,0);
+\fill[popink] (0,0) circle (1.5pt) node[below left] {$S$};
+\foreach \h in {-1.8,-1.2,-0.6,0.6,1.2,1.8}{
+  \draw[popmuted] (-1.2,\h) -- (3.2,\h);
+  \fill[popmuted] (-1.2,\h) circle (1pt);
+}
+\foreach \h in {-1.8,-1.2,-0.6,0.6,1.2,1.8}{
+  \pgfmathsetmacro{\xm}{0.5*\h*\h/2}
+  \fill[poporange] ({\h*\h/4},\h) circle (2pt);
+}
+\draw[popblue,thick,domain=-2.2:2.2,samples=100] plot ({(\x)*(\x)/4},\x);
+\coordinate (H) at (-1.2,1.8);
+\coordinate (M) at (0.81,1.8);
+\draw[popgreen,thick] (H) -- (1,0);
+\draw[popgreen,thick,dashed] (0.05,2.49) -- (0.76,-0.69);
+\node[popgreen] at (1.9,2.3) {\small médiatrice de $[FH]$};
+\node[popink] at (-1.2,-2.9) {\small directrice};
+\node[poporange] at (2.6,-1.6) {\small $M$ : $MF = MH$};
+\end{tikzpicture}
+\end{center}
+\legende{Construction point par point de la parabole : $M$ est l'intersection de la parallèle à l'axe passant par $H$ et de la médiatrice de $[FH]$.}
+\end{popfigure}
+
+\begin{experience}[Construction de la parabole par pliage du papier]
+Matériel : une feuille de papier (calque de préférence), une règle, un crayon.
+\begin{enumerate}
+\item Tracer une droite $D$ près d'un bord de la feuille et marquer un point $F$ à quelques centimètres de $D$.
+\item Choisir un point $H$ sur $D$, puis \textbf{plier} la feuille de sorte que $H$ vienne exactement sur $F$. Marquer le pli au crayon.
+\item Recommencer avec une quinzaine de points $H$ différents de $D$.
+\end{enumerate}
+\textbf{Observation :} chaque pli est la médiatrice d'un segment $[FH]$, donc une tangente à la parabole de foyer $F$ et de directrice $D$. L'ensemble des plis « enveloppe » la parabole, qui apparaît clairement sur la feuille. Cette activité justifie concrètement que la médiatrice de $[FH]$ est tangente à la parabole.
+\end{experience}
+
+\courssub{Construction de l'hyperbole point par point}
+
+Pour l'hyperbole d'équation réduite $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$, la construction s'appuie sur les \cle{sommets} et les \cle{asymptotes}.
+
+\begin{methode}[Tracé de l'hyperbole à l'aide des asymptotes]
+\begin{enumerate}
+\item Placer les sommets $A(a\,;\,0)$ et $A'(-a\,;\,0)$ (l'hyperbole n'a pas de sommet sur l'axe des ordonnées).
+\item Tracer le \textbf{rectangle de référence} de côtés $2a$ et $2b$, centré en $O$, puis ses diagonales prolongées : ce sont les asymptotes d'équations $y = \dfrac{b}{a}x$ et $y = -\dfrac{b}{a}x$.
+\item Pour quelques $x > a$, calculer $y = b\sqrt{\dfrac{x^2}{a^2} - 1}$ (premier quadrant), placer les points, compléter par symétrie par rapport aux axes (quatre branches symétriques deux à deux).
+\item Tracer chaque branche en partant du sommet et en \textbf{s'approchant des asymptotes sans jamais les toucher}.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Erreurs fréquentes]
+\begin{itemize}
+\item Ne jamais faire \textbf{couper} les asymptotes par la courbe : l'hyperbole s'en rapproche indéfiniment sans les rencontrer.
+\item L'hyperbole a \textbf{deux branches} distinctes : ne pas en oublier une.
+\item Pour $\dfrac{x^2}{a^2} - \dfrac{y^2}{b^2} = 1$, il n'existe aucun point pour $-a < x < a$ : ne pas chercher à relier les deux branches.
+\end{itemize}
+\end{attention}
+
+\begin{exemplebox}[Hyperbole $\dfrac{x^2}{9} - \dfrac{y^2}{4} = 1$]
+$a = 3$, $b = 2$. Sommets : $A(3\,;\,0)$ et $A'(-3\,;\,0)$. Asymptotes : $y = \dfrac{2}{3}x$ et $y = -\dfrac{2}{3}x$. Points du premier quadrant : pour $x = 4$, $y = 2\sqrt{\tfrac{16}{9}-1} = 2\sqrt{\tfrac{7}{9}} \approx 1{,}76$ ; pour $x = 5$, $y = 2\sqrt{\tfrac{25}{9}-1} = 2\sqrt{\tfrac{16}{9}} = \tfrac{8}{3} \approx 2{,}67$. On trace les deux branches en s'appuyant sur les asymptotes.
+\end{exemplebox}
+
+\courssub{Tracé de la tangente en un point construit géométriquement}
+
+Une fois la conique construite, on peut tracer la tangente en un point $M_0$ \emph{sans calcul}, par des constructions géométriques issues des propriétés focales (propriétés optiques).
+
+\begin{propriete}[Constructions géométriques de la tangente]
+\begin{itemize}
+\item \textbf{Parabole} : la tangente en $M$ est la \cle{médiatrice} de $[FH]$, où $H$ est le projeté orthogonal de $M$ sur la directrice. C'est aussi la bissectrice de l'angle formé par le rayon focal $[MF]$ et la parallèle à l'axe passant par $M$ (ou la perpendiculaire à $D$ en $M$).
+\item \textbf{Ellipse} : la tangente en $M$ est la bissectrice \emph{extérieure} de l'angle $\widehat{FMF'}$ (elle fait des angles égaux avec les rayons focaux $[MF]$ et $[MF']$).
+\item \textbf{Hyperbole} : la tangente en $M$ est la bissectrice \emph{intérieure} de l'angle $\widehat{FMF'}$.
+\end{itemize}
+\end{propriete}
+
+\begin{methode}[Tracer la tangente à une parabole en un point $M$]
+\begin{enumerate}
+\item Projeter orthogonalement $M$ en $H$ sur la directrice $D$.
+\item Construire la médiatrice de $[FH]$ au compas (deux arcs de même rayon, centres $F$ et $H$).
+\item Cette médiatrice passe par $M$ : c'est la tangente cherchée.
+\end{enumerate}
+\end{methode}
+
+\courssub{Applications concrètes et démarche de modélisation}
+
+Les coniques modélisent de nombreuses situations techniques :
+
+\begin{itemize}
+\item \textbf{Trajectoire d'un projectile} (ballon, jet d'eau, charge utile lancée sur un chantier) : en l'absence de frottements, c'est une \cle{parabole}.
+\item \textbf{Arche de pont, toiture de hangar, câble suspendu} : l'arc ou le câble suit souvent une parabole (ou une chaînette approchée par une parabole), ce qui assure une bonne répartition des efforts.
+\item \textbf{Antenne parabolique, réflecteur de phare} : tout rayon parallèle à l'axe se réfléchit vers le foyer (antenne réceptrice) ou part du foyer pour devenir parallèle (phare) — propriété optique de la parabole.
+\item \textbf{Orbitographie} : les trajectoires des satellites autour de la Terre sont des ellipses dont un foyer est le centre de la Terre (lois de Kepler).
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.5,>=Stealth]
+\fill[popblueL] (-6,-3.2) rectangle (6,0);
+\draw[popink,thick] (-6,0) -- (6,0);
+\draw[popdark,thick,domain=-5:5,samples=100] plot (\x,{-0.08*(\x)*(\x)});
+\draw[popdark,thick] (-5,-2) -- (-5,-3.2);
+\draw[popdark,thick] (5,-2) -- (5,-3.2);
+\draw[popdark,thick] (-3,-0.72) -- (-3,-3.2);
+\draw[popdark,thick] (3,-0.72) -- (3,-3.2);
+\draw[popdark,thick] (0,0) -- (0,-3.2);
+\draw[popline,dashed,->] (0,0) -- (0,1.2) node[right] {\small $y$};
+\draw[popline,dashed,->] (0,0) -- (6.8,0) node[above] {\small $x$};
+\node[popink] at (0,-3.7) {\small pile / culée};
+\node[popdark] at (-4.6,1.1) {\small arc parabolique};
+\end{tikzpicture}
+\end{center}
+\legende{Arche de pont modélisée par une parabole d'équation $x^2 = -2py$ (sommet en haut, axe vertical).}
+\end{popfigure}
+
+\begin{exoresolu}[Modélisation d'une arche de pont]
+Une arche de pont a la forme d'un arc de parabole. Sa portée (distance entre les deux pieds, au niveau de la chaussée) est de \SI{20}{m} et sa hauteur maximale (flèche) est de \SI{5}{m}. On munit le plan d'un repère orthonormé d'origine le sommet $S$ de l'arche, l'axe $(Oy)$ vertical orienté vers le haut. L'arche se situe dans le demi-plan $y \le 0$.
+\begin{enumerate}
+\item Montrer que l'équation de la parabole est de la forme $x^2 = -2py$ et déterminer $p$.
+\item Un camion de \SI{4}{m} de haut roule à \SI{2}{m} de l'axe de l'arche. Peut-il passer ?
+\end{enumerate}
+\tcblower
+\textbf{1.} La parabole a son sommet en $S(0\,;\,0)$, son axe est vertical et elle s'ouvre vers le bas : son équation réduite est $x^2 = -2py$ avec $p > 0$.
+Les pieds de l'arche sont à \SI{5}{m} sous le sommet ($y = -5$) et à \SI{10}{m} de part et d'autre de l'axe ($x = \pm 10$) : le point $(10\,;\,-5)$ appartient à la courbe. Donc :
+\[ 10^2 = -2p \times (-5) \quad\Longrightarrow\quad 100 = 10p \quad\Longrightarrow\quad p = 10. \]
+L'équation de l'arche est $x^2 = -20y$, soit $y = -\dfrac{x^2}{20}$.
+
+\textbf{2.} À \SI{2}{m} de l'axe, $x = 2$ : $y = -\dfrac{2^2}{20} = -0{,}2$. La voûte est donc à $5 - 0{,}2 = 4{,}8$ m au-dessus de la chaussée à cet endroit. Comme $4{,}8 > 4$, le camion passe, avec une marge de \SI{0,8}{m}.
+
+\textbf{Conclusion rédigée :} en choisissant le repère adapté (origine au sommet), on identifie la forme réduite $x^2 = -2py$, on détermine le paramètre $p$ grâce à un point connu de la courbe, puis on exploite l'équation pour répondre à la question concrète. C'est la démarche complète de modélisation : \emph{choix du repère} $\to$ \emph{forme de l'équation} $\to$ \emph{détermination des paramètres} $\to$ \emph{exploitation et conclusion}.
+\end{exoresolu}
+
+\begin{methode}[Rédiger une démarche de modélisation par une conique]
+\begin{enumerate}
+\item \textbf{Choisir un repère} adapté à la situation (origine au sommet ou au centre, axes de symétrie).
+\item \textbf{Identifier la conique} et écrire la forme de son équation réduite.
+\item \textbf{Déterminer les paramètres} ($a$, $b$, $p$) à l'aide des données numériques (points connus, portée, hauteur).
+\item \textbf{Exploiter l'équation} pour répondre à la question posée.
+\item \textbf{Conclure} en revenant à la situation concrète, avec les unités.
+\end{enumerate}
+\end{methode}
+
+\begin{exercice}[Trajectoire d'un jet d'eau]
+Un jet d'eau sort d'une bouche d'arrosage placée au point $O(0\,;\,0)$ et retombe au sol \SI{8}{m} plus loin. Sa hauteur maximale, atteinte à mi-distance, est de \SI{2}{m}. On admet que la trajectoire est parabolique, d'axe vertical.
+\begin{enumerate}
+\item Donner les coordonnées du sommet $S$ de la parabole dans le repère d'origine $O$.
+\item Déterminer l'équation de la trajectoire sous la forme $y = \alpha(x - h)^2 + k$.
+\item À quelle hauteur se trouve le jet à \SI{1}{m} de la bouche d'arrosage ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : trajectoire d'un jet d'eau]
+\textbf{1.} Le sommet est à mi-distance horizontalement et à la hauteur maximale : $S(4\,;\,2)$.
+\textbf{2.} La parabole a un axe vertical, sommet $S(4\,;\,2)$, elle s'ouvre vers le bas : $y = \alpha(x-4)^2 + 2$ avec $\alpha < 0$.
+Le point $O(0\,;\,0)$ est sur la courbe : $0 = \alpha(0-4)^2 + 2 = 16\alpha + 2$, donc $\alpha = -\dfrac{1}{8}$.
+D'où l'équation : $y = -\dfrac{1}{8}(x-4)^2 + 2$.
+\textbf{3.} Pour $x = 1$ : $y = -\dfrac{1}{8}(1-4)^2 + 2 = -\dfrac{9}{8} + 2 = \dfrac{7}{8} = 0{,}875$. Le jet est à \SI{0,875}{m} de hauteur.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item \textbf{Ellipse (jardinier)} : deux piquets en $F$ et $F'$, corde de longueur $2a > FF'$ ; le stylet tendu trace l'ellipse.
+\item \textbf{Ellipse (point par point)} : sommets, tableau de valeurs sur un quadrant, symétries.
+\item \textbf{Parabole} : pour chaque $H$ de la directrice, $M$ = intersection de la parallèle à l'axe passant par $H$ et de la médiatrice de $[FH]$ ; le pliage de papier fait apparaître les tangentes.
+\item \textbf{Hyperbole} : sommets, rectangle de référence, asymptotes, branches qui s'en approchent sans les toucher.
+\item \textbf{Tangente géométrique} : médiatrice de $[FH]$ (parabole), bissectrices des rayons focaux (extérieure pour l'ellipse, intérieure pour l'hyperbole).
+\item \textbf{Modélisation} : repère $\to$ équation réduite $\to$ paramètres $\to$ exploitation $\to$ conclusion avec unités.
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Activité d'intégration : Modélisation technique par les coniques}
+
+\courssub{Objectifs de l'activité}
+Cette activité d'intégration vise à mobiliser l'ensemble des savoirs et savoir-faire de la leçon sur les coniques dans un contexte professionnel authentique. Elle permet à l'élève de :
+\begin{itemize}
+    \item Modéliser une situation technique réelle (antenne, pont) par une conique (parabole, ellipse) en choisissant un repère orthonormé adapté.
+    \item Déterminer l'équation réduite de la conique, ses éléments caractéristiques (foyer, directrice, foyers, excentricité) et l'équation d'une tangente.
+    \item Réaliser une construction géométrique à l'échelle (méthode du jardinier pour l'ellipse).
+    \item Rédiger un rapport technique structuré justifiant chaque étape : choix du repère, calculs algébriques, interprétation physique des paramètres, protocole de construction.
+    \item Communiquer oralement la démarche et les résultats devant la classe.
+\end{itemize}
+
+\courssub{Situation}
+\emph{Contexte :} Dans le cadre de la modernisation des infrastructures de la ville de Douala, l'entreprise \textbf{« GeniCam Ingénierie »} recrute des techniciens supérieurs pour valider les études techniques de deux ouvrages emblématiques du quartier \emph{Makepe} : une antenne parabolique de réception satellite pour le centre communautaire et une arche de pont piétonnier sur le canal de drainage principal.
+
+\medskip
+\noindent \textbf{Problème 1 — L'antenne parabolique du centre communautaire}
+L'antenne a une forme paraboloïde de révolution. En coupe méridienne (plan passant par l'axe de symétrie), le profil est une parabole. Les spécifications techniques indiquent :
+\begin{itemize}
+    \item Diamètre de l'ouverture : $D = \num{1,20}\,\text{m}$.
+    \item Profondeur (flèche) au centre : $h = \num{20}\,\text{cm} = \num{0,20}\,\text{m}$.
+\end{itemize}
+Le récepteur (LNB) doit être placé exactement au foyer de la parabole pour capter le signal optimal. De plus, pour l'étude de la fixation du bord de l'antenne sur son support, il faut connaître l'inclinaison de la parabole au niveau du bord (tangente en ce point).
+
+\medskip
+\noindent \textbf{Problème 2 — L'arche du pont piétonnier sur le canal}
+L'arche a la forme d'une demi-ellipse. Les cotes du projet sont :
+\begin{itemize}
+    \item Largeur totale de l'arche (portée) : $L = \num{10}\,\text{m}$.
+    \item Hauteur maximale au centre (flèche) : $H = \num{4}\,\text{m}$.
+\end{itemize}
+L'architecte souhaite connaître la position des foyers de l'ellipse (points d'ancrage potentiels pour les haubans) et l'excentricité (indicateur de l'aplatissement). Pour la préfabrication des voussoirs en atelier, le chef d'atelier demande un tracé précis de l'arche à l'échelle $1/100^{\text{ème}}$ sur une feuille de papier, en utilisant la méthode du jardinier (corde et deux punaises).
+
+\courssub{Consignes}
+Travailler par groupes de 4 élèves. Chaque groupe remet un rapport écrit et prépare une présentation orale de 5 minutes.
+
+\medskip
+\noindent \textbf{Partie A — Antenne parabolique}
+\begin{enumerate}
+    \item Choisir un repère orthonormé $(O;\vec{\imath},\vec{\jmath})$ adapté pour que l'équation de la parabole soit sous forme réduite. Justifier ce choix (position de l'origine, orientation des axes). Préciser l'unité de longueur.
+    \item Déterminer l'équation réduite de la parabole dans ce repère.
+    \item Calculer le paramètre $p$ et les coordonnées du foyer $F$. À quelle distance du sommet (fond de l'antenne) doit-on placer le récepteur ?
+    \item Déterminer les coordonnées du point $M$ situé sur le bord de l'antenne (intersection avec le bord supérieur).
+    \item Écrire l'équation de la tangente $(T)$ à la parabole au point $M$. Donner l'angle que cette tangente fait avec l'horizontal (arrondi au degré près).
+\end{enumerate}
+
+\medskip
+\noindent \textbf{Partie B — Arche du pont (Ellipse)}
+\begin{enumerate}
+    \item Choisir un repère orthonormé pour que l'équation de l'ellipse soit sous forme réduite. Justifier.
+    \item Déterminer l'équation réduite de l'ellipse (entière) et préciser l'équation de la demi-ellipse supérieure correspondant à l'arche.
+    \item Calculer la distance focale $c$, les coordonnées des foyers $F$ et $F'$, et l'excentricité $e$. Interpréter physiquement la position des foyers.
+    \item \textbf{Construction à l'échelle $1/100^{\text{ème}}$ :} Sur une feuille A4 (paysage), tracer l'ellipse complète par la méthode du jardinier.
+    \begin{itemize}
+        \item Calculer la longueur de la corde à utiliser (en cm).
+        \item Calculer la distance entre les deux punaises (foyers) sur le papier (en cm).
+        \item Décrire le protocole pas à pas pour tracer la courbe.
+    \end{itemize}
+    \item Sur le tracé, reporter l'arche (demi-ellipse supérieure) et coter la hauteur $H$ et la largeur $L$ à l'échelle.
+\end{enumerate}
+
+\medskip
+\noindent \textbf{Partie C — Synthèse et communication}
+\begin{enumerate}
+    \item Comparer les deux formes (parabole vs ellipse) pour une arche de pont : avantages/inconvénients en termes de répartition des efforts (compression).
+    \item Rédiger l'introduction et la conclusion du rapport technique adressé au chef de projet.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+\begin{propriete}[Formules utiles — Parabole]
+Soit une parabole d'équation réduite $y^2 = 2px$ (axe horizontal) ou $x^2 = 2py$ (axe vertical), $p \neq 0$.
+\begin{itemize}
+    \item Sommet : $S(0,0)$.
+    \item Foyer : $F(p/2, 0)$ ou $F(0, p/2)$.
+    \item Directrice : $x = -p/2$ ou $y = -p/2$.
+    \item Tangente en $M(x_0,y_0)$ : $yy_0 = p(x+x_0)$ (axe horiz.) ou $xx_0 = p(y+y_0)$ (axe vert.).
+\end{itemize}
+\end{propriete}
+
+\begin{propriete}[Formules utiles — Ellipse]
+Soit une ellipse d'équation réduite $\dfrac{x^2}{a^2} + \dfrac{y^2}{b^2} = 1$ avec $a > b > 0$ (axe focal horizontal).
+\begin{itemize}
+    \item Centre : $O(0,0)$. Sommets : $A(-a,0), A'(a,0), B(0,-b), B'(0,b)$.
+    \item Distance focale : $c = \sqrt{a^2 - b^2}$. Foyers : $F(-c,0), F'(c,0)$.
+    \item Excentricité : $e = \dfrac{c}{a} \in [0,1[$.
+    \item Tangente en $M(x_0,y_0)$ : $\dfrac{xx_0}{a^2} + \dfrac{yy_0}{b^2} = 1$.
+    \item \textbf{Méthode du jardinier :} L'ellipse est l'ensemble des points $M$ tels que $MF + MF' = 2a$. On plante deux punaises aux foyers, on attache une corde de longueur $2a$ entre elles (extrémités fixées aux punaises), on tend la corde avec un crayon et on tourne.
+\end{itemize}
+\end{propriete}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+    \item Confondre le paramètre $p$ de la parabole ($y^2=2px$ ou $x^2=2py$) et la distance focale $p/2$. Le foyer est à $p/2$ du sommet.
+    \item Oublier de convertir les unités (cm en m) avant les calculs.
+    \item Pour l'ellipse, identifier correctement $a$ (grand axe) et $b$ (petit axe) : $a$ est toujours le demi-grand axe. Ici $a=5$ (horizontal), $b=4$ (vertical).
+    \item À l'échelle $1/100$, $1\,\text{m} = 1\,\text{cm}$. Ne pas diviser par 100 deux fois.
+    \item Méthode du jardinier : la corde a une longueur $2a$ et ses extrémités sont fixées aux foyers (pas de boucle fermée de périmètre $2a$ autour des foyers).
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+\begin{exoresolu}[Corrigé détaillé de l'activité d'intégration]
+\textbf{PARTIE A — ANTENNE PARABOLIQUE}
+
+\medskip
+\noindent \textbf{1. Choix du repère}
+On choisit un repère orthonormé $(O;\vec{\imath},\vec{\jmath})$ tel que :
+\begin{itemize}
+    \item L'origine $O$ est au sommet de la parabole (point le plus profond de l'antenne, centre du fond).
+    \item L'axe des ordonnées $(Oy)$ est l'axe de symétrie de la parabole, orienté vers l'ouverture de l'antenne (vers le haut).
+    \item L'axe des abscisses $(Ox)$ est horizontal, tangent au sommet.
+    \item Unité : le mètre ($\text{m}$).
+\end{itemize}
+\emph{Justification :} Ce choix place le sommet à l'origine et l'axe focal sur $Oy$, ce qui donne l'équation réduite la plus simple : $x^2 = 2py$ avec $p>0$ (parabole tournée vers le haut).
+
+\medskip
+\noindent \textbf{2. Équation réduite}
+La parabole passe par le point $M$ situé sur le bord supérieur. Le diamètre est $\num{1,20}\,\text{m}$, donc l'abscisse de $M$ est $x_M = \num{0,60}\,\text{m}$. La profondeur est $\num{0,20}\,\text{m}$, donc l'ordonnée de $M$ est $y_M = \num{0,20}\,\text{m}$.
+$M(\num{0,60}\,;\, \num{0,20})$ appartient à la parabole $x^2 = 2py$.
+\[
+(\num{0,60})^2 = 2p \times \num{0,20} \iff \num{0,36} = \num{0,4}p \iff p = \frac{\num{0,36}}{\num{0,4}} = \num{0,9}\,\text{m}.
+\]
+L'équation réduite est : \cle{$x^2 = \num{1,8}y$} (ou $y = \dfrac{x^2}{\num{1,8}}$).
+
+\medskip
+\noindent \textbf{3. Foyer et position du récepteur}
+Pour la parabole $x^2 = 2py$, le foyer est $F(0\,;\, p/2)$.
+\[
+p = \num{0,9} \implies \frac{p}{2} = \num{0,45}\,\text{m}.
+\]
+Le foyer est $F(0\,;\, \num{0,45})$. Le récepteur (LNB) doit être placé sur l'axe de l'antenne, à \cle{$\num{45}\,\text{cm}$ au-dessus du fond de l'antenne} (sommet).
+
+\medskip
+\noindent \textbf{4. Coordonnées du point $M$ au bord}
+D'après le choix du repère et les données : \cle{$M(\num{0,60}\,;\, \num{0,20})$}.
+
+\medskip
+\noindent \textbf{5. Tangente en $M$ et angle avec l'horizontal}
+Équation de la tangente à $x^2 = 2py$ en $M(x_0,y_0)$ : $xx_0 = p(y+y_0)$.
+Ici $x_0 = \num{0,60}$, $y_0 = \num{0,20}$, $p = \num{0,9}$.
+\[
+\num{0,60} x = \num{0,9}(y + \num{0,20}) \iff \num{0,60}x = \num{0,9}y + \num{0,18} \iff \num{0,9}y = \num{0,60}x - \num{0,18} \iff y = \frac{2}{3}x - \num{0,2}.
+\]
+L'équation réduite de la tangente $(T)$ est : \cle{$y = \frac{2}{3}x - \num{0,2}$}.
+Le coefficient directeur est $m = \frac{2}{3}$. L'angle $\alpha$ avec l'horizontal (axe $Ox$) vérifie $\tan\alpha = \frac{2}{3}$.
+\[
+\alpha = \arctan\left(\frac{2}{3}\right) \approx \num{33,69}^\circ \approx \cle{\num{34}^\circ}.
+\]
+La tangente au bord fait un angle d'environ $\num{34}^\circ$ avec l'horizontal. Cela définit l'inclinaison du support de fixation du bord de l'antenne.
+
+\medskip
+\noindent \textbf{PARTIE B — ARCHE DU PONT (ELLIPSE)}
+
+\medskip
+\noindent \textbf{1. Choix du repère}
+On choisit un repère orthonormé $(O;\vec{\imath},\vec{\jmath})$ tel que :
+\begin{itemize}
+    \item L'origine $O$ est au centre de l'arche (milieu de la portée, au niveau du sol/du canal).
+    \item L'axe des abscisses $(Ox)$ est horizontal, le long de la portée du pont (axe majeur de l'ellipse).
+    \item L'axe des ordonnées $(Oy)$ est vertical, orienté vers le haut (axe mineur de l'ellipse, axe de symétrie de l'arche).
+    \item Unité : le mètre ($\text{m}$).
+\end{itemize}
+\emph{Justification :} Le centre de l'ellipse est au milieu de la portée. L'axe majeur (longueur $2a$) est horizontal (largeur $\num{10}\,\text{m}$), l'axe mineur (hauteur $2b$ pour l'ellipse entière) est vertical. L'équation réduite est $\frac{x^2}{a^2}+\frac{y^2}{b^2}=1$.
+
+\medskip
+\noindent \textbf{2. Équation réduite}
+Largeur $L = \num{10}\,\text{m} = 2a \implies a = \num{5}\,\text{m}$.
+Hauteur $H = \num{4}\,\text{m} = b$ (car l'arche est une demi-ellipse supérieure, le sommet haut est $B'(0,b)$).
+L'équation de l'ellipse entière est :
+\cle{$\frac{x^2}{25} + \frac{y^2}{16} = 1$}.
+L'arche (demi-ellipse supérieure) correspond à la restriction $y \ge 0$ : \cle{$y = 4\sqrt{1 - \frac{x^2}{25}}$} pour $x \in [-\num{5}\,;\, \num{5}]$.
+
+\medskip
+\noindent \textbf{3. Foyers et excentricité}
+$a=\num{5}$, $b=\num{4}$. Distance focale $c = \sqrt{a^2 - b^2} = \sqrt{25 - 16} = \sqrt{9} = \num{3}\,\text{m}$.
+Foyers : \cle{$F(-\num{3}\,;\,0)$} et \cle{$F'(\num{3}\,;\,0)$}. Ils sont situés sur l'axe de la portée, à $\num{3}\,\text{m}$ du centre (donc à $\num{2}\,\text{m}$ des culées).
+Excentricité : \cle{$e = \frac{c}{a} = \frac{3}{5} = \num{0,6}$}.
+\emph{Interprétation :} L'excentricité $\num{0,6}$ indique une ellipse assez aplatie (proche d'un cercle pour $e\to 0$, très aplatie pour $e\to 1$). Les foyers, situés sur la ligne d'appui, sont des points privilégiés pour l'ancrage de haubans ou l'analyse de la poussée horizontale : la somme des distances d'un point de l'arche aux deux foyers est constante ($2a=\num{10}\,\text{m}$), propriété utilisée en statique graphique (polygone des forces).
+
+\medskip
+\noindent \textbf{4. Construction à l'échelle $1/100^{\text{ème}}$ (Méthode du jardinier)}
+Échelle : $1\,\text{m} \rightarrow 1\,\text{cm}$.
+\begin{itemize}
+    \item Grand axe $2a = \num{10}\,\text{m} \rightarrow \cle{\num{10}\,\text{cm}}$. C'est la longueur de la corde (extrémités fixées aux punaises).
+    \item Distance focale $2c = \num{6}\,\text{m} \rightarrow \cle{\num{6}\,\text{cm}}$. C'est la distance entre les deux punaises (foyers $F$ et $F'$).
+\end{itemize}
+\emph{Protocole de tracé (sur feuille A4 paysage) :}
+\begin{enumerate}
+    \item Tracer un axe horizontal $(Ox)$ au centre de la feuille. Repérer le centre $O$.
+    \item Placer les deux punaises en $F$ et $F'$ tels que $OF = OF' = \num{3}\,\text{cm}$ (donc $FF' = \num{6}\,\text{cm}$).
+    \item Prendre une corde de longueur $\num{10}\,\text{cm}$ ($2a$), attacher une extrémité à la punaise $F$ et l'autre à la punaise $F'$.
+    \item Insérer la pointe d'un crayon dans la corde, tendre la corde de manière à former un triangle $MF F'$ avec la corde tendue.
+    \item En maintenant la corde tendue, faire tourner le crayon autour des punaises : le crayon trace l'ellipse.
+    \item Vérifier : au sommet haut $B'$, la corde forme un triangle isocèle $B'FF'$ de base $\num{6}\,\text{cm}$ et côtés $B'F = B'F' = \num{5}\,\text{cm}$ (somme $\num{10}\,\text{cm}$). Hauteur $B'O = \sqrt{5^2-3^2} = \num{4}\,\text{cm}$. Conforme à $b=\num{4}\,\text{cm}$.
+\end{enumerate}
+
+\medskip
+\noindent \textbf{5. Tracé final de l'arche}
+Sur la construction précédente, ne conserver que la partie supérieure ($y \ge 0$). Tracer l'axe de symétrie $(Oy)$. Coter :
+\begin{itemize}
+    \item Portée $AA' = \num{10}\,\text{cm}$ (représente $\num{10}\,\text{m}$).
+    \item Flèche $OB' = \num{4}\,\text{cm}$ (représente $\num{4}\,\text{m}$).
+    \item Position des foyers $F, F'$ à $\num{3}\,\text{cm}$ du centre.
+\end{itemize}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+    % Ellipse construction (gardener's method)
+    \def\a{5} % cm
+    \def\b{4} % cm
+    \def\c{3} % cm
+    
+    % Axes
+    \draw[popmuted, thin] (-\a-1,0) -- (\a+1,0) node[right] {$Ox$};
+    \draw[popmuted, thin] (0,-\b-0.5) -- (0,\b+0.5) node[above] {$Oy$};
+    
+    % Ellipse (full)
+    \draw[popblue, thick, domain=0:360, smooth, variable=\t] plot ({\a*cos(\t)}, {\b*sin(\t)});
+    
+    % Arch (upper half highlighted)
+    \draw[poporange, very thick, domain=0:180, smooth, variable=\t] plot ({\a*cos(\t)}, {\b*sin(\t)});
+    
+    % Foci
+    \fill[popred] (-\c,0) circle (2pt) node[below=2pt] {$F$};
+    \fill[popred] (\c,0) circle (2pt) node[below=2pt] {$F'$};
+    \fill[popdark] (0,0) circle (2pt) node[below left] {$O$};
+    
+    % Vertices
+    \draw[popmuted] (-\a,0) node[below] {$A$} -- (\a,0) node[below] {$A'$};
+    \draw[popmuted] (0,\b) node[above] {$B'$};
+    
+    % Dimensions
+    \draw[<->, popdark] (-\a,-0.8) -- (\a,-0.8) node[midway, below] {$2a = \num{10}\,\text{cm}$};
+    \draw[<->, popdark] (0,0) -- (0,\b) node[midway, right] {$b = \num{4}\,\text{cm}$};
+    \draw[<->, popdark] (0,-0.4) -- (\c,-0.4) node[midway, below] {$c = \num{3}\,\text{cm}$};
+    
+    % String representation (triangle at top)
+    \draw[popgreen, dashed] (0,\b) -- (-\c,0) -- (\c,0) -- cycle;
+    \node[popgreen, above] at (0,\b) {Corde $= 2a = \num{10}\,\text{cm}$};
+    
+    % Scale note
+    \node[align=center, font=\small, popmuted] at (7,3) {Échelle 1/100\\1 cm = 1 m};
+\end{tikzpicture}
+\legende{Construction de l'arche (demi-ellipse orange) par la méthode du jardinier à l'échelle 1/100. La corde verte en pointillés illustre la propriété $MF+MF'=2a$.}
+\end{popfigure}
+
+\medskip
+\noindent \textbf{PARTIE C — SYNTHÈSE}
+
+\medskip
+\noindent \textbf{1. Parabole vs Ellipse pour une arche de pont}
+\begin{itemize}
+    \item \textbf{Ellipse (choisie ici) :} Forme naturelle pour une arche en maçonnerie (pierre, béton) travaillant principalement en \textbf{compression}. La poussée est transmise aux appuis suivant la courbe des pressions qui se rapproche de l'ellipse (ou de la chaînette). Les foyers sont des points stratégiques pour l'ancrage des tirants (haubans) car la somme des distances aux foyers est constante ($2a$), ce qui simplifie le calcul des longueurs de câbles.
+    \item \textbf{Parabole :} Forme idéale pour une arche supportant une charge \textbf{uniformément répartie horizontalement} (ex: pont suspendu où le tablier pèse beaucoup plus que les câbles). En maçonnerie pure (poids propre dominant), la parabole n'est pas la courbe des pressions idéale, elle génère des moments fléchissants.
+    \item \textbf{Conclusion :} Pour un pont piétonnier en maçonnerie/béton (poids propre dominant), l'ellipse (ou plutôt la chaînette, approchée par l'ellipse ici) est structurellement plus efficiente que la parabole.
+\end{itemize}
+
+\medskip
+\noindent \textbf{2. Extraits du rapport technique}
+\emph{Introduction :} « Monsieur le Chef de Projet, dans le cadre de la validation des ouvrages d'art du quartier Makepe, notre équipe a modélisé l'antenne parabolique du centre communautaire et l'arche du pont piétonnier sur le canal de drainage. L'étude géométrique, réalisée à partir des cotes du dossier d'exécution, a permis de déterminer les paramètres critiques : position du foyer de l'antenne pour l'installation du LNB, et position des foyers de l'arche pour l'éventuel haubanage. Une maquette de tracé de l'arche à l'échelle 1/100 a été réalisée par la méthode du jardinier pour l'atelier de préfabrication. »
+
+\emph{Conclusion :} « L'antenne de diamètre $\num{1,20}\,\text{m}$ nécessite un positionnement du récepteur à $\num{45}\,\text{cm}$ du sommet (foyer $F(0;\num{0,45})$). L'arche de $\num{10}\,\text{m}$ de portée et $\num{4}\,\text{m}$ de flèche correspond à une demi-ellipse d'équation $\frac{x^2}{25}+\frac{y^2}{16}=1$ ($y\ge0$) d'excentricité $\num{0,6}$. Ses foyers, situés à $\num{3}\,\text{m}$ du centre ($\num{2}\,\text{m}$ des culées), sont les points d'ancrage recommandés pour les haubans. Le tracé à l'échelle 1/100 (corde $\num{10}\,\text{cm}$, punaises écartées de $\num{6}\,\text{cm}$) est validé pour la découpe des voussoirs. Nous recommandons de vérifier la portance du sol aux appuis compte tenu de la poussée horizontale $H = \frac{q L^2}{8f}$ (avec $q$ charge linéaire, $f$ flèche), formule approchée pour une courbe parabolique équivalente. »
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+Cette activité a permis de mettre en évidence les points suivants :
+\begin{itemize}
+    \item \textbf{Modélisation :} Le choix judicieux du repère (sommet pour la parabole, centre pour l'ellipse) est la clé pour obtenir immédiatement l'équation réduite sans translation/rotation fastidieuse. L'unité unique (mètre) évite les erreurs de conversion.
+    \item \textbf{Algèbre - Géométrie :} Le passage fluide entre données physiques (diamètre, profondeur, largeur, hauteur) et paramètres mathématiques ($p, a, b, c$) est maîtrisé. Le calcul du paramètre $p$ de la parabole ($p=\num{0,9}$) et la déduction de la distance focale ($p/2=\num{0,45}$) sont des points de vigilance (confusion fréquente $p$ vs $p/2$).
+    \item \textbf{Tangente :} La détermination de l'équation de la tangente et de son angle avec l'horizontal donne une information directement exploitable par le monteur (inclinaison du support).
+    \item \textbf{Construction géométrique :} La méthode du jardinier n'est pas une simple activité ludique : c'est une technique professionnelle de traçage sur chantier ou en atelier (tracé au sol, découpe tôlerie, charpente). Le passage à l'échelle ($1/100 \Rightarrow 1\,\text{m}=1\,\text{cm}$) est une compétence technique transversale essentielle.
+    \item \textbf{Communication technique :} La rédaction du rapport (introduction, développement, conclusion) et la présentation orale forment l'élève à la restitution écrite et orale attendue en situation professionnelle (PV de réception, note de calcul, compte-rendu de chantier).
+    \item \textbf{Culture technique :} La comparaison parabole/ellipse pour les arches ancre les mathématiques dans l'histoire de la résistance des matériaux (Galilée, Hooke, Poleni) et la pratique actuelle du génie civil.
+\end{itemize}
+L'élève termine cette leçon capable de \emph{« faire parler les nombres »} pour dimensionner, tracer et justifier des ouvrages courbes réels.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Reconnaître une conique à partir de son équation réduite}
+
+\begin{methode}[Identifier la nature d'une conique]
+Pour reconnaître la nature d'une conique donnée par son équation :
+\begin{enumerate}
+\item Mettre l'équation sous forme réduite en regroupant les termes en $x$ et en $y$ (carrés parfaits si nécessaire).
+\item Comparer avec les trois formes de référence :
+\begin{itemize}
+\item Ellipse : $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$ (deux carrés de même signe, somme égale à $1$) ;
+\item Hyperbole : $\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=1$ ou $\dfrac{y^2}{b^2}-\dfrac{x^2}{a^2}=1$ (différence de carrés) ;
+\item Parabole : $y^2=2px$ ou $x^2=2py$ (un seul carré).
+\end{itemize}
+\item Lire les paramètres : $a$, $b$ (demi-axes), $p$ (paramètre de la parabole).
+\item En déduire les éléments caractéristiques : pour l'ellipse et l'hyperbole, $c=\sqrt{a^2-b^2}$ (ellipse, $a\geq b$) ou $c=\sqrt{a^2+b^2}$ (hyperbole), foyers $(\pm c\,;\,0)$, excentricité $e=\dfrac{c}{a}$ ; pour la parabole $y^2=2px$, foyer $F\left(\dfrac{p}{2}\,;\,0\right)$ et directrice $x=-\dfrac{p}{2}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Nature et éléments caractéristiques]
+On donne les courbes d'équations : $(C_1) : \dfrac{x^2}{25}+\dfrac{y^2}{9}=1$ ; $(C_2) : \dfrac{x^2}{16}-\dfrac{y^2}{9}=1$ ; $(C_3) : y^2=8x$.\\
+Pour chaque courbe, donner sa nature et ses éléments caractéristiques (sommets, foyers, excentricité ou directrice).
+\tcblower
+\textbf{Courbe $(C_1)$ :} l'équation est une somme de carrés égale à $1$ : c'est une \cle{ellipse}. On lit $a^2=25$ et $b^2=9$, donc $a=5$ et $b=3$. Comme $a>b$ :
+\[c=\sqrt{a^2-b^2}=\sqrt{25-9}=\sqrt{16}=4.\]
+Sommets : $A(5\,;\,0)$, $A'(-5\,;\,0)$, $B(0\,;\,3)$, $B'(0\,;\,-3)$. Foyers : $F(4\,;\,0)$ et $F'(-4\,;\,0)$. Excentricité : $e=\dfrac{c}{a}=\dfrac{4}{5}=0{,}8<1$, ce qui confirme l'ellipse.
+
+\textbf{Courbe $(C_2)$ :} l'équation est une différence de carrés égale à $1$ : c'est une \cle{hyperbole}. On lit $a^2=16$, $b^2=9$, donc $a=4$, $b=3$.
+\[c=\sqrt{a^2+b^2}=\sqrt{16+9}=\sqrt{25}=5.\]
+Sommets : $A(4\,;\,0)$ et $A'(-4\,;\,0)$. Foyers : $F(5\,;\,0)$ et $F'(-5\,;\,0)$. Excentricité : $e=\dfrac{5}{4}=1{,}25>1$, ce qui confirme l'hyperbole. Asymptotes : $y=\pm\dfrac{b}{a}x=\pm\dfrac{3}{4}x$.
+
+\textbf{Courbe $(C_3)$ :} un seul carré : c'est une \cle{parabole}. On identifie $2p=8$, donc $p=4$. Sommet : $O(0\,;\,0)$. Foyer : $F\left(\dfrac{p}{2}\,;\,0\right)=(2\,;\,0)$. Directrice : $x=-\dfrac{p}{2}$, soit $x=-2$.
+
+\textbf{Conclusion :} $(C_1)$ est une ellipse de foyers $(\pm4\,;\,0)$, $(C_2)$ une hyperbole de foyers $(\pm5\,;\,0)$, $(C_3)$ une parabole de foyer $(2\,;\,0)$ et de directrice $x=-2$.
+\end{exoresolu}
+
+\courssub{Déterminer l'équation réduite d'une conique}
+
+\begin{methode}[Trouver l'équation d'une conique à partir de ses éléments]
+\begin{enumerate}
+\item Identifier la nature de la conique demandée et la forme de son équation réduite.
+\item Traduire chaque donnée de l'énoncé (foyers, sommets, excentricité, point de passage) en relation sur $a$, $b$, $c$ ou $p$.
+\item Rappeler la relation de liaison : ellipse $c^2=a^2-b^2$ ; hyperbole $c^2=a^2+b^2$ ; parabole $p$ donne directement foyer et directrice.
+\item Résoudre le système obtenu, puis écrire l'équation réduite et vérifier en remplaçant un point connu.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Équation d'une ellipse]
+Dans un repère orthonormé, une ellipse $(E)$ a pour foyers $F(3\,;\,0)$ et $F'(-3\,;\,0)$ et passe par le point $M(5\,;\,0)$. Déterminer l'équation réduite de $(E)$.
+\tcblower
+L'équation cherchée est de la forme $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$ avec $a>b>0$.
+
+\textbf{Étape 1 : utilisation des foyers.} Les foyers sont $(\pm c\,;\,0)$, donc $c=3$, soit $c^2=9$.
+
+\textbf{Étape 2 : utilisation du point $M(5\,;\,0)$.} $M\in(E)$ donc :
+\[\frac{5^2}{a^2}+\frac{0}{b^2}=1 \implies a^2=25 \implies a=5.\]
+($M$ est donc un sommet du grand axe.)
+
+\textbf{Étape 3 : relation de liaison.} Pour une ellipse : $c^2=a^2-b^2$, donc :
+\[b^2=a^2-c^2=25-9=16 \implies b=4.\]
+
+\textbf{Étape 4 : équation.} L'équation réduite de $(E)$ est :
+\[\frac{x^2}{25}+\frac{y^2}{16}=1.\]
+\textbf{Vérification :} pour $M(5\,;\,0)$ : $\dfrac{25}{25}+0=1$ : correct. Conclusion : $(E) : \dfrac{x^2}{25}+\dfrac{y^2}{16}=1$.
+\end{exoresolu}
+
+\begin{exoresolu}[Équation d'une parabole]
+Une antenne parabolique a pour foyer $F(3\,;\,0)$ et pour sommet l'origine $O$ du repère. Déterminer l'équation réduite de la parabole et l'équation de sa directrice.
+\tcblower
+Le sommet est $O(0\,;\,0)$ et le foyer est sur l'axe des abscisses : l'équation est de la forme $y^2=2px$.
+
+\textbf{Étape 1 :} le foyer de $y^2=2px$ est $F\left(\dfrac{p}{2}\,;\,0\right)$. Or $F(3\,;\,0)$, donc :
+\[\frac{p}{2}=3 \implies p=6.\]
+
+\textbf{Étape 2 : équation.} $y^2=2\times 6\,x$, c'est-à-dire :
+\[y^2=12x.\]
+
+\textbf{Étape 3 : directrice.} La directrice a pour équation $x=-\dfrac{p}{2}$, soit $x=-3$.
+
+\textbf{Conclusion :} la parabole a pour équation $y^2=12x$ et pour directrice la droite d'équation $x=-3$.
+\end{exoresolu}
+
+\courssub{Déterminer l'équation de la tangente en un point à une conique}
+
+\begin{methode}[Tangente par la règle du dédoublement]
+Pour obtenir la tangente en $M_0(x_0\,;\,y_0)$ à une conique :
+\begin{enumerate}
+\item Vérifier d'abord que $M_0$ appartient bien à la conique (son couple de coordonnées vérifie l'équation).
+\item Appliquer la règle du \cle{dédoublement} des termes :
+\[x^2 \to x_0\,x \qquad y^2 \to y_0\,y \qquad x \to \frac{x+x_0}{2} \qquad y \to \frac{y+y_0}{2}.\]
+\item Simplifier l'équation obtenue et la présenter sous la forme $y=mx+p$ ou $ax+by+c=0$.
+\end{enumerate}
+Formules prêtes à l'emploi : ellipse $\dfrac{x_0x}{a^2}+\dfrac{y_0y}{b^2}=1$ ; hyperbole $\dfrac{x_0x}{a^2}-\dfrac{y_0y}{b^2}=1$ ; parabole $y_0y=p(x+x_0)$.
+\end{methode}
+
+\begin{exoresolu}[Tangente à une ellipse]
+Soit $(E)$ l'ellipse d'équation $\dfrac{x^2}{25}+\dfrac{y^2}{16}=1$ et $M_0\left(3\,;\,\dfrac{16}{5}\right)$.\\
+1. Vérifier que $M_0\in(E)$. \quad 2. Déterminer une équation de la tangente $(T)$ à $(E)$ en $M_0$.
+\tcblower
+\textbf{1. Appartenance :} on calcule :
+\[\frac{3^2}{25}+\frac{\left(\frac{16}{5}\right)^2}{16}=\frac{9}{25}+\frac{\frac{256}{25}}{16}=\frac{9}{25}+\frac{16}{25}=\frac{25}{25}=1.\]
+Donc $M_0\in(E)$ : la tangente en ce point existe et la règle du dédoublement s'applique.
+
+\textbf{2. Équation de la tangente :} par dédoublement, $\dfrac{x^2}{25}\to\dfrac{x_0x}{25}$ et $\dfrac{y^2}{16}\to\dfrac{y_0y}{16}$ :
+\[\frac{3x}{25}+\frac{\frac{16}{5}\,y}{16}=1 \iff \frac{3x}{25}+\frac{y}{5}=1.\]
+On multiplie les deux membres par $25$ :
+\[3x+5y=25 \iff y=-\frac{3}{5}x+5.\]
+\textbf{Conclusion :} la tangente $(T)$ a pour équation $3x+5y-25=0$, c'est-à-dire $y=-\dfrac{3}{5}x+5$.
+\end{exoresolu}
+
+\begin{exoresolu}[Tangente à une parabole]
+Soit $(P)$ la parabole d'équation $y^2=8x$. Déterminer une équation de la tangente à $(P)$ au point $M_0(2\,;\,4)$.
+\tcblower
+\textbf{Vérification :} $y_0^2=4^2=16$ et $8x_0=8\times2=16$ : $M_0\in(P)$.
+
+\textbf{Dédoublement :} pour $y^2=2px$ avec $2p=8$ (donc $p=4$), la tangente en $M_0$ est $y_0y=p(x+x_0)$ :
+\[4y=4(x+2).\]
+On simplifie par $4$ :
+\[y=x+2.\]
+\textbf{Conclusion :} la tangente à $(P)$ en $M_0(2\,;\,4)$ a pour équation $y=x+2$. On remarque qu'elle passe par $(-2\,;\,0)$, point de la directrice $x=-2$ : propriété classique de la parabole.
+\end{exoresolu}
+
+\courssub{Construire une conique et résoudre un problème concret}
+
+\begin{methode}[Construction point par point d'une conique]
+\begin{enumerate}
+\item Pour une \textbf{ellipse} de foyers $F$, $F'$ et de grand axe $2a$ : choisir un point $P$ du segment $[FF']$, tracer le cercle de centre $F$ et de rayon $r$ et celui de centre $F'$ et de rayon $2a-r$ ; leurs intersections sont des points de l'ellipse (car $MF+MF'=2a$). Recommencer pour plusieurs valeurs de $r$.
+\item Pour une \textbf{parabole} de foyer $F$ et de directrice $(d)$ : tracer une droite parallèle à $(d)$, puis les points équidistants de $F$ et de cette droite ($MF=$ distance de $M$ à $(d)$).
+\item Pour une \textbf{hyperbole} : utiliser $|MF-MF'|=2a$ avec des cercles de rayons $r$ et $r+2a$.
+\item Tracer les axes de symétrie, placer sommets et foyers, puis relier les points par une courbe régulière.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Problème concret : voûte elliptique]
+Un atelier doit réaliser une arche en forme de demi-ellipse de \SI{10}{m} de large à la base et de \SI{4}{m} de hauteur au centre. On modélise l'arche par la moitié supérieure de l'ellipse $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$.\\
+1. Déterminer $a$ et $b$, puis l'équation de l'ellipse.\\
+2. À quelle hauteur se situe l'arche à \SI{3}{m} du centre ? (Arrondir à \SI{0,01}{m}.)
+\tcblower
+\textbf{1. Paramètres :} la largeur à la base est le grand axe : $2a=10$, donc $a=5$. La hauteur au centre est le petit axe : $b=4$. L'équation de l'ellipse est :
+\[\frac{x^2}{25}+\frac{y^2}{16}=1.\]
+
+\textbf{2. Hauteur à \SI{3}{m} du centre :} on cherche $y>0$ pour $x=3$ :
+\begin{align*}
+\frac{9}{25}+\frac{y^2}{16}&=1\\
+\frac{y^2}{16}&=1-\frac{9}{25}=\frac{16}{25}\\
+y^2&=\frac{16\times16}{25}=\frac{256}{25}\\
+y&=\frac{16}{5}=3{,}2.
+\end{align*}
+(On garde la solution positive car l'arche est au-dessus du sol.)
+
+\textbf{Conclusion :} à \SI{3}{m} du centre, l'arche se trouve à une hauteur de \SI{3,20}{m}.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Confondre les relations de liaison :} pour l'ellipse $c^2=a^2-b^2$ (avec $a$ le plus grand), pour l'hyperbole $c^2=a^2+b^2$. Inverser ces deux formules fausse tout l'exercice.
+\item \textbf{Oublier de vérifier l'appartenance du point} $M_0$ à la conique avant d'appliquer la règle du dédoublement : cette vérification est exigée et rapporte un point.
+\item \textbf{Mal appliquer le dédoublement :} $x^2$ devient $x_0x$ (et non $x_0^2$), et $2px$ devient $p(x+x_0)$ (et non $2px_0$).
+\item \textbf{Se tromper sur l'excentricité :} $e=\dfrac{c}{a}$ ; on doit avoir $e<1$ pour l'ellipse et $e>1$ pour l'hyperbole. Un résultat contraire doit alerter et conduire à revoir le calcul de $c$.
+\item \textbf{Oublier la condition de signe dans les problèmes concrets :} quand on résout $y^2=k$, il y a deux solutions ; dans un contexte (hauteur, distance), on ne retient que la valeur positive et on le justifie par une phrase.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : reconnaître une conique]
+Pour chaque question, une seule réponse est exacte. Recopier la bonne réponse.
+\begin{enumerate}
+\item L'équation $\dfrac{x^{2}}{25}+\dfrac{y^{2}}{9}=1$ est celle :
+\begin{enumerate}
+\item d'un cercle \quad \item d'une ellipse \quad \item d'une hyperbole \quad \item d'une parabole
+\end{enumerate}
+\item La parabole d'équation $y^{2}=8x$ a pour paramètre :
+\begin{enumerate}
+\item $p=8$ \quad \item $p=4$ \quad \item $p=2$ \quad \item $p=16$
+\end{enumerate}
+\item L'excentricité d'une ellipse vérifie toujours :
+\begin{enumerate}
+\item $e>1$ \quad \item $e=1$ \quad \item $0<e<1$ \quad \item $e=0$
+\end{enumerate}
+\item L'hyperbole $\dfrac{x^{2}}{16}-\dfrac{y^{2}}{9}=1$ a pour asymptotes :
+\begin{enumerate}
+\item $y=\pm\dfrac{4}{3}x$ \quad \item $y=\pm\dfrac{3}{4}x$ \quad \item $y=\pm\dfrac{9}{16}x$ \quad \item $y=\pm\dfrac{16}{9}x$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+Dire si chaque affirmation est vraie ou fausse, puis justifier la réponse.
+\begin{enumerate}
+\item « Toute courbe d'équation $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}=1$ est un cercle. »
+\item « L'excentricité d'une hyperbole peut être inférieure à $1$. »
+\item « La tangente au sommet d'une parabole est parallèle à la directrice. »
+\item « Une ellipse de demi-grand axe $a=5$ et de distance focale $2c=8$ a pour excentricité $e=\dfrac{4}{5}$. »
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et éléments caractéristiques]
+\begin{enumerate}
+\item Donner la définition bifocale d'une ellipse de foyers $F$ et $F'$.
+\item Donner la définition monofocale d'une parabole (foyer, directrice).
+\item Compléter : pour l'ellipse $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}=1$ avec $a>b$, on a la relation $c^{2}=\ldots$ ; pour l'hyperbole $\dfrac{x^{2}}{a^{2}}-\dfrac{y^{2}}{b^{2}}=1$, on a la relation $c^{2}=\ldots$
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+\begin{enumerate}
+\item Déterminer les sommets et l'excentricité de l'ellipse $\dfrac{x^{2}}{49}+\dfrac{y^{2}}{24}=1$.
+\item Déterminer le foyer et la directrice de la parabole $y^{2}=12x$.
+\item Déterminer les foyers de l'hyperbole $\dfrac{x^{2}}{9}-\dfrac{y^{2}}{16}=1$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Étude d'une ellipse]
+On considère l'ellipse d'équation $9x^{2}+25y^{2}=225$.
+\begin{enumerate}
+\item Mettre cette équation sous forme réduite.
+\item Déterminer le centre, les sommets, les foyers et l'excentricité de cette ellipse.
+\item Construire l'ellipse dans un repère orthonormé (unité : \SI{0,5}{cm}).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Parabole définie par foyer et directrice]
+Une parabole a pour foyer $F(3\,;0)$ et pour directrice la droite d'équation $x=-3$.
+\begin{enumerate}
+\item Établir son équation réduite.
+\item Déterminer l'équation de la tangente à cette parabole au point d'abscisse $2$ et d'ordonnée positive.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Étude d'une hyperbole]
+On considère l'hyperbole $(H)$ d'équation $\dfrac{x^{2}}{16}-\dfrac{y^{2}}{9}=1$.
+\begin{enumerate}
+\item Montrer que $(H)$ a pour excentricité $e=\dfrac{5}{4}$.
+\item Déterminer les sommets, les foyers et les asymptotes de $(H)$.
+\item Tracer le rectangle fondamental, les asymptotes, puis la courbe $(H)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Construction point par point]
+Dans un repère orthonormé, on considère la parabole de foyer $F(0\,;2)$ et de directrice la droite d'équation $y=-2$.
+\begin{enumerate}
+\item Construire point par point cette parabole (prendre au moins six points).
+\item Vérifier algébriquement que son équation est $x^{2}=8y$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Type Probatoire : étude complète d'une ellipse]
+Le plan est muni d'un repère orthonormé $(O\,;\vec{i},\vec{j})$. On considère l'ellipse $(E)$ d'équation :
+\[ \dfrac{x^{2}}{36}+\dfrac{y^{2}}{20}=1. \]
+\begin{enumerate}
+\item Déterminer les sommets, les foyers et l'excentricité de $(E)$.
+\item Vérifier que le point $M_{0}(3\,;\sqrt{15})$ appartient à $(E)$.
+\item Écrire l'équation de la tangente $(T)$ à $(E)$ au point $M_{0}$.
+\item La tangente $(T)$ coupe-t-elle l'axe des ordonnées ? Si oui, déterminer les coordonnées du point d'intersection. Justifier.
+\item Construire $(E)$ et $(T)$ dans le repère (unité : \SI{0,5}{cm}).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : trajectoire d'un ballon]
+Lors d'un entraînement sur un terrain de football à Douala, un joueur frappe un ballon depuis le sol. La trajectoire du ballon est parabolique : le ballon atteint une hauteur maximale de \SI{5}{m} et retombe au sol à \SI{20}{m} du lanceur.
+
+On choisit un repère orthonormé dans lequel le lanceur est à l'origine $O(0\,;0)$, l'axe des abscisses est le sol et l'axe des ordonnées est vertical (unité : le mètre).
+\begin{enumerate}
+\item Justifier que le sommet de la parabole a pour coordonnées $(10\,;5)$.
+\item Montrer que l'équation de la trajectoire s'écrit $y=-\dfrac{1}{20}x^{2}+x$.
+\item Quelle est la hauteur du ballon lorsqu'il se trouve à \SI{8}{m} horizontalement du lanceur ?
+\item À quelles distances horizontales du lanceur le ballon se trouve-t-il à exactement \SI{3,2}{m} de hauteur ?
+\item Un défenseur de \SI{1,80}{m} se place à \SI{15}{m} du lanceur. Le ballon passe-t-il au-dessus de sa tête ? Justifier par un calcul.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : antenne parabolique]
+Un technicien en électronique à Yaoundé installe une antenne parabolique. La section de l'antenne par un plan passant par son axe est une parabole $(P)$. Dans un repère orthonormé bien choisi (unité : le décimètre), le sommet de la parabole est l'origine $O$ et son foyer est le point $F(0\,;2)$.
+\begin{enumerate}
+\item Donner l'équation de la directrice de $(P)$, puis montrer que l'équation réduite de $(P)$ est $x^{2}=8y$.
+\item Le bord de l'antenne correspond aux points de $(P)$ d'ordonnée $y=2$. Calculer le diamètre de l'antenne en décimètres, puis en centimètres.
+\item Écrire l'équation de la tangente à $(P)$ au point $A$ d'abscisse $4$ et d'ordonnée positive.
+\item Cette tangente coupe l'axe des ordonnées en un point $B$. Déterminer les coordonnées de $B$ et vérifier que $B$ est le symétrique de $A$ par rapport au foyer $F$ relativement à leurs ordonnées, c'est-à-dire que $y_{B}=-y_{A}+2\times 2$... (on vérifiera simplement que $y_{B}=-2$).
+\item Tracer la parabole $(P)$, son foyer, sa directrice et la tangente en $A$ (unité : \SI{1}{cm} pour un décimètre).
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : reconnaître une conique]
+\begin{enumerate}
+\item \textbf{Réponse b : une ellipse.} L'équation $\dfrac{x^{2}}{25}+\dfrac{y^{2}}{9}=1$ est de la forme $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}=1$ avec $a=5$ et $b=3$ ($a\neq b$, donc ce n'est pas un cercle) : c'est une \cle{ellipse}.
+\item \textbf{Réponse b : $p=4$.} Pour une parabole d'équation $y^{2}=2px$, on a $2p=8$, donc $p=4$.
+\item \textbf{Réponse c : $0<e<1$.} Pour une ellipse, $e=\dfrac{c}{a}$ avec $c<a$, donc $0<e<1$ (le cas $e=0$ correspond au cercle, cas limite).
+\item \textbf{Réponse b : $y=\pm\dfrac{3}{4}x$.} Pour l'hyperbole $\dfrac{x^{2}}{a^{2}}-\dfrac{y^{2}}{b^{2}}=1$, les asymptotes sont $y=\pm\dfrac{b}{a}x$. Ici $a=4$, $b=3$, d'où $y=\pm\dfrac{3}{4}x$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, en justifiant]
+\begin{enumerate}
+\item \textbf{Faux.} L'équation $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}=1$ est celle d'un cercle \textbf{uniquement si $a=b$} (on obtient alors $x^{2}+y^{2}=a^{2}$). Si $a\neq b$, c'est une ellipse. Contre-exemple : $\dfrac{x^{2}}{25}+\dfrac{y^{2}}{9}=1$ est une ellipse, pas un cercle.
+\item \textbf{Faux.} Pour une hyperbole, $c^{2}=a^{2}+b^{2}$, donc $c>a$, d'où $e=\dfrac{c}{a}>1$ \textbf{toujours}. L'excentricité d'une hyperbole ne peut jamais être inférieure à $1$.
+\item \textbf{Vrai.} Prenons la parabole $y^{2}=2px$ de sommet $O(0\,;0)$ et de directrice $x=-\dfrac{p}{2}$. Au sommet, $x_{0}=y_{0}=0$ : la tangente $y\,y_{0}=p(x+x_{0})$ devient $x=0$, c'est-à-dire l'axe des ordonnées, qui est bien parallèle à la directrice $x=-\dfrac{p}{2}$.
+\item \textbf{Vrai.} On a $a=5$ et $2c=8$ donc $c=4$. Alors $e=\dfrac{c}{a}=\dfrac{4}{5}$. On vérifie au passage que $c<a$ ($4<5$), condition nécessaire pour une ellipse.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions et éléments caractéristiques]
+\begin{enumerate}
+\item \textbf{Définition bifocale de l'ellipse :} l'ellipse de foyers $F$ et $F'$ est l'ensemble des points $M$ du plan tels que
+\[ MF+MF'=2a, \]
+où $2a$ est une constante telle que $2a>FF'$.
+\item \textbf{Définition monofocale de la parabole :} la parabole de foyer $F$ et de directrice $(D)$ est l'ensemble des points $M$ du plan tels que
+\[ MF=MH, \]
+où $H$ est le projeté orthogonal de $M$ sur $(D)$ (autrement dit $MF=d(M,(D))$), avec $F\notin(D)$.
+\item Pour l'ellipse $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}=1$ avec $a>b$ : $c^{2}=a^{2}-b^{2}$. Pour l'hyperbole $\dfrac{x^{2}}{a^{2}}-\dfrac{y^{2}}{b^{2}}=1$ : $c^{2}=a^{2}+b^{2}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item Ellipse $\dfrac{x^{2}}{49}+\dfrac{y^{2}}{24}=1$ : $a^{2}=49$ donc $a=7$ ; $b^{2}=24$ donc $b=2\sqrt{6}$. Comme $a>b$, le grand axe est l'axe des abscisses. Sommets : $A(7\,;0)$, $A'(-7\,;0)$, $B(0\,;2\sqrt{6})$, $B'(0\,;-2\sqrt{6})$. De plus $c^{2}=a^{2}-b^{2}=49-24=25$, donc $c=5$ et $e=\dfrac{c}{a}=\dfrac{5}{7}$.
+\item Parabole $y^{2}=12x$ : on a $2p=12$ donc $p=6$. Foyer : $F\left(\dfrac{p}{2}\,;0\right)=F(3\,;0)$ ; directrice : $x=-\dfrac{p}{2}$, c'est-à-dire $x=-3$.
+\item Hyperbole $\dfrac{x^{2}}{9}-\dfrac{y^{2}}{16}=1$ : $a^{2}=9$, $b^{2}=16$, donc $c^{2}=a^{2}+b^{2}=9+16=25$, d'où $c=5$. Foyers : $F(5\,;0)$ et $F'(-5\,;0)$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Étude d'une ellipse]
+\begin{enumerate}
+\item On divise les deux membres de $9x^{2}+25y^{2}=225$ par $225$ :
+\[ \dfrac{9x^{2}}{225}+\dfrac{25y^{2}}{225}=1 \iff \dfrac{x^{2}}{25}+\dfrac{y^{2}}{9}=1. \]
+C'est la forme réduite de l'ellipse.
+\item On lit $a^{2}=25$ et $b^{2}=9$, donc $a=5$ et $b=3$ ($a>b$ : grand axe horizontal).
+\begin{itemize}
+\item Centre : $O(0\,;0)$ ;
+\item Sommets : $A(5\,;0)$, $A'(-5\,;0)$ (grand axe) et $B(0\,;3)$, $B'(0\,;-3)$ (petit axe) ;
+\item Distance focale : $c^{2}=a^{2}-b^{2}=25-9=16$, donc $c=4$ ; foyers $F(4\,;0)$ et $F'(-4\,;0)$ ;
+\item Excentricité : $e=\dfrac{c}{a}=\dfrac{4}{5}=0,8$.
+\end{itemize}
+\item Construction : on place les quatre sommets, les foyers, puis on trace la courbe à main levée en passant par les sommets (unité \SI{0,5}{cm} : $a=5$ correspond à \SI{2,5}{cm}).
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.45]
+\draw[->,popmuted] (-6.5,0) -- (6.5,0) node[right]{$x$};
+\draw[->,popmuted] (0,-4) -- (0,4) node[above]{$y$};
+\draw[popblue,thick] (0,0) ellipse (5 and 3);
+\fill[poporange] (4,0) circle (3pt) node[below right]{$F$};
+\fill[poporange] (-4,0) circle (3pt) node[below left]{$F'$};
+\fill[popdark] (5,0) circle (2.5pt) node[above right]{$A$};
+\fill[popdark] (-5,0) circle (2.5pt) node[above left]{$A'$};
+\fill[popdark] (0,3) circle (2.5pt) node[above right]{$B$};
+\fill[popdark] (0,-3) circle (2.5pt) node[below right]{$B'$};
+\end{tikzpicture}
+\end{center}
+\legende{Ellipse $\dfrac{x^{2}}{25}+\dfrac{y^{2}}{9}=1$ : sommets et foyers.}
+\end{popfigure}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Parabole définie par foyer et directrice]
+\begin{enumerate}
+\item Le foyer $F(3\,;0)$ et la directrice $x=-3$ sont symétriques par rapport à l'origine : le sommet est $O(0\,;0)$ et $\dfrac{p}{2}=3$, donc $p=6$. L'équation réduite est :
+\[ y^{2}=2px \iff y^{2}=12x. \]
+\emph{Vérification par la définition :} pour $M(x\,;y)$, $MF^{2}=(x-3)^{2}+y^{2}$ et $d(M,(D))^{2}=(x+3)^{2}$. L'égalité $MF^{2}=d(M,(D))^{2}$ donne $(x-3)^{2}+y^{2}=(x+3)^{2}$, soit $y^{2}=(x+3)^{2}-(x-3)^{2}=12x$.
+\item Le point d'abscisse $x_{0}=2$ sur la parabole vérifie $y_{0}^{2}=12\times 2=24$, donc $y_{0}=\sqrt{24}=2\sqrt{6}$ (ordonnée positive). La tangente en $M_{0}(x_{0}\,;y_{0})$ à $y^{2}=2px$ a pour équation $y\,y_{0}=p(x+x_{0})$, soit ici :
+\[ 2\sqrt{6}\,y=6(x+2) \iff y=\dfrac{3}{\sqrt{6}}(x+2) \iff y=\dfrac{\sqrt{6}}{2}x+\sqrt{6}. \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Étude d'une hyperbole]
+\begin{enumerate}
+\item On a $a^{2}=16$ et $b^{2}=9$, donc $a=4$, $b=3$. Alors $c^{2}=a^{2}+b^{2}=16+9=25$, d'où $c=5$. L'excentricité est :
+\[ e=\dfrac{c}{a}=\dfrac{5}{4}. \]
+\item Sommets : $A(4\,;0)$ et $A'(-4\,;0)$. Foyers : $F(5\,;0)$ et $F'(-5\,;0)$. Asymptotes : $y=\pm\dfrac{b}{a}x$, c'est-à-dire $y=\dfrac{3}{4}x$ et $y=-\dfrac{3}{4}x$.
+\item Le rectangle fondamental a pour sommets $(\pm 4\,;\pm 3)$ ; ses diagonales sont les asymptotes. La courbe passe par $A$ et $A'$ et s'approche des asymptotes.
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.5]
+\draw[->,popmuted] (-7,0) -- (7,0) node[right]{$x$};
+\draw[->,popmuted] (0,-5) -- (0,5) node[above]{$y$};
+\draw[popmuted,dashed] (-4,-3) rectangle (4,3);
+\draw[popgreen,dashed,domain=-6.2:6.2,samples=2] plot (\x,{0.75*\x});
+\draw[popgreen,dashed,domain=-6.2:6.2,samples=2] plot (\x,{-0.75*\x});
+\draw[popblue,thick,domain=4:6.5,samples=60] plot (\x,{3*sqrt(max(0,\x*\x/16-1))});
+\draw[popblue,thick,domain=4:6.5,samples=60] plot (\x,{-3*sqrt(max(0,\x*\x/16-1))});
+\draw[popblue,thick,domain=-6.5:-4,samples=60] plot (\x,{3*sqrt(max(0,\x*\x/16-1))});
+\draw[popblue,thick,domain=-6.5:-4,samples=60] plot (\x,{-3*sqrt(max(0,\x*\x/16-1))});
+\fill[poporange] (5,0) circle (3pt) node[below right]{$F$};
+\fill[poporange] (-5,0) circle (3pt) node[below left]{$F'$};
+\fill[popdark] (4,0) circle (2.5pt) node[above left]{$A$};
+\fill[popdark] (-4,0) circle (2.5pt) node[above right]{$A'$};
+\end{tikzpicture}
+\end{center}
+\legende{Hyperbole $\dfrac{x^{2}}{16}-\dfrac{y^{2}}{9}=1$, rectangle fondamental et asymptotes.}
+\end{popfigure}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Construction point par point]
+\begin{enumerate}
+\item Le foyer est $F(0\,;2)$, la directrice $(D)$ : $y=-2$. Un point $M$ de la parabole vérifie $MF=d(M,(D))$. Méthode : pour une droite horizontale $(\Delta)$ d'équation $y=k$, on place les points de $(\Delta)$ situés à distance $k+2$ de $F$. Quelques points :
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|}\hline
+\rowcolor{popblueL} $y$ & $0$ & $2$ & $4$ & $6$ & $8$ \\ \hline
+$x=\pm\sqrt{8y}$ & $0$ & $\pm 4$ & $\pm\sqrt{32}\approx\pm 5,7$ & $\pm\sqrt{48}\approx\pm 6,9$ & $\pm 8$ \\ \hline
+\end{tabularx}
+\end{center}
+On place par exemple les points $(0\,;0)$, $(4\,;2)$, $(-4\,;2)$, $(5,7\,;4)$, $(-5,7\,;4)$, $(8\,;8)$, $(-8\,;8)$ et on trace la courbe à main levée. Vérification pour $(4\,;2)$ : $MF=\sqrt{16+0}=4$ et $d(M,(D))=2-(-2)=4$ : correct.
+\item Soit $M(x\,;y)$. On a $MF^{2}=x^{2}+(y-2)^{2}$ et $d(M,(D))^{2}=(y+2)^{2}$. La condition $MF=d(M,(D))$ s'écrit :
+\[ x^{2}+(y-2)^{2}=(y+2)^{2} \iff x^{2}=(y+2)^{2}-(y-2)^{2}=8y. \]
+D'où l'équation $x^{2}=8y$ (parabole d'axe vertical, $2p=8$, $p=4$, foyer $(0\,;\tfrac{p}{2})=(0\,;2)$ : cohérent).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type Probatoire : étude complète d'une ellipse]
+\emph{Barème indicatif : 1. (2 pts) ; 2. (1 pt) ; 3. (2 pts) ; 4. (1,5 pt) ; 5. (1,5 pt).}
+\begin{enumerate}
+\item On a $a^{2}=36$ donc $a=6$ ; $b^{2}=20$ donc $b=2\sqrt{5}$ ($a>b$ : grand axe sur $(Ox)$).
+\begin{itemize}
+\item Sommets : $A(6\,;0)$, $A'(-6\,;0)$, $B(0\,;2\sqrt{5})$, $B'(0\,;-2\sqrt{5})$ ;
+\item $c^{2}=a^{2}-b^{2}=36-20=16$, donc $c=4$ : foyers $F(4\,;0)$ et $F'(-4\,;0)$ ;
+\item Excentricité : $e=\dfrac{c}{a}=\dfrac{4}{6}=\dfrac{2}{3}$.
+\end{itemize}
+\item On calcule : $\dfrac{3^{2}}{36}+\dfrac{(\sqrt{15})^{2}}{20}=\dfrac{9}{36}+\dfrac{15}{20}=\dfrac{1}{4}+\dfrac{3}{4}=1$. Donc $M_{0}(3\,;\sqrt{15})\in(E)$.
+\item La tangente à l'ellipse $\dfrac{x^{2}}{a^{2}}+\dfrac{y^{2}}{b^{2}}=1$ au point $M_{0}(x_{0}\,;y_{0})$ a pour équation (par dédoublement) :
+\[ \dfrac{x\,x_{0}}{a^{2}}+\dfrac{y\,y_{0}}{b^{2}}=1 \iff \dfrac{3x}{36}+\dfrac{\sqrt{15}\,y}{20}=1 \iff \dfrac{x}{12}+\dfrac{\sqrt{15}}{20}y=1. \]
+En multipliant par $60$ : $5x+3\sqrt{15}\,y=60$.
+\item L'axe des ordonnées a pour équation $x=0$. En remplaçant dans l'équation de $(T)$ : $3\sqrt{15}\,y=60$, soit $y=\dfrac{60}{3\sqrt{15}}=\dfrac{20}{\sqrt{15}}=\dfrac{20\sqrt{15}}{15}=\dfrac{4\sqrt{15}}{3}\approx 5,16$. Oui, $(T)$ coupe l'axe des ordonnées au point $\left(0\,;\dfrac{4\sqrt{15}}{3}\right)$. (Justification : l'équation obtenue admet une solution unique car le coefficient de $y$ est non nul.)
+\item Construction : on place les sommets ($a=6$ soit \SI{3}{cm}, $b\approx 4,47$ soit environ \SI{2,2}{cm}), les foyers, le point $M_{0}(3\,;\sqrt{15}\approx 3,87)$, puis on trace $(E)$ et la tangente $(T)$ passant par $M_{0}$ et $\left(0\,;\tfrac{4\sqrt{15}}{3}\right)$.
+\end{enumerate}
+\textbf{Points de vigilance :} citer la formule de dédoublement avant de l'appliquer ; justifier l'appartenance de $M_{0}$ par le calcul complet ; pour la question 4, préciser que l'on résout le système $\begin{cases} x=0 \\ 5x+3\sqrt{15}\,y=60 \end{cases}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type Probatoire : trajectoire d'un ballon]
+\emph{Barème indicatif : 1. (1 pt) ; 2. (2 pts) ; 3. (1 pt) ; 4. (2 pts) ; 5. (1,5 pt).}
+\begin{enumerate}
+\item La trajectoire part de $O(0\,;0)$ et retombe en $(20\,;0)$. Une parabole est symétrique par rapport à la verticale passant par son sommet : le sommet a pour abscisse $\dfrac{0+20}{2}=10$. Sa hauteur maximale étant \SI{5}{m}, le sommet est $S(10\,;5)$.
+\item Une parabole de sommet $S(10\,;5)$ a une équation de la forme $y=\alpha(x-10)^{2}+5$. Elle passe par $O(0\,;0)$ :
+\[ 0=\alpha(0-10)^{2}+5 \iff 100\alpha=-5 \iff \alpha=-\dfrac{1}{20}. \]
+D'où $y=-\dfrac{1}{20}(x-10)^{2}+5=-\dfrac{1}{20}(x^{2}-20x+100)+5=-\dfrac{1}{20}x^{2}+x-5+5$, soit :
+\[ y=-\dfrac{1}{20}x^{2}+x. \]
+\item Pour $x=8$ : $y=-\dfrac{64}{20}+8=-3,2+8=4,8$. Le ballon est à \SI{4,8}{m} de hauteur.
+\item On résout $y=3,2$ :
+\[ -\dfrac{1}{20}x^{2}+x=3,2 \iff -x^{2}+20x-64=0 \iff x^{2}-20x+64=0. \]
+Discriminant : $\Delta=400-256=144$, $\sqrt{\Delta}=12$. Solutions : $x=\dfrac{20-12}{2}=4$ et $x=\dfrac{20+12}{2}=16$. Le ballon est à \SI{3,2}{m} de hauteur à \SI{4}{m} et à \SI{16}{m} du lanceur (montée puis descente : résultat cohérent avec la symétrie, $\dfrac{4+16}{2}=10$).
+\item Pour $x=15$ : $y=-\dfrac{225}{20}+15=-11,25+15=3,75$. Le ballon passe à \SI{3,75}{m} de hauteur, or $3,75>1,80$ : \textbf{oui, le ballon passe au-dessus de la tête du défenseur}.
+\end{enumerate}
+\textbf{Points de vigilance :} bien justifier la forme $y=\alpha(x-10)^{2}+5$ par la donnée du sommet ; vérifier que les deux solutions de la question 4 sont dans $[0\,;20]$ ; conclure chaque question par une phrase en lien avec la situation.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Type Probatoire : antenne parabolique]
+\emph{Barème indicatif : 1. (2 pts) ; 2. (1,5 pt) ; 3. (2 pts) ; 4. (1 pt) ; 5. (1,5 pt).}
+\begin{enumerate}
+\item Le sommet est $O(0\,;0)$ et le foyer $F(0\,;2)$ est sur l'axe des ordonnées : la parabole est d'axe vertical, avec $\dfrac{p}{2}=2$, donc $p=4$. La directrice est la droite d'équation $y=-\dfrac{p}{2}$, c'est-à-dire $y=-2$. L'équation réduite est $x^{2}=2py$, soit :
+\[ x^{2}=8y. \]
+\item Pour $y=2$ : $x^{2}=8\times 2=16$, donc $x=\pm 4$. Le bord de l'antenne s'étend de $x=-4$ à $x=4$ : le diamètre est $d=4-(-4)=8$ décimètres, soit \SI{80}{cm}.
+\item Le point $A$ d'abscisse $x_{0}=4$ vérifie $y_{0}=\dfrac{x_{0}^{2}}{8}=\dfrac{16}{8}=2$, donc $A(4\,;2)$. La tangente à $x^{2}=2py$ en $A(x_{0}\,;y_{0})$ a pour équation (dédoublement) $x\,x_{0}=p(y+y_{0})$, soit :
+\[ 4x=4(y+2) \iff y=x-2. \]
+\item L'axe des ordonnées a pour équation $x=0$ : en remplaçant, $y=-2$. Donc $B(0\,;-2)$. On vérifie que $y_{B}=-2$ ; on remarque au passage que $B$ est l'intersection de la tangente en $A$ avec la directrice $y=-2$, propriété caractéristique de l'extrémité du latus rectum.
+\item Tracé (unité \SI{1}{cm} pour un décimètre) :
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.55]
+\draw[->,popmuted] (-6,0) -- (6,0) node[right]{$x$};
+\draw[->,popmuted] (0,-3) -- (0,5) node[above]{$y$};
+\draw[popblue,thick,domain=-4.5:4.5,samples=80] plot (\x,{0.125*\x*\x});
+\draw[popgreen,dashed] (-5.5,-2) -- (5.5,-2) node[right]{$(D):y=-2$};
+\draw[poporange,thick,domain=-1:5.5,samples=2] plot (\x,{\x-2});
+\fill[poporange] (0,2) circle (3pt) node[above left]{$F$};
+\fill[popdark] (4,2) circle (2.5pt) node[above]{$A$};
+\fill[popdark] (0,-2) circle (2.5pt) node[below left]{$B$};
+\fill[popdark] (0,0) circle (2pt) node[below left]{$O$};
+\end{tikzpicture}
+\end{center}
+\legende{Parabole $x^{2}=8y$, foyer $F$, directrice $(D)$ et tangente en $A$.}
+\end{popfigure}
+\end{enumerate}
+\textbf{Points de vigilance :} identifier correctement l'axe de la parabole (vertical, car le foyer est sur $(Oy)$) avant d'écrire l'équation réduite $x^{2}=2py$ et non $y^{2}=2px$ ; pour la tangente, utiliser le dédoublement adapté $x\,x_{0}=p(y+y_{0})$ ; convertir correctement : $1$ décimètre $=10$ centimètres.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+  root concept/.append style={concept color=popdark, font=\large\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=51.4},
+  level 1 concept/.append style={font=\footnotesize\bfseries}]
+\node[root concept]{Coniques}
+  child[concept color=popblue]{ node[align=center]{Définitions \\ foyer, directrice, excentricité $e$} }
+  child[concept color=popgreen]{ node[align=center]{Ellipse \\ $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$, $e<1$} }
+  child[concept color=poporange]{ node[align=center]{Parabole \\ $y^2=2px$, $e=1$} }
+  child[concept color=poppurple]{ node[align=center]{Hyperbole \\ $\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=1$, $e>1$} }
+  child[concept color=poppink]{ node[align=center]{Tangente en $M_0$ \\ règle de dédoublement} }
+  child[concept color=popgold]{ node[align=center]{Construction \\ point par point, méthode du jardinier} }
+  child[concept color=popmuted]{ node[align=center]{Applications \\ antennes, ponts, optique} };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : les coniques}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+  \item Une \cle{conique} est l'ensemble des points $M$ du plan tels que $\dfrac{MF}{d(M,\mathcal{D})}=e$, où $F$ est le \cle{foyer}, $\mathcal{D}$ la \cle{directrice} et $e>0$ l'\cle{excentricité}.
+  \item $e<1$ : \cle{ellipse} ; $e=1$ : \cle{parabole} ; $e>1$ : \cle{hyperbole}.
+  \item Une conique est aussi la section d'un cône de révolution par un plan.
+\end{itemize}
+
+\textbf{Équations réduites et éléments caractéristiques (à connaître par c\oe ur)}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\rowcolor{popblueL} & \textbf{Ellipse} & \textbf{Parabole} & \textbf{Hyperbole} \\
+\hline
+Équation réduite & $\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$ & $y^2=2px$ & $\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=1$ \\
+\hline
+Foyer(s) & $F(c;0)$, $F'(-c;0)$ & $F\left(\dfrac{p}{2};0\right)$ & $F(c;0)$, $F'(-c;0)$ \\
+\hline
+Relation & $c^2=a^2-b^2$ & $p=2\,OF$ & $c^2=a^2+b^2$ \\
+\hline
+Excentricité & $e=\dfrac{c}{a}<1$ & $e=1$ & $e=\dfrac{c}{a}>1$ \\
+\hline
+Directrice(s) & $x=\pm\dfrac{a}{e}$ & $x=-\dfrac{p}{2}$ & $x=\pm\dfrac{a}{e}$ \\
+\hline
+Particularité & $MF+MF'=2a$ & $MF=d(M,\mathcal{D})$ & $|MF-MF'|=2a$ ; asymptotes $y=\pm\dfrac{b}{a}x$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Tangente en un point $M_0(x_0;y_0)$ : règle du dédoublement}
+
+On remplace $x^2$ par $x_0x$, $y^2$ par $y_0y$, $2x$ par $x+x_0$, $2y$ par $y+y_0$. Exemples :
+\begin{itemize}
+  \item Ellipse : $\dfrac{x_0x}{a^2}+\dfrac{y_0y}{b^2}=1$ ;
+  \item Parabole : $y_0y=p(x+x_0)$ ;
+  \item Hyperbole : $\dfrac{x_0x}{a^2}-\dfrac{y_0y}{b^2}=1$.
+\end{itemize}
+
+\textbf{Méthodes express}
+\begin{enumerate}
+  \item \textbf{Identifier la nature} d'une conique : ramener l'équation à la forme réduite, comparer les signes des termes en $x^2$ et $y^2$ (même signe : ellipse ; un seul carré : parabole ; signes opposés : hyperbole).
+  \item \textbf{Trouver foyers et directrices} : lire $a$, $b$ (ou $p$), calculer $c$ puis $e=\dfrac{c}{a}$.
+  \item \textbf{Écrire une tangente} : vérifier que $M_0$ appartient à la conique, puis appliquer le dédoublement.
+  \item \textbf{Construire} : ellipse par la méthode du jardinier (ficelle de longueur $2a$ fixée aux foyers) ; parabole et hyperbole point par point à l'aide de la définition bifocale ou foyer--directrice.
+\end{enumerate}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais définir une conique par foyer, directrice et excentricité $e$.
+  \item[$\square$] Je sais que $e<1$ donne une ellipse, $e=1$ une parabole, $e>1$ une hyperbole.
+  \item[$\square$] Je connais par c\oe ur les trois équations réduites.
+  \item[$\square$] Je sais calculer $c$ : $c^2=a^2-b^2$ (ellipse) et $c^2=a^2+b^2$ (hyperbole) — attention à ne pas les inverser.
+  \item[$\square$] Je sais calculer l'excentricité $e=\dfrac{c}{a}$ et en déduire les directrices.
+  \item[$\square$] Pour la parabole $y^2=2px$, je sais placer le foyer $F\left(\dfrac{p}{2};0\right)$ et la directrice $x=-\dfrac{p}{2}$.
+  \item[$\square$] Je sais reconnaître la nature d'une conique à partir de son équation.
+  \item[$\square$] Je vérifie toujours que le point $M_0$ appartient à la conique avant d'écrire la tangente.
+  \item[$\square$] Je maîtrise la règle du dédoublement pour obtenir l'équation d'une tangente.
+  \item[$\square$] Je sais que l'hyperbole possède deux asymptotes $y=\pm\dfrac{b}{a}x$.
+  \item[$\square$] Je sais décrire la construction de l'ellipse par la méthode du jardinier.
+  \item[$\square$] Je rédige mes justifications en citant la définition ou la propriété utilisée.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

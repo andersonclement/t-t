@@ -98,7 +98,7 @@ def assemble(cat, L, serie):
     for title, content in extras:
         body += ["\\newpage", f"\\coursec{{{title}}}", content]
     body.append("\\findecours")
-    rel_fonts = os.path.relpath(ROOT / "fonts", OUT / "3eme" / f"{L['id']}-{L['slug']}") + "/"
+    rel_fonts = os.path.relpath(ROOT / "fonts", OUT / "tle-tech" / f"{L['id']}-{L['slug']}") + "/"
     preamble = (ROOT / "preamble.tex").read_text().replace("Path=fonts/", f"Path={rel_fonts}")
     tex = (
         f"% {L['titre']} — {matiere} {niveau} — Cours signé OnBuch+\n"
@@ -110,7 +110,7 @@ def assemble(cat, L, serie):
     # Garde-fou : caractères d'un autre alphabet laissés par un modèle (ex. « 保持 »)
     for m in re.finditer(r"[\u0400-\u04FF\u0590-\u06FF\u3000-\u9FFF\uAC00-\uD7AF\uFF00-\uFFEF]", tex):
         print(f"⚠ {L['id']} {serie} : caractère suspect « {tex[max(0, m.start()-30):m.end()+10]} »")
-    out = OUT / "3eme" / f"{L['id']}-{L['slug']}"
+    out = OUT / "tle-tech" / f"{L['id']}-{L['slug']}"
     out.mkdir(parents=True, exist_ok=True)
     f = out / f"{L['id']}-{L['slug']}.tex"
     f.write_text(tex)

@@ -1,0 +1,3328 @@
+% Systèmes d’équations à deux ou trois inconnues — Mathématiques 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N08-systemes-equations-deux-ou-trois-inconnues.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Première technique}
+\newcommand{\DOCLECON}{N08}
+\newcommand{\DOCTITRE}{Systèmes d’équations à deux ou trois inconnues}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Systèmes d’équations à deux ou trois inconnues}{Mathématiques}{1re Tech}{Mathématiques – classe de Première technique}{N08}{1 séance (fiche de progression harmonisée)}{Cette leçon présente les systèmes d'équations linéaires à deux puis à trois inconnues : interprétation géométrique, méthodes de résolution (substitution, combinaison, pivot de Gauss) et discussion du nombre de solutions. Elle montre comment modéliser des situations concrètes de la vie courante et justifier rigoureusement les réponses obtenues.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais reconnaître une équation linéaire à deux ou trois inconnues et vérifier qu'un couple ou un triplet est solution.
+\item À la fin de cette leçon, je sais résoudre un système de deux équations à deux inconnues par substitution et par combinaison linéaire.
+\item À la fin de cette leçon, je sais interpréter graphiquement un système 2×2 (droites sécantes, parallèles ou confondues) et en déduire le nombre de solutions.
+\item À la fin de cette leçon, je sais résoudre un système de trois équations à trois inconnues par la méthode du pivot de Gauss.
+\item À la fin de cette leçon, je sais discuter l'existence et l'unicité des solutions d'un système (solution unique, infinité de solutions, aucune solution).
+\item À la fin de cette leçon, je sais traduire une situation concrète de la vie courante en système d'équations et interpréter la solution trouvée.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Équations linéaires et notion de solution
+\item Systèmes 2×2 : résolution algébrique
+\item Interprétation graphique et discussion (2×2)
+\item Systèmes 3×3 : méthode du pivot de Gauss
+\item Modélisation de situations concrètes
+\item Synthèse et compléments
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais reconnaître une équation linéaire à deux ou trois inconnues et vérifier qu'un couple ou un triplet est solution.
+\item À la fin de cette leçon, je sais résoudre un système de deux équations à deux inconnues par substitution et par combinaison linéaire.
+\item À la fin de cette leçon, je sais interpréter graphiquement un système 2×2 (droites sécantes, parallèles ou confondues) et en déduire le nombre de solutions.
+\item À la fin de cette leçon, je sais résoudre un système de trois équations à trois inconnues par la méthode du pivot de Gauss.
+\item À la fin de cette leçon, je sais discuter l'existence et l'unicité des solutions d'un système (solution unique, infinité de solutions, aucune solution).
+\item À la fin de cette leçon, je sais traduire une situation concrète de la vie courante en système d'équations et interpréter la solution trouvée.
+\item À la fin de cette leçon, je sais rédiger et justifier une démarche complète de résolution, avec vérification et conclusion.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Résolution d'équations du premier degré à une inconnue (classe de 4e/3e)
+\item Équations de droites dans le plan et représentation graphique (Seconde)
+\item Calcul littéral : développer, factoriser, substituer une expression
+\item Notion de couple de coordonnées et lecture graphique dans un repère
+\item Opérations sur les nombres réels et fractions
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Équations linéaires et notion de solution}
+
+\courssub{Situation d'accroche : les paniers de Mama Ngo Bell}
+
+Au marché Mokolo, à Douala, Mama Ngo Bell vend ses produits en \cle{paniers} composés. Elle propose trois types de paniers :
+
+\begin{itemize}
+\item le \textbf{panier A} : un tas d'arachides et un régime de bananes ;
+\item le \textbf{panier B} : un tas d'arachides et un tubercule de manioc ;
+\item le \textbf{panier C} : les trois produits réunis (arachides, bananes, manioc).
+\end{itemize}
+
+Ce matin-là, trois clientes passent tour à tour. La première prend un panier A et un panier B, et paie \SI{2500}{F}. La deuxième prend un panier B et un panier C, et paie \SI{3500}{F}. La troisième prend un panier A et un panier C, et paie \SI{3000}{F}.
+
+Mama Ngo Bell, qui a la tête bien faite, se pose alors une question : \emph{quel est le prix d'un tas d'arachides, d'un régime de bananes et d'un tubercule de manioc ?}
+
+Notons $x$ le prix des arachides, $y$ celui des bananes et $z$ celui du manioc (en francs). Les achats des clientes se traduisent par trois égalités :
+\begin{itemize}
+\item Cliente 1 (A + B) : $(x+y) + (x+z) = 2x + y + z = 2500$ ;
+\item Cliente 2 (B + C) : $(x+z) + (x+y+z) = 2x + y + 2z = 3500$ ;
+\item Cliente 3 (A + C) : $(x+y) + (x+y+z) = 2x + 2y + z = 3000$.
+\end{itemize}
+Nous obtenons un \cle{système de trois équations à trois inconnues} :
+\[
+\begin{cases}
+2x + y + z = 2500\\
+2x + y + 2z = 3500\\
+2x + 2y + z = 3000
+\end{cases}
+\]
+Retrouver les prix, c'est \emph{résoudre} ce système.
+
+\textbf{Problématique de la leçon.} Comment modéliser une situation concrète par un système d'équations, et comment résoudre ce système de manière rigoureuse ? C'est ce que font chaque jour les commerçants pour fixer leurs prix, les comptables pour équilibrer leurs budgets et les ingénieurs camerounais pour dimensionner leurs chantiers. Avant de résoudre des systèmes, il faut d'abord bien comprendre ce qu'est une \cle{équation linéaire} et ce qu'on appelle une \cle{solution}.
+
+\courssub{Équation linéaire à deux inconnues}
+
+\textbf{Intuition.} Imaginez un carnet de dépenses à l'atelier : vous achetez des électrodes à $x$ francs l'unité et des disques à couper à $y$ francs l'unité, pour un total de $c$ francs. La dépense totale s'écrit $ax + by = c$, où $a$ et $b$ sont les quantités achetées. Une telle égalité, où les inconnues n'apparaissent qu'au premier degré (pas de $x^2$, pas de $xy$, pas de $\frac{1}{x}$), est dite \emph{linéaire}.
+
+\begin{definition}[Équation linéaire à deux inconnues]
+Une \cle{équation linéaire à deux inconnues} $x$ et $y$ est une équation qui peut s'écrire sous la forme
+\[ ax + by = c \]
+où $a$, $b$ et $c$ sont des nombres réels donnés, avec $a$ et $b$ \textbf{non tous deux nuls}.
+\end{definition}
+
+\begin{attention}[Condition essentielle]
+La condition « $a$ et $b$ non tous deux nuls » est indispensable. Si $a = 0$ \emph{et} $b = 0$, l'équation devient $0 = c$ : elle ne contient plus aucune inconnue ! Elle est alors soit toujours fausse (si $c \neq 0$), soit toujours vraie (si $c = 0$), et ne mérite plus le nom d'équation à deux inconnues.
+\end{attention}
+
+\begin{definition}[Couple solution]
+Un \cle{couple solution} de l'équation $ax + by = c$ est un couple de réels $(x_0 \,; y_0)$ tel que, lorsqu'on remplace $x$ par $x_0$ et $y$ par $y_0$, l'égalité est vérifiée :
+\[ a x_0 + b y_0 = c. \]
+\end{definition}
+
+\begin{exemplebox}[Vérifier qu'un couple est solution]
+Vérifions que le couple $(1 \,; 2)$ est solution de l'équation $3x + y = 5$.
+
+On remplace $x$ par $1$ et $y$ par $2$ dans le membre de gauche :
+\[ 3 \times 1 + 2 = 3 + 2 = 5. \]
+On obtient bien le membre de droite. Donc $(1 \,; 2)$ \textbf{est solution} de $3x + y = 5$.
+
+En revanche, le couple $(2 \,; 1)$ donne $3 \times 2 + 1 = 7 \neq 5$ : il n'est \textbf{pas} solution.
+\end{exemplebox}
+
+\begin{attention}[Une infinité de solutions]
+Une équation seule à deux inconnues admet en général une \textbf{infinité} de solutions. Ne cherchez jamais « la » solution unique d'une équation comme $3x + y = 5$ ! En effet, on peut exprimer $y$ en fonction de $x$ : $y = 5 - 3x$. Pour \emph{chaque} valeur de $x$, on obtient une valeur de $y$ : $(0 \,; 5)$, $(1 \,; 2)$, $(2 \,; -1)$, $\left(\frac{5}{3} \,; 0\right)$, etc. C'est seulement lorsqu'on impose \emph{deux} équations simultanément (un système) qu'on peut espérer une solution unique.
+\end{attention}
+
+\begin{propriete}[Ensemble des solutions : une droite]
+L'ensemble des couples $(x \,; y)$ solutions d'une équation linéaire $ax + by = c$ (avec $a$ et $b$ non tous deux nuls) est représenté, dans un repère du plan, par une \cle{droite}.
+\begin{itemize}
+\item Si $b \neq 0$, l'équation équivaut à $y = -\dfrac{a}{b}x + \dfrac{c}{b}$ : c'est l'équation réduite d'une droite de coefficient directeur $-\dfrac{a}{b}$.
+\item Si $b = 0$ (alors $a \neq 0$), l'équation devient $x = \dfrac{c}{a}$ : c'est une droite parallèle à l'axe des ordonnées.
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[La droite des solutions de $2x + 3y = 6$]
+L'équation $2x + 3y = 6$ équivaut à $y = -\dfrac{2}{3}x + 2$. Cherchons quelques solutions :
+\begin{itemize}
+\item si $x = 0$, alors $y = 2$ : le couple $(0 \,; 2)$ est solution ;
+\item si $x = 3$, alors $y = 0$ : le couple $(3 \,; 0)$ est solution ;
+\item si $x = 1{,}5$, alors $y = 1$ : le couple $(1{,}5 \,; 1)$ est solution ;
+\item si $x = -3$, alors $y = 4$ : le couple $(-3 \,; 4)$ est solution.
+\end{itemize}
+Tous ces points sont alignés sur une même droite, tracée ci-dessous.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+width=0.85\linewidth, height=7cm,
+axis lines=middle,
+xlabel={$x$}, ylabel={$y$},
+xmin=-4.5, xmax=5.5, ymin=-1.5, ymax=5.5,
+xtick={-3,0,1.5,3}, ytick={1,2,4},
+grid=both, grid style={popline!40},
+clip=true
+]
+\addplot[popcurve,domain=-4:5,samples=50]{-2/3*x+2};
+\addplot[only marks, mark=*, mark size=2.5pt, poporange] coordinates {(0,2) (3,0) (1.5,1) (-3,4)};
+\node[popdark, above right] at (axis cs:0,2) {$(0\,;2)$};
+\node[popdark, above right] at (axis cs:3,0) {$(3\,;0)$};
+\node[popdark, above right] at (axis cs:1.5,1) {$(1{,}5\,;1)$};
+\node[popdark, above left] at (axis cs:-3,4) {$(-3\,;4)$};
+\node[popblue, rotate=-25, above] at (axis cs:4,0.2) {$2x+3y=6$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La droite d'équation $2x + 3y = 6$ : chacun de ses points est une solution de l'équation, et il y en a une infinité.}
+\end{popfigure}
+
+\begin{exoresolu}[Trouver des solutions d'une équation à deux inconnues]
+Énoncé. On considère l'équation $4x - 2y = 8$.
+\begin{enumerate}
+\item Le couple $(3 \,; 2)$ est-il solution ? Et le couple $(1 \,; 2)$ ?
+\item Exprimer $y$ en fonction de $x$, puis déterminer trois couples solutions.
+\end{enumerate}
+\tcblower
+Solution détaillée.
+\begin{enumerate}
+\item Pour $(3 \,; 2)$ : $4 \times 3 - 2 \times 2 = 12 - 4 = 8$. L'égalité est vérifiée : $(3 \,; 2)$ \textbf{est solution}.
+
+Pour $(1 \,; 2)$ : $4 \times 1 - 2 \times 2 = 4 - 4 = 0 \neq 8$. Le couple $(1 \,; 2)$ \textbf{n'est pas solution}.
+\item On isole $y$ :
+\begin{align*}
+4x - 2y &= 8\\
+-2y &= 8 - 4x\\
+y &= 2x - 4.
+\end{align*}
+On choisit ensuite des valeurs de $x$ au hasard :
+\begin{itemize}
+\item $x = 0$ donne $y = -4$ : solution $(0 \,; -4)$ ;
+\item $x = 2$ donne $y = 0$ : solution $(2 \,; 0)$ ;
+\item $x = 5$ donne $y = 6$ : solution $(5 \,; 6)$.
+\end{itemize}
+On pourrait continuer indéfiniment : l'équation possède une infinité de solutions, toutes situées sur la droite d'équation $y = 2x - 4$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Équation linéaire à trois inconnues}
+
+\textbf{Intuition.} Revenons au marché Mokolo. Le panier C de Mama Ngo Bell contient les trois produits : si un tas d'arachides coûte $x$ francs, un régime de bananes $y$ francs et un tubercule de manioc $z$ francs, alors le prix du panier C s'écrit $x + y + z$. Trois inconnues interviennent naturellement : il nous faut une équation à trois inconnues.
+
+\begin{definition}[Équation linéaire à trois inconnues]
+Une \cle{équation linéaire à trois inconnues} $x$, $y$ et $z$ est une équation qui peut s'écrire sous la forme
+\[ ax + by + cz = d \]
+où $a$, $b$, $c$ et $d$ sont des nombres réels donnés, avec $a$, $b$ et $c$ \textbf{non tous trois nuls}.
+\end{definition}
+
+\begin{definition}[Triplet solution]
+Un \cle{triplet solution} de l'équation $ax + by + cz = d$ est un triplet de réels $(x_0 \,; y_0 \,; z_0)$ tel que
+\[ a x_0 + b y_0 + c z_0 = d. \]
+\end{definition}
+
+\begin{exemplebox}[Vérifier qu'un triplet est solution]
+Vérifions que le triplet $(1 \,; 2 \,; 3)$ est solution de l'équation $x + y + z = 6$.
+
+On remplace $x$ par $1$, $y$ par $2$ et $z$ par $3$ :
+\[ 1 + 2 + 3 = 6. \]
+L'égalité est vérifiée : $(1 \,; 2 \,; 3)$ \textbf{est solution}.
+
+Testons d'autres triplets :
+\begin{itemize}
+\item $(6 \,; 0 \,; 0)$ : $6 + 0 + 0 = 6$ : solution ;
+\item $(0 \,; 3 \,; 3)$ : $0 + 3 + 3 = 6$ : solution ;
+\item $(1 \,; 1 \,; 1)$ : $1 + 1 + 1 = 3 \neq 6$ : \textbf{pas} solution ;
+\item $(2 \,; 2 \,; 1)$ : $2 + 2 + 1 = 5 \neq 6$ : \textbf{pas} solution.
+\end{itemize}
+Là encore, l'équation possède une infinité de solutions : on peut choisir librement deux des inconnues, et la troisième est alors déterminée (par exemple $z = 6 - x - y$).
+\end{exemplebox}
+
+\begin{propriete}[Ensemble des solutions : un plan de l'espace (admis)]
+L'ensemble des triplets $(x \,; y \,; z)$ solutions d'une équation linéaire $ax + by + cz = d$ (avec $a$, $b$, $c$ non tous trois nuls) est représenté, dans un repère de l'espace, par un \cle{plan}.
+
+Ce résultat est \textbf{admis} en classe de Première technique ; on se contentera de l'illustrer et de l'utiliser. Retenons l'idée intuitive : dans le plan (2 dimensions), une équation linéaire « enlève un degré de liberté » et donne une droite (1 dimension) ; dans l'espace (3 dimensions), une équation linéaire donne un plan (2 dimensions).
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1, line join=round]
+% Axes 3D
+\draw[-{Stealth}, popdark, thick] (0,0,0) -- (4.6,0,0) node[below left] {$x$};
+\draw[-{Stealth}, popdark, thick] (0,0,0) -- (0,4.2,0) node[left] {$z$};
+\draw[-{Stealth}, popdark, thick] (0,0,0) -- (0,0,5.2) node[below right] {$y$};
+% Plan x+y+z=6 : sommets (6,0,0),(0,6,0),(0,0,6) mis à l'échelle 0.6
+\coordinate (A) at (3.6,0,0);
+\coordinate (B) at (0,0,3.6);
+\coordinate (C) at (0,3.6,0);
+\fill[popblue!25, opacity=0.85] (A) -- (B) -- (C) -- cycle;
+\draw[popblue, thick] (A) -- (B) -- (C) -- cycle;
+% Points solutions
+\fill[poporange] (A) circle (1.6pt) node[below right, popdark] {$(6\,;0\,;0)$};
+\fill[poporange] (B) circle (1.6pt) node[right, popdark] {$(0\,;6\,;0)$};
+\fill[poporange] (C) circle (1.6pt) node[above left, popdark] {$(0\,;0\,;6)$};
+\fill[poporange] (1.2,1.2,1.2) circle (1.6pt);
+\node[popdark] at (2.0,1.05,1.6) {$(2\,;2\,;2)$};
+\node[popblue] at (1.15,0.55,1.15) {\small $x+y+z=6$};
+\end{tikzpicture}
+\end{center}
+\legende{Le plan d'équation $x + y + z = 6$ dans un repère de l'espace. Tous les triplets solutions, comme $(6\,;0\,;0)$, $(0\,;6\,;0)$, $(0\,;0\,;6)$ ou $(2\,;2\,;2)$, sont les points de ce plan.}
+\end{popfigure}
+
+\begin{exoresolu}[Solutions d'une équation à trois inconnues]
+Énoncé. On considère l'équation $2x - y + 3z = 12$.
+\begin{enumerate}
+\item Vérifier que $(6 \,; 0 \,; 0)$ et $(1 \,; 2 \,; 4)$ sont solutions.
+\item Déterminer $z$ pour que le triplet $(3 \,; 0 \,; z)$ soit solution.
+\end{enumerate}
+\tcblower
+Solution détaillée.
+\begin{enumerate}
+\item Pour $(6 \,; 0 \,; 0)$ : $2 \times 6 - 0 + 3 \times 0 = 12$. C'est une solution.
+
+Pour $(1 \,; 2 \,; 4)$ : $2 \times 1 - 2 + 3 \times 4 = 2 - 2 + 12 = 12$. C'est une solution.
+\item On remplace $x$ par $3$ et $y$ par $0$ :
+\begin{align*}
+2 \times 3 - 0 + 3z &= 12\\
+6 + 3z &= 12\\
+3z &= 6\\
+z &= 2.
+\end{align*}
+Le triplet $(3 \,; 0 \,; 2)$ est donc solution.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{methode}[Vérifier qu'un couple ou un triplet est solution]
+\begin{enumerate}
+\item Relever les valeurs proposées pour chaque inconnue, \textbf{dans l'ordre} : le premier nombre correspond à $x$, le deuxième à $y$ (et le troisième à $z$).
+\item Remplacer chaque inconnue par sa valeur dans le membre de gauche de l'équation.
+\item Calculer soigneusement, en respectant les priorités opératoires.
+\item Comparer avec le membre de droite : si les deux membres sont égaux, c'est une solution ; sinon, ce n'en est pas une.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item \textbf{Ordre des coordonnées} : dans le couple $(1 \,; 2)$, c'est $x = 1$ et $y = 2$. Inverser les rôles change tout : pour $3x + y = 5$, le couple $(2 \,; 1)$ n'est pas solution alors que $(1 \,; 2)$ l'est.
+\item \textbf{Confondre équation et système} : une seule équation à deux ou trois inconnues a une infinité de solutions. Pour obtenir une solution unique, il faut autant d'équations indépendantes que d'inconnues : c'est l'objet des systèmes, étudiés dans la suite de la leçon.
+\item \textbf{Oublier les coefficients nuls} : dans $2x + 3z = 6$, l'inconnue $y$ a pour coefficient $0$ ; l'équation reste une équation à trois inconnues, et $(3 \,; 7 \,; 0)$ en est une solution quelle que soit la valeur de $y$.
+\end{itemize}
+\end{attention}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Une équation linéaire à deux inconnues s'écrit $ax + by = c$ avec $a$ et $b$ non tous deux nuls ; une solution est un \cle{couple} $(x_0 \,; y_0)$ vérifiant l'égalité.
+\item Une équation linéaire à trois inconnues s'écrit $ax + by + cz = d$ avec $a$, $b$, $c$ non tous trois nuls ; une solution est un \cle{triplet} $(x_0 \,; y_0 \,; z_0)$.
+\item Une équation seule possède une \textbf{infinité de solutions} : une droite dans le plan (deux inconnues), un plan dans l'espace (trois inconnues).
+\item Pour vérifier qu'un couple ou un triplet est solution, on \textbf{remplace} et on \textbf{calcule}.
+\end{itemize}
+\end{aretenir}
+
+\begin{savaistu}[Des tablettes babyloniennes au marché Mokolo]
+Les équations linéaires ne sont pas une invention moderne ! Il y a près de 4000 ans, les scribes de \textbf{Babylone} (l'actuel Irak) gravaient sur des tablettes d'argile des problèmes de partage de grain, de mélanges de métaux précieux et de calculs de salaires, qu'ils résolvaient par des méthodes très proches de nos systèmes d'équations. En Chine, le traité \emph{Les Neuf Chapitres sur l'art du calcul} (vers 200 avant J.-C.) décrit déjà une méthode de résolution de systèmes par élimination, ancêtre direct du « pivot de Gauss » que nous étudierons dans cette leçon. Aujourd'hui encore, les mêmes idées servent à équilibrer un budget familial à Yaoundé, à doser un mélange de ciment sur un chantier à Bafoussam ou à répartir les charges dans un réseau électrique. Quand Mama Ngo Bell cherche le prix de ses arachides, elle marche dans les pas de quarante siècles de mathématiciens !
+\end{savaistu}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Parmi les couples suivants, lesquels sont solutions de l'équation $5x - 2y = 10$ ?
+\[ (2 \,; 0) \qquad (0 \,; 5) \qquad (4 \,; 5) \qquad (1 \,; -2{,}5) \]
+\item Exprimer $y$ en fonction de $x$ dans l'équation $3x + 6y = 12$, puis donner quatre couples solutions.
+\item On considère l'équation $x - 2y + z = 4$. Vérifier que $(4 \,; 0 \,; 0)$ et $(1 \,; 0 \,; 3)$ sont solutions, puis déterminer $y$ pour que $(2 \,; y \,; 2)$ soit solution.
+\item Chez un quincaillier de Ngaoundéré, une pince coûte $x$ francs et un marteau $y$ francs. L'achat de 2 pinces et 3 marteaux coûte \SI{7000}{F}. Écrire l'équation traduisant cette situation et proposer deux couples de prix possibles.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n]
+\begin{enumerate}
+\item $(2 \,; 0)$ : $5 \times 2 - 0 = 10$ : solution. $(0 \,; 5)$ : $0 - 10 = -10 \neq 10$ : non. $(4 \,; 5)$ : $20 - 10 = 10$ : solution. $(1 \,; -2{,}5)$ : $5 + 5 = 10$ : solution.
+\item $3x + 6y = 12$ donne $6y = 12 - 3x$, soit $y = 2 - \dfrac{x}{2}$. Par exemple : $(0 \,; 2)$, $(2 \,; 1)$, $(4 \,; 0)$, $(-2 \,; 3)$.
+\item $(4 \,; 0 \,; 0)$ : $4 - 0 + 0 = 4$ : solution. $(1 \,; 0 \,; 3)$ : $1 - 0 + 3 = 4$ : solution. Pour $(2 \,; y \,; 2)$ : $2 - 2y + 2 = 4$, soit $-2y = 0$, donc $y = 0$. Le triplet $(2 \,; 0 \,; 2)$ est solution.
+\item L'équation est $2x + 3y = 7000$. Par exemple : $x = 2000$ donne $3y = 3000$, soit $y = 1000$ : couple $(2000 \,; 1000)$. Et $x = 500$ donne $3y = 6000$, soit $y = 2000$ : couple $(500 \,; 2000)$. Il y a une infinité de prix possibles tant qu'on n'a pas une deuxième information : il faudra un système !
+\end{enumerate}
+\end{corrige}
+
+\coursec{Systèmes 2×2 : résolution algébrique}
+
+Dans la section précédente, nous avons rappelé ce qu'est une équation linéaire à deux inconnues et comment son ensemble de solutions se représente par une droite dans le plan. Nous allons maintenant confronter \emph{deux} droites : chercher le point (ou les points) qui leur est (sont) commun. C'est exactement le problème que l'on rencontre en atelier quand deux contraintes techniques (longueur totale, coût total, équilibre des forces) doivent être satisfaites simultanément.
+
+\courssub{Définition et vocabulaire}
+
+\begin{definition}[Système d'équations linéaires à deux inconnues (2×2)]
+On appelle \cle{système d'équations linéaires à deux inconnues} (ou système 2×2) un ensemble de deux équations de la forme
+\[
+\begin{cases}
+a_1 x + b_1 y = c_1 \\[2pt]
+a_2 x + b_2 y = c_2
+\end{cases}
+\]
+où $x$ et $y$ sont les \cle{inconnues}, $a_1, b_1, a_2, b_2$ sont les \cle{coefficients} (réels, non tous nuls sur une même équation) et $c_1, c_2$ sont les \cle{second membres}.
+\end{definition}
+
+\begin{definition}[Solution d'un système 2×2]
+Un \cle{couple solution} (ou simplement \cle{solution}) du système est un couple ordonné $(x_0 ; y_0) \in \mathbb{R}^2$ qui, remplacé à $(x ; y)$, \emph{vérifie simultanément les deux équations}.
+L'ensemble des solutions est noté $S$. On écrit $S = \{(x_0 ; y_0)\}$ s'il y a une unique solution, $S = \varnothing$ s'il n'y en a pas, ou on décrit l'ensemble infini le cas échéant.
+\end{definition}
+
+\begin{savaistu}[Vocabulaire technique]
+En électricité, les lois des mailles (Kirchhoff) donnent un système 2×2 pour trouver deux courants inconnus dans un circuit à deux mailles. En mécanique statique, l'équilibre d'une poutre sur deux appuis donne un système 2×2 pour les réactions d'appui. Résoudre le système, c'est trouver les valeurs réelles qui rendent le montage fonctionnel.
+\end{savaistu}
+
+\courssub{Méthode de substitution}
+
+L'idée est simple : on isole une inconnue dans une équation (on « exprime $x$ en fonction de $y$ » ou l'inverse), puis on remplace cette expression dans l'autre équation. On retombe sur une équation à \emph{une seule inconnue}, que l'on sait résoudre (classe de Seconde / début Première).
+
+\begin{methode}[Résolution par substitution — Étapes]
+\begin{enumerate}
+\item \textbf{Choisir} l'équation la plus simple et \textbf{isoler} une inconnue (celle dont le coefficient est $\pm 1$ de préférence pour éviter les fractions).
+\item \textbf{Remplacer} cette expression dans l'autre équation : on obtient une équation à une inconnue.
+\item \textbf{Résoudre} cette équation : on trouve la valeur de la première inconnue.
+\item \textbf{Reporter} cette valeur dans l'expression de l'étape 1 pour obtenir la seconde inconnue.
+\item \textbf{Vérifier} le couple $(x ; y)$ dans les \textbf{deux} équations initiales.
+\item \textbf{Conclure} par $S = \{(x ; y)\}$ (ou $S = \varnothing$ / description de l'ensemble infini).
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Piège classique : l'oubli du report]
+Après avoir trouvé $x$ (ou $y$) à l'étape 3, beaucoup d'élèves s'arrêtent là. \textbf{Il faut impérativement revenir à l'expression de l'étape 1} pour calculer l'autre coordonnée. Sans cela, le couple n'est pas complet et la vérification est impossible.
+\end{attention}
+
+\courssub{Méthode de combinaison linéaire (addition / élimination)}
+
+Cette méthode utilise le fait qu'on peut ajouter les deux membres de deux égalités vraies : le résultat est encore une égalité vraie. On cherche à faire disparaître une inconnue en additionnant les équations (éventuellement après les avoir multipliées par des nombres bien choisis).
+
+\begin{methode}[Résolution par combinaison linéaire — Étapes]
+\begin{enumerate}
+\item \textbf{Observer} les coefficients d'une inconnue ($x$ ou $y$). Choisir celle dont les coefficients sont opposés ou facilement rendus opposés par multiplication.
+\item \textbf{Multiplier} (si nécessaire) chaque équation par un nombre non nul pour obtenir des coefficients \textbf{opposés} sur l'inconnue choisie.
+\item \textbf{Additionner} membre à membre les deux équations : l'inconnue choisie disparaît, il reste une équation à une inconnue.
+\item \textbf{Résoudre} cette équation pour obtenir la première inconnue.
+\item \textbf{Reporter} cette valeur dans \textbf{l'une des deux équations initiales} (souvent la plus simple) pour trouver la seconde inconnue.
+\item \textbf{Vérifier} le couple dans les \textbf{deux} équations initiales et \textbf{conclure}.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Vérification obligatoire dans les DEUX équations]
+Un couple peut satisfaire l'équation utilisée pour le report (étape 5) par construction, mais ne pas satisfaire l'autre s'il y a eu une erreur de calcul aux étapes 2 ou 3 (signe oublié, multiplication mal faite). \textbf{La vérification dans les deux équations du système original est la seule garantie d'absence d'erreur.}
+\end{attention}
+
+\courssub{Exemple complet résolu par les deux méthodes}
+
+\begin{exoresolu}[Résolution de $\begin{cases} 2x + y = 7 \\ x - y = 2 \end{cases}$]
+\textbf{Énoncé :} Résoudre le système suivant :
+\[
+(S) : \begin{cases}
+2x + y = 7 & (E_1)\\
+x - y = 2  & (E_2)
+\end{cases}
+\]
+
+\tcblower
+
+\textbf{Méthode 1 : Par substitution}
+\begin{enumerate}
+\item Dans $(E_2)$, le coefficient de $x$ est $1$. On isole $x$ :
+\[ x = y + 2 \quad (E_2') \]
+\item On remplace $x$ par $y+2$ dans $(E_1)$ :
+\[ 2(y+2) + y = 7 \]
+\item On résout :
+\begin{align*}
+2y + 4 + y &= 7 \\
+3y &= 3 \\
+y &= 1
+\end{align*}
+\item On reporte $y=1$ dans $(E_2')$ :
+\[ x = 1 + 2 = 3 \]
+\item \textbf{Vérification :}
+\begin{align*}
+\text{Dans }(E_1) &: 2\times 3 + 1 = 6 + 1 = 7 \quad \checkmark \\
+\text{Dans }(E_2) &: 3 - 1 = 2 \quad \checkmark
+\end{align*}
+\item \textbf{Conclusion :} $S = \{(3 ; 1)\}$.
+\end{enumerate}
+
+\textbf{Méthode 2 : Par combinaison linéaire}
+\begin{enumerate}
+\item On observe les coefficients de $y$ : $+1$ dans $(E_1)$ et $-1$ dans $(E_2)$. Ils sont déjà opposés. Inutile de multiplier.
+\item On additionne $(E_1)$ et $(E_2)$ membre à membre :
+\begin{align*}
+(2x + y) + (x - y) &= 7 + 2 \\
+3x &= 9
+\end{align*}
+\item On résout : $x = 3$.
+\item On reporte $x=3$ dans $(E_2)$ (la plus simple) :
+\begin{align*}
+3 - y &= 2 \\
+-y &= -1 \\
+y &= 1
+\end{align*}
+\item \textbf{Vérification :} Identique à la méthode 1. \checkmark
+\item \textbf{Conclusion :} $S = \{(3 ; 1)\}$.
+\end{enumerate}
+
+\textbf{Remarque :} Les deux méthodes donnent le même couple. Le choix de la méthode dépend de la forme du système : substitution si un coefficient vaut $\pm 1$, combinaison si les coefficients sont facilement opposables.
+\end{exoresolu}
+
+\courssub{Illustration comparative : les deux méthodes sur le même système}
+
+Le tableau suivant résume visuellement les étapes clés des deux approches appliquées au système de l'exemple.
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=0.8cm and 1.5cm,
+    box/.style={rectangle, draw=popdark, thick, rounded corners=4pt, fill=popcream, text width=5.5cm, align=left, minimum height=1.8cm},
+    arrow/.style={-Stealth, thick, popblue},
+    title/.style={rectangle, fill=popblue, text=white, font=\bfseries, rounded corners=4pt, minimum width=6cm, minimum height=0.8cm, align=center}
+]
+% Titres
+\node[title] (tsub) at (0, 4.5) {Méthode de SUBSTITUTION};
+\node[title] (tcomb) at (12, 4.5) {Méthode de COMBINAISON LINÉAIRE};
+
+% Colonne Substitution
+\node[box, below=of tsub] (s1) {\textbf{1. Isoler} : $x = y + 2$ \quad (depuis $x-y=2$)};
+\node[box, below=of s1] (s2) {\textbf{2. Remplacer} : $2(y+2) + y = 7$};
+\node[box, below=of s2] (s3) {\textbf{3. Résoudre} : $3y+4=7 \Rightarrow y=1$};
+\node[box, below=of s3] (s4) {\textbf{4. Reporter} : $x = 1+2 = 3$};
+\node[box, below=of s4, fill=popgreenL] (s5) {\textbf{5. Vérifier \& Conclure} : $S=\{(3;1)\}$};
+
+\draw[arrow] (s1) -- (s2);
+\draw[arrow] (s2) -- (s3);
+\draw[arrow] (s3) -- (s4);
+\draw[arrow] (s4) -- (s5);
+
+% Colonne Combinaison
+\node[box, below=of tcomb] (c1) {\textbf{1. Observer} : Coeff de $y$ : $+1$ et $-1$ (opposés)};
+\node[box, below=of c1] (c2) {\textbf{2. Additionner} : $(2x+y)+(x-y)=7+2 \Rightarrow 3x=9$};
+\node[box, below=of c2] (c3) {\textbf{3. Résoudre} : $x=3$};
+\node[box, below=of c3] (c4) {\textbf{4. Reporter} : $3-y=2 \Rightarrow y=1$ (dans $x-y=2$)};
+\node[box, below=of c4, fill=popgreenL] (c5) {\textbf{5. Vérifier \& Conclure} : $S=\{(3;1)\}$};
+
+\draw[arrow] (c1) -- (c2);
+\draw[arrow] (c2) -- (c3);
+\draw[arrow] (c3) -- (c4);
+\draw[arrow] (c4) -- (c5);
+
+% Flèches de correspondance horizontales (pointillés)
+\draw[dashed, popmuted, thick] (s1.east) -- ++(0.5,0) node[midway, above, sloped, font=\tiny] {Isoler $\approx$ Préparer} (c1.west);
+\draw[dashed, popmuted, thick] (s3.east) -- ++(0.5,0) node[midway, above, sloped, font=\tiny] {Même résultat} (c3.west);
+\draw[dashed, popmuted, thick] (s5.east) -- ++(0.5,0) node[midway, above, sloped, font=\tiny] {Même conclusion} (c5.west);
+\end{tikzpicture}
+\legende{Comparatif des étapes : Substitution vs Combinaison linéaire sur le système $\begin{cases}2x+y=7\\x-y=2\end{cases}$.}
+\end{popfigure}
+
+\courssub{Cas particuliers : discussion algébrique}
+
+Tous les systèmes 2×2 n'ont pas une unique solution. Géométriquement, deux droites peuvent être sécantes (1 solution), parallèles distinctes (0 solution) ou confondues (infinité de solutions). Algébriquement, cela se détecte lors de la résolution.
+
+\begin{propriete}[Discussion d'un système 2×2 — Cas particuliers]
+Soit le système $\begin{cases} a_1 x + b_1 y = c_1 \\ a_2 x + b_2 y = c_2 \end{cases}$.
+On compare les rapports des coefficients : $\dfrac{a_1}{a_2}$, $\dfrac{b_1}{b_2}$, $\dfrac{c_1}{c_2}$ (si dénominateurs non nuls).
+\begin{enumerate}
+\item \textbf{Unique solution} (droites sécantes) : $\dfrac{a_1}{a_2} \neq \dfrac{b_1}{b_2}$.
+      La résolution (substitution ou combinaison) aboutit à une valeur numérique pour $x$ et $y$.
+\item \textbf{Aucune solution} (droites parallèles distinctes, système \cle{impossible}) : $\dfrac{a_1}{a_2} = \dfrac{b_1}{b_2} \neq \dfrac{c_1}{c_2}$.
+      La résolution par combinaison fait disparaître \emph{les deux} inconnues et aboutit à une \textbf{fausseté} (ex: $0 = 5$). On écrit $S = \varnothing$.
+\item \textbf{Infinité de solutions} (droites confondues, système \cle{indéterminé}) : $\dfrac{a_1}{a_2} = \dfrac{b_1}{b_2} = \dfrac{c_1}{c_2}$.
+      La résolution par combinaison fait disparaître les deux inconnues et aboutit à une \textbf{identité} (ex: $0 = 0$). Les équations sont proportionnelles. On exprime $y$ en fonction de $x$ (ou l'inverse) : $S = \{(x ; \frac{c_1 - a_1 x}{b_1}) \mid x \in \mathbb{R}\}$.
+\end{enumerate}
+\end{propriete}
+
+\begin{exoresolu}[Détection des cas particuliers]
+\textbf{1. Système impossible :} $\begin{cases} 2x + y = 4 \\ 4x + 2y = 10 \end{cases}$
+\emph{Résolution par combinaison :} Multiplier la première par $-2$ : $-4x - 2y = -8$.
+Additionner à la seconde : $(-4x-2y) + (4x+2y) = -8 + 10 \implies 0 = 2$ (Faux).
+\textbf{Conclusion :} $S = \varnothing$. Les droites sont parallèles (coefficients proportionnels $2/4 = 1/2$, mais seconds membres non proportionnels $4/10 \neq 1/2$).
+
+\textbf{2. Système indéterminé :} $\begin{cases} x - 3y = 6 \\ 2x - 6y = 12 \end{cases}$
+\emph{Résolution par combinaison :} Multiplier la première par $-2$ : $-2x + 6y = -12$.
+Additionner à la seconde : $0 = 0$ (Vrai).
+Les équations sont proportionnelles (la seconde est le double de la première).
+On exprime $x$ en fonction de $y$ depuis la première : $x = 3y + 6$.
+\textbf{Conclusion :} $S = \{(3y+6 ; y) \mid y \in \mathbb{R}\}$ (ou $S = \{(x ; \frac{x-6}{3}) \mid x \in \mathbb{R}\}$).
+\end{exoresolu}
+
+\begin{attention}[Rédaction du cas indéterminé]
+Ne pas écrire « $S = \mathbb{R}^2$ » (ce serait n'importe quel couple). La solution est une \emph{droite} : il faut donner une \textbf{paramétrisation} (ex: $x = 3t+6, y=t$ avec $t \in \mathbb{R}$) ou écrire $y$ en fonction de $x$ explicitement.
+\end{attention}
+
+\courssub{Synthèse : rédaction type attendue au Probatoire}
+
+Pour toute résolution de système 2×2, la copie doit suivre ce canevas rigoureux :
+
+\begin{aretenir}[Modèle de rédaction — Système 2×2]
+\begin{enumerate}
+\item \textbf{Annoncer la méthode} : « Je résous par substitution / combinaison linéaire. »
+\item \textbf{Poser le système} : $(S) : \begin{cases} ... \\ ... \end{cases}$
+\item \textbf{Dérouler les calculs} alignés sur le signe $=$ (environnement \texttt{align*}).
+\item \textbf{Reporter} pour trouver la seconde inconnue.
+\item \textbf{Vérifier} explicitement dans les \textbf{deux} équations : « Vérification : dans (1) ... = ... ; dans (2) ... = ... »
+\item \textbf{Conclure} par une phrase complète : « L'ensemble des solutions est $S = \{(x ; y)\}$ » (ou $S = \varnothing$, ou la paramétrisation).
+\end{enumerate}
+\end{aretenir}
+
+\begin{exercice}[Entraînement immédiat]
+Résolvez les systèmes suivants en appliquant la rédaction type. Choisissez la méthode la plus adaptée.
+\begin{enumerate}
+\item $\begin{cases} 3x - 2y = 1 \\ x + 4y = 19 \end{cases}$
+\item $\begin{cases} 5x + 2y = 11 \\ 10x + 4y = 22 \end{cases}$
+\item $\begin{cases} 0{,}5x - 0{,}2y = 1{,}1 \\ 2x + y = 7 \end{cases}$ \emph{(Astuce : multiplier par 10 pour éliminer les décimales).}
+\item Un électricien doit préparer \SI{10}{\liter} d'une solution à \SI{30}{\percent} d'acide en mélangeant une solution à \SI{20}{\percent} et une solution à \SI{50}{\percent}. Combien de litres de chaque ? (Modéliser par un système 2×2 et résoudre).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\textbf{1.} Substitution conseillée ($x = 19 - 4y$ dans 2ème). $S = \{(3 ; 4)\}$.
+\textbf{2.} Combinaison : $(2) - 2\times(1)$ donne $0=0$. Indéterminé. $S = \{(x ; \frac{11-5x}{2}) \mid x \in \mathbb{R}\}$.
+\textbf{3.} Combinaison après nettoyage : $\begin{cases} 5x - 2y = 11 \\ 2x + y = 7 \end{cases}$. Multiplier 2ème par 2 : $4x+2y=14$. Addition : $9x=25 \Rightarrow x=\frac{25}{9}$. $y=\frac{13}{9}$. $S = \{(\frac{25}{9} ; \frac{13}{9})\}$.
+\textbf{4.} Soit $x$ litres à \SI{20}{\percent}, $y$ litres à \SI{50}{\percent}. $\begin{cases} x+y=10 \\ 0{,}2x+0{,}5y=3 \end{cases} \iff \begin{cases} x+y=10 \\ 2x+5y=30 \end{cases}$. $x=10-y \Rightarrow 20-2y+5y=30 \Rightarrow 3y=10 \Rightarrow y=\frac{10}{3} \approx 3,33$ L. $x=\frac{20}{3} \approx 6,67$ L.
+\end{corrige}
+
+Nous savons maintenant résoudre algébriquement tout système 2×2. La section suivante donnera une vision géométrique de ces résultats (intersection de droites) avant d'attaquer les systèmes 3×3 avec la méthode du pivot de Gauss.
+
+\coursec{Interprétation graphique et discussion (2×2)}
+
+Dans la section précédente, nous avons appris à résoudre algébriquement un système de deux équations à deux inconnues, par substitution ou par combinaison. Mais une question naturelle se pose : un système possède-t-il \emph{toujours} une solution ? Et s'il en a une, est-elle \emph{unique} ? Pour répondre à ces questions, les mathématiciens ont une idée remarquable : traduire le problème algébrique en un problème \emph{géométrique}, en dessinant des droites. C'est l'objet de cette section.
+
+\courssub{Chaque équation du système représente une droite}
+
+Considérons un système de deux équations à deux inconnues :
+\[
+\begin{cases}
+ax + by = c \\
+a'x + b'y = c'
+\end{cases}
+\qquad \text{avec } (a,b)\neq(0,0) \text{ et } (a',b')\neq(0,0).
+\]
+
+L'idée fondatrice est la suivante : une équation de la forme $ax+by=c$ est l'\cle{équation cartésienne d'une droite} du plan. En effet, si $b\neq 0$, on peut isoler $y$ :
+\[
+y = -\frac{a}{b}\,x + \frac{c}{b},
+\]
+ce qui est l'équation réduite d'une droite de coefficient directeur $-\dfrac{a}{b}$ et d'ordonnée à l'origine $\dfrac{c}{b}$. Si $b=0$, l'équation devient $x=\dfrac{c}{a}$, qui représente une droite verticale (parallèle à l'axe des ordonnées).
+
+\begin{aretenir}[Traduction géométrique d'un système]
+Résoudre le système $\begin{cases} ax+by=c \\ a'x+b'y=c' \end{cases}$, c'est chercher les points $M(x\,;y)$ du plan qui appartiennent \emph{à la fois} à la droite $(d)$ d'équation $ax+by=c$ \emph{et} à la droite $(d')$ d'équation $a'x+b'y=c'$.
+
+Autrement dit : \textbf{les solutions du système sont les coordonnées des points d'intersection des deux droites.}
+\end{aretenir}
+
+Cette traduction est puissante car, dans le plan, deux droites ne peuvent être que dans l'une des trois situations suivantes :
+\begin{itemize}
+\item elles sont \textbf{sécantes} : elles se coupent en un seul point ;
+\item elles sont \textbf{strictement parallèles} : elles ne se coupent jamais ;
+\item elles sont \textbf{confondues} : elles ont tous leurs points en commun.
+\end{itemize}
+Il n'existe pas d'autre cas. Par conséquent, un système de deux équations à deux inconnues possède soit \emph{une seule} solution, soit \emph{aucune}, soit une \emph{infinité}. Jamais deux, jamais trois.
+
+\begin{propriete}[Position relative des droites et nombre de solutions (admise)]
+Soit le système $\begin{cases} ax+by=c \\ a'x+b'y=c' \end{cases}$ associé aux droites $(d)$ et $(d')$.
+\begin{enumerate}
+\item $(d)$ et $(d')$ sont \textbf{sécantes} $\iff$ le système admet \textbf{une solution unique} : le couple $(x\,;y)$ des coordonnées du point d'intersection.
+\item $(d)$ et $(d')$ sont \textbf{strictement parallèles} $\iff$ le système n'admet \textbf{aucune solution}.
+\item $(d)$ et $(d')$ sont \textbf{confondues} $\iff$ le système admet \textbf{une infinité de solutions} : tous les couples $(x\,;y)$ vérifiant l'une des deux équations.
+\end{enumerate}
+Cette propriété est admise au niveau de la classe de Première technique ; elle se justifie par le fait que deux droites du plan sont nécessairement dans l'un de ces trois cas.
+\end{propriete}
+
+\begin{popfigure}
+\begin{minipage}[t]{0.32\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.52]
+\begin{axis}[axis lines=middle, xlabel={$x$}, ylabel={$y$}, xmin=-1, xmax=5, ymin=-1, ymax=5, xtick=\empty, ytick=\empty, width=\linewidth, clip=false]
+\addplot[popcurve,domain=-0.5:4.5,samples=50]{4-x};
+\addplot[popcurve,poporange,domain=-0.5:3,samples=50]{2*x-2};
+\addplot[mark=*,mark size=1.5pt,popdark] coordinates {(2,2)};
+\node[popdark,anchor=south west] at (axis cs:2,2) {\scriptsize $A(2\,;2)$};
+\end{axis}
+\end{tikzpicture}
+\par\small\textbf{Droites sécantes}\par\scriptsize 1 solution unique
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.52]
+\begin{axis}[axis lines=middle, xlabel={$x$}, ylabel={$y$}, xmin=-1, xmax=5, ymin=-1, ymax=5, xtick=\empty, ytick=\empty, width=\linewidth, clip=false]
+\addplot[popcurve,domain=-0.5:4.5,samples=50]{4-x};
+\addplot[popcurve,poporange,domain=-0.5:4.5,samples=50]{2-x};
+\end{axis}
+\end{tikzpicture}
+\par\small\textbf{Droites parallèles}\par\scriptsize aucune solution
+\end{minipage}\hfill
+\begin{minipage}[t]{0.32\linewidth}
+\centering
+\begin{tikzpicture}[scale=0.52]
+\begin{axis}[axis lines=middle, xlabel={$x$}, ylabel={$y$}, xmin=-1, xmax=5, ymin=-1, ymax=5, xtick=\empty, ytick=\empty, width=\linewidth, clip=false]
+\addplot[popcurve,domain=-0.5:4.5,samples=50]{4-x};
+\addplot[popcurve,poporange,dashed,domain=-0.5:4.5,samples=50]{4-x};
+\end{axis}
+\end{tikzpicture}
+\par\small\textbf{Droites confondues}\par\scriptsize infinité de solutions
+\end{minipage}
+\legende{Les trois positions relatives possibles de deux droites et le nombre de solutions correspondant du système.}
+\end{popfigure}
+
+\courssub{Critère algébrique : comparaison des coefficients et déterminant}
+
+Dessiner les droites est parlant, mais pas toujours pratique ni précis. On préfère souvent un \emph{critère de calcul} permettant de prévoir le nombre de solutions \emph{avant} de résoudre.
+
+\textbf{Intuition.} Deux droites d'équations réduites $y=mx+p$ et $y=m'x+p'$ sont parallèles (ou confondues) lorsqu'elles ont le \emph{même coefficient directeur}, c'est-à-dire $m=m'$, soit $-\dfrac{a}{b}=-\dfrac{a'}{b'}$, ce qui s'écrit encore $ab'-a'b=0$. Elles sont sécantes dans le cas contraire. On en déduit le critère suivant.
+
+\begin{definition}[Déterminant d'un système 2×2]
+Le \cle{déterminant} du système $\begin{cases} ax+by=c \\ a'x+b'y=c' \end{cases}$ est le nombre
+\[
+\Delta = ab' - a'b.
+\]
+\end{definition}
+
+\begin{propriete}[Critère d'unicité (admis)]
+Le système $\begin{cases} ax+by=c \\ a'x+b'y=c' \end{cases}$ admet \textbf{une solution unique si et seulement si} son déterminant est non nul :
+\[
+ab' - a'b \neq 0.
+\]
+Si $ab'-a'b=0$, le système n'a \textbf{aucune solution} (droites strictement parallèles) ou en a une \textbf{infinité} (droites confondues). Pour trancher, on compare alors les rapports des coefficients :
+\begin{itemize}
+\item si $\dfrac{a}{a'}=\dfrac{b}{b'}\neq\dfrac{c}{c'}$ : droites strictement parallèles, \textbf{aucune solution} ;
+\item si $\dfrac{a}{a'}=\dfrac{b}{b'}=\dfrac{c}{c'}$ : droites confondues, \textbf{infinité de solutions}.
+\end{itemize}
+(Lorsqu'un coefficient est nul, on adapte : on vérifie directement si les équations sont proportionnelles.)
+\end{propriete}
+
+\begin{methode}[Discuter le nombre de solutions d'un système 2×2]
+\begin{enumerate}
+\item Identifier les coefficients $a,b,c$ et $a',b',c'$ en écrivant le système sous la forme $\begin{cases} ax+by=c \\ a'x+b'y=c' \end{cases}$.
+\item Calculer le déterminant $\Delta = ab'-a'b$.
+\item Si $\Delta\neq 0$ : conclure « solution unique » et résoudre (substitution ou combinaison).
+\item Si $\Delta=0$ : comparer les rapports $\dfrac{a}{a'}$, $\dfrac{b}{b'}$, $\dfrac{c}{c'}$ pour distinguer « aucune solution » et « infinité de solutions ».
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Trois systèmes, trois situations]
+\textbf{Système 1 :} $\begin{cases} x+y=4 \\ 2x-y=2 \end{cases}$. \quad $\Delta = 1\times(-1)-2\times 1 = -3\neq 0$ : solution unique.
+
+\textbf{Système 2 :} $\begin{cases} x+y=4 \\ 2x+2y=6 \end{cases}$. \quad $\Delta = 1\times 2-2\times 1=0$. De plus $\dfrac{1}{2}=\dfrac{1}{2}\neq\dfrac{4}{6}$ : droites strictement parallèles, \textbf{aucune solution}.
+
+\textbf{Système 3 :} $\begin{cases} x+y=4 \\ 2x+2y=8 \end{cases}$. \quad $\Delta = 0$ et $\dfrac{1}{2}=\dfrac{1}{2}=\dfrac{4}{8}$ : la deuxième équation est le double de la première, les droites sont confondues, \textbf{infinité de solutions} (tous les couples $(x\,;4-x)$).
+\end{exemplebox}
+
+\begin{attention}[Parallèle ne veut pas dire confondu]
+Des droites \textbf{parallèles} ont le \emph{même coefficient directeur} mais pas nécessairement la même ordonnée à l'origine. Ne conclus jamais « infinité de solutions » dès que $\Delta=0$ : il faut encore vérifier si les deux équations sont \emph{proportionnelles en entier} (y compris les seconds membres $c$ et $c'$). Par exemple, $x+y=4$ et $x+y=7$ définissent deux droites parallèles \emph{distinctes} : le système n'a aucune solution. Seul le cas où les deux équations sont équivalentes donne des droites confondues.
+\end{attention}
+
+\courssub{Lecture graphique approchée puis confirmation par le calcul}
+
+En situation concrète (atelier, chantier), on peut tracer les deux droites sur un graphique et \emph{lire} les coordonnées du point d'intersection. Cette lecture est rapide mais \emph{approchée} : elle doit toujours être confirmée par le calcul exact.
+
+\begin{exoresolu}[Discussion puis résolution graphique et algébrique]
+On considère le système $\begin{cases} x+y=4 \\ 2x-y=2 \end{cases}$.
+\begin{enumerate}
+\item Discuter le nombre de solutions à l'aide du déterminant.
+\item Lire graphiquement une valeur approchée de la solution.
+\item Confirmer par le calcul.
+\end{enumerate}
+\tcblower
+\textbf{1. Discussion.} Le déterminant vaut
+\[
+\Delta = ab'-a'b = 1\times(-1)-2\times 1 = -1-2 = -3.
+\]
+Comme $\Delta=-3\neq 0$, le système admet une \textbf{solution unique} : les droites $(d):x+y=4$ et $(d'):2x-y=2$ sont sécantes.
+
+\textbf{2. Lecture graphique.} On trace les deux droites à partir de deux points chacune :
+\begin{itemize}
+\item pour $(d):y=4-x$ : les points $(0\,;4)$ et $(4\,;0)$ ;
+\item pour $(d'):y=2x-2$ : les points $(0\,;-2)$ et $(2\,;2)$.
+\end{itemize}
+Sur le graphique, les droites se coupent au point $A$ dont on lit les coordonnées approchées : $A(2\,;2)$.
+
+\textbf{3. Confirmation par le calcul.} Par combinaison, on additionne les deux équations membre à membre :
+\begin{align*}
+(x+y)+(2x-y) &= 4+2 \\
+3x &= 6 \\
+x &= 2.
+\end{align*}
+En reportant dans la première équation : $2+y=4$, donc $y=2$.
+
+\textbf{Vérification} dans la deuxième équation : $2\times 2-2=2$ : exact.
+
+Le système admet bien l'unique solution $\boxed{(x\,;y)=(2\,;2)}$, ce qui confirme la lecture graphique.
+\end{exoresolu}
+
+\begin{attention}[Une lecture graphique n'est pas une preuve]
+Sur un graphique, on peut lire $x\approx 1{,}98$ et conclure à tort. La lecture graphique donne une \emph{estimation} ; seule la résolution algébrique (ou la vérification par substitution dans \emph{les deux} équations) garantit l'exactitude du couple solution. Au Probatoire, rédige toujours la confirmation par le calcul.
+\end{attention}
+
+\begin{savaistu}[Pourquoi le mot « déterminant » ?]
+Le mot \emph{déterminant} a été introduit au XIX\textsuperscript{e} siècle dans le sillage des travaux de Leibniz, Cramer et Cauchy. Il porte bien son nom : le nombre $ab'-a'b$ \emph{détermine} — c'est-à-dire décide à lui seul — si le système possède une solution unique ou non. Un simple calcul de quatre multiplications et soustractions suffit à connaître le destin du système ! Les déterminants sont aujourd'hui partout : en mécanique pour calculer des aires et des volumes, en électricité pour résoudre les circuits à plusieurs mailles, et en informatique pour les graphismes 3D.
+\end{savaistu}
+
+\begin{exercice}[À toi de discuter]
+Pour chacun des systèmes suivants, déterminer le nombre de solutions sans le résoudre, puis interpréter géométriquement :
+\[
+(S_1)\ \begin{cases} 3x-y=1 \\ x+2y=5 \end{cases}
+\qquad
+(S_2)\ \begin{cases} 2x-4y=3 \\ x-2y=1 \end{cases}
+\qquad
+(S_3)\ \begin{cases} 2x-4y=6 \\ x-2y=3 \end{cases}
+\]
+\end{exercice}
+
+\begin{corrige}[Exercice : À toi de discuter]
+$(S_1)$ : $\Delta = 3\times 2 - 1\times(-1) = 6+1=7\neq 0$ : solution unique, droites sécantes.
+
+$(S_2)$ : $\Delta = 2\times(-2)-1\times(-4) = -4+4=0$. Or $\dfrac{2}{1}=\dfrac{-4}{-2}=2$ mais $\dfrac{3}{1}=3\neq 2$ : droites strictement parallèles, aucune solution.
+
+$(S_3)$ : $\Delta = 0$ et $\dfrac{2}{1}=\dfrac{-4}{-2}=\dfrac{6}{3}=2$ : les équations sont proportionnelles, droites confondues, infinité de solutions.
+\end{corrige}
+
+\coursec{Systèmes 3×3 : méthode du pivot de Gauss}
+
+Dans la section précédente, nous avons résolu des systèmes de deux équations à deux inconnues et interprété chaque équation comme une droite du plan : la solution, quand elle existe et est unique, est le point d'intersection de deux droites. Mais dans la vie professionnelle, les situations font souvent intervenir \emph{trois} grandeurs inconnues : trois articles à l'atelier, trois tensions dans un circuit, trois mélanges sur un chantier. Il faut alors passer aux systèmes de \textbf{trois équations à trois inconnues}. Bonne nouvelle : il existe une méthode systématique, qui fonctionne à tous les coups, la \cle{méthode du pivot de Gauss}. C'est l'objet de cette section.
+
+\courssub{Systèmes de trois équations à trois inconnues}
+
+\begin{definition}[Système 3×3 et triplet solution]
+Un \cle{système de trois équations linéaires à trois inconnues} est un système de la forme :
+\[
+\begin{cases}
+a_1 x + b_1 y + c_1 z = d_1 \\
+a_2 x + b_2 y + c_2 z = d_2 \\
+a_3 x + b_3 y + c_3 z = d_3
+\end{cases}
+\]
+où $x$, $y$, $z$ sont les inconnues et où les coefficients $a_i$, $b_i$, $c_i$, $d_i$ sont des réels donnés (pour chaque ligne, $a_i$, $b_i$, $c_i$ ne sont pas tous nuls).
+
+Une \cle{solution} du système est un \textbf{triplet} $(x\,;y\,;z)$ de réels qui vérifie \emph{simultanément} les trois équations. Résoudre le système, c'est déterminer l'ensemble $S$ de tous les triplets solutions.
+\end{definition}
+
+\begin{exemplebox}[Vérifier qu'un triplet est solution]
+Le triplet $(1\,;2\,;3)$ est-il solution du système $\begin{cases} x+y+z=6 \\ 2x-y+z=3 \\ x+2y-z=2 \end{cases}$ ?
+
+On remplace $x$ par $1$, $y$ par $2$, $z$ par $3$ dans chaque équation :
+\begin{itemize}
+\item $1+2+3 = 6$ : vrai ;
+\item $2\times 1 - 2 + 3 = 3$ : vrai ;
+\item $1 + 2\times 2 - 3 = 2$ : vrai.
+\end{itemize}
+Les trois équations sont satisfaites : $(1\,;2\,;3)$ est bien une solution du système.
+\end{exemplebox}
+
+\courssub{Interprétation géométrique (admise)}
+
+Dans le plan, une équation $ax+by=c$ représente une droite. Dans l'\textbf{espace}, une équation $ax+by+cz=d$ représente un \cle{plan}. Un système $3\times 3$ correspond donc à \textbf{trois plans} de l'espace, et résoudre le système revient à chercher leur intersection. Trois cas sont possibles :
+\begin{itemize}
+\item les trois plans se coupent en \textbf{un point unique} : le système a une solution unique (cas général) ;
+\item les trois plans ont en commun une droite ou un plan : \textbf{infinité de solutions} ;
+\item les plans n'ont aucun point commun (par exemple deux plans parallèles distincts) : \textbf{aucune solution}.
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+% Plan 1 (bleu)
+\fill[popblue!25] (-2.6,-1.3) -- (0.4,-1.9) -- (1.6,0.3) -- (-1.4,0.9) -- cycle;
+\draw[popblue,thick] (-2.6,-1.3) -- (0.4,-1.9) -- (1.6,0.3) -- (-1.4,0.9) -- cycle;
+\node[popblue] at (-2.0,0.5) {\small $\mathcal{P}_1$};
+% Plan 2 (orange)
+\fill[poporange!25] (-1.9,1.4) -- (1.9,0.9) -- (1.1,-1.7) -- (-2.5,-1.1) -- cycle;
+\draw[poporange,thick] (-1.9,1.4) -- (1.9,0.9) -- (1.1,-1.7) -- (-2.5,-1.1) -- cycle;
+\node[poporange] at (1.5,0.75) {\small $\mathcal{P}_2$};
+% Plan 3 (vert)
+\fill[popgreen!20] (-1.2,-1.9) -- (0.6,-2.1) -- (0.9,1.6) -- (-0.9,1.9) -- cycle;
+\draw[popgreen,thick] (-1.2,-1.9) -- (0.6,-2.1) -- (0.9,1.6) -- (-0.9,1.9) -- cycle;
+\node[popgreen!60!black] at (-0.75,1.65) {\small $\mathcal{P}_3$};
+% Point d'intersection
+\fill[popink] (-0.35,-0.35) circle (2.2pt);
+\node[popink,right] at (-0.3,-0.4) {\small $(x\,;y\,;z)$};
+\end{tikzpicture}
+\end{center}
+\legende{Trois plans de l'espace se coupant en un point unique : le système admet une solution unique.}
+\end{popfigure}
+
+\courssub{Les opérations élémentaires sur les lignes}
+
+Toute la méthode repose sur le fait suivant, que nous admettons.
+
+\begin{propriete}[Opérations élémentaires — admise]
+Les opérations suivantes, appelées \cle{opérations élémentaires sur les lignes}, transforment un système en un système \textbf{équivalent}, c'est-à-dire ayant \emph{exactement le même ensemble de solutions} :
+\begin{enumerate}
+\item \textbf{échanger} deux équations : $L_i \leftrightarrow L_j$ ;
+\item \textbf{multiplier} une équation par un réel non nul : $L_i \leftarrow k\,L_i$ avec $k\neq 0$ ;
+\item \textbf{ajouter} à une équation un multiple d'une autre : $L_i \leftarrow L_i + k\,L_j$.
+\end{enumerate}
+\end{propriete}
+
+\begin{attention}[La combinaison se fait sur toute la ligne]
+Quand on écrit $L_2 \leftarrow L_2 - 2L_1$, on combine \emph{tous} les termes de la ligne : les coefficients de $x$, de $y$, de $z$ \textbf{et le second membre}. Oublier le second membre est l'erreur la plus fréquente.
+\end{attention}
+
+\courssub{Le principe du pivot de Gauss}
+
+L'idée est simple et puissante : au lieu de chercher à éliminer les inconnues au hasard, on procède \textbf{en escalier}. On utilise la première équation pour éliminer $x$ dans les équations (2) et (3), puis la nouvelle deuxième équation pour éliminer $y$ dans la troisième. On obtient un \cle{système triangulaire}, très facile à résoudre par \textbf{remontée} : la dernière équation donne $z$, on substitue dans la deuxième pour trouver $y$, puis dans la première pour trouver $x$.
+
+\begin{methode}[Algorithme du pivot de Gauss]
+\textbf{Étape 1 — Choix du pivot.} On choisit comme \cle{pivot} le coefficient de $x$ dans la première équation (s'il est nul, on échange deux lignes pour en obtenir un non nul).
+
+\textbf{Étape 2 — Élimination de $x$.} Par des combinaisons du type $L_2 \leftarrow L_2 - \dfrac{a_2}{a_1}L_1$ et $L_3 \leftarrow L_3 - \dfrac{a_3}{a_1}L_1$, on élimine $x$ dans les lignes 2 et 3. En pratique, on choisit les multiples entiers qui annulent le coefficient de $x$.
+
+\textbf{Étape 3 — Élimination de $y$.} On utilise la nouvelle ligne 2 comme pivot pour éliminer $y$ dans la ligne 3 : $L_3 \leftarrow L_3 + k\,L_2$.
+
+\textbf{Étape 4 — Système triangulaire.} Le système a maintenant la forme :
+\[
+\begin{cases}
+x + \cdots + \cdots = \cdots \\
+\phantom{x + {}} y + \cdots = \cdots \\
+\phantom{x + y + {}} z = \cdots
+\end{cases}
+\]
+
+\textbf{Étape 5 — Remontée.} La dernière équation donne $z$. On reporte cette valeur dans la deuxième équation pour obtenir $y$, puis $y$ et $z$ dans la première pour obtenir $x$.
+
+\textbf{Étape 6 — Vérification.} On vérifie le triplet obtenu dans les \textbf{trois équations d'origine}.
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.92, every node/.style={align=center}]
+\node[draw=popblue, thick, rounded corners, fill=popblueL, text width=4.6cm] (s1) at (0,0)
+{\small $\begin{cases} x + y + z = 6 \\ 2x - y + z = 3 \\ x + 2y - z = 2 \end{cases}$};
+\node[draw=poporange, thick, rounded corners, fill=poporangeL, text width=4.6cm] (s2) at (0,-3.1)
+{\small $\begin{cases} x + y + z = 6 \\ \phantom{x{}} -3y - z = -9 \\ \phantom{x +{}} y - 2z = -4 \end{cases}$};
+\node[draw=popgreen, thick, rounded corners, fill=popgreenL, text width=4.6cm] (s3) at (0,-6.2)
+{\small $\begin{cases} x + y + z = 6 \\ \phantom{x{}} -3y - z = -9 \\ \phantom{x + y{}} -\dfrac{7}{3}z = -7 \end{cases}$};
+\draw[-{Stealth}, very thick, poporange] (s1) -- (s2) node[midway, right, text width=4.5cm, xshift=2pt]{\small $L_2 \leftarrow L_2 - 2L_1$\\ $L_3 \leftarrow L_3 - L_1$};
+\draw[-{Stealth}, very thick, popgreen!60!black] (s2) -- (s3) node[midway, right, text width=4.5cm, xshift=2pt]{\small $L_3 \leftarrow L_3 + \dfrac{1}{3}L_2$\\ (élimination de $y$)};
+\node[popink, font=\small\bfseries] at (0,-7.6) {Remontée : $z=3$, puis $y=2$, puis $x=1$};
+\end{tikzpicture}
+\end{center}
+\legende{Transformation en escalier du système vers une forme triangulaire, puis remontée.}
+\end{popfigure}
+
+\courssub{Exemple complet guidé pas à pas}
+
+\begin{exoresolu}[Résolution par le pivot de Gauss]
+Résoudre dans $\mathbb{R}^3$ le système :
+\[
+(S)\ :\ \begin{cases}
+x + y + z = 6 & (L_1)\\
+2x - y + z = 3 & (L_2)\\
+x + 2y - z = 2 & (L_3)
+\end{cases}
+\]
+\tcblower
+\textbf{Étape 1 et 2 : élimination de $x$.} Le pivot est le coefficient de $x$ dans $L_1$, qui vaut $1$.
+\begin{itemize}
+\item $L_2 \leftarrow L_2 - 2L_1$ : \quad $(2x-y+z) - 2(x+y+z) = 3 - 12$, soit $-3y - z = -9$ ;
+\item $L_3 \leftarrow L_3 - L_1$ : \quad $(x+2y-z) - (x+y+z) = 2 - 6$, soit $y - 2z = -4$.
+\end{itemize}
+Le système devient :
+\[
+\begin{cases}
+x + y + z = 6 \\
+\phantom{x{}} -3y - z = -9 & (L'_2)\\
+\phantom{x +{}} y - 2z = -4 & (L'_3)
+\end{cases}
+\]
+
+\textbf{Étape 3 : élimination de $y$.} On effectue $L'_3 \leftarrow L'_3 + \dfrac{1}{3}L'_2$ :
+\[
+(y - 2z) + \tfrac{1}{3}(-3y - z) = -4 + \tfrac{1}{3}\times(-9)
+\quad\Longleftrightarrow\quad
+-\tfrac{7}{3}z = -7.
+\]
+
+\textbf{Étape 4 : système triangulaire.}
+\[
+\begin{cases}
+x + y + z = 6 \\
+-3y - z = -9 \\
+-\dfrac{7}{3}z = -7
+\end{cases}
+\]
+
+\textbf{Étape 5 : remontée.}
+\begin{align*}
+-\tfrac{7}{3}z = -7 &\implies z = 3 ;\\
+-3y - 3 = -9 &\implies -3y = -6 \implies y = 2 ;\\
+x + 2 + 3 = 6 &\implies x = 1.
+\end{align*}
+
+\textbf{Étape 6 : vérification dans le système d'origine.}
+\begin{itemize}
+\item $1 + 2 + 3 = 6$ \checkmark
+\item $2\times 1 - 2 + 3 = 3$ \checkmark
+\item $1 + 2\times 2 - 3 = 2$ \checkmark
+\end{itemize}
+Conclusion : $\boxed{S = \{(1\,;2\,;3)\}}$.
+\end{exoresolu}
+
+\begin{attention}[Une erreur de signe fausse tout le calcul]
+La première élimination conditionne toute la suite : une erreur de signe dans $L_2 \leftarrow L_2 - 2L_1$ se propage jusqu'au triplet final. Deux réflexes de professionnel :
+\begin{enumerate}
+\item après chaque combinaison de lignes, \textbf{vérifier la ligne obtenue} en refaisant le calcul terme à terme (coefficient de $y$, de $z$, second membre) ;
+\item à la fin, \textbf{toujours vérifier} le triplet dans les trois équations \emph{d'origine} : si une seule n'est pas satisfaite, il y a une erreur à retrouver.
+\end{enumerate}
+Attention aussi : $L_2 \leftarrow 2L_2 - L_1$ est correct, mais écrire $L_2 \leftarrow L_1 - 2L_2$ change le signe de toute la ligne ; ce n'est pas faux, mais c'est une source fréquente de confusion.
+\end{attention}
+
+\courssub{Cas particuliers : aucune solution ou infinité de solutions}
+
+Au cours de la triangularisation, il peut apparaître une ligne dont tous les coefficients des inconnues sont nuls. Deux situations se présentent alors.
+
+\begin{aretenir}[Lecture des lignes nulles]
+\begin{itemize}
+\item Si une ligne s'écrit $0x + 0y + 0z = k$ avec $k \neq 0$ (par exemple $0 = 5$), l'égalité est \textbf{impossible} : le système n'a \textbf{aucune solution}, $S = \varnothing$. Géométriquement, les trois plans n'ont aucun point commun.
+\item Si une ligne s'écrit $0x + 0y + 0z = 0$ (c'est-à-dire $0 = 0$), l'égalité est toujours vraie : elle n'apporte aucune information. Le système se ramène à moins d'équations que d'inconnues et admet une \textbf{infinité de solutions}, que l'on exprime à l'aide d'un paramètre. Géométriquement, les plans se coupent selon une droite (ou sont confondus).
+\end{itemize}
+\end{aretenir}
+
+\begin{exemplebox}[Une ligne $0 = k$, aucune solution]
+Considérons le système $\begin{cases} x + y + z = 3 \\ x + y + z = 5 \\ x - y = 0 \end{cases}$.
+
+L'opération $L_2 \leftarrow L_2 - L_1$ donne $0 = 2$, ce qui est impossible. Le système n'a aucune solution : $S = \varnothing$.
+\end{exemplebox}
+
+\begin{exemplebox}[Une ligne $0 = 0$, infinité de solutions]
+Considérons le système $\begin{cases} x + y + z = 3 \\ 2x + 2y + 2z = 6 \\ x - y = 1 \end{cases}$.
+
+L'opération $L_2 \leftarrow L_2 - 2L_1$ donne $0 = 0$ : la deuxième équation disparaît. Il reste $\begin{cases} x + y + z = 3 \\ x - y = 1 \end{cases}$. En posant $z = t$ (paramètre réel), on obtient $x = 2 - \dfrac{t}{2}$ et $y = 1 - \dfrac{t}{2}$. L'ensemble des solutions est :
+\[
+S = \left\{ \left(2 - \tfrac{t}{2}\,;\ 1 - \tfrac{t}{2}\,;\ t\right),\ t \in \mathbb{R} \right\},
+\]
+une infinité de triplets, correspondant géométriquement à une droite de l'espace.
+\end{exemplebox}
+
+\begin{savaistu}[Une méthode vieille de 2000 ans]
+La méthode du pivot porte le nom du mathématicien allemand \textbf{Carl Friedrich Gauss} (1777--1855), qui l'utilisa pour ses calculs d'astronomie. Pourtant, elle était déjà décrite, sous forme de tableaux de coefficients manipulés par élimination, dans \emph{Les Neuf Chapitres sur l'art mathématique}, un ouvrage chinois compilé il y a plus de 2000 ans ! Aujourd'hui, cette méthode est au cœur de tous les logiciels de calcul : les ordinateurs qui simulent la résistance d'un pont ou la météo résolvent des systèmes de \emph{millions} d'équations... exactement par le principe que tu viens d'apprendre.
+\end{savaistu}
+
+\begin{exercice}
+Résoudre par le pivot de Gauss le système :
+$\begin{cases} x + 2y + z = 8 \\ 2x + y - z = 1 \\ x + y + 2z = 9 \end{cases}$ \quad (on trouvera $S = \{(1\,;2\,;3)\}$ ; vérifier !).
+\end{exercice}
+
+\begin{exercice}
+Un atelier produit trois types de pièces $A$, $B$, $C$. La production totale est de 30 pièces ; le nombre de pièces $A$ est le double du nombre de pièces $C$ ; il y a autant de pièces $B$ que de pièces $A$ et $C$ réunies. Modéliser par un système $3\times 3$ et déterminer le nombre de pièces de chaque type.
+\end{exercice}
+
+\coursec{Modélisation de situations concrètes}
+
+\courssub{Transition : de la technique à la réalité}
+
+Nous venons de maîtriser la \emph{méthode du pivot de Gauss} pour résoudre systématiquement tout système linéaire $3 \times 3$. Cet outil algébrique puissant n'est pas une fin en soi : il devient le moteur de calcul au cœur de la \textbf{modélisation mathématique}. En classe de Première technique, l'objectif est de savoir transformer une situation professionnelle ou quotidienne (devis d'atelier, gestion de stock, répartition de charges, dosage d'un alliage) en un système d'équations, de le résoudre avec rigueur, puis d'\textbf{interpréter} le résultat dans le contexte initial. C'est cette chaîne complète — \emph{Réalité $\to$ Modèle $\to$ Calcul $\to$ Réponse} — qui est évaluée au Probatoire.
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=1.8cm and 2.5cm,
+    box/.style={rectangle, draw=popblue, thick, fill=popblueL, rounded corners, minimum width=3.2cm, minimum height=1.2cm, align=center, font=\sffamily\bfseries},
+    arrow/.style={-Stealth, thick, popdark},
+    labelstyle/.style={font=\small\sffamily, text=popmuted, align=center}
+]
+\node[box, align=center] (real){Situation réelle\\ \textit{(Problème concret)}};
+\node[box, right=of real, align=center] (model){Mise en équations\\ \textit{(Modèle mathématique)}};
+\node[box, right=of model, align=center] (solve){Résolution algébrique\\ \textit{(Pivot de Gauss / Substitution)}};
+\node[box, right=of solve, align=center] (interp){Interprétation \& Validation\\ \textit{(Réponse contextualisée)}};
+
+\draw[arrow] (real) -- (model) node[midway, above, labelstyle, align=center]{Traduction\\Choix des inconnues};
+\draw[arrow] (model) -- (solve) node[midway, above, labelstyle, align=center]{Calcul\\Système $n \times n$};
+\draw[arrow] (solve) -- (interp) node[midway, above, labelstyle, align=center]{Vérification\\Cohérence unitàires};
+
+% Feedback loop
+\draw[arrow, poporange, dashed, bend left=40] (interp) to node[midway, above, labelstyle, poporange, align=center]{Incohérence ?\\Revoir modèle} (model);
+\end{tikzpicture}
+\legende{Les quatre étapes incontournables de la modélisation par un système d'équations linéaires.}
+\end{popfigure}
+
+\courssub{Les quatre étapes de la modélisation}
+
+\begin{methode}[Les 4 étapes de la modélisation d'un problème concret par un système]
+\textbf{Étape 1 : Analyser et choisir les inconnues.}
+Lire le problème plusieurs fois. Identifier les \emph{quantités inconnues} cherchées. Les nommer explicitement par des lettres (souvent $x, y, z$) en précisant leur \textbf{unité} et leur \textbf{sens}.
+\emph{Exemple :} « Soit $x$ le prix unitaire (en FCFA) d'un kg de riz ; $y$ le prix unitaire (en FCFA) d'un kg de haricots. »
+
+\textbf{Étape 2 : Traduire les contraintes en équations.}
+Repérer les relations quantitatives (total, différence, proportion, mélange). Écrire une équation par relation indépendante. Vérifier que le nombre d'équations indépendantes égale le nombre d'inconnues (système déterminé).
+
+\textbf{Étape 3 : Résoudre le système.}
+Appliquer la méthode adaptée :
+\begin{itemize}
+    \item $2 \times 2$ : substitution, combinaison linéaire, ou Cramer (si $\Delta \neq 0$).
+    \item $3 \times 3$ : pivot de Gauss (recommandé pour la robustesse) ou substitution successive.
+\end{itemize}
+Présenter les calculs de façon alignée et commentée.
+
+\textbf{Étape 4 : Interpréter et conclure.}
+Remplacer les lettres par les valeurs trouvées \textbf{dans le texte de la réponse}. Vérifier la \textbf{cohérence physique} : positivité des prix, entières pour des compteurs d'objets, respect des ordres de grandeur. Rédiger une phrase de conclusion complète.
+\end{methode}
+
+\begin{attention}[Définir les inconnues par écrit : une obligation, pas une option]
+Au Probatoire, l'oubli de la phrase « Soit $x$ ... ; soit $y$ ... » entraîne une \textbf{pénalité systématique} (souvent 1 à 2 points sur la note du problème). De plus, sans définition claire, vous risquez de confondre « prix total » et « prix unitaire », ou « nombre de pièces » et « masse totale ». Écrivez toujours :
+\begin{center}
+\textbf{Soit $x$ le prix unitaire d'un kg de riz (en FCFA).}\\
+\textbf{Soit $y$ le prix unitaire d'un kg de haricots (en FCFA).}
+\end{center}
+Cela structure votre pensée et guide le correcteur.
+\end{attention}
+
+\courssub{Problème de prix : le marché camerounais (Système $3 \times 3$)}
+
+Situation classique : un acheteur effectue plusieurs achats groupés (paniers) à des prix globaux connus. On cherche les prix unitaires. C'est un système linéaire où les inconnues sont les prix unitaires, les coefficients sont les quantités achetées, et les seconds membres sont les totaux payés.
+
+\begin{exemplebox}[Problème des paniers de Mama Ngo Bell]
+\textbf{Énoncé.}
+Au marché Mokolo, Mama Ngo Bell achète trois paniers différents :
+\begin{itemize}
+    \item Panier A : 2 kg de riz, 3 kg de haricots, 1 kg de maïs $\to$ 4\,200 FCFA.
+    \item Panier B : 1 kg de riz, 2 kg de haricots, 3 kg de maïs $\to$ 3\,800 FCFA.
+    \item Panier C : 3 kg de riz, 1 kg de haricots, 2 kg de maïs $\to$ 4\,600 FCFA.
+\end{itemize}
+On suppose les prix unitaires constants. Déterminer le prix du kg de riz, de haricots et de maïs.
+
+\textbf{Résolution complète.}
+
+\textit{Étape 1 : Inconnues.}
+Soit $x$ le prix du kg de riz (FCFA), $y$ le prix du kg de haricots (FCFA), $z$ le prix du kg de maïs (FCFA).
+
+\textit{Étape 2 : Système.}
+\begin{align*}
+\text{Panier A :} \quad & 2x + 3y + 1z = 4200 \quad (L_1)\\
+\text{Panier B :} \quad & 1x + 2y + 3z = 3800 \quad (L_2)\\
+\text{Panier C :} \quad & 3x + 1y + 2z = 4600 \quad (L_3)
+\end{align*}
+
+\textit{Étape 3 : Pivot de Gauss.}
+Matrice augmentée :
+\[
+\left(\begin{array}{ccc|c}
+2 & 3 & 1 & 4200 \\
+1 & 2 & 3 & 3800 \\
+3 & 1 & 2 & 4600
+\end{array}\right)
+\]
+On permute $L_1$ et $L_2$ pour avoir un pivot $1$ en haut à gauche (facilite les calculs) :
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & 3 & 3800 \\
+2 & 3 & 1 & 4200 \\
+3 & 1 & 2 & 4600
+\end{array}\right)
+\]
+$L_2 \leftarrow L_2 - 2L_1$ ; $L_3 \leftarrow L_3 - 3L_1$ :
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & 3 & 3800 \\
+0 & -1 & -5 & -3400 \\
+0 & -5 & -7 & -6800
+\end{array}\right)
+\]
+On multiplie $L_2$ par $-1$ (pivot positif) :
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & 3 & 3800 \\
+0 & 1 & 5 & 3400 \\
+0 & -5 & -7 & -6800
+\end{array}\right)
+\]
+$L_3 \leftarrow L_3 + 5L_2$ :
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & 3 & 3800 \\
+0 & 1 & 5 & 3400 \\
+0 & 0 & 18 & 10200
+\end{array}\right)
+\]
+Remontée :
+\begin{align*}
+18z &= 10200 \quad \Rightarrow \quad z = \frac{10200}{18} = \frac{1700}{3} \text{ FCFA} \\
+y + 5z &= 3400 \quad \Rightarrow \quad y = 3400 - 5 \times \frac{1700}{3} = \frac{10200 - 8500}{3} = \frac{1700}{3} \text{ FCFA} \\
+x + 2y + 3z &= 3800 \quad \Rightarrow \quad x = 3800 - 2\left(\frac{1700}{3}\right) - 3\left(\frac{1700}{3}\right) = 3800 - \frac{8500}{3} = \frac{11400 - 8500}{3} = \frac{2900}{3} \text{ FCFA}
+\end{align*}
+
+\textit{Étape 4 : Interprétation.}
+Les prix unitaires exacts sont :
+\begin{itemize}
+    \item Riz : $\frac{2900}{3}$ FCFA/kg $\approx 966,67$ FCFA/kg,
+    \item Haricots : $\frac{1700}{3}$ FCFA/kg $\approx 566,67$ FCFA/kg,
+    \item Maïs : $\frac{1700}{3}$ FCFA/kg $\approx 566,67$ FCFA/kg.
+\end{itemize}
+\textbf{Vérification exacte (Panier A) :}
+$2\left(\frac{2900}{3}\right) + 3\left(\frac{1700}{3}\right) + 1\left(\frac{1700}{3}\right) = \frac{5800 + 5100 + 1700}{3} = \frac{12600}{3} = 4200$ FCFA. \checkmark
+
+\textbf{Conclusion :} Le kilogramme de riz coûte $\frac{2900}{3}$ FCFA (environ 967 FCFA), tandis que le haricot et le maïs coûtent $\frac{1700}{3}$ FCFA (environ 567 FCFA) chacun.
+\end{exemplebox}
+
+\begin{attention}[Cohérence de la solution avec le contexte]
+Ici, les prix ne sont pas des nombres entiers. Dans la réalité camerounaise, les prix sont arrondis à 5 ou 10 FCFA. Une solution fractionnaire ($\frac{1700}{3}$) indique soit :
+\begin{enumerate}
+    \item Que les données du problème sont des moyennes ou des totaux arrondis.
+    \item Qu'il faut exprimer la réponse exacte sous forme fractionnaire (exigé en maths) puis donner l'arrondi pratique (exigé en gestion/technique).
+\end{enumerate}
+\textbf{Au Probatoire :} Donnez la valeur exacte (fraction) puis l'arrondi au FCFA ou au 5 FCFA près, en précisant « arrondi par excès/défaut ». Une solution \textbf{négative} (ex. $x = -500$) serait \textbf{impossible} (prix négatif) : il faut alors signaler l'incohérence du modèle ou une erreur de données.
+\end{attention}
+
+\courssub{Problème de partage et de mélange (Système $3 \times 3$)}
+
+Autre situation fréquente : la répartition d'une somme, d'un volume ou d'une masse entre trois entités (personnes, cuves, alliages) avec des conditions de proportionnalité ou d'écarts.
+
+\begin{exoresolu}[Répartition d'une prime de rendement]
+\textbf{Énoncé.}
+Une entreprise verse une prime globale de 1\,200\,000 FCFA à trois équipes (A, B, C).
+L'équipe A reçoit 100\,000 FCFA de plus que le double de ce que reçoit l'équipe C.
+L'équipe B reçoit 50\,000 FCFA de moins que la somme reçue par A et C.
+Combien reçoit chaque équipe ?
+
+\textbf{Solution.}
+
+\textit{1. Inconnues.}
+Soit $a, b, c$ les montants (en FCFA) reçus par les équipes A, B, C.
+
+\textit{2. Système.}
+\[\begin{cases}
+a + b + c = 1\,200\,000 & \text{(Total)} \quad (1)\\
+a = 2c + 100\,000 & \text{(Condition A vs C)} \quad (2)\\
+b = (a + c) - 50\,000 & \text{(Condition B vs A+C)} \quad (3)
+\end{cases}\]
+
+\textit{3. Résolution par substitution (efficace ici car (2) et (3) expriment $a$ et $b$ en fonction de $c$).}
+On substitue (2) et (3) dans (1) :
+\[
+(2c + 100\,000) + \big((2c + 100\,000) + c - 50\,000\big) + c = 1\,200\,000
+\]
+\[
+2c + 100\,000 + 3c + 50\,000 + c = 1\,200\,000
+\]
+\[
+6c + 150\,000 = 1\,200\,000 \quad \Rightarrow \quad 6c = 1\,050\,000 \quad \Rightarrow \quad c = 175\,000
+\]
+Alors :
+\[
+a = 2(175\,000) + 100\,000 = 450\,000
+\]
+\[
+b = (450\,000 + 175\,000) - 50\,000 = 575\,000
+\]
+
+\textit{4. Vérification et Conclusion.}
+$450\,000 + 575\,000 + 175\,000 = 1\,200\,000$. \checkmark
+Tous les montants sont positifs et entiers. Cohérent.
+\textbf{L'équipe A reçoit 450\,000 FCFA, l'équipe B 575\,000 FCFA, l'équipe C 175\,000 FCFA.}
+\end{exoresolu}
+
+\courssub{Problème de nombres : le nombre à trois chiffres}
+
+Ces problèmes font le lien entre l'écriture décimale ($100c + 10d + u$) et l'algèbre. Ils entraînent la traduction de phrases en équations et la vérification du domaine de définition des inconnues.
+
+\begin{exoresolu}[Le nombre mystère]
+\textbf{Énoncé.}
+Un nombre à trois chiffres vérifie :
+\begin{enumerate}
+    \item La somme de ses chiffres est 14.
+    \item Le chiffre des dizaines est la moyenne arithmétique du chiffre des centaines et du chiffre des unités.
+    \item Si on inverse l'ordre des chiffres, le nouveau nombre obtenu est supérieur de 99 au nombre initial.
+\end{enumerate}
+Trouver ce nombre.
+
+\textbf{Solution.}
+
+\textit{1. Inconnues et domaine.}
+Soient $c$ (centaines), $d$ (dizaines), $u$ (unités) les chiffres. Ils sont des \textbf{entiers} tels que $1 \le c \le 9$, $0 \le d \le 9$, $0 \le u \le 9$.
+Le nombre vaut $N = 100c + 10d + u$. Le nombre inversé vaut $N' = 100u + 10d + c$.
+
+\textit{2. Système.}
+\begin{align*}
+(1) &\quad c + d + u = 14 \\
+(2) &\quad d = \frac{c + u}{2} \quad \Leftrightarrow \quad 2d = c + u \quad \Leftrightarrow \quad c - 2d + u = 0 \\
+(3) &\quad N' = N + 99 \quad \Leftrightarrow \quad 100u + 10d + c = 100c + 10d + u + 99 \\
+    &\quad \Rightarrow 99u - 99c = 99 \quad \Rightarrow \quad u - c = 1 \quad \Leftrightarrow \quad -c + 0d + u = 1
+\end{align*}
+
+\textit{3. Résolution.}
+Système :
+\[
+\begin{cases}
+c + d + u = 14 \\
+c - 2d + u = 0 \\
+-c + u = 1
+\end{cases}
+\]
+L'équation (3) donne $u = c + 1$.
+Substituons dans (1) et (2) :
+(1) $c + d + (c+1) = 14 \Rightarrow 2c + d = 13 \Rightarrow d = 13 - 2c$.
+(2) $c - 2d + (c+1) = 0 \Rightarrow 2c - 2d = -1 \Rightarrow c - d = -0,5$.
+
+Attention ! $c$ et $d$ sont des \textbf{entiers}. $c - d = -0,5$ est \textbf{impossible}.
+\textbf{Conclusion :} Il n'existe \textbf{aucun} nombre à trois chiffres vérifiant ces trois conditions simultanément. Le problème est mal posé ou contient une contradiction.
+
+\textbf{Analyse pédagogique :} Si on n'avait pas vérifié la condition d'entier, on aurait pu continuer avec des fractions. La vérification du domaine de définition des inconnues (chiffres entiers entre 0 et 9) est \textbf{indispensable}.
+\end{exoresolu}
+
+\begin{attention}[Vérifier le domaine de définition des inconnues]
+Dans les problèmes de \textbf{nombres} (chiffres), d'\textbf{objets comptables} (pièces, personnes, arbres) ou de \textbf{quantités discrètes}, les solutions doivent être des \textbf{entiers naturels}.
+Dans les problèmes de \textbf{mesures continues} (prix, longueurs, masses, volumes, temps), les solutions peuvent être réelles (décimales), mais doivent rester \textbf{positives} (ou nulles).
+\textbf{Toujours} écrire en fin de résolution : « Vérification : $x=..., y=...$ sont des entiers positifs / des réels positifs. La solution est acceptable. »
+\end{attention}
+
+\courssub{Synthèse : rédaction type attendue au Probatoire}
+
+Pour obtenir la note maximale sur un exercice de modélisation, votre copie doit présenter cette structure claire :
+
+\begin{enumerate}
+    \item \textbf{Énoncé du choix des inconnues} (phrase complète avec unités).
+    \item \textbf{Mise en équations} (système aligné, numéroté $(1), (2), (3)$).
+    \item \textbf{Résolution} (méthode annoncée : « Par la méthode du pivot de Gauss » ou « Par substitution », calculs détaillés, alignés sur le signe $=$).
+    \item \textbf{Solution du système} (triplet $(x,y,z)$ clairement identifié).
+    \item \textbf{Vérification} (substitution dans une équation d'origine ou recalcul du total).
+    \item \textbf{Interprétation contextuelle} (phrase de réponse : « Le prix du riz est de ... »).
+    \item \textbf{Conclusion finale} (réponse à la question posée, avec unités).
+\end{enumerate}
+
+\begin{savaistu}[Les géants de l'industrie : SONARA, ENEO, CDC]
+Vous résolvez des systèmes $3 \times 3$ à la main. Les ingénieurs de la \textbf{SONARA} (raffinerie de Limbé), d'\textbf{ENEO} (réseau électrique) ou de la \textbf{CDC} (palmeraies) gèrent des modèles avec \textbf{des milliers, voire des millions d'inconnues} :
+\begin{itemize}
+    \item \textbf{Raffinage :} Équilibres matière/énergie sur 50+ unités de distillation $\to$ systèmes creux $10\,000 \times 10\,000$.
+    \item \textbf{Réseau électrique :} Lois de Kirchhoff sur le maillage national (nœuds, lignes HT) $\to$ systèmes complexes pour le dispatching.
+    \item \textbf{Logistique/Transport :} Problèmes de flux (simplexe, programmation linéaire) = systèmes d'inéquations à huge scale.
+\end{itemize}
+Les algorithmes (Gauss sparse, LU, Gradient Conjugué, solveurs itératifs) tournent sur serveurs HPC (High Performance Computing). La méthode du pivot de Gauss que vous apprenez est la \textbf{base algorithmique} de ces solveurs industriels. Maîtriser le $3 \times 3$ à la main, c'est comprendre ce que fait l'ordinateur à grande échelle.
+\end{savaistu}
+
+\courssub{Exercices d'entraînement progressif}
+
+\begin{exercice}[Ex. 1 — Prix au kg (Marché Central)]
+Mme Atangana achète : 3 kg d'oignons + 2 kg de tomates + 1 kg de piments = 2\,850 FCFA.
+M. Bello achète : 1 kg d'oignons + 3 kg de tomates + 2 kg de piments = 3\,150 FCFA.
+Mme Ngo achète : 2 kg d'oignons + 1 kg de tomates + 3 kg de piments = 3\,000 FCFA.
+Trouver le prix du kg de chaque légume. Vérifier.
+\end{exercice}
+
+\begin{exercice}[Ex. 2 — Alliage métallique (Atelier soudure)]
+Un soudeur prépare 3 alliages tests (10 kg chacun) en mélangeant Cuivre ($Cu$), Zinc ($Zn$) et Étain ($Sn$).
+\begin{itemize}
+    \item Alliage 1 : 50\% Cu, 30\% Zn, 20\% Sn $\to$ Coût 10 kg = 45\,000 FCFA.
+    \item Alliage 2 : 20\% Cu, 50\% Zn, 30\% Sn $\to$ Coût 10 kg = 42\,000 FCFA.
+    \item Alliage 3 : 30\% Cu, 20\% Zn, 50\% Sn $\to$ Coût 10 kg = 48\,000 FCFA.
+\end{itemize}
+Déterminer le prix du kg de Cu, Zn, Sn. (Indication : travailler sur 10 kg ou ramener à 1 kg).
+\end{exercice}
+
+\begin{exercice}[Ex. 3 — Trois âges (Gestion RH)]
+La somme des âges de trois collègues (Directeur, Chef d'atelier, Apprenti) est de 110 ans.
+Le Directeur a 10 ans de plus que la somme des âges des deux autres.
+Dans 5 ans, l'âge du Chef d'atelier sera le double de l'âge de l'Apprenti.
+Quel est l'âge actuel de chacun ? Vérifier la cohérence (âges entiers, positifs, ordre logique).
+\end{exercice}
+
+\begin{corrige}[Ex. 1]
+\textbf{Inconnues :} $x$ prix/kg oignons, $y$ prix/kg tomates, $z$ prix/kg piments (en FCFA).
+\textbf{Système :}
+\[
+\begin{cases}
+3x + 2y + z = 2850 & (1)\\
+x + 3y + 2z = 3150 & (2)\\
+2x + y + 3z = 3000 & (3)
+\end{cases}
+\]
+\textbf{Résolution (Pivot de Gauss).}
+Matrice augmentée :
+\[
+\left(\begin{array}{ccc|c}
+3 & 2 & 1 & 2850 \\
+1 & 3 & 2 & 3150 \\
+2 & 1 & 3 & 3000
+\end{array}\right)
+\]
+Permutation $L_1 \leftrightarrow L_2$ (pivot 1) :
+\[
+\left(\begin{array}{ccc|c}
+1 & 3 & 2 & 3150 \\
+3 & 2 & 1 & 2850 \\
+2 & 1 & 3 & 3000
+\end{array}\right)
+\]
+$L_2 \leftarrow L_2 - 3L_1$ ; $L_3 \leftarrow L_3 - 2L_1$ :
+\[
+\left(\begin{array}{ccc|c}
+1 & 3 & 2 & 3150 \\
+0 & -7 & -5 & -6600 \\
+0 & -5 & -1 & -3300
+\end{array}\right)
+\]
+$L_2 \leftarrow -\frac{1}{7}L_2$ (ou on garde les entiers : $L_3 \leftarrow 7L_3 - 5L_2$) :
+\[
+7L_3 - 5L_2 : \quad (0, -35, -7) - (0, -35, -25) = (0, 0, 18) \quad | \quad -23100 - (-33000) = 9900
+\]
+Donc $18z = 9900 \Rightarrow z = 550$.
+Remontée : $-7y - 5(550) = -6600 \Rightarrow -7y = -6600 + 2750 = -3850 \Rightarrow y = 550$.
+$x + 3(550) + 2(550) = 3150 \Rightarrow x + 2750 = 3150 \Rightarrow x = 400$.
+
+\textbf{Solution :} $(x, y, z) = (400,\ 550,\ 550)$.
+\textbf{Vérification :} Eq(1) : $3(400) + 2(550) + 550 = 1200 + 1100 + 550 = 2850$. \checkmark
+\textbf{Conclusion :} Oignon 400 FCFA/kg, Tomate 550 FCFA/kg, Piment 550 FCFA/kg.
+\end{corrige}
+
+\begin{corrige}[Ex. 2]
+\textbf{Inconnues :} $c, z, e$ prix/kg de Cu, Zn, Sn (en FCFA).
+Quantités pour 10 kg : All.1 $(5, 3, 2)$, All.2 $(2, 5, 3)$, All.3 $(3, 2, 5)$.
+\textbf{Système :}
+\[
+\begin{cases}
+5c + 3z + 2e = 45000 & (1)\\
+2c + 5z + 3e = 42000 & (2)\\
+3c + 2z + 5e = 48000 & (3)
+\end{cases}
+\]
+\textbf{Résolution (Pivot de Gauss).}
+Matrice augmentée :
+\[
+\left(\begin{array}{ccc|c}
+5 & 3 & 2 & 45000 \\
+2 & 5 & 3 & 42000 \\
+3 & 2 & 5 & 48000
+\end{array}\right)
+\]
+$L_1 \leftarrow \frac{1}{5}L_1$ :
+\[
+\left(\begin{array}{ccc|c}
+1 & 0.6 & 0.4 & 9000 \\
+2 & 5 & 3 & 42000 \\
+3 & 2 & 5 & 48000
+\end{array}\right)
+\]
+$L_2 \leftarrow L_2 - 2L_1$ ; $L_3 \leftarrow L_3 - 3L_1$ :
+\[
+\left(\begin{array}{ccc|c}
+1 & 0.6 & 0.4 & 9000 \\
+0 & 3.8 & 2.2 & 24000 \\
+0 & 0.2 & 3.8 & 21000
+\end{array}\right)
+\]
+$L_2 \leftarrow \frac{1}{3.8}L_2$ (ou $L_2 \leftarrow 5L_2$ pour éviter les décimales : on multiplie la matrice par 10 au départ).
+\emph{Alternative plus propre :} On élimine $c$ par combinaisons entières.
+$(1)\times2 - (2)\times5$ : $(10c+6z+4e) - (10c+25z+15e) = 90000 - 210000 \Rightarrow -19z -11e = -120000 \Rightarrow 19z + 11e = 120000 \quad (4)$
+$(1)\times3 - (3)\times5$ : $(15c+9z+6e) - (15c+10z+25e) = 135000 - 240000 \Rightarrow -z -19e = -105000 \Rightarrow z + 19e = 105000 \quad (5)$
+
+De (5) : $z = 105000 - 19e$.
+Substitué dans (4) : $19(105000 - 19e) + 11e = 120000$
+$1995000 - 361e + 11e = 120000$
+$-350e = 120000 - 1995000 = -1875000$
+$e = \frac{1875000}{350} = \frac{37500}{7} \approx 5357,14$ FCFA/kg.
+
+$z = 105000 - 19\times\frac{37500}{7} = \frac{735000 - 712500}{7} = \frac{22500}{7} \approx 3214,29$ FCFA/kg.
+
+$c$ par (1) : $5c = 45000 - 3z - 2e = 45000 - \frac{67500}{7} - \frac{75000}{7} = \frac{315000 - 142500}{7} = \frac{172500}{7}$
+$c = \frac{34500}{7} \approx 4928,57$ FCFA/kg.
+
+\textbf{Solution exacte :} $c = \frac{34500}{7}$ FCFA/kg, $z = \frac{22500}{7}$ FCFA/kg, $e = \frac{37500}{7}$ FCFA/kg.
+\textbf{Arrondis (5 FCFA) :} Cuivre $\approx 4930$ FCFA/kg, Zinc $\approx 3215$ FCFA/kg, Étain $\approx 5355$ FCFA/kg.
+\textbf{Vérification (Alliage 1) :} $5c+3z+2e = \frac{1}{7}(172500+67500+75000) = \frac{315000}{7} = 45000$. \checkmark
+\textbf{Conclusion :} Les prix unitaires exacts sont des fractions ; en pratique on utilise les arrondis.
+\end{corrige}
+
+\begin{corrige}[Ex. 3]
+\textbf{Inconnues :} $D, C, A$ âges en années (entiers positifs).
+\textbf{Système :}
+\[
+\begin{cases}
+D + C + A = 110 & (1)\\
+D = C + A + 10 & (2)\\
+C + 5 = 2(A + 5) & (3)
+\end{cases}
+\]
+\textbf{Résolution par substitution.}
+D'après (2) : $D = C + A + 10$.
+Substitué dans (1) : $(C + A + 10) + C + A = 110 \Rightarrow 2(C + A) = 100 \Rightarrow C + A = 50$.
+Donc $D = 50 + 10 = 60$ ans.
+
+D'après (3) : $C + 5 = 2A + 10 \Rightarrow C = 2A + 5$.
+Substitué dans $C + A = 50$ : $(2A + 5) + A = 50 \Rightarrow 3A = 45 \Rightarrow A = 15$ ans.
+Alors $C = 2(15) + 5 = 35$ ans.
+
+\textbf{Vérification :} $60 + 35 + 15 = 110$. \checkmark
+Dans 5 ans : Chef d'atelier $40$ ans, Apprenti $20$ ans. $40 = 2 \times 20$. \checkmark
+Tous âges entiers, positifs, ordre logique respecté ($D > C > A$). Cohérent.
+
+\textbf{Conclusion :} Directeur 60 ans, Chef d'atelier 35 ans, Apprenti 15 ans.
+\end{corrige}
+
+\coursec{Synthèse et compléments}
+
+Dans la section précédente, nous avons vu comment un problème concret d'atelier, de chantier ou de gestion se traduit par un système d'équations linéaires, puis comment la résolution de ce système fournit la réponse au problème posé. Il est temps de faire une pause et de regarder le chemin parcouru : nous disposons désormais de plusieurs méthodes de résolution (substitution, combinaison, pivot de Gauss), d'outils de discussion (déterminant, forme échelonnée) et d'un savoir-faire de modélisation. Cette dernière section a trois objectifs : \textbf{organiser} ces méthodes pour savoir laquelle choisir, \textbf{récapituler} la discussion du nombre de solutions, et \textbf{ouvrir} vers les notions de Terminale (matrices, systèmes à paramètre), clairement signalées comme hors du strict programme de Première. Nous terminerons par un récapitulatif des erreurs fréquentes et un mini-QCM corrigé.
+
+\courssub{Bilan : tableau récapitulatif des méthodes}
+
+Trois méthodes algébriques ont été étudiées. Elles donnent toutes le même résultat, mais elles ne sont pas également rapides selon la forme du système. Le bon réflexe consiste à \emph{observer le système pendant dix secondes avant de calculer}.
+
+\begin{aretenir}[Les trois méthodes de résolution]
+\begin{itemize}
+\item \textbf{Substitution} : on exprime une inconnue en fonction des autres à l'aide d'une équation, puis on reporte dans les autres équations. Idéale quand une inconnue a pour coefficient $1$ ou $-1$.
+\item \textbf{Combinaison (addition)} : on multiplie les équations par des nombres bien choisis puis on les additionne membre à membre pour éliminer une inconnue. Idéale quand les coefficients d'une inconnue sont opposés ou faciles à rendre opposés.
+\item \textbf{Pivot de Gauss} : on élimine méthodiquement les inconnues pour obtenir un système triangulaire (échelonné), que l'on résout par remontée. Méthode \emph{universelle}, indispensable pour les systèmes $3\times 3$.
+\end{itemize}
+\end{aretenir}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  entete/.style={fill=popblue, text=white, font=\bfseries\small, minimum height=0.75cm, align=center},
+  cel/.style={fill=popblueL, font=\small, align=left, minimum height=1.15cm, text depth=0.2ex},
+  celb/.style={fill=popcream, font=\small, align=left, minimum height=1.15cm, text depth=0.2ex}]
+\node[entete, minimum width=2.6cm] (a1) at (0,0) {Méthode};
+\node[entete, minimum width=4.6cm, anchor=west] (a2) at (a1.east) {Principe};
+\node[entete, minimum width=3.4cm, anchor=west] (a3) at (a2.east) {Avantage};
+\node[entete, minimum width=4.4cm, anchor=west] (a4) at (a3.east) {Cas d'usage};
+\node[cel, minimum width=2.6cm, below=0pt of a1] (b1) {Substitution};
+\node[celb, minimum width=4.6cm, below=0pt of a2, align=center] (b2){Exprimer une inconnue,\\ reporter ailleurs};
+\node[cel, minimum width=3.4cm, below=0pt of a3, align=center] (b3){Rapide, calculs\\ simples};
+\node[celb, minimum width=4.4cm, below=0pt of a4, align=center] (b4){Un coefficient vaut $1$ ou $-1$\\ (systèmes $2\times 2$)};
+\node[cel, minimum width=2.6cm, below=0pt of b1] (c1) {Combinaison};
+\node[celb, minimum width=4.6cm, below=0pt of b2, align=center] (c2){Additionner des équations\\ multipliées pour éliminer};
+\node[cel, minimum width=3.4cm, below=0pt of b3, align=center] (c3){Évite les fractions\\ au départ};
+\node[celb, minimum width=4.4cm, below=0pt of b4, align=center] (c4){Coefficients opposés ou\\ multiples (systèmes $2\times 2$)};
+\node[cel, minimum width=2.6cm, below=0pt of c1] (d1) {Pivot de Gauss};
+\node[celb, minimum width=4.6cm, below=0pt of c2, align=center] (d2){Échelonner puis\\ remonter les substitutions};
+\node[cel, minimum width=3.4cm, below=0pt of c3, align=center] (d3){Méthode systématique,\\ toujours applicable};
+\node[celb, minimum width=4.4cm, below=0pt of c4, align=center] (d4){Systèmes $3\times 3$ et\\ systèmes à discuter};
+\end{tikzpicture}
+\legende{Tableau de synthèse : les trois méthodes de résolution et leurs domaines d'emploi.}
+\end{popfigure}
+
+\begin{methode}[Choisir la méthode la plus rapide]
+\begin{enumerate}
+\item \textbf{Observer} les coefficients du système avant tout calcul.
+\item Si une inconnue a pour coefficient $1$ ou $-1$ dans une équation : choisir la \cle{substitution} à partir de cette équation.
+\item Sinon, si les coefficients d'une inconnue sont opposés (par exemple $3y$ et $-3y$) ou multiples simples ($2x$ et $4x$) : choisir la \cle{combinaison}.
+\item Si le système a trois inconnues, ou s'il faut discuter le nombre de solutions : appliquer le \cle{pivot de Gauss} sans hésiter.
+\item \textbf{Vérifier} toujours la solution en reportant les valeurs dans \emph{toutes} les équations de départ.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Un même système, deux méthodes]
+Résolvons $\begin{cases} x + 3y = 11 \\ 2x - y = 8 \end{cases}$.
+\begin{itemize}
+\item \emph{Substitution} : la première équation donne $x = 11 - 3y$ ; en reportant : $2(11-3y) - y = 8$, soit $22 - 7y = 8$, d'où $y = 2$ puis $x = 5$.
+\item \emph{Combinaison} : on multiplie la deuxième équation par $3$ : $6x - 3y = 24$ ; en ajoutant à la première : $7x = 35$, d'où $x = 5$ puis $y = 2$.
+\end{itemize}
+Les deux méthodes donnent $S = \{(5\,;\,2)\}$. Ici la substitution était légèrement plus rapide grâce au coefficient $1$ devant $x$.
+\end{exemplebox}
+
+\courssub{Bilan : discussion du nombre de solutions}
+
+\courssub{Cas des systèmes $2\times 2$ : le déterminant}
+
+Pour un système $\begin{cases} ax + by = c \\ a'x + b'y = c' \end{cases}$, tout se lit sur le nombre $\Delta = ab' - a'b$, appelé \cle{déterminant} du système. Géométriquement, chaque équation représente une droite : deux droites du plan sont soit sécantes (un point commun), soit strictement parallèles (aucun point commun), soit confondues (tous leurs points communs).
+
+\begin{propriete}[Nombre de solutions d'un système $2\times 2$]
+Soit $\Delta = ab' - a'b$ le déterminant du système.
+\begin{itemize}
+\item Si $\Delta \neq 0$ : le système admet une \textbf{unique solution} (droites sécantes), donnée par les formules de Cramer :
+\[ x = \frac{cb' - c'b}{\Delta}, \qquad y = \frac{ac' - a'c}{\Delta}. \]
+\item Si $\Delta = 0$ : les droites sont parallèles. Deux sous-cas :
+\begin{itemize}
+\item si les équations sont \emph{incompatibles} (par exemple on obtient $0x + 0y = k$ avec $k \neq 0$ après combinaison) : \textbf{aucune solution}, $S = \varnothing$ ;
+\item si les équations sont \emph{proportionnelles} (l'une est un multiple de l'autre, seconds membres compris) : \textbf{une infinité de solutions} (droites confondues).
+\end{itemize}
+\end{itemize}
+\end{propriete}
+
+\courssub{Cas des systèmes $3\times 3$ : la forme échelonnée}
+
+Pour trois inconnues, le pivot de Gauss conduit à un système triangulaire. C'est la \emph{forme échelonnée} qui permet de conclure :
+
+\begin{aretenir}[Lecture de la forme échelonnée]
+Après élimination de Gauss, on obtient un système de la forme
+\[ \begin{cases} \alpha x + \beta y + \gamma z = d \\ \beta' y + \gamma' z = e \\ \gamma'' z = f \end{cases} \]
+\begin{itemize}
+\item Si les trois coefficients diagonaux $\alpha$, $\beta'$, $\gamma''$ sont \textbf{non nuls} : solution \textbf{unique}, obtenue par remontée.
+\item Si une ligne s'écrit $0 = k$ avec $k \neq 0$ : système \textbf{impossible}, $S = \varnothing$.
+\item Si une ligne s'écrit $0 = 0$ (et aucune ligne impossible) : \textbf{infinité de solutions}, que l'on exprime à l'aide d'une inconnue libre (par exemple $z = t$, $t \in \mathbb{R}$).
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Ne pas conclure trop vite]
+Une ligne $0 = 0$ ne signifie pas « pas de solution » : elle signifie que l'équation a disparu car elle était redondante. C'est la ligne $0 = k$ avec $k \neq 0$ qui traduit l'impossibilité. Confondre ces deux situations est l'erreur la plus fréquente au Probatoire.
+\end{attention}
+
+\courssub{Complément pour la Terminale : l'écriture matricielle $AX = B$}
+
+\emph{Ce paragraphe dépasse le strict programme de Première technique : il prépare la classe de Terminale et n'est pas exigible au Probatoire.}
+
+Un système linéaire peut s'écrire sous une forme compacte remarquable. Par exemple :
+\[ \begin{cases} 2x + 3y = 8 \\ x - y = 1 \end{cases} \quad \Longleftrightarrow \quad \begin{pmatrix} 2 & 3 \\ 1 & -1 \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 8 \\ 1 \end{pmatrix} \]
+On note $A$ le tableau (la \emph{matrice}) des coefficients, $X$ la colonne des inconnues et $B$ la colonne des seconds membres : le système devient simplement $AX = B$. Le déterminant $\Delta$ étudié plus haut n'est autre que le \emph{déterminant de la matrice} $A$.
+
+\begin{savaistu}[Une écriture qui unifie tout]
+L'écriture matricielle $AX = B$, étudiée en Terminale, fait ressembler n'importe quel système linéaire à l'équation du premier degré $ax = b$. De même que $ax = b$ a une solution unique quand $a \neq 0$, le système $AX = B$ a une solution unique quand le déterminant de $A$ est non nul, et la solution s'écrit alors $X = A^{-1}B$ à l'aide de la \emph{matrice inverse}. C'est exactement ainsi que les ordinateurs résolvent les systèmes : les logiciels de calcul de structures utilisés sur les chantiers, les simulateurs de circuits électriques et les programmes de gestion de stock traduisent le problème en matrices puis appliquent le pivot de Gauss — la méthode que vous avez apprise cette année — sur des systèmes de milliers d'équations.
+\end{savaistu}
+
+\courssub{Complément pour la Terminale : systèmes à paramètre}
+
+\emph{Ce paragraphe est également une ouverture hors strict programme de Première.}
+
+Un \cle{système à paramètre} contient, en plus des inconnues, une lettre (souvent $m$) dont la valeur n'est pas fixée. Résoudre et discuter le système signifie : déterminer, \emph{selon les valeurs de $m$}, le nombre de solutions et leur expression.
+
+\begin{exoresolu}[Discussion d'un système à paramètre]
+Discuter selon les valeurs du réel $m$ le nombre de solutions du système :
+\[ \begin{cases} mx + y = 3 \\ 4x + my = 6 \end{cases} \]
+\tcblower
+Le déterminant est $\Delta = m \times m - 1 \times 4 = m^2 - 4 = (m-2)(m+2)$.
+\begin{itemize}
+\item \textbf{Si $m \neq 2$ et $m \neq -2$} : $\Delta \neq 0$, le système admet une \textbf{solution unique}. On trouve par exemple
+\[ x = \frac{3m - 6}{m^2 - 4} = \frac{3(m-2)}{(m-2)(m+2)} = \frac{3}{m+2}, \qquad
+   y = \frac{6m - 12}{m^2 - 4} = \frac{6}{m+2}. \]
+\item \textbf{Si $m = 2$} : le système devient $\begin{cases} 2x + y = 3 \\ 4x + 2y = 6 \end{cases}$. La deuxième équation est le double de la première : équations proportionnelles, donc \textbf{infinité de solutions} (droites confondues) : $S = \{(x\,;\,3-2x),\ x \in \mathbb{R}\}$.
+\item \textbf{Si $m = -2$} : le système devient $\begin{cases} -2x + y = 3 \\ 4x - 2y = 6 \end{cases}$. En multipliant la première équation par $-2$ : $4x - 2y = -6$, incompatible avec $4x - 2y = 6$. Donc \textbf{aucune solution} : $S = \varnothing$.
+\end{itemize}
+Conclusion : solution unique si $m \notin \{-2\,;\,2\}$ ; infinité de solutions si $m = 2$ ; aucune solution si $m = -2$.
+\end{exoresolu}
+
+La démarche est toujours la même : calculer le déterminant (ou échelonner), repérer les \emph{valeurs remarquables} du paramètre qui l'annulent, puis étudier séparément chacune de ces valeurs en les substituant dans le système.
+
+\courssub{Erreurs fréquentes et stratégies de vérification}
+
+\begin{attention}[Récapitulatif des erreurs fréquentes]
+\begin{itemize}
+\item \textbf{Oubli de vérification} : une erreur de signe en début de calcul fausse tout le reste. Toujours reporter le couple (ou le triplet) trouvé dans \emph{toutes} les équations initiales.
+\item \textbf{Erreur de signe dans la substitution} : de $x + 3y = 11$ on tire $x = 11 - 3y$, et non $x = 11 + 3y$. Le changement de membre change le signe.
+\item \textbf{Report incomplet} : dans un système $3\times 3$, après avoir trouvé $z$ puis $y$, il faut reporter \emph{les deux} valeurs dans la première équation pour obtenir $x$.
+\item \textbf{Combinaison mal menée} : quand on multiplie une équation par un nombre, on multiplie \emph{tous} les termes, y compris le second membre.
+\item \textbf{Conclusion hâtive sur $0 = 0$} : cela signifie une infinité de solutions, pas l'absence de solution.
+\item \textbf{Déterminant mal calculé} : $\Delta = ab' - a'b$ : attention à l'ordre des produits en croix et aux signes des coefficients.
+\item \textbf{Réponse hors contexte} : dans un problème concret, vérifier que la solution est réaliste (une quantité de matériau négative ou un nombre d'ouvriers non entier doit alerter).
+\end{itemize}
+\end{attention}
+
+\begin{methode}[Stratégie de vérification systématique]
+\begin{enumerate}
+\item Reporter les valeurs trouvées dans \textbf{chaque} équation de départ (pas dans les équations transformées).
+\item Vérifier la \textbf{cohérence} avec l'énoncé concret : signe, ordre de grandeur, caractère entier éventuel.
+\item En cas de doute sur la méthode, résoudre par une \textbf{autre méthode} (substitution puis combinaison) : les deux doivent donner le même résultat.
+\item Pour un système $2\times 2$, un contrôle rapide est possible par le \textbf{déterminant} : si $\Delta \neq 0$, une solution unique doit exister.
+\end{enumerate}
+\end{methode}
+
+\courssub{Mini-QCM de synthèse corrigé}
+
+\begin{exoresolu}[Nombre de solutions de trois systèmes]
+Pour chaque système, déterminer le nombre de solutions.
+\textbf{Système 1 :} $\begin{cases} 3x - 2y = 1 \\ x + 4y = 5 \end{cases}$ \qquad
+\textbf{Système 2 :} $\begin{cases} 2x - y = 3 \\ -4x + 2y = -6 \end{cases}$ \qquad
+\textbf{Système 3 :} $\begin{cases} x + y + z = 6 \\ y + 2z = 5 \\ 0z = 4 \end{cases}$
+\tcblower
+\textbf{Système 1.} Déterminant : $\Delta = 3 \times 4 - 1 \times (-2) = 12 + 2 = 14 \neq 0$. Le système admet une \textbf{solution unique}. (On trouverait $x = 1$, $y = 1$.)
+
+\textbf{Système 2.} Déterminant : $\Delta = 2 \times 2 - (-4) \times (-1) = 4 - 4 = 0$. Les droites sont parallèles. Or la deuxième équation est obtenue en multipliant la première par $-2$ : $(-2)(2x - y) = -4x + 2y$ et $(-2)\times 3 = -6$. Les équations sont proportionnelles : \textbf{infinité de solutions} (droites confondues), $S = \{(x\,;\,2x-3),\ x \in \mathbb{R}\}$.
+
+\textbf{Système 3.} Le système est déjà échelonné. La dernière ligne s'écrit $0z = 4$, c'est-à-dire $0 = 4$, ce qui est impossible : \textbf{aucune solution}, $S = \varnothing$.
+
+\emph{Bilan : système 1 : une solution unique ; système 2 : infinité de solutions ; système 3 : aucune solution.}
+\end{exoresolu}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Résoudre par la méthode de votre choix, en justifiant ce choix : $\begin{cases} 5x + 2y = 16 \\ 3x - 2y = 8 \end{cases}$.
+\item Discuter selon le réel $m$ le nombre de solutions de $\begin{cases} x + my = 2 \\ x + 4y = m \end{cases}$.
+\item Un atelier achète $3$ marteaux et $2$ pinces pour \SI{13 500}{F} ; puis $2$ marteaux et $5$ pinces pour \SI{17 500}{F}. Modéliser par un système et trouver le prix unitaire de chaque outil. Vérifier la cohérence de la réponse.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice de synthèse]
+\textbf{1.} Les coefficients de $y$ sont opposés ($2y$ et $-2y$) : la combinaison est immédiate. En additionnant : $8x = 24$, donc $x = 3$. Alors $2y = 16 - 15 = 1$, d'où $y = \dfrac{1}{2}$. Vérification : $3\times 3 - 2\times \dfrac{1}{2} = 9 - 1 = 8$. $S = \left\{\left(3\,;\,\dfrac{1}{2}\right)\right\}$.
+
+\textbf{2.} $\Delta = 1\times 4 - 1\times m = 4 - m$. Si $m \neq 4$ : solution unique. Si $m = 4$ : le système devient $\begin{cases} x + 4y = 2 \\ x + 4y = 4 \end{cases}$, équations incompatibles : aucune solution. (Il n'y a jamais d'infinité de solutions ici, car $m = 4$ donne des seconds membres différents.)
+
+\textbf{3.} Soit $x$ le prix d'un marteau et $y$ celui d'une pince (en francs CFA). Le système est :
+\[ \begin{cases} 3x + 2y = 13\,500 \\ 2x + 5y = 17\,500 \end{cases} \]
+Le déterminant est $\Delta = 3\times 5 - 2\times 2 = 15 - 4 = 11 \neq 0$, donc solution unique.
+Par les formules de Cramer (ou combinaison) :
+\[ x = \frac{13\,500 \times 5 - 2 \times 17\,500}{11} = \frac{67\,500 - 35\,000}{11} = \frac{32\,500}{11} \approx 2\,954,55 \]
+\[ y = \frac{3 \times 17\,500 - 2 \times 13\,500}{11} = \frac{52\,500 - 27\,000}{11} = \frac{25\,500}{11} \approx 2\,318,18 \]
+Vérification : $3\times \frac{32\,500}{11} + 2\times \frac{25\,500}{11} = \frac{97\,500 + 51\,000}{11} = \frac{148\,500}{11} = 13\,500$. Correct.
+$2\times \frac{32\,500}{11} + 5\times \frac{25\,500}{11} = \frac{65\,000 + 127\,500}{11} = \frac{192\,500}{11} = 17\,500$. Correct.
+
+\textbf{Analyse de cohérence :} Les prix unitaires ne sont pas des nombres entiers de francs. Dans un contexte réel de facturation (prix unitaires arrondis au franc), cela signale souvent une approximation dans les totaux donnés ou une erreur de saisie dans l'énoncé. Si l'on impose des prix entiers, les données \SI{13 500}{F} et \SI{17 500}{F} ne sont pas compatibles avec des quantités entières d'articles aux prix unitaires entiers. La démarche mathématique est cependant rigoureuse : on a résolu le système \emph{tel qu'il est posé}.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\begin{itemize}
+\item Trois méthodes : \cle{substitution} (coefficient $1$ ou $-1$), \cle{combinaison} (coefficients opposés), \cle{pivot de Gauss} (cas général, $3\times 3$).
+\item Système $2\times 2$ : $\Delta \neq 0 \Rightarrow$ solution unique ; $\Delta = 0 \Rightarrow$ aucune solution ou infinité, selon la compatibilité des équations.
+\item Système $3\times 3$ : la forme échelonnée donne la conclusion ; une ligne $0 = k \neq 0$ signifie l'impossibilité, une ligne $0 = 0$ signifie une infinité de solutions.
+\item Toujours \textbf{vérifier} la solution dans toutes les équations de départ et contrôler la cohérence avec la situation concrète.
+\item Ouverture vers la Terminale : l'écriture matricielle $AX = B$ unifie tous les systèmes linéaires.
+\end{itemize}
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Systèmes d'équations linéaires à trois inconnues — Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+\begin{aretenir}[Objectifs visés]
+Cette activité d'intégration mobilise l'ensemble des savoirs et savoir-faire de la leçon sur les systèmes d'équations linéaires à trois inconnues. Elle permet à l'élève de :
+\begin{itemize}
+    \item \textbf{Modéliser} une situation concrète de gestion budgétaire (contexte de la vie scolaire au Cameroun) par un système d'équations linéaires à trois inconnues ($3\times3$).
+    \item \textbf{Résoudre} ce système par la \textbf{méthode du pivot de Gauss} (algorithme de réduction par opérations élémentaires sur les lignes de la matrice augmentée), en justifiant chaque étape.
+    \item \textbf{Vérifier} la solution obtenue par substitution dans les équations initiales.
+    \item \textbf{Interpréter} le résultat pour prendre une décision financière (le budget suffit-il ?).
+    \item \textbf{Communiquer} une démarche mathématique complète, rigoureuse et structurée, à l'écrit comme à l'oral (présentation au tableau).
+\end{itemize}
+L'accent est mis sur la rédaction soignée, le respect de l'algorithme de Gauss (choix du pivot, opérations sur les lignes, forme échelonnée, remontée) et le sens des nombres manipulés (prix unitaires en FCFA).
+\end{aretenir}
+
+\courssub{Situation}
+Le \textbf{Collège d'Enseignement Général (CEG) de Mbankomo} prépare sa fête de fin d'année. Le comité d'organisation, composé d'élèves délégués et d'enseignants encadrants, doit finaliser l'approvisionnement en consommables : \textbf{boissons} (bouteilles de jus ou sodas), \textbf{beignets} (pains haricots, beignets banane) et \textbf{sachets de bonbons} (mélanges fruits, caramels).
+
+Pour estimer les coûts unitaires, trois délégués de classes différentes (3\textsuperscript{e}, 2\textsuperscript{nde} et 1\textsuperscript{re}) se sont rendus au marché central de Mbankomo un mardi matin. Chacun a effectué un achat partiel selon les besoins de sa classe, en notant soigneusement les quantités et le montant total payé. Voici les relevés transmis au trésorier du comité :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Délégué} & \textbf{Boissons (unités)} & \textbf{Beignets (unités)} & \textbf{Sachets bonbons (unités)} & \textbf{Montant payé (FCFA)} \\ \hline
+Délégué 1 (3\textsuperscript{e} A) & 10 & 20 & 5 & 8\,500 \\ \hline
+Délégué 2 (2\textsuperscript{nde} B) & 15 & 10 & 10 & 9\,000 \\ \hline
+Délégué 3 (1\textsuperscript{re} C) & 5 & 30 & 5 & 9\,500 \\ \hline
+\end{tabularx}
+\end{center}
+
+Le trésorier dispose désormais de ces trois équations pour déterminer le \textbf{prix unitaire} de chaque article. Une fois ces prix connus, le comité doit valider le budget global : il dispose d'une enveloppe de \textbf{20\,000 FCFA} pour commander \textbf{20 boissons, 40 beignets et 15 sachets de bonbons} destinés à la vente le jour de la fête.
+
+\emph{Problème :} Le budget de 20\,000 FCFA est-il suffisant pour couvrir cette commande finale ? Pour répondre, il faut déterminer les prix unitaires exacts.
+
+\courssub{Consignes}
+Travailler par groupes de 3 ou 4 élèves. Chaque groupe remet une copie unique, rédigée soigneusement, qui servira de support pour la présentation au tableau.
+
+\begin{enumerate}
+    \item \textbf{Modélisation :} Poser les trois inconnues (avec leur unité), puis écrire le système d'équations linéaires à trois inconnues $(S)$ qui traduit la situation. Vérifier que le système est bien linéaire.
+    \item \textbf{Mise en forme matricielle :} Écrire la matrice augmentée $(A|B)$ associée au système $(S)$. Expliquer pourquoi on peut simplifier les coefficients avant de commencer l'élimination (diviser chaque ligne par 5).
+    \item \textbf{Résolution par le pivot de Gauss :} Appliquer l'algorithme du pivot de Gauss sur la matrice simplifiée pour la mettre sous forme échelonnée (triangulaire supérieure).
+        \begin{itemize}
+            \item Choisir le pivot de la première colonne (stratégie : placer un 1 en position $(1,1)$ par permutation de lignes).
+            \item Annuler les coefficients sous ce pivot par combinaisons linéaires de lignes ($L_i \leftarrow L_i - k L_1$).
+            \item Passer à la deuxième colonne, choisir le pivot, annuler le coefficient en dessous.
+            \item Obtenir la forme échelonnée finale.
+        \end{itemize}
+        \textbf{Justifier chaque opération élémentaire} effectuée (notation : $L_2 \leftarrow L_2 - 3L_1$, etc.).
+    \item \textbf{Remontée (résolution à rebours) :} À partir de la forme échelonnée, déterminer les valeurs des trois inconnues (prix unitaires) par substitution successive, en partant de la dernière ligne.
+    \item \textbf{Vérification :} Substituer le triplet solution $(x,y,z)$ dans les \textbf{trois} équations initiales (non simplifiées) pour valider le résultat.
+    \item \textbf{Application :} Calculer le coût total de la commande finale (20 boissons, 40 beignets, 15 sachets). Comparer à l'enveloppe de 20\,000 FCFA. Conclure par une phrase complète : « Le budget suffit / ne suffit pas, il reste / il manque X FCFA. »
+    \item \textbf{Analyse critique (question bonus) :} Si le prix des beignets augmentait de 10\% au marché le jour de la commande finale, le budget serait-il encore suffisant ? Justifier par un calcul.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+\begin{propriete}[Système linéaire $3\times3$ et matrice augmentée]
+Un système de trois équations linéaires à trois inconnues $x, y, z$ s'écrit :
+\[
+\begin{cases}
+a_{11}x + a_{12}y + a_{13}z = b_1 \\
+a_{21}x + a_{22}y + a_{23}z = b_2 \\
+a_{31}x + a_{32}y + a_{33}z = b_3
+\end{cases}
+\]
+La matrice augmentée associée est $(A|B) = \left(\begin{array}{ccc|c}
+a_{11} & a_{12} & a_{13} & b_1 \\
+a_{21} & a_{22} & a_{23} & b_2 \\
+a_{31} & a_{32} & a_{33} & b_3
+\end{array}\right)$.
+Deux systèmes équivalents ont la même matrice augmentée modulo des opérations élémentaires sur les lignes.
+\end{propriete}
+
+\begin{propriete}[Opérations élémentaires sur les lignes (Gauss)]
+On peut transformer une matrice sans changer les solutions du système associé en effectuant :
+\begin{enumerate}
+    \item \textbf{Permutation} de deux lignes ($L_i \leftrightarrow L_j$).
+    \item \textbf{Multiplication} d'une ligne par un scalaire non nul ($L_i \leftarrow k L_i,\ k\neq 0$).
+    \item \textbf{Combinaison linéaire} : ajouter à une ligne un multiple d'une autre ($L_i \leftarrow L_i + k L_j$).
+\end{enumerate}
+\emph{Remarque :} Pour éviter les fractions, on utilise souvent une combinaison du type $L_i \leftarrow a L_i + b L_j$ ($a\neq 0$), qui revient à enchaîner une multiplication et une addition.
+\end{propriete}
+
+\begin{methode}[Algorithme du pivot de Gauss (résumé)]
+\begin{enumerate}
+    \item Écrire la matrice augmentée. Simplifier si possible (diviser lignes par PGCD).
+    \item \textbf{Colonne 1 :} Placer un pivot non nul en $(1,1)$ (idéalement 1). Annuler les coefficients $a_{21}$ et $a_{31}$ ($L_2 \leftarrow L_2 - a_{21}L_1$, $L_3 \leftarrow L_3 - a_{31}L_1$).
+    \item \textbf{Colonne 2 :} Sur les lignes 2 et 3, placer un pivot non nul en $(2,2)$. Annuler le coefficient $a_{32}$ ($L_3 \leftarrow L_3 - \frac{a_{32}}{a_{22}}L_2$ ou combinaison sans fraction).
+    \item \textbf{Forme échelonnée :} La matrice est triangulaire supérieure. Lire la dernière équation : $a_{33}z = b_3' \Rightarrow z = \dots$
+    \item \textbf{Remontée :} Substituer $z$ dans l'équation 2 pour trouver $y$, puis $y,z$ dans l'équation 1 pour trouver $x$.
+    \item \textbf{Vérifier} dans le système initial.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges fréquents au Probatoire]
+\begin{itemize}
+    \item Oublier d'appliquer l'opération sur \textbf{toute la ligne} (coefficients \textbf{et} second membre).
+    \item Faire des erreurs de signes lors des soustractions ($L_i - kL_j$).
+    \item Ne pas simplifier les lignes au début : les grands nombres (8500, 9000...) augmentent le risque d'erreurs de calcul.
+    \item Ne pas vérifier la solution dans le système \textbf{initial} (non simplifié).
+    \item Réponse finale sans phrase de conclusion ni unité (FCFA).
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+\begin{exoresolu}[Activité d'intégration : Fête du CEG Mbankomo]
+\textbf{Énoncé :} À partir des achats tests de trois délégués, déterminer les prix unitaires (boisson, beignet, sachet de bonbons) par la méthode du pivot de Gauss. Vérifier si le budget de 20\,000 FCFA couvre la commande finale (20 boissons, 40 beignets, 15 sachets). Étudier l'impact d'une hausse de 10\% sur le prix des beignets.
+\tcblower
+\textbf{Solution détaillée}
+
+\textbf{1. Modélisation et système initial}
+Soient les inconnues (prix unitaires en FCFA) :
+$x$ = prix d'une boisson, $y$ = prix d'un beignet, $z$ = prix d'un sachet de bonbons.
+Le système $(S)$ est :
+\[
+(S)\quad \begin{cases}
+10x + 20y + 5z = 8\,500 & (E_1)\\
+15x + 10y + 10z = 9\,000 & (E_2)\\
+5x + 30y + 5z = 9\,500 & (E_3)
+\end{cases}
+\]
+Tous les coefficients sont des multiples de 5. On simplifie chaque équation en divisant par 5 (opération élémentaire de type 2 sur chaque ligne) pour faciliter les calculs :
+\[
+(S')\quad \begin{cases}
+2x + 4y + z = 1\,700 & (E'_1)\\
+3x + 2y + 2z = 1\,800 & (E'_2)\\
+x + 6y + z = 1\,900 & (E'_3)
+\end{cases}
+\]
+
+\textbf{2. Matrice augmentée simplifiée}
+\[
+(A|B) = \left(\begin{array}{ccc|c}
+2 & 4 & 1 & 1\,700 \\
+3 & 2 & 2 & 1\,800 \\
+1 & 6 & 1 & 1\,900
+\end{array}\right)
+\]
+
+\textbf{3. Étape 1 : Pivot sur la colonne 1}
+On veut un pivot 1 en position $(1,1)$. La ligne 3 ($L_3$) commence par 1. On permute $L_1$ et $L_3$ :
+\[
+L_1 \leftrightarrow L_3 \quad \Rightarrow \quad
+\left(\begin{array}{ccc|c}
+\textbf{1} & 6 & 1 & 1\,900 \\
+3 & 2 & 2 & 1\,800 \\
+2 & 4 & 1 & 1\,700
+\end{array}\right)
+\]
+On annule les coefficients sous le pivot (positions $(2,1)$ et $(3,1)$) :
+\begin{itemize}
+    \item $L_2 \leftarrow L_2 - 3L_1$ : $(3-3\times1,\ 2-3\times6,\ 2-3\times1\ |\ 1800-3\times1900) = (0,\ -16,\ -1\ |\ -3900)$
+    \item $L_3 \leftarrow L_3 - 2L_1$ : $(2-2\times1,\ 4-2\times6,\ 1-2\times1\ |\ 1700-2\times1900) = (0,\ -8,\ -1\ |\ -2100)$
+\end{itemize}
+Matrice intermédiaire :
+\[
+\left(\begin{array}{ccc|c}
+1 & 6 & 1 & 1\,900 \\
+0 & -16 & -1 & -3\,900 \\
+0 & -8 & -1 & -2\,100
+\end{array}\right)
+\]
+
+\textbf{4. Étape 2 : Pivot sur la colonne 2}
+Le pivot est $-16$ en position $(2,2)$. On annule le coefficient en $(3,2)$ qui est $-8$.
+Pour éviter les fractions, on effectue la combinaison $L_3 \leftarrow 2L_3 - L_2$ (multiplication de $L_3$ par 2 puis soustraction de $L_2$ ; opération valide car combinaison d'opérations élémentaires).
+\begin{itemize}
+    \item $2L_3$ : $(0,\ -16,\ -2\ |\ -4\,200)$
+    \item $2L_3 - L_2$ : $(0-0,\ -16-(-16),\ -2-(-1)\ |\ -4200-(-3900)) = (0,\ 0,\ -1\ |\ -300)$
+\end{itemize}
+Matrice sous forme échelonnée (triangulaire supérieure) :
+\[
+\left(\begin{array}{ccc|c}
+1 & 6 & 1 & 1\,900 \\
+0 & -16 & -1 & -3\,900 \\
+0 & 0 & \textbf{-1} & \textbf{-300}
+\end{array}\right)
+\]
+
+\textbf{5. Remontée (résolution à rebours)}
+\begin{itemize}
+    \item \textbf{Ligne 3 :} $-z = -300 \quad \Rightarrow \quad \boxed{z = 300}$ FCFA (prix sachet bonbons).
+    \item \textbf{Ligne 2 :} $-16y - z = -3\,900 \quad \Rightarrow \quad -16y - 300 = -3\,900 \quad \Rightarrow \quad -16y = -3\,600 \quad \Rightarrow \quad \boxed{y = 225}$ FCFA (prix beignet).
+    \item \textbf{Ligne 1 :} $x + 6y + z = 1\,900 \quad \Rightarrow \quad x + 6(225) + 300 = 1\,900 \quad \Rightarrow \quad x + 1\,350 + 300 = 1\,900 \quad \Rightarrow \quad x + 1\,650 = 1\,900 \quad \Rightarrow \quad \boxed{x = 250}$ FCFA (prix boisson).
+\end{itemize}
+Le triplet solution est $(x,y,z) = (250;\ 225;\ 300)$.
+
+\textbf{6. Vérification dans le système initial $(S)$ (coefficients non simplifiés)}
+\begin{align*}
+(E_1) &: 10(250) + 20(225) + 5(300) = 2\,500 + 4\,500 + 1\,500 = 8\,500 \quad \checkmark \\
+(E_2) &: 15(250) + 10(225) + 10(300) = 3\,750 + 2\,250 + 3\,000 = 9\,000 \quad \checkmark \\
+(E_3) &: 5(250) + 30(225) + 5(300) = 1\,250 + 6\,750 + 1\,500 = 9\,500 \quad \checkmark
+\end{align*}
+La solution est correcte.
+
+\textbf{7. Application : Commande finale et budget}
+Commande : 20 boissons, 40 beignets, 15 sachets.
+Coût total $C = 20x + 40y + 15z$.
+\[
+C = 20(250) + 40(225) + 15(300) = 5\,000 + 9\,000 + 4\,500 = 18\,500 \text{ FCFA}.
+\]
+Budget disponible : 20\,000 FCFA.
+Comparaison : $18\,500 < 20\,000$.
+
+\textbf{Conclusion :} \textbf{Le budget suffit.} Il reste une marge de $20\,000 - 18\,500 = 1\,500$ FCFA pour d'éventuels imprévus (transport, petit matériel).
+
+\textbf{8. Question bonus : Hausse de 10\% sur les beignets}
+Nouveau prix beignet : $y' = 225 \times 1,10 = 247,5$ FCFA.
+Nouveau coût $C' = 20(250) + 40(247,5) + 15(300) = 5\,000 + 9\,900 + 4\,500 = 19\,400$ FCFA.
+$19\,400 < 20\,000$. \textbf{Le budget suffit encore}, mais la marge se réduit à 600 FCFA seulement.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+Cette activité a permis de mettre en évidence plusieurs points clés du programme de Première Technique :
+\begin{itemize}
+    \item \textbf{La modélisation} : Passer d'un énoncé verbal (contexte camerounais réel : fête de fin d'année, marché, budget en FCFA) à un système algébrique $3\times3$ est une compétence centrale. Le choix des inconnues (prix unitaires) et l'écriture des équations ont été validés collectivement.
+    \item \textbf{L'algorithme de Gauss} : Les élèves ont manipulé la matrice augmentée, compris l'intérêt de la simplification préliminaire (division par 5), et appliqué rigoureusement les trois types d'opérations élémentaires (permutation, multiplication, combinaison). La technique du $2L_3 - L_2$ pour éviter les fractions a été appréciée comme une astuce de « calcul mental assisté ».
+    \item \textbf{La vérification systématique} : Le retour au système initial (non simplifié) est indispensable pour valider l'absence d'erreur de calcul lors des opérations sur les lignes. C'est un réflexe à acquérir pour l'examen du Probatoire.
+    \item \textbf{L'interprétation et la décision} : Les mathématiques ne s'arrêtent pas au triplet $(250;225;300)$. Il faut calculer le coût final, comparer au budget, et rédiger une conclusion chiffrée et argumentée. La question bonus (hausse des prix) introduit la notion de \textbf{sensibilité} du modèle, utile en gestion de projet technique.
+    \item \textbf{La communication} : La présentation au tableau a obligé chaque groupe à structurer son exposé : « Voici nos inconnues, voici notre système, voici nos opérations de Gauss (étape par étape), voici nos prix, voici la vérification, voici la réponse à la question posée. » Cette rigueur rédactionnelle est attendue dans les épreuves certificatives.
+\end{itemize}
+Les difficultés principales observées ont porté sur la gestion des signes moins lors des combinaisons de lignes (ex: $-16 - (-16)$) et sur la rédaction de la conclusion (oubli de l'unité FCFA ou phrase incomplète). Ces points feront l'objet d'un rappel en séance de remédiation.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Systèmes d'équations à deux ou trois inconnues}
+
+\courssub{Équations linéaires et notion de solution}
+
+\begin{definition}[Équation linéaire à deux inconnues]
+Une \cle{équation linéaire} (ou du premier degré) à deux inconnues $x$ et $y$ s'écrit sous la forme canonique :
+\[
+ax + by = c \qquad \text{avec } (a,b) \neq (0,0) \text{ et } a,b,c \in \mathbb{R}.
+\]
+Une \cle{solution} est un couple $(x_0; y_0) \in \mathbb{R}^2$ qui vérifie l'égalité.
+\end{definition}
+
+\begin{definition}[Système d'équations linéaires]
+Un \cle{système d'équations linéaires} à deux inconnues est un ensemble de deux équations :
+\[
+(S) : \begin{cases} a_1 x + b_1 y = c_1 \\ a_2 x + b_2 y = c_2 \end{cases}
+\]
+Résoudre $(S)$, c'est trouver l'ensemble $S = \{(x;y) \in \mathbb{R}^2 \mid \text{les deux équations sont vérifiées}\}$.
+\end{definition}
+
+\begin{propriete}[Nombre de solutions d'un système 2×2]
+Un système linéaire 2×2 admet soit :
+\begin{itemize}
+\item \textbf{Une unique solution} (système \emph{déterminé}) : les droites sont sécantes.
+\item \textbf{Aucune solution} (système \emph{impossible} ou \emph{incompatible}) : les droites sont parallèles distinctes.
+\item \textbf{Une infinité de solutions} (système \emph{indéterminé}) : les droites sont confondues.
+\end{itemize}
+\end{propriete}
+
+\courssub{Systèmes 2×2 : résolution algébrique}
+
+\begin{methode}[Résolution algébrique d'un système 2×2 (Substitution et Combinaison)]
+\begin{enumerate}
+\item \textbf{Écrire le système} sous la forme canonique :
+      $\begin{cases} a_1 x + b_1 y = c_1 \\ a_2 x + b_2 y = c_2 \end{cases}$ avec $(a_1,b_1)\neq(0,0)$ et $(a_2,b_2)\neq(0,0)$.
+\item \textbf{Choisir la méthode} :
+      \begin{itemize}
+      \item \emph{Substitution} : isoler $x$ (ou $y$) dans l'équation la plus simple, substituer dans l'autre.
+      \item \emph{Combinaison linéaire} : multiplier les équations pour obtenir des coefficients opposés sur une inconnue, additionner pour l'éliminer.
+      \end{itemize}
+\item \textbf{Résoudre} l'équation à une inconnue obtenue.
+\item \textbf{Remonter} : remplacer la valeur trouvée dans une équation initiale pour obtenir la seconde inconnue.
+\item \textbf{Vérifier} en remplaçant $(x,y)$ dans les \emph{deux} équations initiales.
+\item \textbf{Conclure} par une phrase : « Le couple solution est $S = \{(x_0;y_0)\}$ » ou « Le système n'admet pas de solution » ou « Le système admet une infinité de solutions ».
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Système 2×2 — Méthode de la combinaison (type Probatoire)]
+Résoudre le système suivant :
+\[
+(S) : \begin{cases} 3x - 2y = 7 \\ 5x + 4y = 19 \end{cases}
+\]
+\tcblower
+\textbf{Solution détaillée.}
+
+\noindent\textbf{1. Mise en forme.} Le système est déjà sous forme canonique.
+\noindent\textbf{2. Choix de la méthode : Combinaison.} On vise à éliminer $y$. Les coefficients de $y$ sont $-2$ et $4$. Il suffit de multiplier la première équation par $2$ pour obtenir $-4y$ et $4y$.
+\[
+\begin{cases}
+2\times(3x - 2y) = 2\times 7 \\
+5x + 4y = 19
+\end{cases}
+\iff
+\begin{cases}
+6x - 4y = 14 & (L_1') \\
+5x + 4y = 19 & (L_2)
+\end{cases}
+\]
+\noindent\textbf{3. Addition membre à membre :} $(L_1') + (L_2)$ :
+\[
+(6x + 5x) + (-4y + 4y) = 14 + 19 \iff 11x = 33
+\]
+\noindent\textbf{4. Résolution :} $x = \frac{33}{11} = 3$.
+\noindent\textbf{5. Remontée (substitution dans $L_1$ initiale) :}
+\[
+3(3) - 2y = 7 \iff 9 - 2y = 7 \iff -2y = -2 \iff y = 1.
+\]
+\noindent\textbf{6. Vérification :}
+\begin{itemize}
+\item Dans (1) : $3(3) - 2(1) = 9 - 2 = 7$ \checkmark
+\item Dans (2) : $5(3) + 4(1) = 15 + 4 = 19$ \checkmark
+\end{itemize}
+\noindent\textbf{Conclusion :} Le système admet une unique solution. L'ensemble solution est $S = \{(3;1)\}$.
+\end{exoresolu}
+
+\courssub{Interprétation graphique et discussion (2×2)}
+
+\begin{methode}[Interprétation graphique et discussion d'un système 2×2]
+\begin{enumerate}
+\item \textbf{Rappel :} Une équation $ax+by=c$ (avec $(a,b)\neq(0,0)$) représente une droite du plan muni d'un repère.
+\item \textbf{Représenter} les deux droites $(d_1)$ et $(d_2)$ correspondantes (par points particuliers ou forme réduite $y=mx+p$).
+\item \textbf{Analyser les positions relatives :}
+      \begin{itemize}
+      \item \textbf{Droites sécantes} (coefficients directeurs différents) $\Rightarrow$ \textbf{Unique solution} (point d'intersection).
+      \item \textbf{Droites parallèles distinctes} (même coefficient directeur, ordonnées à l'origine différentes) $\Rightarrow$ \textbf{Pas de solution} ($S=\varnothing$).
+      \item \textbf{Droites confondues} (équations proportionnelles) $\Rightarrow$ \textbf{Infinité de solutions} (tous les points de la droite).
+      \end{itemize}
+\item \textbf{Lien algébrique :} Calculer le déterminant $\Delta = a_1b_2 - a_2b_1$.
+      \begin{itemize}
+      \item $\Delta \neq 0 \Leftrightarrow$ Droites sécantes $\Leftrightarrow$ Solution unique (formules de Cramer).
+      \item $\Delta = 0 \Leftrightarrow$ Droites parallèles ou confondues. Tester la proportionnalité des seconds membres.
+      \end{itemize}
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.85, every node/.style={font=\small}]
+% Styles
+\tikzset{axe/.style={->, >=Stealth, thick, popdark},
+         grille/.style={very thin, popmuted},
+         droite/.style={thick},
+         point/.style={circle, fill, inner sep=1.5pt},
+         leg/.style={anchor=north west, font=\footnotesize}}
+% Repères communs
+\def\drawaxes{
+  \draw[grille] (-3,-2.5) grid (3,2.5);
+  \draw[axe] (-3,0) -- (3,0) node[right] {$x$};
+  \draw[axe] (0,-2.5) -- (0,2.5) node[above] {$y$};
+  \foreach \x in {-2,-1,1,2} \draw (\x,2pt) -- (\x,-2pt) node[below=2pt] {\x};
+  \foreach \y in {-2,-1,1,2} \draw (2pt,\y) -- (-2pt,\y) node[left=2pt] {\y};
+}
+% Cas 1 : Sécantes (Unique solution)
+\begin{scope}[xshift=-7cm]
+  \drawaxes
+  \draw[droite, popblue] (-3,2) -- (3,-2) node[right, pos=0.9] {$(d_1)$};
+  \draw[droite, poporange] (-3,-2.5) -- (3,2.5) node[right, pos=0.9] {$(d_2)$};
+  \node[point, popgreen] at (0,0) {};
+  \node[leg, popgreen] at (0.2,-0.3) {$(x_0;y_0)$};
+  \node[leg, popdark] at (-2.8, 2.2) {\textbf{Cas 1 :} $\Delta \neq 0$};
+  \node[leg, popdark] at (-2.8, 1.7) {Solution unique};
+\end{scope}
+% Cas 2 : Parallèles (Pas de solution)
+\begin{scope}[xshift=0cm]
+  \drawaxes
+  \draw[droite, popblue] (-3,-1.5) -- (3,1.5) node[right] {$(d_1)$};
+  \draw[droite, poporange] (-3,-2.5) -- (3,0.5) node[right] {$(d_2)$};
+  \node[leg, popdark] at (-2.8, 2.2) {\textbf{Cas 2 :} $\Delta = 0$};
+  \node[leg, popdark] at (-2.8, 1.7) {Pas de solution ($S=\varnothing$)};
+  \draw[popred, dashed] (-2.5, -2) -- (-0.5, -2); % just visual separation
+\end{scope}
+% Cas 3 : Confondues (Infinité de solutions)
+\begin{scope}[xshift=7cm]
+  \drawaxes
+  \draw[droite, popblue] (-3,-2) -- (3,2) node[right] {$(d_1) \equiv (d_2)$};
+  \foreach \x in {-2,-1,0,1,2} {
+    \node[point, popgreen] at (\x, \x) {};
+  }
+  \node[leg, popdark] at (-2.8, 2.2) {\textbf{Cas 3 :} $\Delta = 0$};
+  \node[leg, popdark] at (-2.8, 1.7) {Infinité de solutions};
+\end{scope}
+\end{tikzpicture}
+\legende{Les trois configurations géométriques possibles pour un système 2×2.}
+\end{popfigure}
+
+\begin{exoresolu}[Discussion graphique et algébrique avec paramètre]
+Soit le système $(S_m)$ :
+\[
+\begin{cases} 2x + 3y = 5 \\ 4x + m y = 10 \end{cases}
+\]
+Discuter le nombre de solutions selon la valeur du paramètre réel $m$.
+\tcblower
+\textbf{Solution détaillée.}
+
+\noindent\textbf{1. Approche algébrique (Déterminant).}
+Le déterminant du système est :
+\[
+\Delta = \begin{vmatrix} 2 & 3 \\ 4 & m \end{vmatrix} = 2m - 12 = 2(m-6).
+\]
+\noindent\textbf{Cas 1 : $\Delta \neq 0 \Leftrightarrow m \neq 6$.}
+Les droites ne sont pas parallèles, elles sont sécantes. Le système admet une \textbf{unique solution}.
+On peut l'exprimer par les formules de Cramer :
+\[
+\Delta_x = \begin{vmatrix} 5 & 3 \\ 10 & m \end{vmatrix} = 5m - 30 = 5(m-6), \quad
+\Delta_y = \begin{vmatrix} 2 & 5 \\ 4 & 10 \end{vmatrix} = 20 - 20 = 0.
+\]
+\[
+x = \frac{\Delta_x}{\Delta} = \frac{5(m-6)}{2(m-6)} = \frac{5}{2}, \quad
+y = \frac{\Delta_y}{\Delta} = 0.
+\]
+Solution : $S = \{(\frac{5}{2}; 0)\}$ pour tout $m \neq 6$.
+
+\noindent\textbf{Cas 2 : $\Delta = 0 \Leftrightarrow m = 6$.}
+Le système devient :
+\[
+(S_6) : \begin{cases} 2x + 3y = 5 \\ 4x + 6y = 10 \end{cases}
+\]
+On observe que la deuxième équation est exactement le double de la première ($L_2 = 2\times L_1$). Les deux équations sont \textbf{proportionnelles} (même rapport pour les coefficients de $x$, $y$ et le second membre).
+Les droites sont \textbf{confondues}. Le système admet une \textbf{infinité de solutions}.
+On paramètre : $x = t \in \mathbb{R}$, alors $2t + 3y = 5 \iff y = \frac{5-2t}{3}$.
+$S = \left\{ \left(t; \frac{5-2t}{3}\right) \mid t \in \mathbb{R} \right\}$.
+
+\noindent\textbf{2. Interprétation graphique.}
+\begin{itemize}
+\item $m \neq 6$ : Droites $(d_1): y = -\frac{2}{3}x + \frac{5}{3}$ et $(d_2): y = -\frac{4}{m}x + \frac{10}{m}$. Coefficients directeurs différents $\Rightarrow$ Intersection en $(\frac{5}{2}; 0)$.
+\item $m = 6$ : $(d_2): y = -\frac{2}{3}x + \frac{5}{3}$. Même équation réduite $\Rightarrow$ Droites confondues.
+\end{itemize}
+
+\noindent\textbf{Conclusion :}
+\begin{itemize}
+\item Si $m \neq 6$ : Solution unique $(\frac{5}{2}; 0)$.
+\item Si $m = 6$ : Infinité de solutions (droites confondues).
+\item \textbf{Jamais de système impossible} pour ce paramétrage.
+\end{itemize}
+\end{exoresolu}
+
+\courssub{Systèmes 3×3 : méthode du pivot de Gauss}
+
+\begin{methode}[Résolution d'un système 3×3 par la méthode du pivot de Gauss (Échelonnage)]
+\begin{enumerate}
+\item \textbf{Écrire la matrice augmentée} $(A|B)$ du système :
+      $\begin{pmatrix} a_1 & b_1 & c_1 & | & d_1 \\ a_2 & b_2 & c_2 & | & d_2 \\ a_3 & b_3 & c_3 & | & d_3 \end{pmatrix}$.
+\item \textbf{Mettre en forme échelonnée (triangulaire supérieure)} par opérations élémentaires sur les lignes (OEL) :
+      \begin{enumerate}
+      \item Permuter deux lignes ($L_i \leftrightarrow L_j$).
+      \item Multiplier une ligne par un non-nul ($L_i \leftarrow k L_i$).
+      \item Ajouter à une ligne un multiple d'une autre ($L_i \leftarrow L_i + k L_j$).
+      \end{enumerate}
+      Objectif : obtenir des zéros sous la diagonale principale (pivots).
+      \begin{itemize}
+      \item \textbf{Pivot 1 (colonne 1)} : Zéro en $(2,1)$ et $(3,1)$.
+      \item \textbf{Pivot 2 (colonne 2)} : Zéro en $(3,2)$.
+      \item \textbf{Pivot 3 (colonne 3)} : Coefficient non nul en $(3,3)$.
+      \end{itemize}
+\item \textbf{Analyser la dernière ligne} (équation en $z$ seul) :
+      \begin{itemize}
+      \item $0\cdot z = k \neq 0$ $\Rightarrow$ \textbf{Impossible} ($S=\varnothing$).
+      \item $0\cdot z = 0$ $\Rightarrow$ \textbf{Infinité de solutions} (paramétrer).
+      \item $a z = b$ ($a\neq 0$) $\Rightarrow$ \textbf{Solution unique} (remonter).
+      \end{itemize}
+\item \textbf{Remonter (substitution arrière)} : calculer $z$, puis $y$, puis $x$.
+\item \textbf{Vérifier} dans le système initial. \textbf{Conclure}.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Système 3×3 — Pivot de Gauss complet (Système impossible)]
+Résoudre par la méthode du pivot de Gauss :
+\[
+(S) : \begin{cases}
+x + 2y - z = 3 & (L_1) \\
+2x - y + 3z = 1 & (L_2) \\
+3x + y + 2z = 8 & (L_3)
+\end{cases}
+\]
+\tcblower
+\textbf{Solution détaillée.}
+
+\noindent\textbf{1. Matrice augmentée :}
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & -1 & 3 \\
+2 & -1 & 3 & 1 \\
+3 & 1 & 2 & 8
+\end{array}\right)
+\]
+
+\noindent\textbf{2. Échelonnage (Pivot colonne 1 = 1 en ligne 1).}
+\underline{Annuler sous le pivot 1 :}
+$L_2 \leftarrow L_2 - 2L_1$ : $(2-2,\ -1-4,\ 3-(-2)\ |\ 1-6) = (0,\ -5,\ 5\ |\ -5)$
+$L_3 \leftarrow L_3 - 3L_1$ : $(3-3,\ 1-6,\ 2-(-3)\ |\ 8-9) = (0,\ -5,\ 5\ |\ -1)$
+
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & -1 & 3 \\
+0 & -5 & 5 & -5 \\
+0 & -5 & 5 & -1
+\end{array}\right)
+\]
+
+\noindent\textbf{3. Pivot colonne 2 (ligne 2).} On peut simplifier $L_2$ : $L_2 \leftarrow \frac{L_2}{-5} \Rightarrow (0, 1, -1 | 1)$.
+\underline{Annuler sous le pivot 2 :}
+$L_3 \leftarrow L_3 - L_2$ (sur l'état précédent, avant simplification de $L_2$) :
+$(0,\ -5-(-5),\ 5-5\ |\ -1-(-5)) = (0,\ 0,\ 0\ |\ 4)$.
+
+\[
+\left(\begin{array}{ccc|c}
+1 & 2 & -1 & 3 \\
+0 & -5 & 5 & -5 \\
+0 & 0 & 0 & 4
+\end{array}\right)
+\]
+
+\noindent\textbf{4. Analyse de la dernière ligne :} Elle correspond à l'équation $0x + 0y + 0z = 4$, soit $0 = 4$, qui est \textbf{fausse}.
+\noindent\textbf{Conclusion :} Le système n'admet \textbf{aucune solution}. $S = \varnothing$.
+Les trois plans ne se coupent pas en un point commun (deux sont parallèles ou intersection deux à deux sans point triple).
+\end{exoresolu}
+
+\courssub{Modélisation de situations concrètes}
+
+\begin{methode}[Modélisation et résolution d'un problème concret (Système 2×2)]
+\begin{enumerate}
+\item \textbf{Lire et comprendre} : Identifier les grandeurs inconnues (prix, quantités, débits, concentrations, forces, courants...).
+\item \textbf{Noter les inconnues} : $x$ et $y$ (avec unités ! Ex: $x$ en kg, $y$ en L).
+\item \textbf{Traduire les relations} en équations (souvent : \emph{Quantité totale} ou \emph{Coût total} ou \emph{Loi de Kirchhoff / Mécanique}).
+\item \textbf{Écrire le système} et vérifier l'homogénéité des unités dans chaque équation.
+\item \textbf{Résoudre} le système (méthode au choix).
+\item \textbf{Interpréter} la solution dans le contexte : les valeurs sont-elles physiques (positives, entières si comptage) ?
+\item \textbf{Répondre par une phrase complète} avec unités.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Problème de mélange — Alliation (Chimie / Agro-alimentaire)]
+Un chimiste doit préparer $\num{100}$ litres d'une solution à $\num{30}\%$ d'acide en mélangeant une solution à $\num{20}\%$ et une solution à $\num{50}\%$.
+Quels volumes doit-il prélever de chaque solution ?
+\tcblower
+\textbf{Solution détaillée.}
+
+\noindent\textbf{1. Inconnues.}
+Soit $x$ le volume (en litres) de la solution à $\num{20}\%$.
+Soit $y$ le volume (en litres) de la solution à $\num{50}\%$.
+
+\noindent\textbf{2. Traduction.}
+\begin{itemize}
+\item Volume total : $x + y = 100$.
+\item Quantité d'acide pur : $\num{0,20}x + \num{0,50}y = \num{0,30} \times 100 = 30$.
+\end{itemize}
+
+\noindent\textbf{3. Système :}
+\[
+\begin{cases}
+x + y = 100 & (1) \\
+\num{0,2}x + \num{0,5}y = 30 & (2)
+\end{cases}
+\]
+
+\noindent\textbf{4. Résolution (Substitution).}
+De (1) : $y = 100 - x$.
+Substituons dans (2) :
+\[
+\num{0,2}x + \num{0,5}(100 - x) = 30 \iff \num{0,2}x + 50 - \num{0,5}x = 30 \iff -\num{0,3}x = -20 \iff x = \frac{20}{\num{0,3}} = \frac{200}{3} \approx \num{66,67}.
+\]
+\[
+y = 100 - \frac{200}{3} = \frac{100}{3} \approx \num{33,33}.
+\]
+
+\noindent\textbf{5. Vérification / Cohérence.}
+$x>0, y>0$. Volume acide : $\num{0,2}\times\frac{200}{3} + \num{0,5}\times\frac{100}{3} = \frac{40}{3} + \frac{50}{3} = \frac{90}{3} = 30$ L. Correct.
+
+\noindent\textbf{Conclusion :} Il faut prélever \textbf{$\frac{200}{3}$ L (environ $\num{66,7}$ L) de la solution à $\num{20}\%$} et \textbf{$\frac{100}{3}$ L (environ $\num{33,3}$ L) de la solution à $\num{50}\%$}.
+\end{exoresolu}
+
+\begin{methode}[Modélisation et résolution d'un problème concret (Système 3×3)]
+\begin{enumerate}
+\item \textbf{Identifier 3 grandeurs inconnues} (ex: prix unitaire de 3 articles, courants dans 3 mailles, forces dans 3 câbles, concentrations de 3 composants).
+\item \textbf{Écrire 3 relations indépendantes} issues de l'énoncé (souvent : 1 équation de bilan global + 2 équations de bilans partiels ou lois physiques).
+\item \textbf{Vérifier l'indépendance} : les 3 équations ne doivent pas être des combinaisons linéaires les unes des autres.
+\item \textbf{Résoudre par Gauss} (matrice augmentée $\to$ échelon $\to$ remontée).
+\item \textbf{Contrôler la plausibilité technique} (valeurs positives, ordre de grandeur cohérent).
+\item \textbf{Formuler la réponse finale} en langage courant avec unités.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Problème électricité — Loi des mailles (3 mailles / 3 courants)]
+Dans un circuit électrique en courant continu, on relève les équations des mailles (loi de Kirchhoff) :
+\[
+\begin{cases}
+2i_1 + 3i_2 - i_3 = 10 & \text{(Maille 1, tension 10V)} \\
+-i_1 + 4i_2 + 2i_3 = 5 & \text{(Maille 2, tension 5V)} \\
+3i_1 - 2i_2 + 5i_3 = 12 & \text{(Maille 3, tension 12V)}
+\end{cases}
+\]
+Déterminer les courants $i_1, i_2, i_3$ (en Ampères).
+\tcblower
+\textbf{Solution détaillée.}
+
+\noindent\textbf{1. Matrice augmentée :}
+\[
+\left(\begin{array}{ccc|c}
+2 & 3 & -1 & 10 \\
+-1 & 4 & 2 & 5 \\
+3 & -2 & 5 & 12
+\end{array}\right)
+\]
+
+\noindent\textbf{2. Pivot colonne 1.} On préfère un pivot $1$ ou $-1$ en ligne 1. Permutons $L_1 \leftrightarrow L_2$ (puis multiplions par $-1$ pour simplifier) :
+$L_1 \leftarrow -L_2$ : $(1, -4, -2 | -5)$.
+$L_2 \leftarrow \text{ancien } L_1$ : $(2, 3, -1 | 10)$.
+$L_3$ inchangé : $(3, -2, 5 | 12)$.
+
+\[
+\left(\begin{array}{ccc|c}
+1 & -4 & -2 & -5 \\
+2 & 3 & -1 & 10 \\
+3 & -2 & 5 & 12
+\end{array}\right)
+\]
+
+\noindent\textbf{Annuler sous pivot 1 :}
+$L_2 \leftarrow L_2 - 2L_1$ : $(0, 11, 3 | 20)$.
+$L_3 \leftarrow L_3 - 3L_1$ : $(0, 10, 11 | 27)$.
+
+\[
+\left(\begin{array}{ccc|c}
+1 & -4 & -2 & -5 \\
+0 & 11 & 3 & 20 \\
+0 & 10 & 11 & 27
+\end{array}\right)
+\]
+
+\noindent\textbf{3. Pivot colonne 2 (ligne 2).} Pivot $11$. Annuler dessous :
+$L_3 \leftarrow 11 L_3 - 10 L_2$ (pour éviter fractions) :
+$11\times(0, 10, 11 | 27) - 10\times(0, 11, 3 | 20) = (0, 0, 121-30 | 297-200) = (0, 0, 91 | 97)$.
+
+\[
+\left(\begin{array}{ccc|c}
+1 & -4 & -2 & -5 \\
+0 & 11 & 3 & 20 \\
+0 & 0 & 91 & 97
+\end{array}\right)
+\]
+
+\noindent\textbf{4. Remontée.}
+Ligne 3 : $91 i_3 = 97 \Rightarrow i_3 = \frac{97}{91} \approx \num{1,066}$ A.
+Ligne 2 : $11 i_2 + 3 i_3 = 20 \Rightarrow 11 i_2 = 20 - \frac{291}{91} = \frac{1820-291}{91} = \frac{1529}{91} \Rightarrow i_2 = \frac{1529}{1001} = \frac{139}{91} \approx \num{1,527}$ A.
+Ligne 1 : $i_1 - 4 i_2 - 2 i_3 = -5 \Rightarrow i_1 = -5 + \frac{556}{91} + \frac{194}{91} = \frac{-455 + 750}{91} = \frac{295}{91} \approx \num{3,242}$ A.
+
+\noindent\textbf{5. Vérification rapide (Maille 1) :} $2(\frac{295}{91}) + 3(\frac{139}{91}) - \frac{97}{91} = \frac{590+417-97}{91} = \frac{910}{91} = 10$. \checkmark
+
+\noindent\textbf{Conclusion :} Les courants sont $i_1 = \frac{295}{91}$ A, $i_2 = \frac{139}{91}$ A, $i_3 = \frac{97}{91}$ A. Tous positifs, le sens supposé est correct.
+\end{exoresolu}
+
+\courssub{Synthèse et compléments : Méthode de Cramer et pièges à éviter}
+
+\begin{methode}[Résolution par les formules de Cramer (Système 2×2 ou 3×3 — Cas $\Delta \neq 0$)]
+\begin{enumerate}
+\item \textbf{Calculer le déterminant principal $\Delta$} de la matrice des coefficients.
+      \begin{itemize}
+      \item 2×2 : $\Delta = a_1b_2 - a_2b_1$.
+      \item 3×3 (Règle de Sarrus) : $\Delta = a_1b_2c_3 + b_1c_2a_3 + c_1a_2b_3 - c_1b_2a_3 - b_1a_2c_3 - a_1c_2b_3$.
+      \end{itemize}
+\item \textbf{Si $\Delta = 0$ :} \textbf{Arrêter.} Cramer ne s'applique pas (utiliser Gauss pour discuter).
+\item \textbf{Si $\Delta \neq 0$ :} Calculer $\Delta_x, \Delta_y, (\Delta_z)$ en remplaçant la colonne de l'inconnue par la colonne des seconds membres.
+\item \textbf{Appliquer les formules :} $x = \frac{\Delta_x}{\Delta},\ y = \frac{\Delta_y}{\Delta},\ (z = \frac{\Delta_z}{\Delta})$.
+\item \textbf{Simplifier les fractions} et \textbf{vérifier} dans une équation initiale.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Application de Cramer — Système 3×3 à solution entière (Matrice de Vandermonde)]
+Résoudre par la méthode de Cramer :
+\[
+(S) : \begin{cases}
+x + y + z = 6 \\
+x + 2y + 3z = 14 \\
+x + 4y + 9z = 36
+\end{cases}
+\]
+\tcblower
+\textbf{Solution détaillée.}
+
+\noindent\textbf{1. Déterminant principal $\Delta$ (Matrice de Vandermonde) :}
+\[
+\Delta = \begin{vmatrix}
+1 & 1 & 1 \\
+1 & 2 & 3 \\
+1 & 4 & 9
+\end{vmatrix}
+= (1)(2)(9) + (1)(3)(1) + (1)(1)(4) - (1)(2)(1) - (1)(1)(9) - (1)(3)(4)
+\]
+\[
+= 18 + 3 + 4 - 2 - 9 - 12 = 25 - 23 = 2.
+\]
+$\Delta = 2 \neq 0$ \textbf{$\Rightarrow$ Solution unique.}
+
+\noindent\textbf{2. Déterminants partiels.}
+$\Delta_x$ (Colonne 1 $\leftarrow (6,14,36)$) :
+\[
+\Delta_x = \begin{vmatrix}
+6 & 1 & 1 \\
+14 & 2 & 3 \\
+36 & 4 & 9
+\end{vmatrix}
+= 6(18) + 1(3)(36) + 1(14)(4) - 1(2)(36) - 1(14)(9) - 6(3)(4)
+\]
+\[
+= 108 + 108 + 56 - 72 - 126 - 72 = 272 - 270 = 2.
+\]
+
+$\Delta_y$ (Colonne 2 $\leftarrow (6,14,36)$) :
+\[
+\Delta_y = \begin{vmatrix}
+1 & 6 & 1 \\
+1 & 14 & 3 \\
+1 & 36 & 9
+\end{vmatrix}
+= 1(126) + 6(3)(1) + 1(1)(36) - 1(14)(1) - 6(1)(9) - 1(3)(36)
+\]
+\[
+= 126 + 18 + 36 - 14 - 54 - 108 = 180 - 176 = 4.
+\]
+
+$\Delta_z$ (Colonne 3 $\leftarrow (6,14,36)$) :
+\[
+\Delta_z = \begin{vmatrix}
+1 & 1 & 6 \\
+1 & 2 & 14 \\
+1 & 4 & 36
+\end{vmatrix}
+= 1(72) + 1(14)(1) + 6(1)(4) - 6(2)(1) - 1(1)(36) - 1(14)(4)
+\]
+\[
+= 72 + 14 + 24 - 12 - 36 - 56 = 110 - 104 = 6.
+\]
+
+\noindent\textbf{3. Solutions :}
+\[
+x = \frac{\Delta_x}{\Delta} = \frac{2}{2} = 1, \quad
+y = \frac{\Delta_y}{\Delta} = \frac{4}{2} = 2, \quad
+z = \frac{\Delta_z}{\Delta} = \frac{6}{2} = 3.
+\]
+
+\noindent\textbf{4. Vérification :}
+Eq 1 : $1+2+3=6$ \checkmark
+Eq 2 : $1+4+9=14$ \checkmark
+Eq 3 : $1+8+27=36$ \checkmark
+
+\noindent\textbf{Conclusion :} Le système admet l'unique solution $S = \{(1;2;3)\}$.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Oublier la conclusion finale.} Même si les calculs sont justes, l'absence de phrase « L'ensemble solution est $S = \dots$ » ou « Le système est impossible » fait perdre 1 à 2 points (critère « Rédiger et justifier »).
+\item \textbf{Ne pas vérifier $\Delta \neq 0$ avant Cramer.} Appliquer les formules de Cramer sans calculer $\Delta$ (ou en trouvant $\Delta=0$) est une erreur grave de condition d'application. $\rightarrow$ 0 point à la question.
+\item \textbf{Erreurs de signes dans le pivot de Gauss.} Oublier de changer les signes lors de $L_i \leftarrow L_i - k L_j$ (surtout avec $k$ négatif). \textbf{Astuce :} Écrire l'opération explicitement ($L_2 \leftarrow L_2 - 2L_1$) et calculer terme à terme.
+\item \textbf{Confondre « Infinité de solutions » et « Solution paramétrée ».} Écrire « $x = 2, y = 3-t, z = t$ » sans dire « $t \in \mathbb{R}$ » ou sans écrire $S = \{(2; 3-t; t), t\in\mathbb{R}\}$. L'ensemble solution doit être un ensemble.
+\item \textbf{Incohérence unités / réalité dans la modélisation.} Trouver $x = -5$ litres ou $i = -2$ A sans commenter (sens opposé au sens arbitraire choisi) ou sans vérifier la positivité des quantités physiques (masse, volume, prix). Toujours ajouter : « Comme $x>0$, le résultat est physiquement acceptable. »
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : nombre de solutions]
+On considère le système d'équations linéaires à deux inconnues :
+\[
+(S) : \begin{cases}
+2x + 3y = 5 \\
+4x + 6y = 10
+\end{cases}
+\]
+Parmi les affirmations suivantes, laquelle est exacte ?
+\begin{enumerate}
+\item Le système n'admet aucune solution.
+\item Le système admet une unique solution.
+\item Le système admet une infinité de solutions.
+\item Le système admet exactement deux solutions.
+\end{enumerate}
+\emph{Justifiez votre choix en calculant le déterminant du système.}
+\end{exercice}
+
+\begin{exercice}[Vrai ou Faux ? Justifiez]
+Déterminez si les affirmations suivantes sont vraies ou fausses. Dans les deux cas, justifiez votre réponse par un calcul ou un contre-exemple.
+\begin{enumerate}
+\item Si le déterminant d'un système $2 \times 2$ est nul, alors le système n'a pas de solution.
+\item La méthode de substitution consiste à exprimer une inconnue en fonction de l'autre à partir d'une équation, puis à substituer cette expression dans l'autre équation.
+\item Pour résoudre un système $3 \times 3$ par la méthode du pivot de Gauss, on doit obligatoirement échanger deux équations si le premier coefficient de la première équation est nul.
+\item Un système d'équations linéaires dont les droites associées sont confondues admet une infinité de solutions.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et vocabulaire]
+Complétez les phrases suivantes en utilisant le vocabulaire précis du cours.
+\begin{enumerate}
+\item On appelle \textbf{\dots} d'un système d'équations tout couple (ou triplet) de nombres qui vérifie \textbf{\dots} les équations du système.
+\item Le \textbf{\dots} d'un système $2 \times 2$ de la forme $\begin{cases} ax+by=c \\ dx+ey=f \end{cases}$ est le nombre $\Delta = \dots$.
+\item Si $\Delta \neq 0$, le système admet \textbf{\dots} solution(s) ; on dit que le système est \textbf{\dots}.
+\item La méthode du \textbf{\dots} de Gauss pour un système $3 \times 3$ vise à transformer le système en un système \textbf{\dots} (ou échelonné) pour remonter ensuite les valeurs des inconnues par \textbf{\dots}.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Effectuez les calculs suivants sans rédiger de démonstration complète.
+\begin{enumerate}
+\item Calculez le déterminant $\Delta$ du système : $\begin{cases} 5x - 2y = 8 \\ 3x + 4y = 1 \end{cases}$.
+\item Résolvez le système suivant par la méthode de votre choix : $\begin{cases} x + y = 7 \\ 2x - y = 2 \end{cases}$.
+\item Vérifiez si le triplet $(x;y;z) = (2; -1; 3)$ est solution du système :
+$\begin{cases} x - 2y + z = 7 \\ 2x + y - z = 0 \\ -x + 3y + 2z = 1 \end{cases}$.
+\item Mettez le système suivant sous forme échelonnée (triangulaire) en ne faisant que la première étape du pivot de Gauss (éliminer $x$ des 2\up{ème} et 3\up{ème} équations) :
+$\begin{cases} x + y + z = 6 \\ 2x - y + 3z = 9 \\ -x + 2y - z = -2 \end{cases}$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Résolution algébrique et vérification graphique (2×2)]
+Résolvez le système suivant successivement par la méthode de la \textbf{substitution} puis par la méthode de la \textbf{combinaison linéaire} :
+\[
+(S_1) : \begin{cases}
+3x + 2y = 12 \\
+x - y = -1
+\end{cases}
+\]
+\begin{enumerate}
+\item Détaillez les étapes des deux méthodes et vérifiez que vous obtenez le même couple solution $(x_0; y_0)$.
+\item Dans un repère orthonormé, tracez les droites $(d_1)$ et $(d_2)$ d'équations respectives $3x+2y=12$ et $x-y=-1$ (utilisez les intercepts avec les axes). Repérez le point d'intersection et confirmez graphiquement la solution trouvée.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Discussion graphique et algébrique de systèmes 2×2]
+Pour chacun des trois systèmes ci-dessous :
+\begin{enumerate}
+\item Calculez le déterminant $\Delta$.
+\item Déduisez le nombre de solutions (0, 1 ou $\infty$).
+\item Précisez la position relative des deux droites associées (sécantes, parallèles distinctes, confondues).
+\item Si le système admet une solution unique, déterminez-la.
+\end{enumerate}
+\[
+\textbf{(A)}\ \begin{cases} 2x + y = 4 \\ x - 3y = 5 \end{cases}
+\qquad
+\textbf{(B)}\ \begin{cases} x + 2y = 3 \\ 2x + 4y = 7 \end{cases}
+\qquad
+\textbf{(C)}\ \begin{cases} 4x - 2y = 6 \\ -2x + y = -3 \end{cases}
+\]
+\end{exercice}
+
+\begin{exercice}[Méthode du pivot de Gauss (3×3)]
+Résolvez le système suivant par la méthode du pivot de Gauss. Présentez les opérations sur les lignes de manière claire (ex: $L_2 \leftarrow L_2 - 2L_1$).
+\[
+(S_2) : \begin{cases}
+x + 2y - z = 3 \\
+2x - y + z = 0 \\
+x + y + z = 6
+\end{cases}
+\]
+\begin{enumerate}
+\item Écrivez le système augmenté (matrice augmentée) si vous le souhaitez, ou travaillez sur les équations.
+\item Transformez le système en système échelonné (triangulaire).
+\item Effectuez la remontée pour trouver le triplet solution $(x;y;z)$.
+\item Vérifiez que ce triplet satisfait bien les trois équations initiales.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Modélisation : Mélange d'alliages en atelier]
+Un soudeur doit préparer $100\,\text{kg}$ d'un alliage d'aluminium titré à $18\,\%$ de cuivre. Il dispose en stock de deux alliages :
+\begin{itemize}
+\item Alliage A : titré à $10\,\%$ de cuivre.
+\item Alliage B : titré à $25\,\%$ de cuivre.
+\end{itemize}
+\begin{enumerate}
+\item Soit $x$ la masse (en kg) de l'alliage A et $y$ la masse (en kg) de l'alliage B utilisés. Écrivez le système d'équations modélisant la situation (masse totale et masse de cuivre).
+\item Résolvez ce système. Combien de kg de chaque alliage le soudeur doit-il mélanger ?
+\item Vérifiez que la masse de cuivre dans le mélange final est bien de $18\,\text{kg}$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Billetterie d'un théâtre — Système 3×3]
+Un théâtre propose des places en trois catégories :
+\begin{itemize}
+\item Catégorie 1 : $1\,500\,\text{FCFA}$
+\item Catégorie 2 : $1\,000\,\text{FCFA}$
+\item Catégorie 3 : $500\,\text{FCFA}$
+\end{itemize}
+Pour une représentation, $200$ places ont été vendues, générant une recette totale de $165\,000\,\text{FCFA}$. On sait qu'il y a deux fois plus de places vendues en catégorie 3 qu'en catégorie 1.
+\begin{enumerate}
+\item Soient $x$, $y$, $z$ les nombres de places vendues respectivement en catégorie 1, 2 et 3. Traduisez les données du problème en un système de trois équations à trois inconnues.
+\item Résolvez ce système par la méthode du pivot de Gauss (ou par substitution successive).
+\item Donnez le nombre de places vendues pour chaque catégorie. Vérifiez la cohérence des résultats (total places, total recette, relation catégorie 3 / catégorie 1).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Discussion d'un système 2×2 à paramètre]
+Soit $m$ un nombre réel. On considère le système d'équations suivant, où $x$ et $y$ sont les inconnues :
+\[
+(S_m) : \begin{cases}
+mx + y = 1 \\
+x + my = 1
+\end{cases}
+\]
+\begin{enumerate}
+\item Calculez le déterminant $\Delta(m)$ de ce système en fonction de $m$.
+\item Discutez le nombre de solutions du système $(S_m)$ selon les valeurs de $m$. Distinguez les cas :
+\begin{itemize}
+\item $\Delta(m) \neq 0$ : déterminez la solution unique $(x;y)$ en fonction de $m$ (utilisez les formules de Cramer ou la combinaison).
+\item $\Delta(m) = 0$ : pour chaque valeur de $m$ annulant le déterminant, étudiez la compatibilité du système (solution unique, aucune, ou infinité) et explicitez l'ensemble des solutions le cas échéant.
+\end{itemize}
+\item Résumez les résultats dans un tableau de synthèse : Valeur de $m$ | Nombre de solutions | Solution(s).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Énigme numérique — Nombre à trois chiffres]
+On cherche un nombre entier naturel $N$ à trois chiffres (chiffre des centaines non nul) vérifiant les trois propriétés suivantes :
+\begin{enumerate}
+\item La somme de ses trois chiffres est égale à $12$.
+\item Le chiffre des dizaines est égal à la somme du chiffre des centaines et du chiffre des unités.
+\item Si on échange le chiffre des centaines et le chiffre des unités, le nouveau nombre obtenu est inférieur de $99$ au nombre initial.
+\end{enumerate}
+\begin{enumerate}
+\item Soient $a$ (centaines), $b$ (dizaines), $c$ (unités) les chiffres de $N$. Écrivez les trois équations reliant $a$, $b$, $c$ traduites des énoncés 1, 2 et 3.
+\item Résolvez le système ainsi obtenu.
+\item Déduisez le nombre $N$ cherché. Vérifiez qu'il satisfait bien les trois conditions.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{corrige}[Exercice 1 — QCM : nombre de solutions]
+Le déterminant du système est :
+\[
+\Delta = \begin{vmatrix} 2 & 3 \\ 4 & 6 \end{vmatrix} = 2\times 6 - 3\times 4 = 12 - 12 = 0.
+\]
+Comme $\Delta = 0$, le système n'admet pas une solution unique : il a soit aucune solution, soit une infinité. Or la deuxième équation est exactement le double de la première : $2(2x+3y)=4x+6y$ et $2\times 5 = 10$. Les deux équations sont donc \emph{équivalentes} (droites confondues).
+
+\textbf{La réponse exacte est l'affirmation 3 : le système admet une infinité de solutions.}
+
+L'ensemble des solutions est $\left\{\left(x\,;\,\dfrac{5-2x}{3}\right),\ x\in\mathbb{R}\right\}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou Faux ? Justifiez]
+\begin{enumerate}
+\item \textbf{FAUX.} Si $\Delta = 0$, le système peut avoir \emph{aucune} solution \emph{ou une infinité}. Contre-exemple : $\begin{cases} x+y=1 \\ 2x+2y=2 \end{cases}$ a pour déterminant $\Delta = 2-2=0$, et pourtant il admet une infinité de solutions (les deux équations sont équivalentes).
+\item \textbf{VRAI.} C'est la définition même de la méthode de \cle{substitution} : on isole une inconnue dans une équation (par exemple $x$ en fonction de $y$), puis on \emph{substitue} (remplace) cette expression dans l'autre équation pour obtenir une équation à une seule inconnue.
+\item \textbf{VRAI.} Dans la méthode du \cle{pivot de Gauss}, le pivot (premier coefficient de la première ligne) doit être \textbf{non nul} pour éliminer $x$ des autres lignes. S'il est nul, on \emph{doit} échanger la première équation avec une équation dont le coefficient de $x$ est non nul (si aucune ne convient, $x$ n'apparaît nulle part et le système est de nature différente).
+\item \textbf{VRAI.} Si les droites sont confondues, \emph{tous} leurs points (une infinité) sont communs aux deux droites, donc solutions du système. C'est le cas $\Delta = 0$ avec équations équivalentes.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions et vocabulaire]
+\begin{enumerate}
+\item On appelle \textbf{solution} d'un système d'équations tout couple (ou triplet) de nombres qui vérifie \textbf{simultanément} (toutes) les équations du système.
+\item Le \textbf{déterminant} d'un système $2\times 2$ de la forme $\begin{cases} ax+by=c \\ dx+ey=f \end{cases}$ est le nombre $\Delta = ae - bd$.
+\item Si $\Delta \neq 0$, le système admet \textbf{une unique} solution ; on dit que le système est \textbf{de Cramer} (ou \emph{régulier}).
+\item La méthode du \textbf{pivot} de Gauss pour un système $3\times 3$ vise à transformer le système en un système \textbf{triangulaire} (ou échelonné) pour remonter ensuite les valeurs des inconnues par \textbf{substitutions successives} (remontée).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item $\Delta = 5\times 4 - (-2)\times 3 = 20 + 6 = \boxed{26}$.
+\item Par combinaison, on additionne les deux équations : $(x+y)+(2x-y) = 7+2$, soit $3x = 9$, d'où $x = 3$. Puis $y = 7 - x = 4$. Solution : $(3\,;\,4)$. Vérification : $2\times 3 - 4 = 2$ \checkmark.
+\item On remplace $(x;y;z) = (2;-1;3)$ dans chaque équation :
+\begin{align*}
+x - 2y + z &= 2 - 2(-1) + 3 = 2+2+3 = 7 \ \checkmark \\
+2x + y - z &= 4 + (-1) - 3 = 0 \ \checkmark \\
+-x + 3y + 2z &= -2 + 3(-1) + 6 = -2-3+6 = 1 \ \checkmark
+\end{align*}
+Le triplet $(2\,;\,-1\,;\,3)$ \textbf{est solution} du système.
+\item On garde $L_1$ et on élimine $x$ :
+\[
+L_2 \leftarrow L_2 - 2L_1 : \quad (2x-2x) + (-y-2y) + (3z-2z) = 9 - 12 \ \Rightarrow\ -3y + z = -3
+\]
+\[
+L_3 \leftarrow L_3 + L_1 : \quad (-x+x) + (2y+y) + (-z+z) = -2 + 6 \ \Rightarrow\ 3y = 4
+\]
+Système après la première étape :
+\[
+\begin{cases} x + y + z = 6 \\ -3y + z = -3 \\ 3y = 4 \end{cases}
+\]
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je m'entraîne}
+
+\begin{corrige}[Exercice 5 — Résolution algébrique et vérification graphique (2×2)]
+\begin{enumerate}
+\item \textbf{Méthode de substitution.} De la deuxième équation : $x = y - 1$. On substitue dans la première :
+\[
+3(y-1) + 2y = 12 \iff 3y - 3 + 2y = 12 \iff 5y = 15 \iff y = 3.
+\]
+Alors $x = 3 - 1 = 2$. Solution : $(2\,;\,3)$.
+
+\textbf{Méthode de combinaison linéaire.} On effectue $L_1 + 2L_2$ pour éliminer $y$ :
+\[
+(3x + 2y) + 2(x - y) = 12 + 2(-1) \iff 5x = 10 \iff x = 2.
+\]
+Puis, de $x - y = -1$ : $y = x + 1 = 3$. Solution : $(2\,;\,3)$.
+
+Les deux méthodes donnent bien le \textbf{même couple solution $(x_0\,;\,y_0) = (2\,;\,3)$}.
+
+\item \textbf{Tracé.} Pour $(d_1) : 3x+2y=12$ : si $x=0$, $y=6$ ; si $y=0$, $x=4$. Pour $(d_2) : x-y=-1$ : si $x=0$, $y=1$ ; si $y=0$, $x=-1$.
+\end{enumerate}
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.75]
+\draw[->,popmuted] (-2,0) -- (5.5,0) node[right]{$x$};
+\draw[->,popmuted] (0,-1.5) -- (0,7) node[above]{$y$};
+\foreach \i in {-1,1,2,3,4,5} \draw[popmuted] (\i,0.08) -- (\i,-0.08) node[below]{\scriptsize $\i$};
+\foreach \j in {1,...,6} \draw[popmuted] (0.08,\j) -- (-0.08,\j) node[left]{\scriptsize $\j$};
+\draw[popblue,thick,domain=-1.2:4.6] plot (\x,{6-1.5*\x}) node[above left]{$d_1$};
+\draw[poporange,thick,domain=-2:5] plot (\x,{\x+1}) node[below right]{$d_2$};
+\fill[poppink] (2,3) circle (2.5pt) node[above right,popdark]{\scriptsize $(2\,;\,3)$};
+\draw[popline,dashed] (2,0) -- (2,3) -- (0,3);
+\end{tikzpicture}
+\end{center}
+\legende{Les droites $(d_1)$ et $(d_2)$ se coupent au point $(2\,;\,3)$, ce qui confirme la solution.}
+\end{popfigure}
+Le point d'intersection lu graphiquement est bien $(2\,;\,3)$ : la solution algébrique est confirmée.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Discussion graphique et algébrique de systèmes 2×2]
+\textbf{Système (A)} : $\begin{cases} 2x + y = 4 \\ x - 3y = 5 \end{cases}$
+\begin{enumerate}
+\item $\Delta = 2\times(-3) - 1\times 1 = -6 - 1 = -7$.
+\item $\Delta \neq 0$ : \textbf{une unique solution}.
+\item Les deux droites sont \textbf{sécantes}.
+\item De la première équation : $y = 4 - 2x$. On substitue : $x - 3(4-2x) = 5 \iff x - 12 + 6x = 5 \iff 7x = 17 \iff x = \dfrac{17}{7}$. Alors $y = 4 - \dfrac{34}{7} = \dfrac{28-34}{7} = -\dfrac{6}{7}$. Solution : $\left(\dfrac{17}{7}\,;\,-\dfrac{6}{7}\right)$. Vérification : $2\times\dfrac{17}{7} - \dfrac{6}{7} = \dfrac{28}{7} = 4$ \checkmark.
+\end{enumerate}
+
+\textbf{Système (B)} : $\begin{cases} x + 2y = 3 \\ 2x + 4y = 7 \end{cases}$
+\begin{enumerate}
+\item $\Delta = 1\times 4 - 2\times 2 = 4 - 4 = 0$.
+\item En multipliant la première équation par $2$ : $2x + 4y = 6$, ce qui \emph{contredit} $2x+4y=7$. Donc \textbf{aucune solution}.
+\item Les deux droites sont \textbf{parallèles distinctes} (même direction, mais pas confondues car $\dfrac{1}{2}=\dfrac{2}{4}\neq\dfrac{3}{7}$).
+\end{enumerate}
+
+\textbf{Système (C)} : $\begin{cases} 4x - 2y = 6 \\ -2x + y = -3 \end{cases}$
+\begin{enumerate}
+\item $\Delta = 4\times 1 - (-2)\times(-2) = 4 - 4 = 0$.
+\item En multipliant la deuxième équation par $-2$ : $4x - 2y = 6$, identique à la première. Les équations sont équivalentes : \textbf{infinité de solutions}.
+\item Les deux droites sont \textbf{confondues}. L'ensemble des solutions est $\{(x\,;\,2x-3),\ x\in\mathbb{R}\}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Méthode du pivot de Gauss (3×3)]
+\textbf{Étape 1 : élimination de $x$ dans $L_2$ et $L_3$} (pivot : $1$, coefficient de $x$ dans $L_1$).
+\[
+L_2 \leftarrow L_2 - 2L_1 : \quad -5y + 3z = -6 \qquad
+L_3 \leftarrow L_3 - L_1 : \quad -y + 2z = 3
+\]
+Le système devient :
+\[
+\begin{cases} x + 2y - z = 3 \\ -5y + 3z = -6 \\ -y + 2z = 3 \end{cases}
+\]
+\textbf{Étape 2 : élimination de $y$ dans $L_3$.} On effectue $L_3 \leftarrow 5L_3 - L_2$ :
+\[
+5(-y + 2z) - (-5y + 3z) = 5\times 3 - (-6) \iff -5y + 10z + 5y - 3z = 15 + 6 \iff 7z = 21.
+\]
+\textbf{Système triangulaire obtenu :}
+\[
+\begin{cases} x + 2y - z = 3 \\ -5y + 3z = -6 \\ 7z = 21 \end{cases}
+\]
+\textbf{Étape 3 : remontée.}
+\[
+z = \frac{21}{7} = 3 \ ;\quad -5y + 9 = -6 \iff -5y = -15 \iff y = 3 \ ;\quad x + 6 - 3 = 3 \iff x = 0.
+\]
+\textbf{Solution : $(x\,;\,y\,;\,z) = (0\,;\,3\,;\,3)$.}
+
+\textbf{Vérification :} $0 + 2(3) - 3 = 3$ \checkmark ; $2(0) - 3 + 3 = 0$ \checkmark ; $0 + 3 + 3 = 6$ \checkmark.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Modélisation : Mélange d'alliages en atelier]
+\begin{enumerate}
+\item \textbf{Masse totale :} $x + y = 100$. \textbf{Masse de cuivre :} $0{,}10x + 0{,}25y = 0{,}18\times 100 = 18$. D'où le système :
+\[
+\begin{cases} x + y = 100 \\ 0{,}10x + 0{,}25y = 18 \end{cases}
+\]
+\item De la première équation : $x = 100 - y$. On substitue :
+\[
+0{,}10(100 - y) + 0{,}25y = 18 \iff 10 - 0{,}10y + 0{,}25y = 18 \iff 0{,}15y = 8 \iff y = \frac{8}{0{,}15} = \frac{160}{3} \approx 53{,}33.
+\]
+Alors $x = 100 - \dfrac{160}{3} = \dfrac{140}{3} \approx 46{,}67$.
+
+Le soudeur doit mélanger $\dfrac{140}{3}\,\text{kg} \approx 46{,}67\,\text{kg}$ d'alliage A et $\dfrac{160}{3}\,\text{kg} \approx 53{,}33\,\text{kg}$ d'alliage B.
+\item Masse de cuivre : $0{,}10\times\dfrac{140}{3} + 0{,}25\times\dfrac{160}{3} = \dfrac{14}{3} + \dfrac{40}{3} = \dfrac{54}{3} = 18\,\text{kg}$ \checkmark. Le mélange est bien titré à $18\,\%$.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{corrige}[Exercice 9 — Billetterie d'un théâtre — Système 3×3]
+\begin{enumerate}
+\item Traduction des données :
+\[
+\begin{cases}
+x + y + z = 200 & \text{(total des places)} \\
+1500x + 1000y + 500z = 165000 & \text{(recette totale)} \\
+z = 2x & \text{(deux fois plus de catégorie 3 que de catégorie 1)}
+\end{cases}
+\]
+En simplifiant la deuxième équation par $500$ : $3x + 2y + z = 330$.
+\item On substitue $z = 2x$ dans les deux premières équations :
+\[
+\begin{cases} 3x + y = 200 \\ 5x + 2y = 330 \end{cases}
+\]
+De la première : $y = 200 - 3x$. On substitue : $5x + 2(200 - 3x) = 330 \iff 5x + 400 - 6x = 330 \iff -x = -70 \iff x = 70$. Alors $y = 200 - 210 = -10$ et $z = 140$.
+\item La solution algébrique est $(x\,;\,y\,;\,z) = (70\,;\,-10\,;\,140)$. Or $y = -10$ est \textbf{négatif}, ce qui est impossible pour un nombre de places vendues. Les vérifications formelles passent ($70-10+140=200$ ; $3(70)+2(-10)+140=330$ ; $140=2\times70$), mais la solution n'a \textbf{pas de sens concret}.
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} mise en équations correcte (1,5 pt) ; résolution avec étapes visibles (2 pts) ; vérification des trois conditions (1 pt) ; conclusion critique sur la cohérence (0,5 pt).
+\end{corrige}
+
+\begin{attention}[Point de vigilance — cohérence des données (Exercice 9)]
+Au Probatoire, une solution négative pour une quantité concrète (places, masses, prix) doit vous alerter : il faut \emph{vérifier la cohérence} et le signaler dans la conclusion. Ici, les données de l'énoncé sont incompatibles avec une situation réelle : avec $200$ places et $z=2x$, la recette minimale cohérente (pour $y=0$) serait atteinte pour $x=\dfrac{200}{3}$, $z=\dfrac{400}{3}$, soit une recette de $\dfrac{500000}{3} \approx 166\,667\,\text{FCFA} > 165\,000\,\text{FCFA}$. Avec une recette de $175\,000\,\text{FCFA}$, on obtiendrait la solution réaliste $(50\,;\,50\,;\,100)$.
+\end{attention}
+
+\begin{corrige}[Exercice 10 — Discussion d'un système 2×2 à paramètre]
+\begin{enumerate}
+\item $\Delta(m) = m\times m - 1\times 1 = m^2 - 1 = (m-1)(m+1)$.
+\item \textbf{Cas 1 : $\Delta(m) \neq 0$, c'est-à-dire $m \neq 1$ et $m \neq -1$.} Le système admet une unique solution. Par les formules de Cramer :
+\[
+x = \frac{\begin{vmatrix} 1 & 1 \\ 1 & m \end{vmatrix}}{\Delta(m)} = \frac{m-1}{m^2-1} = \frac{m-1}{(m-1)(m+1)} = \frac{1}{m+1},
+\qquad
+y = \frac{\begin{vmatrix} m & 1 \\ 1 & 1 \end{vmatrix}}{\Delta(m)} = \frac{m-1}{m^2-1} = \frac{1}{m+1}.
+\]
+Solution unique : $\left(\dfrac{1}{m+1}\,;\,\dfrac{1}{m+1}\right)$.
+
+\textbf{Cas 2 : $m = 1$.} Le système devient $\begin{cases} x + y = 1 \\ x + y = 1 \end{cases}$ : les deux équations sont identiques (droites confondues). \textbf{Infinité de solutions} : $\{(x\,;\,1-x),\ x\in\mathbb{R}\}$.
+
+\textbf{Cas 3 : $m = -1$.} Le système devient $\begin{cases} -x + y = 1 \\ x - y = 1 \end{cases}$, c'est-à-dire $y - x = 1$ et $y - x = -1$ : contradictoire. \textbf{Aucune solution} (droites parallèles distinctes).
+\item Tableau de synthèse :
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|c|X|}\hline
+\rowcolor{popblueL} Valeur de $m$ & Nombre de solutions & Solution(s) \\ \hline
+$m \neq 1$ et $m \neq -1$ & $1$ & $\left(\dfrac{1}{m+1}\,;\,\dfrac{1}{m+1}\right)$ \\ \hline
+$m = 1$ & infinité & $(x\,;\,1-x)$, $x\in\mathbb{R}$ \\ \hline
+$m = -1$ & $0$ & aucune \\ \hline
+\end{tabularx}
+\end{center}
+\end{enumerate}
+\textbf{Barème indicatif (sur 6 pts) :} déterminant factorisé (1 pt) ; cas général avec solution en fonction de $m$ (2 pts) ; cas $m=1$ justifié (1 pt) ; cas $m=-1$ justifié (1 pt) ; tableau de synthèse (1 pt).
+
+\textbf{Points de vigilance :} citer la condition $\Delta \neq 0$ avant d'appliquer Cramer ; simplifier $\dfrac{m-1}{(m-1)(m+1)}$ uniquement parce que $m \neq 1$ ; traiter \emph{séparément} chaque valeur annulant le déterminant.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Énigme numérique — Nombre à trois chiffres]
+\begin{enumerate}
+\item Traduction des trois propriétés, avec $N = 100a + 10b + c$ :
+\[
+\begin{cases}
+a + b + c = 12 & \text{(somme des chiffres)} \\
+b = a + c & \text{(dizaines = centaines + unités)} \\
+(100a + 10b + c) - (100c + 10b + a) = 99 & \text{(échange centaines/unités)}
+\end{cases}
+\]
+La troisième équation se simplifie : $99a - 99c = 99 \iff a - c = 1$.
+\item Résolution. En reportant $b = a + c$ dans la première équation :
+\[
+a + (a+c) + c = 12 \iff 2(a+c) = 12 \iff a + c = 6.
+\]
+On résout alors $\begin{cases} a + c = 6 \\ a - c = 1 \end{cases}$ : en additionnant, $2a = 7$, d'où $a = \dfrac{7}{2} = 3{,}5$, puis $c = 6 - 3{,}5 = 2{,}5$ et $b = 6$.
+\item Les valeurs obtenues $a = 3{,}5$ et $c = 2{,}5$ \textbf{ne sont pas des chiffres} (entiers entre $0$ et $9$, avec $a \neq 0$). Le système algébrique admet bien une solution unique $\left(\dfrac{7}{2}\,;\,6\,;\,\dfrac{5}{2}\right)$, mais \textbf{aucun nombre entier à trois chiffres} ne vérifie simultanément les trois conditions de l'énoncé : les données sont incompatibles avec la contrainte « chiffres entiers ».
+\end{enumerate}
+\textbf{Barème indicatif (sur 5 pts) :} écriture de $N = 100a+10b+c$ et des trois équations (2 pts) ; simplification $a-c=1$ (0,5 pt) ; résolution du système (1,5 pt) ; conclusion argumentée sur l'absence de solution entière (1 pt).
+\end{corrige}
+
+\begin{attention}[Point de vigilance — contrainte entière (Exercice 11)]
+En arithmétique, une solution algébrique non entière signifie que le problème concret n'a pas de solution : il faut le dire explicitement. Remarque : si la troisième condition était « inférieur de $198$ », on aurait $a - c = 2$, d'où $a = 4$, $b = 6$, $c = 2$ et $N = 462$ (vérification : $4+6+2=12$ ; $6=4+2$ ; $462-264=198$).
+\end{attention}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small\bfseries},
+  root concept/.append style={concept color=popdark, font=\normalsize\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=60, font=\footnotesize},
+  level 2/.append style={level distance=2.1cm, sibling angle=45, font=\scriptsize}]
+\node[root concept]{Systèmes d'équations linéaires}
+  child[concept color=popblue]{ node {Équation linéaire}
+    child { node {$ax+by=c$} }
+    child { node {Solution : couple $(x;y)$} }
+  }
+  child[concept color=poporange]{ node {Système $2\times 2$}
+    child { node {Substitution} }
+    child { node {Combinaison} }
+  }
+  child[concept color=popgreen]{ node {Interprétation graphique}
+    child { node {Intersection de droites} }
+    child { node {Unique, aucune, infinité} }
+  }
+  child[concept color=poppurple]{ node {Système $3\times 3$}
+    child { node {Pivot de Gauss} }
+    child { node {Remontée} }
+  }
+  child[concept color=poppink]{ node {Discussion}
+    child { node {$\dfrac{a}{a'}\neq\dfrac{b}{b'}$ : unique} }
+  }
+  child[concept color=popgold]{ node {Modélisation}
+    child { node {Mise en équations} }
+    child { node {Atelier, chantier, gestion} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : systèmes d'équations à deux ou trois inconnues.}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+  \item \cle{Équation linéaire} à deux inconnues : équation de la forme $ax+by=c$ avec $(a;b)\neq(0;0)$. Une solution est un \cle{couple} $(x;y)$ vérifiant l'égalité.
+  \item \cle{Système} $2\times 2$ : $\begin{cases} ax+by=c \\ a'x+b'y=c' \end{cases}$. Résoudre, c'est trouver tous les couples solutions \emph{communes} aux deux équations.
+  \item Système $3\times 3$ : trois équations linéaires à trois inconnues $x$, $y$, $z$ ; une solution est un \cle{triplet} $(x;y;z)$.
+\end{itemize}
+
+\textbf{Formules et résultats à connaître par cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Situation} & \textbf{Conclusion} \\ \hline
+$\dfrac{a}{a'}\neq\dfrac{b}{b'}$ & Une \cle{unique} solution (droites sécantes) \\ \hline
+$\dfrac{a}{a'}=\dfrac{b}{b'}\neq\dfrac{c}{c'}$ & \cle{Aucune} solution (droites parallèles distinctes) \\ \hline
+$\dfrac{a}{a'}=\dfrac{b}{b'}=\dfrac{c}{c'}$ & Une \cle{infinité} de solutions (droites confondues) \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthodes express}
+\begin{itemize}
+  \item \cle{Substitution} : on exprime une inconnue en fonction de l'autre dans une équation, puis on remplace dans l'autre équation.
+  \item \cle{Combinaison} (addition) : on multiplie les équations par des coefficients bien choisis pour éliminer une inconnue en additionnant membre à membre.
+  \item \cle{Pivot de Gauss} ($3\times 3$) : on élimine $x$ des équations (2) et (3), puis $y$ de l'équation (3) ; on obtient un système \emph{triangulaire} que l'on résout par \cle{remontée} (d'abord $z$, puis $y$, puis $x$).
+  \item \cle{Vérification} : toujours reporter la solution trouvée dans \emph{toutes} les équations du système.
+  \item \cle{Modélisation} : nommer les inconnues, traduire chaque donnée en équation, résoudre, puis conclure par une phrase dans le contexte (FCFA, kg, heures...).
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais reconnaître une équation linéaire à deux ou trois inconnues.
+  \item[$\square$] Je sais vérifier qu'un couple $(x;y)$ ou un triplet $(x;y;z)$ est solution d'un système.
+  \item[$\square$] Je maîtrise la méthode de \cle{substitution} pour un système $2\times 2$.
+  \item[$\square$] Je maîtrise la méthode de \cle{combinaison} pour un système $2\times 2$.
+  \item[$\square$] Je sais discuter le nombre de solutions avec les quotients $\dfrac{a}{a'}$, $\dfrac{b}{b'}$, $\dfrac{c}{c'}$.
+  \item[$\square$] Je sais interpréter graphiquement un système $2\times 2$ (droites sécantes, parallèles ou confondues).
+  \item[$\square$] Je sais appliquer le \cle{pivot de Gauss} pour triangulariser un système $3\times 3$.
+  \item[$\square$] Je sais effectuer la \cle{remontée} : calculer $z$, puis $y$, puis $x$.
+  \item[$\square$] Je pense à vérifier ma solution dans toutes les équations de départ.
+  \item[$\square$] Je sais mettre en équations un problème concret (prix, mélanges, effectifs, durées de travail).
+  \item[$\square$] Je rédige ma conclusion avec une phrase complète et les unités (FCFA, kg, h).
+  \item[$\square$] Je soigne la présentation : système aligné avec \emph{accolade}, étapes justifiées.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

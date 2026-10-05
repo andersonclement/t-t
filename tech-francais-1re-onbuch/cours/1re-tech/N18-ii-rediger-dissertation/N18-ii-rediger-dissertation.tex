@@ -1,0 +1,2050 @@
+% II : Rédiger une dissertation — Français 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N18-ii-rediger-dissertation.tex
+\newcommand{\DOCMATIERE}{Français}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Français – classe de Première technique}
+\newcommand{\DOCLECON}{N18}
+\newcommand{\DOCTITRE}{II : Rédiger une dissertation}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{II : Rédiger une dissertation}{Français}{1re Tech}{Français – classe de Première technique}{N18}{10 séances (fiche de progression harmonisée)}{Cette leçon outille l'élève de Première technique pour construire une dissertation complète : introduction, paragraphes avec citations, transitions et conclusion. Elle s'appuie sur la lecture méthodique du Lion et la Perle et sur les notions d'énonciation, de dénotation et de connotation pour affiner la qualité de l'écriture argumentative.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais identifier les marques de l'énonciation dans un texte argumentatif et les utiliser à bon escient
+\item À la fin de cette leçon, je sais distinguer la dénotation et la connotation d'un mot et exploiter cette distinction dans mon écriture
+\item À la fin de cette leçon, je sais rédiger une introduction de dissertation complète (amorce, présentation du sujet, problématique, annonce du plan) et l'améliorer
+\item À la fin de cette leçon, je sais rédiger un paragraphe argumentatif avec insertion correcte des citations
+\item À la fin de cette leçon, je sais rédiger des transitions assurant la cohérence entre les parties du devoir
+\item À la fin de cette leçon, je sais rédiger une conclusion (bilan, réponse à la problématique, ouverture) et l'améliorer
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item L'énonciation et la lecture méthodique n°2 du Lion et la Perle
+\item Rédaction et amélioration de l'introduction
+\item Dénotation et connotation : enrichir son écriture
+\item Rédaction du paragraphe : citations et transitions
+\item Rédaction et amélioration de la conclusion
+\item Lecture méthodique n°3 et production complète de la dissertation
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais identifier les marques de l'énonciation dans un texte argumentatif et les utiliser à bon escient
+\item À la fin de cette leçon, je sais distinguer la dénotation et la connotation d'un mot et exploiter cette distinction dans mon écriture
+\item À la fin de cette leçon, je sais rédiger une introduction de dissertation complète (amorce, présentation du sujet, problématique, annonce du plan) et l'améliorer
+\item À la fin de cette leçon, je sais rédiger un paragraphe argumentatif avec insertion correcte des citations
+\item À la fin de cette leçon, je sais rédiger des transitions assurant la cohérence entre les parties du devoir
+\item À la fin de cette leçon, je sais rédiger une conclusion (bilan, réponse à la problématique, ouverture) et l'améliorer
+\item À la fin de cette leçon, je sais analyser méthodiquement un extrait du Lion et la Perle et en tirer des arguments citables
+\item À la fin de cette leçon, je sais produire, rédiger et améliorer une dissertation entière en temps limité
+\item À la fin de cette leçon, je sais justifier ma démarche argumentative et appliquer ces compétences à des situations de communication de la vie courante
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Les étapes de l'analyse du sujet et de la construction du plan (début d'année)
+\item Les types de plans de dissertation (thématique, dialectique, analytique)
+\item Les connecteurs logiques et la cohérence textuelle (classe de Seconde)
+\item La lecture méthodique n°1 du Lion et la Perle (présentation de l'œuvre et de l'auteur)
+\item Les figures de style et leurs effets argumentatifs
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{L'énonciation et la lecture méthodique n°2 du \emph{Lion et la Perle}}
+
+\textbf{Situation d'accroche.} À l'occasion du concours d'entrée à l'ENAM, un candidat de Yaoundé échoue non pas par manque d'idées, mais parce que sa dissertation manque d'introduction claire, de transitions fluides et de conclusion aboutie. De même, lors des débats radiophoniques sur la place des traditions dans le Cameroun moderne — thème central du \emph{Lion et la Perle} de Wole Soyinka —, les intervenants les plus convaincants sont ceux qui structurent rigoureusement leur propos et qui assument leur parole : ils savent dire « je » quand il faut s'engager, « nous » quand il faut rassembler, et rester impersonnels quand il faut exposer des faits. Cette maîtrise de la prise de parole, on l'appelle l'\cle{énonciation}. C'est elle que nous allons étudier, d'abord comme notion de langue, ensuite comme outil de lecture dans la pièce de Soyinka, enfin comme compétence au service de la dissertation.
+
+\textbf{Problématique.} Comment le locuteur s'inscrit-il dans son discours, et comment le relevé des marques d'énonciation nous aide-t-il à comprendre les personnages du \emph{Lion et la Perle} et à mieux rédiger notre propre dissertation ?
+
+\courssub{Qu'est-ce que l'énonciation ?}
+
+\textbf{Intuition d'abord.} Comparez ces deux phrases : « Il pleut sur Douala » et « Je crois qu'il va pleuvoir sur Douala, sans doute devrions-nous rentrer ». Les deux parlent du même fait, mais la seconde fait entrer le locuteur en scène : il doute, il propose, il entraîne quelqu'un avec lui. Le message n'est plus seulement une information, c'est un \emph{acte} posé par quelqu'un, devant quelqu'un, à un moment donné. Cette différence, c'est précisément ce qu'étudie l'énonciation.
+
+\begin{definition}[L'énonciation]
+L'\cle{énonciation} est l'ensemble des procédés linguistiques par lesquels le \cle{locuteur} s'inscrit dans son discours : il y marque sa présence, son point de vue, son degré de certitude et sa relation avec son \cle{destinataire}. On distingue :
+\begin{itemize}
+\item l'\cle{énonciation subjective} : le locuteur s'engage personnellement (marques de « je », d'opinion, de sentiment) ;
+\item l'\cle{énonciation objective} : le locuteur s'efface derrière les faits (tournures impersonnelles, présent de vérité, troisième personne).
+\end{itemize}
+\end{definition}
+
+Toute énonciation repose sur trois pôles : celui qui parle, ce qui est dit, celui à qui l'on parle. C'est le \cle{triangle de l'énonciation}.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.2, every node/.style={font=\footnotesize}]
+% Coordonnées des sommets
+\coordinate (L) at (0,3.5);
+\coordinate (M) at (4.5,0);
+\coordinate (D) at (-4.5,0);
+% Triangle
+\draw[very thick,popblue] (L) -- node[midway, right=2mm, align=left] {message\\adressé} (M) 
+                          -- node[midway, below=1mm] {reçu par} (D) 
+                          -- node[midway, left=2mm, align=right] {produit par\\le locuteur} cycle;
+% Nœuds sommets
+\node[circle,fill=popblueL,draw=popblue,thick,minimum size=1.8cm,align=center] at (L) {\textbf{Locuteur}\\ \emph{je / nous}};
+\node[rectangle,rounded corners,fill=poporangeL,draw=poporange,thick,minimum width=3cm,align=center] at (M) {\textbf{Message}\\ \emph{ce qui est dit}};
+\node[rectangle,rounded corners,fill=popgreenL,draw=popgreen,thick,minimum width=3cm,align=center] at (D) {\textbf{Destinataire}\\ \emph{tu / vous}};
+% Centre : marques linguistiques
+\node[popdark,align=center, fill=popcream, rounded corners, draw=popline, inner sep=3pt] at (0,1.2) {Marques linguistiques :\\ temps verbaux, modalisateurs, pronoms, adverbes};
+\end{tikzpicture}
+\end{center}
+\legende{Le triangle de l'énonciation : le locuteur produit un message destiné à un destinataire ; les marques linguistiques (pronoms, temps, modalisateurs) relient les trois pôles.}
+\end{popfigure}
+
+\courssub{Les marques de l'énonciation}
+
+Pour repérer comment un locuteur s'inscrit dans son discours, on observe quatre grandes familles de marques.
+
+\begin{itemize}
+\item \textbf{Les pronoms personnels.} « Je » engage pleinement le locuteur ; « nous » l'associe à un groupe ou au destinataire (inclusif/exclusif) ; « on » peut être vague, universel ou rassembleur ; « il/elle » tient le propos à distance.
+\item \textbf{Les temps verbaux.} Le présent de vérité générale donne au propos une valeur objective (« La tradition unit le village ») ; le futur annonce un engagement ou une prédiction (« Je montrerai que... ») ; le passé composé rapporte une expérience vécue ; le conditionnel marque l'hypothèse ou l'atténuation.
+\item \textbf{Les modalisateurs.} Ce sont les mots qui expriment le degré de certitude ou l'attitude du locuteur : \emph{sans doute}, \emph{certes}, \emph{peut-être}, \emph{il faut}, \emph{il est évident que}, \emph{je pense que}, \emph{probablement}. Ils modulent la force illocutoire de l'énoncé.
+\item \textbf{Les adverbes d'opinion et les verbes de pensée/parole.} \emph{heureusement}, \emph{malheureusement}, \emph{croire}, \emph{sembler}, \emph{paraître}, \emph{affirmer}, \emph{nier} colorent le message du point de vue du locuteur.
+\end{itemize}
+
+\begin{popfigure}
+\begin{center}
+\begin{tabularx}{\linewidth}{|>{\columncolor{popblueL}}X|>{\columncolor{popgreenL}}X|}
+\hline
+\rowcolor{popblue}\textbf{\color{white}Énonciation subjective} & \textbf{\color{white}Énonciation objective} \\
+\hline
+$\bullet$ Pronoms « \emph{je} », « \emph{nous} » engagés & $\bullet$ Tournures impersonnelles : \emph{il est clair que}, \emph{il convient de} \\
+$\bullet$ Modalisateurs subjectifs : \emph{je crois}, \emph{sans doute}, \emph{il faut}, \emph{à mon avis} & $\bullet$ Présent de vérité générale / Présent gnomique \\
+$\bullet$ Adverbes d'opinion : \emph{certes}, \emph{hélas}, \emph{heureusement} & $\bullet$ Troisième personne, « \emph{on} » indéfini, passif \\
+$\bullet$ Futur d'annonce : « \emph{je montrerai} », « \emph{nous verrons} » & $\bullet$ Vocabulaire neutre, faits vérifiables, définitions \\
+$\bullet$ Ex. (Baroka) : « \emph{Je} suis le Lion d'Ilujinlé » & $\bullet$ Ex. : « La dot est une coutume ancienne du village » \\
+\hline
+\end{tabularx}
+\end{center}
+\legende{Tableau comparatif : marques d'énonciation subjective (gauche) et objective (droite), avec exemples inspirés du \emph{Lion et la Perle}.}
+\end{popfigure}
+
+\begin{methode}[Repérer et interpréter les marques d'énonciation dans un extrait]
+\begin{enumerate}
+\item \textbf{Souligner} dans le texte tous les pronoms personnels, les temps de verbe dominants, les modalisateurs et les adverbes d'opinion.
+\item \textbf{Classer} ces marques : qui parle ? à qui ? le locuteur s'engage-t-il (subjectif) ou s'efface-t-il (objectif) ?
+\item \textbf{Mesurer le degré de certitude} : affirmation ferme, doute, hypothèse, obligation, probabilité ?
+\item \textbf{Interpréter l'effet argumentatif} : autorité, séduction, ironie, hésitation, volonté de convaincre, de dominer ou de rassurer.
+\item \textbf{Conclure} en reliant l'effet observé au thème de l'œuvre ou à la thèse défendue par le personnage.
+\end{enumerate}
+\end{methode}
+
+\courssub{Énonciation et prise de position dans la dissertation}
+
+Dans une dissertation littéraire au Probatoire, le choix entre « je », « nous » et l'impersonnel n'est pas anodin : il obéit à des conventions codifiées que le correcteur attend de voir respectées.
+
+\begin{aretenir}[Les trois régimes d'énonciation dans la dissertation]
+\begin{itemize}
+\item « \textbf{Je} » : réservé aux moments où le candidat s'engage personnellement — annonce de la problématique (« Je me demanderai si... » ou, plus académique : « Nous nous demanderons si... »), prise de position finale et nuancée dans la conclusion (« En définitive, je retiendrai que... »).
+\item « \textbf{Nous} » : \textbf{recommandé} dans l'annonce du plan et les transitions, car il associe le lecteur (le correcteur) à la démarche intellectuelle (« Nous verrons d'abord que... », « Nous analyserons ensuite... »).
+\item L'\textbf{impersonnel} : \textbf{privilégié} dans le développement pour exposer les arguments, analyser les exemples et citer le texte (« Il apparaît que... », « Cet extrait montre que... », « L'auteur suggère que... »).
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Erreurs fréquentes au Probatoire]
+\begin{itemize}
+\item Employer « je » partout dans la dissertation (« je pense que Baroka a raison, je trouve que Lakunle est ridicule... ») donne un devoir bavard et subjectif, sanctionné à l'examen. \textbf{Réservez « je » à la problématique et à la conclusion} ; préférez « nous » ou les tournures impersonnelles dans le développement.
+\item Le « on » vague (« on voit que... », « on peut dire que... ») affaiblit l'argumentation : il masque l'agent. \textbf{Précisez toujours qui voit, qui dit, qui agit} : « Le texte montre que... », « L'analyse révèle que... », « Le lecteur constate que... ».
+\item Confondre énonciation du \emph{personnage} (dans l'œuvre) et énonciation de l'\emph{élève} (dans la copie). Dans le développement, on analyse l'énonciation de Baroka \textbf{à la troisième personne} : « Baroka use du "je" pour affirmer son autorité », et non « J'affirme mon autorité comme Baroka ».
+\end{itemize}
+\end{attention}
+
+\courssub{Lecture méthodique n°2 du \emph{Lion et la Perle} : le conflit Baroka/Lakunle autour de Sidi}
+
+\textbf{Rappel de la situation.} Dans le village d'Ilujinlé, Sidi, la plus belle jeune fille du village — la « Perle » —, est courtisée par deux hommes que tout oppose : \cle{Lakunle}, le jeune instituteur moderniste qui refuse de payer la dot et rêve de transformer le village à l'image des villes occidentales, et \cle{Baroka}, le vieux chef traditionnel — le « Lion » — qui défend les coutumes et use de ruse pour séduire Sidi. L'extrait étudié dans cette lecture méthodique (souvent la scène de la séduction ou le dialogue sur la dot) met en scène leur affrontement verbal autour de la jeune fille.
+
+\textbf{Observation méthodique.} Appliquons la méthode de relevé au dialogue. Dans les répliques de \textbf{Baroka}, on relève des « je » affirmatifs, des présents de vérité gnomique et des formules sentencieuses (proverbes) : le chef parle en maître, son « je » épouse sa fonction d'autorité traditionnelle. Dans celles de \textbf{Lakunle}, on relève des modalisateurs en abondance (« il faut », « nous devrions », « sans doute », « c'est évident »), des futurs de projet et des exclamations : son discours est un discours de l'intention et de l'idéologie, non de l'expérience vécue. Sidi, elle, répond par des questions ironiques et des répliques elliptiques qui déstabilisent les deux prétendants et affirment son autonomie.
+
+\begin{exemplebox}[Les marques d'énonciation au service de la caractérisation]
+Dans le \emph{Lion et la Perle}, l'usage du « je » par Baroka affirme son autorité de chef : quand il déclare sa volonté, il parle au nom d'une tradition qui le précède et le dépasse (« Je suis le Lion »). L'absence de modalisateurs de doute renforce sa posture de détenteur du pouvoir. À l'inverse, les modalisateurs de Lakunle (« il faut que », « nous devrions », « c'est ainsi que font les gens civilisés ») trahissent son incertitude profonde : il cite un modèle extérieur (Lagos, l'Occident) au lieu de parler en son nom propre, et ses certitudes affichées masquent mal son inexpérience et son déracinement. L'ironie de Sidi, qui retourne leurs propres mots contre eux (écho, reformulation moqueuse), révèle que la maîtrise de l'énonciation est un pouvoir : celui qui contrôle sa parole contrôle le débat et, in fine, la situation.
+\end{exemplebox}
+
+\begin{exoresolu}[Analyser l'effet argumentatif d'une réplique]
+Énoncé. Lakunle déclare à Sidi : « Il faut que tu renonces à ces coutumes arriérées ; nous devrions vivre comme les couples modernes de Lagos. » Relevez les marques d'énonciation et interprétez leur effet.
+\tcblower
+Solution détaillée. On relève : (1) le modalisateur d'obligation « il faut que », qui impose un point de vue sans le justifier par une expérience personnelle ; (2) le « nous » de projet (« nous devrions »), qui associe Sidi à un avenir qu'elle n'a pas choisi et gomme l'opposition ; (3) le conditionnel « devrions », marque d'un discours de l'intention/hypothèse, non de la réalité ; (4) le jugement de valeur péjoratif « coutumes arriérées » et la référence extérieure « comme les couples modernes de Lagos » (modèle exogène). Interprétation : Lakunle ne s'engage jamais en « je » personnel ; il s'abrite derrière une norme étrangère qu'il présente comme universelle. L'effet est double : son autorité est empruntée, donc fragile face à l'autorité endogène de Baroka, et son mépris affiché pour les coutumes provoque le rejet de Sidi, attachée à son identité. La réplique illustre le thème central du débat tradition/modernité : la modernité de Lakunle n'est qu'un vernis de slogans importés, tandis que Baroka, lui, incarne une tradition vivante, rusée et adaptative.
+\end{exoresolu}
+
+\courssub{Du texte à la vie : tradition et modernité au Cameroun}
+
+Le conflit Baroka/Lakunle n'est pas qu'une intrigue théâtrale : il éclaire des débats bien réels de notre société camerounaise. La question de la \cle{dot}, moquée par Lakunle et défendue par Baroka, divise encore les familles entre ceux qui y voient un respect des ancêtres et un lien social, et ceux qui la jugent marchande ou discriminatoire. La \cle{scolarisation des filles}, la \cle{modernisation des villages} (électricité, routes, téléphonie mobile à Ilujinlé comme dans nos zones rurales) posent la même question que la pièce : faut-il choisir entre tradition et modernité, ou les articuler intelligemment ? Soyinka suggère une réponse nuancée : la tradition de Baroka est vivante mais ruse avec la morale ; la modernité de Lakunle est généreuse mais superficielle et déracinée. C'est exactement le type de réflexion qu'une dissertation au Probatoire doit savoir conduire : éviter le jugement simpliste (pour/contre), confronter deux thèses argumentées, puis dépasser l'opposition dans une synthèse critique.
+
+\begin{savaistu}[Wole Soyinka, un Nobel africain]
+Wole Soyinka, dramaturge, poète et essayiste nigérian, a reçu le prix Nobel de littérature en 1986 — le premier écrivain africain ainsi honoré. Il a écrit \emph{Le Lion et la Perle} (\emph{The Lion and the Jewel}) en 1959, à la veille des indépendances africaines, dont celle du Cameroun (1er janvier 1960). La pièce interroge donc, au moment même où les nations africaines accèdent à la souveraineté, le chemin qu'elles choisiront : copier servilement l'Occident, restaurer un passé figé, ou inventer leur propre modernité en puisant dans leurs ressources culturelles.
+\end{savaistu}
+
+\begin{exercice}[À vous de jouer]
+Dans un extrait du \emph{Lion et la Perle} de votre choix (réplique de Baroka ou de Lakunle d'une dizaine de lignes), relevez \textbf{cinq} marques d'énonciation distinctes, classez-les par catégorie (pronom, temps, modalisateur, adverbe d'opinion, tournure syntaxique) et rédigez un court paragraphe argumenté (huit à dix lignes) interprétant leur effet argumentatif. \textbf{Contrainte de rédaction :} votre paragraphe doit impérativement employer une énonciation impersonnelle correcte (pas de « je pense », pas de « on voit »).
+\end{exercice}
+
+\begin{corrige}[Exercice — Éléments de correction]
+\textbf{Exemple avec une réplique de Baroka (Acte 2, scène de la séduction) :} « Je ne suis pas un arbre pour qu'on m'écorce. Je suis le Lion. Qui ose me défier ? »
+\begin{itemize}
+\item (1) « \emph{Je} » (x2) — pronom personnel d'engagement fort, identification du locuteur à sa fonction.
+\item (2) Présent de vérité gnomique « \emph{suis} » — temps marquant une vérité intemporelle, essentielle.
+\item (3) Négation « \emph{ne... pas} » + métaphore « \emph{arbre} » — figure de style refusant la passivité/victimisation.
+\item (4) Absence totale de modalisateur de doute — certitude absolue, posture de domination.
+\item (5) Question rhétorique « \emph{Qui ose me défier ?} » — tournure interrogative à visée assertive (provocation/affirmation de puissance).
+\end{itemize}
+\textbf{Paragraphe attendu (modèle) :} « Dans cette réplique, l'énonciation de Baroka se caractérise par une subjectivité assumée et autoritaire. L'usage répété du pronom "je", soutenu par le présent de vérité "suis", identifie pleinement le locuteur à sa charge symbolique : il ne parle pas en homme privé, mais en incarnation de la chefferie ("le Lion"). L'absence de tout modalisateur atténuateur (pas de "peut-être", "sans doute") confère à sa parole une valeur performative : dire, c'est faire. La métaphore négative "Je ne suis pas un arbre" rejette l'altérité et la vulnérabilité, tandis que la question rhétorique finale clôt le débat par une assertion de force. Ainsi, l'énonciation construit le personnage en maître absolu du jeu social, contrastant radicalement avec l'énonciation hésitante et hétéronome de Lakunle. »
+\textbf{Vérification de la contrainte :} L'élève n'écrit pas « je pense que Baroka... » mais « L'énonciation de Baroka se caractérise... », « L'usage répété... identifie... », « La métaphore... rejette... », « Ainsi, l'énonciation construit... ». L'impersonnel et le "nous" implicite de l'analyse sont respectés.
+\end{corrige}
+
+\coursec{Rédaction et amélioration de l'introduction}
+
+Dans la section précédente, nous avons étudié l'énonciation — qui parle, à qui, dans quelle situation — et poursuivi la lecture méthodique du \emph{Le Lion et la Perle} de Wole Soyinka. Nous avons vu que toute parole s'inscrit dans une situation de communication précise. La dissertation obéit à la même logique : celui qui écrit s'adresse à un lecteur (le correcteur) qu'il doit convaincre. Or, comme dans une conversation, ce sont les premières phrases qui installent le contact. C'est précisément le rôle de l'\cle{introduction}, première partie visible de votre copie et première impression laissée au correcteur. Cette section vous apprend à la construire méthodiquement, puis à l'améliorer par la relecture.
+
+\courssub{La fonction de l'introduction}
+
+\begin{definition}[L'introduction]
+L'\cle{introduction} est la première partie d'une dissertation. Elle remplit trois fonctions complémentaires : \textbf{capter l'attention} du lecteur, \textbf{poser le problème} soulevé par le sujet, et \textbf{orienter le lecteur} en annonçant la démarche qui sera suivie dans le développement.
+\end{definition}
+
+Imaginez un guide qui accueille un visiteur à l'entrée d'un village. Il ne commence pas par décrire la dernière case du fond : il salue d'abord son hôte, lui dit où il se trouve, pourquoi la visite vaut la peine, et par quels lieux il le conduira. L'introduction fait exactement ce travail d'accueil. Un correcteur qui lit une introduction claire et bien construite aborde la suite de la copie avec confiance ; une introduction confuse ou hors sujet le met au contraire en méfiance pour tout le reste.
+
+\begin{aretenir}[Les trois fonctions de l'introduction]
+\begin{enumerate}
+\item \textbf{Accrocher} : éveiller l'intérêt du lecteur dès la première phrase.
+\item \textbf{Problématiser} : montrer que le sujet pose une vraie question, qui appelle une réflexion et non une évidence.
+\item \textbf{Annoncer le plan} : indiquer les grandes étapes de la réponse qui sera développée.
+\end{enumerate}
+\end{aretenir}
+
+\courssub{Les quatre étapes obligatoires}
+
+Pour remplir ces trois fonctions, l'introduction d'une dissertation littéraire se construit en \textbf{quatre étapes}, qui vont du plus général au plus particulier, comme un entonnoir :
+
+\begin{enumerate}
+\item l'\cle{amorce} (ou accroche) : une ouverture large qui met le sujet en perspective ;
+\item la \cle{présentation du sujet} : on reformule le sujet avec ses propres mots, on définit ses termes essentiels, on situe l'œuvre ou la question ;
+\item la \cle{problématique} : la question précise, née de l'analyse du sujet, que le devoir va traiter ;
+\item l'\cle{annonce du plan} : la présentation des deux ou trois axes du développement.
+\end{enumerate}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\fill[popblueL] (-4.5,4.5) -- (4.5,4.5) -- (3.2,3.2) -- (-3.2,3.2) -- cycle;
+\fill[popgreenL] (-3.2,3.2) -- (3.2,3.2) -- (2.1,2.1) -- (-2.1,2.1) -- cycle;
+\fill[poporangeL] (-2.1,2.1) -- (2.1,2.1) -- (1.2,1.2) -- (-1.2,1.2) -- cycle;
+\fill[poppinkL] (-1.2,1.2) -- (1.2,1.2) -- (0.4,0.2) -- (-0.4,0.2) -- cycle;
+\node[text=popdark, font=\bfseries] at (0,3.85) {1. Amorce (général)};
+\node[text=popdark, font=\bfseries] at (0,2.65) {2. Sujet};
+\node[text=popdark, font=\bfseries] at (0,1.65) {3. Problématique};
+\node[text=popdark, font=\bfseries\small] at (0,0.7) {4. Plan};
+\draw[-{Stealth[length=3mm]}, line width=1.2pt, poppurple] (5.2,4.5) -- (5.2,0.2);
+\node[rotate=90, text=poppurple, font=\small] at (5.7,2.35) {du général au particulier};
+\end{tikzpicture}
+\end{center}
+\legende{La structure en entonnoir de l'introduction : on part d'une idée large (amorce) et on resserre progressivement jusqu'à l'annonce précise du plan.}
+\end{popfigure}
+
+\begin{attention}[L'amorce hors sujet ou trop longue]
+L'erreur la plus fréquente est une amorce trop vaste (\emph{« Depuis la nuit des temps, l'homme... »}) ou sans lien réel avec le sujet. L'amorce doit \textbf{mener au sujet en deux ou trois phrases maximum}. Si votre première phrase pourrait servir pour n'importe quel sujet, elle est trop générale : supprimez-la ou précisez-la.
+\end{attention}
+
+\courssub{Les techniques d'amorce}
+
+Il existe plusieurs manières d'accrocher le lecteur. Choisissez celle qui convient le mieux au sujet :
+
+\begin{itemize}
+\item \textbf{Le fait général} : une vérité large, liée au thème. \emph{Exemple : « Toute société humaine s'enracine dans des traditions transmises de génération en génération. »}
+\item \textbf{La référence culturelle ou littéraire} : une allusion à une œuvre, un auteur, un courant de pensée. \emph{Exemple : « Dans \emph{Le Lion et la Perle}, Wole Soyinka met en scène l'affrontement entre un chef traditionnel et un jeune instituteur moderniste. »}
+\item \textbf{La citation} : une parole d'auteur, exacte et brièvement commentée. \emph{Exemple : « "La tradition est un guide, non un geôlier", écrit un proverbe africain. »}
+\item \textbf{La situation concrète} : une scène de la vie courante. \emph{Exemple : « Dans bien des villages camerounais, les jeunes hésitent entre respecter les coutumes de leurs aînés et adopter les modes de vie modernes. Ce débat traverse toute l'Afrique contemporaine. »}
+\end{itemize}
+
+\courssub{Formuler la problématique}
+
+\begin{definition}[La problématique]
+La \cle{problématique} est la question directrice du devoir. Elle naît de l'\textbf{analyse des termes du sujet} : elle met en évidence une tension, un doute, un paradoxe que le sujet contient. Elle ne doit jamais être une simple reformulation banale du sujet.
+\end{definition}
+
+Prenons le sujet : \emph{« La tradition est-elle un obstacle au progrès ? »}. Une mauvaise problématique serait : « La tradition est-elle un obstacle au progrès ? » — simple recopie. Une bonne problématique creuse la tension entre les deux termes : \emph{« La tradition, qui fonde l'identité d'un peuple, est-elle nécessairement incompatible avec le progrès, ou peut-elle au contraire l'accompagner et l'enrichir ? »}. On voit que la question oblige à dépasser le « oui/non » et à envisager une réponse nuancée.
+
+\begin{methode}[Construire sa problématique en trois temps]
+\begin{enumerate}
+\item \textbf{Définir les termes clés} du sujet (ici : « tradition », « obstacle », « progrès »).
+\item \textbf{Repérer l'opposition} ou le présupposé du sujet (le sujet suppose que tradition et progrès s'opposent).
+\item \textbf{Formuler une question} qui interroge cette opposition et ouvre plusieurs réponses possibles.
+\end{enumerate}
+\end{methode}
+
+\courssub{Annoncer le plan}
+
+L'annonce du plan présente les deux ou trois axes du développement. Elle doit être \textbf{fluide}, intégrée dans une phrase élégante, et non une énumération mécanique.
+
+\begin{attention}[Pas de « premièrement, deuxièmement » mécanique]
+N'écrivez jamais : « Premièrement nous verrons que..., deuxièmement nous verrons que... ». Cette annonce lourde et scolaire dévalorise la copie. Intégrez les axes dans une phrase construite : \emph{« Ainsi, après avoir montré que la tradition peut freiner l'évolution des sociétés, nous verrons qu'elle constitue aussi un socle identitaire précieux, avant de nous demander comment tradition et progrès peuvent se concilier. »}
+\end{attention}
+
+\begin{methode}[Rédiger une introduction en quatre temps : les formulations types]
+\begin{enumerate}
+\item \textbf{Amorce} : « De tout temps, les hommes... » / « Toute société... » / une citation ou une scène concrète.
+\item \textbf{Présentation du sujet} : « C'est précisément la question que pose... » / « Ce débat se trouve au cœur de \emph{Le Lion et la Perle}, où... ».
+\item \textbf{Problématique} : « Nous nous demanderons donc... » / « On peut alors se poser la question suivante : ... ».
+\item \textbf{Annonce du plan} : « Ainsi, dans un premier temps, nous montrerons que..., puis nous verrons que..., avant de... ».
+\end{enumerate}
+\end{methode}
+
+\courssub{Exemple : une introduction rédigée pas à pas}
+
+\begin{exemplebox}[Sujet : « La tradition est-elle un obstacle au progrès ? » (à partir de \emph{Le Lion et la Perle})]
+\textbf{Étape 1 — Amorce (situation concrète)} : « Dans bien des villages camerounais, les jeunes générations hésitent entre le respect des coutumes héritées des aînés et l'attrait des modes de vie modernes. »
+
+\textbf{Étape 2 — Présentation du sujet} : « Ce débat, qui traverse toute l'Afrique contemporaine, est au cœur de \emph{Le Lion et la Perle} de Wole Soyinka : dans le village d'Ilujinle, le chef Baroka, gardien des traditions, s'oppose au jeune instituteur Lakunle, partisan d'une modernité radicale. »
+
+\textbf{Étape 3 — Problématique} : « Nous nous demanderons si la tradition, loin d'être un simple obstacle au progrès, ne peut pas aussi constituer un repère identitaire et une richesse pour les sociétés en mutation. »
+
+\textbf{Étape 4 — Annonce du plan} : « Ainsi, dans un premier temps, nous montrerons que la tradition peut apparaître comme un frein au progrès ; nous verrons ensuite qu'elle fonde l'identité et la cohésion d'un peuple, avant de nous demander comment une société peut concilier héritage et modernité. »
+\end{exemplebox}
+
+Observez la progression : la copie va du village camerounais (large) à l'œuvre de Soyinka (précis), puis à la question (resserrée), enfin au plan (très précis). C'est exactement le mouvement de l'entonnoir.
+
+\begin{savaistu}[L'introduction au Probatoire technique]
+Au Probatoire et au Baccalauréat technique, l'introduction représente environ \textbf{un quart de la note} de dissertation. Les correcteurs y vérifient la présence des quatre étapes, la correction de la langue et la pertinence de la problématique. Soigner l'introduction est donc stratégique : une introduction réussie met le correcteur en confiance et valorise l'ensemble du devoir.
+\end{savaistu}
+
+\courssub{Atelier de production}
+
+\begin{exoresolu}[Rédiger une introduction]
+\textbf{Énoncé} : En vous inspirant de \emph{Le Lion et la Perle}, rédigez l'introduction d'une dissertation sur le sujet suivant : \emph{« Faut-il rejeter les coutumes de nos ancêtres pour être moderne ? »}
+\tcblower
+\textbf{Solution détaillée} :
+
+« Toute société humaine se construit sur un héritage : langues, rites, coutumes transmis par les anciens. Or, le monde moderne, avec ses techniques et ses idées nouvelles, semble parfois entrer en conflit avec cet héritage. C'est ce conflit que met en scène Wole Soyinka dans \emph{Le Lion et la Perle} : le jeune instituteur Lakunle rêve de transformer le village d'Ilujinle et méprise ses coutumes, tandis que le chef Baroka en est le gardien rusé. Nous nous demanderons si être moderne implique nécessairement de rejeter les coutumes de nos ancêtres, ou si une modernité authentique peut au contraire s'enraciner dans la tradition. Ainsi, dans un premier temps, nous montrerons que certaines coutumes peuvent paraître dépassées et freiner l'émancipation des individus ; nous verrons ensuite que le rejet total de la tradition conduit à une modernité superficielle et déracinée, avant de défendre l'idée d'une modernité capable de dialoguer avec l'héritage des ancêtres. »
+
+\textbf{Vérification} : amorce en deux phrases (fait général + tension), présentation de l'œuvre, problématique sous forme d'alternative, annonce de trois axes en une phrase fluide. Les quatre étapes sont présentes.
+\end{exoresolu}
+
+\courssub{Atelier d'amélioration : la grille de relecture}
+
+Rédiger ne suffit pas : il faut \textbf{relire et améliorer}. En binôme, chaque élève relit l'introduction de son camarade à l'aide de la grille suivante, puis chacun réécrit son texte en tenant compte des remarques.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Question de relecture} & \textbf{Amélioration possible} \\
+\hline
+Amorce & Mène-t-elle au sujet en 2 ou 3 phrases ? & Supprimer les généralités vides. \\
+\hline
+Sujet & Les termes clés sont-ils définis ? L'œuvre est-elle située ? & Ajouter une définition ou une précision. \\
+\hline
+Problématique & Est-ce une vraie question, pas une recopie du sujet ? & Formuler une alternative ou un paradoxe. \\
+\hline
+Plan & Les axes sont-ils annoncés avec fluidité ? & Remplacer « premièrement » par « dans un premier temps ». \\
+\hline
+Clarté & Les phrases sont-elles courtes et compréhensibles ? & Découper les phrases trop longues. \\
+\hline
+Correction & Orthographe, accords, conjugaison, ponctuation ? & Corriger chaque faute repérée. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{exercice}[Amélioration d'une introduction défectueuse]
+Voici l'introduction rédigée par un élève sur le sujet : \emph{« La tradition est-elle un obstacle au progrès ? »}
+
+« Depuis la nuit des temps, l'homme est un être qui vit en société et qui a des habitudes. La société a toujours existé. Le monde évolue chaque jour. La tradition est-elle un obstacle au progrès ? Premièrement nous verrons que oui, deuxièmement nous verrons que non. »
+
+Relevez les défauts de cette introduction à l'aide de la grille de relecture, puis réécrivez-la entièrement.
+\end{exercice}
+
+\begin{corrige}[Exercice : amélioration d'une introduction défectueuse]
+\textbf{Défauts relevés} :
+\begin{itemize}
+\item Amorce trop longue et hors sujet : trois phrases de généralités vides (« la société a toujours existé ») qui ne préparent pas le sujet.
+\item Absence de présentation du sujet : ni définition des termes, ni référence à l'œuvre étudiée.
+\item Problématique = simple recopie du sujet.
+\item Annonce du plan mécanique (« premièrement... deuxièmement... ») et pauvre (« oui / non »), sans formulation des axes.
+\end{itemize}
+\textbf{Réécriture possible} :
+
+« Dans bien des villages africains, les jeunes hésitent entre les coutumes de leurs aînés et les modèles modernes. C'est ce débat que Wole Soyinka met en scène dans \emph{Le Lion et la Perle}, à travers l'affrontement du chef Baroka et de l'instituteur Lakunle. Nous nous demanderons si la tradition est nécessairement un obstacle au progrès, ou si elle peut au contraire l'accompagner. Ainsi, dans un premier temps, nous montrerons que la tradition peut freiner l'évolution des sociétés, puis nous verrons qu'elle constitue un socle identitaire précieux, avant de nous demander comment concilier héritage et modernité. »
+\end{corrige}
+
+\begin{aretenir}[L'essentiel]
+Une introduction réussie comporte \textbf{quatre étapes} : amorce brève et liée au sujet, présentation du sujet, problématique précise, annonce fluide du plan. Elle va du général au particulier, comme un entonnoir. Après la rédaction, la \textbf{relecture en binôme} avec une grille (clarté, correction, pertinence) permet l'amélioration du texte. C'est cette introduction soignée qui ouvrira la voie au développement, que nous apprendrons à construire dans les prochaines sections.
+\end{aretenir}
+
+\coursec{Dénotation et connotation : enrichir son écriture}
+
+Dans la section précédente, nous avons appris à rédiger et à améliorer l'introduction d'une dissertation : accroche, présentation de l'œuvre, problématique, annonce du plan. Mais une introduction, même bien structurée, peut rester plate si le vocabulaire employé est pauvre ou mal choisi. Or, un mot ne dit jamais seulement ce qu'il désigne : il fait aussi \emph{ressentir} quelque chose. Dire qu'un personnage est « mince », « svelte » ou « maigre », c'est désigner la même réalité physique, mais ce n'est pas du tout dire la même chose. C'est précisément cette double vie des mots que nous allons étudier maintenant : la \cle{dénotation} et la \cle{connotation}. Cette compétence de langue est un outil formidable pour la dissertation : elle permet de nuancer, d'orienter le lecteur et de décoder les intentions d'un auteur comme Wole Soyinka dans \emph{Le Lion et la Perle}.
+
+\courssub{La dénotation : le sens premier et stable du mot}
+
+\textbf{L'intuition d'abord.} Imagine un dictionnaire de poche. Quand tu cherches le mot « village », tu trouves une définition du type : « agglomération rurale de taille moyenne, groupant des habitations et des habitants ». Cette définition est la même pour tous les locuteurs, elle ne dépend ni de tes émotions, ni de ton village d'origine, ni de ton humeur du jour. C'est le sens \emph{objectif} du mot, celui sur lequel tout le monde peut s'accorder.
+
+\begin{definition}[La dénotation]
+La \cle{dénotation} est le sens premier, objectif et stable d'un mot : c'est le sens que donne le dictionnaire, indépendant du contexte, des émotions et des opinions du locuteur. Deux personnes qui s'entendent sur la dénotation d'un mot parlent bien de la même réalité.
+\end{definition}
+
+\begin{exemplebox}[Dénotation de quelques mots courants]
+\begin{itemize}
+\item « Chef » : personne qui dirige un groupe, une communauté (dénotation : fonction de direction).
+\item « Perle » : petite sphère dure et brillante produite par certains mollusques (dénotation : objet précieux).
+\item « Modernité » : caractère de ce qui est récent, conforme à l'époque présente (dénotation : rapport au temps).
+\end{itemize}
+Dans chaque cas, la définition est neutre : elle ne juge pas, elle décrit.
+\end{exemplebox}
+
+\begin{attention}[Ne pas confondre dénotation et banalité]
+Employer un mot dans son sens dénotatif n'est pas une faute de style : c'est souvent nécessaire pour être clair et précis, surtout dans la définition des termes du sujet en introduction de dissertation. L'erreur serait plutôt de croire qu'un texte argumentatif peut se passer de ce socle objectif : sans dénotation partagée, le lecteur ne comprend plus de quoi l'on parle.
+\end{attention}
+
+\courssub{La connotation : le halo de sens qui entoure le mot}
+
+\textbf{L'intuition d'abord.} Reprends le mot « village ». Pour un citadin de Douala, il peut évoquer la poussière, l'ennui, le « retard » ; pour un autre, il évoque au contraire les vacances chez les grands-parents, la solidarité, les manguiers, l'authenticité. Le sens du dictionnaire est identique, mais chacun y attache des images, des souvenirs, des jugements de valeur. Ce supplément de sens, variable selon les personnes et les cultures, c'est la connotation.
+
+\begin{definition}[La connotation]
+La \cle{connotation} est l'ensemble des sens seconds, subjectifs, culturels ou affectifs qu'un mot évoque en plus de sa dénotation. Elle dépend du contexte, de la culture, de l'époque et de l'expérience personnelle. Un même mot peut avoir une connotation \emph{méliorative} (positive) ou \emph{péjorative} (négative).
+\end{definition}
+
+\begin{exemplebox}[Un même mot, deux connotations opposées]
+\begin{itemize}
+\item « Baroka est un \textbf{vieux} chef » : le mot « vieux » peut connoter la sagesse et l'expérience (mélioratif) ou la décrépitude et l'obsolescence (péjoratif).
+\item « Lakunle est un homme \textbf{moderne} » : « moderne » peut connoter le progrès et l'ouverture d'esprit (mélioratif) ou le rejet prétentieux des traditions (péjoratif).
+\end{itemize}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\fill[popblueL] (0,0) circle (2.6);
+\fill[popblue!60] (0,0) circle (1.3);
+\node[white,font=\bfseries] at (0,0.35) {DÉNOTATION};
+\node[white,font=\small] at (0,-0.35) {sens du dictionnaire};
+\node[popdark,font=\small] at (0,1.95) {CONNOTATION};
+\node[popdark,font=\scriptsize] at (0,1.55) {images, émotions, valeurs culturelles};
+\node[popdark,font=\scriptsize] at (0,-1.95) {variable selon le contexte};
+\draw[->,thick,popdark] (1.3,0) -- (2.6,0);
+\end{tikzpicture}
+\legende{Schéma des deux niveaux de sens d'un mot : le noyau dénotatif (sens stable, partagé) entouré du halo connotatif (sens subjectif et culturel).}
+\end{center}
+\end{popfigure}
+
+\courssub{Dénotation et connotation dans \emph{Le Lion et la Perle}}
+
+La lecture méthodique de l'œuvre de Wole Soyinka montre que les mots les plus importants de la pièce fonctionnent sur les deux niveaux. Voici un tableau récapitulatif à connaître pour analyser le texte et alimenter vos dissertations.
+
+\begin{popfigure}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Mot} & \textbf{Dénotation} & \textbf{Connotation dans l'œuvre} \\
+\hline
+lion & grand félin carnassier, « roi des animaux » & force, puissance, ruse, virilité, autorité traditionnelle (Baroka) \\
+\hline
+perle & sphère nacrée précieuse & beauté rare, pureté, objet de convoitise (Sidi) \\
+\hline
+village & agglomération rurale & tradition, racines, communauté ; parfois « retard » aux yeux de Lakunle \\
+\hline
+progrès & avancée, amélioration & modernité bienfaisante pour Lakunle ; menace et destruction des valeurs pour Baroka \\
+\hline
+\end{tabularx}
+\legende{Tableau comparatif : dénotation et connotation de quatre mots-clés du \emph{Lion et la Perle} de Wole Soyinka.}
+\end{center}
+\end{popfigure}
+
+On observe que la connotation n'est jamais fixée une fois pour toutes : le mot « progrès » est chargé positivement dans la bouche de l'instituteur Lakunle, mais négativement dans celle du baobab Baroka. C'est le \emph{contexte} — qui parle, à qui, dans quelle situation — qui détermine la couleur du mot.
+
+\begin{savaistu}[Le titre de l'œuvre est déjà une leçon de connotation]
+Le titre même de la pièce joue sur la connotation : le « lion » désigne Baroka, le chef d'Ilujinle, et connote la tradition puissante, rusée et redoutable ; la « perle » désigne Sidi, la belle du village, et connote la beauté rare que tous convoitent. Avant même d'ouvrir la pièce, Soyinka annonce le conflit : qui du lion (la tradition) ou de ceux qui courtisent la perle (la modernité de Lakunle) l'emportera ? Analyser le titre par la connotation est une excellente accroche de dissertation.
+\end{savaistu}
+
+\courssub{Connotation et argumentation : orienter le lecteur}
+
+Dans une dissertation, le choix des mots n'est jamais neutre. En sélectionnant un lexique mélioratif ou péjoratif, tu guides le jugement du correcteur sans avoir besoin de dire explicitement « je suis pour » ou « je suis contre ».
+
+\begin{exemplebox}[Lexique mélioratif contre lexique péjoratif]
+Pour défendre la tradition : « les \textbf{sages} du village », « un héritage \textbf{précieux} », « des valeurs \textbf{ancestrales} ».\\
+Pour critiquer la tradition : « des coutumes \textbf{dépassées} », « un poids \textbf{étouffant} », « des pratiques \textbf{archaïques} ».\\
+La réalité désignée est la même ; seule la connotation change, et avec elle l'orientation de l'argumentation.
+\end{exemplebox}
+
+\begin{methode}[Exploiter la connotation dans une dissertation]
+\begin{enumerate}
+\item Repère le mot-clé que tu vas répéter souvent (ex. « tradition », « modernité »).
+\item Dresse la liste de ses synonymes ou périphrases en les classant : mélioratifs, neutres, péjoratifs.
+\item Choisis le registre connotatif adapté à ta thèse : mélioratif pour valoriser, péjoratif pour critiquer, neutre pour définir.
+\item Alterne ces termes dans tes paragraphes pour \emph{nuancer sans répéter} : cela enrichit le style et montre ta maîtrise du lexique.
+\item Vérifie à la relecture que la connotation de chaque mot sert bien ton argumentation et ne la contredit pas.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Erreur fréquente : confondre connotation et figure de style]
+La connotation n'est pas une figure de style. Une métaphore ou une comparaison est un procédé de construction (un rapprochement entre deux termes) ; la connotation, elle, porte sur \emph{le mot isolé dans son contexte culturel}. Dire « Baroka est le Lion du village » relève de la métaphore (figure de style) \emph{et} active la connotation de force attachée au mot « lion » : les deux notions peuvent se combiner, mais il ne faut pas les identifier l'une à l'autre dans une copie.
+\end{attention}
+
+\courssub{Application : réécrire une phrase neutre en versions connotées}
+
+\begin{exoresolu}[Transformer une phrase neutre]
+Énoncé : voici une phrase strictement dénotative : « Baroka est un vieux chef qui a épousé Sidi. » Réécris-la en version connotée positive, puis en version connotée négative.
+\tcblower
+Solution détaillée :
+\begin{itemize}
+\item Version connotée \textbf{positive} (méliorative) : « Baroka, le Lion d'Ilujinle, chef \emph{sage} et \emph{expérimenté}, a uni son destin à la \emph{perle} du village. » Les mots « sage », « expérimenté », « perle » valorisent les personnages.
+\item Version connotée \textbf{négative} (péjorative) : « Baroka, vieux chef \emph{rusé} et \emph{autoritaire}, s'est \emph{approprié} la jeune Sidi. » Les mots « rusé », « autoritaire », « s'est approprié » dévalorisent le personnage.
+\end{itemize}
+La réalité factuelle est inchangée ; seule la couleur connotative des mots oriente le jugement du lecteur.
+\end{exoresolu}
+
+\begin{exercice}[À toi de jouer]
+Soit la phrase neutre : « Lakunle veut transformer le village. »
+\begin{enumerate}
+\item Réécris-la en version connotée positive (Lakunle vu favorablement).
+\item Réécris-la en version connotée négative (Lakunle critiqué).
+\item Souligne dans chaque version les mots porteurs de connotation et précise leur valeur (méliorative ou péjorative).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Version positive : « Lakunle, jeune instituteur \emph{passionné}, rêve d'\emph{éveiller} son village aux \emph{lumières} du progrès. » Mots connotés mélioratifs : « passionné », « éveiller », « lumières ».
+\item Version négative : « Lakunle, instituteur \emph{prétentieux}, veut \emph{bouleverser} un village dont il \emph{méprise} les coutumes. » Mots connotés péjoratifs : « prétentieux », « bouleverser », « méprise ».
+\item Dans les deux cas, la dénotation (un instituteur souhaite changer son village) reste identique : c'est le halo connotatif qui fait pencher le jugement du lecteur d'un côté ou de l'autre.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel]
+\begin{itemize}
+\item La \cle{dénotation} est le sens premier, objectif et stable d'un mot (celui du dictionnaire) ; la \cle{connotation} est le halo de sens subjectif, culturel et affectif qui l'entoure.
+\item La connotation dépend du contexte : un même mot (« progrès », « vieux ») peut être mélioratif ou péjoratif selon le locuteur et la situation.
+\item Dans \emph{Le Lion et la Perle}, « lion » connote la force traditionnelle (Baroka) et « perle » la beauté convoitée (Sidi).
+\item En dissertation, choisir son lexique connotatif permet d'orienter le lecteur et de varier l'expression sans répétition.
+\item Ne pas confondre connotation (propriété du mot isolé en contexte) et figure de style (procédé de construction).
+\end{itemize}
+\end{aretenir}
+
+Cette maîtrise des deux niveaux de sens te sera immédiatement utile dans la section suivante : rédiger un paragraphe de dissertation, c'est justement choisir des mots justes, insérer des citations et enchaîner les idées par des transitions — autant d'opérations où la connotation fait la différence entre une copie moyenne et une copie excellente.
+
+\coursec{Rédaction du paragraphe : citations et transitions}
+
+Dans la section précédente, nous avons appris à enrichir notre écriture en jouant sur la dénotation et la connotation des mots. Un vocabulaire précis et nuancé est une arme précieuse, mais elle ne suffit pas : encore faut-il savoir organiser ces mots en paragraphes solides, capables de convaincre un correcteur. C'est l'objet de cette section : construire le \cle{paragraphe argumentatif}, y insérer correctement des \cle{citations} tirées de \emph{Le Lion et la Perle} de Wole Soyinka, et relier les parties du devoir par des \cle{transitions} efficaces.
+
+\courssub{La structure du paragraphe argumentatif}
+
+\begin{definition}[Le paragraphe argumentatif]
+Le \cle{paragraphe argumentatif} est l'unité de base du développement d'une dissertation. Il correspond à une seule idée (un argument) et suit une structure rigoureuse en quatre temps : l'\textbf{idée directrice} (ou phrase d'introduction du paragraphe), le \textbf{développement} (explication, exemple, citation), et la \textbf{phrase de synthèse} (ou phrase de conclusion du paragraphe).
+\end{definition}
+
+L'intuition est simple : un paragraphe, c'est comme une démonstration devant un tribunal. Vous annoncez d'abord ce que vous allez prouver (idée directrice), vous apportez vos preuves (explication, exemple, citation), puis vous concluez en montrant que vous avez gagné votre procès (synthèse). Un paragraphe qui mélange deux idées est un paragraphe raté : \textbf{un paragraphe = une idée}.
+
+\begin{propriete}[Les quatre temps du paragraphe]
+\begin{enumerate}
+\item \textbf{Idée directrice} : une phrase claire qui énonce l'argument du paragraphe. Elle répond à un aspect de la problématique.
+\item \textbf{Explication} : deux à quatre phrases qui développent l'idée, la précisent, la relient au sujet.
+\item \textbf{Exemple et citation} : un exemple précis tiré de l'œuvre étudiée (\emph{Le Lion et la Perle}), appuyé par une citation correctement insérée et commentée.
+\item \textbf{Phrase de synthèse} : une phrase qui conclut le paragraphe et montre ce que l'argument a démontré.
+\end{enumerate}
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+bloc/.style={rectangle, rounded corners=3pt, draw=popblue, fill=popblueL, text width=3.2cm, minimum height=1.1cm, align=center, font=\small},
+blocsyn/.style={rectangle, rounded corners=3pt, draw=poporange, fill=poporangeL, text width=3.2cm, minimum height=1.1cm, align=center, font=\small},
+fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}]
+\node[bloc, align=center] (idee){\textbf{1. Idée directrice}\\ l'argument};
+\node[bloc, right=0.55cm of idee, align=center] (expl){\textbf{2. Explication}\\ développer, préciser};
+\node[bloc, right=0.55cm of expl, align=center] (excit){\textbf{3. Exemple \& Citation}\\ illustrer et prouver};
+\node[blocsyn, right=0.55cm of excit, align=center] (syn){\textbf{4. Synthèse}\\ conclure le paragraphe};
+\draw[fleche] (idee) -- (expl);
+\draw[fleche] (expl) -- (excit);
+\draw[fleche] (excit) -- (syn);
+\end{tikzpicture}
+\end{center}
+\legende{Schéma du paragraphe argumentatif type : quatre blocs enchaînés logiquement, de l'idée directrice à la phrase de synthèse.}
+\end{popfigure}
+
+\begin{exemplebox}[Repères chiffrés pour le Probatoire]
+Un paragraphe efficace compte en général \textbf{8 à 12 lignes} sur la copie. Une citation ne doit jamais dépasser \textbf{3 lignes} : au-delà, ce n'est plus une citation mais un recopiage, que le correcteur sanctionne. Un devoir de dissertation au Probatoire technique comporte généralement 4 à 6 paragraphes de développement, répartis en deux ou trois parties.
+\end{exemplebox}
+
+\courssub{Les techniques d'insertion des citations}
+
+La citation est la preuve que vous connaissez l'œuvre. Mais une citation ne parle jamais toute seule : elle doit être \textbf{introduite}, puis \textbf{commentée}. Il existe trois grandes techniques d'insertion.
+
+\begin{propriete}[Les trois modes d'insertion d'une citation]
+\begin{enumerate}
+\item \textbf{La citation introduite par deux-points} : on annonce la citation, on met deux-points, puis la citation entre guillemets. Exemple : Baroka affirme sa force devant Sidi : « Je suis le Lion, et nulle gazelle ne m'échappe. »
+\item \textbf{La citation intégrée à la phrase} : la citation s'insère grammaticalement dans la phrase de l'élève, sans deux-points. Exemple : Sidi, séduite par sa propre image dans le magazine, se croit devenue « plus belle que la déesse des eaux ».
+\item \textbf{La citation avec verbe de parole} : on nomme l'auteur ou le personnage avec un verbe de parole (écrire, dire, affirmer, répliquer, s'écrier). Exemple : Soyinka écrit : « Le vieux lion a encore des crocs. »
+\end{enumerate}
+\end{propriete}
+
+\begin{methode}[Insérer une citation en trois étapes]
+\begin{enumerate}
+\item \textbf{Introduire} : annoncer la citation par une phrase qui la relie à l'idée du paragraphe (qui parle ? à qui ? dans quelle situation ?).
+\item \textbf{Citer} : reproduire le texte exact entre guillemets, en respectant les règles typographiques.
+\item \textbf{Commenter} : expliquer en une ou deux phrases ce que la citation prouve et comment elle éclaire l'argument. \textbf{Jamais de citation laissée seule.}
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[La « citation parachutée »]
+L'erreur la plus fréquente au Probatoire est la \cle{citation parachutée} : une citation jetée dans le paragraphe sans introduction ni commentaire. Le correcteur ne peut pas deviner pourquoi elle est là. Toute citation doit être \textbf{exploitée} : elle sert à prouver l'idée, pas à décorer la copie. Une citation non commentée vaut zéro point.
+\end{attention}
+
+\begin{propriete}[Règles typographiques de la citation]
+\begin{itemize}
+\item La citation courte s'écrit entre \textbf{guillemets français} : « ... ».
+\item Toute coupure dans le texte cité se signale par des \textbf{points de suspension entre crochets} : [...].
+\item Toute modification (mise au pluriel, changement de temps) se signale entre crochets.
+\item La \textbf{référence} doit être précise : titre de l'œuvre en italique, auteur, et si possible l'acte ou la partie (\emph{Le Lion et la Perle}, « Matin », « Midi » ou « Nuit »).
+\end{itemize}
+\end{propriete}
+
+\begin{savaistu}[Les citations inventées sont sanctionnées]
+Les correcteurs du Probatoire et du Baccalauréat technique connaissent les œuvres au programme. Une citation \textbf{inventée} est immédiatement repérée et coûte des points. Si vous ne vous souvenez pas des mots exacts, mieux vaut \textbf{paraphraser fidèlement} (rapporter l'idée sans guillemets : « Baroka rappelle alors à Sidi que sa force est intacte ») que de fabriquer une fausse citation. L'honnêteté intellectuelle est toujours récompensée.
+\end{savaistu}
+
+\courssub{Les transitions : assurer la continuité logique}
+
+\begin{definition}[La transition]
+La \cle{transition} est une phrase (ou deux phrases) placée entre deux parties du développement. Elle a une double fonction : faire le \textbf{bilan} de la partie qui se termine et \textbf{annoncer} la partie qui commence. Elle assure la continuité logique du devoir et montre au correcteur que le plan est maîtrisé.
+\end{definition}
+
+Imaginez un pont entre deux rives : le pont part de la rive que vous quittez (bilan) et aboutit à la rive où vous arrivez (annonce). Sans pont, le lecteur tombe dans l'eau : il ne comprend pas le passage d'une partie à l'autre.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+partie/.style={rectangle, rounded corners=3pt, draw=popblue, fill=popblueL, text width=3.4cm, minimum height=1.5cm, align=center, font=\small},
+pont/.style={rectangle, rounded corners=8pt, draw=poporange, fill=poporangeL, text width=3.8cm, minimum height=1.5cm, align=center, font=\small},
+fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}]
+\node[partie, align=center] (p1){\textbf{Première partie}\\ La tradition triomphe\\ (Baroka, le Lion)};
+\node[pont, right=1.3cm of p1, align=center] (tr){\textbf{Transition}\\ bilan de la partie 1\\ $+$ annonce de la partie 2};
+\node[partie, right=1.3cm of tr, align=center] (p2){\textbf{Deuxième partie}\\ Mais la modernité\\ séduit (Sidi, Lakunle)};
+\draw[fleche] (p1) -- (tr);
+\draw[fleche] (tr) -- (p2);
+\end{tikzpicture}
+\end{center}
+\legende{La transition fonctionne comme un pont entre deux parties adjacentes : elle part du bilan de la partie précédente et aboutit à l'annonce de la suivante.}
+\end{popfigure}
+
+\begin{methode}[Rédiger une transition en deux temps]
+\begin{enumerate}
+\item \textbf{Bilan} : résumer en une proposition ce que la partie précédente a démontré (« Ainsi, la tradition, incarnée par Baroka, semble d'abord écraser la modernité. »).
+\item \textbf{Annonce} : introduire la partie suivante, souvent sous forme de question ou de connecteur d'opposition (« Cependant, la modernité n'est pas sans séduction : il convient maintenant d'examiner les armes de Lakunle et l'ambivalence de Sidi. »).
+\end{enumerate}
+Connecteurs utiles : \emph{ainsi, cependant, néanmoins, dès lors, il reste à, après avoir montré que..., nous devons maintenant...}.
+\end{methode}
+
+\begin{attention}[Ce qu'une transition n'est pas]
+Une transition ne résume \textbf{pas tout le devoir} : elle articule uniquement \textbf{deux parties adjacentes}. Erreurs fréquentes : la transition qui répète l'introduction, la transition d'une demi-page, la transition qui annonce une partie sans faire le bilan de la précédente. Une bonne transition tient en \textbf{une ou deux phrases}.
+\end{attention}
+
+\courssub{Exercice résolu et ateliers de production}
+
+\begin{exoresolu}[Rédiger un paragraphe avec citation]
+Énoncé. Sujet : « Dans \emph{Le Lion et la Perle}, la tradition finit toujours par vaincre la modernité. » Rédigez un paragraphe (8 à 12 lignes) montrant que Baroka utilise la ruse, arme traditionnelle, pour triompher. Insérez une citation correctement.
+\tcblower
+Solution détaillée. \textbf{Idée directrice} : Baroka, le chef d'Ilujinle, incarne une tradition qui ne s'impose pas par la force brute mais par la ruse, héritée de la sagesse des anciens. \textbf{Explication} : Contrairement à Lakunle qui croit tout obtenir par les slogans modernes, Baroka connaît les cœurs humains et sait tendre des pièges invisibles. \textbf{Exemple et citation} : Feignant d'être devenu impuissant, il attire Sidi dans sa chambre ; Soyinka montre alors le vieux chef triomphant, et Baroka lui-même confie sa stratégie : « Le vieux lion feint la faiblesse pour mieux saisir sa proie » (\emph{Le Lion et la Perle}, « Nuit »). \textbf{Commentaire de la citation} : Cette métaphore animale révèle que la ruse n'est pas un aveu de faiblesse mais l'arme suprême de la tradition : Baroka calcule chaque geste. \textbf{Phrase de synthèse} : Ainsi, par la ruse plus que par la force, le Lion confirme que la tradition possède des ressources que la modernité naïve de Lakunle ne peut contrer. (Environ 10 lignes, citation courte, introduite et commentée.)
+\end{exoresolu}
+
+\begin{exercice}[Atelier de production]
+\begin{enumerate}
+\item Rédigez un paragraphe (8 à 12 lignes) sur l'idée suivante : « Sidi, la Perle, est déchirée entre l'orgueil que lui donne sa beauté et les valeurs de son village. » Insérez une citation intégrée à la phrase, puis une citation avec verbe de parole.
+\item Rédigez la transition qui relie ce paragraphe (partie sur Sidi) à une partie suivante consacrée à Lakunle et à la modernité.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Atelier d'amélioration : corriger un paragraphe fautif]
+Voici le paragraphe d'un élève. Relevez toutes les fautes de méthode et réécrivez le paragraphe correctement : « Baroka est rusé. « Je suis le Lion et nulle gazelle ne m'échappe car ma force est grande et ma sagesse plus grande encore et tous les habitants d'Ilujinle me respectent et me craignent jour et nuit. » Sidi est belle. Lakunle est un fou moderne. Donc la tradition gagne. »
+\end{exercice}
+
+\begin{corrige}[Atelier d'amélioration]
+Fautes relevées : (1) \textbf{citation parachutée} : ni introduite ni commentée ; (2) citation \textbf{trop longue} (plus de 3 lignes) et manifestement inventée ; (3) \textbf{trois idées} dans un même paragraphe (Baroka, Sidi, Lakunle) au lieu d'une seule ; (4) pas d'explication, pas d'exemple développé ; (5) phrase de synthèse (« Donc la tradition gagne ») trop sèche et non démontrée ; (6) aucune transition avec la suite. \textbf{Paragraphe réécrit} : « Baroka doit sa victoire à la ruse, arme traditionnelle par excellence. Conscient que la force seule ne suffit plus, il manipule les apparences pour piéger Sidi. Il proclame d'ailleurs sa nature : « Je suis le Lion » (\emph{Le Lion et la Perle}), se donnant ainsi le pouvoir absolu sur son village. Cette brève affirmation, rapportée au moment où il séduit la Perle, prouve que son autorité repose sur un savoir ancestral du cœur humain. Ainsi, la tradition triomphe par l'intelligence plus que par la violence. » La transition attendue ensuite : « Si la tradition l'emporte par la ruse, encore faut-il comprendre pourquoi la modernité de Lakunle échoue : c'est ce que nous allons maintenant examiner. »
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Un paragraphe = \textbf{une idée}, structurée en quatre temps : idée directrice, explication, exemple avec citation, synthèse (8 à 12 lignes).
+\item Toute citation s'insère en \textbf{trois étapes} : introduire, citer (entre guillemets, 3 lignes maximum), commenter. Jamais de citation parachutée.
+\item La transition est un \textbf{pont} entre deux parties adjacentes : bilan de la partie précédente $+$ annonce de la suivante, en une ou deux phrases.
+\item Mieux vaut \textbf{paraphraser fidèlement} que d'inventer une citation.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Rédaction et amélioration de la conclusion}
+
+Dans la section précédente, nous avons appris à construire un paragraphe de développement solide : une idée directrice, des arguments, des citations insérées avec soin et des transitions qui relient les axes entre eux. Votre dissertation possède désormais un corps cohérent. Il reste à lui donner une fin digne de ce nom. Or beaucoup d'élèves, fatigués après le développement, bâclent la conclusion en trois lignes. C'est une erreur stratégique : la conclusion est la \emph{dernière impression} laissée au correcteur, et c'est souvent elle qui fait basculer une copie d'une note moyenne vers une bonne note. Cette section vous apprend à la rédiger en trois temps, puis à l'améliorer grâce à une grille de relecture.
+
+\courssub{La fonction de la conclusion : clore et marquer les esprits}
+
+Commençons par une intuition simple. Quand vous racontez une histoire à un ami, vous ne vous arrêtez pas brusquement au milieu d'une phrase : vous annoncez la chute, vous tirez la morale, et parfois vous terminez par une question qui prolonge la discussion. La conclusion d'une dissertation joue exactement ce rôle.
+
+\begin{definition}[La conclusion]
+La \cle{conclusion} est la dernière partie de la dissertation. Elle remplit trois fonctions : \textbf{clore} la réflexion en faisant le bilan du chemin parcouru, \textbf{répondre explicitement} à la problématique posée dans l'introduction, et \textbf{ouvrir} la réflexion vers une question connexe qui laisse au lecteur une impression forte.
+\end{definition}
+
+Retenez l'image du \emph{miroir} : la conclusion est le reflet inversé de l'introduction. L'introduction partait du général (l'amorce) pour arriver au particulier (la problématique et le plan) ; la conclusion part du particulier (le bilan de votre réflexion) pour revenir au général (l'ouverture). C'est un entonnoir renversé.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+% Entonnoir inversé : du particulier (haut, étroit) au général (bas, large)
+\fill[popblueL] (0,0) -- (2,0) -- (2.6,-1.6) -- (-0.6,-1.6) -- cycle;
+\fill[poporangeL] (-0.6,-1.6) -- (2.6,-1.6) -- (3.4,-3.2) -- (-1.4,-3.2) -- cycle;
+\fill[popgreenL] (-1.4,-3.2) -- (3.4,-3.2) -- (4.2,-4.8) -- (-2.2,-4.8) -- cycle;
+\draw[popdark,thick] (0,0) -- (2,0);
+\draw[popdark,thick] (0,0) -- (-2.2,-4.8);
+\draw[popdark,thick] (2,0) -- (4.2,-4.8);
+\draw[popdark,thick] (-2.2,-4.8) -- (4.2,-4.8);
+\node[align=center] at (1,-0.8) {\small\textbf{1. Bilan synthétique}\\ \small des axes};
+\node[align=center] at (1,-2.4) {\small\textbf{2. Réponse explicite}\\ \small à la problématique};
+\node[align=center] at (1,-4.0) {\small\textbf{3. Ouverture}\\ \small vers une question connexe};
+% Flèche du mouvement
+\draw[-{Stealth},very thick,popink] (4.8,0) -- (4.8,-4.8) node[midway,right,align=left]{\small du particulier\\ \small au général};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma de la conclusion en entonnoir inversé : on part du bilan précis de la réflexion pour s'élargir vers une ouverture générale. C'est le miroir exact de l'introduction, qui allait du général au particulier.}
+\end{popfigure}
+
+\courssub{Les trois étapes de la conclusion}
+
+\textbf{Première étape : le bilan synthétique des axes.}\par
+Il s'agit de rappeler, en une ou deux phrases, le chemin parcouru dans le développement. Attention au mot \cle{synthétique} : on ne résume pas chaque paragraphe un par un, on condense la logique d'ensemble. Les formulations types commencent par « Ainsi, … », « En définitive, … », « Au terme de cette réflexion, … ».
+
+\textbf{Deuxième étape : la réponse explicite à la problématique.}\par
+C'est le cœur de la conclusion. Vous aviez posé une question dans l'introduction ; vous devez maintenant y répondre \emph{clairement}, en une phrase. Le correcteur doit pouvoir lire cette phrase et dire : « voilà la thèse de l'élève ». Une conclusion qui ne répond pas à la problématique est une conclusion manquée.
+
+\textbf{Troisième étape : l'ouverture.}\par
+L'\cle{ouverture} élargit la réflexion vers une question connexe, sans apporter de réponse. Elle montre que le sujet déborde le cadre de la copie. Pour le sujet sur la tradition dans \emph{Le Lion et la Perle} de Wole Soyinka, on peut ouvrir vers la place des chefferies traditionnelles dans le Cameroun contemporain, ou vers le dialogue entre modernité et coutumes en Afrique. Formulations types : « On peut dès lors se demander… », « Cette réflexion invite à s'interroger sur… », « Reste à savoir si… ».
+
+\begin{methode}[Rédiger une conclusion en trois temps]
+\begin{enumerate}
+\item \textbf{Relire} la problématique et le plan annoncés dans votre introduction : la conclusion doit leur répondre point par point.
+\item \textbf{Rédiger le bilan} : une phrase qui condense vos deux ou trois axes, introduite par « Ainsi, … » ou « En définitive, … ».
+\item \textbf{Formuler la réponse} : une phrase directe qui tranche la question posée (« La tradition n'est donc pas un obstacle au progrès, à condition que… »).
+\item \textbf{Ajouter l'ouverture} : une question connexe, liée au sujet, introduite par « On peut dès lors se demander… ».
+\item \textbf{Vérifier la longueur} : 5 à 8 lignes suffisent.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Une conclusion rédigée pas à pas]
+Sujet : « La tradition est-elle un obstacle au progrès ? » (à partir de \emph{Le Lion et la Perle}).
+
+\textbf{Étape 1 — Bilan :} « Ainsi, si la tradition peut apparaître comme un frein lorsqu'elle s'oppose aveuglément à toute nouveauté, elle constitue aussi un socle de valeurs et de sagesse sans lequel le progrès perdrait son sens. »
+
+\textbf{Étape 2 — Réponse :} « La tradition n'est donc pas en elle-même un obstacle au progrès : tout dépend de l'usage qu'en font les hommes, comme le montre le conflit entre Baroka et Lakunle, où c'est la ruse héritée des coutumes qui triomphe d'un modernisme superficiel. »
+
+\textbf{Étape 3 — Ouverture :} « On peut dès lors se demander quelle place les chefferies traditionnelles peuvent encore occuper dans la construction d'un Cameroun moderne. »
+\end{exemplebox}
+
+\begin{attention}[Jamais d'argument nouveau en conclusion]
+L'erreur la plus fréquente consiste à introduire en conclusion un exemple ou un argument qui n'a pas été développé. La conclusion ne fait que \textbf{synthétiser} ce qui a été dit et \textbf{ouvrir} la réflexion. Si une idée nouvelle vous vient à l'esprit, c'est qu'elle aurait dû figurer dans le développement : ne la glissez pas à la dernière minute, le correcteur la sanctionnera.
+\end{attention}
+
+\begin{attention}[Une ouverture liée au sujet]
+L'ouverture n'est pas une question quelconque posée pour faire bien. Une ouverture trop éloignée du sujet (« Et vous, qu'en pensez-vous ? », « L'avenir nous le dira ») est considérée comme artificielle et pénalise la copie. Elle doit naître \emph{naturellement} de votre réflexion : même domaine, même problématique, mais un angle nouveau.
+\end{attention}
+
+\begin{attention}[Ne pas recopier l'introduction]
+La conclusion reprend la problématique, mais jamais mot à mot. Reformulez avec vos propres termes : la répétition exacte de l'introduction donne l'impression d'une copie circulaire et sans progression.
+\end{attention}
+
+\begin{savaistu}[Court vaut mieux que long]
+Au Probatoire comme au Baccalauréat technique, les correcteurs apprécient une conclusion de 5 à 8 lignes, dense et percutante, bien plus qu'une longue récapitulation d'une page. Une conclusion interminable trahit souvent un élève qui n'a pas su hiérarchiser ses idées. La dernière phrase, surtout, doit être soignée : c'est celle qui reste à l'esprit du correcteur au moment où il attribue la note.
+\end{savaistu}
+
+\begin{exoresolu}[Repérer et corriger une conclusion défaillante]
+\textbf{Énoncé.} Voici la conclusion d'un élève sur le sujet « La tradition est-elle un obstacle au progrès ? » : « En conclusion, la tradition est-elle un obstacle au progrès ? C'est la question que nous avons posée dans l'introduction. La tradition est très importante en Afrique. Par exemple, les griots transmettent l'histoire des peuples. La vie est un éternel recommencement. » Relevez trois défauts et proposez une version améliorée.
+\tcblower
+\textbf{Solution détaillée.}
+Trois défauts : (1) l'élève \emph{reprend} la problématique au lieu d'y \emph{répondre} ; (2) l'exemple des griots est un \emph{argument nouveau}, jamais développé ; (3) l'ouverture (« La vie est un éternel recommencement ») est une formule creuse, sans lien avec le sujet.
+
+Version améliorée : « Ainsi, la tradition peut certes ralentir le changement lorsqu'elle se fige, mais elle offre aussi les repères sans lesquels aucun progrès durable n'est possible. Elle n'est donc pas un obstacle en soi : c'est le refus du dialogue entre ancien et nouveau qui bloque l'évolution, comme l'illustre l'échec de Lakunle face à Baroka. On peut dès lors se demander comment les sociétés africaines d'aujourd'hui peuvent moderniser leurs institutions sans renier leurs racines. »
+\end{exoresolu}
+
+\courssub{Atelier de production : rédiger votre conclusion}
+
+Reprenez l'introduction que vous avez rédigée dans la section 2 et le développement construit dans la section 4. Votre conclusion doit être leur exact prolongement.
+
+\begin{exercice}[Rédaction de la conclusion]
+En 5 à 8 lignes, rédigez la conclusion de votre dissertation sur le sujet travaillé dans les sections précédentes. Votre texte doit comporter obligatoirement : un bilan introduit par « Ainsi, … » ou « En définitive, … » ; une phrase de réponse explicite à la problématique ; une ouverture introduite par « On peut dès lors se demander… » ou une formulation équivalente.
+\end{exercice}
+
+\begin{corrige}[Atelier de production]
+Il n'existe pas une seule bonne conclusion, mais tout corrigé acceptable doit vérifier trois points : le bilan reprend les axes du développement sans les résumer un par un ; la réponse à la problématique est une phrase affirmative claire, pas une nouvelle question ; l'ouverture reste dans le champ du sujet (tradition, modernité, Afrique, chefferies) et ne débouche pas sur une formule creuse. Exemple de conclusion attendue : « En définitive, la tradition apparaît tour à tour comme un poids lorsqu'elle refuse toute évolution et comme un levier lorsqu'elle transmet des valeurs qui guident le changement. Elle n'est donc pas un obstacle au progrès, mais un héritage à réinventer, comme le suggère la victoire de Baroka, maître d'une coutume capable de s'adapter. On peut dès lors se demander quel rôle les chefferies traditionnelles sont appelées à jouer dans le Cameroun contemporain. »
+\end{corrige}
+
+\courssub{Atelier d'amélioration : la relecture croisée}
+
+Rédiger, c'est seulement la moitié du travail ; l'autre moitié consiste à \cle{améliorer} son texte. Échangez votre conclusion avec celle d'un camarade et évaluez-la à l'aide de la grille suivante. Chaque critère vaut 2 points : 0 (absent), 1 (présent mais faible), 2 (réussi).
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|c|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Question à se poser} & \textbf{Note /2} \\
+\hline
+Bilan synthétique & Les axes sont-ils condensés en une ou deux phrases, sans résumé paragraphe par paragraphe ? & \\
+\hline
+Cohérence bilan/problématique & La réponse donnée correspond-elle exactement à la question posée dans l'introduction ? & \\
+\hline
+Réponse explicite & Peut-on souligner une phrase qui affirme clairement la thèse de l'élève ? & \\
+\hline
+Qualité de l'ouverture & L'ouverture est-elle une vraie question, liée au sujet, sans argument nouveau ? & \\
+\hline
+Correction linguistique & Orthographe, accords, conjugaison et ponctuation sont-ils maîtrisés ? & \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{methode}[Conduire la relecture croisée]
+\begin{enumerate}
+\item Lisez la conclusion de votre camarade \emph{à voix haute} : les maladresses de style s'entendent mieux qu'elles ne se lisent.
+\item Notez chaque critère de la grille et justifiez votre note par une remarque écrite précise (« ta réponse à la problématique est une question, transforme-la en affirmation »).
+\item Soulignez en couleur les fautes linguistiques sans les corriger : c'est à l'auteur de trouver la correction.
+\item Rendez la copie ; l'auteur réécrit sa conclusion en tenant compte des remarques, puis la compare à sa première version.
+\end{enumerate}
+\end{methode}
+
+\begin{exercice}[Amélioration d'une conclusion]
+Voici une conclusion à améliorer : « Pour conclure, nous avons vu que la tradition a des avantages et des inconvénients. Donc la tradition est un obstacle au progrès mais pas toujours. De plus, l'école est importante pour les jeunes. Finalement, qu'est-ce que l'avenir nous réserve ? » Appliquez la grille de relecture, relevez les défauts et réécrivez cette conclusion en 5 à 8 lignes.
+\end{exercice}
+
+\begin{corrige}[Amélioration d'une conclusion]
+Défauts relevés : bilan vague (« des avantages et des inconvénients » ne reprend pas les axes réels) ; réponse à la problématique contradictoire et hésitante (« mais pas toujours ») ; argument nouveau hors sujet (« l'école est importante ») ; ouverture creuse et sans lien (« qu'est-ce que l'avenir nous réserve ? »). Réécriture possible : « Ainsi, la tradition, lorsqu'elle se fige dans le refus de tout changement, freine l'évolution ; mais elle constitue aussi un fondement de sagesse et d'identité dont le progrès ne peut se passer. Elle n'est donc pas un obstacle en soi : c'est l'absence de dialogue entre coutume et modernité qui est stérile, comme le prouve la défaite de Lakunle face à Baroka dans \emph{Le Lion et la Perle}. On peut dès lors se demander comment les jeunes générations camerounaises pourront s'approprier le patrimoine traditionnel tout en construisant la modernité. »
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la conclusion]
+Une conclusion réussie comporte trois temps : un \cle{bilan} synthétique (« Ainsi, … »), une \cle{réponse explicite} à la problématique, et une \cle{ouverture} liée au sujet (« On peut dès lors se demander… »). Elle est courte (5 à 8 lignes), ne contient aucun argument nouveau et ne recopie jamais l'introduction. C'est le miroir inversé de l'introduction : du particulier vers le général.
+\end{aretenir}
+
+Vous disposez maintenant de toutes les pièces de la dissertation : introduction, développement, conclusion. La section suivante vous conduira à assembler ces pièces dans une production complète, tout en poursuivant la lecture méthodique du \emph{Lion et la Perle}.
+
+\coursec{Lecture méthodique n°3 et production complète de la dissertation}
+
+Après avoir maîtrisé l'art de conclure, nous abordons l'étape ultime : la mise en œuvre intégrée de toutes les compétences acquises. Cette section constitue la \textbf{répétition générale} avant l'examen du Probatoire. Nous y analyserons le dénouement du \emph{Lion et la Perle} pour enrichir notre banque d'arguments, nous réviserons la méthode complète de la dissertation sous contrainte de temps, nous produirons un sujet type en conditions réelles, et nous apprendrons à nous auto-évaluer avec la rigueur d
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, l'élève sera capable de :
+\begin{itemize}
+\item mobiliser l'ensemble des savoir-faire de la leçon dans une \cle{production complète} : analyse de texte, repérage de l'énonciation, distinction dénotation/connotation, rédaction de l'introduction, du paragraphe avec citation insérée, des transitions et de la conclusion ;
+\item rédiger une \cle{dissertation} complète et cohérente sur un sujet de réflexion en lien avec la vie sociale camerounaise ;
+\item \cle{justifier oralement} ses choix d'écriture (problématique, plan, citations, connecteurs, chute de la conclusion) ;
+\item évaluer la production d'autrui à l'aide d'une grille critériée, puis \cle{améliorer} sa propre copie (relecture, correction, reformulation) ;
+\item participer à un compte rendu collectif et réaliser des exercices de remédiation ciblés.
+\end{itemize}
+
+\courssub{Situation}
+
+Dans le cadre de la semaine culturelle du lycée technique de Maroua, le club de français organise un \cle{débat-dissertation} ouvert aux classes de Première. Le thème retenu cette année est : \emph{« Faut-il moderniser les traditions camerounaises ? »}. Le jury, composé du proviseur, d'un chef traditionnel invité et de deux enseignants, récompensera le groupe dont la dissertation sera la mieux construite et la mieux défendue oralement.
+
+Ton groupe de quatre élèves décide de participer. Le professeur de français vous remet un dossier documentaire composé de quatre documents :
+
+\textbf{Document 1.} Un extrait de \emph{The Lion and the Jewel} (\emph{Le Lion et la Perle}) de Wole Soyinka, dramaturge nigérian, prix Nobel de littérature en 1986, dans lequel Baroka, le vieux chef du village d'Ilujinle, s'oppose au jeune instituteur Lakunle qui veut moderniser le village et refuse de payer la dot pour épouser Sidi, la « perle » du village. Lakunle déclare : « Dans un an ou deux, nous aurons des machines qui feront le travail à notre place », tandis que Baroka affirme que la tradition est la sagesse des ancêtres.
+
+\textbf{Document 2.} Un article de presse camerounaise intitulé « Les chefferies traditionnelles à l'ère du numérique », qui rapporte que certaines chefferies de l'Ouest et du Nord-Ouest créent des sites Internet et des comités de développement, tout en continuant à célébrer les rites ancestraux. L'article cite un notable : « Moderniser n'est pas abandonner : c'est transmettre autrement. »
+
+\textbf{Document 3.} Des données chiffrées sur la scolarisation : dans les régions du Nord et de l'Extrême-Nord, le taux net de scolarisation des filles au secondaire reste inférieur à 35 \%, contre plus de 70 \% dans les régions du Centre et du Littoral. Les mariages précoces, justifiés par certaines coutumes, sont cités parmi les causes principales de la déscolarisation.
+
+\textbf{Document 4.} Deux photographies : l'une montre un village traditionnel de cases en banco avec sa place des rites ; l'autre montre un quartier moderne de Yaoundé avec ses immeubles, ses cybercafés et ses jeunes branchés sur leurs téléphones portables.
+
+Le sujet imposé par le jury est le suivant :
+
+\begin{center}
+\textbf{« La tradition est-elle un obstacle au développement du Cameroun ? »}
+\end{center}
+
+Ton groupe doit rédiger une dissertation complète (introduction, développement en deux ou trois paragraphes, conclusion), la présenter oralement en cinq minutes, puis l'améliorer après l'évaluation collective.
+
+\courssub{Consignes}
+
+\begin{enumerate}
+\item \textbf{Analyse du sujet et du dossier.} Souligne les mots-clés du sujet (« tradition », « obstacle », « développement »). Pour chaque mot-clé, distingue son sens dénoté (sens propre, dictionnaire) et ses connotations (valeurs positives ou négatives associées). Quel type de plan cette formulation appelle-t-elle ?
+\item \textbf{Énonciation.} Dans le document 1, relève deux marques d'énonciation (pronoms personnels, verbes de parole, modalisateurs) et dis ce qu'elles révèlent de la position de chaque personnage.
+\item \textbf{Problématique et introduction.} Formule la problématique de ta dissertation, puis rédige l'introduction complète : phrase d'accroche, présentation du sujet, problématique, annonce du plan.
+\item \textbf{Rédaction du développement.} Rédige deux paragraphes argumentés. Chaque paragraphe doit contenir : une idée directrice, au moins une citation du dossier correctement insérée (introduite, citée entre guillemets, commentée), un exemple camerounais et une mini-conclusion. Rédige la transition entre les deux paragraphes.
+\item \textbf{Conclusion.} Rédige la conclusion : bilan de la réflexion, réponse nuancée à la problématique, ouverture.
+\item \textbf{Présentation orale.} Présente à la classe ta problématique, une citation insérée et ta conclusion, en justifiant tes choix d'écriture (pourquoi ce plan ? pourquoi cette citation ? pourquoi cette ouverture ?).
+\item \textbf{Évaluation et amélioration.} Évalue la production d'un autre groupe à l'aide de la grille critériée fournie, puis améliore ta propre copie en corrigeant au moins trois points faibles relevés.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Les outils de la leçon]
+\begin{itemize}
+\item \textbf{L'énonciation} : les marques de la prise de parole (je/tu/il, verbes de parole, modalisateurs comme « il faut », « peut-être », « certes ») permettent de repérer qui parle et quelle position il défend.
+\item \textbf{Dénotation et connotation} : la dénotation est le sens objectif et stable d'un mot ; la connotation est l'ensemble des valeurs, des émotions et des images qu'il évoque dans un contexte donné.
+\item \textbf{L'introduction} : phrase d'accroche $\rightarrow$ présentation du sujet $\rightarrow$ problématique $\rightarrow$ annonce du plan.
+\item \textbf{Le paragraphe argumenté} : idée directrice $\rightarrow$ citation insérée (verbe introducteur + guillemets + commentaire) $\rightarrow$ exemple $\rightarrow$ mini-conclusion.
+\item \textbf{La transition} : elle résume ce qui vient d'être dit et annonce ce qui va suivre (ex. : « Si la tradition apparaît donc comme..., elle peut cependant... »).
+\item \textbf{La conclusion} : bilan $\rightarrow$ réponse à la problématique $\rightarrow$ ouverture.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges fréquents à éviter]
+\begin{itemize}
+\item Ne pas confondre \cle{dénotation} et \cle{connotation} : « coutume » dénote une pratique transmise ; elle ne connote pas automatiquement l'archaïsme — c'est le contexte qui décide.
+\item Ne jamais laisser une citation « en l'air » : toute citation doit être \textbf{introduite} (qui parle ? dans quel document ?), \textbf{citée entre guillemets}, puis \textbf{commentée} (que prouve-t-elle ?).
+\item Ne pas annoncer un plan dialectique puis rédiger un plan thématique : l'annonce du plan engage toute la copie.
+\item Dans la conclusion, ne pas introduire un argument nouveau : l'ouverture prolonge la réflexion, elle ne la relance pas sur un autre sujet.
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé commenté de l'activité]
+\textbf{Étape 1 : analyse du sujet.} Les mots-clés sont « tradition » (dénotation : ensemble de coutumes transmises de génération en génération ; connotations : sagesse, identité, mais aussi immobilisme), « obstacle » (dénotation : ce qui empêche d'avancer ; connotation négative : blocage, frein) et « développement » (dénotation : progrès économique et social ; connotations : modernité, école, santé, technologie). La formulation interrogative « est-elle... ? » appelle un \cle{plan dialectique} : thèse (la tradition freine le développement), antithèse (la tradition peut favoriser le développement), synthèse (moderniser sans renier).
+
+\tcblower
+
+\textbf{Étape 2 : énonciation (document 1).} Chez Lakunle, le pronom « nous » (« nous aurons des machines ») et le futur traduisent un projet collectif tourné vers le progrès ; le verbe « aurons » modalise un avenir présenté comme certain à ses yeux. Chez Baroka, l'affirmation sentencieuse « la tradition est la sagesse des ancêtres » utilise le présent de vérité générale : le chef pose son point de vue comme une évidence indiscutable. L'énonciation révèle donc l'affrontement de deux visions du monde : l'une tournée vers l'avenir technique, l'autre enracinée dans l'héritage ancestral.
+
+\textbf{Étape 3 : problématique et introduction (modèle).} Problématique : \emph{Dans quelle mesure la tradition constitue-t-elle un obstacle au développement du Cameroun, et ne peut-elle pas au contraire en devenir un levier ?}
+
+Introduction rédigée : « De la case en banco du village à l'immeuble de verre de Douala, le Cameroun vit chaque jour la rencontre entre l'héritage des ancêtres et les exigences du monde moderne. Cette coexistence soulève une question qui divise les esprits : les coutumes, les rites et les autorités traditionnelles freinent-ils la marche du pays vers le progrès ? En d'autres termes, la tradition est-elle un obstacle au développement du Cameroun ? Nous verrons d'abord que certaines pratiques traditionnelles peuvent effectivement freiner le développement, avant de montrer que la tradition, loin d'être un simple poids du passé, peut aussi devenir un moteur du progrès. »
+
+\textbf{Étape 4 : paragraphe 1 (thèse).} « Il est indéniable que certaines traditions ralentissent le développement du pays. Ainsi, dans les régions du Nord et de l'Extrême-Nord, le taux net de scolarisation des filles au secondaire reste inférieur à 35 \%, contre plus de 70 \% au Centre et au Littoral, en grande partie à cause des mariages précoces imposés par la coutume. Une jeune fille mariée à treize ans ne construit pas l'avenir économique de sa région. De même, chez Soyinka, Baroka incarne un pouvoir traditionnel qui refuse toute innovation venue de l'école. Ces exemples montrent que, figée dans des pratiques inégalitaires, la tradition peut devenir un véritable frein. »
+
+\textbf{Transition.} « Si la tradition apparaît donc, dans certains cas, comme un obstacle réel, il serait pourtant injuste de la réduire à ce seul rôle négatif : elle peut aussi nourrir le développement. »
+
+\textbf{Paragraphe 2 (antithèse).} « En effet, la tradition est aussi une force de cohésion et d'identité sans laquelle aucun développement durable n'est possible. Un notable de l'Ouest le rappelle avec justesse : "Moderniser n'est pas abandonner : c'est transmettre autrement." Cette formule condense l'idée que la modernité n'oblige pas à rompre avec le passé, mais invite à en renouveler les formes. Les chefferies qui créent des comités de développement et des sites Internet prouvent que coutume et modernité peuvent marcher ensemble. La tontine, pratique d'épargne traditionnelle, finance aujourd'hui de nombreux petits commerces à Yaoundé et à Douala. La tradition, lorsqu'elle est repensée, devient donc un levier et non une chaîne. »
+
+\textbf{Étape 5 : conclusion (modèle).} « En définitive, la tradition n'est pas en elle-même un obstacle au développement du Cameroun : tout dépend de l'usage qu'on en fait. Figée et inégalitaire, elle freine ; repensée et ouverte, elle fonde un progrès enraciné. Comme le suggère la pièce de Soyinka, où ni Lakunle ni Baroka ne triomphent totalement, l'avenir appartient peut-être à ceux qui sauront, comme Sidi, choisir librement entre la perle du passé et le lion du présent. Reste à savoir quelle place l'école camerounaise donnera demain à cet héritage. »
+
+\textbf{Étape 6 : justification orale attendue.} L'élève explique : choix du plan dialectique (imposé par la formulation interrogative du sujet) ; choix de la citation du notable (elle condense l'idée de synthèse et provient d'un document crédible) ; ouverture sur l'école (elle prolonge la réflexion sans sortir du sujet).
+
+\textbf{Étape 7 : évaluation et amélioration.} Grille critériée : respect des étapes de l'introduction (4 pts) ; qualité de la problématique (2 pts) ; paragraphes construits avec citation insérée et commentée (6 pts) ; transition explicite (2 pts) ; conclusion avec bilan et ouverture (3 pts) ; correction de la langue (3 pts). L'amélioration porte sur les points faibles relevés : reformuler une problématique trop vague, ajouter le commentaire d'une citation laissée « en l'air », renforcer une transition trop abrupte.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité d'intégration a permis de vérifier que les savoir-faire de la leçon ne sont pas des exercices isolés mais les maillons d'une seule chaîne : comprendre un texte (lecture méthodique du \emph{Lion et la Perle}), repérer qui parle et comment (énonciation), peser les mots (dénotation et connotation), puis construire une pensée écrite complète (introduction, paragraphe avec citation, transition, conclusion). Elle a montré qu'une bonne dissertation naît d'une analyse rigoureuse du sujet et d'un dossier exploité avec méthode, et non d'une improvisation. Enfin, la phase d'évaluation croisée et d'amélioration a fait comprendre aux élèves qu'une copie n'est jamais définitive : relire, justifier et corriger font partie intégrante de l'acte d'écrire, au Probatoire comme au Baccalauréat technique.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Leçon 18 : Rédiger une dissertation}
+
+\courssub{L'énonciation et la lecture méthodique n°2 de « Le Lion et la Perle »}
+
+\begin{methode}[Repérer les marques de l'énonciation]
+Pour analyser qui parle, à qui, quand et comment dans un texte théâtral (dialogue, réplique, didascalie) :
+\begin{enumerate}
+\item \textbf{Identifier l'instance d'énonciation} : repérer les \cle{pronoms personnels} (\og je\fg, \og tu\fg, \og nous\fg, \og vous\fg) et les \cle{temps verbaux} (présent de l'indicatif = ancrage dans l'instant de l'énonciation).
+\item \textbf{Repérer les \cle{deictiques} (ou indices déictiques)} : mots qui situent l'énonciation dans l'espace (\og ici\fg, \og là\fg, \og là-bas\fg), le temps (\og maintenant\fg, \og aujourd'hui\fg, \og demain\fg, \og hier\fg) et le discours (\og ceci\fg, \og cela\fg).
+\item \textbf{Observer les marques de subjectivité / modalisation} : jugements de valeur (adjectifs, noms), modalisateurs (\og il faut\fg, \og peut-être\fg, \og certainement\fg, \og sans doute\fg), phrases exclamatives, interrogatives, impératives.
+\item \textbf{Conclure sur l'effet produit} : présence/absence de l'auteur, distance ironique, engagement du personnage, tension dramatique, caractérisation (arrogance, naïveté, ruse, etc.).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Analyse de l'énonciation : réplique de Lakunle (Lecture méthodique n°2)]
+Énoncé : À partir de la réplique de Lakunle à Sidi (scène 1) : \og Je veux t'épouser, Sidi, mais sans payer le prix de la fiancée !\fg, relevez les marques de l'énonciation et dites ce qu'elles révèlent du personnage et de la situation.
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+\item \textbf{Pronoms et personne} : \og Je\fg (Lakunle, locuteur) / \og t'\fg (Sidi, allocutaire) $\rightarrow$ énonciation \cle{dialogale}, adresse directe, situation de communication immédiate.
+\item \textbf{Temps verbal} : \og veux\fg (présent de l'indicatif) $\rightarrow$ ancrage dans le \cle{ hic et nunc} de la représentation ; volonté actuelle, acte de parole performatif (il pose sa condition en parlant).
+\item \textbf{Deictiques} : absence de deictiques spatio-temporels explicites, mais \og Sidi\fg (nom propre) ancre l'adresse dans l'ici-maintenant de la scène.
+\item \textbf{Modalisation / Subjectivité} : \og Je veux\fg (volonté forte, affirmation catégorique) ; \og mais\fg (opposition, concession refusée) ; point d'exclamation (intensité émotionnelle, emportement).
+\item \textbf{Interprétation} : Lakunle s'affiche en \cle{moderniste arrogant} : il refuse la coutume (\og prix de la fiancée\fg) tout en revendiquant le mariage. L'énonciation directe place le spectateur en position de témoin immédiat de ce choc culturel.
+\end{enumerate}
+\textbf{Bilan} : Les marques \og je/tu\fg, le présent, l'exclamation et l'adversatif \og mais\fg construisent un locuteur engagé, autoritaire, porteur d'une idéologie moderne qui se heurte aux valeurs traditionnelles du village d'Ilujinle.
+\end{exoresolu}
+
+\begin{exemplebox}[Lecture méthodique n°2 : étapes types (extrait choisi par l'enseignant)]
+\begin{enumerate}
+\item \textbf{Contexte} : situer l'extrait (acte, scène, personnages présents, situation dramatique antérieure).
+\item \textbf{Énonciation} : appliquer la méthode ci-dessus (qui parle ? à qui ? comment ? pourquoi ?).
+\item \textbf{Thèmes / Enjeux} : identifier les thèmes mis en jeu (tradition vs modernité, condition féminine, pouvoir, séduction, ruse).
+\item \textbf{Procédés d'écriture} : repérer le registre (comique, satirique, pathétique), les figures de style, le rythme, les didascalies.
+\item \textbf{Portée} : en quoi cet extrait éclaire-t-il l'œuvre entière et la vision de l'auteur (Wole Soyinka) ?
+\end{enumerate}
+\end{exemplebox}
+
+\courssub{Rédaction et amélioration de l'introduction}
+
+\begin{methode}[Construire une introduction complète (4 étapes obligatoires)]
+Une introduction de dissertation suit un \cle{entonnoir} : du général au particulier.
+\begin{enumerate}
+\item \textbf{L'amorce (accroche)} : une phrase large qui inscrit le sujet dans un domaine connu (littérature, société, histoire, condition humaine). \textbf{Interdit} : commencer par le sujet ou par \og Dans cette dissertation...\fg.
+\item \textbf{L'amenée du sujet} : 2 à 3 phrases qui resserrent progressivement vers le sujet exact. On définit les termes clés si nécessaire, on montre la tension ou le débat.
+\item \textbf{La problématique} : une question (ou deux imbriquées) qui reformule le sujet en \cle{problème à résoudre}. Elle doit reprendre les \cle{mots-clés} du sujet.
+\item \textbf{L'annonce du plan} : présentation des 2 ou 3 grandes parties (I, II, III) sans les détailler. Formules types : \og Nous analyserons d'abord..., puis nous verrons..., enfin nous montrerons que...\fg.
+\end{enumerate}
+\textbf{Norme} : environ 1/10 de la copie (6 à 10 lignes). Rédiger au brouillon, vérifier la présence des 4 étapes, soigner l'orthographe et la syntaxe.
+\end{methode}
+
+\begin{exoresolu}[Introduction type : « Le théâtre a-t-il pour seule fonction de divertir le spectateur ? »]
+\tcblower
+\textbf{Amorce} : Depuis l'Antiquité grecque, le théâtre occupe une place centrale dans la cité : il rassemble, émeut et fait réfléchir.
+\textbf{Amenée} : Si le spectacle procure un plaisir immédiat par le rire, les larmes ou le suspense, ce divertissement épuise-t-il la fonction théâtrale ? Nombre d'auteurs et de théoriciens ont soutenu que la scène doit aussi instruire, corriger les mœurs ou éveiller les consciences.
+\textbf{Problématique} : Le théâtre se cantonne-t-il au divertissement, ou remplit-il également une fonction morale, sociale et critique ?
+\textbf{Annonce du plan} : Nous montrerons d'abord que le théâtre divertit effectivement le spectateur (I), puis qu'il instruit et dénonce les travers de la société (II), avant de voir que plaire et instruire, loin de s'exclure, se renforcent mutuellement (III).
+\textbf{Rédaction finale (recopiée au propre)} : Depuis l'Antiquité grecque, le théâtre occupe une place centrale dans la cité : il rassemble, émeut et fait réfléchir. Si le spectacle procure un plaisir immédiat par le rire, les larmes ou le suspense, ce divertissement épuise-t-il la fonction théâtrale ? Nombre d'auteurs et de théoriciens ont soutenu que la scène doit aussi instruire, corriger les mœurs ou éveiller les consciences. Autrement dit, le théâtre se cantonne-t-il au divertissement, ou remplit-il également une fonction morale, sociale et critique ? Nous montrerons d'abord que le théâtre divertit effectivement le spectateur, puis qu'il instruit et dénonce les travers de la société, avant de voir que plaire et instruire, loin de s'exclure, se renforcent mutuellement.
+\end{exoresolu}
+
+\courssub{Dénotation et connotation : enrichir son écriture}
+
+\begin{definition}[Dénotation et Connotation]
+\begin{itemize}
+\item \textbf{Dénotation} : sens premier, littéral, objectif, stable, donné par le dictionnaire (ex. : \og rose\fg = fleur épineuse du rosier).
+\item \textbf{Connotation} : sens second, subjectif, affectif, culturel, variable selon le contexte (ex. : \og rose\fg $\rightarrow$ amour, beauté, éphémère, passion, secret \og sous la rose\fg).
+\end{itemize}
+\end{definition}
+
+\begin{methode}[Analyser et utiliser la connotation]
+\begin{enumerate}
+\item \textbf{À l'analyse (lecture)} : donner le sens dénoté $\rightarrow$ lister les connotations contextuelles $\rightarrow$ expliquer l'effet de sens (ironie, éloge, critique, pathétique, etc.).
+\item \textbf{À la production (dissertation)} : choisir des mots à \cle{connotation précise} pour nuancer l'argumentation (ex. : \og ruse\fg [négatif] vs \og intelligence\fg [neutre] vs \og sagacité\fg [positif] ; \og entêtement\fg vs \og persévérance\fg).
+\item \textbf{Attention} : la connotation dépend du \cle{contexte d'énonciation} (qui parle ? à qui ? dans quelle intention ?).
+\end{enumerate}
+\end{methode}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\rowcolor{popblueL}
+\textbf{Mot / Expression} & \textbf{Dénotation} & \textbf{Connotations dans « Le Lion et la Perle »} & \textbf{Effet / Portée} \\
+\hline
+\og Le Lion \fg (Baroka) & Grand félin, prédateur, roi des animaux & Force, puissance, royauté, ruse, dangerosité, virilité, autorité traditionnelle & Valorise le chef comme protecteur et maître ; suggère la prédation sur Sidi \\
+\hline
+\og La Perle \fg (Sidi) & Concrétion nacrée, gemme rare, objet de parure & Beauté rare, pureté, valeur marchande, fragilité, objet que l'on possède/convoite & Sidi = trésor du village, enjeu de la rivalité ; risque de réification (objet) \\
+\hline
+\og Ilujinle \fg (village) & Nom propre fictif (yoruba : \og le village qui refuse de grandir\fg ou \og qui refuse le changement\fg) & Conservatisme, tradition figée, résistance au moderne, microcosme africain & Ancre la satire dans un lieu symbolique ; universalise le conflit \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Analyse des surnoms (Lecture méthodique n°2 / n°3)]
+Énoncé : Dans \emph{Le Lion et la Perle}, Baroka est surnommé \og le Lion\fg et Sidi \og la Perle\fg. Analysez la dénotation et la connotation de ces deux surnoms.
+\tcblower
+\textbf{« Le Lion »} : Dénotation = grand carnassier (Panthera leo). Connotations = force, royauté, ruse, danger, virilité, autorité. Effet = Baroka incarne le pouvoir traditionnel dans sa majesté et sa dangerosité ; il \og rugit\fg (parole performative) et \og chasse\fg (conquête de Sidi).
+\textbf{« La Perle »} : Dénotation = gemme produite par l'huître. Connotations = beauté, rareté, pureté, prix élevé, objet de désir, fragilité. Effet = Sidi est le \cle{trésor} du village, admirée, mais réduite à un \og prix\fg (dot) et disputée comme un trophée entre deux visions du monde.
+\textbf{Synthèse} : Le titre condense le conflit central : l'affrontement entre la \cle{force rusée du pouvoir établi} (Lion) et la \cle{beauté convoitée, enjeu de modernité} (Perle), médiatisée par l'argent/la tradition (dot) et le discours (langage).
+\end{exoresolu}
+
+\courssub{Rédaction du paragraphe : citations et transitions}
+
+\begin{methode}[Structure du paragraphe argumenté : le schéma I.A.E.A.]
+Chaque paragraphe = \cle{une seule idée directrice} développée en 4 temps :
+\begin{enumerate}
+\item \textbf{Idée (I)} : phrase d'ouverture (thèse du paragraphe), claire, affirmative, liée à la problématique.
+\item \textbf{Argument (A)} : développement, justification, explication logique (2-3 phrases). Pourquoi cette idée est-elle vraie ?
+\item \textbf{Exemple (E)} : illustration précise (œuvre, auteur, personnage, scène, citation courte \textless 1 ligne). \textbf{Introduire} la citation : \og Comme l'écrit Wole Soyinka : "...", \fg \og Selon Baroka : "...", \fg \og La réplique "...\fg montre que... \textbf{Mettre entre guillemets français \og ...\fg.}
+\item \textbf{Analyse (A)} : commentaire de l'exemple/citation. On ne laisse \textbf{jamais} une citation seule. On explique \og en quoi\fg elle prouve l'argument et \og en quoi\fg elle répond à la problématique. Transition interne vers l'idée suivante si possible.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Paragraphe type : le théâtre dénonce (Partie II - Argument 1)]
+\tcblower
+\textbf{Idée} : Le théâtre est d'abord une arme de dénonciation sociale et politique.
+\textbf{Argument} : En mettant en scène des conflits entre personnages représentatifs de groupes sociaux, le dramaturge rend visibles les injustices, les abus de pouvoir ou les hypocrisies, et force le public à prendre position.
+\textbf{Exemple} : Dans \emph{Le Lion et la Perle}, Wole Soyinka oppose Baroka (le chef traditionnel, \og le Lion\fg) à Lakunle (l'instituteur moderniste) pour la conquête de Sidi (\og la Perle\fg). La ruse de Baroka, qui feint l'impuissance pour séduire Sidi, est résumée par Sadiku : \og Le Lion a rugi une dernière fois\fg (fin de la pièce), révélant la manipulation.
+\textbf{Analyse} : Ainsi, le spectacle ne se contente pas de divertir : il expose la \cle{ruse du pouvoir traditionnel} qui instrumentalise la tradition (la dot, la polygamie) pour assouvir des désirs personnels, tout en raillant le \cle{snobisme stérile} du moderne (Lakunle). Le spectateur rit, mais rit \og jaune\fg : il juge.
+\end{exoresolu}
+
+\begin{methode}[Rédiger une transition entre deux grandes parties]
+La transition (2-3 phrases) se place \textbf{entre la fin d'une partie et le début de la suivante}. Elle assure la \cle{cohérence logique} du plan.
+\begin{enumerate}
+\item \textbf{Bilan (rétrospectif)} : résumer en une phrase ce qui vient d'être démontré. \og Nous avons vu que... / Il ressort de cette première partie que...\fg
+\item \textbf{Annonce / Relance (prospectif)} : introduire la partie suivante par une nuance, une concession, une opposition ou un approfondissement. \og Cependant... / Toutefois... / Mais ne faut-il pas ajouter que... / Il convient maintenant d'examiner...\fg
+\end{enumerate}
+\textbf{Formules types} : \og Si le théâtre divertit, il n'en reste pas moins qu'il instruit.\fg ; \og Certes..., mais...\fg ; \og Après avoir montré que..., nous nous demanderons si...\fg.
+\end{methode}
+
+\begin{exoresolu}[Transition Partie I $\rightarrow$ Partie II (Sujet : théâtre et divertissement)]
+\tcblower
+\textbf{Bilan (I)} : Nous venons de voir que le théâtre procure au spectateur un plaisir réel, par le rire, l'émotion, le suspense et l'identification aux personnages.
+\textbf{Annonce (II)} : Cependant, réduire le théâtre à ce seul divertissement serait oublier sa dimension morale et critique : il convient donc de montrer qu'il instruit et dénonce les travers de la société.
+\textbf{Rédaction} : Nous venons de voir que le théâtre procure au spectateur un plaisir réel, par le rire, l'émotion, le suspense et l'identification aux personnages. Cependant, réduire le théâtre à ce seul divertissement serait oublier sa dimension morale et critique : il convient donc de montrer qu'il instruit et dénonce les travers de la société.
+\end{exoresolu}
+
+\courssub{Rédaction et amélioration de la conclusion}
+
+\begin{methode}[Construire une conclusion complète (3 étapes)]
+La conclusion \textbf{ne doit pas} être une simple répétition du plan. Elle \textbf{répond} à la problématique.
+\begin{enumerate}
+\item \textbf{Le bilan (synthèse)} : reprendre les résultats principaux du développement (I, II, III) en les \cle{synthétisant}, sans énumérer \og Dans la première partie nous avons vu que...\fg. \og Au terme de cette étude, il apparaît que...\fg
+\item \textbf{La réponse nuancée à la problématique} : trancher clairement la question posée. \og Ainsi, le théâtre n'a pas pour seule fonction de divertir...\fg \og En définitive, [réponse]...\fg
+\item \textbf{L'ouverture (facultative mais valorisée)} : élargir vers un horizon voisin (autre art, autre époque, problème actuel) \textbf{sans nouvel argument}. \og On peut dès lors se demander si le cinéma / la télévision / les réseaux sociaux assument aujourd'hui cette double mission...\fg
+\end{enumerate}
+\textbf{Interdits} : introduire un exemple ou une idée nouvelle, recopier l'annonce du plan, terminer brutalement par \og Voilà\fg ou \og C'est fini\fg.
+\end{methode}
+
+\begin{exoresolu}[Conclusion type : « Le théâtre a-t-il pour seule fonction de divertir le spectateur ? »]
+\tcblower
+\textbf{Bilan} : Au terme de cette réflexion, nous avons constaté que le théâtre divertit par le jeu, le rire et l'émotion, mais aussi qu'il instruit et dénonce les travers de la société, et que ces deux fonctions s'entrelacent indissociablement.
+\textbf{Réponse} : Le théâtre n'a donc pas pour seule fonction de divertir : fidèle à la formule horatienne \og plaire et instruire\fg (\emph{Ars Poetica}), il concilie le plaisir esthétique et la leçon civique.
+\textbf{Ouverture} : On peut alors se demander si le cinéma, héritier moderne du théâtre, ou les séries télévisées contemporaines, assument aujourd'hui la même mission de \cle{miroir critique} de la société.
+\textbf{Rédaction finale} : Au terme de cette réflexion, nous avons constaté que le théâtre divertit par le jeu, le rire et l'émotion, mais aussi qu'il instruit et dénonce les travers de la société, et que ces deux fonctions s'entrelacent indissociablement. Le théâtre n'a donc pas pour seule fonction de divertir : fidèle à la formule horatienne \og plaire et instruire\fg, il concilie le plaisir esthétique et la leçon civique. On peut alors se demander si le cinéma, héritier moderne du théâtre, ou les séries télévisées contemporaines, assument aujourd'hui la même mission de miroir critique de la société.
+\end{exoresolu}
+
+\courssub{Lecture méthodique n°3 et production complète de la dissertation}
+
+\begin{exemplebox}[Lecture méthodique n°3 : préparation à la dissertation sur l'œuvre]
+Sur un nouvel extrait significatif (ex. : scène de la séduction finale, ou monologue de Baroka, ou dialogue Sidi/Lakunle) :
+\begin{enumerate}
+\item \textbf{Contexte précis} (acte, scène, enjeu dramatique immédiat).
+\item \textbf{Analyse énonciative} (méthode §1) : qui parle ? comment ? quelle posture ?
+\item \textbf{Analyse lexicale / sémantique} (méthode §3) : champs lexicaux, dénotation/connotation des mots-clés (ex. : \og modernité\fg, \og tradition\fg, \og dot\fg, \og photo\fg, \og timbre\fg).
+\item \textbf{Portée thématique} : en quoi cet extrait illustre-t-il la thèse de la dissertation (ex. : \og Le théâtre dénonce\fg) ?
+\item \textbf{Rédaction d'un paragraphe I.A.E.A.} à partir de cet extrait (entraînement noté).
+\end{enumerate}
+\end{exemplebox}
+
+\begin{methode}[Produire une dissertation complète : démarche d'examen (4h / 2 séances)]
+\begin{enumerate}
+\item \textbf{Analyse du sujet} (15 min) : souligner mots-clés, définir termes, repérer la tension (opposition, nuance), formuler la problématique au brouillon.
+\item \textbf{Recherche d'idées / Plan} (30 min) : brainstorming (œuvres lues, connaissances, actualité), regroupement en 2 ou 3 parties équilibrées, trouver 2 arguments + 1 exemple précis par partie, rédiger les transitions.
+\item \textbf{Rédaction au brouillon} (1h30) : Introduction (4 étapes) $\rightarrow$ Développement (paragraphes I.A.E.A. + transitions) $\rightarrow$ Conclusion (3 étapes). \textbf{Compter les lignes} (viser 300-400 mots / 1,5 à 2 pages).
+\item \textbf{Relecture / Amélioration} (30 min) : \cle{Correction} (orthographe, grammaire, syntaxe, ponctuation) + \cle{Amélioration} (vocabulaire précis, connecteurs logiques, fluidité, conformité aux consignes). Vérifier : sujet respecté ? Problématique traitée ? Citations exactes et analysées ? Transitions logiques ? Conclusion répondant à la question ?
+\item \textbf{Recopie au propre} (30 min) : écriture soignée, paragraphes sautés, citations en italique ou guillemets, numérotation des parties apparente (I, II, III).
+\end{enumerate}
+\end{methode}
+
+\begin{exercice}[Entraînement complet : Dissertation notée]
+Sujet : \og Dans \emph{Le Lion et la Perle}, Wole Soyinka montre-t-il que la tradition est un obstacle au progrès ? \fg
+\begin{enumerate}
+\item Rédigez l'introduction complète (4 étapes).
+\item Rédigez \textbf{deux paragraphes I.A.E.A.} : un pour la thèse (la tradition freine le progrès), un pour l'antithèse (la tradition résiste / s'adapte / le progrès est illusoire).
+\item Rédigez la transition entre ces deux parties.
+\item Rédigez la conclusion complète (3 étapes).
+\end{enumerate}
+\textit{Durée : 2h. Évaluation sur 20 pts (Intro 4, Développement 10, Transition 2, Conclusion 4).}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1 - Éléments attendus]
+\textbf{Intro} : Amorce (théâtre africain / tradition vs modernité) $\rightarrow$ Amenée (Soyinka, Ilujinle, conflit Baroka/Lakunle/Sidi) $\rightarrow$ Problématique (La tradition est-elle seulement un frein ou aussi une force vive ?) $\rightarrow$ Plan (I. Tradition comme obstacle / II. Tradition comme résistance identitaire / III. Dépassement : synthèse dynamique).
+\textbf{Paragraphe I (Thèse)} : Idée = Lakunle incarne le progrès moderne bloqué par la coutume (dot, polygamie). Argument = refus de payer la dot = rejet de la tradition. Exemple = réplique Lakunle \og sans payer le prix de la fiancée\fg. Analyse = mais son modernisme est caricatural, stérile, il échoue.
+\textbf{Transition} : \og Si Lakunle incarne un modernisme vain qui bute sur la tradition, il ne faut pas conclure que celle-ci est figée : Baroka montre qu'elle sait s'adapter pour survivre.\fg
+\textbf{Paragraphe II (Antithèse)} : Idée = Baroka utilise la tradition comme levier de pouvoir et d'adaptation. Argument = ruse du timbre-poste, feinte impuissance. Exemple = \og Le Lion a rugi une dernière fois\fg. Analyse = tradition vivante, manipulable, qui absorbe le moderne (timbre) pour mieux régner.
+\textbf{Conclusion} : Bilan = tradition n'est pas monolithique (obstacle pour Lakunle, ressource pour Baroka). Réponse = Soyinka montre la complexité : la tradition n'est pas seulement un obstacle, elle est un champ de bataille. Ouverture = quel avenir pour les traditions africaines face à la globalisation ?
+\end{corrige}
+
+\begin{aretenir}[Check-list finale avant de rendre la copie (Probatoire / Bac)]
+\begin{itemize}
+\item \coche Introduction : 4 étapes présentes, dans l'ordre, problématique claire, plan annoncé.
+\item \coche Développement : 2 ou 3 parties équilibrées, paragraphes I.A.E.A. (1 idée = 1 paragraphe), citations exactes, courtes, introduites, analysées.
+\item \coche Transitions : bilan + annonce entre chaque grande partie, connecteurs logiques variés.
+\item \coche Conclusion : bilan synthétique, réponse explicite à la problématique, ouverture pertinente.
+\item \coche Langue : phrases complètes, vocabulaire précis (dénotation/connotation maîtrisées), connecteurs (\og par conséquent\fg, \og en outre\fg, \og en revanche\fg), zéro faute d'accord majeur, écriture lisible.
+\item \coche Propreté : saut de ligne pour chaque paragraphe, titres I / II / III visibles, citations en \og guillemets \fg.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire / Bac Technique]
+\begin{enumerate}
+\item \textbf{Oublier une étape de l'introduction} : pas de problématique ou pas d'annonce de plan $\rightarrow$ note plafonnée. \textbf{Vérifier les 4 étapes} avant de recopier.
+\item \textbf{Laisser une citation \og orpheline\fg} : citation sans introduction, sans guillemets, sans analyse. \textbf{Toute citation = Exemple + Analyse obligatoire.}
+\item \textbf{Enchaîner les parties sans transition} : rupture brutale = plan incohérent. \textbf{Rédiger toujours : Bilan + Annonce.}
+\item \textbf{Introduire une idée nouvelle dans la conclusion} : la conclusion \textbf{synthétise}, elle ne \textbf{prouve} plus. Pas d'exemple, pas d'argument inédit.
+\item \textbf{Confondre dénotation et connotation} : donner le sens du dictionnaire quand on demande l'analyse connotative, ou inventer des connotations hors contexte. \textbf{Toujours ancrer la connotation dans le texte et l'énonciation.}
+\end{enumerate}
+\end{attention}
+
+\begin{savaistu}[Wole Soyinka et le théâtre nigérian]
+Wole \textbf{Soyinka} (né en 1934, prix Nobel de littérature 1986) est une figure majeure du théâtre anglophone africain. \emph{Le Lion et la Perle} (1959, créé à Ibadan 1960) mêle tradition orale yoruba (chants, danses, proverbes, masques \og egungun\fg) et techniques occidentales (structure en 3 actes, ironie, satire). La pièce illustre la \cle{théorie du \og théâtre de la forêt\fg} : un théâtre total, populaire, engagé, qui divertit \textbf{et} instruit, exactement comme le demande le sujet de dissertation type. La connaissance de ce contexte renforce l'argumentation (ex. : le mime de la machine à danser, le chant de l'oiseau, le rôle de Sadiku).
+\end{savaistu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={font=\small}, node distance=1.2cm and 1.5cm]
+% Styles
+\tikzset{
+  box/.style={draw=popblue, thick, rounded corners, fill=popblue!10, minimum width=2.8cm, minimum height=1.1cm, align=center},
+  arrow/.style={-Stealth, thick, popdark},
+  labelbox/.style={draw=poporange, thick, rounded corners, fill=poporange!15, minimum width=3.5cm, minimum height=0.9cm, align=center, font=\small\bfseries},
+}
+% Nodes
+\node[box, align=center] (intro){INTRODUCTION\\Amorce $\rightarrow$ Amenée $\rightarrow$ Problématique $\rightarrow$ Plan};
+\node[box, below=of intro] (dev) {DÉVELOPPEMENT};
+\node[labelbox, left=of dev, xshift=-1.5cm, align=center] (I){PARTIE I\\Thèse};
+\node[labelbox, below=of I, align=center] (II){PARTIE II\\Antithèse};
+\node[labelbox, below=of II, align=center] (III){PARTIE III\\Synthèse};
+\node[box, below=of dev, align=center] (conc){CONCLUSION\\Bilan $\rightarrow$ Réponse $\rightarrow$ Ouverture};
+% Paragraph structure inside parts
+\node[draw=popgreen, thick, rounded corners, fill=popgreen!10, minimum width=5cm, minimum height=2.5cm, right=of I, xshift=1.5cm, align=center] (para){
+\textbf{Paragraphe type (I.A.E.A.)}\\
+\underline{Idée} : Phrase d'ouverture\\
+\underline{Argument} : Justification\\
+\underline{Exemple} : Œuvre + Citation \og...\fg\\
+\underline{Analyse} : Commentaire + Lien probl.
+};
+% Arrows
+\draw[arrow] (intro) -- (dev);
+\draw[arrow] (dev) -- (conc);
+\draw[arrow, densely dashed] (I) -- (II);
+\draw[arrow, densely dashed] (II) -- (III);
+\node[align=center, font=\tiny, text=popmuted] at ($(I)!0.5!(II) + (0,-0.3)$) {Transition\\Bilan + Annonce};
+\node[align=center, font=\tiny, text=popmuted] at ($(II)!0.5!(III) + (0,-0.3)$) {Transition\\Bilan + Annonce};
+\end{tikzpicture}
+\legende{Schéma global de la dissertation et structure du paragraphe argumenté (I.A.E.A.). Les flèches pleines = flux principal ; flèches pointillées = transitions inter-parties.}
+\end{popfigure}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : Structure de l'introduction]
+Parmi les propositions suivantes, laquelle correspond à l'ordre canonique des étapes d'une introduction de dissertation littéraire ?
+\begin{enumerate}
+\item Amorce, Annonce du plan, Problématique, Présentation du sujet.
+\item Amorce, Présentation du sujet (œuvre/auteur), Problématique, Annonce du plan.
+\item Problématique, Amorce, Présentation du sujet, Annonce du plan.
+\item Annonce du plan, Amorce, Problématique, Présentation du sujet.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai / Faux justifié : Énonciation]
+Déterminez si les affirmations suivantes sont vraies ou fausses. Justifiez brièvement votre réponse en mobilisant les notions d'énonciation (énonciateur, énonciataire, déictiques, modalités).
+\begin{enumerate}
+\item Dans une dissertation, l'énonciateur (le candidat) doit systématiquement utiliser le « je » pour marquer son engagement subjectif.
+\item Les marques de l'énonciation (adverbes, pronoms, temps verbaux) permettent d'identifier le point de vue adopté dans un paragraphe argumentatif.
+\item La dénotation d'un mot suffit à expliquer son effet stylistique dans un texte littéraire comme \emph{Le Lion et la Perle}.
+\item Une transition réussie fait disparaître l'énonciateur au profit du seul enchaînement logique des idées.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et distinctions : Dénotation / Connotation]
+Donnez une définition précise pour chacun des termes suivants et illustrez par un exemple tiré de \emph{Le Lion et la Perle} (ou inventé s'il est fidèle à l'esprit de la pièce) :
+\begin{enumerate}
+\item Dénotation (ou sens propre).
+\item Connotation (ou sens figuré/affectif).
+\item Champ lexical.
+\item Verbe introducteur (ou verbe de parole) dans une citation insérée.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs : Gestion du temps et structure]
+Un sujet de dissertation au Probatoire technique dure 4 heures (240 minutes). Un candidat suit la répartition temporelle idéale suivante : 15\% pour l'analyse du sujet et le brouillon, 30\% pour la rédaction de l'introduction et de la conclusion, 45\% pour le développement (corps), 10\% pour la relecture et la correction.
+\begin{enumerate}
+\item Calculez le nombre exact de minutes allouées à chaque phase.
+\item Si le développement comporte 3 parties (Thèse, Antithèse, Synthèse) équilibrées, combien de minutes par partie ?
+\item Le candidat a passé 50 minutes sur l'analyse du sujet. De combien de minutes dispose-t-il désormais pour le développement s'il maintient les autres durées prévues ?
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Réécriture d'une introduction défaillante]
+Voici une introduction rédigée par un élève sur le sujet : \og Le progrès technique menace-t-il les valeurs traditionnelles africaines ? Vous répondrez en vous appuyant sur \emph{Le Lion et la Perle} et sur votre expérience. \fg
+\textbf{Introduction de l'élève :}
+\og De nos jours, la technologie est partout. Les téléphones portables et internet changent la vie des Africains. Dans \emph{Le Lion et la Perle}, Wole Soyinka parle de Baroka et Lakunle. Lakunle veut la modernité, Baroka la tradition. Est-ce que le progrès est mauvais ? Nous allons voir les arguments pour et contre. \fg
+\begin{enumerate}
+\item Identifiez 4 défauts majeurs de cette introduction par rapport aux attendus (amorce, présentation sujet/œuvre, problématique, annonce de plan).
+\item Réécrivez une introduction correcte et complète en corrigeant ces défauts.
+\item Justifiez chaque modification apportée (ex : \og Remplacement de l'amorce vague par une citation/réflexion sur le choc des cultures \fg).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Insertion de citations : Le personnage de Baroka]
+Rédigez un paragraphe argumentatif d'une quinzaine de lignes répondant à la question : \og En quoi Baroka incarne-t-il une tradition vivante et stratège plutôt qu'un passé figé ? \fg
+Vous devez insérer \textbf{obligatoirement} les trois citations ci-dessous en respectant les règles d'insertion (deux-points, guillemets, intégration syntaxique, verbe introducteur varié, commentaire explicatif) :
+\begin{enumerate}
+\item \og Je suis le lion qui chasse par la ruse. \fg
+\item \og La vieillesse n'empêche pas la virilité. \fg
+\item \og Le progrès... c'est le ver dans le fruit. \fg
+\end{enumerate}
+Variez les verbes introducteurs (affirmer, déclarer, souligner, ironiser, constater, etc.) et assurez la cohérence du raisonnement.
+\end{exercice}
+
+\begin{exercice}[Sémantique : Connotations et vision de la tradition]
+Relisez l'extrait suivant (Acte 1, scène de la classe / discussion Lakunle/Sidi) :
+\og \textbf{Lakunle} : (Il la suit, gesticulant) C'est une habitude barbare, cruelle, rétrograde... Vous êtes attachée à des coutumes qui rabaissent la femme. Le prix de la mariée... c'est de l'esclavage déguisé. Une femme doit être libre, éduquée, l'égale de l'homme ! \fg
+\og \textbf{Sidi} : (Riant) Ta bouche est pleine de grands mots qui ne veulent rien dire... Est-ce que l'homme blanc t'a appris à parler comme un livre ? \fg
+\begin{enumerate}
+\item Relevez 5 mots ou expressions à forte connotation (péjorative ou méliorative) dans les répliques de Lakunle.
+\item Pour chaque mot, précisez sa dénotation (sens littéral) et sa connotation (valeur affective, jugement implicite).
+\item Expliquez comment ce jeu sur les connotations construit la vision \emph{idéologique} de la tradition chez Lakunle (modernité = lumière/progrès vs tradition = obscurantisme/barbarie).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Rédaction de transitions dialectiques]
+Sujet : \og La tradition est-elle un frein ou un moteur pour le développement ? \fg (Appui sur \emph{Le Lion et la Perle}).
+Rédigez les deux transitions manquantes dans le plan suivant :
+\begin{enumerate}
+\item \textbf{Thèse} : La tradition comme frein (poids des coutumes, résistance au changement, exemple de Lakunle rejeté par le village).
+\item \textbf{Transition 1 (Thèse $\rightarrow$ Antithèse) :} \textit{À rédiger.}
+\item \textbf{Antithèse} : La tradition comme moteur/ressource (identité, cohésion sociale, sagesse de Baroka, adaptation).
+\item \textbf{Transition 2 (Antithèse $\rightarrow$ Synthèse) :} \textit{À rédiger.}
+\item \textbf{Synthèse} : Dépassement : une tradition dynamique, réinventée (syncretisme, éducation, avenir).
+\end{enumerate}
+Chaque transition doit : faire le bilan de la partie achevée, annoncer le mouvement inverse, poser le problème nouveau qui lance la partie suivante. Longueur : 4 à 6 lignes chacune.
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Sujet type Probatoire : Dissertation complète (4h)]
+\textbf{Sujet :} \og Le progrès technique menace-t-il les valeurs traditionnelles africaines ? Vous répondrez en vous appuyant sur \emph{Le Lion et la Perle} de Wole Soyinka et sur votre expérience personnelle. \fg
+\textbf{Consignes :}
+\begin{enumerate}
+\item \textbf{Analyse du sujet (brouillon) :} Définissez les termes clés (progrès technique, valeurs traditionnelles, menace), identifiez la tension (opposition / complémentarité), formulez la problématique, proposez un plan dialectique détaillé (3 parties, 2-3 arguments par partie, exemples précis de la pièce et expérience).
+\item \textbf{Rédaction de l'introduction :} Respectez les 4 étapes canoniques. Soignez l'amorce (citation, actualité, proverbe).
+\item \textbf{Rédaction du développement :} Rédigez au moins deux paragraphes argumentatifs complets pour la \textbf{Thèse} (le progrès comme menace : aliénation, perte de repères, Lakunle) et deux pour l'\textbf{Antithèse} (le progrès comme opportunité / tradition comme résistance : Baroka, adaptation, éducation). Insérez au moins 3 citations exactes de la pièce avec commentaires. Rédigez les transitions.
+\item \textbf{Rédaction de la synthèse :} Proposez une dépassement (tradition vivante, modernité endogène).
+\item \textbf{Rédaction de la conclusion :} Bilan, réponse nuancée à la problématique, ouverture (autre œuvre, actualité camerounaise, avenir).
+\item \textbf{Relecture :} Cochez les points de vigilance (orthographe, syntaxe, cohérence, respect du sujet, présence citations).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Analyse comparative de conclusions : Évaluation par les pairs]
+Deux candidats ont traité le sujet : \og Baroka est-il le véritable vainqueur de la pièce ? \fg Voici leurs conclusions.
+
+\textbf{Copie A :}
+\og En conclusion, Baroka a gagné car il a eu Sidi. Il est malin et il a menti à Sadiku. Lakunle a perdu car il est bête. La tradition a gagné contre la modernité. C'est fini. \fg
+
+\textbf{Copie B :}
+\og Pour répondre à la question, nous avons vu que Baroka use de ruse pour conserver son pouvoir et épouser Sidi, triomphant de la naïveté de Lakunle. Cependant, cette victoire est ambiguë : elle repose sur le mensonge et fige Sidi dans un rôle traditionnel. Finalement, Baroka gagne la partie mais le village d'Ilujinle reste tiraillé entre deux mondes. Cette pièce nous invite à réfléchir sur le prix de la stabilité en Afrique aujourd'hui. \fg
+
+\begin{enumerate}
+\item Pour chaque copie, identifiez 3 points forts (qualités) et 3 points faibles (fautes/manques) par rapport aux attendus d'une conclusion de dissertation (Bilan synthétique, Réponse à la problématique, Ouverture, Style/Ton).
+\item Rédigez la \textbf{conclusion idéale} (12-15 lignes) qui corrige les faiblesses et conserve les forces des deux copies.
+\item Justifiez vos choix de rédaction pour la conclusion idéale (ex : \og J'ai utilisé le conditionnel pour nuancer la victoire \fg).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Sujet d'invention / Expression écrite : Plaidoyer oral]
+Dans le cadre d'un \og Parlement des Jeunes \fg au Cameroun, vous devez prononcer un discours de 3 minutes (environ 400 mots) sur le thème : \og Valoriser nos langues nationales et nos cultures dans l'ère du numérique. \fg
+Vous vous appuierez sur la leçon de \emph{Le Lion et la Perle} (le conflit langue anglaise / yoruba, l'oralité, les proverbes) et sur votre expérience de lycéen technique.
+\begin{enumerate}
+\item Rédigez le \textbf{plan détaillé} de votre discours (Introduction : accroche, thèse, plan ; Développement : 2 grandes parties avec arguments et exemples ; Conclusion : synthèse, appel à l'action).
+\item Rédigez l'\textbf{introduction complète} et la \textbf{conclusion complète} de ce discours.
+\item Identifiez dans votre texte 3 procédés d'énonciation (apostrophe, modalisateurs, déictiques, « nous » d'inclusion) et expliquez leur effet sur l'auditoire.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Leçon 18 : Rédiger une dissertation}
+
+\begin{corrige}[Exercice 1 — QCM : Structure de l'introduction]
+\textbf{Réponse correcte : 2.} Amorce, Présentation du sujet (œuvre/auteur), Problématique, Annonce du plan.
+
+\textbf{Justification :} L'introduction de dissertation littéraire suit un ordre canonique en quatre étapes, du plus général au plus précis :
+\begin{enumerate}
+\item L'\cle{amorce} (ou accroche) : une réflexion générale, une citation, un proverbe ou un fait d'actualité qui capte l'attention et conduit au sujet.
+\item La \cle{présentation du sujet} : on situe l'œuvre (titre, auteur, date, genre) et on définit les termes clés du sujet.
+\item La \cle{problématique} : la question directrice, souvent formulée par une interrogation, qui annonce l'enjeu du devoir.
+\item L'\cle{annonce du plan} : on présente les grandes parties du développement (sans les numéroter).
+\end{enumerate}
+Les propositions 1, 3 et 4 sont fausses car elles violent cet ordre logique : la problématique ne peut précéder la présentation du sujet (on ne peut pas poser une question sur un sujet non présenté), et l'annonce du plan vient toujours en dernier, puisqu'elle découle de la problématique.
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai / Faux justifié : Énonciation]
+\begin{enumerate}
+\item \textbf{FAUX.} Dans une dissertation, l'énonciateur efface le plus souvent sa subjectivité : il utilise le \og nous \fg{} d'inclusion (qui associe le lecteur au raisonnement) ou des tournures impersonnelles (\og il convient de constater que... \fg). Le \og je \fg{} n'est admis que ponctuellement, par exemple dans l'expérience personnelle demandée par certains sujets.
+\item \textbf{VRAI.} Les marques énonciatives — pronoms personnels (\og je \fg, \og nous \fg), déictiques temporels et spatiaux (\og ici \fg, \og maintenant \fg, \og aujourd'hui \fg), temps verbaux (présent de vérité générale, futur) et modalisateurs (\og certes \fg, \og sans doute \fg, \og il faut \fg) — permettent d'identifier qui parle, à qui, et le degré d'engagement ou de distance adopté dans le paragraphe.
+\item \textbf{FAUX.} La dénotation (sens propre, définition du dictionnaire) ne suffit pas : l'effet stylistique repose largement sur la \cle{connotation}, c'est-à-dire les valeurs affectives et culturelles associées au mot. Ainsi, chez Soyinka, \og lion \fg{} dénote un animal, mais connote la force, la ruse et la royauté ; \og perle \fg{} dénote un joyau, mais connote la beauté et la valeur de Sidi.
+\item \textbf{FAUX.} Une transition réussie ne fait pas disparaître l'énonciateur : au contraire, elle est souvent portée par un \og nous \fg{} qui guide le lecteur (\og Après avoir montré que..., nous nous demanderons si... \fg). La transition articule le bilan de la partie achevée et l'annonce de la suivante ; l'énonciateur y reste présent comme organisateur du discours.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions et distinctions : Dénotation / Connotation]
+\begin{enumerate}
+\item \textbf{Dénotation (sens propre) :} sens premier, objectif et stable d'un mot, celui que donne le dictionnaire, indépendamment du contexte. \emph{Exemple :} dans \emph{Le Lion et la Perle}, \og lion \fg{} dénote un grand félin carnassier d'Afrique ; \og perle \fg{} dénote une concrétion nacrée précieuse.
+\item \textbf{Connotation (sens figuré/affectif) :} ensemble des valeurs affectives, culturelles ou idéologiques qu'un mot évoque dans un contexte donné. \emph{Exemple :} appliqué à Baroka, \og lion \fg{} connote la puissance, la ruse et l'autorité du chef ; appliquée à Sidi, \og perle \fg{} connote la beauté rare et la valeur (notamment la dot).
+\item \textbf{Champ lexical :} ensemble de mots qui, dans un texte, se rapportent à une même notion et la tissent en réseau. \emph{Exemple :} le champ lexical de la modernité chez Lakunle (\og progrès \fg, \og éducation \fg, \og civilisation \fg, \og machine \fg) s'oppose au champ lexical de la tradition chez Baroka (\og coutume \fg, \og ancêtres \fg, \og danse \fg, \og héritage \fg).
+\item \textbf{Verbe introducteur (verbe de parole) :} verbe qui introduit une citation et indique la manière dont l'énonciateur du texte s'exprime (affirmer, déclarer, ironiser, rétorquer, souligner...). \emph{Exemple :} \og Baroka \textbf{affirme} : "Je suis le lion qui chasse par la ruse" \fg. Le choix du verbe oriente l'interprétation de la citation.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs : Gestion du temps et structure]
+Durée totale : $4\ \text{h} = 240$ minutes.
+\begin{enumerate}
+\item Minutes par phase :
+\begin{align*}
+\text{Analyse et brouillon} &= 240 \times \frac{15}{100} = 36\ \text{min} \\
+\text{Introduction et conclusion} &= 240 \times \frac{30}{100} = 72\ \text{min} \\
+\text{Développement} &= 240 \times \frac{45}{100} = 108\ \text{min} \\
+\text{Relecture} &= 240 \times \frac{10}{100} = 24\ \text{min}
+\end{align*}
+Vérification : $36 + 72 + 108 + 24 = 240$ min. Le compte est bon.
+\item Développement en 3 parties équilibrées :
+\[ \frac{108}{3} = 36\ \text{minutes par partie (Thèse, Antithèse, Synthèse).} \]
+\item Le candidat a passé $50$ min sur l'analyse au lieu de $36$ min : dépassement de $50 - 36 = 14$ min. S'il maintient les autres durées, ce dépassement est prélevé sur le développement :
+\[ 108 - 14 = 94\ \text{minutes disponibles pour le développement.} \]
+\end{enumerate}
+\textbf{Point de vigilance :} ce calcul montre qu'un dépassement en début d'épreuve se paie toujours quelque part ; il faut surveiller sa montre et respecter le brouillon comme un contrat de temps.
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Réécriture d'une introduction défaillante]
+\textbf{1. Les quatre défauts majeurs :}
+\begin{itemize}
+\item \textbf{Amorce vague et banale} (\og De nos jours, la technologie est partout \fg) : cliché sans valeur littéraire, qui ne prépare pas spécifiquement le sujet.
+\item \textbf{Présentation de l'œuvre insuffisante} : ni le genre (pièce de théâtre), ni la date (1959), ni la nationalité de Soyinka (dramaturge nigérian, prix Nobel 1986) ne sont mentionnés ; les personnages sont cités sans être situés.
+\item \textbf{Problématique faible et mal formulée} (\og Est-ce que le progrès est mauvais ? \fg) : question trop simpliste, qui réduit l'enjeu (menace des valeurs traditionnelles) à un jugement moral binaire.
+\item \textbf{Annonce de plan maladroite} (\og Nous allons voir les arguments pour et contre \fg) : formulation scolaire qui n'annonce pas de véritable mouvement dialectique (thèse / antithèse / synthèse).
+\end{itemize}
+
+\textbf{2. Introduction réécrite (modèle) :}
+
+\og L'Afrique contemporaine vit sous le signe d'une rencontre souvent brutale entre les techniques venues d'Occident et les valeurs héritées des ancêtres : le téléphone portable côtoie le tam-tam, et l'école moderne concurrence la parole des anciens. C'est précisément ce choc que met en scène Wole Soyinka, dramaturge nigérian et prix Nobel de littérature, dans sa pièce \emph{Le Lion et la Perle} (1959), qui oppose dans le village d'Ilujinle le jeune instituteur Lakunle, apôtre d'une modernité importée, au vieux chef Baroka, gardien rusé de la tradition, tous deux rivaux pour la main de la belle Sidi. On peut alors se demander si le progrès technique constitue nécessairement une menace pour les valeurs traditionnelles africaines, ou s'il peut au contraire s'articuler à elles. Nous verrons d'abord que le progrès, tel que Lakunle l'incarne, peut apparaître comme une force de rupture et d'aliénation ; nous montrerons ensuite que la tradition, loin d'être figée, sait résister et s'adapter ; enfin, nous nous demanderons si une synthèse entre modernité et tradition n'est pas la voie de l'avenir. \fg
+
+\textbf{3. Justification des modifications :}
+\begin{itemize}
+\item Remplacement de l'amorce banale par une \textbf{mise en situation concrète} (portable / tam-tam) qui annonce le thème du choc culturel.
+\item Ajout des \textbf{coordonnées de l'œuvre} (auteur, nationalité, date, genre) et de la \textbf{situation dramatique} (rivalité Lakunle / Baroka pour Sidi).
+\item Reformulation de la problématique en \textbf{question ouverte} (\og menace ou articulation possible ? \fg) qui autorise un plan dialectique.
+\item Annonce de plan \textbf{explicite et dialectique} (\og d'abord... ensuite... enfin... \fg) au lieu du vague \og pour et contre \fg.
+\end{itemize}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Insertion de citations : Le personnage de Baroka]
+\textbf{Paragraphe argumentatif (corrigé type) :}
+
+Baroka, le Baalé d'Ilujinle, incarne une tradition vivante parce qu'il la pratique comme un art de l'adaptation et non comme un culte du passé. Contrairement à l'image d'un vieillard dépassé que veut donner Lakunle, le chef assume pleinement sa force et sa lucidité : il \textbf{affirme} avec fierté : \og Je suis le lion qui chasse par la ruse \fg. Cette métaphore animale, reprise du titre même de la pièce, montre que son pouvoir ne repose pas sur la seule autorité héréditaire, mais sur une intelligence stratégique capable de déjouer les pièges de la modernité, comme lorsqu'il fait capoter le projet de chemin de fer pour protéger son village. Sa prétendue impuissance, annoncée à Sadiku pour piéger Sidi, relève de la même tactique : en \textbf{ironisant} sur son âge, il \textbf{souligne} en réalité que \og la vieillesse n'empêche pas la virilité \fg, formule qui réconcilie l'expérience des anciens et l'énergie créatrice. Mieux, Baroka n'est pas un ennemi absolu du progrès : lorsqu'il \textbf{constate} que \og le progrès... c'est le ver dans le fruit \fg, il ne rejette pas le changement, il en dénonce la corruption possible et en avertit la communauté. La preuve en est qu'il envisage d'installer une presse à imprimer à Ilujinle : la tradition qu'il défend sait donc s'approprier les techniques nouvelles. Baroka apparaît ainsi comme un stratège qui fait de la tradition un instrument d'avenir, et non un musée.
+
+\textbf{Points de vigilance vérifiés :} les trois citations sont introduites par deux-points et guillemets ; les verbes introducteurs sont variés (affirme, ironisant, souligne, constate) ; chaque citation est suivie d'un commentaire qui l'exploite pour l'argumentation ; le paragraphe suit le schéma idée directrice $\rightarrow$ arguments $\rightarrow$ exemples cités $\rightarrow$ mini-conclusion.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Sémantique : Connotations et vision de la tradition]
+\textbf{1. et 2. Relevé et analyse :}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL} \textbf{Mot / expression} & \textbf{Dénotation (sens littéral)} & \textbf{Connotation (valeur implicite)} \\ \hline
+\og barbare \fg & qui appartient à un peuple non civilisé & péjorative : cruauté, absence d'humanité \\ \hline
+\og cruelle \fg & qui fait souffrir & péjorative : la tradition serait une violence faite aux femmes \\ \hline
+\og rétrograde \fg & qui va en arrière & péjorative : immobilisme, refus du progrès \\ \hline
+\og esclavage déguisé \fg & réduction d'une personne en propriété d'autrui & très péjorative : la dot assimilée à une vente d'êtres humains \\ \hline
+\og libre, éduquée, l'égale de l'homme \fg & autonomie, instruction, égalité & méliorative : la modernité comme émancipation et lumière \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{3. Construction idéologique :} Lakunle organise son discours selon une opposition binaire : d'un côté, les connotations péjoratives accumulées sur la tradition (\og barbare \fg, \og cruelle \fg, \og rétrograde \fg, \og esclavage \fg) la présentent comme l'obscurantisme et l'oppression ; de l'autre, les connotations mélioratives (\og libre \fg, \og éduquée \fg, \og égale \fg) font de la modernité occidentale la lumière et le progrès. Mais la réplique de Sidi (\og parler comme un livre \fg) dénonce ironiquement ce vocabulaire appris et déconnecté de la réalité villageoise : Soyinka invite ainsi le lecteur à se méfier des grands mots de Lakunle, dont la connotation flatteuse cache une aliénation culturelle. Le jeu des connotations construit donc à la fois l'idéologie du personnage et sa critique implicite par le dramaturge.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Rédaction de transitions dialectiques]
+\textbf{Transition 1 (Thèse $\rightarrow$ Antithèse) :}
+
+\og Ainsi, la tradition peut apparaître comme un poids qui entrave le changement : les coutumes imposées, la dot, la polygamie ou le refus de l'école semblent enfermer les individus, et l'échec de Lakunle à se faire entendre du village illustre la force d'inertie des communautés attachées à leurs rites. Cependant, réduire la tradition à un frein serait une erreur de perspective : ne constitue-t-elle pas aussi une ressource identitaire et un principe de cohésion ? C'est ce que nous devons maintenant examiner en nous demandant si la tradition ne peut pas être, au contraire, un moteur du développement. \fg
+
+\textbf{Transition 2 (Antithèse $\rightarrow$ Synthèse) :}
+
+\og Nous venons donc de voir que la tradition, loin d'être un simple héritage figé, offre des repères, une sagesse et une capacité d'adaptation, comme le prouve la ruse de Baroka qui sait détourner la modernité à son profit. Mais faut-il pour autant choisir entre tradition et progrès, comme si l'une excluait l'autre ? Ne convient-il pas plutôt de dépasser cette opposition ? C'est pourquoi nous nous interrogerons enfin sur la possibilité d'une tradition dynamique, capable de s'enrichir de la modernité sans se renier. \fg
+
+\textbf{Points de vigilance :} chaque transition remplit les trois fonctions exigées : bilan de la partie achevée (\og Ainsi... \fg, \og Nous venons de voir... \fg), pivot (\og Cependant \fg, \og Mais \fg), et question nouvelle qui lance la partie suivante. Le \og nous \fg{} d'inclusion guide le lecteur.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Sujet type Probatoire : Dissertation complète (4h)]
+\textbf{1. Analyse du sujet (brouillon) :}
+\begin{itemize}
+\item \textbf{Termes clés :} \emph{progrès technique} = innovations matérielles et scientifiques (machines, école, routes, photographie) ; \emph{valeurs traditionnelles africaines} = coutumes, culte des ancêtres, dot, polygamie, oralité, autorité des chefs ; \emph{menacer} = mettre en danger, détruire ou affaiblir.
+\item \textbf{Tension :} le sujet oppose progrès et tradition, mais le conditionnel (\og menace-t-il ? \fg) invite à nuancer : opposition ou complémentarité ?
+\item \textbf{Problématique :} le progrès technique détruit-il nécessairement les valeurs traditionnelles, ou peut-il s'y articuler ?
+\item \textbf{Plan dialectique :} I. Le progrès comme menace (Lakunle aliéné, mépris de la dot, déracinement) ; II. La tradition comme résistance vivante (ruse de Baroka, échec du chemin de fer, Sidi choisit le Baalé) ; III. Vers une synthèse (presse à imprimer de Baroka, éducation enracinée, modernité endogène).
+\end{itemize}
+
+\textbf{2. Introduction :} reprendre le modèle du corrigé de l'exercice 5 (amorce concrète, présentation de l'œuvre, problématique ouverte, annonce du plan en trois mouvements).
+
+\textbf{3. Développement (extraits attendus) :}
+\begin{itemize}
+\item \emph{Thèse, §1 :} Lakunle incarne une modernité aliénée : il rejette la dot comme \og esclavage déguisé \fg{} et méprise les coutumes ; son langage livresque le coupe du village (Sidi : \og parler comme un livre \fg). Commentaire : le progrès importé déracine.
+\item \emph{Thèse, §2 :} la photographie et le magazine donnent à Sidi une vanité nouvelle qui bouleverse les hiérarchies villageoises : la technique modifie les rapports sociaux.
+\item \emph{Antithèse, §1 :} Baroka, \og lion qui chasse par la ruse \fg, fait échouer le projet de chemin de fer : la tradition se défend stratégiquement.
+\item \emph{Antithèse, §2 :} Sidi choisit finalement Baroka : la fécondité et l'enracinement l'emportent sur les discours ; la tradition séduit encore.
+\end{itemize}
+Transitions : reprendre le schéma de l'exercice 8.
+
+\textbf{4. Synthèse :} Baroka lui-même envisage une presse à imprimer : la tradition peut s'approprier la technique. La voie est une modernité endogène, enracinée (exemple : écoles bilingues, valorisation des langues nationales au Cameroun).
+
+\textbf{5. Conclusion (modèle) :} bilan des trois temps du devoir ; réponse nuancée (le progrès ne menace la tradition que s'il est importé sans discernement ; intégré, il peut la servir) ; ouverture (le débat actuel sur les langues nationales et le numérique au Cameroun).
+
+\textbf{6. Barème indicatif (sur 20) :} analyse du sujet et plan : 4 pts ; introduction (4 étapes) : 4 pts ; développement (arguments, exemples, 3 citations commentées, transitions) : 8 pts ; conclusion (bilan, réponse, ouverture) : 2 pts ; langue et présentation : 2 pts.
+
+\textbf{Points de vigilance :} citations exactes et commentées ; ne pas résumer la pièce mais argumenter ; respecter la gestion du temps de l'exercice 4 ; relire orthographe et accords.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Analyse comparative de conclusions]
+\textbf{1. Évaluation des deux copies :}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL} & \textbf{Points forts} & \textbf{Points faibles} \\ \hline
+\textbf{Copie A} & réponse claire à la question ; mention de la ruse de Baroka ; opposition tradition/modernité esquissée & bilan inexistant ; style oral et familier (\og bête \fg, \og C'est fini \fg) ; aucune nuance ; pas d'ouverture ; vocabulaire pauvre \\ \hline
+\textbf{Copie B} & bilan synthétique (\og nous avons vu \fg) ; réponse nuancée (\og victoire ambiguë \fg) ; ouverture vers l'Afrique actuelle ; style soutenu & bilan un peu rapide ; ouverture générale, non reliée à une œuvre précise ; le sort de Sidi mériterait un développement \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{2. Conclusion idéale (modèle) :}
+
+\og Au terme de cette réflexion, nous avons vu que Baroka, par sa ruse et sa connaissance des hommes, triomphe de Lakunle et épouse Sidi, faisant échouer à la fois le projet de chemin de fer et les rêves de modernité importée. Sa victoire apparaît donc d'abord comme celle de la tradition sur un progrès mal assimilé. Cependant, cette victoire demeure ambiguë : fondée sur un mensonge habile, elle fige Sidi dans le rôle d'épouse soumise et laisse Ilujinle suspendu entre deux mondes. Baroka gagnerait ainsi la partie sans résoudre la question essentielle : comment concilier l'héritage des ancêtres et les exigences de l'avenir ? La pièce de Soyinka ne tranche pas ; elle nous invite plutôt à imaginer une tradition capable de dialoguer avec la modernité. C'est tout l'enjeu, aujourd'hui encore, des sociétés africaines comme le Cameroun, tiraillées entre la mondialisation numérique et la fidélité à leurs cultures : le vrai vainqueur ne sera ni le lion ni le livre, mais celui qui saura les faire vivre ensemble. \fg
+
+\textbf{3. Justification des choix :}
+\begin{itemize}
+\item Bilan explicite (\og nous avons vu \fg) reprenant les étapes du raisonnement (force de B).
+\item Réponse nuancée grâce au \textbf{conditionnel} (\og Baroka gagnerait... \fg) et à la concession (\og Cependant \fg), qui corrigent le manichéisme de A.
+\item Ouverture concrète reliée à l'actualité camerounaise, plus précise que celle de B.
+\item Style soutenu, vocabulaire précis, aucune familiarité (correction des fautes de registre de A).
+\end{itemize}
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Sujet d'invention : Plaidoyer oral]
+\textbf{1. Plan détaillé du discours :}
+\begin{itemize}
+\item \textbf{Introduction :} accroche (constat : un lycéen camerounais passe plus de temps en français ou en anglais sur son téléphone qu'en langue nationale) ; thèse (le numérique peut devenir un allié de nos langues et cultures) ; annonce du plan.
+\item \textbf{Développement :} I. Le danger : l'ère numérique marginalise nos langues (domination de l'anglais et du français, perte des proverbes et de l'oralité — parallèle avec Lakunle qui \og parle comme un livre \fg{} et méprise la culture d'Ilujinle). II. L'opportunité : le numérique peut valoriser nos cultures (applications en ewondo, duala, fulfuldé ; réseaux sociaux pour transmettre contes et proverbes ; exemple des jeunes créateurs de contenus camerounais ; leçon de Baroka : s'approprier la technique sans se renier).
+\item \textbf{Conclusion :} synthèse (la modernité n'est pas l'ennemie si elle s'enracine) ; appel à l'action (parler, écrire et publier dans nos langues).
+\end{itemize}
+
+\textbf{2. Introduction complète (modèle) :}
+
+\og Monsieur le Président, chers délégués, mes chers camarades, combien d'entre nous ont salué ce matin leurs parents dans une langue nationale ? Combien, en revanche, ont consulté leur téléphone en anglais ou en français ? Cette simple question mesure le défi de notre génération : à l'ère du numérique, nos langues et nos cultures risquent de devenir muettes. Pourtant, comme nous l'enseigne \emph{Le Lion et la Perle} de Wole Soyinka, la modernité n'est une menace que lorsqu'elle est subie ; appropriée, elle devient une force. Je soutiendrai donc que le numérique peut et doit servir la valorisation de nos langues nationales. J'évoquerai d'abord le danger d'effacement qui pèse sur elles, puis je montrerai les formidables opportunités que les outils numériques offrent à nos cultures. \fg
+
+\textbf{Conclusion complète (modèle) :}
+
+\og En définitive, l'ère numérique n'est pas condamnée à être le tombeau de nos langues : elle peut devenir leur nouvelle case, leur nouveau palais des griots. Entre le livre de Lakunle, déconnecté du village, et la sagesse de Baroka, qui s'empare de la technique pour servir sa communauté, choisissons la voie du lion : celle de l'intelligence enracinée. Je vous invite donc, chers camarades, à un engagement simple : parlons nos langues, écrivons-les, publions-les, enseignons-les à nos cadets. Car un peuple qui perd sa langue perd son âme ; un peuple qui la fait vivre, même sur un écran, demeure debout. Je vous remercie. \fg
+
+\textbf{3. Procédés d'énonciation et effets :}
+\begin{itemize}
+\item \textbf{Apostrophe} (\og chers camarades \fg, \og Monsieur le Président \fg) : interpelle directement l'énonciataire, crée la proximité et capte l'attention.
+\item \textbf{\og Nous \fg{} d'inclusion} (\og combien d'entre nous \fg, \og choisissons \fg) : associe l'auditoire à la réflexion et à l'action, transforme l'auditeur en acteur.
+\item \textbf{Déictiques et modalisateurs} (\og ce matin \fg, \og ici \fg ; \og peut et doit \fg, \og je vous invite \fg) : ancrent le discours dans la situation d'énonciation et marquent l'engagement et la certitude de l'orateur.
+\end{itemize}
+\textbf{Point de vigilance :} à l'oral, soigner le débit, les pauses et le regard ; les procédés énonciatifs ne produisent leur effet que s'ils sont portés par la voix.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, execute at begin node=\small\bfseries}, concept color=popblue!80,
+    level 1/.append style={level distance=4.2cm, sibling angle=60, font=\small},
+    level 2/.append style={level distance=3cm, sibling angle=45, font=\tiny}]
+\node[concept, minimum size=2.2cm, align=center]{Rédiger une\\ dissertation}
+    child[concept color=popblue] { node[concept, minimum size=1.8cm, align=center]{Énonciation \&\\ Lecture n°2\\ (Le Lion et la Perle)} }
+    child[concept color=poporange] { node[concept, minimum size=1.8cm, align=center]{Introduction\\ (Amorce, Sujet,\\ Problématique, Plan)} }
+    child[concept color=popgreen] { node[concept, minimum size=1.8cm, align=center]{Dénotation /\ Connotation\\ (Précision lexicale)} }
+    child[concept color=poppurple] { node[concept, minimum size=1.8cm, align=center]{Paragraphe argumenté\\ (Idée, Arguments,\\ Citations, Transitions)} }
+    child[concept color=poppink] { node[concept, minimum size=1.8cm, align=center]{Conclusion\\ (Bilan, Réponse,\\ Ouverture)} }
+    child[concept color=popgold] { node[concept, minimum size=1.8cm, align=center]{Lecture n°3 \&\\ Production finale\\ (Relecture, Correction)} };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : les 6 piliers de la dissertation au Probatoire}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Notions clés à maîtriser}
+\begin{itemize}
+    \item \cle{Énonciation} : Acte de prise de parole ; repères \textbf{personne, temps, lieu, modalité} (indicateurs : pronoms, temps verbaux, déictiques, adverbes/modaliseurs).
+    \item \cle{Dénotation} : Sens littéral, principal, stable, partagé (définition dictionnaire).
+    \item \cle{Connotation} : Sens suggéré, affectif, subjectif, culturel (charge positive/négative, registre, image).
+    \item \cle{Problématique} : Question ouverte, issue de l'analyse du sujet, qui guide toute la démonstration.
+    \item \cle{Transition} : Passe-relais logique entre deux parties/paragraphes (rappel + annonce + lien logique).
+    \item \cle{Citation} : Emprunt textuel \textbf{intégré} (guillemets, italique, référence) et \textbf{commenté} (analyse, lien avec l'argument).
+\end{itemize}
+
+\textbf{Structure canonique de la dissertation (Probatoire)}
+\begin{center}
+\begin{tabularx}{\linewidth}{|>{\bfseries}l|X|}\hline
+\textbf{Étape} & \textbf{Contenu attendu} \\ \hline
+\rowcolor{popblueL} \textbf{Introduction} & 1. Amorce (accroche) \textbullet{} 2. Présentation du sujet (reformulation) \textbullet{} 3. Problématique \textbullet{} 4. Annonce du plan (mots-clés : \emph{D'abord, Ensuite, Enfin}) \\ \hline
+\textbf{Développement} & 2 ou 3 grandes parties (I, II, III) \textbullet{} Chaque partie = 2 sous-parties (A, B) \textbullet{} 1 paragraphe = 1 idée directrice + arguments + exemples/citations + mini-transition \\ \hline
+\rowcolor{popgreenL} \textbf{Conclusion} & 1. Bilan synthétique (réponse aux grandes parties) \textbullet{} 2. Réponse explicite à la problématique \textbullet{} 3. Ouverture (autre texte, actualité, question nouvelle) \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthodes express (à appliquer mécaniquement)}
+\begin{enumerate}
+    \item \textbf{Introduction (4 temps chronométrés)} : \textbf{1.} Trouver l'amorce (citation, fait de société, définition). \textbf{2.} Reformuler le sujet sans le copier. \textbf{3.} Poser LA question problème (contient tension/débat). \textbf{4.} Annoncer le plan (verbes d'action : \emph{analyser, montrer, démontrer}).
+    \item \textbf{Paragraphe type (Schéma A.E.C.T.)} : \textbf{A}ffirmer (phrase thèse) $\rightarrow$ \textbf{E}xpliquer (raisonnement) $\rightarrow$ \textbf{C}iter/Exemplifier (intégration syntaxique : \emph{« ... », écrit l'auteur}) $\rightarrow$ \textbf{T}ransition (vers paragraphe suivant).
+    \item \textbf{Conclusion (3 temps)} : \textbf{1.} Résumer le parcours (I a montré que... II a révélé que...). \textbf{2.} Répondre net à la problématique. \textbf{3.} Ouvrir sans HS (autre œuvre du programme, contexte actuel, prolongement théorique).
+    \item \textbf{Réussir l'insertion de citation} : \emph{Introducteur} + \emph{Citation (guillemets/italique)} + \emph{Analyse (portée, mot-clé, figure de style)} + \emph{Lien avec thèse}.
+\end{enumerate}
+
+\textbf{Pièges fréquents (Check-list erreurs)}
+\begin{itemize}
+    \item Sujet non analysé $\rightarrow$ Hors-sujet total.
+    \item Problématique fermée (Oui/Non) ou absente.
+    \item Plan « catalogue » (I. Les avantages, II. Les inconvénients) sans articulation dialectique.
+    \item Citations « parachutées » (non introduites, non commentées, trop longues).
+    \item Transitions mécaniques (\emph« Pour passer au deuxième paragraphe... ») sans logique.
+    \item Conclusion qui introduit des arguments nouveaux ou se termine par « En conclusion, j'ai fini ».
+    \item Confusion dénotation/connotation $\rightarrow$ imprécision lexicale (ex: \emph{maison} vs \emph{foyer}).
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Bac : Dissertation]
+$\square$ 1. Sujet \textbf{analysé} : mots-clés soulignés, instruction identifiée (discuter, analyser, commenter).
+$\square$ 2. \textbf{Problématique} rédigée au brouillon : question ouverte, débattue, centrale.
+$\square$ 3. \textbf{Plan} détaillé (I, II, III / A, B) : équilibré, logique, répondant à la problématique.
+$\square$ 4. \textbf{Introduction} complète : amorce pertinente + sujet reformulé + problématique + plan annoncé.
+$\square$ 5. \textbf{Paragraphes} structurés : 1 idée force + arguments ordonnés + citations intégrées (guillemets/italique) + commentées.
+$\square$ 6. \textbf{Transitions} réelles : rappel de l'idée précédente + annonce de la suivante + connecteur logique (\emph{Par ailleurs, En revanche, De plus}).
+$\square$ 7. \textbf{Vocabulaire} maîtrisé : choix connotatifs assumés (registre soutenu, précision), pas de répétitions évitables.
+$\square$ 8. \textbf{Conclusion} en 3 temps : bilan synthétique + réponse nette à la problématique + ouverture pertinente.
+$\square$ 9. \textbf{Relecture} active : accord (sujet/verbe, GN), temps (cohérence narrative), ponctuation, homophones.
+$\square$ 10. \textbf{Conclusion} : bilan, réponse nette et ouverture.
+\end{aretenir}
+
+\findecours
+
+\end{document}

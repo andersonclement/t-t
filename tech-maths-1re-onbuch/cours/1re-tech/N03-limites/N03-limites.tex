@@ -1,0 +1,2991 @@
+% Limites — Mathématiques 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N03-limites.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Première technique}
+\newcommand{\DOCLECON}{N03}
+\newcommand{\DOCTITRE}{Limites}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Limites}{Mathématiques}{1re Tech}{Mathématiques – classe de Première technique}{N03}{1 séance (fiche de progression harmonisée)}{Cette leçon porte sur le calcul pratique des limites de fonctions usuelles en un point ou à l'infini. Elle outille l'élève pour lever les indéterminations, utiliser les théorèmes de comparaison et modéliser des phénomènes techniques réels.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir rigoureusement la limite d'une fonction en un point et à l'infini (finie ou infinie).
+\item Je sais calculer les limites des fonctions usuelles (polynômes, rationnelles, racine carrée, exponentielle, logarithme) en utilisant les règles de calcul sur les limites.
+\item Je sais identifier les formes indéterminées principales (0/0, ∞/∞, ∞-∞, 0×∞, 1\^{}∞) et choisir la méthode adaptée pour les lever (factorisation, conjugaison, changement de variable, règles des puissances dominantes).
+\item Je sais appliquer le théorème des gendarmes et les limites remarquables pour déterminer des limites non accessibles par calcul direct.
+\item Je sais modéliser une situation concrète (physique, économique, biologique) par une fonction, calculer sa limite et l'interpréter dans le contexte (valeur terminale, asymptote, seuil).
+\item Je sais rédiger une démonstration complète, structurée et justifiée, en utilisant le vocabulaire mathématique précis (voisinage, majorant/minorant, forme indéterminée).
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item 1. Rappels : Vocabulaire et définitions fondamentales
+\item 2. Limites des fonctions usuelles et règles de calcul (hors indéterminations)
+\item 3. Les formes indéterminées : Identification et levée (Cœur technique)
+\item 4. Théorèmes de comparaison et limites remarquables
+\item 5. Modélisation et applications concrètes : Le technicien face aux limites
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir rigoureusement la limite d'une fonction en un point et à l'infini (finie ou infinie).
+\item Je sais calculer les limites des fonctions usuelles (polynômes, rationnelles, racine carrée, exponentielle, logarithme) en utilisant les règles de calcul sur les limites.
+\item Je sais identifier les formes indéterminées principales (0/0, ∞/∞, ∞-∞, 0×∞, 1\^{}∞) et choisir la méthode adaptée pour les lever (factorisation, conjugaison, changement de variable, règles des puissances dominantes).
+\item Je sais appliquer le théorème des gendarmes et les limites remarquables pour déterminer des limites non accessibles par calcul direct.
+\item Je sais modéliser une situation concrète (physique, économique, biologique) par une fonction, calculer sa limite et l'interpréter dans le contexte (valeur terminale, asymptote, seuil).
+\item Je sais rédiger une démonstration complète, structurée et justifiée, en utilisant le vocabulaire mathématique précis (voisinage, majorant/minorant, forme indéterminée).
+\item Je sais vérifier la cohérence de mes résultats par une approche numérique (tableau de valeurs) ou graphique (asymptotes).
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion de fonction, ensemble de définition, variations et graphique (Seconde / Début Première).
+\item Fonctions de référence : polynômes, fonctions rationnelles, f(x)=√x, f(x)=1/x, exponentielle, logarithme népérien.
+\item Calcul algébrique : factorisation (identités remarquables, factorisation par a\^{}n - b\^{}n), rationalisation (conjugaison), manipulation des puissances et logarithmes.
+\item Notion intuitive de « tendance » et lecture graphique d'asymptotes (Seconde).
+\item Résolution d'équations et inéquations simples (linéaires, quadratiques, exponentielles/logarithmiques basiques).
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Rappels : Vocabulaire et définitions fondamentales}
+
+\courssub{Situation d'accroche : Le défi du technicien qualité}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$t$ (min)}, ylabel={$T(t)$ (°C)},
+    xmin=0, xmax=100, ymin=15, ymax=105,
+    xtick={0,20,40,60,80,100},
+    ytick={20,25,40,60,80,100},
+    grid=major, grid style={popline},
+    domain=0:100, samples=200,
+    clip=false
+]
+\addplot[popcurve, thick] {20 + 80*exp(-0.05*x)};
+\addplot[popmuted, dashed, thick] coordinates {(0,20) (100,20)} node[pos=1, right] {$y=20$};
+\addplot[poporange, dashed, thick] coordinates {(0,25) (100,25)} node[pos=1, right] {$T=25^\circ\text{C}$};
+\addplot[poppink, mark=*, only marks] coordinates {(0,100)};
+\addplot[poppink, mark=*, only marks] coordinates {(60,24.0)};
+\node[poppink, anchor=south west] at (axis cs:0,100) {$T(0)=100^\circ\text{C}$};
+\node[poporange, anchor=south] at (axis cs:50,25) {Seuil qualité};
+\node[popblue, anchor=north east] at (axis cs:90,22) {Asymptote horizontale $y=20$};
+\end{axis}
+\end{tikzpicture}
+\legende{Refroidissement du jus : $T(t)=20+80e^{-0,05t}$. La température tend vers $20^\circ\text{C}$ (température ambiante).}
+\end{popfigure}
+
+Dans une usine de transformation agroalimentaire à Douala, un technicien surveille le refroidissement d'un jus de fruit pasteurisé. Sa température suit la loi $T(t) = 20 + 80e^{-0,05t}$ ($t$ en minutes). Le responsable qualité exige que le jus atteigne $25^\circ\text{C}$ avant conditionnement. \textbf{Combien de temps faut-il attendre ?} Cette situation illustre la recherche d'une limite finie (la température ambiante $20^\circ\text{C}$ que l'on approche sans jamais l'atteindre exactement) et la résolution d'une équation exponentielle, compétences clés du technicien supérieur.
+
+\courssub{Intuition : « Se rapprocher » sans nécessairement « atteindre »}
+
+L'idée de limite est au cœur de l'analyse. Elle formalise ce que l'on observe sur un graphe ou dans une table de valeurs : \emph{quand $x$ se rapproche arbitrairement d'une valeur $x_0$ (ou devient arbitrairement grand), les valeurs $f(x)$ se rapprochent arbitrairement d'un nombre $L$ (ou deviennent arbitrairement grandes).}
+
+\begin{itemize}
+    \item \textbf{En un point réel $x_0$ :} on regarde ce qui se passe \emph{autour} de $x_0$, sans se soucier de la valeur $f(x_0)$ (qui peut ne pas exister).
+    \item \textbf{À l'infini ($+\infty$ ou $-\infty$) :} on regarde le comportement de $f(x)$ quand $x$ « part loin vers la droite » ou « loin vers la gauche ».
+\end{itemize}
+
+\courssub{Voisinages : le langage précis du « tout près »}
+
+Pour écrire rigoureusement les définitions, on utilise la notion de \cle{voisinage}.
+
+\begin{definition}[Voisinages usuels]
+Soit $x_0 \in \mathbb{R}$ et $\varepsilon > 0$ (ou $M > 0$ pour l'infini).
+\begin{itemize}
+    \item \textbf{Voisinage de $x_0$ :} $V(x_0) = ]x_0-\varepsilon,\; x_0+\varepsilon[$ (intervalle centré sur $x_0$).
+    \item \textbf{Voisinage de $+\infty$ :} $V(+\infty) = ]M,\; +\infty[$ (tous les réels supérieurs à $M$).
+    \item \textbf{Voisinage de $-\infty$ :} $V(-\infty) = ]-\infty,\; M[$ (tous les réels inférieurs à $M$).
+    \item \textbf{Voisinage ponctué de $x_0$ :} $\dot{V}(x_0) = ]x_0-\varepsilon,\; x_0+\varepsilon[ \setminus \{x_0\}$ (on \emph{retire} $x_0$ lui-même).
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Notation $\dot{V}(x_0)$]
+Le point au-dessus du $V$ signifie « \emph{ponctué} » : le point $x_0$ est \textbf{exclu}. C'est crucial : la limite en $x_0$ ne dépend \textbf{jamais} de la valeur $f(x_0)$, ni même de son existence.
+\end{attention}
+
+\courssub{Limite finie en un point réel (définition $\varepsilon$-$\delta$ admise)}
+
+\begin{definition}[Limite finie en un point réel]
+Soit $f$ une fonction définie sur un intervalle $I$ (sauf peut-être en $x_0$). Soit $x_0$ une valeur d'adhérence de $I$ et $L \in \mathbb{R}$.
+On dit que \textbf{$f$ admet la limite $L$ en $x_0$} et on note :
+\[
+\lim_{x \to x_0} f(x) = L
+\]
+si et seulement si :
+\[
+\forall \varepsilon > 0,\; \exists \delta > 0 \text{ tel que } \forall x \in \dot{V}_\delta(x_0) \cap I,\; |f(x)-L| < \varepsilon.
+\]
+En mots : \emph{quelle que soit la précision $\varepsilon$ demandée autour de $L$, on peut trouver une précision $\delta$ autour de $x_0$ telle que toutes les images (sauf peut-être $x_0$ lui-même) tombent dans l'intervalle $]L-\varepsilon, L+\varepsilon[$.}
+\end{definition}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1]
+\begin{axis}[
+    width=0.9\linewidth, height=6cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$f(x)$},
+    xmin=-0.5, xmax=3.5, ymin=-0.5, ymax=3.5,
+    xtick={1}, xticklabels={$x_0$},
+    ytick={2}, yticklabels={$L$},
+    grid=major, grid style={popline},
+    clip=false
+]
+% Function: f(x) = (x-1)^2 + 2, but with a hole at x=1
+\addplot[popcurve, thick, domain=-0.5:0.99] {(x-1)^2+2};
+\addplot[popcurve, thick, domain=1.01:3.5] {(x-1)^2+2};
+\addplot[poppink, mark=*, mark size=2pt, only marks] coordinates {(1,2)};
+\addplot[poppink, mark=o, mark size=3pt, only marks] coordinates {(1,2)}; % hole
+% Epsilon band
+\addplot[popblue!20, fill opacity=0.3] coordinates {(0.5,1.5) (1.5,1.5) (1.5,2.5) (0.5,2.5)} \closedcycle;
+\draw[popblue, dashed] (0.5,1.5) -- (1.5,1.5) node[right] {$L+\varepsilon$};
+\draw[popblue, dashed] (0.5,2.5) -- (1.5,2.5) node[right] {$L-\varepsilon$};
+% Delta interval
+\draw[poporange, thick] (0.7, -0.3) -- (1.3, -0.3) node[midway, below] {$\delta$};
+\draw[poporange, |-|] (0.7, -0.4) -- (1.3, -0.4);
+\draw[poporange, dashed] (0.7, -0.5) -- (0.7, 3.5);
+\draw[poporange, dashed] (1.3, -0.5) -- (1.3, 3.5);
+\node[poporange] at (1, -0.8) {$\dot{V}_\delta(x_0)$};
+\node[popblue] at (1.6, 2) {$V_\varepsilon(L)$};
+\end{axis}
+\end{tikzpicture}
+\legende{Illustration $\varepsilon$-$\delta$ : pour tout « couloir » horizontal $\varepsilon$ autour de $L$, il existe un « couloir » vertical $\delta$ autour de $x_0$ qui envoie la courbe dans le couloir horizontal.}
+\end{popfigure}
+
+\courssub{Limite finie à l'infini (définition $\varepsilon$-$M$ admise)}
+
+\begin{definition}[Limite finie en $+\infty$ (resp. $-\infty$)]
+Soit $f$ définie sur un intervalle non majoré (resp. non minoré). Soit $L \in \mathbb{R}$.
+\[
+\lim_{x \to +\infty} f(x) = L \quad\Longleftrightarrow\quad \forall \varepsilon > 0,\; \exists M > 0 \text{ tel que } \forall x > M,\; |f(x)-L| < \varepsilon.
+\]
+De même pour $-\infty$ avec $x < M$.
+\end{definition}
+
+\courssub{Limites infinies et asymptotes}
+
+Parfois, $f(x)$ ne tend pas vers un nombre fini, mais « explose ».
+
+\begin{definition}[Limite infinie en un point réel]
+Soit $f$ définie autour de $x_0$ (sauf peut-être en $x_0$).
+\begin{itemize}
+    \item $\lim\limits_{x \to x_0} f(x) = +\infty$ si $\forall A > 0,\; \exists \delta > 0$ tel que $\forall x \in \dot{V}_\delta(x_0),\; f(x) > A$.
+    \item $\lim\limits_{x \to x_0} f(x) = -\infty$ si $\forall A > 0,\; \exists \delta > 0$ tel que $\forall x \in \dot{V}_\delta(x_0),\; f(x) < -A$.
+\end{itemize}
+Si la limite est $+\infty$ ou $-\infty$ (des deux côtés), la droite $x = x_0$ est une \cle{asymptote verticale} au graphe de $f$.
+\end{definition}
+
+\begin{definition}[Limite infinie à l'infini]
+\begin{itemize}
+    \item $\lim\limits_{x \to +\infty} f(x) = +\infty$ si $\forall A > 0,\; \exists M > 0$ tel que $\forall x > M,\; f(x) > A$.
+    \item $\lim\limits_{x \to +\infty} f(x) = -\infty$ si $\forall A > 0,\; \exists M > 0$ tel que $\forall x > M,\; f(x) < -A$.
+\end{itemize}
+\end{definition}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    width=\linewidth, height=6cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$f(x)$},
+    xmin=-1, xmax=5, ymin=-10, ymax=10,
+    xtick={2}, xticklabels={$x_0=2$},
+    grid=major, grid style={popline},
+    clip=false,
+    domain=-1:5, samples=200
+]
+% f(x) = 1/(x-2)^2
+\addplot[popcurve, thick, domain=-1:1.9] {1/(x-2)^2};
+\addplot[popcurve, thick, domain=2.1:5] {1/(x-2)^2};
+\draw[popred, dashed, thick] (2,-10) -- (2,10) node[above] {$x=2$ (asymptote verticale)};
+\node[popred] at (2.5, 8) {$\lim_{x\to 2} f(x)=+\infty$};
+\end{axis}
+\end{tikzpicture}
+\legende{Asymptote verticale $x=2$ pour $f(x)=\frac{1}{(x-2)^2}$. La fonction tend vers $+\infty$ des deux côtés.}
+\end{popfigure}
+
+\courssub{Asymptotes horizontales et obliques (limites finies à l'infini)}
+
+\begin{propriete}[Asymptotes horizontales et obliques]
+Soit $f$ définie sur $]a,+\infty[$.
+\begin{itemize}
+    \item Si $\lim\limits_{x \to +\infty} f(x) = L \in \mathbb{R}$, la droite $y=L$ est une \cle{asymptote horizontale}.
+    \item Si $\lim\limits_{x \to +\infty} \frac{f(x)}{x} = a \in \mathbb{R}^*$ et $\lim\limits_{x \to +\infty} \bigl(f(x)-ax\bigr) = b \in \mathbb{R}$, la droite $y=ax+b$ est une \cle{asymptote oblique}.
+\end{itemize}
+Mêmes définitions pour $x \to -\infty$.
+\end{propriete}
+
+\begin{exemplebox}[Asymptote oblique]
+$f(x) = x + \frac{1}{x}$ sur $]0,+\infty[$.
+$\lim\limits_{x \to +\infty} \frac{f(x)}{x} = \lim\limits_{x \to +\infty} \left(1+\frac{1}{x^2}\right) = 1 = a$.
+$\lim\limits_{x \to +\infty} \bigl(f(x)-x\bigr) = \lim\limits_{x \to +\infty} \frac{1}{x} = 0 = b$.
+Asymptote oblique : $y = x$.
+\end{exemplebox}
+
+\courssub{Théorème d'unicité de la limite (admis)}
+
+\begin{propriete}[Unicité de la limite]
+Si une fonction $f$ admet une limite (finie ou infinie) en un point $x_0$ (ou en $\pm\infty$), alors cette limite est \textbf{unique}.
+\end{propriete}
+
+\begin{attention}[« Pas de limite » $\neq$ « Limite infinie »]
+C'est une erreur classique au Probatoire.
+\begin{itemize}
+    \item $f(x) = \frac{1}{x}$ en $x_0=0$ : $\lim\limits_{x \to 0^-} f(x) = -\infty$ et $\lim\limits_{x \to 0^+} f(x) = +\infty$. \textbf{La limite bilatère n'existe pas} (les deux limites latérales sont différentes). On n'écrit \textbf{pas} $\lim_{x\to 0}\frac1x = \infty$.
+    \item $g(x) = \frac{1}{x^2}$ en $x_0=0$ : $\lim\limits_{x \to 0} g(x) = +\infty$ (les deux côtés donnent $+\infty$). Ici, la limite \textbf{existe et est infinie}.
+\end{itemize}
+\textbf{Règle d'or :} Vérifiez toujours les \textbf{limites latérales} (gauche et droite) avant de conclure à une limite infinie en un point.
+\end{attention}
+
+\courssub{Opérations sur les limites (admises, hors formes indéterminées)}
+
+Si les limites existent (finies) et qu'aucune forme indéterminée n'apparaît :
+
+\begin{propriete}[Règles de calcul sur les limites]
+Soient $f,g$ deux fonctions et $\ell_f, \ell_g \in \mathbb{R}$ leurs limites en $x_0$ (ou $\pm\infty$).
+\begin{align*}
+\lim (f+g) &= \ell_f + \ell_g \\
+\lim (f-g) &= \ell_f - \ell_g \\
+\lim (f \times g) &= \ell_f \times \ell_g \\
+\lim \left(\frac{f}{g}\right) &= \frac{\ell_f}{\ell_g} \quad (\text{si } \ell_g \neq 0) \\
+\lim (f \circ g) &= f(\ell_g) \quad (\text{si } f \text{ continue en } \ell_g)
+\end{align*}
+Ces règles s'étendent aux limites infinies avec les conventions usuelles ($+\infty + \ell = +\infty$, $\ell / +\infty = 0$, etc.), \textbf{à condition de ne pas tomber dans une forme indéterminée}.
+\end{propriete}
+
+\begin{aretenir}[Formes indéterminées à retenir (seront traitées en Section 3)]
+$+\infty - \infty$, $\; 0 \times \infty$, $\; \frac{0}{0}$, $\; \frac{\infty}{\infty}$, $\; 0^0$, $\; 1^\infty$, $\; \infty^0$.
+\textbf{Ne jamais « calculer » ces formes directement.} Il faut transformer l'expression (factorisation, conjugaison, changement de variable, etc.) pour en sortir.
+\end{aretenir}
+
+\courssub{Lire une limite sur un graphique : méthode visuelle}
+
+\begin{methode}[Lire une limite sur la courbe représentative $C_f$]
+\begin{enumerate}
+    \item \textbf{Repérez l'abscisse} $x_0$ (ou la direction $+\infty/-\infty$).
+    \item \textbf{Observez le comportement de la courbe} quand $x$ approche de $x_0$ \textbf{par la gauche} ($x \to x_0^-$) et \textbf{par la droite} ($x \to x_0^+$).
+    \item \textbf{Cas finis :} La courbe se rapproche-t-elle d'une horizontale $y=L$ ? $\Rightarrow \lim = L$.
+    \item \textbf{Cas infinis :} La courbe « monte » ou « descend » sans borne vers une verticale $x=x_0$ ? $\Rightarrow$ Asymptote verticale, limite $\pm\infty$ (vérifiez les deux côtés !).
+    \item \textbf{À l'infini :} La courbe a-t-elle une asymptote horizontale $y=L$ ou oblique $y=ax+b$ ? $\Rightarrow$ Limite correspondante.
+    \item \textbf{Pas de limite :} Oscillations (ex: $\sin\frac1x$), saut (limites latérales finies différentes), ou $+\infty$ d'un côté et $-\infty$ de l'autre.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    width=\linewidth, height=5.5cm,
+    axis lines=middle,
+    xlabel={$x$}, ylabel={$y$},
+    xmin=-0.5, xmax=3.5, ymin=-1.5, ymax=1.5,
+    xtick={0}, xticklabels={$0$},
+    grid=major, grid style={popline},
+    clip=false,
+    domain=0.02:3.5, samples=500
+]
+% sin(1/x)
+\addplot[popcurve, thick, domain=0.02:3.5] {sin(1/deg(x))};
+\node[popred] at (1.5, 1.2) {$\sin(1/x)$ : oscillations infinies près de $0$};
+\node[popred] at (1.5, -1.2) {$\Rightarrow$ Pas de limite en $0$};
+\end{axis}
+\end{tikzpicture}
+\legende{Exemple de « pas de limite » : $f(x)=\sin(1/x)$ en $0$. La courbe oscille indéfiniment entre $-1$ et $1$ sans se stabiliser.}
+\end{popfigure}
+
+\courssub{Exemple résolu : Limite $\neq$ valeur de la fonction}
+
+\begin{exoresolu}[Limite en un point où la fonction n'est pas définie]
+Étudier la limite en $2$ de la fonction $f(x) = \dfrac{x^2-4}{x-2}$.
+\medskip
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Domaine :} $D_f = \mathbb{R} \setminus \{2\}$. La fonction n'est \textbf{pas définie en $2$}.
+    \item \textbf{Expression algébrique :} Pour tout $x \neq 2$, on peut factoriser :
+    \[
+    f(x) = \frac{(x-2)(x+2)}{x-2} = x+2 \quad (x \neq 2).
+    \]
+    \item \textbf{Calcul de la limite :} Puisque $f(x) = x+2$ pour tout $x \neq 2$, et que la fonction $x \mapsto x+2$ est continue sur $\mathbb{R}$,
+    \[
+    \lim_{x \to 2} f(x) = \lim_{x \to 2} (x+2) = 2+2 = 4.
+    \]
+    \item \textbf{Conclusion :} $\lim\limits_{x \to 2} f(x) = 4$, alors que $f(2)$ \textbf{n'existe pas}.
+    \item \textbf{Interprétation graphique :} La courbe $C_f$ est la droite $y=x+2$ \textbf{avec un trou} au point $(2,4)$. La limite « comble le trou ».
+\end{enumerate}
+\end{exoresolu}
+
+\begin{savaistu}[Le technicien et l'asymptote]
+Dans notre situation d'accroche, $T(t)=20+80e^{-0,05t}$. La limite finie à l'infini est $20^\circ\text{C}$ (température ambiante). L'asymptote horizontale $y=20$ signifie que le jus \textbf{n'atteindra jamais exactement} $20^\circ\text{C}$, mais s'en approchera à volonté. Pour le conditionnement à $25^\circ\text{C}$, on résout $20+80e^{-0,05t}=25 \Rightarrow e^{-0,05t}=\frac{5}{80}=\frac{1}{16} \Rightarrow -0,05t = \ln(1/16) = -\ln 16 \Rightarrow t = \frac{\ln 16}{0,05} \approx 55,45$ minutes. Le technicien attendra \textbf{56 minutes} (arrondi supérieur pour sécurité qualité).
+\end{savaistu}
+
+\coursec{Limites des fonctions usuelles et règles de calcul (hors indéterminations)}
+
+Après avoir posé le vocabulaire et les définitions rigoureuses dans la section précédente, nous entrons maintenant dans l'« atelier » du calcul de limites. En tant que technicien, vous ne devez pas seulement \emph{savoir} la définition $\varepsilon-\eta$ ; vous devez surtout \emph{calculer} vite et juste les limites des fonctions qui modélisent vos systèmes (charge d'un condensateur, résistance d'un matériau, évolution d'un stock). Cette section vous donne les règles d'or et le tableau de référence à connaître par cœur pour résoudre 80\% des exercices du Probatoire sans tomber dans le piège des \cle{formes indéterminées}.
+
+\courssub{Tableau de référence : Les limites usuelles à connaître par cœur}
+
+C'est votre « boîte à outils » de base. Tout calcul de limite complexe ramène in fine à ces limites élémentaires. Apprenez-les par cœur \emph{avec leur condition de validité} (domaine de définition, sens de la limite).
+
+\begin{aretenir}[Tableau des limites usuelles (à coller dans le cahier)]
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabularx}{\linewidth}{|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|}
+\hline
+\rowcolor{popblueL}
+\textbf{Fonction $f(x)$} & $\boldsymbol{\lim_{x \to +\infty} f(x)}$ & $\boldsymbol{\lim_{x \to -\infty} f(x)}$ & $\boldsymbol{\lim_{x \to 0^+} f(x)}$ & $\boldsymbol{\lim_{x \to 0^-} f(x)}$ \\ \hline
+$f(x) = x^n \quad (n \in \mathbb{N}^*)$ & $+\infty$ & $(-1)^n \cdot +\infty$ & $0^+$ & $0^{(-1)^n}$ \\ \hline
+$f(x) = \dfrac{1}{x^n} \quad (n \in \mathbb{N}^*)$ & $0^+$ & $0^{(-1)^n}$ & $+\infty$ & $(-1)^n \cdot +\infty$ \\ \hline
+$f(x) = \sqrt{x}$ & $+\infty$ & \text{--} (non déf.) & $0^+$ & \text{--} \\ \hline
+$f(x) = \ln x$ & $+\infty$ & \text{--} & $-\infty$ & \text{--} \\ \hline
+$f(x) = e^x$ & $+\infty$ & $0^+$ & $1$ & $1$ \\ \hline
+$f(x) = a^x \quad (a > 1)$ & $+\infty$ & $0^+$ & $1$ & $1$ \\ \hline
+$f(x) = a^x \quad (0 < a < 1)$ & $0^+$ & $+\infty$ & $1$ & $1$ \\ \hline
+\end{tabularx}
+\end{center}
+\vspace{0.2cm}
+\textbf{Notation :} $0^+$ signifie « tend vers 0 par valeurs positives », $0^-$ « par valeurs négatives ». Cela est crucial pour le signe des limites de quotients.
+\end{aretenir}
+
+\begin{attention}[Piège classique : Le signe à $-\infty$ pour les puissances]
+Pour $x^n$ avec $n$ impair (ex: $x^3, x^5$), $\lim_{x \to -\infty} x^n = -\infty$.
+Pour $n$ pair (ex: $x^2, x^4$), $\lim_{x \to -\infty} x^n = +\infty$.
+De même $\lim_{x \to 0^-} \frac{1}{x^3} = -\infty$ mais $\lim_{x \to 0^-} \frac{1}{x^2} = +\infty$.
+\emph{Astuce :} Préservez le signe de $x$ dans votre tête : $(-)^3 = -$, $(-)^2 = +$.
+\end{attention}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=8cm,
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.5, xmax=4,
+    ymin=-2, ymax=5,
+    domain=0.01:4, samples=200,
+    legend style={at={(0.98,0.98)}, anchor=north east, font=\tiny, fill=white, fill opacity=0.9, draw=popmuted},
+    grid=major, grid style={popline},
+    clip=true
+]
+\addplot[popblue, thick] {x};
+\addplot[poporange, thick] {x^2};
+\addplot[popgreen, thick] {x^3};
+\addplot[poppurple, thick] {sqrt(max(0,x))};
+\addplot[poppink, thick] {ln(x)};
+\addplot[popgold, thick] {exp(x)};
+\addplot[popdark, dashed, thick] {1};
+\legend{$y=x$, $y=x^2$, $y=x^3$, $y=\sqrt{x}$, $y=\ln x$, $y=e^x$, $y=1$}
+\end{axis}
+\end{tikzpicture}
+\legende{Comparaison des vitesses de croissance vers $+\infty$ : $\ln x \ll \sqrt{x} \ll x \ll x^2 \ll x^3 \ll e^x$. L'exponentielle domine tout polynôme, le logarithme est le plus lent.}
+\end{popfigure}
+
+\courssub{Limite d'un polynôme en $\pm\infty$ : La règle du \cle{terme dominant}}
+
+C'est la première règle « métier » à automatiser. Un polynôme $P(x) = a_n x^n + a_{n-1} x^{n-1} + \dots + a_1 x + a_0$ (avec $a_n \neq 0$) se comporte « au loin » comme son monôme dominant $a_n x^n$.
+
+\begin{experience}[Démonstration guidée : Pourquoi factoriser par $x^n$ ?]
+Prenons $P(x) = 3x^2 - 5x + 1$. On veut $\lim_{x \to +\infty} P(x)$.
+\begin{enumerate}
+    \item \textbf{Écriture naïve (interdite) :} $3(+\infty)^2 - 5(+\infty) + 1 = +\infty - \infty + 1$. \textbf{STOP !} C'est une \cle{forme indéterminée} $\infty - \infty$. On ne sait pas conclure.
+    \item \textbf{Factorisation par la plus grande puissance $x^2$ :}
+    \[ P(x) = x^2 \left( 3 - \frac{5}{x} + \frac{1}{x^2} \right) \]
+    \item \textbf{Calcul des limites des facteurs :}
+    \begin{itemize}
+        \item $\lim_{x \to +\infty} x^2 = +\infty$ (tableau usuel).
+        \item $\lim_{x \to +\infty} \left( 3 - \frac{5}{x} + \frac{1}{x^2} \right) = 3 - 0 + 0 = 3$ (règles de calcul usuelles, pas d'indétermination).
+    \end{itemize}
+    \item \textbf{Produit :} $+\infty \times 3 = +\infty$.
+\end{enumerate}
+\emph{Moralité :} La factorisation isole l'infini ($x^n$) et laisse un facteur qui tend vers un \textbf{réel non nul} ($a_n$). Le signe de la limite est le signe de $a_n$ (pour $x \to +\infty$) ou $(-1)^n \times \text{signe}(a_n)$ (pour $x \to -\infty$).
+\end{experience}
+
+\begin{propriete}[Limite d'un polynôme en $\pm\infty$ (Démonstration exigible au Probatoire)]
+Soit $P(x) = a_n x^n + \dots + a_0$ un polynôme de degré $n \ge 1$, $a_n \neq 0$.
+\[ \lim_{x \to +\infty} P(x) = \text{signe}(a_n) \cdot (+\infty) \]
+\[ \lim_{x \to -\infty} P(x) = \text{signe}(a_n) \cdot (-1)^n \cdot (+\infty) \]
+\textbf{Preuve type attendue :} Factoriser par $x^n$, utiliser les limites usuelles de $1/x^k \to 0$ et le théorème du produit de limites (limite finie $\times$ limite infinie).
+\end{propriete}
+
+\begin{exemplebox}[Application directe]
+Calculer $\lim_{x \to -\infty} ( -2x^3 + 4x^2 - 7 )$.
+\begin{itemize}
+    \item Degré $n=3$ (impair), coefficient dominant $a_3 = -2 < 0$.
+    \item $\lim_{x \to -\infty} (-2x^3) = (-2) \times (-\infty) = +\infty$ car $(-)^3 = -$ et $- \times - = +$.
+    \item \textbf{Réponse :} $+\infty$.
+\end{itemize}
+\textbf{Vérification par factorisation (rédaction d'examen) :}
+$P(x) = x^3(-2 + \frac{4}{x} - \frac{7}{x^3})$. $\lim x^3 = -\infty$, $\lim (\dots) = -2$. Produit : $(-\infty) \times (-2) = +\infty$.
+\end{exemplebox}
+
+\courssub{Limites des fonctions rationnelles en $\pm\infty$ : La règle des trois cas}
+
+Une fonction rationnelle est un quotient de deux polynômes $f(x) = \frac{P(x)}{Q(x)}$ avec $Q \neq 0$. Pour $x \to \pm\infty$, on compare les degrés $p = \deg(P)$ et $q = \deg(Q)$.
+
+\begin{methode}[Calcul de $\lim_{x \to \pm\infty} \frac{P(x)}{Q(x)}$]
+\begin{enumerate}
+    \item Identifier $p = \deg(P)$ et $q = \deg(Q)$. Noter $a_p$ et $b_q$ les coefficients dominants.
+    \item \textbf{Factoriser numérateur et dénominateur par $x^{\max(p,q)}$} (la plus grande puissance présente).
+    \item Simplifier les puissances de $x$ et calculer les limites des facteurs restants (qui tendent vers des réels).
+    \item Conclure selon le cas :
+\end{enumerate}
+\end{methode}
+
+\begin{propriete}[Trois cas pour les fonctions rationnelles en $\pm\infty$]
+Soit $f(x) = \frac{P(x)}{Q(x)}$, $p=\deg(P)$, $q=\deg(Q)$, $a_p, b_q$ coeff. dominants ($b_q \neq 0$).
+\begin{enumerate}
+    \item \textbf{Cas $p < q$ :} $\lim_{x \to \pm\infty} f(x) = 0$ (le dénominateur « gagne », la fonction tend vers l'axe des abscisses : asymptote horizontale $y=0$).
+    \item \textbf{Cas $p = q$ :} $\lim_{x \to \pm\infty} f(x) = \frac{a_p}{b_q}$ (les puissances $x^p$ se simplifient, reste le quotient des coefficients : asymptote horizontale $y = a_p/b_q$).
+    \item \textbf{Cas $p > q$ :} $\lim_{x \to \pm\infty} f(x) = \pm\infty$ (le numérateur « gagne »). Le signe dépend de la parité de $p-q$ et des signes de $a_p, b_q$. On écrit $\frac{a_p}{b_q} x^{p-q}$ et on applique la règle du polynôme.
+\end{enumerate}
+\end{propriete}
+
+\begin{exoresolu}[Limite de fonction rationnelle : Cas $p=q$]
+\textbf{Énoncé :} Calculer $\lim_{x \to +\infty} \frac{3x^2 - 5x + 1}{2x^2 + 7}$.
+\tcblower
+\textbf{Solution détaillée :}
+$p=2, q=2 \implies p=q$. Coeff. dominants : $3$ et $2$.
+$\lim = \frac{3}{2}$.
+\textbf{Rédaction rigoureuse :}
+$\frac{3x^2 - 5x + 1}{2x^2 + 7} = \frac{x^2(3 - \frac{5}{x} + \frac{1}{x^2})}{x^2(2 + \frac{7}{x^2})} = \frac{3 - \frac{5}{x} + \frac{1}{x^2}}{2 + \frac{7}{x^2}} \xrightarrow[x \to +\infty]{} \frac{3 - 0 + 0}{2 + 0} = \frac{3}{2}$.
+\end{exoresolu}
+
+\begin{exoresolu}[Limite de fonction rationnelle : Cas $p < q$]
+\textbf{Énoncé :} Calculer $\lim_{x \to +\infty} \frac{5x - 2}{x^3 + 4x}$.
+\tcblower
+\textbf{Solution détaillée :}
+$p=1, q=3 \implies p < q$. $\lim = 0$.
+\textbf{Rédaction :} Factoriser par $x^3$ (max). $\frac{x^3(\frac{5}{x^2} - \frac{2}{x^3})}{x^3(1 + \frac{4}{x^2})} = \frac{\frac{5}{x^2} - \frac{2}{x^3}}{1 + \frac{4}{x^2}} \to \frac{0}{1} = 0$.
+\end{exoresolu}
+
+\begin{exoresolu}[Limite de fonction rationnelle : Cas $p > q$]
+\textbf{Énoncé :} Calculer $\lim_{x \to -\infty} \frac{-x^4 + 2x}{3x^2 - 1}$.
+\tcblower
+\textbf{Solution détaillée :}
+$p=4, q=2 \implies p > q$. Comportement comme $\frac{-x^4}{3x^2} = -\frac{1}{3}x^2$.
+$x^2 \to +\infty$, coeff $-\frac{1}{3} < 0 \implies \lim = -\infty$.
+\textbf{Rédaction :} Factoriser par $x^4$. $\frac{x^4(-1 + \frac{2}{x^3})}{x^4(\frac{3}{x^2} - \frac{1}{x^4})} = \frac{-1 + \frac{2}{x^3}}{\frac{3}{x^2} - \frac{1}{x^4}}$. Num $\to -1$, Dén $\to 0^+$ (car $3/x^2 > 0$). Quotient $\to -\infty$.
+\end{exoresolu}
+
+\courssub{Théorème de composition et limites de fonctions composées}
+
+Souvent, la fonction n'est pas un polynôme ou une rationnelle simple, mais une composition $f(g(x))$. Exemple : $\ln(2x+1)$, $e^{-x^2}$, $\sqrt{x^2+3}$.
+
+\begin{propriete}[Théorème de composition (Admis en Première Technique)]
+Soient $g$ une fonction définie sur un intervalle $I$ et $f$ une fonction définie sur un intervalle $J$ contenant l'ensemble des valeurs de $g$.
+Si $\lim_{x \to a} g(x) = L$ (fini ou infini) et si $f$ est \textbf{continue} en $L$ (ou admet une limite infinie en $L$ cohérente), alors :
+\[ \lim_{x \to a} f(g(x)) = f\left( \lim_{x \to a} g(x) \right) = f(L) \]
+\textbf{En pratique :} On calcule d'abord la limite « intérieure » $L = \lim g(x)$, puis on « rentre » cette limite dans la fonction « extérieure » $f$, \textbf{à condition que $f$ soit continue en $L$}.
+\end{propriete}
+
+\begin{attention}[Condition de continuité : Le piège mortel]
+Le théorème \textbf{échoue} si $f$ n'est pas continue en $L$.
+Exemple : $f(x) = \frac{1}{x}$, $g(x) = x^2$, $a=0$.
+$\lim_{x \to 0} g(x) = 0$. Mais $f$ n'est pas continue en $0$ (pas définie).
+$\lim_{x \to 0} f(g(x)) = \lim_{x \to 0} \frac{1}{x^2} = +\infty \neq f(0)$ (qui n'existe pas).
+\textbf{Règle d'or :} Vérifiez toujours que la fonction extérieure est continue en la limite intérieure trouvée. Si $L$ est une borne du domaine de $f$ (ex: $L=0$ pour $\ln$ ou $\sqrt{\cdot}$), on utilise la limite unilatérale correspondante ($0^+$).
+\end{attention}
+
+\begin{aretenir}[Cas particuliers indispensables : Composées de $\ln$ et $\exp$]
+Soit $u(x)$ une fonction telle que $\lim_{x \to a} u(x) = L$.
+\begin{itemize}
+    \item \textbf{Exponentielle :} $f(x) = e^x$ est continue sur $\mathbb{R}$.
+    \[ \lim_{x \to a} e^{u(x)} = e^{\lim_{x \to a} u(x)} = e^L \quad (\text{valable pour } L \in \mathbb{R} \cup \{-\infty, +\infty\}) \]
+    \emph{Rappel :} $e^{+\infty} = +\infty$, $e^{-\infty} = 0$.
+    \item \textbf{Logarithme népérien :} $f(x) = \ln x$ est continue sur $]0, +\infty[$.
+    \[ \lim_{x \to a} \ln(u(x)) = \ln\left( \lim_{x \to a} u(x) \right) \quad \text{si } \lim_{x \to a} u(x) = L > 0 \]
+    Si $L = 0$ (forcément $0^+$ car $u(x)>0$ près de $a$), $\lim \ln(u(x)) = -\infty$.
+    Si $L = +\infty$, $\lim \ln(u(x)) = +\infty$.
+    \textbf{Interdit :} $\ln(L)$ si $L \le 0$ (hors domaine).
+\end{itemize}
+\end{aretenir}
+
+\begin{exemplebox}[Limites de composées : $\ln$ et $\exp$]
+\begin{enumerate}
+    \item $\lim_{x \to +\infty} \ln(3x^2 + 1)$.
+    $u(x) = 3x^2+1 \xrightarrow[x\to+\infty]{} +\infty$. $\ln$ continue sur $]0,+\infty[$.
+    $\lim = \ln(+\infty) = +\infty$.
+    \item $\lim_{x \to 0} e^{\frac{1}{x}}$.
+    $u(x) = 1/x$. $\lim_{x \to 0^+} u = +\infty \implies \lim_{x \to 0^+} e^{1/x} = +\infty$.
+    $\lim_{x \to 0^-} u = -\infty \implies \lim_{x \to 0^-} e^{1/x} = 0$.
+    \textbf{Conclusion :} La limite en $0$ n'existe pas (limites unilatérales différentes).
+    \item $\lim_{x \to 1} \ln(x^2 - 1)$.
+    $u(x) = x^2-1 \xrightarrow[x\to 1]{} 0$. Mais pour $x \to 1$, $x^2-1 > 0$ si $|x|>1$ et $<0$ si $|x|<1$.
+    $f(x)$ n'est pas définie au voisinage de $1$ (domaine $]-\infty, -1[ \cup ]1, +\infty[$).
+    \textbf{Seule la limite à droite $1^+$ a du sens :} $u(x) \to 0^+ \implies \ln(u(x)) \to -\infty$.
+\end{enumerate}
+\end{exemplebox}
+
+\courssub{Calculs directs « sans surprise » : Entraînement ciblé}
+
+Voici la méthode systématique pour tout exercice de calcul de limite \textbf{hors formes indéterminées} (les indéterminations $0/0, \infty/\infty, \infty-\infty, 0\times\infty, 1^\infty$ seront traitées en Section 3).
+
+\begin{methode}[Algorithme de calcul de limite (Hors indéterminations)]
+\begin{enumerate}
+    \item \textbf{Identifier la forme :} Remplacer $x$ par la valeur visée ($a$, $+\infty$, $-\infty$, $0^+$, $0^-$) dans l'expression \emph{en gardant les opérations symboliques}.
+    \item \textbf{Classer le résultat :}
+    \begin{itemize}
+        \item \textbf{Forme déterminée (Nombre fini, $0^\pm$, $\pm\infty$) :} Appliquer les règles de calcul (somme, produit, quotient, composition) directement. \textbf{C'est fini.}
+        \item \textbf{Forme indéterminée ($0/0, \infty/\infty, \infty-\infty, 0\times\infty, 1^\infty$) :} \textbf{STOP.} Ne pas conclure. Passer aux techniques de levée (Section 3 : factorisation, conjugaison, changement de variable, encadrement).
+    \end{itemize}
+    \item \textbf{Rédiger :} Une ligne par étape, justification (théorème, limite usuelles, continuité).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Série d'applications directes (Niveau Probatoire) -- Exercices 1 à 5]
+\textbf{Énoncés :}
+\begin{enumerate}
+    \item $\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$
+    \item $\lim_{x \to +\infty} \frac{2x^3 - x}{5x^2 + 3}$
+    \item $\lim_{x \to 0^+} \left( \frac{1}{x} - \frac{1}{\sin x} \right)$
+    \item $\lim_{x \to 1} \frac{\ln(2x-1)}{x-1}$
+    \item $\lim_{x \to +\infty} \frac{e^{-x}}{x^2}$
+\end{enumerate}
+\tcblower
+\textbf{Solutions détaillées :}
+\begin{enumerate}
+    \item \textbf{Forme $\frac{0}{0}$ (Indéterminée).} \textbf{Pas de calcul direct.} (Voir Section 3 : simplification par $x-2$).
+    \item \textbf{Forme $\frac{\infty}{\infty}$ mais cas polynomial $p>q$.} $p=3 > q=2$.
+    $f(x) = \frac{x^3(2 - 1/x^2)}{x^2(5 + 3/x^2)} = x \cdot \frac{2 - 1/x^2}{5 + 3/x^2} \sim x \cdot \frac{2}{5} \to +\infty$.
+    \textbf{Réponse :} $+\infty$.
+    \item \textbf{Forme $+\infty - +\infty$ (Indéterminée).} \textbf{Pas de calcul direct.} (Section 3 : mise au même dénominateur).
+    \item \textbf{Forme $\frac{0}{0}$ (Indéterminée).} (Section 3 : taux d'accroissement / dérivée).
+    \item \textbf{Forme $\frac{0}{\infty} = 0$.} \textbf{Calcul direct autorisé.}
+    Num $\to 0$, Dén $\to +\infty$. \textbf{Réponse :} $0$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Série d'applications directes (Niveau Probatoire) -- Exercices 6 à 10]
+\textbf{Énoncés :}
+\begin{enumerate}
+    \setcounter{enumi}{5}
+    \item $\lim_{x \to 0^+} x \ln x$
+    \item $\lim_{x \to -\infty} (x^2 + 3x) e^x$
+    \item $\lim_{x \to 0} \frac{\sqrt{x+1} - 1}{x}$
+    \item $\lim_{x \to +\infty} \arctan(x)$
+    \item $\lim_{x \to 2} \frac{x^2 + 1}{x - 3}$
+\end{enumerate}
+\tcblower
+\textbf{Solutions détaillées :}
+\begin{enumerate}
+    \setcounter{enumi}{5}
+    \item \textbf{Forme $0 \times (-\infty)$ (Indéterminée).} \textbf{Pas de calcul direct.} (Section 3 : poser $x = e^{-t}$ ou encadrement).
+    \item \textbf{Forme $\infty \times 0$ (Indéterminée).} $x^2+3x \to +\infty$, $e^x \to 0$. (Section 3 : l'exponentielle gagne toujours).
+    \item \textbf{Forme $\frac{0}{0}$ (Indéterminée).} (Section 3 : conjugaison).
+    \item \textbf{Calcul direct :} $\arctan$ continue sur $\mathbb{R}$, limite en $+\infty$ connue : $\pi/2$.
+    \textbf{Réponse :} $\pi/2$.
+    \item \textbf{Calcul direct :} Num $\to 5$, Dén $\to -1$. Forme $\frac{5}{-1} = -5$.
+    \textbf{Réponse :} $-5$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{savaistu}[La \cle{hiérarchie des infinis} : La boussole du technicien]
+La figure du début de section montre une vérité fondamentale pour l'ingénieur : \textbf{toute exponentielle bat tout polynôme, tout polynôme bat tout logarithme}.
+En Terminale (et en prépa), on formalisera cela par les \emph{équivalents} ($f \sim g$) et les \emph{Petits-o} ($f = o(g)$).
+\begin{itemize}
+    \item Si vous modélisez la décharge d'un condensateur : $u(t) = U_0 e^{-t/\tau}$. L'exponentielle assure une extinction \textbf{rapide} (plus rapide que $1/t^n$).
+    \item Si vous analysez la complexité d'un algorithme de tri : $n \ln n$ croît moins vite que $n^2$ (polynôme degré 2).
+    \item En mécanique des fluides, la loi de Poiseuille donne un débit proportionnel à $r^4$ (puissance 4) : doubler le rayon multiplie le débit par 16. La sensibilité aux puissances est critique.
+\end{itemize}
+Gardez cette hiérarchie en tête : $\ln x \ll x^\alpha \ll a^x \quad (a>1, \alpha>0)$. Elle vous permettra de deviner le résultat d'une limite $\infty/\infty$ ou $0 \times \infty$ avant même de calculer.
+\end{savaistu}
+
+\begin{attention}[Erreurs de rédaction à bannir au Probatoire]
+\begin{enumerate}
+    \item \textbf{Écrire $\infty - \infty = 0$ ou $\frac{\infty}{\infty} = 1$.} \textbf{Faux.} Ce sont des \cle{formes indéterminées}. Aucune conclusion possible sans transformation.
+    \item \textbf{Oublier le signe ($0^+$ / $0^-$) pour les quotients.} Ex: $\lim_{x \to 0} \frac{1}{x}$. Réponse « $\infty$ » = \textbf{0 point}. Il faut écrire : $\lim_{x \to 0^+} = +\infty$, $\lim_{x \to 0^-} = -\infty$, donc pas de limite en $0$.
+    \item \textbf{Appliquer le théorème de composition sans vérifier la continuité.}$\lim_{x \to 0} \cos(1/x)$. $\lim 1/x$ n'existe pas, mais même s'il existait (ex $L$), $\cos$ est continue partout, donc ok. Mais $\lim_{x \to 0} \ln(\sin x)$ : $\sin x \to 0$, mais $\ln$ n'est pas continue en $0$ (non définie à gauche). Il faut spécifier $x \to 0^+$ pour que $\sin x \to 0^+$ et $\ln \to -\infty$.
+    \item \textbf{Notation « $= \infty$ » sans signe.} On écrit $+\infty$ ou $-\infty$. Le symbole $\infty$ seul (non signé) ne s'utilise que pour dire « la limite n'est pas finie » sans préciser le signe, ou en géométrie projective. En analyse réelle : \textbf{toujours signé}.
+\end{enumerate}
+\end{attention}
+
+\begin{exercice}[Entraînement autonome - Niveau Probatoire]
+Calculer les limites suivantes (préciser $+\infty$, $-\infty$, ou nombre réel, ou « n'existe pas »).
+\begin{enumerate}
+    \item $\lim_{x \to +\infty} \frac{4x^5 - 2x^2 + 1}{-3x^5 + 7x}$
+    \item $\lim_{x \to -\infty} (2x^3 - 5x^2 + 1)$
+    \item $\lim_{x \to 0^+} \ln(\sin x)$
+    \item $\lim_{x \to 1} \frac{x^2 + 3x - 4}{x - 1}$ (Attention : forme ?)
+    \item $\lim_{x \to +\infty} \frac{\ln x}{x}$
+    \item $\lim_{x \to 0} e^{\frac{1}{x^2}}$
+    \item $\lim_{x \to +\infty} \arctan(\ln x)$
+    \item $\lim_{x \to 2^-} \frac{3}{(x-2)^2}$
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n]
+\begin{enumerate}
+    \item Cas $p=q=5$. Coeff dominants $4$ et $-3$. $\lim = \frac{4}{-3} = -\frac{4}{3}$.
+    \item Polynôme degré 3 (impair), coeff dominant $2>0$. $x \to -\infty \implies x^3 \to -\infty$. $2 \times (-\infty) = -\infty$.
+    \item $x \to 0^+ \implies \sin x \to 0^+$ (car $\sin x > 0$ pour $x>0$ petit). $\ln(0^+) = -\infty$.
+    \item $x \to 1$ : Num $\to 1+3-4=0$, Dén $\to 0$. Forme $0/0$ (Indéterminée). \textbf{Pas de limite directe}. Factorisation : $x^2+3x-4 = (x-1)(x+4)$. Simplification par $x-1 \neq 0$. Reste $x+4 \to 5$. \textbf{Limite = 5}.
+    \item Forme $\frac{\infty}{\infty}$ (Indéterminée). Hiérarchie : $\ln x \ll x$. Le dénominateur gagne. $\lim = 0$. (Preuve rigoureuse en Section 3).
+    \item $x \to 0 \implies 1/x^2 \to +\infty$ (toujours positif). $e^{+\infty} = +\infty$.
+    \item $x \to +\infty \implies \ln x \to +\infty$. $\arctan(+\infty) = \pi/2$ (continue).
+    \item $x \to 2^- \implies x-2 \to 0^- \implies (x-2)^2 \to 0^+$. $\frac{3}{0^+} = +\infty$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Les formes indéterminées : Identification et levée (Cœur technique)}
+
+\noindent Dans la section précédente, nous avons vu comment calculer des limites grâce aux règles algébriques (somme, produit, quotient, composé) \emph{à condition que les limites en jeu ne créent pas de conflit}. Lorsque l'application naïve de ces règles aboutit à une expression qui n'a pas de sens unique (comme $\frac{0}{0}$ ou $\infty-\infty$), on dit que l'on tombe sur une \cle{forme indéterminée}. C'est le cœur technique du chapitre : il ne s'agit pas de « deviner » la limite, mais d'appliquer une \cle{réécriture algébrique} rigoureuse pour faire apparaître la vraie valeur. En classe de Première technique, nous maîtrisons les quatre formes « algébriques » principales et la forme exponentielle $1^{\infty}$, incontournable en modélisation (croissance, décroissance radioactive, charge de condensateur).
+
+\courssub{Qu'est-ce qu'une forme indéterminée ?}
+
+\begin{definition}[Forme indéterminée]
+Soit $f$ et $g$ deux fonctions et $a \in \mathbb{R} \cup \{-\infty, +\infty\}$. On dit que l'expression $\lim_{x \to a} F(x)$ (où $F$ est une combinaison de $f$ et $g$) présente une \textbf{forme indéterminée} si le calcul direct des limites de $f$ et $g$ en $a$ conduit à une expression mathématique \textbf{ambigüe}, c'est-à-dire qui ne permet pas de conclure sur la valeur de la limite de $F$ sans une étude plus fine.
+\end{definition}
+
+\begin{exemplebox}[Pourquoi « indéterminée » ?]
+Considérons la forme $\frac{0}{0}$.
+\begin{itemize}
+    \item $\lim_{x \to 0} \frac{x}{x} = 1$ (pour $x \neq 0$, la fraction vaut $1$).
+    \item $\lim_{x \to 0} \frac{x^2}{x} = \lim_{x \to 0} x = 0$.
+    \item $\lim_{x \to 0} \frac{x}{x^2} = \lim_{x \to 0} \frac{1}{x} = +\infty$ (ou $-\infty$ selon le côté).
+    \item $\lim_{x \to 0} \frac{\sin x}{x} = 1$ (limite remarquable).
+\end{itemize}
+\emph{La même forme $\frac{0}{0}$ peut cacher n'importe quelle limite réelle ou infinie.} C'est pourquoi on ne peut pas « calculer » $\frac{0}{0}$ : il faut \textbf{transformer l'expression} pour lever l'ambiguïté.
+\end{exemplebox}
+
+\courssub{Les 7 formes indéterminées classiques — Focus Première Tech}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Forme} & \textbf{Statut 1re Tech} & \textbf{Exemple type} \\ \hline
+$\dfrac{0}{0}$ & \textbf{MAJEURE} (Priorité 1) & $\dfrac{x^2-4}{x-2}$ en $2$ \\ \hline
+$\dfrac{\infty}{\infty}$ & \textbf{MAJEURE} (Priorité 1) & $\dfrac{3x^2+2x}{5x^2-1}$ en $+\infty$ \\ \hline
+$\infty - \infty$ & \textbf{MAJEURE} (Priorité 2) & $\sqrt{x^2+x} - x$ en $+\infty$ \\ \hline
+$0 \times \infty$ & \textbf{MAJEURE} (Priorité 2) & $x \ln x$ en $0^+$ \\ \hline
+$1^{\infty}$ & \textbf{IMPORTANTE} (Modélisation) & $\left(1+\frac{1}{x}\right)^x$ en $+\infty$ \\ \hline
+$0^0$ & Secondaire (vu en Terminale) & $x^x$ en $0^+$ \\ \hline
+$\infty^0$ & Secondaire (vu en Terminale) & $x^{1/x}$ en $+\infty$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{aretenir}[Focus Programme]
+En Première technique, vous devez \textbf{identifier} systématiquement la forme parmi les 5 premières et \textbf{maîtriser la méthode de levée} adaptée. Les formes $0^0$ et $\infty^0$ se traitent par logarithme (comme $1^{\infty}$) mais sont réservées à l'approfondissement en Terminale.
+\end{aretenir}
+
+\courssub{Boîte à outils : Les 5 méthodes de levée}
+
+\noindent Chaque forme indéterminée appelle une technique de réécriture spécifique. Voici les 5 méthodes officielles du programme, classées par ordre d'utilisation typique.
+
+\courssub{Méthode 1 : Factorisation / Simplification (Formes $\frac{0}{0}$, $\frac{\infty}{\infty}$ — Fractions rationnelles)}
+
+\begin{methode}[Lever $\frac{0}{0}$ ou $\frac{\infty}{\infty}$ par factorisation]
+\textbf{Contexte :} $f(x) = \frac{P(x)}{Q(x)}$ où $P,Q$ sont des polynômes (ou expressions factorisables) et $P(a)=Q(a)=0$ (ou degrés supérieurs pour $\infty/\infty$).
+\begin{enumerate}
+    \item \textbf{Factoriser} le numérateur et le dénominateur au maximum.
+    \item \textbf{Repérer le facteur commun} qui s'annule en $a$ (souvent $x-a$).
+    \item \textbf{Simplifier} ce facteur \textbf{en précisant $x \neq a$} (car on travaille dans un \cle{voisinage pointé} de $a$).
+    \item Calculer la limite de l'expression simplifiée.
+\end{enumerate}
+\textbf{Astuce pro :} Si $P(a)=0$, alors $(x-a)$ divise $P(x)$. Utilisez l'identité $a^n - b^n = (a-b)(a^{n-1} + a^{n-2}b + \dots + b^{n-1})$ pour factoriser rapidement $x^n - a^n$.
+\end{methode}
+
+\begin{exoresolu}[Factorisation et identité remarquable]
+Calculer $\lim_{x \to 2} \frac{x^3 - 8}{x^2 - 4}$.
+\tcblower
+\textbf{Étape 1 : Forme.} Numérateur $2^3-8=0$, Dénominateur $2^2-4=0$ $\Rightarrow$ Forme $\frac{0}{0}$.
+\textbf{Étape 2 : Factorisation.}
+$x^3 - 8 = (x-2)(x^2 + 2x + 4)$ \quad (identité $a^3-b^3$ avec $a=x, b=2$)
+$x^2 - 4 = (x-2)(x+2)$ \quad (différence de carrés)
+\textbf{Étape 3 : Simplification (pour $x \neq 2$).}
+$\frac{x^3 - 8}{x^2 - 4} = \frac{\cancel{(x-2)}(x^2 + 2x + 4)}{\cancel{(x-2)}(x+2)} = \frac{x^2 + 2x + 4}{x+2}$
+\textbf{Étape 4 : Limite.}
+$\lim_{x \to 2} \frac{x^2 + 2x + 4}{x+2} = \frac{4 + 4 + 4}{4} = \frac{12}{4} = 3$.
+\end{exoresolu}
+
+\courssub{Méthode 2 : Conjugaison (Formes $\infty-\infty$ ou $\frac{0}{0}$ avec racines carrées)}
+
+\begin{methode}[Lever $\infty-\infty$ ou $\frac{0}{0}$ avec $\sqrt{\cdot}$ par conjugaison]
+\textbf{Contexte :} Expression contenant $\sqrt{A(x)} - \sqrt{B(x)}$ (ou somme) qui donne $\infty-\infty$ ou $\frac{0}{0}$.
+\begin{enumerate}
+    \item \textbf{Identifier l'expression conjuguée :} $\sqrt{A} + \sqrt{B}$ (changer le signe central).
+    \item \textbf{Multiplier le numérateur ET le dénominateur} par cette conjuguée (ou multiplier par $\frac{\text{conjuguée}}{\text{conjuguée}}=1$ si pas de fraction).
+    \item Utiliser l'identité \textbf{$(a-b)(a+b) = a^2 - b^2$} : les racines disparaissent au numérateur.
+    \item Simplifier le facteur qui crée l'indétermination (souvent $x-a$ ou $x$ pour $+\infty$).
+    \item Calculer la limite.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Exemple type : $\infty - \infty$ à l'infini]
+Calculer $\lim_{x \to +\infty} \left( \sqrt{x^2+x} - x \right)$.
+\tcblower
+\textbf{Forme :} $+\infty - \infty$ (indéterminée).
+\textbf{Conjugaison :} On multiplie par $\frac{\sqrt{x^2+x} + x}{\sqrt{x^2+x} + x}$.
+\begin{align*}
+\sqrt{x^2+x} - x &= \frac{(\sqrt{x^2+x} - x)(\sqrt{x^2+x} + x)}{\sqrt{x^2+x} + x} \\
+&= \frac{(x^2+x) - x^2}{\sqrt{x^2+x} + x} = \frac{x}{\sqrt{x^2+x} + x}
+\end{align*}
+\textbf{Nouvelle forme :} $\frac{\infty}{\infty}$. On factorise par $x$ (puissance dominante) au dénominateur :
+$\sqrt{x^2+x} = x\sqrt{1+\frac{1}{x}}$ (car $x>0$ vers $+\infty$).
+$\frac{x}{x\sqrt{1+\frac{1}{x}} + x} = \frac{\cancel{x}}{\cancel{x}(\sqrt{1+\frac{1}{x}} + 1)} = \frac{1}{\sqrt{1+\frac{1}{x}} + 1}$
+\textbf{Limite :} $\frac{1}{\sqrt{1+0} + 1} = \frac{1}{2}$.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=1.5cm and 2.2cm,
+    decision/.style={diamond, draw=popdark, thick, fill=poporange!20, text width=2.8cm, align=center, inner sep=4pt},
+    process/.style={rectangle, draw=popblue, thick, fill=popblue!10, text width=3.2cm, align=center, rounded corners, inner sep=4pt},
+    startstop/.style={rectangle, draw=popgreen, thick, fill=popgreen!15, text width=2.5cm, align=center, rounded corners=5pt, inner sep=4pt},
+    arrow/.style={-Stealth, thick, popdark},
+    yesno/.style={midway, fill=white, inner sep=2pt, font=\small\bfseries}
+]
+\node (start) [startstop] {Devant une limite $\lim f(x)$};
+\node (det) [decision, below=of start, align=center]{Forme déterminée ?\\(Résultat direct possible)};
+\node (yes) [startstop, right=of det, align=center]{\textbf{Résultat direct}\\(Nombre, $\pm\infty$)};
+\node (no) [decision, below=of det] {Quelle forme indéterminée ?};
+\node (f1) [process, below left=of no, align=center]{$\frac{0}{0}$ ou $\frac{\infty}{\infty}$\\(Fraction rationnelle)};
+\node (m1) [process, left=of f1, align=center]{Factoriser / Simplifier\\(Identité $a^n-b^n$)};
+\node (f2) [process, below=of no, align=center]{$\frac{0}{0}$ ou $\infty-\infty$\\(Avec $\sqrt{\cdot}$)};
+\node (m2) [process, right=of f2, align=center]{Conjugaison\\($\times (\sqrt{A}+\sqrt{B})$)};
+\node (f3) [process, below right=of no, align=center]{$\frac{\infty}{\infty}$ ou $\infty-\infty$\\(Polynômes / Puissances)};
+\node (m3) [process, right=of f3, align=center]{Factoriser par $x^n$\\($n$ = plus haut degré)};
+\node (f4) [process, below=of f2] {$0 \times \infty$};
+\node (m4) [process, below=of m2, align=center]{Mettre au même dénominateur\\$\to \frac{0}{0}$ ou $\frac{\infty}{\infty}$};
+\node (f5) [process, below=of f4] {$1^{\infty}$};
+\node (m5) [process, below=of m4, align=center]{Poser $\ln(f(x))$\\LR3 : $\frac{\ln(1+u)}{u}\to 1$ $\to$ Exponentier};
+
+\draw [arrow] (start) -- (det);
+\draw [arrow] (det) -- node [yesno] {OUI} (yes);
+\draw [arrow] (det) -- node [yesno, left] {NON} (no);
+\draw [arrow] (no) -- (f1);
+\draw [arrow] (no) -- (f2);
+\draw [arrow] (no) -- (f3);
+\draw [arrow] (no) -- (f4);
+\draw [arrow] (no) -- (f5);
+\draw [arrow] (f1) -- (m1);
+\draw [arrow] (f2) -- (m2);
+\draw [arrow] (f3) -- (m3);
+\draw [arrow] (f4) -- (m4);
+\draw [arrow] (f5) -- (m5);
+\end{tikzpicture}
+\legende{Arbre de décision : quelle méthode choisir face à une forme indéterminée ?}
+\end{popfigure}
+
+\courssub{Méthode 3 : Factorisation par la puissance dominante (Formes $\frac{\infty}{\infty}$, $\infty-\infty$ — Polynômes, puissances)}
+
+\begin{methode}[Lever $\frac{\infty}{\infty}$ ou $\infty-\infty$ par factorisation par $x^n$]
+\textbf{Contexte :} Limite en $+\infty$ ou $-\infty$ d'une fraction de polynômes ou d'une somme de puissances ($x^\alpha$, $\sqrt{x}$, etc.).
+\begin{enumerate}
+    \item \textbf{Identifier $n$ = plus haut degré} (ou plus forte puissance) présent dans l'expression (numérateur et dénominateur confondus pour une fraction ; tous les termes pour une somme).
+    \item \textbf{Factoriser $x^n$} dans le numérateur ET le dénominateur (ou dans la somme).
+    \item \textbf{Simplifier $x^n$} (pour $x \neq 0$, ce qui est vrai vers $\pm\infty$).
+    \item Calculer la limite : les termes en $1/x^k$ tendent vers $0$, il ne reste que les coefficients des termes de degré maximal.
+\end{enumerate}
+\textbf{Règle rapide (Fraction rationnelle) :} $\lim_{x \to \pm\infty} \frac{a_n x^n + \dots}{b_m x^m + \dots} = \begin{cases} 0 & \text{si } n < m \\ \frac{a_n}{b_m} & \text{si } n = m \\ \pm\infty & \text{si } n > m \end{cases}$ (signe selon parité de $n-m$ et signe de $x$).
+\end{methode}
+
+\begin{exoresolu}[Puissance dominante]
+Calculer $\lim_{x \to +\infty} \frac{3x^2 - 5x + 2}{2x^2 + 7x - 1}$.
+\tcblower
+\textbf{Forme :} $\frac{\infty}{\infty}$.
+\textbf{Dégré max $n=2$.} Factoriser $x^2$ numérateur et dénominateur :
+$\frac{x^2(3 - \frac{5}{x} + \frac{2}{x^2})}{x^2(2 + \frac{7}{x} - \frac{1}{x^2})} = \frac{3 - \frac{5}{x} + \frac{2}{x^2}}{2 + \frac{7}{x} - \frac{1}{x^2}}$ (pour $x \neq 0$).
+\textbf{Limite :} $\frac{3 - 0 + 0}{2 + 0 - 0} = \frac{3}{2}$.
+\end{exoresolu}
+
+\courssub{Méthode 4 : Changement de variable (Ramener à une limite connue)}
+
+\begin{methode}[Changement de variable]
+\textbf{But :} Transformer une limite « bizarre » (ex: $x \to 0$ avec $1/x$) en une limite standard ($t \to \pm\infty$) ou vice-versa.
+\begin{enumerate}
+    \item Poser $t = g(x)$ (souvent $t = 1/x$ ou $t = x-a$).
+    \item Exprimer $x$ en fonction de $t$ et déterminer la nouvelle limite de $t$.
+    \item Réécrire toute la fonction en $t$.
+    \item Calculer la limite en $t$.
+\end{enumerate}
+\textbf{Classiques :} $x \to 0^+ \iff t = 1/x \to +\infty$ ; $x \to a \iff t = x-a \to 0$.
+\end{methode}
+
+\begin{exemplebox}[Changement $t=1/x$]
+$\lim_{x \to 0^+} x \ln x$. Forme $0 \times (-\infty)$.
+Posons $t = \frac{1}{x} \Rightarrow x = \frac{1}{t}$. Quand $x \to 0^+$, $t \to +\infty$.
+$\lim_{x \to 0^+} x \ln x = \lim_{t \to +\infty} \frac{1}{t} \ln(1/t) = \lim_{t \to +\infty} -\frac{\ln t}{t}$.
+Forme $\frac{\infty}{\infty}$. Puissance dominante : $\ln t$ négligeable devant $t$ $\Rightarrow$ limite $0$.
+(On retrouvera ce résultat avec les limites remarquables en 3.3.5).
+\end{exemplebox}
+
+\courssub{Méthode 5 : Limites remarquables (Formes $1^{\infty}$, $\frac{0}{0}$ transcendant, $0 \times \infty$)}
+
+\begin{propriete}[Limites remarquables à connaître par cœur (Probatoire)]
+Pour $u(x) \to 0$ (ou $u(x) \to \pm\infty$ selon le cas) :
+\begin{align*}
+(LR1) &\quad \frac{\sin u}{u} \to 1 \quad (u \to 0) \\
+(LR2) &\quad \frac{e^u - 1}{u} \to 1 \quad (u \to 0) \\
+(LR3) &\quad \frac{\ln(1+u)}{u} \to 1 \quad (u \to 0) \\
+(LR4) &\quad (1+u)^{1/u} \to e \quad (u \to 0) \quad \text{équivalent à} \quad \left(1+\frac{1}{x}\right)^x \to e \quad (x \to \pm\infty)
+\end{align*}
+\textbf{Utilisation :} Il faut \textbf{forcer l'apparition} de ces formes par factorisation, changement de variable ou mise au même dénominateur.
+\end{propriete}
+
+\begin{methode}[Lever $1^{\infty}$ : La méthode du logarithme]
+\textbf{Contexte :} $\lim f(x)^{g(x)}$ avec $f(x) \to 1$ et $g(x) \to \pm\infty$.
+\begin{enumerate}
+    \item Poser $L = \lim f(x)^{g(x)}$. Étudier $\ln L = \lim g(x) \ln(f(x))$.
+    \item Écrire $f(x) = 1 + u(x)$ avec $u(x) \to 0$.
+    \item Utiliser la \textbf{limite remarquable LR3} : $\frac{\ln(1+u)}{u} \to 1$ (donc $\ln(1+u) \sim u$ au voisinage de $0$).
+    \item $\ln L = \lim g(x) \cdot u(x)$. Calculer cette limite (souvent $0 \times \infty$ ramené à $\frac{0}{0}$ ou $\frac{\infty}{\infty}$).
+    \item Conclure : $L = e^{\ln L}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Forme $1^{\infty}$ et limites remarquables]
+Calculer $\lim_{x \to +\infty} \left( 1 + \frac{2}{x} \right)^{3x}$.
+\tcblower
+\textbf{Forme :} $1^{\infty}$.
+\textbf{Méthode du logarithme :}
+Soit $y = \left( 1 + \frac{2}{x} \right)^{3x}$. $\ln y = 3x \ln\left(1 + \frac{2}{x}\right)$.
+Posons $u = \frac{2}{x} \to 0$. Alors $x = \frac{2}{u}$.
+$\ln y = 3 \cdot \frac{2}{u} \cdot \ln(1+u) = 6 \cdot \frac{\ln(1+u)}{u}$.
+Par (LR3) : $\frac{\ln(1+u)}{u} \to 1$.
+Donc $\ln y \to 6 \times 1 = 6$.
+\textbf{Résultat :} $y \to e^6$.
+\emph{Note :} On peut aussi utiliser directement $\left(1+\frac{a}{x}\right)^{bx} \to e^{ab}$ (ici $a=2, b=3 \Rightarrow e^6$).
+\end{exoresolu}
+
+\begin{exoresolu}[Combinaison : $\frac{e^{2x}-1}{\sin 3x}$ en $0$]
+Calculer $\lim_{x \to 0} \frac{e^{2x}-1}{\sin 3x}$.
+\tcblower
+\textbf{Forme :} $\frac{0}{0}$.
+\textbf{Stratégie :} Faire apparaître $\frac{e^u-1}{u}$ et $\frac{\sin v}{v}$.
+$\frac{e^{2x}-1}{\sin 3x} = \frac{e^{2x}-1}{2x} \cdot \frac{3x}{\sin 3x} \cdot \frac{2x}{3x}$.
+\begin{itemize}
+    \item $\frac{e^{2x}-1}{2x} \xrightarrow[x\to 0]{} 1$ (LR2 avec $u=2x$).
+    \item $\frac{3x}{\sin 3x} \xrightarrow[x\to 0]{} 1$ (LR1 avec $v=3x$).
+    \item $\frac{2x}{3x} = \frac{2}{3}$ (pour $x \neq 0$).
+\end{itemize}
+\textbf{Limite :} $1 \times 1 \times \frac{2}{3} = \frac{2}{3}$.
+\end{exoresolu}
+
+\courssub{Stratégie de décision : Arbre de choix (Synthèse visuelle)}
+
+\noindent L'arbre de décision ci-dessus (Figure 3.1) résume la logique à suivre. \textbf{En examen}, notez la forme indéterminée identifiée avant de choisir la méthode. Cela structure votre copie et évite les erreurs de précipitation.
+
+\begin{aretenir}[Check-list « Avant de rendre la copie »]
+\begin{enumerate}
+    \item Ai-je écrit la forme indéterminée (ex: « Forme $\frac{0}{0}$ ») ?
+    \item Ai-je justifié la simplification (ex: « pour $x \neq 2$ ») ?
+    \item Ai-je réécrit l'expression \textbf{étape par étape} (pas de saut magique) ?
+    \item La limite finale est-elle un nombre, $+\infty$, $-\infty$ ou « n'existe pas » ?
+    \item Pour $1^{\infty}$ : ai-je bien exponentié le résultat du logarithme ?
+\end{enumerate}
+\end{aretenir}
+
+\courssub{Exercices résolus types « Probatoire »}
+
+\begin{exoresolu}[Examen 2023 — Polynôme / Racine]
+$\lim_{x \to +\infty} \left( \sqrt{9x^2 + 5x} - 3x \right)$.
+\tcblower
+\textbf{Forme :} $\infty - \infty$.
+\textbf{Méthode : Conjugaison.}
+$\sqrt{9x^2+5x} - 3x = \frac{(9x^2+5x) - 9x^2}{\sqrt{9x^2+5x} + 3x} = \frac{5x}{\sqrt{9x^2+5x} + 3x}$.
+Factoriser $x$ au dénominateur ($x>0 \Rightarrow \sqrt{x^2}=x$) :
+$\frac{5x}{x\sqrt{9+\frac{5}{x}} + 3x} = \frac{5}{\sqrt{9+\frac{5}{x}} + 3} \xrightarrow[x\to+\infty]{} \frac{5}{\sqrt{9}+3} = \frac{5}{6}$.
+\end{exoresolu}
+
+\begin{exoresolu}[Examen 2022 — Logarithme et exponentielle]
+$\lim_{x \to 0} \frac{\ln(1+3x)}{\tan 2x}$.
+\tcblower
+\textbf{Forme :} $\frac{0}{0}$.
+\textbf{Méthode : Limites remarquables (LR1, LR3).}
+Rappel : $\tan 2x = \frac{\sin 2x}{\cos 2x}$.
+$\frac{\ln(1+3x)}{\tan 2x} = \frac{\ln(1+3x)}{3x} \cdot \frac{2x}{\sin 2x} \cdot \cos 2x \cdot \frac{3x}{2x}$.
+\begin{itemize}
+    \item $\frac{\ln(1+3x)}{3x} \to 1$ (LR3, $u=3x$).
+    \item $\frac{2x}{\sin 2x} \to 1$ (LR1, $v=2x$).
+    \item $\cos 2x \to 1$.
+    \item $\frac{3x}{2x} = \frac{3}{2}$ ($x \neq 0$).
+\end{itemize}
+\textbf{Limite :} $1 \times 1 \times 1 \times \frac{3}{2} = \frac{3}{2}$.
+\end{exoresolu}
+
+\courssub{Erreurs fréquentes et pièges à éviter}
+
+\begin{attention}[Pièges « Zéro tolérance » au Probatoire]
+\begin{itemize}
+\item \textbf{Simplifier « $x$ » sans dire « pour $x \neq 0$ » (ou $x \neq a$).}
+\textit{Exemple :} $\lim_{x \to 0} \frac{x^2+x}{x}$.
+$\times$ Faux : « Je simplifie $x$, il reste $x+1$, limite $1$. »
+$\checkmark$ Vrai : « Pour $x \neq 0$, $\frac{x^2+x}{x} = x+1$. Donc la limite est $1$. »
+\textbf{Pourquoi ?} La limite en $0$ ne regarde que les valeurs \emph{voisines} de $0$, jamais $0$ lui-même. La simplification n'est valable que dans ce \cle{voisinage pointé}.
+
+\item \textbf{Confondre $\frac{\infty}{\infty}$ et « l'infini divisé par l'infini = 1 ».}
+$\frac{\infty}{\infty}$ est indéterminé. $\lim_{x\to\infty} \frac{x}{x^2}=0$, $\lim_{x\to\infty} \frac{x^2}{x}=\infty$, $\lim_{x\to\infty} \frac{2x}{x}=2$.
+
+\item \textbf{Oublier le signe pour les racines carrées vers $-\infty$.}
+$\sqrt{x^2} = |x|$.
+Si $x \to +\infty$, $\sqrt{x^2} = x$.
+Si $x \to -\infty$, $\sqrt{x^2} = -x$ (car $|x| = -x$ quand $x<0$).
+\textit{Exemple :} $\lim_{x \to -\infty} \frac{\sqrt{x^2+1}}{x} = \lim_{x \to -\infty} \frac{|x|\sqrt{1+1/x^2}}{x} = \lim_{x \to -\infty} \frac{-x}{x} = -1$.
+
+\item \textbf{Mauvaise utilisation des équivalents (asymptotiques) dans une somme/soustraction.}
+$f(x) \sim g(x)$ ne permet \textbf{PAS} de remplacer $f$ par $g$ dans $f(x) - h(x)$ ou $f(x) + h(x)$.
+$\times$ Faux : $\sqrt{x^2+x} \sim x$ donc $\sqrt{x^2+x} - x \sim x - x = 0$. (La limite est $1/2$, pas $0$ !)
+$\checkmark$ Les équivalents ne s'utilisent \textbf{que} dans les produits, quotients, ou pour les fonctions composées (ex: $\ln(1+u) \sim u$). Pour les sommes/soustractions : \cle{factorisation}/\cle{conjugaison} obligatoire.
+
+\item \textbf{Forme $1^{\infty}$ : oublier d'exponentier.}
+Calculer $\ln L = 3$ et répondre « La limite est $3$ ».
+$\checkmark$ Réponse : « $\ln L = 3 \Rightarrow L = e^3$ ».
+\end{itemize}
+\end{attention}
+
+\courssub{Modélisation et applications concrètes : Le technicien face aux limites}
+
+\begin{savaistu}[Le nombre $e$ et la finance : l'intérêt composé continu]
+La limite $\lim_{n \to +\infty} \left(1 + \frac{1}{n}\right)^n = e$ a une origine concrète : l'intérêt composé.
+Si vous placez 1~000~FCFA à 100\% d'intérêt par an :
+\begin{itemize}
+    \item Intérêt annuel (1 fois/an) : $1000 \times (1+1)^1 = 2000$.
+    \item Intérêt mensuel (12 fois/an) : $1000 \times (1+\frac{1}{12})^{12} \approx 2613$.
+    \item Intérêt journalier (365 fois/an) : $1000 \times (1+\frac{1}{365})^{365} \approx 2714$.
+    \item Intérêt \textbf{continu} (infini fois/an) : $1000 \times e^1 \approx 2718,28$.
+\end{itemize}
+Le nombre $e \approx 2,71828$ est la borne supérieure du gain avec un taux de 100\%. En technique, on retrouve $e$ dans la charge/décharge de condensateurs ($u = U_0 e^{-t/\tau}$), la décroissance radioactive, la loi de refroidissement de Newton. Maîtriser $1^{\infty}$, c'est maîtriser le modèle exponentiel continu.
+\end{savaistu}
+
+\coursec{Théorèmes de comparaison et limites remarquables}
+
+Dans la section précédente, nous avons appris à lever les formes indéterminées par factorisation, par l'expression conjuguée ou par changement de variable. Mais certaines fonctions résistent à toutes ces techniques : pensez à $x\sin\left(\dfrac{1}{x}\right)$ en $0$, où le sinus oscille indéfiniment sans jamais se stabiliser. Face à ces situations, il nous faut des outils d'un autre type : au lieu de transformer l'expression, on va la \cle{comparer} à des fonctions plus simples dont on connaît la limite. C'est l'objet de cette section, qui fournit aussi la liste des \cle{limites remarquables} à connaître par cœur pour le Probatoire et le Baccalauréat technique.
+
+\courssub{Le théorème des gendarmes (théorème d'encadrement)}
+
+\textbf{Intuition.} Imaginez deux motos de gendarmerie encadrant un convoi sur la route de Douala à Yaoundé : si les deux gendarmes arrivent au même point, le convoi, coincé entre eux, arrive forcément au même point. En mathématiques, le « convoi » est une fonction $g$ compliquée, et les « gendarmes » sont deux fonctions simples $f$ et $h$ qui l'encadrent et qui tendent vers la même limite.
+
+\begin{propriete}[Théorème des gendarmes (admis)]
+Soit $a$ un réel (ou $\pm\infty$) et trois fonctions $f$, $g$, $h$ définies sur un voisinage de $a$ telles que :
+\[ f(x) \le g(x) \le h(x) \quad \text{sur ce voisinage.} \]
+Si $\displaystyle\lim_{x\to a} f(x) = \lim_{x\to a} h(x) = L$ (avec $L$ réel), alors :
+\[ \lim_{x\to a} g(x) = L. \]
+Ce théorème est \textbf{admis} : sa démonstration n'est pas exigible, mais son énoncé précis et son utilisation sont exigibles au Probatoire.
+\end{propriete}
+
+\begin{attention}[Conditions d'application à ne pas oublier]
+Deux conditions sont indispensables, et l'oubli de l'une d'elles est une erreur classique à l'examen :
+\begin{itemize}
+\item l'encadrement $f(x) \le g(x) \le h(x)$ doit être \textbf{vérifié et rédigé} (souvent à partir de $-1 \le \sin X \le 1$ ou $-1 \le \cos X \le 1$) ;
+\item les deux fonctions « gendarmes » doivent avoir la \textbf{même} limite. Si $\lim f = 2$ et $\lim h = 5$, on ne peut rien conclure !
+\end{itemize}
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle, xlabel={$x$}, ylabel={$y$},
+  xmin=-1.1, xmax=1.1, ymin=-1.1, ymax=1.2,
+  xtick={-1,-0.5,0.5,1}, ytick={-1,1},
+  legend style={at={(0.02,0.98)}, anchor=north west, font=\small},
+  samples=300
+]
+% Borne inférieure f(x) = -x^2
+\addplot[popcurve, popblue, domain=-1.05:1.05]{-x^2};
+\addlegendentry{$f(x)=-x^2$}
+% Borne supérieure h(x) = x^2
+\addplot[popcurve, poporange, domain=-1.05:1.05]{x^2};
+\addlegendentry{$h(x)=x^2$}
+% Fonction encadrée g(x) = x^2 sin(1/x)
+\addplot[popcurve, popgreen, domain=-1.05:-0.02, samples=400]{x^2*sin(deg(1/x))};
+\addplot[popcurve, popgreen, domain=0.02:1.05, samples=400]{x^2*sin(deg(1/x))};
+\addlegendentry{$g(x)=x^2\sin\left(\frac{1}{x}\right)$}
+\end{axis}
+\end{tikzpicture}
+\legende{Illustration du théorème des gendarmes : la courbe verte de $g(x)=x^2\sin(1/x)$ oscille mais reste « coincée » entre les deux paraboles $f(x)=-x^2$ (bleue, en bas) et $h(x)=x^2$ (orange, en haut). Comme $f$ et $h$ tendent toutes les deux vers $0$ en $0$, $g$ tend aussi vers $0$.}
+\end{center}
+\end{popfigure}
+
+\begin{methode}[Utiliser le théorème des gendarmes]
+\begin{enumerate}
+\item \textbf{Repérer} dans l'expression un terme borné, le plus souvent $\sin(\ldots)$ ou $\cos(\ldots)$, qui vérifie $-1 \le \sin(\ldots) \le 1$.
+\item \textbf{Construire l'encadrement} en multipliant ou en ajoutant, pour obtenir $f(x) \le g(x) \le h(x)$ avec $f$ et $h$ des fonctions simples.
+\item \textbf{Calculer} les limites de $f$ et $h$ en $a$ et \textbf{vérifier qu'elles sont égales} à un même réel $L$.
+\item \textbf{Conclure} en citant le théorème : « d'après le théorème des gendarmes, $\lim_{x\to a} g(x) = L$ ».
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Limite de $x\sin\left(\dfrac{1}{x}\right)$ en $0$]
+Déterminer $\displaystyle\lim_{x\to 0^+} x\,\sin\left(\dfrac{1}{x}\right)$.
+\tcblower
+\textbf{Solution détaillée.} Le calcul direct donne « $0 \times (\text{indéterminé}) »$ : ni la factorisation ni le conjugué ne s'appliquent. On utilise un encadrement.
+
+\textbf{Étape 1 :} pour tout réel $X$, $-1 \le \sin X \le 1$. En posant $X = \dfrac{1}{x}$ : $-1 \le \sin\left(\dfrac{1}{x}\right) \le 1$.
+
+\textbf{Étape 2 :} comme $x > 0$, on multiplie par $x$ sans changer le sens des inégalités :
+\[ -x \le x\,\sin\left(\dfrac{1}{x}\right) \le x. \]
+
+\textbf{Étape 3 :} $\displaystyle\lim_{x\to 0^+}(-x) = \lim_{x\to 0^+} x = 0$ : les deux gendarmes ont la même limite.
+
+\textbf{Étape 4 :} d'après le théorème des gendarmes, $\displaystyle\lim_{x\to 0^+} x\,\sin\left(\dfrac{1}{x}\right) = 0$.
+\end{exoresolu}
+
+\begin{exoresolu}[Limite de $x\sin\left(\dfrac{1}{x}\right)$ en $+\infty$]
+Déterminer $\displaystyle\lim_{x\to +\infty} x\,\sin\left(\dfrac{1}{x}\right)$.
+\tcblower
+\textbf{Solution détaillée.} C'est une forme « $\infty \times 0$ ». Posons $X = \dfrac{1}{x}$ : quand $x \to +\infty$, $X \to 0^+$. Alors :
+\[ x\,\sin\left(\dfrac{1}{x}\right) = \dfrac{\sin X}{X}. \]
+Or nous verrons ci-dessous que $\displaystyle\lim_{X\to 0}\dfrac{\sin X}{X} = 1$. Donc $\displaystyle\lim_{x\to +\infty} x\,\sin\left(\dfrac{1}{x}\right) = 1$.
+
+\textbf{Remarque.} On peut aussi encadrer : pour $x > 0$, $-1 \le \sin\left(\dfrac{1}{x}\right) \le 1$ donne $\left|x\sin\left(\dfrac{1}{x}\right)\right| \le x$, ce qui ne suffit pas ici (l'encadrement ne « resserre » pas assez) : c'est la limite remarquable qui conclut. Cela montre qu'il faut choisir le bon outil selon la situation.
+\end{exoresolu}
+
+\courssub{Les limites remarquables à connaître}
+
+Les quatre limites suivantes sont \textbf{admises} (leur justification utilise des arguments géométriques ou des propriétés des fonctions $\ln$ et $\exp$ vues dans l'unité sur les fonctions usuelles). Elles constituent le « socle » à mobiliser immédiatement à l'examen.
+
+\begin{aretenir}[Boîte à outils : les 4 limites remarquables socle]
+\[ \lim_{x\to 0}\dfrac{\sin x}{x} = 1 \qquad\qquad \lim_{x\to 0}\dfrac{\mathrm{e}^{x}-1}{x} = 1 \]
+\[ \lim_{x\to 0}\dfrac{\ln(1+x)}{x} = 1 \qquad\qquad \lim_{x\to +\infty}\left(1+\dfrac{1}{x}\right)^{x} = \mathrm{e} \]
+\textbf{Formes généralisées} (par changement de variable $X = kx$, avec $k$ réel non nul) :
+\[ \lim_{x\to 0}\dfrac{\sin(kx)}{x} = k \qquad\qquad \lim_{x\to 0}\dfrac{\mathrm{e}^{kx}-1}{x} = k \qquad\qquad \lim_{x\to 0}\dfrac{\ln(1+kx)}{x} = k. \]
+\end{aretenir}
+
+\begin{exemplebox}[Utilisation directe des formes généralisées]
+\begin{itemize}
+\item $\displaystyle\lim_{x\to 0}\dfrac{\sin(3x)}{x} = 3$ (ici $k=3$) ; en effet $\dfrac{\sin(3x)}{x} = 3\times\dfrac{\sin(3x)}{3x}$ et $\dfrac{\sin X}{X}\to 1$ quand $X = 3x \to 0$.
+\item $\displaystyle\lim_{x\to 0}\dfrac{\mathrm{e}^{2x}-1}{x} = 2$.
+\item $\displaystyle\lim_{x\to 0}\dfrac{\ln(1+5x)}{x} = 5$.
+\end{itemize}
+\end{exemplebox}
+
+\textbf{Les équivalents comme outil de calcul.} Dire que $\displaystyle\lim_{x\to 0}\dfrac{\sin x}{x} = 1$ signifie concrètement que, \textbf{au voisinage de $0$}, $\sin x$ se comporte \emph{comme} $x$. De même, $\mathrm{e}^x - 1$ se comporte comme $x$, et $\ln(1+x)$ se comporte comme $x$. Dans un \textbf{produit ou un quotient}, on peut donc remplacer chacun de ces facteurs par $x$ pour trouver la limite. Attention à la rédaction : en Première technique, on n'écrit pas « $\sin x \sim x$ », on justifie en écrivant « car $\lim_{x\to 0}\dfrac{\sin x}{x} = 1$ ».
+
+\begin{attention}[Erreur fréquente : les équivalents dans une somme ou une différence]
+Le remplacement par un équivalent n'est valable que dans un \textbf{produit}, un \textbf{quotient} ou une \textbf{composée}, JAMAIS dans une somme ou une différence. Par exemple, pour calculer $\lim_{x\to 0}\dfrac{\mathrm{e}^x - 1 - x}{x^2}$, il serait \textbf{faux} de remplacer $\mathrm{e}^x - 1$ par $x$ : on obtiendrait $\dfrac{0}{x^2} = 0$, alors que la vraie limite est $\dfrac{1}{2}$. Remplacer dans une différence fait « disparaître » précisément le terme qui détermine la limite. Retenez : \emph{équivalents = produits et quotients uniquement}.
+\end{attention}
+
+\begin{exoresolu}[Calcul combiné : $\dfrac{\sin(3x)\,\ln(1+2x)}{x^2}$ en $0$]
+Déterminer $\displaystyle\lim_{x\to 0}\dfrac{\sin(3x)\times\ln(1+2x)}{x^2}$.
+\tcblower
+\textbf{Solution détaillée.} C'est une forme « $\dfrac{0}{0}$ ». On fait apparaître les limites remarquables en réécrivant le quotient :
+\[ \dfrac{\sin(3x)\times\ln(1+2x)}{x^2} = \dfrac{\sin(3x)}{x}\times\dfrac{\ln(1+2x)}{x}. \]
+Or $\displaystyle\lim_{x\to 0}\dfrac{\sin(3x)}{x} = 3$ et $\displaystyle\lim_{x\to 0}\dfrac{\ln(1+2x)}{x} = 2$ (formes généralisées avec $k=3$ et $k=2$).
+
+Par produit de limites : $\displaystyle\lim_{x\to 0}\dfrac{\sin(3x)\,\ln(1+2x)}{x^2} = 3 \times 2 = 6$.
+\end{exoresolu}
+
+\courssub{Théorème de comparaison pour les limites infinies}
+
+Le théorème des gendarmes exigeait deux gendarmes aboutissant au même point. Pour les limites infinies, \textbf{un seul gendarme suffit} : si une fonction est au-dessus d'une fonction qui « explose » vers $+\infty$, elle explose aussi.
+
+\begin{propriete}[Théorème de comparaison (admis)]
+Soit $a$ un réel (ou $\pm\infty$) et deux fonctions $f$ et $g$ définies sur un voisinage de $a$.
+\begin{itemize}
+\item Si $f(x) \le g(x)$ sur ce voisinage et si $\displaystyle\lim_{x\to a} f(x) = +\infty$, alors $\displaystyle\lim_{x\to a} g(x) = +\infty$.
+\item Si $f(x) \le g(x)$ sur ce voisinage et si $\displaystyle\lim_{x\to a} g(x) = -\infty$, alors $\displaystyle\lim_{x\to a} f(x) = -\infty$.
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[Application : une fonction polynôme perturbée]
+Déterminons $\displaystyle\lim_{x\to +\infty}\big(x^2 + \sin x\big)$.
+
+Pour tout réel $x$, $\sin x \ge -1$, donc $x^2 + \sin x \ge x^2 - 1$. Or $\displaystyle\lim_{x\to +\infty}(x^2 - 1) = +\infty$. Par le théorème de comparaison :
+\[ \lim_{x\to +\infty}\big(x^2 + \sin x\big) = +\infty. \]
+Ici, $f(x) = x^2 - 1$ joue le rôle du « gendarme inférieur » qui pousse la fonction vers $+\infty$.
+\end{exemplebox}
+
+\begin{methode}[Choisir entre gendarmes et comparaison]
+\begin{enumerate}
+\item Si la limite attendue est \textbf{finie} : il faut \textbf{deux} encadrants ayant la même limite $\Rightarrow$ théorème des gendarmes.
+\item Si la limite attendue est \textbf{infinie} : un \textbf{seul} minorant (pour $+\infty$) ou majorant (pour $-\infty$) suffit $\Rightarrow$ théorème de comparaison.
+\end{enumerate}
+\end{methode}
+
+\courssub{Le nombre $\mathrm{e}$ et les intérêts composés}
+
+\begin{savaistu}[Le nombre $\mathrm{e}$, star de la finance]
+La limite $\displaystyle\lim_{x\to +\infty}\left(1+\dfrac{1}{x}\right)^{x} = \mathrm{e} \approx \num{2,71828}$ n'est pas qu'une curiosité : elle modélise les \textbf{intérêts composés en continu}. Si une banque place votre épargne à un taux de $100\,\%$ par an et verse les intérêts une fois par an, 1 FCFA devient $2$ FCFA en un an. Si elle verse les intérêts deux fois par an (à $50\,\%$ chaque fois), on obtient $\left(1+\dfrac{1}{2}\right)^2 = \num{2,25}$ FCFA. Douze fois par an : $\left(1+\dfrac{1}{12}\right)^{12} \approx \num{2,61}$ FCFA. En versant les intérêts \emph{à chaque instant} (composition continue), le capital tend vers $\mathrm{e} \approx \num{2,718}$ FCFA : c'est le maximum possible. C'est pourquoi $\mathrm{e}$ est partout en banque, en assurance et en croissance de populations !
+\end{savaistu}
+
+\courssub{Complément : asymptotes obliques}
+
+\begin{propriete}[Asymptote oblique (complément, programme de Terminale)]
+La droite d'équation $y = ax + b$ est \cle{asymptote oblique} à la courbe de $f$ en $+\infty$ si et seulement si :
+\[ \lim_{x\to +\infty}\big(f(x) - (ax+b)\big) = 0. \]
+En pratique, on calcule successivement :
+\[ a = \lim_{x\to +\infty}\dfrac{f(x)}{x} \qquad \text{puis} \qquad b = \lim_{x\to +\infty}\big(f(x) - ax\big). \]
+Ce résultat est signalé ici à titre de \textbf{complément} : il sera étudié en détail en Terminale technique.
+\end{propriete}
+
+\begin{exemplebox}[Lecture rapide sur un exemple]
+Soit $f(x) = 2x + 1 + \dfrac{3}{x}$ pour $x > 0$. Alors $\dfrac{f(x)}{x} = 2 + \dfrac{1}{x} + \dfrac{3}{x^2} \xrightarrow[x\to+\infty]{} 2$, donc $a = 2$ ; puis $f(x) - 2x = 1 + \dfrac{3}{x} \xrightarrow[x\to+\infty]{} 1$, donc $b = 1$. La droite $y = 2x+1$ est asymptote oblique à la courbe de $f$ en $+\infty$.
+\end{exemplebox}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Déterminer $\displaystyle\lim_{x\to +\infty}\dfrac{\sin x}{x}$ à l'aide du théorème des gendarmes.
+\item Déterminer $\displaystyle\lim_{x\to 0}\dfrac{\sin(5x)}{\ln(1+x)}$.
+\item Déterminer $\displaystyle\lim_{x\to +\infty}\big(x + \cos x\big)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\textbf{1.} Pour tout $x > 0$, $-1 \le \sin x \le 1$, donc en divisant par $x > 0$ : $-\dfrac{1}{x} \le \dfrac{\sin x}{x} \le \dfrac{1}{x}$. Comme $\lim_{x\to+\infty}\dfrac{1}{x} = \lim_{x\to+\infty}\left(-\dfrac{1}{x}\right) = 0$, le théorème des gendarmes donne $\lim_{x\to+\infty}\dfrac{\sin x}{x} = 0$.
+
+\textbf{2.} On écrit $\dfrac{\sin(5x)}{\ln(1+x)} = \dfrac{\sin(5x)}{x}\times\dfrac{x}{\ln(1+x)}$. Le premier facteur tend vers $5$, le second vers $\dfrac{1}{1} = 1$ (car $\lim_{x\to 0}\dfrac{\ln(1+x)}{x} = 1$). Par produit : la limite vaut $5$.
+
+\textbf{3.} Pour tout réel $x$, $\cos x \ge -1$, donc $x + \cos x \ge x - 1$. Or $\lim_{x\to+\infty}(x-1) = +\infty$, donc par comparaison $\lim_{x\to+\infty}(x+\cos x) = +\infty$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item \textbf{Gendarmes} : si $f \le g \le h$ au voisinage de $a$ et si $f$ et $h$ ont la même limite $L$, alors $g$ tend vers $L$. Outil de prédilection dès qu'apparaît $\sin(\ldots)$ ou $\cos(\ldots)$.
+\item \textbf{Comparaison} : si $f \le g$ et $f \to +\infty$, alors $g \to +\infty$ (un seul gendarme suffit pour l'infini).
+\item \textbf{Limites socle} : $\dfrac{\sin x}{x} \to 1$, $\dfrac{\mathrm{e}^x - 1}{x} \to 1$, $\dfrac{\ln(1+x)}{x} \to 1$ en $0$ ; $\left(1+\dfrac{1}{x}\right)^x \to \mathrm{e}$ en $+\infty$. Formes généralisées : $\dfrac{\sin(kx)}{x} \to k$, etc.
+\item \textbf{Équivalents} : valables en produit/quotient, \textbf{interdits} dans une somme ou une différence.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Modélisation et applications concrètes : Le technicien face aux limites}
+
+Après avoir maîtrisé les outils algébriques de calcul de limites (section 4), nous voici au cœur du métier de technicien : \textbf{modéliser un phénomène réel par une fonction, calculer sa limite à l'infini (ou en un point critique) et en donner l'interprétation physique exacte.} Une limite n'est pas un nombre abstrait ; c'est une \cle{valeur cible}, un \cle{seuil infranchissable}, un \cle{régime permanent} que le système vise sans jamais l'atteindre totalement en temps fini.
+
+\courssub{Démarche type de résolution : Du concret au calcul}
+
+Toute étude de limite en contexte technique suit un protocole rigoureux. L'application de cette méthode est \textbf{exigible au Probatoire} : la rédaction compte autant que le résultat numérique.
+
+\begin{methode}[Résoudre un problème concret « Modélisation – Limite »]
+\textbf{Étape 1 : Identifier les variables et les paramètres.}\\
+Nommer la variable indépendante (souvent le temps $t$ en secondes, minutes, heures ; ou une quantité $x$ : production, tension, concentration) et son unité. Lister les constantes physiques ($R, C, k, K, E, T_a\dots$) avec leurs unités.
+\vspace{0.3cm}
+\textbf{Étape 2 : Écrire la fonction modélisant le phénomène.}\\
+Expliciter $f(t)$ ou $f(x)$. Vérifier l'ensemble de définition (ex: $t \ge 0$).
+\vspace{0.3cm}
+\textbf{Étape 3 : Calculer la limite demandée (justifiée).}\\
+Appliquer les règles de calcul (section 2), lever les indéterminations (section 3), utiliser les limites remarquables ou le théorème de comparaison (section 4). \emph{Ne jamais écrire seulement « $\lim = 5$ », mais montrer le passage à la limite : $\lim_{t\to+\infty} e^{-kt} = 0$ donc $\lim T(t) = T_a$.}
+\vspace{0.3cm}
+\textbf{Étape 4 : Interpréter physiquement et rédiger la conclusion.}\\
+Dire ce que représente cette limite : « tension finale », « température ambiante », « capacité maximale », « rendement maximal ». \textbf{Une phrase de réponse complète, avec unité, est obligatoire.} Exemple : « La tension aux bornes du condensateur tend vers \SI{12}{V} ; c'est la tension de la source. Le condensateur est chargé au régime permanent. »
+\end{methode}
+
+\begin{attention}[Pièges rédactionnels fréquents au Probatoire]
+\begin{itemize}
+    \item \textbf{Oubli des unités :} Écrire « $t = 55$ » au lieu de « $t \approx \SI{55,5}{\minute}$ ». Confondre secondes et minutes ($RC$ en secondes si $R$ en $\Omega$ et $C$ en F).
+    \item \textbf{Valeur hors domaine :} Trouver un temps négatif pour une équation $f(t) = \text{seuil}$ et ne pas le rejeter explicitement.
+    \item \textbf{Confondre limite et valeur atteinte :} Dire « La température \emph{est} \SI{20}{\celsius} au bout d'une heure » au lieu de « La température \emph{tend vers} \SI{20}{\celsius} » (elle n'est jamais \emph{exactement} \SI{20}{\celsius} en temps fini).
+    \item \textbf{Mauvaise lecture des paramètres :} Prendre $a$ pour $c$ dans $R(x) = \frac{ax+b}{cx+d}$.
+\end{itemize}
+\end{attention}
+
+\courssub{Modélisation 1 : Charge et décharge d'un condensateur (Circuit RC)}
+
+C'est l'archétype du système du premier ordre en électricité. Un générateur de tension $E$ (en Volts) charge un condensateur $C$ (en Farads) à travers une résistance $R$ (en Ohms).
+
+\begin{definition}[Loi de charge d'un condensateur]
+La tension $u(t)$ (en V) aux bornes du condensateur au temps $t$ (en s) est donnée par :
+\[ u(t) = E \left(1 - e^{-t/\tau}\right) \quad \text{avec} \quad \tau = R \times C \text{ (constante de temps en secondes)}. \]
+Pour la décharge (source coupée, condensateur initialement chargé à $E$) : $u(t) = E \, e^{-t/\tau}$.
+\end{definition}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={font=\small}, >=Stealth]
+    % Nœuds
+    \node[draw, rectangle, rounded corners, fill=popblue!10, minimum width=2.5cm, minimum height=1.2cm] (gen) at (0,0) {Générateur $E$};
+    \node[draw, rectangle, rounded corners, fill=poporange!10, minimum width=1.5cm, minimum height=1cm] (R) at (3.5,0) {Résistance $R$};
+    \node[draw, rectangle, rounded corners, fill=popgreen!10, minimum width=1.5cm, minimum height=1cm] (C) at (6.5,0) {Condensateur $C$};
+    % Fils
+    \draw[thick, ->] (gen.east) -- node[above] {$i(t)$} (R.west);
+    \draw[thick] (R.east) -- (C.west);
+    \draw[thick] (C.south) -- ++(0,-0.5) -| (gen.south);
+    % Tension u(t)
+    \draw[<->, poppurple, thick] (C.north west) -- ++(0,0.8) node[midway, left, poppurple] {$u(t)$} coordinate (topC);
+    \draw[poppurple, dashed] (topC) -- ++(-3.5,0) coordinate (topG);
+    \draw[<->, poppurple, thick] (gen.north west) -- (topG);
+\end{tikzpicture}
+\legende{Schéma bloc : Circuit série RC. La tension $u(t)$ aux bornes de $C$ suit une exponentielle.}
+\end{popfigure}
+
+\begin{propriete}[Limite en $+\infty$ — Régime permanent]
+\[ \lim_{t \to +\infty} u(t) = \lim_{t \to +\infty} E(1 - e^{-t/\tau}) = E(1 - 0) = E. \]
+\textbf{Interprétation :} La tension aux bornes du condensateur tend vers la tension de la source $E$. Le courant tend vers 0. Le condensateur agit comme un circuit ouvert. C'est le \cle{régime permanent}.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$t$ (s)}, ylabel={$u(t)$ (V)},
+    xmin=0, xmax=5.5, ymin=0, ymax=13,
+    xtick={1,2,3,4,5}, ytick={3,6,9,12},
+    domain=0:5, samples=200,
+    clip=false,
+    enlargelimits={abs=0.3},
+    grid=major, grid style={popline!50},
+]
+    % Asymptote
+    \addplot[dashed, popred, thick, domain=0:5] {12} node[right, pos=0.9, popred] {$y = E = \SI{12}{V}$};
+    % Courbe charge
+    \addplot[popcurve, thick, domain=0:5] {12*(1-exp(-x))};
+    % Point tau
+    \addplot[only marks, mark=*, mark size=2.5, poporange] coordinates {(1, 7.585)};
+    \node[poporange, anchor=south west, align=center] at (axis cs:1, 7.585){$\tau = RC$ \\ $u(\tau) \approx 0,63 E$};
+    % Annotations régimes
+    \node[align=center, fill=popcream, draw=poporange, rounded corners, inner sep=3pt] at (axis cs:1.5, 4) {\textbf{Régime transitoire}\\(évolution rapide)};
+    \node[align=center, fill=popcream, draw=popgreen, rounded corners, inner sep=3pt] at (axis cs:4.5, 11) {\textbf{Régime permanent}\\(stabilisation)};
+\end{axis}
+\end{tikzpicture}
+\legende{Charge d'un condensateur $RC=\SI{1}{s}$, $E=\SI{12}{V}$. Asymptote horizontale $y=E$. À $t=\tau$, la tension atteint 63\% de sa valeur finale.}
+\end{popfigure}
+
+\begin{savaistu}[La règle des 5$\tau$ — Pratique atelier]
+En électronique, on considère qu'un régime transitoire est \textbf{terminé} au bout de $5\tau$ (5 fois la constante de temps).
+\[ u(5\tau) = E(1 - e^{-5}) \approx E(1 - 0,0067) = 0,9933 E. \]
+Le condensateur est chargé à \textbf{99,3\%}. Pour une précision courante (1\%), $t = 5\tau$ est la durée de réponse du système. Exemple : $R=\SI{1}{\kilo\ohm}$, $C=\SI{100}{\micro\farad} \Rightarrow \tau = \SI{0,1}{s}$. Charge complète $\approx \SI{0,5}{s}$.
+\end{savaistu}
+
+\begin{exoresolu}[Dimensionnement d'un temporisateur RC]
+\textbf{Énoncé :} On souhaite réaliser un temporisateur qui commande un relais lorsque la tension aux bornes d'un condensateur $C = \SI{470}{\micro\farad}$ atteint \SI{8}{V}. La source fournit $E = \SI{12}{V}$. Calculer la résistance $R$ nécessaire pour que le relais s'enclenche après $t = \SI{2}{s}$.
+\textbf{Solution :}
+\begin{enumerate}
+    \item \textbf{Variables :} $t=\SI{2}{s}$, $u=\SI{8}{V}$, $E=\SI{12}{V}$, $C=\SI{470}{\micro\farad}$. Inconnue : $R$.
+    \item \textbf{Fonction :} $u(t) = E(1 - e^{-t/RC})$.
+    \item \textbf{Équation :} $8 = 12(1 - e^{-2/(R \times 470\times10^{-6})})$.
+    \item \textbf{Résolution :}
+    \begin{align*}
+        \frac{8}{12} &= 1 - e^{-2/(RC)} \\
+        \frac{2}{3} &= 1 - e^{-2/(RC)} \\
+        e^{-2/(RC)} &= \frac{1}{3} \\
+        -\frac{2}{RC} &= \ln(1/3) = -\ln 3 \\
+        RC &= \frac{2}{\ln 3} \approx \frac{2}{1,0986} \approx \SI{1,82}{s}.
+    \end{align*}
+    \item \textbf{Résistance :} $R = \frac{1,82}{470\times10^{-6}} \approx \SI{3872}{\ohm} \approx \SI{3,9}{\kilo\ohm}$ (valeur normalisée E12).
+    \item \textbf{Vérification :} $\tau = RC \approx \SI{1,82}{s}$. $t=\SI{2}{s} \approx 1,1\tau$. $u(1,1\tau) = 12(1-e^{-1,1}) \approx 12(0,667) = \SI{8}{V}$. \textbf{OK.}
+\end{enumerate}
+\tcblower
+\textbf{Réponse :} Il faut choisir une résistance d'environ \textbf{\SI{3,9}{\kilo\ohm}}.
+\end{exoresolu}
+
+\courssub{Modélisation 2 : Refroidissement (Loi de Newton) et Pharmacocinétique}
+
+La loi de Newton stipule que la vitesse de refroidissement d'un corps est proportionnelle à l'écart de température avec le milieu ambiant. Même équation différentielle, même solution exponentielle.
+
+\begin{definition}[Loi de refroidissement / Élimination]
+Température d'un corps / Concentration d'un médicament dans le sang :
+\[ f(t) = T_a + (T_0 - T_a) e^{-kt} \quad (k > 0). \]
+\begin{itemize}
+    \item $T_a$ : Température ambiante / Concentration résiduelle (limite).
+    \item $T_0$ : Température / Concentration initiale ($t=0$).
+    \item $k$ : Constante de vitesse (en $s^{-1}$, $min^{-1}$, $h^{-1}$).
+    \item $\tau = 1/k$ : Constante de temps.
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Limite à l'infini]
+\[ \lim_{t \to +\infty} f(t) = T_a + (T_0 - T_a) \times 0 = T_a. \]
+Le corps ne descendra \textbf{jamais} en dessous de $T_a$ (sauf apport externe). Le médicament ne sera jamais totalement éliminé (trace résiduelle).
+\end{propriete}
+
+\begin{exemplebox}[Jus de fruit en atelier — Application chiffrée]
+Une bouteille de jus à $T_0 = \SI{100}{\celsius}$ (pasteurisation) est posée dans un atelier à $T_a = \SI{20}{\celsius}$. La constante de refroidissement est $k = 0,05 \text{ min}^{-1}$.
+Modèle : $T(t) = 20 + 80 e^{-0,05 t}$ ($t$ en minutes).
+\begin{enumerate}
+    \item \textbf{Limite :} $\lim_{t\to+\infty} T(t) = \SI{20}{\celsius}$. Le jus tend vers la température de l'atelier.
+    \item \textbf{Quand atteint-on \SI{25}{\celsius} ?} Résoudre $20 + 80 e^{-0,05 t} = 25$.
+    \begin{align*}
+        80 e^{-0,05 t} &= 5 \\
+        e^{-0,05 t} &= \frac{1}{16} \\
+        -0,05 t &= \ln(1/16) = -\ln 16 \\
+        t &= \frac{\ln 16}{0,05} = \frac{2,7726}{0,05} \approx 55,45 \text{ min}.
+    \end{align*}
+    \item \textbf{Réponse :} Il faut environ \textbf{\SI{55}{\minute} \SI{27}{\second}} pour que le jus descende à \SI{25}{\celsius}.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{attention}[Unités de $k$ et $t$ : Cohérence impérative !]
+Si $k = 0,05 \text{ min}^{-1}$, alors $t$ est en \textbf{minutes}. Si le problème donne $k$ en $s^{-1}$, convertir $t$ en secondes. Erreur classique : utiliser $k=0,05$ avec $t$ en secondes $\Rightarrow$ résultat faux par facteur 60. \textbf{Toujours écrire l'unité de $k$ à côté de la formule.}
+\end{attention}
+
+\courssub{Modélisation 3 : Croissance limitée — Modèle de Verhulst (Logistique)}
+
+La croissance exponentielle $P(t)=P_0 e^{rt}$ est irréaliste à long terme (ressources finies). Le modèle logistique introduit une \textbf{capacité maximale $K$} (capacité biologique d'un milieu, saturation d'un marché, limite de population).
+
+\begin{definition}[Fonction logistique]
+\[ P(t) = \frac{K}{1 + a e^{-rt}} \quad \text{avec } K > 0, r > 0, a > 0. \]
+\begin{itemize}
+    \item $K$ : Capacité de charge / Saturation (limite supérieure).
+    \item $P_0 = P(0) = \frac{K}{1+a}$ : Population/Quantité initiale.
+    \item $r$ : Vitesse de croissance intrinsèque.
+    \item Point d'inflexion : $t = \frac{\ln a}{r}$ où $P = K/2$ (croissance maximale).
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Limites aux bornes]
+\[ \lim_{t \to +\infty} P(t) = \frac{K}{1 + a \cdot 0} = K. \]
+\[ \lim_{t \to -\infty} P(t) = \frac{K}{1 + a \cdot (+\infty)} = 0 \quad \text{(théorique, domaine physique $t\ge 0$)}. \]
+\textbf{Interprétation :} La population tend vers la capacité maximale $K$. La courbe a une forme en \textbf{S} (sigmoïde). $K$ est une \cle{asymptote horizontale} en $+\infty$.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel={$t$ (temps)}, ylabel={$P(t)$},
+    xmin=0, xmax=10, ymin=0, ymax=110,
+    xtick={2,4,6,8,10}, ytick={25,50,75,100},
+    domain=0:10, samples=200,
+    grid=major, grid style={popline!50},
+    clip=false,
+]
+    % Asymptote K
+    \addplot[dashed, popred, thick] {100} node[right, pos=0.95, popred] {$y = K$ (Capacité max)};
+    % Asymptote 0
+    \addplot[dashed, popmuted] {0};
+    % Courbe logistique K=100, a=9, r=0.8 => P0=10
+    \addplot[popcurve, thick, popblue] {100/(1+9*exp(-0.8*x))};
+    % Point d'inflexion
+    \addplot[only marks, mark=*, mark size=2.5, poppurple] coordinates {(2.746, 50)};
+    \node[poppurple, anchor=south east, align=center] at (axis cs:2.746, 50){Point d'inflexion \\ $P=K/2$};
+    % P0
+    \addplot[only marks, mark=*, mark size=2.5, poporange] coordinates {(0, 10)};
+    \node[poporange, anchor=north east] at (axis cs:0, 10) {$P_0$};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe logistique $P(t) = \frac{100}{1+9e^{-0,8t}}$. Croissance lente au départ, puis exponentielle vers $K/2$, puis ralentissement asymptotique vers $K=100$.}
+\end{popfigure}
+
+\begin{exoresolu}[Lancement d'un nouveau produit — Saturation du marché]
+\textbf{Énoncé :} Le nombre de clients $N(t)$ (en milliers) ayant adopté un nouveau logiciel après $t$ mois est modélisé par $N(t) = \frac{500}{1 + 49 e^{-0,6 t}}$.
+\begin{enumerate}
+    \item Déterminer le nombre initial de clients $N(0)$.
+    \item Calculer la limite de $N(t)$ quand $t \to +\infty$ et l'interpréter.
+    \item Au bout de combien de mois le nombre de clients dépasse-t-il 400 000 ?
+\end{enumerate}
+\textbf{Solution :}
+\begin{enumerate}
+    \item $N(0) = \frac{500}{1+49} = \frac{500}{50} = 10$ (milliers) $\Rightarrow$ \textbf{10 000 clients}.
+    \item $\lim_{t\to+\infty} N(t) = 500$ (milliers). \textbf{Interprétation :} Le marché potentiel maximal (saturation) est de \textbf{500 000 clients}. On n'en aura jamais plus.
+    \item Résoudre $N(t) > 400$ :
+    \begin{align*}
+        \frac{500}{1 + 49 e^{-0,6 t}} &> 400 \\
+        500 &> 400(1 + 49 e^{-0,6 t}) \\
+        500 &> 400 + 19600 e^{-0,6 t} \\
+        100 &> 19600 e^{-0,6 t} \\
+        e^{-0,6 t} &< \frac{100}{19600} = \frac{1}{196} \\
+        -0,6 t &< \ln(1/196) = -\ln 196 \\
+        t &> \frac{\ln 196}{0,6} \approx \frac{5,278}{0,6} \approx 8,80 \text{ mois}.
+    \end{align*}
+\end{enumerate}
+\tcblower
+\textbf{Réponse :} Le seuil de 400 000 clients est dépassé après \textbf{8,8 mois} (soit au cours du 9\textsuperscript{e} mois).
+\end{exoresolu}
+
+\courssub{Modélisation 4 : Rendement d'une machine et Rentabilité}
+
+En gestion de production ou en thermodynamique, le rendement $R$ (ou efficacité) dépend souvent d'une variable de charge $x$ (débit, puissance, nombre d'unités produites). Un modèle rationnel simple est la fonction homographique.
+
+\begin{definition}[Rendement / Rentabilité moyenne — Modèle homographique]
+\[ R(x) = \frac{ax + b}{cx + d} \quad (c \neq 0, \text{ domaine } x \ge 0 \text{ tel que } cx+d \neq 0). \]
+\begin{itemize}
+    \item $x$ : Variable de charge (production, débit, effectif).
+    \item $a, b, c, d$ : Constantes techniques/économiques ($a/c$ souvent = rendement max théorique).
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Limite en $+\infty$ — Rendement maximal théorique]
+Si $c \neq 0$ :
+\[ \lim_{x \to +\infty} R(x) = \lim_{x \to +\infty} \frac{ax + b}{cx + d} = \frac{a}{c}. \]
+\textbf{Interprétation :} Quel que soit l'effort (augmentation de $x$), le rendement ne dépassera jamais la valeur $\frac{a}{c}$. C'est une \cle{asymptote horizontale} $y = a/c$. C'est le « plafond de verre » technique ou économique.
+\end{propriete}
+
+\begin{exemplebox}[Rendement d'un groupe électrogène]
+Le rendement $\eta(P)$ (en \%) d'un groupe électrogène en fonction de la puissance fournie $P$ (en kW) est donné par :
+\[ \eta(P) = \frac{0,85 P + 12}{P + 50} \quad (P \ge 0). \]
+\begin{enumerate}
+    \item Calculer $\lim_{P\to+\infty} \eta(P)$.
+    \item Interpréter. Quelle puissance pour atteindre 80\% de rendement ?
+\end{enumerate}
+\textbf{Solution :}
+\begin{enumerate}
+    \item $\lim_{P\to+\infty} \eta(P) = \frac{0,85}{1} = 0,85 = \textbf{85\%}$.
+    \item \textbf{Interprétation :} Le rendement maximal théorique de cette machine est 85\%. Elle ne l'atteindra jamais exactement, mais s'en approchera pour de fortes puissances.
+    \item $\eta(P) = 0,80 \iff \frac{0,85P+12}{P+50} = 0,80 \iff 0,85P+12 = 0,80P + 40 \iff 0,05P = 28 \iff P = 560 \text{ kW}$.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{savaistu}[Asymptote oblique : Le programme de Terminale Tech]
+En Première, nous trouvons des asymptotes \textbf{horizontales} (limites finies à l'infini). En Terminale Technique, vous étudierez les \textbf{asymptotes obliques} ($y = ax + b$) quand $\lim_{x\to\infty} f(x) = \pm\infty$. Pour $R(x) = \frac{ax+b}{cx+d}$, la division euclidienne donne $R(x) = \frac{a}{c} + \frac{bc-ad}{c(cx+d)}$. L'asymptote horizontale est $y = a/c$. Si le numérateur est de degré supérieur (ex: coût total $C(x) = ax^2+bx+c$, coût moyen $C_m(x) = ax+b+c/x$), l'asymptote est oblique ($y=ax+b$), donnant la tendance linéaire à long terme.
+\end{savaistu}
+
+\courssub{Synthèse comparative des quatre modèles}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Modèle} & \textbf{Fonction type} & \textbf{Limite en $+\infty$} & \textbf{Signification physique} & \textbf{Paramètre clé} \\ \hline
+\textbf{RC Série (Charge)} & $E(1-e^{-t/\tau})$ & $E$ & Tension source / Régime permanent & $\tau = RC$ (s) \\ \hline
+\textbf{Refroidissement / PK} & $T_a + (T_0-T_a)e^{-kt}$ & $T_a$ & Temp. ambiante / Conc. résiduelle & $\tau = 1/k$ \\ \hline
+\textbf{Logistique (Verhulst)} & $\frac{K}{1+ae^{-rt}}$ & $K$ & Capacité max / Saturation marché & $K$ (plafond) \\ \hline
+\textbf{Rendement (Homographique)} & $\frac{ax+b}{cx+d}$ & $a/c$ & Rendement max théorique / Plafond & $a/c$ (ratio) \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{aretenir}[Check-list « Réponse Probatoire » pour tout exercice de modélisation]
+\begin{enumerate}
+    \item \textbf{Formule} recopiée avec \textbf{unités} de chaque paramètre.
+    \item \textbf{Calcul de limite} détaillé (factorisation, limite remarquable, règle des puissances).
+    \item \textbf{Phrase d'interprétation} : « La grandeur [nom] tend vers [valeur][unité] qui correspond à [réalité physique]. »
+    \item \textbf{Résolution d'équation} $f(t) = \text{seuil}$ si demandée (logarithme népérien, vérification domaine).
+    \item \textbf{Phrase de conclusion finale} avec unité et arrondi cohérent (ex: « Il faut environ \SI{55}{\minute} \SI{27}{\second} »).
+\end{enumerate}
+\end{aretenir}
+
+\begin{exercice}[Entraînement : Évacuation d'une cuve]
+Une cuve de rétention d'eau de pluie se vide par un orifice. Le volume $V(t)$ (en $\text{m}^3$) au temps $t$ (en heures) suit la loi : $V(t) = 50 e^{-0,2 t} + 5$.
+\begin{enumerate}
+    \item Quel est le volume initial ? Quel est le volume résiduel (limite) ? Interpréter.
+    \item Au bout de combien de temps le volume descend-il sous $10 \text{ m}^3$ ? (Donner le résultat en heures et minutes).
+    \item Tracer la courbe (asymptote, point initial, point à $t=5$ h).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Évacuation d'une cuve]
+\begin{enumerate}
+    \item $V(0) = 50+5 = 55 \text{ m}^3$. $\lim_{t\to+\infty} V(t) = 5 \text{ m}^3$. \textbf{Interprétation :} La cuve ne se vide jamais totalement ; il reste $5 \text{ m}^3$ (volume mort, fond de cuve non drainé).
+    \item $50 e^{-0,2 t} + 5 < 10 \iff 50 e^{-0,2 t} < 5 \iff e^{-0,2 t} < 0,1 \iff -0,2 t < \ln 0,1 \iff t > \frac{-\ln 0,1}{0,2} = \frac{\ln 10}{0,2} \approx \frac{2,3026}{0,2} = 11,513 \text{ h}$.
+    $0,513 \times 60 \approx 30,8 \text{ min}$. \textbf{Réponse :} Environ \textbf{11 h 31 min}.
+    \item Courbe exponentielle décroissante, asymptote $y=5$, passant par $(0,55)$ et $(5, 50e^{-1}+5 \approx 23,4)$.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, l'élève devra être capable de :
+\begin{itemize}
+\item calculer une limite en $+\infty$ d'une fonction faisant intervenir l'exponentielle, et interpréter physiquement cette limite ;
+\item identifier l'absence de forme indéterminée et appliquer correctement les règles opératoires sur les limites (somme, produit) ;
+\item résoudre une équation de type $e^{-t/\tau} = k$ (avec $k > 0$) à l'aide du logarithme népérien ;
+\item exploiter la proportionnalité entre deux grandeurs pour dimensionner un composant (résistance) ;
+\item lire et construire la représentation graphique d'une fonction exponentielle (asymptote, points remarquables) ;
+\item rédiger une note technique argumentée, claire et justifiée, destinée à un responsable d'atelier.
+\end{itemize}
+
+\courssub{Situation}
+
+Dans l'atelier d'électronique du Lycée Technique de Douala, les élèves de Première technique participent à la maintenance d'un \cle{onduleur} de secours destiné à une salle informatique. À Douala, les coupures de courant sont fréquentes : lorsque le secteur ENEO tombe, l'onduleur doit maintenir la tension suffisamment longtemps pour permettre la bascule automatique vers la batterie.
+
+Le cœur du dispositif est un \cle{condensateur} de capacité $C = \SI{4700}{\micro F}$ (microfarads), qui se charge sous une tension $E = \SI{12}{V}$ à travers une résistance $R = \SI{220}{\ohm}$. La tension aux bornes du condensateur pendant la charge est modélisée par la fonction :
+\[ u(t) = 12\left(1 - e^{-t/\tau}\right), \quad \text{avec } \tau = R \times C, \]
+où $t$ est le temps en secondes, $u(t)$ la tension en volts, et $\tau$ (lettre grecque « tau ») la \cle{constante de temps} du circuit, exprimée en secondes.
+
+\textbf{Attention aux unités :} $C = \SI{4700}{\micro F} = \num{0,0047}$ F (farads), car $1\ \mu\text{F} = 10^{-6}$ F.
+
+Le système de surveillance de l'onduleur considère que l'alimentation est « bonne » tant que $u(t) \geq \SI{10,8}{V}$. En dessous de ce seuil, la bascule vers la batterie n'est plus garantie.
+
+Le chef d'atelier souhaite que le temps de montée jusqu'au seuil soit \textbf{réduit de 20 \%} (pour forcer une bascule plus rapide et protéger les équipements sensibles), en remplaçant uniquement la résistance $R$. Les élèves doivent étudier le circuit et proposer la nouvelle valeur de $R$.
+
+\courssub{Consignes}
+
+\begin{enumerate}
+\item Calculer la constante de temps $\tau = RC$ du circuit (penser à convertir $C$ en farads).
+\item Déterminer $\lim\limits_{t \to +\infty} u(t)$. Interpréter physiquement ce résultat : vers quelle valeur la tension du condensateur tend-elle quand on attend très longtemps ?
+\item Déterminer l'instant $t_0$ où le seuil est atteint, c'est-à-dire résoudre l'équation $u(t) = \num{10,8}$. Arrondir au centième de seconde.
+\item On veut un nouveau temps $t_1$ réduit de 20 \% par rapport à $t_0$. Calculer $t_1$, puis en déduire la nouvelle constante de temps $\tau_1$ et la nouvelle résistance $R_1$ (arrondir à l'unité).
+\item Tracer la courbe représentative de $u$ sur l'intervalle $[0\,;\,5\tau]$, en plaçant : l'asymptote horizontale, le point d'abscisse $\tau$ (on montrera que $u(\tau) = 12(1 - e^{-1}) \approx \num{7,59}$), et le point de seuil $(t_0\,;\,\num{10,8})$.
+\item Rédiger une note technique de cinq lignes maximum, adressée au chef d'atelier, justifiant le choix de la nouvelle résistance.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de l'élève]
+\begin{itemize}
+\item \textbf{Limite de l'exponentielle :} $\lim\limits_{t \to +\infty} e^{-t/\tau} = 0$ pour $\tau > 0$ (car $-t/\tau \to -\infty$ et $e^{x} \to 0$ quand $x \to -\infty$).
+\item \textbf{Règles opératoires :} la limite d'une somme et d'un produit (hors forme indéterminée) s'obtient en combinant les limites ; une constante multiplicative se « sort » de la limite.
+\item \textbf{Équation exponentielle :} pour $k > 0$, $e^{x} = k \iff x = \ln k$ ; en particulier $e^{-t/\tau} = k \iff t = -\tau \ln k$.
+\item \textbf{Proportionnalité :} le temps d'atteinte du seuil est proportionnel à $\tau$, donc à $R$ (à $C$ fixée).
+\item \textbf{Pourcentages :} réduire une grandeur de 20 \% revient à la multiplier par $1 - 0,20 = 0,80$.
+\item \textbf{Courbe :} la fonction $u$ est croissante sur $[0\,;\,+\infty[$ et admet la droite d'équation $u = 12$ comme asymptote horizontale en $+\infty$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Le condensateur de secours — corrigé détaillé]
+\textbf{Question 1.} Calcul de la constante de temps $\tau$.
+
+On convertit d'abord la capacité : $C = \SI{4700}{\micro F} = \num{0,0047}$ F. Alors :
+\[ \tau = R \times C = 220 \times \num{0,0047} = \num{1,034} \text{ s}. \]
+La constante de temps du circuit est $\tau = \num{1,034}$ s $\approx \SI{1,03}{s}$.
+
+\medskip
+\textbf{Question 2.} Limite en $+\infty$.
+
+Comme $\tau > 0$, on a $\lim\limits_{t \to +\infty} \left(-\dfrac{t}{\tau}\right) = -\infty$, donc $\lim\limits_{t \to +\infty} e^{-t/\tau} = 0$. Par somme puis produit de limites (aucune forme indéterminée ici, car une seule grandeur dépend de $t$) :
+\[ \lim_{t \to +\infty} u(t) = 12 \times (1 - 0) = 12. \]
+\textbf{Interprétation :} quand le temps devient très grand, la tension aux bornes du condensateur se rapproche de la tension d'alimentation $E = \SI{12}{V}$ sans jamais l'atteindre exactement : le condensateur se charge (presque) complètement. Graphiquement, la droite d'équation $u = 12$ est asymptote horizontale à la courbe en $+\infty$.
+
+\medskip
+\textbf{Question 3.} Instant d'atteinte du seuil.
+
+On résout $u(t) = \num{10,8}$ en isolant d'abord l'exponentielle :
+\begin{align*}
+12\left(1 - e^{-t/\tau}\right) &= \num{10,8} \\
+1 - e^{-t/\tau} &= \frac{\num{10,8}}{12} = \num{0,9} \\
+e^{-t/\tau} &= 1 - \num{0,9} = \num{0,1} \\
+-\frac{t}{\tau} &= \ln(\num{0,1}) = -\ln 10 \\
+t_0 &= \tau \ln 10 = \num{1,034} \times \num{2,3026} \approx \SI{2,38}{s}.
+\end{align*}
+Le seuil de \SI{10,8}{V} est atteint au bout de $t_0 \approx \SI{2,38}{s}$ : c'est le temps caractéristique de montée que le chef d'atelier souhaite réduire.
+
+\emph{Vérification :} $u(\num{2,38}) = 12\left(1 - e^{-2,38/1,034}\right) \approx 12(1 - \num{0,1001}) \approx \SI{10,80}{V}$. Le résultat est cohérent.
+
+\medskip
+\textbf{Question 4.} Nouvelle résistance.
+
+Réduire le temps de 20 \% :
+\[ t_1 = 0,80 \times t_0 = 0,80 \times \num{2,38} \approx \SI{1,90}{s}. \]
+Comme $t_0 = \tau \ln 10$, le temps d'atteinte du seuil est proportionnel à $\tau$ (le facteur $\ln 10$ ne change pas, car le seuil \SI{10,8}{V} est inchangé), donc :
+\[ \tau_1 = 0,80 \times \tau = 0,80 \times \num{1,034} = \num{0,8272} \text{ s}. \]
+Or $\tau_1 = R_1 \times C$, d'où :
+\[ R_1 = \frac{\tau_1}{C} = \frac{\num{0,8272}}{\num{0,0047}} \approx \SI{176}{\ohm}. \]
+On choisira la résistance normalisée la plus proche : $R_1 = \SI{180}{\ohm}$ (série normalisée E12), ce qui donne $\tau = 180 \times \num{0,0047} = \SI{0,846}{s}$ et un temps d'atteinte du seuil de $0,846 \times \ln 10 \approx \SI{1,95}{s}$, conforme au cahier des charges (réduction d'environ 18 \%, proche des 20 \% demandés).
+
+\medskip
+\textbf{Question 5.} Tracé de la courbe.
+
+Points remarquables : $u(0) = 12(1 - e^0) = 0$ ; $u(\tau) = 12(1 - e^{-1}) \approx \SI{7,59}{V}$ ; $u(t_0) = \SI{10,8}{V}$ avec $t_0 \approx \SI{2,38}{s}$ ; asymptote $u = 12$. On trace sur $[0\,;\,5\tau]$, soit $[0\,;\,\num{5,17}]$ (voir la figure ci-dessous).
+
+\medskip
+\textbf{Question 6.} Note technique (modèle).
+
+\emph{« Objet : modification du circuit de charge de l'onduleur. Le temps d'atteinte du seuil \SI{10,8}{V} est actuellement de 2,38 s ($\tau = 1,03$ s). Pour le réduire de 20 \% (1,90 s), la constante de temps doit passer à 0,83 s. À capacité inchangée ($C = \SI{4700}{\micro F}$), il faut remplacer la résistance de \SI{220}{\ohm} par une résistance de \SI{176}{\ohm}, soit \SI{180}{\ohm} en valeur normalisée. La tension maximale de charge (12 V) reste inchangée. »}
+\tcblower
+\textbf{Commentaires méthodologiques sur la résolution :}
+\begin{itemize}
+\item \textbf{Question 1 :} l'erreur classique est d'oublier la conversion des microfarads. $220 \times 4700$ ne donne pas des secondes ! Toujours convertir dans l'unité de base (le farad) avant tout calcul.
+\item \textbf{Question 2 :} on applique les règles opératoires sur les limites : la limite de $e^{-t/\tau}$ est $0$, celle de $1 - e^{-t/\tau}$ est $1$, et par produit par la constante $12$, la limite est $12$. Il n'y a pas de forme indéterminée car une seule grandeur dépend de $t$ : on le vérifie \emph{avant} de conclure.
+\item \textbf{Question 3 :} on isole d'abord l'exponentielle avant de passer au logarithme. C'est l'étape-clé : on ne peut pas « descendre » l'exposant tant que $e^{-t/\tau}$ n'est pas seul dans un membre. On termine par une vérification numérique, réflexe indispensable du technicien.
+\item \textbf{Question 4 :} la proportionnalité entre $t_0$ et $\tau$ (car $t_0 = \tau \ln 10$) évite de refaire toute la résolution : multiplier $\tau$ par $0,80$ suffit. C'est un raisonnement de technicien : à $C$ fixée, $\tau$ est proportionnelle à $R$.
+\item \textbf{Question 5 :} le point en $\tau$ est un repère universel en électronique : à $t = \tau$, le condensateur atteint environ 63 \% de sa charge finale ($1 - e^{-1} \approx \num{0,63}$).
+\end{itemize}
+\end{exoresolu}
+
+\begin{attention}[Erreurs fréquentes à éviter]
+\begin{itemize}
+\item Oublier de convertir $C$ en farads : $\SI{4700}{\micro F} = \num{0,0047}$ F et non $4700$ F.
+\item Écrire $\ln(\num{0,1})$ comme un nombre positif : $\ln(\num{0,1}) = -\ln 10 \approx -\num{2,30}$, le signe moins est essentiel pour obtenir $t_0 > 0$.
+\item Confondre « réduire de 20 \% » (multiplier par $0,80$) et « réduire à 20 \% » (multiplier par $0,20$).
+\item Croire que la limite $12$ V est atteinte en temps fini : la courbe ne touche jamais son asymptote, le condensateur n'est jamais chargé à exactement \SI{12}{V}.
+\item Appliquer les règles opératoires sans vérifier l'absence de forme indéterminée : ici tout se passe bien, mais dans d'autres exercices une somme du type « $\infty - \infty$ » exigerait une transformation préalable.
+\item Dans la note technique, annoncer une valeur sans unité ou sans justification : toute grandeur physique s'accompagne de son unité.
+\end{itemize}
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+\draw[->,popdark] (0,0) -- (5.6,0) node[below left]{$t$ (s)};
+\draw[->,popdark] (0,0) -- (0,3.4) node[below left]{$u(t)$ (V)};
+% asymptote
+\draw[dashed,poporange,thick] (0,3) -- (5.5,3) node[pos=0.85,above]{asymptote $u = 12$};
+% courbe u(t) = 12(1-exp(-t/1.034)), échelle : 12 V -> 3 cm, t en s -> 1 cm
+\draw[popblue,very thick,domain=0:5.3,samples=120] plot (\x,{3*(1-exp(-\x/1.034))});
+% point tau
+\draw[dashed,popgreen] (1.034,0) node[below]{$\tau$} -- (1.034,1.896) -- (0,1.896) node[left]{$\num{7,59}$};
+\fill[popgreen] (1.034,1.896) circle (1.5pt);
+% point seuil
+\draw[dashed,poppink] (2.38,0) node[below]{$t_0$} -- (2.38,2.7) -- (0,2.7) node[left]{$\num{10,8}$};
+\fill[poppink] (2.38,2.7) circle (1.5pt);
+% origine
+\fill[popblue] (0,0) circle (1.5pt);
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de charge du condensateur : $u(t) = 12(1 - e^{-t/\tau})$ sur $[0\,;\,5\tau]$, avec l'asymptote $u = 12$, le point remarquable en $t = \tau$ (63 \% de la charge) et le seuil de bascule à \SI{10,8}{V}.}
+\end{popfigure}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence que :
+\begin{itemize}
+\item le \textbf{calcul d'une limite en $+\infty$} n'est pas un exercice abstrait : il traduit le comportement à long terme d'un système réel (ici, la charge complète du condensateur vers \SI{12}{V}) et donne l'\textbf{asymptote} de la courbe ;
+\item les \textbf{règles opératoires sur les limites} (somme, produit) s'appliquent directement lorsqu'il n'y a pas de forme indéterminée, à condition de vérifier ce point avant de conclure ;
+\item la \textbf{résolution d'une équation exponentielle} par le logarithme népérien est un outil de dimensionnement : elle permet de passer d'une contrainte de tension (le seuil \SI{10,8}{V}) à une contrainte de temps ($t_0$), puis à un choix de composant ($R_1$) ;
+\item la \textbf{proportionnalité} entre le temps caractéristique et la résistance est un raisonnement puissant qui évite des calculs redondants ;
+\item enfin, les mathématiques débouchent sur un \textbf{acte professionnel} : rédiger une note technique argumentée, avec des valeurs, des unités et une justification, compétence attendue de tout technicien au Probatoire et au Baccalauréat technique comme en atelier.
+\end{itemize}
+
+\begin{savaistu}[Le condensateur, gardien du courant à Douala]
+Les onduleurs et stabilisateurs sont omniprésents dans les entreprises et les foyers camerounais, de Douala à Yaoundé, pour protéger ordinateurs et équipements contre les coupures et les variations de tension. Leur fonctionnement repose sur des circuits RC dont le comportement est entièrement décrit par la fonction exponentielle et ses limites : les mathématiques de la classe de Première technique sont littéralement branchées sur le secteur !
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Rappels : Vocabulaire et définitions fondamentales}
+
+\begin{definition}[Limite d'une fonction en un point]
+    Soit $f$ une fonction définie sur un intervalle $I$ (sauf éventuellement en $x_0$) et $x_0 \in \mathbb{R}$.
+    \begin{itemize}
+        \item \textbf{Limite finie $L$ :} $\lim_{x\to x_0} f(x) = L$ signifie : $\forall \varepsilon > 0,\ \exists \eta > 0$ tel que $\forall x \in I,\ 0 < |x-x_0| < \eta \implies |f(x)-L| < \varepsilon$.
+        \item \textbf{Limite infinie :} $\lim_{x\to x_0} f(x) = +\infty$ signifie : $\forall M > 0,\ \exists \eta > 0$ tel que $\forall x \in I,\ 0 < |x-x_0| < \eta \implies f(x) > M$. (De même pour $-\infty$).
+        \item \textbf{Limites unilatérales :} $\lim_{x\to x_0^+}$ (par valeurs supérieures) et $\lim_{x\to x_0^-}$ (par valeurs inférieures).
+    \end{itemize}
+    \textbf{Existence de la limite bilatère :} $\lim_{x\to x_0} f(x) = L \iff \lim_{x\to x_0^-} f(x) = \lim_{x\to x_0^+} f(x) = L$.
+\end{definition}
+
+\begin{definition}[Limite en $+\infty$ ou $-\infty$]
+    \begin{itemize}
+        \item $\lim_{x\to +\infty} f(x) = L$ : $\forall \varepsilon > 0,\ \exists A > 0$ tel que $\forall x > A,\ |f(x)-L| < \varepsilon$.
+        \item $\lim_{x\to +\infty} f(x) = +\infty$ : $\forall M > 0,\ \exists A > 0$ tel que $\forall x > A,\ f(x) > M$.
+    \end{itemize}
+\end{definition}
+
+\begin{propriete}[Théorèmes fondamentaux sur les limites (admis au Probatoire)]
+    Soient $f,g$ des fonctions et $x_0 \in \mathbb{R} \cup \{+\infty, -\infty\}$.
+    \begin{enumerate}
+        \item \textbf{Unicité :} Si la limite existe (finie ou infinie), elle est unique.
+        \item \textbf{Opérations (si les limites ne sont pas des formes indéterminées) :}
+              $\lim (f+g) = \lim f + \lim g$,
+              $\lim (f \times g) = \lim f \times \lim g$,
+              $\lim (f/g) = \lim f / \lim g$ (si $\lim g \neq 0$),
+              $\lim (f \circ g) = \lim_{y\to \lim g} f(y)$ (théorème de composition, si $f$ continue en $\lim g$ ou limite existante).
+        \item \textbf{Théorème des Gendarmes (Encadrement) :} Si $g(x) \le f(x) \le h(x)$ près de $x_0$ et $\lim g = \lim h = L$, alors $\lim f = L$.
+        \item \textbf{Comparaison :} Si $f(x) \le g(x)$ près de $x_0$ et les limites existent, alors $\lim f \le \lim g$.
+    \end{enumerate}
+\end{propriete}
+
+\begin{aretenir}[Limites de référence des fonctions usuelles (à connaître par cœur)]
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|}\hline
+    Fonction $f(x)$ & $\lim_{x\to +\infty}$ & $\lim_{x\to -\infty}$ & $\lim_{x\to 0^+}$ / $\lim_{x\to 0}$ \\ \hline
+    $x^n\ (n\in\mathbb{N}^*)$ & $+\infty$ & $(-1)^n\infty$ & $0$ \\ \hline
+    $\dfrac{1}{x^n}$ & $0^+$ & $0^{(-1)^n}$ & $+\infty$ \\ \hline
+    $\sqrt{x}$ & $+\infty$ & -- & $0$ \\ \hline
+    $e^x$ & $+\infty$ & $0$ & $1$ \\ \hline
+    $\ln x$ & $+\infty$ & -- & $-\infty$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Notation :} $0^+$ (tend vers 0 par valeurs positives), $0^-$ (par valeurs négatives). Le signe est crucial pour les quotients.
+\end{aretenir}
+
+\begin{attention}[Formes Indéterminées (FI) — À repérer absolument]
+    Les combinaisons suivantes \textbf{ne donnent pas de résultat direct} et nécessitent un traitement algébrique :
+    \[ \frac{0}{0},\quad \frac{\infty}{\infty},\quad \infty - \infty,\quad 0 \times \infty,\quad 1^\infty,\quad 0^0,\quad \infty^0 \]
+    \textbf{Interdiction formelle :} Écrire $\frac{1}{0}=\infty$, $\frac{\infty}{\infty}=1$, $\infty-\infty=0$, etc.
+\end{attention}
+
+\coursec{Limites des fonctions usuelles et règles de calcul (hors indéterminations)}
+
+\begin{methode}[Calculer une limite simple (finie ou infinie) en un point ou à l'infini]
+    \textbf{Objectif :} Déterminer la limite d'une fonction usuelle (polynôme, rationnelle, racine carrée, exponentielle, logarithme) sans forme indéterminée.
+    \begin{enumerate}
+        \item \textbf{Identifier} la fonction $f$, la variable $x$ et la valeur $x_0$ (réel ou $+\infty/-\infty$) vers laquelle $x$ tend.
+        \item \textbf{Remplacer} mentalement $x$ par $x_0$ dans l'expression de $f(x)$ en respectant les règles des limites élémentaires (tableau ci-dessus).
+        \item \textbf{Appliquer} les règles de calcul (somme, produit, quotient, composé) \textbf{si le résultat n'est pas une forme indéterminée}.
+        \item \textbf{Conclure} par une phrase : « La limite de $f$ en $x_0$ est $L$ (ou $+\infty$, $-\infty$) ».
+    \end{enumerate}
+    \textbf{Réflexe :} Vérifier toujours le signe ($0^+$ ou $0^-$) pour les quotients donnant une limite infinie.
+\end{methode}
+
+\begin{exoresolu}[Limites de fonctions usuelles et opérations — Type Probatoire]
+    Soit la fonction $f$ définie sur $]0; +\infty[$ par $f(x) = \dfrac{\ln x + 2\sqrt{x}}{e^x - 3}$.
+    \begin{enumerate}
+        \item Calculer $\lim_{x\to 0^+} f(x)$.
+        \item Calculer $\lim_{x\to +\infty} f(x)$.
+        \item En déduire les asymptotes éventuelles de la courbe représentative de $f$.
+    \end{enumerate}
+    \tcblower
+    \textbf{Solution détaillée}
+    \begin{enumerate}
+        \item \textbf{Limite en $0^+$ :}
+              On étudie le numérateur $N(x) = \ln x + 2\sqrt{x}$ et le dénominateur $D(x) = e^x - 3$ séparément.
+              \begin{align*}
+                  \lim_{x\to 0^+} \ln x &= -\infty \\
+                  \lim_{x\to 0^+} 2\sqrt{x} &= 0 \\
+                  \Rightarrow \lim_{x\to 0^+} N(x) &= -\infty \quad (\text{somme } -\infty + 0 = -\infty) \\[0.5em]
+                  \lim_{x\to 0^+} e^x &= 1 \\
+                  \Rightarrow \lim_{x\to 0^+} D(x) &= 1 - 3 = -2 \quad (\text{limite finie non nulle})
+              \end{align*}
+              Règle du quotient : $\dfrac{-\infty}{-2} = +\infty$.
+              \begin{aretenir}
+                  $\lim_{x\to 0^+} f(x) = +\infty$.
+              \end{aretenir}
+              La droite $x=0$ (axe des ordonnées) est une asymptote verticale.
+        \item \textbf{Limite en $+\infty$ :}
+              \begin{align*}
+                  \lim_{x\to +\infty} \ln x &= +\infty, \quad \lim_{x\to +\infty} 2\sqrt{x} = +\infty \Rightarrow \lim_{x\to +\infty} N(x) = +\infty \\
+                  \lim_{x\to +\infty} e^x &= +\infty \Rightarrow \lim_{x\to +\infty} D(x) = +\infty
+              \end{align*}
+              On obtient la \textbf{forme indéterminée} $\dfrac{+\infty}{+\infty}$.
+              On factorise par le terme dominant au numérateur et au dénominateur. Ici $e^x$ domine tout.
+              \[ f(x) = \frac{e^x\left(\frac{\ln x}{e^x} + \frac{2\sqrt{x}}{e^x}\right)}{e^x\left(1 - \frac{3}{e^x}\right)} = \frac{\frac{\ln x}{e^x} + \frac{2\sqrt{x}}{e^x}}{1 - \frac{3}{e^x}} \]
+              On utilise les limites remarquables (croissances comparées) : $\lim_{+\infty} \frac{\ln x}{e^x} = 0$, $\lim_{+\infty} \frac{\sqrt{x}}{e^x} = 0$, $\lim_{+\infty} \frac{3}{e^x} = 0$.
+              \[ \lim_{x\to +\infty} f(x) = \frac{0 + 0}{1 - 0} = 0 \]
+              \begin{aretenir}
+                  $\lim_{x\to +\infty} f(x) = 0$.
+              \end{aretenir}
+        \item \textbf{Asymptotes :}
+              \begin{itemize}
+                  \item En $0^+$, limite $+\infty$ $\Rightarrow$ Asymptote verticale : \textbf{droite d'équation $x=0$}.
+                  \item En $+\infty$, limite finie $0$ $\Rightarrow$ Asymptote horizontale : \textbf{droite d'équation $y=0$} (axe des abscisses).
+              \end{itemize}
+    \end{enumerate}
+\end{exoresolu}
+
+\coursec{Les formes indéterminées : Identification et levée (Cœur technique)}
+
+\begin{propriete}[Les 7 Formes Indéterminées classiques]
+    \begin{center}
+    \begin{tabular}{|c|l|}\hline
+    Type & Exemple typique \\ \hline
+    $\dfrac{0}{0}$ & $\dfrac{x^2-1}{x-1}$ en $1$ \\ \hline
+    $\dfrac{\infty}{\infty}$ & $\dfrac{x^2+1}{x}$ en $+\infty$ \\ \hline
+    $\infty - \infty$ & $\sqrt{x^2+x} - x$ en $+\infty$ \\ \hline
+    $0 \times \infty$ & $x \ln x$ en $0^+$ \\ \hline
+    $1^\infty$ & $\left(1+\frac{1}{x}\right)^x$ en $+\infty$ \\ \hline
+    $0^0$ & $x^x$ en $0^+$ \\ \hline
+    $\infty^0$ & $x^{1/x}$ en $+\infty$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \textbf{Stratégie générale :} Transformer l'expression (factorisation, conjugué, mise au même dénominateur, changement de variable) pour faire disparaître la FI.
+\end{propriete}
+
+\begin{methode}[Résoudre une forme indéterminée $0/0$ ou $\infty/\infty$ (Fonctions rationnelles et irrationnelles)]
+    \textbf{Objectif :} Lever l'indétermination pour obtenir une limite finie ou infinie.
+    \begin{enumerate}
+        \item \textbf{Identifier} la forme indéterminée (FI) : $0/0$ ou $\infty/\infty$.
+        \item \textbf{Choisir la technique} adaptée à l'expression :
+              \begin{itemize}
+                  \item \textbf{Fonction rationnelle (polynômes) :} Factoriser par la plus grande puissance du dénominateur (si $x\to\pm\infty$) ou factoriser par $(x-x_0)$ si $x\to x_0$ (théorème du facteur).
+                  \item \textbf{Racines carrées (type $\sqrt{u} - \sqrt{v}$) :} Multiplier numérateur et dénominateur par le \textbf{conjugué} ($\sqrt{u} + \sqrt{v}$).
+                  \item \textbf{Expressions mixtes :} Mettre au même dénominateur puis simplifier.
+              \end{itemize}
+        \item \textbf{Simplifier} le facteur commun (celui qui tend vers 0 ou $\infty$). Préciser « pour $x \neq x_0$ ».
+        \item \textbf{Recalculer} la limite de l'expression simplifiée (qui n'est plus une FI).
+        \item \textbf{Conclure} clairement.
+    \end{enumerate}
+    \textbf{Astuce Probatoire :} Pour $x\to a$, si $P(a)=Q(a)=0$, alors $(x-a)$ divise $P$ et $Q$ (Théorème du facteur). Effectuez la division euclidienne ou la factorisation évidente.
+\end{methode}
+
+\begin{exoresolu}[Levée d'indétermination $0/0$ par factorisation et conjugué — Type Probatoire]
+    Soit $f(x) = \dfrac{\sqrt{x+3} - 2}{x-1}$ définie sur $[-3; 1[ \cup ]1; +\infty[$.
+    \begin{enumerate}
+        \item Montrer que $\lim_{x\to 1} f(x)$ présente une forme indéterminée.
+        \item Calculer cette limite en rationalisant l'expression.
+        \item On définit $g(x) = \dfrac{x^3 - 2x^2 - x + 2}{x^2 - 3x + 2}$ sur $\mathbb{R}\setminus\{1;2\}$. Calculer $\lim_{x\to 1} g(x)$.
+    \end{enumerate}
+    \tcblower
+    \textbf{Solution détaillée}
+    \begin{enumerate}
+        \item Pour $x\to 1$ :
+              Numérateur : $\sqrt{1+3} - 2 = 2 - 2 = 0$.
+              Dénominateur : $1 - 1 = 0$.
+              C'est bien une \textbf{forme indéterminée $0/0$}.
+        \item \textbf{Technique du conjugué} au numérateur :
+              On multiplie par $\dfrac{\sqrt{x+3} + 2}{\sqrt{x+3} + 2}$ (qui vaut 1 pour $x \neq 1$) :
+              \begin{align*}
+                  f(x) &= \frac{(\sqrt{x+3} - 2)(\sqrt{x+3} + 2)}{(x-1)(\sqrt{x+3} + 2)} \\
+                  &= \frac{(x+3) - 4}{(x-1)(\sqrt{x+3} + 2)} \quad \text{(différence de carrés)} \\
+                  &= \frac{x - 1}{(x-1)(\sqrt{x+3} + 2)}
+              \end{align*}
+              Pour $x \neq 1$, on simplifie par $(x-1)$ :
+              \[ f(x) = \frac{1}{\sqrt{x+3} + 2} \]
+              Maintenant, la limite en 1 est directe :
+              \[ \lim_{x\to 1} f(x) = \frac{1}{\sqrt{4} + 2} = \frac{1}{4} \]
+        \item \textbf{Factorisation polynomiale} pour $g(x)$ en $x\to 1$ :
+              $P(1) = 1 - 2 - 1 + 2 = 0$ et $Q(1) = 1 - 3 + 2 = 0$. $(x-1)$ est facteur.
+              Division de $P(x)$ par $(x-1)$ : $P(x) = (x-1)(x^2 - x - 2) = (x-1)(x-2)(x+1)$.
+              Division de $Q(x)$ par $(x-1)$ : $Q(x) = (x-1)(x-2)$.
+              Pour $x \neq 1, 2$ :
+              \[ g(x) = \frac{(x-1)(x-2)(x+1)}{(x-1)(x-2)} = x+1 \]
+              \[ \lim_{x\to 1} g(x) = 1 + 1 = 2 \]
+    \end{enumerate}
+\end{exoresolu}
+
+\begin{methode}[Résoudre les formes indéterminées $\infty - \infty$ et $0 \times \infty$]
+    \textbf{Objectif :} Transformer l'expression pour faire apparaître un quotient ($0/0$ ou $\infty/\infty$) ou factoriser par le terme dominant.
+    \begin{enumerate}
+        \item \textbf{Identifier} la FI : $\infty - \infty$ (soustraction de deux grands nombres) ou $0 \times \infty$ (produit petit $\times$ grand).
+        \item \textbf{Stratégie pour $\infty - \infty$ (racines ou polynômes) :}
+              \begin{itemize}
+                  \item Si racines : Multiplier par le conjugué (même méthode que $0/0$).
+                  \item Si polynômes/rationnelles : Mettre au même dénominateur ou factoriser par la plus haute puissance de $x$.
+              \end{itemize}
+        \item \textbf{Stratégie pour $0 \times \infty$ :} Réécrire en quotient : $u(x)v(x) = \dfrac{u(x)}{1/v(x)}$ (forme $0/0$) ou $\dfrac{v(x)}{1/u(x)}$ (forme $\infty/\infty$). Choisir la forme la plus simple à simplifier.
+        \item \textbf{Simplifier} et calculer la limite de la nouvelle expression.
+    \end{enumerate}
+    \textbf{Réflexe :} Pour $x\to +\infty$, $\sqrt{ax^2+bx+c} \sim \sqrt{a}x$ (si $a>0$). Factorisez $x$ hors de la racine : $\sqrt{x^2(1+\dots)} = |x|\sqrt{1+\dots} = x\sqrt{1+\dots}$ (car $x>0$).
+\end{methode}
+
+\begin{exoresolu}[Formes indéterminées $\infty - \infty$ et $0 \times \infty$ — Type Probatoire]
+    \begin{enumerate}
+        \item Calculer $\lim_{x\to +\infty} \left( \sqrt{x^2 + 5x} - x \right)$.
+        \item Calculer $\lim_{x\to 0^+} x \ln x$.
+        \item Calculer $\lim_{x\to +\infty} x \left( \sqrt{x^2+1} - x \right)$.
+    \end{enumerate}
+    \tcblower
+    \textbf{Solution détaillée}
+    \begin{enumerate}
+        \item \textbf{FI $\infty - \infty$ (Racine - Polynôme).} Conjugué :
+              \begin{align*}
+                  \sqrt{x^2+5x} - x &= \frac{(\sqrt{x^2+5x} - x)(\sqrt{x^2+5x} + x)}{\sqrt{x^2+5x} + x} \\
+                  &= \frac{x^2+5x - x^2}{\sqrt{x^2+5x} + x} = \frac{5x}{\sqrt{x^2+5x} + x}
+              \end{align*}
+              Factoriser par $x$ au dénominateur ($x>0 \Rightarrow \sqrt{x^2}=x$) :
+              \[ = \frac{5x}{x\sqrt{1+\frac{5}{x}} + x} = \frac{5x}{x(\sqrt{1+\frac{5}{x}} + 1)} = \frac{5}{\sqrt{1+\frac{5}{x}} + 1} \]
+              $\lim_{+\infty} \frac{5}{x} = 0 \Rightarrow \lim_{+\infty} \sqrt{1+\frac{5}{x}} = 1$.
+              \begin{aretenir}
+                  Limite $= \dfrac{5}{1+1} = \dfrac{5}{2}$.
+              \end{aretenir}
+        \item \textbf{FI $0 \times (-\infty)$} (car $\ln x \to -\infty$). Réécriture en quotient $0/0$ :
+              \[ x \ln x = \frac{\ln x}{\frac{1}{x}} \quad \xrightarrow[x\to 0^+]{} \quad \frac{-\infty}{+\infty} \]
+              On utilise la limite remarquable de croissance comparée : \textbf{Le logarithme est négligeable devant toute puissance positive}.
+              $\lim_{x\to 0^+} x^a \ln x = 0$ pour tout $a>0$. Ici $a=1$.
+              \begin{aretenir}
+                  Limite $= 0$.
+              \end{aretenir}
+              (Au Probatoire, citer la règle de croissance comparée suffit si on ne peut pas dériver).
+        \item \textbf{FI $\infty \times (\infty - \infty)$ $\to$ $\infty \times 0$}. On traite le parenthèse comme en 1. :
+              \[ \sqrt{x^2+1} - x = \frac{1}{\sqrt{x^2+1} + x} \sim \frac{1}{2x} \]
+              Donc $x \left( \sqrt{x^2+1} - x \right) \sim x \cdot \frac{1}{2x} = \frac{1}{2}$.
+              \textbf{Calcul rigoureux :}
+              \[ x \cdot \frac{1}{\sqrt{x^2+1} + x} = \frac{x}{x\sqrt{1+\frac{1}{x^2}} + x} = \frac{1}{\sqrt{1+\frac{1}{x^2}} + 1} \xrightarrow[x\to+\infty]{} \frac{1}{2} \]
+    \end{enumerate}
+\end{exoresolu}
+
+\coursec{Théorèmes de comparaison et limites remarquables}
+
+\begin{methode}[Utiliser les théorèmes de comparaison (Gendarmes) et les limites remarquables]
+    \textbf{Objectif :} Encadrer une fonction difficile par deux fonctions simples ayant la même limite (Théorème des gendarmes) ou reconnaître une limite remarquable standard.
+    \begin{enumerate}
+        \item \textbf{Théorème des Gendarmes (Encadrement) :}
+              \begin{itemize}
+                  \item Trouver $g(x)$ et $h(x)$ telles que $g(x) \le f(x) \le h(x)$ (ou $\ge$) près de $x_0$.
+                  \item Vérifier $\lim g(x) = \lim h(x) = L$.
+                  \item Conclure $\lim f(x) = L$.
+              \end{itemize}
+              \textbf{Astuce :} $|\sin u| \le 1$, $|\cos u| \le 1$, $\ln(1+u) \sim u$, $e^u - 1 \sim u$, $\sin u \sim u$ ($u\to 0$).
+        \item \textbf{Limites Remarquables (à connaître par cœur) :}
+              \begin{align*}
+                  \lim_{x\to 0} \frac{\sin x}{x} &= 1 & \lim_{x\to 0} \frac{\tan x}{x} &= 1 & \lim_{x\to 0} \frac{1-\cos x}{x^2} &= \frac{1}{2} \\
+                  \lim_{x\to 0} \frac{e^x - 1}{x} &= 1 & \lim_{x\to 0} \frac{\ln(1+x)}{x} &= 1 & \lim_{x\to +\infty} \left(1+\frac{1}{x}\right)^x &= e
+              \end{align*}
+        \item \textbf{Technique :} Faire « apparaître » la forme standard par substitution ($u = \text{expression} \to 0$) ou factorisation.
+    \end{enumerate}
+    \textbf{Condition Probatoire :} Pour les gendarmes, l'encadrement doit être justifié (ex: $-1 \le \sin(\dots) \le 1$). Pour les limites remarquables, l'argument de la fonction doit tendre vers 0 (ou $\infty$ pour $(1+1/x)^x$).
+\end{methode}
+
+\begin{exoresolu}[Théorème des gendarmes et limites remarquables — Type Probatoire]
+    \begin{enumerate}
+        \item Calculer $\lim_{x\to 0} \dfrac{\sin(3x) \ln(1+2x)}{x^2}$.
+        \item Calculer $\lim_{x\to +\infty} \dfrac{x + \sin x}{x}$.
+        \item Calculer $\lim_{x\to 0} \dfrac{e^{2x} - 1}{\sin 3x}$.
+    \end{enumerate}
+    \tcblower
+    \textbf{Solution détaillée}
+    \begin{enumerate}
+        \item \textbf{Produit de limites remarquables} :
+              \[ \frac{\sin(3x) \ln(1+2x)}{x^2} = \frac{\sin(3x)}{x} \cdot \frac{\ln(1+2x)}{x} \]
+              On fait apparaître les formes standards $\frac{\sin u}{u}$ et $\frac{\ln(1+v)}{v}$ :
+              \[ = 3 \cdot \frac{\sin(3x)}{3x} \cdot 2 \cdot \frac{\ln(1+2x)}{2x} = 6 \cdot \underbrace{\frac{\sin(3x)}{3x}}_{\to 1} \cdot \underbrace{\frac{\ln(1+2x)}{2x}}_{\to 1} \]
+              \begin{aretenir}
+                  Limite $= 6 \times 1 \times 1 = 6$.
+              \end{aretenir}
+        \item \textbf{Théorème des Gendarmes} :
+              Pour tout $x$, $-1 \le \sin x \le 1$.
+              Pour $x > 0$, on divise par $x$ : $-\frac{1}{x} \le \frac{\sin x}{x} \le \frac{1}{x}$.
+              On ajoute 1 : $1 - \frac{1}{x} \le 1 + \frac{\sin x}{x} \le 1 + \frac{1}{x}$.
+              Or $\frac{x + \sin x}{x} = 1 + \frac{\sin x}{x}$.
+              $\lim_{+\infty} (1 - \frac{1}{x}) = 1$ et $\lim_{+\infty} (1 + \frac{1}{x}) = 1$.
+              Par encadrement (gendarmes) :
+              \begin{aretenir}
+                  $\lim_{x\to +\infty} \dfrac{x + \sin x}{x} = 1$.
+              \end{aretenir}
+        \item \textbf{Limites remarquables composées} :
+              \[ \frac{e^{2x} - 1}{\sin 3x} = \frac{2x}{3x} \cdot \frac{e^{2x}-1}{2x} \cdot \frac{3x}{\sin 3x} \]
+              Posons $u=2x\to 0$ et $v=3x\to 0$.
+              \[ \frac{e^{2x}-1}{2x} \to 1, \quad \frac{3x}{\sin 3x} \to 1 \]
+              \begin{aretenir}
+                  Limite $= \dfrac{2}{3} \times 1 \times 1 = \dfrac{2}{3}$.
+              \end{aretenir}
+    \end{enumerate}
+\end{exoresolu}
+
+\coursec{Modélisation et applications concrètes : Le technicien face aux limites}
+
+\begin{methode}[Modéliser une situation technique par une limite et l'interpréter]
+    \textbf{Objectif :} Traduire un problème concret (électricité, mécanique, gestion, chimie) en fonction mathématique, calculer la limite et donner du sens au résultat.
+    \begin{enumerate}
+        \item \textbf{Lire} l'énoncé et identifier les grandeurs physiques : variable indépendante (temps $t$, distance $x$, quantité $q$...) et variable dépendante (tension $U$, concentration $C$, coût $C_t$, température $\theta$...).
+        \item \textbf{Écrire} la fonction $f$ modélisant la situation (souvent donnée ou à établir via une loi physique : loi d'Ohm, loi de refroidissement, rendement...).
+        \item \textbf{Identifier} la question : « Que se passe-t-il après un long temps ? » $\to \lim_{+\infty}$. « Que se passe-t-il au démarrage ? » $\to \lim_{0^+}$. « Seuil de rupture ? » $\to \lim_{x\to x_0}$.
+        \item \textbf{Calculer} la limite avec les méthodes vues (simplification, croissance comparée, gendarmes).
+        \item \textbf{Interpréter} le résultat \textbf{dans le contexte} : « La tension tend vers 12 V : le condensateur est chargé. », « Le coût marginal tend vers 5000 FCFA : coût unitaire stabilisé. ».
+    \end{enumerate}
+    \textbf{Vocabulaire technique :} \cle{Asymptote horizontale} = valeur cible / régime permanent. \cle{Asymptote verticale} = seuil critique / rupture / interdiction. \cle{Limite nulle} = extinction / disparition / efficacité nulle.
+\end{methode}
+
+\begin{exoresolu}[Application concrète : Charge d'un condensateur (Électricité) — Type Probatoire]
+    Dans un circuit RC série alimenté par une tension continue $E = 12$ V, la tension $u_C(t)$ aux bornes du condensateur au cours du temps $t \ge 0$ (en secondes) est modélisée par :
+    \[ u_C(t) = 12 \left( 1 - e^{-t/10^{-3}} \right) \quad (\text{constante de temps } \tau = 10^{-3}\,\text{s}) \]
+    \begin{enumerate}
+        \item Calculer $\lim_{t\to 0^+} u_C(t)$ et interpréter physiquement.
+        \item Calculer $\lim_{t\to +\infty} u_C(t)$ et interpréter. Quel est le régime permanent ?
+        \item On souhaite que la tension atteigne 99\% de sa valeur finale. Montrer que cela correspond à résoudre $e^{-t/10^{-3}} = 0,01$. En déduire l'ordre de grandeur du temps nécessaire (sans calculette, en utilisant $\ln 10 \approx 2,3$).
+    \end{enumerate}
+    \tcblower
+    \textbf{Solution détaillée}
+    \begin{enumerate}
+        \item \textbf{Démarrage ($t\to 0^+$) :}
+              $e^{-t/10^{-3}} \xrightarrow[t\to 0^+]{} e^0 = 1$.
+              $u_C(t) \to 12(1 - 1) = 0$.
+              \begin{aretenir}
+                  $\lim_{t\to 0^+} u_C(t) = 0$ V.
+              \end{aretenir}
+              \textbf{Interprétation :} Au branchement ($t=0$), le condensateur est déchargé, la tension à ses bornes est nulle. Il se comporte comme un court-circuit.
+        \item \textbf{Régime permanent ($t\to +\infty$) :}
+              $-\frac{t}{10^{-3}} \xrightarrow[t\to +\infty]{} -\infty$.
+              $e^{-\infty} = 0$.
+              $u_C(t) \to 12(1 - 0) = 12$.
+              \begin{aretenir}
+                  $\lim_{t\to +\infty} u_C(t) = 12$ V.
+              \end{aretenir}
+              \textbf{Interprétation :} Après un temps long, le condensateur est totalement chargé. La tension aux bornes égale la tension du générateur. Le courant est nul. \textbf{La droite $y=12$ est asymptote horizontale (régime permanent).}
+        \item \textbf{Atteinte de 99\% :}
+              $u_C(t) = 0,99 \times 12 = 11,88$ V.
+              $12(1 - e^{-t/10^{-3}}) = 11,88 \iff 1 - e^{-t/10^{-3}} = 0,99 \iff e^{-t/10^{-3}} = 0,01$.
+              On prend le logarithme népérien :
+              $-\frac{t}{10^{-3}} = \ln(0,01) = \ln(10^{-2}) = -2\ln 10$.
+              $t = 10^{-3} \times 2 \times \ln 10 \approx 10^{-3} \times 2 \times 2,3 = 4,6 \times 10^{-3}$ s.
+              \begin{aretenir}
+                  Temps nécessaire $\approx 4,6$ ms (millisecondes).
+              \end{aretenir}
+              \textbf{Note technique :} On dit souvent que le régime permanent est atteint à $5\tau$ (ici $\tau = 10^{-3}$ s, donc $5$ ms), ce qui est cohérent.
+    \end{enumerate}
+\end{exoresolu}
+
+\begin{methode}[Étudier la limite d'une fonction composée ou définie par parties]
+    \textbf{Objectif :} Gérer les limites de $f(g(x))$ ou de fonctions par morceaux (seuils, valeurs absolues).
+    \begin{enumerate}
+        \item \textbf{Théorème de composition :} Si $\lim_{x\to x_0} g(x) = L$ et $f$ est continue en $L$ (ou $\lim_{y\to L} f(y) = M$), alors $\lim_{x\to x_0} f(g(x)) = M$.
+              \textbf{Attention :} Si $g(x) \to L$ mais $f$ n'a pas de limite en $L$ (ex: $\sin(1/x)$), on ne peut pas conclure directement.
+        \item \textbf{Valeur absolue $|x|$ :} Rappel $|x| = x$ si $x\ge 0$, $|x| = -x$ si $x < 0$.
+              Pour $\lim_{x\to 0} \frac{|x|}{x}$ : Étudier $x\to 0^+$ (vaut 1) et $x\to 0^-$ (vaut -1). Limites distinctes $\Rightarrow$ \textbf{Pas de limite en 0}.
+        \item \textbf{Fonction par parties / Seuils :} Calculer la \textbf{limite à gauche} ($x\to x_0^-$) avec l'expression de gauche, et la \textbf{limite à droite} ($x\to x_0^+$) avec l'expression de droite.
+              \begin{itemize}
+                  \item Si égales $\to$ Limite existe (bilatère).
+                  \item Si différentes $\to$ \textbf{Pas de limite} (discontinuité de première espèce / saut).
+              \end{itemize}
+    \end{enumerate}
+    \textbf{Rédaction Probatoire :} Toujours écrire « Par croissance comparée... », « Par encadrement... », « Par composition... ». Ne pas écrire seulement le résultat.
+\end{methode}
+
+\begin{exoresolu}[Limites bilatères, valeur absolue et fonction par morceaux — Type Probatoire]
+    Soit la fonction $f$ définie sur $\mathbb{R}^*$ par :
+    \[ f(x) = \begin{cases} \dfrac{e^x - 1}{x} & \text{si } x < 0 \\ \dfrac{\ln(1+x)}{x} & \text{si } x > 0 \end{cases} \]
+    \begin{enumerate}
+        \item Calculer $\lim_{x\to 0^-} f(x)$ et $\lim_{x\to 0^+} f(x)$.
+        \item $f$ admet-elle une limite en $0$ ? Justifier.
+        \item Étudier $\lim_{x\to 0} \dfrac{|x|}{x}$ et $\lim_{x\to 0} x \sin\left(\frac{1}{x}\right)$.
+    \end{enumerate}
+    \tcblower
+    \textbf{Solution détaillée}
+    \begin{enumerate}
+        \item \textbf{Limite à gauche ($x\to 0^-$) :} Expression $\frac{e^x - 1}{x}$.
+              Limite remarquable : $\lim_{u\to 0} \frac{e^u - 1}{u} = 1$. Ici $u=x\to 0$.
+              $\lim_{x\to 0^-} f(x) = 1$.
+              \textbf{Limite à droite ($x\to 0^+$) :} Expression $\frac{\ln(1+x)}{x}$.
+              Limite remarquable : $\lim_{u\to 0} \frac{\ln(1+u)}{u} = 1$. Ici $u=x\to 0$.
+              $\lim_{x\to 0^+} f(x) = 1$.
+        \item Les deux limites latérales existent, sont finies et \textbf{égales à 1}.
+              \begin{aretenir}
+                  $\lim_{x\to 0} f(x) = 1$.
+              \end{aretenir}
+              La fonction peut être prolongée par continuité en 0 en posant $f(0)=1$.
+        \item \textbf{A. $g(x) = \frac{|x|}{x}$ :}
+              $x\to 0^+ \Rightarrow |x|=x \Rightarrow g(x)=1 \Rightarrow \lim_{0^+} = 1$.
+              $x\to 0^- \Rightarrow |x|=-x \Rightarrow g(x)=-1 \Rightarrow \lim_{0^-} = -1$.
+              $1 \neq -1 \Rightarrow$ \textbf{Pas de limite en 0}.
+              \textbf{B. $h(x) = x \sin(1/x)$ :}
+              Pour tout $x \neq 0$, $-1 \le \sin(1/x) \le 1$.
+              \textbf{Cas $x>0$ :} $-x \le x\sin(1/x) \le x$. $\lim_{0^+} -x = 0$, $\lim_{0^+} x = 0$. Par gendarmes : $\lim_{0^+} h(x) = 0$.
+              \textbf{Cas $x<0$ :} $x$ est négatif, l'inégalité s'inverse en multipliant par $x$ : $x \le x\sin(1/x) \le -x$. $\lim_{0^-} x = 0$, $\lim_{0^-} -x = 0$. Par gendarmes : $\lim_{0^-} h(x) = 0$.
+              Les deux limites latérales valent 0.
+              \begin{aretenir}
+                  $\lim_{x\to 0} x \sin(1/x) = 0$.
+              \end{aretenir}
+              \textbf{Interprétation :} L'amplitude des oscillations tend vers 0.
+    \end{enumerate}
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+    \begin{enumerate}
+        \item \textbf{Écrire « $\frac{1}{0} = \infty$ » ou « $\frac{\infty}{\infty} = 1$ » :} \textbf{Interdit.} Ce ne sont pas des calculs, ce sont des \textbf{formes indéterminées} (ou des limites infinies). Il faut écrire : « Dénominateur tend vers 0, numérateur vers 1 $\Rightarrow$ limite infinie » ou « FI $\infty/\infty$, je factorise par le terme dominant... ».
+        \item \textbf{Oublier le signe ($0^+$ ou $0^-$) pour une limite infinie :} $\lim_{x\to 0} \frac{1}{x}$ n'existe pas (différentes à gauche et à droite). Il faut préciser $\lim_{x\to 0^+} \frac{1}{x} = +\infty$ et $\lim_{x\to 0^-} \frac{1}{x} = -\infty$. Pour $\frac{1}{x^2}$, les deux donnent $+\infty$.
+        \item \textbf{Simplifier « $x$ » dans $\frac{x^2+x}{x}$ sans dire « pour $x \neq 0$ » :} On simplifie une \textbf{variable}, pas un nombre. La simplification est valide car on cherche la limite \textbf{au voisinage} de 0 (donc $x \neq 0$). Écrire : « Pour $x \neq 0$, $f(x) = x+1$, donc la limite est 1 ».
+        \item \textbf{Mauvaise utilisation des limites remarquables :} Appliquer $\frac{\sin u}{u} \to 1$ alors que $u \not\to 0$ (ex: $\frac{\sin x}{x}$ pour $x\to +\infty$ tend vers 0, pas 1). \textbf{Vérifier toujours que l'argument tend vers 0.}
+        \item \textbf{Confondre « Pas de limite » et « Limite infinie » :} Une limite infinie ($+\infty$ ou $-\infty$) \textbf{EXISTE} (au sens large) et se note. « Pas de limite » (ex: $\sin x$ en $+\infty$, $\frac{1}{x}$ en 0 bilatère, $\frac{|x|}{x}$ en 0) signifie qu'il n'y a pas de convergence (ni finie, ni infinie unique). La rédaction doit être précise : « La limite est $+\infty$ » vs « $f$ n'admet pas de limite en 0 ».
+    \end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : Limites à l'infini]
+Parmi les affirmations suivantes, une seule est exacte. Laquelle ?
+\begin{enumerate}
+    \item $\displaystyle \lim_{x \to +\infty} \frac{3x^2 - 2x + 1}{x^2 + 5} = 0$
+    \item $\displaystyle \lim_{x \to +\infty} \frac{2x + 1}{x^2 - 4} = +\infty$
+    \item $\displaystyle \lim_{x \to +\infty} \frac{5x^3 - 2x}{2x^3 + 7} = \frac{5}{2}$
+    \item $\displaystyle \lim_{x \to +\infty} ( \sqrt{x^2 + 1} - x ) = +\infty$
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai / Faux justifié]
+Déterminer si les affirmations suivantes sont vraies ou fausses. Justifier chaque réponse par un calcul ou un contre-exemple.
+\begin{enumerate}
+    \item $\displaystyle \lim_{x \to 0} \frac{\sin(3x)}{x} = 3$
+    \item $\displaystyle \lim_{x \to +\infty} \left( 1 + \frac{1}{x} \right)^x = 1$
+    \item Si $\lim_{x \to a} f(x) = +\infty$ et $\lim_{x \to a} g(x) = 0$, alors $\lim_{x \to a} f(x)g(x) = 0$.
+    \item La fonction $f(x) = \frac{x^2 - 4}{x - 2}$ admet une limite finie en $2$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vocabulaire et définitions]
+Compléter les phrases suivantes avec les termes appropriés : \emph{forme indéterminée, asymptote verticale, asymptote horizontale, limite remarquable, théorème des gendarmes}.
+\begin{enumerate}
+    \item On appelle \_\_\_\_\_\_\_\_\_\_ la droite d'équation $y = \ell$ si $\lim_{x \to +\infty} f(x) = \ell \in \mathbb{R}$.
+    \item L'expression $\frac{0}{0}$ ou $\frac{\infty}{\infty}$ est une \_\_\_\_\_\_\_\_\_\_ qui nécessite un traitement algébrique.
+    \item Si $g(x) \le f(x) \le h(x)$ et que $g$ et $h$ ont même limite $\ell$ en $a$, alors $f$ a pour limite $\ell$ en $a$ : c'est le \_\_\_\_\_\_\_\_\_\_.
+    \item $\lim_{x \to 0} \frac{e^x - 1}{x} = 1$ est une \_\_\_\_\_\_\_\_\_\_.
+    \item Si $\lim_{x \to a} f(x) = +\infty$, la droite $x = a$ est une \_\_\_\_\_\_\_\_\_\_.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs d'entraînement]
+Calculer les limites suivantes (finies ou infinies) :
+\begin{enumerate}
+    \item $\displaystyle \lim_{x \to +\infty} \frac{4x^2 - 3x + 2}{2x^2 + 5x - 1}$
+    \item $\displaystyle \lim_{x \to 0} \frac{\sin(5x)}{2x}$
+    \item $\displaystyle \lim_{x \to 1} \frac{x^3 - 1}{x - 1}$
+    \item $\displaystyle \lim_{x \to +\infty} \left( \sqrt{x^2 + 4x} - x \right)$
+    \item $\displaystyle \lim_{x \to 0} \frac{\ln(1 + 3x)}{x}$
+    \item $\displaystyle \lim_{x \to -\infty} \frac{2x^3 + x}{x^2 - 1}$
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Levée d'indéterminations par factorisation]
+Calculer les limites suivantes en levant les indéterminations :
+\begin{enumerate}
+    \item $\displaystyle \lim_{x \to 2} \frac{x^2 - 4}{x^2 - 5x + 6}$
+    \item $\displaystyle \lim_{x \to -1} \frac{x^3 + 1}{x^2 - 1}$
+    \item $\displaystyle \lim_{x \to +\infty} \frac{3x^2 - 2x + 1}{5x^2 + 4x - 7}$
+    \item $\displaystyle \lim_{x \to 0} \frac{\sqrt{1 + x} - 1}{x}$ \textit{(indice : multiplier par le conjugué)}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Limites de fonctions composées et usuelles]
+Soient les fonctions $f(x) = \ln(x^2 + 1)$, $g(x) = e^{-x^2}$ et $h(x) = \frac{\sin x}{x}$ (prolongée par continuité en $0$).
+\begin{enumerate}
+    \item Calculer $\lim_{x \to +\infty} f(x)$ et $\lim_{x \to +\infty} g(x)$.
+    \item Calculer $\lim_{x \to 0} \frac{f(x)}{x^2}$.
+    \item Calculer $\lim_{x \to +\infty} h(x)$ et $\lim_{x \to 0} h(x)$.
+    \item Déterminer $\lim_{x \to +\infty} \left[ f(x) - 2\ln x \right]$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Théorème des gendarmes et comparaison]
+\begin{enumerate}
+    \item En utilisant le fait que $-1 \le \cos x \le 1$, déterminer $\lim_{x \to 0} x^2 \cos\left(\frac{1}{x}\right)$.
+    \item Montrer que pour tout $x > 0$, $\frac{x}{x^2 + 1} \le \frac{\ln(1+x)}{x} \le 1$. En déduire $\lim_{x \to 0^+} \frac{\ln(1+x)}{x}$.
+    \item Soit $u_n = \frac{\sin n}{n}$. Déterminer $\lim_{n \to +\infty} u_n$.
+    \item Comparer les croissances de $x^2$, $e^x$ et $\ln x$ au voisinage de $+\infty$ pour calculer $\lim_{x \to +\infty} \frac{x^2}{e^x}$ et $\lim_{x \to +\infty} \frac{\ln x}{x}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Asymptotes et comportement graphique]
+On considère la fonction $f(x) = \frac{x^2 + 2x - 3}{x - 1}$ définie sur $\mathbb{R}^* = \mathbb{R} \setminus \{1\}$.
+\begin{enumerate}
+    \item Simplifier l'expression de $f(x)$ pour $x \neq 1$.
+    \item Calculer $\lim_{x \to 1} f(x)$. Quel est le comportement graphique au voisinage de $x = 1$ (trou ou asymptote verticale) ?
+    \item Calculer les limites de $f$ en $+\infty$ et $-\infty$.
+    \item Déterminer s'il existe une asymptote oblique. Si oui, donner son équation.
+    \item Tracer schématiquement la courbe représentative de $f$ dans un repère orthogonal.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Type Probatoire : Calculs de limites et formes indéterminées]
+\textbf{Partie A :} Calculer les limites suivantes en justifiant chaque étape.
+\begin{enumerate}
+    \item $\displaystyle \lim_{x \to +\infty} \frac{2x^2 - 5x + 1}{x - 3}$
+    \item $\displaystyle \lim_{x \to +\infty} \left( \sqrt{x^2 + 3x} - x \right)$
+    \item $\displaystyle \lim_{x \to +\infty} x \ln\left(1 + \frac{2}{x}\right)$
+    \item $\displaystyle \lim_{x \to 0} \frac{e^x - 1 - x}{x^2}$
+\end{enumerate}
+
+\textbf{Partie B :} Soit la fonction $f$ définie sur $]-1 ; +\infty[$ par $f(x) = \frac{x^2 - 2x}{x+1}$.
+\begin{enumerate}
+    \item Calculer les limites de $f$ aux bornes de son domaine de définition.
+    \item Déterminer les asymptotes (verticales, horizontales, obliques) de la courbe $\mathcal{C}_f$.
+    \item Calculer la dérivée $f'(x)$ et dresser le tableau de variations de $f$.
+    \item Tracer $\mathcal{C}_f$ et ses asymptotes dans un repère orthogonal.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : Modélisation pharmacocinétique]
+La concentration $C(t)$ (en mg/L) d'un médicament dans le sang $t$ heures après son administration par voie orale est modélisée par la fonction :
+\[ C(t) = \frac{5t}{t^2 + 1} \quad \text{pour } t \ge 0. \]
+\begin{enumerate}
+    \item Calculer $\lim_{t \to 0^+} C(t)$ et $\lim_{t \to +\infty} C(t)$. Interpréter physiquement ces résultats.
+    \item Étudier les variations de $C$ sur $[0 ; +\infty[$. Dresser le tableau de variations.
+    \item Montrer que $C$ admet un maximum. Déterminer l'instant $t_{\text{max}}$ où la concentration est maximale et la valeur de ce maximum $C_{\text{max}}$.
+    \item Le seuil d'efficacité thérapeutique est fixé à $0,5$ mg/L. À partir de quel instant la concentration devient-elle inférieure à ce seuil ? (On pourra résoudre l'inéquation $C(t) < 0,5$).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : Limites remarquables, gendarmes et paramètre]
+\textbf{Partie A : Théorème des gendarmes et limites remarquables}
+\begin{enumerate}
+    \item En utilisant le théorème des gendarmes, déterminer $\lim_{x \to 0} x^2 \cos\left(\frac{1}{x}\right)$.
+    \item Déterminer $\lim_{x \to +\infty} \frac{\sin x}{x}$.
+    \item Calculer $\lim_{x \to 0} \frac{e^{3x} - 1}{\sin(2x)}$.
+    \item Calculer $\lim_{x \to 0} \frac{\ln(1 + 4x) - \sin(2x)}{x^2}$.
+\end{enumerate}
+
+\textbf{Partie B : Étude avec paramètre}
+Soit $a \in \mathbb{R}$ et la fonction $f_a$ définie sur $\mathbb{R} \setminus \{1\}$ par $f_a(x) = \frac{x^2 + ax + 1}{x - 1}$.
+\begin{enumerate}
+    \item Déterminer la valeur de $a$ pour laquelle la limite de $f_a$ en $1$ est finie.
+    \item Pour cette valeur de $a$, calculer $\lim_{x \to 1} f_a(x)$.
+    \item Interpréter graphiquement la situation pour cette valeur de $a$ (trou ? asymptote verticale ?) et pour les autres valeurs de $a$.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Corrigés détaillés — Leçon 3 : Limites}
+
+\begin{corrige}[Exercice 1 — QCM : Limites à l'infini]
+La bonne réponse est la \textbf{c)}. Justifions chaque item.
+
+\textbf{a) Faux.} Pour $x \to +\infty$, une fraction rationnelle se comporte comme le rapport des termes de plus haut degré :
+\[ \lim_{x \to +\infty} \frac{3x^2 - 2x + 1}{x^2 + 5} = \lim_{x \to +\infty} \frac{3x^2}{x^2} = 3 \neq 0. \]
+
+\textbf{b) Faux.} Le degré du dénominateur (2) est supérieur à celui du numérateur (1) :
+\[ \lim_{x \to +\infty} \frac{2x + 1}{x^2 - 4} = \lim_{x \to +\infty} \frac{2x}{x^2} = \lim_{x \to +\infty} \frac{2}{x} = 0 \neq +\infty. \]
+
+\textbf{c) Vrai.} Même degré (3) au numérateur et au dénominateur, la limite est le rapport des coefficients dominants :
+\[ \lim_{x \to +\infty} \frac{5x^3 - 2x}{2x^3 + 7} = \frac{5}{2}. \]
+
+\textbf{d) Faux.} On multiplie par la quantité conjuguée :
+\[ \sqrt{x^2+1} - x = \frac{(\sqrt{x^2+1}-x)(\sqrt{x^2+1}+x)}{\sqrt{x^2+1}+x} = \frac{1}{\sqrt{x^2+1}+x} \xrightarrow[x \to +\infty]{} 0 \neq +\infty. \]
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai / Faux justifié]
+\textbf{1. Vrai.} On utilise la limite remarquable $\lim_{u \to 0} \frac{\sin u}{u} = 1$ :
+\[ \frac{\sin(3x)}{x} = 3 \times \frac{\sin(3x)}{3x} \xrightarrow[x \to 0]{} 3 \times 1 = 3. \]
+
+\textbf{2. Faux.} C'est une limite remarquable du cours : $\lim_{x \to +\infty} \left(1 + \frac{1}{x}\right)^x = e \approx 2{,}718 \neq 1$. (L'intuition « $1 + 0 = 1$ » est un piège : c'est une forme indéterminée $1^{+\infty}$.)
+
+\textbf{3. Faux.} C'est une forme indéterminée $\infty \times 0$ : on ne peut pas conclure sans calcul. Contre-exemples :
+\begin{itemize}
+    \item $f(x) = \frac{1}{x^2}$ et $g(x) = x^2$ en $a = 0$ : $f(x)g(x) = 1 \to 1$ ;
+    \item $f(x) = \frac{1}{x^2}$ et $g(x) = x^4$ en $a = 0$ : $f(x)g(x) = x^2 \to 0$ ;
+    \item $f(x) = \frac{1}{x^4}$ et $g(x) = x^2$ en $a = 0$ : $f(x)g(x) = \frac{1}{x^2} \to +\infty$.
+\end{itemize}
+Tous les cas sont possibles, d'où l'indétermination.
+
+\textbf{4. Vrai.} Pour $x \neq 2$ : $f(x) = \dfrac{(x-2)(x+2)}{x-2} = x + 2$, donc
+\[ \lim_{x \to 2} f(x) = 4 \in \mathbb{R}. \]
+La limite est finie (la courbe présente un « trou » au point d'abscisse 2).
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Vocabulaire et définitions]
+\begin{enumerate}
+    \item On appelle \cle{asymptote horizontale} la droite d'équation $y = \ell$ si $\lim_{x \to +\infty} f(x) = \ell \in \mathbb{R}$.
+    \item L'expression $\frac{0}{0}$ ou $\frac{\infty}{\infty}$ est une \cle{forme indéterminée} qui nécessite un traitement algébrique.
+    \item C'est le \cle{théorème des gendarmes} (ou théorème d'encadrement).
+    \item $\lim_{x \to 0} \frac{e^x - 1}{x} = 1$ est une \cle{limite remarquable}.
+    \item Si $\lim_{x \to a} f(x) = +\infty$, la droite $x = a$ est une \cle{asymptote verticale}.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs d'entraînement]
+\textbf{1.} Termes dominants : $\displaystyle \lim_{x \to +\infty} \frac{4x^2 - 3x + 2}{2x^2 + 5x - 1} = \lim_{x \to +\infty} \frac{4x^2}{2x^2} = \boxed{2}$.
+
+\textbf{2.} Limite remarquable : $\displaystyle \frac{\sin(5x)}{2x} = \frac{5}{2} \times \frac{\sin(5x)}{5x} \xrightarrow[x \to 0]{} \boxed{\frac{5}{2}}$.
+
+\textbf{3.} Forme $\frac{0}{0}$. On factorise : $x^3 - 1 = (x-1)(x^2 + x + 1)$, d'où pour $x \neq 1$ :
+\[ \frac{x^3 - 1}{x - 1} = x^2 + x + 1 \xrightarrow[x \to 1]{} 1 + 1 + 1 = \boxed{3}. \]
+
+\textbf{4.} Forme $\infty - \infty$. Quantité conjuguée :
+\[ \sqrt{x^2 + 4x} - x = \frac{4x}{\sqrt{x^2 + 4x} + x} = \frac{4x}{x\left(\sqrt{1 + \frac{4}{x}} + 1\right)} = \frac{4}{\sqrt{1 + \frac{4}{x}} + 1} \xrightarrow[x \to +\infty]{} \frac{4}{2} = \boxed{2}. \]
+
+\textbf{5.} Limite remarquable $\lim_{u \to 0} \frac{\ln(1+u)}{u} = 1$ :
+\[ \frac{\ln(1+3x)}{x} = 3 \times \frac{\ln(1+3x)}{3x} \xrightarrow[x \to 0]{} \boxed{3}. \]
+
+\textbf{6.} Termes dominants : $\displaystyle \frac{2x^3 + x}{x^2 - 1} \sim \frac{2x^3}{x^2} = 2x \xrightarrow[x \to -\infty]{} \boxed{-\infty}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Levée d'indéterminations par factorisation]
+\textbf{1.} Forme $\frac{0}{0}$ en $x = 2$. On factorise numérateur et dénominateur :
+\[ \frac{x^2 - 4}{x^2 - 5x + 6} = \frac{(x-2)(x+2)}{(x-2)(x-3)} = \frac{x+2}{x-3} \quad (x \neq 2). \]
+Donc $\displaystyle \lim_{x \to 2} \frac{x+2}{x-3} = \frac{4}{-1} = \boxed{-4}$.
+
+\textbf{2.} Forme $\frac{0}{0}$ en $x = -1$. On utilise $x^3 + 1 = (x+1)(x^2 - x + 1)$ et $x^2 - 1 = (x-1)(x+1)$ :
+\[ \frac{x^3 + 1}{x^2 - 1} = \frac{x^2 - x + 1}{x - 1} \quad (x \neq -1), \qquad \lim_{x \to -1} \frac{x^2 - x + 1}{x - 1} = \frac{1 + 1 + 1}{-2} = \boxed{-\frac{3}{2}}. \]
+
+\textbf{3.} Forme $\frac{\infty}{\infty}$. On factorise par $x^2$ (terme dominant) :
+\[ \frac{3x^2 - 2x + 1}{5x^2 + 4x - 7} = \frac{x^2\left(3 - \frac{2}{x} + \frac{1}{x^2}\right)}{x^2\left(5 + \frac{4}{x} - \frac{7}{x^2}\right)} = \frac{3 - \frac{2}{x} + \frac{1}{x^2}}{5 + \frac{4}{x} - \frac{7}{x^2}} \xrightarrow[x \to +\infty]{} \boxed{\frac{3}{5}}. \]
+
+\textbf{4.} Forme $\frac{0}{0}$. On multiplie par la quantité conjuguée $\sqrt{1+x} + 1$ :
+\[ \frac{\sqrt{1+x} - 1}{x} = \frac{(1+x) - 1}{x\left(\sqrt{1+x} + 1\right)} = \frac{1}{\sqrt{1+x} + 1} \xrightarrow[x \to 0]{} \boxed{\frac{1}{2}}. \]
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Limites de fonctions composées et usuelles]
+\textbf{1.} $\bullet$ $f(x) = \ln(x^2+1)$ : quand $x \to +\infty$, $x^2 + 1 \to +\infty$ et $\ln u \to +\infty$ quand $u \to +\infty$, donc par composition $\boxed{\lim_{x \to +\infty} f(x) = +\infty}$.
+
+$\bullet$ $g(x) = e^{-x^2}$ : quand $x \to +\infty$, $-x^2 \to -\infty$ et $e^u \to 0$ quand $u \to -\infty$, donc $\boxed{\lim_{x \to +\infty} g(x) = 0}$.
+
+\textbf{2.} On écrit $\dfrac{f(x)}{x^2} = \dfrac{\ln(1 + x^2)}{x^2}$. Posons $u = x^2$ : quand $x \to 0$, $u \to 0^+$ et par la limite remarquable $\lim_{u \to 0} \frac{\ln(1+u)}{u} = 1$ :
+\[ \boxed{\lim_{x \to 0} \frac{f(x)}{x^2} = 1}. \]
+
+\textbf{3.} $\bullet$ En $+\infty$ : pour $x > 0$, $\left|\frac{\sin x}{x}\right| \le \frac{1}{x} \to 0$, donc par le théorème des gendarmes $\boxed{\lim_{x \to +\infty} h(x) = 0}$.
+
+$\bullet$ En $0$ : limite remarquable, $\boxed{\lim_{x \to 0} \frac{\sin x}{x} = 1}$ (ce qui justifie le prolongement par continuité $h(0) = 1$).
+
+\textbf{4.} On regroupe les logarithmes :
+\[ f(x) - 2\ln x = \ln(x^2 + 1) - \ln(x^2) = \ln\left(\frac{x^2 + 1}{x^2}\right) = \ln\left(1 + \frac{1}{x^2}\right). \]
+Quand $x \to +\infty$, $1 + \frac{1}{x^2} \to 1$ et $\ln 1 = 0$, donc $\boxed{\lim_{x \to +\infty} \left[f(x) - 2\ln x\right] = 0}$.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Théorème des gendarmes et comparaison]
+\textbf{1.} Pour tout $x \neq 0$ : $-1 \le \cos\left(\frac{1}{x}\right) \le 1$. En multipliant par $x^2 \ge 0$ (l'encadrement est conservé) :
+\[ -x^2 \le x^2 \cos\left(\tfrac{1}{x}\right) \le x^2. \]
+Or $\lim_{x \to 0} (-x^2) = \lim_{x \to 0} x^2 = 0$. Par le théorème des gendarmes : $\boxed{\lim_{x \to 0} x^2 \cos\left(\tfrac{1}{x}\right) = 0}$.
+
+\textbf{2.} Pour $x > -1$, $x \neq 0$, on a l'inégalité classique : $\frac{x}{1+x} \le \ln(1+x) \le x$.
+En divisant par $x > 0$ (au voisinage de $0^+$), on obtient :
+\[ \frac{1}{1+x} \le \frac{\ln(1+x)}{x} \le 1. \]
+Les deux bornes tendent vers $1$ quand $x \to 0^+$. Par le théorème des gendarmes :
+\[ \boxed{\lim_{x \to 0^+} \frac{\ln(1+x)}{x} = 1}. \]
+(La limite bilatère existe et vaut $1$ car la fonction est paire au voisinage de $0$ par changement de variable $u=-x$).
+
+\textbf{3.} Pour tout $n \ge 1$ : $-\frac{1}{n} \le \frac{\sin n}{n} \le \frac{1}{n}$. Comme $\frac{1}{n} \to 0$, le théorème des gendarmes donne $\boxed{\lim_{n \to +\infty} u_n = 0}$.
+
+\textbf{4.} Croissances comparées au voisinage de $+\infty$ : l'exponentielle l'emporte sur toute puissance de $x$, qui l'emporte sur le logarithme :
+\[ \boxed{\lim_{x \to +\infty} \frac{x^2}{e^x} = 0} \qquad \text{et} \qquad \boxed{\lim_{x \to +\infty} \frac{\ln x}{x} = 0}. \]
+Concrètement : $e^x$ croît infiniment plus vite que $x^2$, et $x$ croît infiniment plus vite que $\ln x$.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Asymptotes et comportement graphique]
+\textbf{1.} Le numérateur se factorise : $x^2 + 2x - 3 = (x-1)(x+3)$ (racines $1$ et $-3$). Pour $x \neq 1$ :
+\[ f(x) = \frac{(x-1)(x+3)}{x-1} = x + 3. \]
+
+\textbf{2.} $\displaystyle \lim_{x \to 1} f(x) = \lim_{x \to 1} (x+3) = 4$. La limite est \textbf{finie} : la courbe présente un \cle{trou} au point $(1\,;\,4)$, et \emph{pas} d'asymptote verticale. La fonction est prolongeable par continuité en $1$.
+
+\textbf{3.} $f(x) = x + 3$ pour $x \neq 1$, donc :
+\[ \lim_{x \to +\infty} f(x) = +\infty \qquad \text{et} \qquad \lim_{x \to -\infty} f(x) = -\infty. \]
+
+\textbf{4.} La courbe de $f$ coïncide avec la droite d'équation $y = x + 3$ (sauf au point $(1\,;\,4)$). Cette droite est donc à la fois la courbe et son \cle{asymptote oblique} : $f(x) - (x+3) = 0 \to 0$.
+
+\textbf{5.} Tracé : la droite $y = x + 3$, avec un cercle vide au point $(1\,;\,4)$.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+\draw[->,popmuted] (-3.5,0) -- (4.5,0) node[below left]{$x$};
+\draw[->,popmuted] (0,-1) -- (0,6.5) node[below left]{$y$};
+\draw[popblue,thick,domain=-3.2:3.6] plot (\x,{\x+3});
+\draw[popblue,fill=white,thick] (1,4) circle (2.2pt);
+\foreach \x in {-3,-2,-1,1,2,3,4} \draw (\x,0.08) -- (\x,-0.08) node[below,scale=0.8]{\x};
+\foreach \y in {1,...,6} \draw (0.08,\y) -- (-0.08,\y) node[left,scale=0.8]{\y};
+\node[popblue,scale=0.9] at (3.2,5.4) {$y = x+3$};
+\node[poporange,scale=0.85] at (1.7,4.6) {trou $(1;4)$};
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f$ : droite $y = x+3$ privée du point $(1\,;\,4)$.}
+\end{popfigure}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type Probatoire : Calculs de limites et formes indéterminées]
+\textbf{Partie A.}
+
+\textbf{1.} Forme $\frac{\infty}{\infty}$ ; termes dominants :
+\[ \frac{2x^2 - 5x + 1}{x - 3} = \frac{x^2\left(2 - \frac{5}{x} + \frac{1}{x^2}\right)}{x\left(1 - \frac{3}{x}\right)} = x \times \frac{2 - \frac{5}{x} + \frac{1}{x^2}}{1 - \frac{3}{x}}. \]
+Le facteur $x \to +\infty$ et la fraction tend vers $2$, donc $\boxed{\lim_{x \to +\infty} \frac{2x^2 - 5x + 1}{x - 3} = +\infty}$.
+
+\textbf{2.} Forme $\infty - \infty$ ; quantité conjuguée :
+\[ \sqrt{x^2 + 3x} - x = \frac{3x}{\sqrt{x^2 + 3x} + x} = \frac{3x}{x\left(\sqrt{1 + \frac{3}{x}} + 1\right)} = \frac{3}{\sqrt{1 + \frac{3}{x}} + 1} \xrightarrow[x \to +\infty]{} \boxed{\frac{3}{2}}. \]
+
+\textbf{3.} On pose $u = \frac{2}{x}$ ; quand $x \to +\infty$, $u \to 0^+$ :
+\[ x \ln\left(1 + \frac{2}{x}\right) = 2 \times \frac{\ln\left(1 + \frac{2}{x}\right)}{\frac{2}{x}} = 2 \, \frac{\ln(1+u)}{u} \xrightarrow[u \to 0]{} 2 \times 1 = \boxed{2}. \]
+
+\textbf{4.} Forme $\frac{0}{0}$. On utilise la limite remarquable d'ordre 2 (admise) : $\lim_{x \to 0} \frac{e^x - 1 - x}{x^2} = \frac{1}{2}$.
+\[ \boxed{\lim_{x \to 0} \frac{e^x - 1 - x}{x^2} = \frac{1}{2}}. \]
+\emph{Note :} On peut aussi l'obtenir en écrivant $\frac{e^x-1-x}{x^2} = \frac{1}{x}\left(\frac{e^x-1}{x} - 1\right)$ et en utilisant la dérivée de $u \mapsto \frac{e^u-1}{u}$ en $0$, mais la limite remarquable est plus directe.
+
+\textbf{Partie B.} $f(x) = \dfrac{x^2 - 2x}{x + 1}$ sur $]-1\,;\,+\infty[$.
+
+\textbf{1.} $\bullet$ En $-1^+$ : numérateur $\to (-1)^2 - 2(-1) = 3 > 0$ ; dénominateur $x + 1 \to 0^+$. Donc $\boxed{\lim_{x \to -1^+} f(x) = +\infty}$.
+
+$\bullet$ En $+\infty$ : $\frac{x^2 - 2x}{x+1} \sim \frac{x^2}{x} = x$, donc $\boxed{\lim_{x \to +\infty} f(x) = +\infty}$.
+
+\textbf{2.} $\bullet$ \textbf{Asymptote verticale} : la droite $x = -1$ (car la limite en $-1^+$ est infinie).
+
+$\bullet$ \textbf{Pas d'asymptote horizontale} (limite infinie en $+\infty$).
+
+$\bullet$ \textbf{Asymptote oblique} : division euclidienne de $x^2 - 2x$ par $x + 1$ :
+\[ x^2 - 2x = (x+1)(x - 3) + 3 \quad \Longrightarrow \quad f(x) = x - 3 + \frac{3}{x+1}. \]
+Comme $\lim_{x \to +\infty} \left[f(x) - (x-3)\right] = \lim_{x \to +\infty} \frac{3}{x+1} = 0$, la droite $\boxed{y = x - 3}$ est asymptote oblique en $+\infty$. De plus $\frac{3}{x+1} > 0$ sur le domaine : la courbe est \emph{au-dessus} de son asymptote.
+
+\textbf{3.} Dérivée (forme $\frac{u}{v}$) :
+\[ f'(x) = \frac{(2x - 2)(x+1) - (x^2 - 2x)\cdot 1}{(x+1)^2} = \frac{2x^2 + 2x - 2x - 2 - x^2 + 2x}{(x+1)^2} = \frac{x^2 + 2x - 2}{(x+1)^2}. \]
+Le signe de $f'$ est celui de $x^2 + 2x - 2$, de racines $x = -1 \pm \sqrt{3}$. Sur $]-1\,;\,+\infty[$, seule la racine $-1 + \sqrt{3} \approx 0{,}73$ compte : $f' < 0$ sur $]-1\,;\,-1+\sqrt{3}[$ et $f' > 0$ sur $]-1+\sqrt{3}\,;\,+\infty[$. Minimum : $f(-1+\sqrt{3}) = \frac{(-1+\sqrt{3})^2 - 2(-1+\sqrt{3})}{\sqrt{3}} = \frac{4 - 2\sqrt{3} + 2 - 2\sqrt{3}}{\sqrt{3}} = \frac{6 - 4\sqrt{3}}{\sqrt{3}} = 2\sqrt{3} - 4 \approx -0{,}54$.
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $-1$ & & $-1+\sqrt{3}$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $+\infty$ & $\searrow$ & $2\sqrt{3}-4$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{4.} Tracé :
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.55]
+\draw[->,popmuted] (-4.5,0) -- (6.5,0) node[below left]{$x$};
+\draw[->,popmuted] (0,-4.5) -- (0,6.5) node[below left]{$y$};
+\draw[poporange,dashed,thick] (-1,-4.5) -- (-1,6.5) node[above,scale=0.8]{$x=-1$};
+\draw[popgreen,dashed,thick,domain=-4:6] plot (\x,{\x-3}) node[pos=0.9,above,scale=0.8,sloped]{$y=x-3$};
+\draw[popblue,thick,domain=-0.87:6,samples=120] plot (\x,{(\x*\x-2*\x)/(\x+1)});
+\draw[popblue,thick,domain=-4.4:-1.15,samples=60] plot (\x,{(\x*\x-2*\x)/(\x+1)});
+\foreach \x in {-4,-3,-2,-1,1,2,3,4,5,6} \draw (\x,0.08) -- (\x,-0.08) node[below,scale=0.7]{\x};
+\foreach \y in {-4,-3,-2,-1,1,2,3,4,5,6} \draw (0.08,\y) -- (-0.08,\y) node[left,scale=0.7]{\y};
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f$, asymptote verticale $x=-1$ et asymptote oblique $y = x-3$.}
+\end{popfigure}
+
+\textbf{Barème indicatif (sur 10) :} Partie A : 4 pts (1 pt par limite, justification exigée). Partie B : 6 pts (limites 1 pt ; asymptotes 1,5 pt ; dérivée 1,5 pt ; tableau 1 pt ; tracé 1 pt).
+
+\textbf{Points de vigilance :} citer la forme indéterminée avant de la lever ; pour l'asymptote oblique, écrire explicitement $\lim [f(x) - (ax+b)] = 0$ ; ne pas oublier que le domaine est $]-1\,;\,+\infty[$ (seule la limite en $-1^+$ est demandée).
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type Probatoire : Modélisation pharmacocinétique]
+\textbf{1.} $\bullet$ $\lim_{t \to 0^+} C(t) = \frac{0}{1} = \boxed{0}$ : au moment de l'administration, le médicament n'est pas encore passé dans le sang.
+
+$\bullet$ En $+\infty$ : $C(t) = \frac{5t}{t^2+1} \sim \frac{5t}{t^2} = \frac{5}{t}$, donc $\boxed{\lim_{t \to +\infty} C(t) = 0}$ : à long terme, le médicament est entièrement éliminé par l'organisme.
+
+\textbf{2.} Dérivée (forme $\frac{u}{v}$) pour $t \ge 0$ :
+\[ C'(t) = \frac{5(t^2+1) - 5t \cdot 2t}{(t^2+1)^2} = \frac{5 - 5t^2}{(t^2+1)^2} = \frac{5(1 - t)(1 + t)}{(t^2+1)^2}. \]
+Sur $[0\,;\,+\infty[$, $C'(t)$ est du signe de $1 - t$ : $C' > 0$ sur $[0\,;\,1[$, $C'(1) = 0$, $C' < 0$ sur $]1\,;\,+\infty[$.
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$t$ & $0$ & & $1$ & & $+\infty$ \\ \hline
+$C'(t)$ & & $+$ & $0$ & $-$ & \\ \hline
+$C$ & $0$ & $\nearrow$ & $\frac{5}{2}$ & $\searrow$ & $0$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{3.} D'après le tableau, $C$ admet un maximum en $t_{\max} = \boxed{1 \text{ heure}}$, de valeur
+\[ C_{\max} = C(1) = \frac{5 \times 1}{1 + 1} = \boxed{\frac{5}{2} = 2{,}5 \text{ mg/L}}. \]
+
+\textbf{4.} On résout $C(t) < 0{,}5$ pour $t \ge 0$ :
+\[ \frac{5t}{t^2+1} < \frac{1}{2} \iff 10t < t^2 + 1 \iff t^2 - 10t + 1 > 0. \]
+Le trinôme $t^2 - 10t + 1$ a pour discriminant $\Delta = 100 - 4 = 96$, d'où les racines
+\[ t_1 = \frac{10 - \sqrt{96}}{2} = 5 - 2\sqrt{6} \approx 0{,}10, \qquad t_2 = 5 + 2\sqrt{6} \approx 9{,}90. \]
+Le trinôme est positif à l'extérieur des racines ; comme on cherche l'instant à partir duquel la concentration \emph{retombe} sous le seuil (phase d'élimination), on retient :
+\[ \boxed{t > 5 + 2\sqrt{6} \approx 9{,}9 \text{ h}}. \]
+La concentration redevient inférieure au seuil d'efficacité environ \textbf{9 h 54 min} après l'administration.
+
+\textbf{Barème indicatif (sur 10) :} limites et interprétation 2,5 pts ; dérivée 2 pts ; tableau 1,5 pt ; maximum 1,5 pt ; inéquation 2,5 pts.
+
+\textbf{Points de vigilance :} l'interprétation physique des limites est exigée (elle vaut des points) ; pour l'inéquation, justifier le choix de la racine $t_2$ (la racine $t_1$ correspond à la montée initiale) ; bien préciser les unités (heures, mg/L).
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Type Probatoire : Limites remarquables, gendarmes et paramètre]
+\textbf{Partie A.}
+
+\textbf{1.} Pour $x \neq 0$ : $-1 \le \cos\left(\frac{1}{x}\right) \le 1$, donc $-x^2 \le x^2\cos\left(\frac{1}{x}\right) \le x^2$. Les deux bornes tendent vers $0$, donc par le théorème des gendarmes : $\boxed{\lim_{x \to 0} x^2 \cos\left(\tfrac{1}{x}\right) = 0}$.
+
+\textbf{2.} Pour $x > 0$ : $-\frac{1}{x} \le \frac{\sin x}{x} \le \frac{1}{x}$, et $\frac{1}{x} \to 0$. Par gendarmes : $\boxed{\lim_{x \to +\infty} \frac{\sin x}{x} = 0}$.
+
+\textbf{3.} Forme $\frac{0}{0}$. On fait apparaître deux limites remarquables :
+\[ \frac{e^{3x} - 1}{\sin(2x)} = \frac{e^{3x} - 1}{3x} \times \frac{2x}{\sin(2x)} \times \frac{3}{2} \xrightarrow[x \to 0]{} 1 \times 1 \times \frac{3}{2} = \boxed{\frac{3}{2}}. \]
+
+\textbf{4.} Forme $\frac{0}{0}$. On utilise les limites remarquables $\lim_{u \to 0} \frac{\ln(1+u)}{u} = 1$ et $\lim_{u \to 0} \frac{\sin u}{u} = 1$ :
+\[ \frac{\ln(1+4x) - \sin(2x)}{x^2} = \frac{\ln(1+4x)}{x^2} - \frac{\sin(2x)}{x^2} = 4\,\frac{\ln(1+4x)}{4x}\cdot\frac{1}{x} - 2\,\frac{\sin(2x)}{2x}\cdot\frac{1}{x}. \]
+Au voisinage de $0$, $\frac{\ln(1+4x)}{4x} \to 1$ et $\frac{\sin(2x)}{2x} \to 1$, donc l'expression se comporte comme $\frac{4}{x} - \frac{2}{x} = \frac{2}{x}$.
+Le terme $\frac{2}{x}$ n'a pas de limite finie en $0$ : $\lim_{x \to 0^+} = +\infty$ et $\lim_{x \to 0^-} = -\infty$. La fonction n'admet donc \textbf{pas de limite en $0$} (les limites à droite et à gauche sont infinies et de signes opposés).
+
+\textbf{Partie B.} $f_a(x) = \dfrac{x^2 + ax + 1}{x - 1}$.
+
+\textbf{1.} En $x = 1$, le dénominateur s'annule. Pour que la limite soit finie, il faut que le numérateur s'annule aussi en $1$ (sinon la limite serait infinie) :
+\[ 1 + a + 1 = 0 \iff \boxed{a = -2}. \]
+
+\textbf{2.} Pour $a = -2$ : $x^2 - 2x + 1 = (x-1)^2$, donc pour $x \neq 1$ :
+\[ f_{-2}(x) = \frac{(x-1)^2}{x-1} = x - 1 \quad \Longrightarrow \quad \boxed{\lim_{x \to 1} f_{-2}(x) = 0}. \]
+
+\textbf{3.} Interprétation graphique :
+\begin{itemize}
+    \item Pour $a = -2$ : la limite en $1$ est finie, la courbe (droite $y = x - 1$) présente un \cle{trou} au point $(1\,;\,0)$ ; la fonction est prolongeable par continuité en $1$.
+    \item Pour $a \neq -2$ : le numérateur tend vers $2 + a \neq 0$ et le dénominateur vers $0$ : la limite est infinie (avec des signes dépendant du côté), la droite $x = 1$ est une \cle{asymptote verticale}.
+\end{itemize}
+
+\textbf{Barème indicatif (sur 10) :} Partie A : 5 pts (1 pt pour chacune des questions 1 et 2 ; 1,5 pt pour les questions 3 et 4). Partie B : 5 pts (condition sur $a$ : 2 pts ; calcul de la limite : 1,5 pt ; interprétation : 1,5 pt).
+
+\textbf{Points de vigilance :} pour le théorème des gendarmes, rédiger l'encadrement \emph{avant} de conclure et vérifier que les deux « gendarmes » ont la même limite ; pour la question A.4, ne pas conclure hâtivement à une limite finie : contrôler le terme en $\frac{1}{x}$ ; pour la Partie B, la condition nécessaire « numérateur nul en $1$ » doit être clairement justifiée (sinon limite infinie).
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small},
+root concept/.append style={concept color=popdark, font=\bfseries},
+level 1/.append style={level distance=3.4cm, sibling angle=60},
+level 1 concept/.append style={font=\footnotesize}]
+\node[root concept]{Limites}
+child[concept color=popblue]{node{Définitions : finie, $+\infty$, $-\infty$}}
+child[concept color=popgreen]{node{Fonctions usuelles : $x^n$, $\sqrt{x}$, $\frac{1}{x}$}}
+child[concept color=poporange]{node{Opérations : somme, produit, quotient}}
+child[concept color=poppink]{node{Formes indéterminées}}
+child[concept color=popgold]{node{Comparaison et encadrement}}
+child[concept color=poppurple]{node{Applications techniques}};
+\end{tikzpicture}
+\end{center}
+\legende{Carte mentale de la leçon : les limites}
+\end{popfigure}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\textbf{Définitions clés}
+\begin{itemize}
+\item $\lim\limits_{x\to a} f(x) = \ell$ (avec $\ell$ un nombre réel) : $f(x)$ devient aussi proche de $\ell$ qu'on veut quand $x$ se rapproche de $a$.
+\item $\lim\limits_{x\to a} f(x) = +\infty$ : $f(x)$ devient aussi grand qu'on veut (limite infinie).
+\item Limite à gauche ($x\to a^-$, c'est-à-dire $x<a$) et limite à droite ($x\to a^+$, c'est-à-dire $x>a$) : essentielles pour $\dfrac{1}{x}$ et pour les fonctions définies par morceaux.
+\end{itemize}
+
+\textbf{Limites des fonctions usuelles (à connaître par cœur)}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\rowcolor{popblueL} Fonction & En $+\infty$ & En $0$ & En $a$ \\
+\hline
+$x^n$ ($n\geq 1$) & $+\infty$ & $0$ & $a^n$ \\
+\hline
+$\sqrt{x}$ & $+\infty$ & $0$ & $\sqrt{a}$ ($a\geq 0$) \\
+\hline
+$\dfrac{1}{x}$ & $0$ & $+\infty$ si $x\to 0^+$ ; $-\infty$ si $x\to 0^-$ & $\dfrac{1}{a}$ ($a\neq 0$) \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{Règles de calcul (hors indétermination)}
+\begin{itemize}
+\item Somme : $\ell+\ell'$ ; $+\infty$ l'emporte, sauf dans le cas $(+\infty)+(-\infty)$ qui est indéterminé.
+\item Produit : règle des signes comme pour les nombres ; le cas $0\times\infty$ est indéterminé.
+\item Quotient : $\dfrac{\ell}{\ell'}$ si $\ell'\neq 0$ ; $\dfrac{\ell}{0}$ avec $\ell\neq 0$ donne une limite infinie (dont le signe dépend du signe de $\ell$ et de celui du dénominateur) ; $\dfrac{0}{0}$ et $\dfrac{\infty}{\infty}$ sont indéterminés.
+\item Polynôme ou fraction rationnelle en $\pm\infty$ : la limite est celle du \cle{terme de plus haut degré} (du numérateur et du dénominateur pour une fraction).
+\end{itemize}
+
+\textbf{Méthodes express pour lever une indétermination}
+\begin{enumerate}
+\item $\dfrac{0}{0}$ en un point $a$ : \textbf{factoriser} numérateur et dénominateur par $(x-a)$, puis simplifier.
+\item $\dfrac{\infty}{\infty}$ ou $+\infty-\infty$ à l'infini : \textbf{factoriser par le terme dominant} (terme de plus haut degré).
+\item Présence de racines carrées : multiplier numérateur et dénominateur par la \textbf{quantité conjuguée}.
+\end{enumerate}
+
+\textbf{Théorèmes de comparaison}
+\begin{itemize}
+\item Si $f(x)\geq g(x)$ au voisinage de $a$ et si $\lim\limits_{x\to a} g(x) = +\infty$, alors $\lim\limits_{x\to a} f(x) = +\infty$.
+\item Si $|f(x)-\ell|\leq g(x)$ au voisinage de $a$ et si $\lim\limits_{x\to a} g(x) = 0$, alors $\lim\limits_{x\to a} f(x) = \ell$ (théorème d'encadrement, dit « des gendarmes »).
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges fréquents au Probatoire]
+\begin{itemize}
+\item Ne jamais écrire $\dfrac{1}{0}=+\infty$ sans préciser : $\dfrac{1}{x}\to +\infty$ quand $x\to 0^+$, mais $\dfrac{1}{x}\to -\infty$ quand $x\to 0^-$.
+\item « Indéterminé » ne signifie pas « pas de limite » : cela signifie qu'il faut \emph{transformer l'écriture} de la fonction pour conclure.
+\item Pour $\dfrac{\ell}{0}$ avec $\ell\neq 0$, toujours étudier le \textbf{signe du dénominateur} (à gauche et à droite) avant de conclure $+\infty$ ou $-\infty$.
+\item En $-\infty$, attention au signe : $x^2\to +\infty$ mais $x^3\to -\infty$.
+\end{itemize}
+\end{attention}
+
+\begin{exemplebox}[Lecture rapide]
+$\lim\limits_{x\to +\infty}(3x^2-5x+1)=\lim\limits_{x\to +\infty}3x^2=+\infty$ (terme de plus haut degré).
+
+$\lim\limits_{x\to 2}\dfrac{x^2-4}{x-2}=\lim\limits_{x\to 2}\dfrac{(x-2)(x+2)}{x-2}=\lim\limits_{x\to 2}(x+2)=4$ (factorisation par $(x-2)$).
+\end{exemplebox}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+\item[$\square$] Je sais donner les limites de $x^n$, $\sqrt{x}$ et $\dfrac{1}{x}$ en $0$ et en $\pm\infty$.
+\item[$\square$] Je distingue limite finie, limite infinie, limite à gauche et limite à droite.
+\item[$\square$] Je reconnais immédiatement les 4 formes indéterminées : $+\infty-\infty$, $0\times\infty$, $\dfrac{0}{0}$, $\dfrac{\infty}{\infty}$.
+\item[$\square$] Je sais qu'en $\pm\infty$, un polynôme se comporte comme son terme de plus haut degré.
+\item[$\square$] Je sais factoriser par $(x-a)$ pour lever la forme $\dfrac{0}{0}$.
+\item[$\square$] Je sais factoriser par le terme dominant pour lever la forme $\dfrac{\infty}{\infty}$.
+\item[$\square$] Je pense à la quantité conjuguée quand il y a des racines carrées.
+\item[$\square$] Je vérifie le signe du dénominateur (à gauche / à droite) avant de conclure $+\infty$ ou $-\infty$.
+\item[$\square$] Je n'écris jamais $\dfrac{1}{0}=+\infty$ sans préciser $0^+$ ou $0^-$.
+\item[$\square$] Je rédige ma réponse : forme indéterminée identifiée, méthode annoncée, conclusion claire.
+\item[$\square$] Je sais relier une limite à une situation concrète (coût moyen, intensité, vitesse).
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

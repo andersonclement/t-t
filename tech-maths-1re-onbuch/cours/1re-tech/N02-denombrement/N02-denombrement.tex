@@ -1,0 +1,3029 @@
+% Dénombrement — Mathématiques 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N02-denombrement.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Première technique}
+\newcommand{\DOCLECON}{N02}
+\newcommand{\DOCTITRE}{Dénombrement}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Dénombrement}{Mathématiques}{1re Tech}{Mathématiques – classe de Première technique}{N02}{11 séances (fiche de progression harmonisée)}{Ce cours introduit les outils fondamentaux du dénombrement : produit cartésien, p‑listes, permutations, arrangements et combinaisons. Il permet de résoudre des problèmes de comptage concrets en structurant le raisonnement mathématique.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir le produit cartésien de deux ensembles finis et en calculer le cardinal.
+\item Je sais identifier une p‑liste (p‑uplet) et distinguer les cas avec ou sans répétition.
+\item Je sais démontrer et appliquer la formule du nombre de permutations d'un ensemble à n éléments (n!).
+\item Je sais démontrer et utiliser la formule des arrangements d'ordre p parmi n éléments : A(n,p)=n!/(n-p)!.
+\item Je sais démontrer et utiliser la formule des combinaisons de p éléments parmi n : C(n,p)=n!/(p!(n-p)!).
+\item Je sais passer d'un arrangement à une combinaison en divisant par p! et expliquer le lien.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item 1. Produit cartésien et p‑listes
+\item 2. Permutations d'un ensemble à n éléments
+\item 3. Arrangements d'ordre p parmi n éléments
+\item 4. Combinaisons de p éléments parmi n
+\item 5. Relations, propriétés et cas particuliers
+\item 6. Applications concrètes et résolution de problèmes
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir le produit cartésien de deux ensembles finis et en calculer le cardinal.
+\item Je sais identifier une p‑liste (p‑uplet) et distinguer les cas avec ou sans répétition.
+\item Je sais démontrer et appliquer la formule du nombre de permutations d'un ensemble à n éléments (n!).
+\item Je sais démontrer et utiliser la formule des arrangements d'ordre p parmi n éléments : A(n,p)=n!/(n-p)!.
+\item Je sais démontrer et utiliser la formule des combinaisons de p éléments parmi n : C(n,p)=n!/(p!(n-p)!).
+\item Je sais passer d'un arrangement à une combinaison en divisant par p! et expliquer le lien.
+\item Je sais modéliser une situation concrète (emploi du temps, tirage au sort, code secret) avec le bon outil de dénombrement.
+\item Je sais rédiger une démonstration claire et justifier chaque étape de mon raisonnement.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion d'ensemble fini et de cardinal (4ème).
+\item Factorielle n! et propriétés de base (début d'année).
+\item Principes de multiplication et d'addition pour le comptage (4ème).
+\item Notation ensembliste de base (⊂, ∪, ∩, ×).
+\item Raisonnement par récurrence simple (facultatif, utile pour les démonstrations).
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Produit cartésien et p‑listes}
+
+Au lycée de Bafoussam, l'administration doit composer les emplois du temps de 5 classes en choisissant 3 créneaux horaires parmi 8 disponibles, tout en évitant les conflits. Combien de grilles différentes peut-on obtenir ? Cette situation quotidienne illustre la nécessité de compter sans énumérer. Le dénombrement, que nous abordons dans cette leçon, fournit les outils mathématiques pour répondre à ce type de question : compter le nombre d'éléments d'un ensemble fini sans avoir à les lister un par un. Nous commençons par la notion fondamentale de produit cartésien et celle de p‑liste.
+
+\courssub{Produit cartésien de deux ensembles finis}
+
+\begin{definition}[Produit cartésien de deux ensembles]
+Soient $E$ et $F$ deux ensembles. Le \cle{produit cartésien} de $E$ par $F$, noté $E \times F$, est l'ensemble des couples ordonnés $(x,y)$ tels que $x \in E$ et $y \in F$ :
+\[
+E \times F = \{(x,y) \mid x \in E \text{ et } y \in F\}.
+\]
+L'ordre dans le couple est essentiel : $(x,y) \neq (y,x)$ sauf si $x=y$.
+\end{definition}
+
+\begin{exemplebox}[Exemple concret : grille de couples]
+Soient $E = \{a, b\}$ et $F = \{1, 2, 3\}$.
+Le produit cartésien $E \times F$ contient les 6 couples suivants :
+\[
+E \times F = \{(a,1), (a,2), (a,3), (b,1), (b,2), (b,3)\}.
+\]
+On peut visualiser cet ensemble sous forme de grille ou de tableau à double entrée.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+% Grille
+\draw[popline, thick] (0,0) grid (3,2);
+% Étiquettes lignes (E)
+\node[left=0.3cm] at (0,1.5) {$a$};
+\node[left=0.3cm] at (0,0.5) {$b$};
+% Étiquettes colonnes (F)
+\node[above=0.3cm] at (0.5,2) {$1$};
+\node[above=0.3cm] at (1.5,2) {$2$};
+\node[above=0.3cm] at (2.5,2) {$3$};
+% Titres axes
+\node[below=0.6cm] at (1.5,-0.3) {$E = \{a,b\}$};
+\node[left=1.2cm, rotate=90] at (-0.5,1) {$F = \{1,2,3\}$};
+% Remplissage couples
+\node at (0.5,1.5) {$(a,1)$};
+\node at (1.5,1.5) {$(a,2)$};
+\node at (2.5,1.5) {$(a,3)$};
+\node at (0.5,0.5) {$(b,1)$};
+\node at (1.5,0.5) {$(b,2)$};
+\node at (2.5,0.5) {$(b,3)$};
+% Lignes de séparation visuelles
+\draw[popblue, thick] (0,2) -- (3,2);
+\draw[popblue, thick] (0,0) -- (3,0);
+\draw[popblue, thick] (0,0) -- (0,2);
+\draw[popblue, thick] (3,0) -- (3,2);
+\end{tikzpicture}
+\legende{Représentation graphique du produit cartésien $E \times F$ pour $E=\{a,b\}$, $F=\{1,2,3\}$. Chaque case correspond à un couple ordonné.}
+\end{popfigure}
+
+\begin{propriete}[Cardinal du produit cartésien de deux ensembles finis]
+Si $E$ et $F$ sont deux ensembles finis, alors $E \times F$ est fini et son cardinal est le produit des cardinaux :
+\[
+|E \times F| = |E| \times |F|.
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : Principe de multiplication]
+\emph{Objectif :} Comprendre pourquoi on multiplie les cardinaux.
+\begin{enumerate}
+    \item Pour former un couple $(x,y) \in E \times F$, on procède en deux étapes successives :
+    \begin{itemize}
+        \item \textbf{Étape 1 :} Choisir le premier élément $x$ dans $E$. Il y a $|E|$ façons de le faire.
+        \item \textbf{Étape 2 :} Choisir le second élément $y$ dans $F$. Il y a $|F|$ façons de le faire.
+    \end{itemize}
+    \item Le choix de $x$ n'influence pas le nombre de choix possibles pour $y$ (indépendance des choix).
+    \item D'après le \cle{principe de multiplication} (si un choix peut se faire de $m$ façons et qu'un second choix indépendant peut se faire de $n$ façons, la suite des deux choix peut se faire de $m \times n$ façons), le nombre total de couples est $|E| \times |F|$.
+\end{enumerate}
+\emph{Conclusion :} $|E \times F| = |E| \cdot |F|$.
+\end{experience}
+
+\courssub{Généralisation à $n$ ensembles et p‑listes}
+
+La notion de produit cartésien se généralise naturellement à un nombre quelconque d'ensembles.
+
+\begin{definition}[Produit cartésien de $n$ ensembles]
+Soient $E_1, E_2, \dots, E_n$ des ensembles ($n \in \mathbb{N}^*$). Le produit cartésien $E_1 \times E_2 \times \dots \times E_n$ est l'ensemble des $n$-uplets $(x_1, x_2, \dots, x_n)$ tels que $x_i \in E_i$ pour tout $i \in \{1,\dots,n\}$.
+\end{definition}
+
+\begin{propriete}[Cardinal du produit cartésien de $n$ ensembles finis]
+Si $E_1, E_2, \dots, E_n$ sont des ensembles finis, alors :
+\[
+|E_1 \times E_2 \times \dots \times E_n| = |E_1| \times |E_2| \times \dots \times |E_n| = \prod_{i=1}^{n} |E_i|.
+\]
+\end{propriete}
+
+\begin{definition}[p‑liste (ou p‑uplet) d'éléments d'un ensemble $E$]
+Soit $E$ un ensemble et $p \in \mathbb{N}^*$. Une \cle{p‑liste} (ou \cle{p‑uplet}) d'éléments de $E$ est un élément du produit cartésien $E^p = \underbrace{E \times E \times \dots \times E}_{p \text{ fois}}$.
+C'est une suite ordonnée de longueur $p$ : $(x_1, x_2, \dots, x_p)$ avec $x_i \in E$.
+\end{definition}
+
+\begin{aretenir}[Distinction cruciale : avec ou sans répétition]
+On distingue deux cas majeurs pour former des p‑listes à partir d'un ensemble $E$ de cardinal $n$ :
+\begin{itemize}
+    \item \textbf{p‑listes \emph{avec} répétition :} Les éléments $x_i$ peuvent être égaux entre eux. On choisit $p$ fois dans $E$ en remettant l'élément à chaque fois. Nombre : $n^p = |E|^p$.
+    \item \textbf{p‑listes \emph{sans} répétition :} Les éléments $x_i$ sont tous distincts deux à deux. C'est un \cle{arrangement} (voir section 3). Nombre : $A_n^p = n(n-1)\dots(n-p+1)$.
+\end{itemize}
+\end{aretenir}
+
+\begin{methode}[Compter les p‑listes avec répétition]
+Pour compter le nombre de p‑listes avec répétition formées à partir d'un ensemble $E$ à $n$ éléments :
+\begin{enumerate}
+    \item Identifier $n = |E|$ (nombre de choix possibles pour chaque position).
+    \item Identifier $p$ (longueur de la liste / nombre de positions).
+    \item Appliquer la formule : $\boxed{N = n^p}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Codes PIN à 4 chiffres]
+Un code PIN est une 4‑liste de chiffres choisis dans $E = \{0,1,2,3,4,5,6,7,8,9\}$.
+\begin{itemize}
+    \item $n = |E| = 10$.
+    \item $p = 4$ (4 positions).
+    \item Les chiffres peuvent se répéter (ex: 1122, 0000).
+    \item Nombre de codes possibles : $N = 10^4 = 10\,000$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{exemplebox}[Mots de 3 lettres sur l'alphabet $\{A,B,C\}$]
+Combien de « mots » de 3 lettres peut-on former avec les lettres A, B, C si on autorise les répétitions ?
+\begin{itemize}
+    \item $E = \{A, B, C\}$, donc $n = 3$.
+    \item $p = 3$.
+    \item Liste avec répétition : $N = 3^3 = 27$.
+    \item Exemples : AAA, AAB, ABA, ABB, ABC, ACB, ...
+\end{itemize}
+\end{exemplebox}
+
+\begin{exoresolu}[Codes d'accès pour un chantier]
+Sur un chantier, les badges d'accès sont codés par une suite de 2 lettres majuscules (A à Z) suivie de 3 chiffres (0 à 9).
+\begin{enumerate}
+    \item Combien de badges différents peut-on fabriquer ?
+    \item Si on impose que les deux lettres soient distinctes et les trois chiffres distincts, quel est le nouveau nombre de badges ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+    \item \textbf{Sans contrainte de distinction (avec répétition).}
+    On forme une 5‑liste : (Lettre, Lettre, Chiffre, Chiffre, Chiffre).
+    \begin{itemize}
+        \item Choix des 2 lettres : $26 \times 26 = 26^2$ (26 lettres, répétition autorisée).
+        \item Choix des 3 chiffres : $10 \times 10 \times 10 = 10^3$ (10 chiffres, répétition autorisée).
+        \item Par principe de multiplication : $N_1 = 26^2 \times 10^3 = 676 \times 1000 = 676\,000$.
+    \end{itemize}
+    \item \textbf{Avec contrainte de distinction (sans répétition pour les lettres et pour les chiffres).}
+    \begin{itemize}
+        \item Lettres distinctes : arrangement de 2 parmi 26 : $A_{26}^2 = 26 \times 25 = 650$.
+        \item Chiffres distincts : arrangement de 3 parmi 10 : $A_{10}^3 = 10 \times 9 \times 8 = 720$.
+        \item Total : $N_2 = 650 \times 720 = 468\,000$.
+    \end{itemize}
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Arbre de décision et visualisation}
+
+La construction d'une p‑liste (surtout sans répétition) se visualise efficacement par un \cle{arbre de décision} (ou arbre de probabilité sans les probabilités). Chaque niveau correspond à une position dans la liste, chaque branche à un choix possible.
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    level distance=1.8cm,
+    sibling distance=2.5cm,
+    edge from parent/.style={draw=popdark, thick},
+    every node/.style={draw=popblue, thick, rounded corners, fill=popblueL, minimum width=1.2cm, minimum height=0.7cm, font=\small},
+    level 1/.style={sibling distance=3.5cm},
+    level 2/.style={sibling distance=1.5cm},
+    level 3/.style={sibling distance=0.8cm}
+]
+\node {Début}
+child { node {$x$}
+    child { node {$y$}
+        child { node {$z$} edge from parent node[left,font=\tiny] {$z$} }
+        edge from parent node[left,font=\tiny] {$y$}
+    }
+    child { node {$z$}
+        child { node {$y$} edge from parent node[right,font=\tiny] {$y$} }
+        edge from parent node[right,font=\tiny] {$z$}
+    }
+    edge from parent node[left,font=\small] {$x$}
+}
+child { node {$y$}
+    child { node {$x$}
+        child { node {$z$} edge from parent node[left,font=\tiny] {$z$} }
+        edge from parent node[left,font=\tiny] {$x$}
+    }
+    child { node {$z$}
+        child { node {$x$} edge from parent node[right,font=\tiny] {$x$} }
+        edge from parent node[right,font=\tiny] {$z$}
+    }
+    edge from parent node[left=0.2cm,font=\small] {$y$}
+}
+child { node {$z$}
+    child { node {$x$}
+        child { node {$y$} edge from parent node[left,font=\tiny] {$y$} }
+        edge from parent node[left,font=\tiny] {$x$}
+    }
+    child { node {$y$}
+        child { node {$x$} edge from parent node[right,font=\tiny] {$x$} }
+        edge from parent node[right,font=\tiny] {$y$}
+    }
+    edge from parent node[right,font=\small] {$z$}
+};
+% Légendes des niveaux
+\node[draw=none, fill=none, font=\small\bfseries, text=popdark] at (-5.5, 0) {Niveau 1 :};
+\node[draw=none, fill=none, font=\small\bfseries, text=popdark] at (-5.5, -1.8) {Niveau 2 :};
+\node[draw=none, fill=none, font=\small\bfseries, text=popdark] at (-5.5, -3.6) {Niveau 3 :};
+\node[draw=none, fill=none, font=\small, text=popmuted] at (5.5, -3.6) {Feuilles = 3-listes sans répétition};
+\end{tikzpicture}
+\legende{Arbre de décision pour la construction des 3‑listes sans répétition à partir de $E=\{x,y,z\}$. Il y a $3 \times 2 \times 1 = 6$ feuilles (arrangements $A_3^3 = 3! = 6$).}
+\end{popfigure}
+
+\begin{attention}[Pièges fréquents à éviter]
+\begin{itemize}
+    \item \textbf{Confondre p‑liste et sous-ensemble :} Une p‑liste $(x_1,\dots,x_p)$ est \emph{ordonnée} : $(a,b) \neq (b,a)$. Un sous-ensemble à $p$ éléments (combinaison) n'est \emph{pas ordonné} : $\{a,b\} = \{b,a\}$. Voir sections 3 et 4.
+    \item \textbf{Oublier la condition de répétition :} La formule $n^p$ ne s'applique \emph{que} si la répétition est autorisée. Si l'énoncé dit « éléments distincts » ou « sans répétition », c'est un arrangement ($A_n^p$), pas $n^p$.
+    \item \textbf{Ne pas vérifier l'indépendance des choix :} Le principe de multiplication (et donc $|E \times F| = |E||F|$) ne s'applique que si le nombre de choix pour la 2ème position ne dépend pas du choix fait à la 1ère position. Si une contrainte lie les choix (ex: « le second chiffre doit être supérieur au premier »), on ne peut pas multiplier directement les cardinaux initiaux ; il faut raisonner par cas ou utiliser d'autres outils.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Le produit cartésien en informatique et bases de données]
+La notion de produit cartésien est au cœur des \emph{bases de données relationnelles} (SQL). Une table est un ensemble de n-uplets (lignes). L'opération \texttt{CROSS JOIN} entre deux tables réalise exactement leur produit cartésien. Si une table \texttt{Employes} a 50 lignes et une table \texttt{Projets} a 10 lignes, leur produit cartésien a $50 \times 10 = 500$ lignes (toutes les affectations possibles employé-projet). Le dénombrement permet donc de prédire la taille des résultats de requêtes avant de les exécuter, ce qui est crucial pour l'optimisation des performances sur les gros chantiers de données.
+\end{savaistu}
+
+\begin{exercice}[Entraînement : Produit cartésien et p‑listes]
+\begin{enumerate}
+    \item Soit $E = \{1,2\}$ et $F = \{a,b,c\}$. Écrire explicitement $E \times F$ et $F \times E$. Sont-ils égaux ? Donner leurs cardinaux.
+    \item Un restaurant propose 4 entrées, 6 plats principaux et 3 desserts. Combien de menus « Entrée + Plat + Dessert » différents un client peut-il composer ?
+    \item Un mot de passe doit contenir exactement 6 caractères. Chaque caractère est une lettre minuscule (26 possibilités) ou un chiffre (10 possibilités).
+    \begin{enumerate}
+        \item Combien de mots de passe possibles si les répétitions sont autorisées ?
+        \item Combien si le mot de passe doit commencer par une lettre et finir par un chiffre (répétitions autorisées) ?
+    \end{enumerate}
+    \item On forme des 4‑listes avec les éléments de $E = \{0, 1, 2, 3, 4\}$.
+    \begin{enumerate}
+        \item Combien de 4‑listes au total (avec répétition) ?
+        \item Combien de 4‑listes sans répétition ?
+        \item Combien de 4‑listes avec répétition dont le premier élément est 0 ?
+    \end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Produit cartésien et p‑listes]
+\begin{enumerate}
+    \item $E \times F = \{(1,a),(1,b),(1,c),(2,a),(2,b),(2,c)\}$, $|E \times F| = 6$.
+    $F \times E = \{(a,1),(a,2),(b,1),(b,2),(c,1),(c,2)\}$, $|F \times E| = 6$.
+    $E \times F \neq F \times E$ car les couples sont de nature différente (entier, lettre) vs (lettre, entier).
+    \item Principe de multiplication : $4 \times 6 \times 3 = 72$ menus.
+    \item Alphabet total : $26 + 10 = 36$ symboles.
+    \begin{enumerate}
+        \item $36^6 = 2\,176\,782\,336$.
+        \item 1ère position : 26 choix (lettres). Dernière position : 10 choix (chiffres). 4 positions du milieu : 36 choix chacune.
+        $N = 26 \times 36^4 \times 10 = 26 \times 1\,679\,616 \times 10 = 436\,699\,160$.
+    \end{enumerate}
+    \item $n=5, p=4$.
+    \begin{enumerate}
+        \item Avec répétition : $5^4 = 625$.
+        \item Sans répétition : $A_5^4 = 5 \times 4 \times 3 \times 2 = 120$.
+        \item Premier élément fixé à 0 (1 choix). 3 positions restantes : $5^3 = 125$.
+    \end{enumerate}
+\end{enumerate}
+\end{corrige}
+
+\coursec{Permutations d'un ensemble à n éléments}
+
+Dans la section précédente, nous avons compté les \cle{p-listes} : des listes ordonnées de $p$ éléments où les répétitions étaient autorisées, comme les codes à 4 chiffres d'un cadenas d'atelier. Nous nous intéressons maintenant à un cas particulier fondamental : que se passe-t-il lorsque l'on range \emph{tous} les éléments d'un ensemble, chacun une seule fois, dans un certain ordre ? C'est exactement la situation d'un contremaître qui doit fixer l'ordre de passage de ses ouvriers sur une machine, ou d'un professeur qui établit l'ordre de passage des candidats à un oral. Cette situation porte un nom : la \cle{permutation}.
+
+\courssub{Définition et intuition}
+
+\begin{definition}[Permutation d'un ensemble fini]
+Soit $E$ un ensemble fini à $n$ éléments. Une \cle{permutation} de $E$ est une \textbf{bijection de $E$ dans lui-même}.
+
+De façon équivalente, une permutation de $E$ est une \textbf{$n$-liste sans répétition} contenant \textbf{tous} les éléments de $E$ : c'est un rangement des $n$ éléments dans un certain ordre.
+\end{definition}
+
+\begin{exemplebox}[Permutations de $\{1\,;\,2\,;\,3\}$]
+Prenons $E = \{1\,;\,2\,;\,3\}$. Les permutations de $E$ sont les rangements possibles de ces trois éléments :
+\[ (1,2,3)\;;\quad (1,3,2)\;;\quad (2,1,3)\;;\quad (2,3,1)\;;\quad (3,1,2)\;;\quad (3,2,1). \]
+On en compte \textbf{6}. Remarquons que chaque élément apparaît exactement une fois dans chaque liste : c'est bien une liste \emph{sans répétition} qui \emph{épuise} tous les éléments.
+\end{exemplebox}
+
+L'arbre ci-dessous permet de visualiser la construction de ces 6 permutations : à chaque étage, on choisit l'élément suivant parmi ceux qui ne sont pas encore placés.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[grow=right, level distance=2.6cm,
+  level 1/.style={sibling distance=2.6cm},
+  level 2/.style={sibling distance=1.15cm},
+  level 3/.style={sibling distance=0.55cm},
+  every node/.style={font=\small}]
+\node[fill=popblueL, rounded corners=2pt, inner sep=2pt] {Départ}
+  child { node[fill=poporangeL, rounded corners=2pt, inner sep=1pt] {3}
+    child { node {2} child { node[fill=popgreenL, rounded corners=2pt, inner sep=1pt] {1} } }
+    child { node {1} child { node[fill=popgreenL, rounded corners=2pt, inner sep=1pt] {2} } }
+  }
+  child { node[fill=poporangeL, rounded corners=2pt, inner sep=1pt] {2}
+    child { node {3} child { node[fill=popgreenL, rounded corners=2pt, inner sep=1pt] {1} } }
+    child { node {1} child { node[fill=popgreenL, rounded corners=2pt, inner sep=1pt] {3} } }
+  }
+  child { node[fill=poporangeL, rounded corners=2pt, inner sep=1pt] {1}
+    child { node {3} child { node[fill=popgreenL, rounded corners=2pt, inner sep=1pt] {2} } }
+    child { node {2} child { node[fill=popgreenL, rounded corners=2pt, inner sep=1pt] {3} } }
+  };
+\end{tikzpicture}
+\end{center}
+\legende{Arbre des permutations de $\{1\,;\,2\,;\,3\}$ : 3 choix au premier étage, 2 au deuxième, 1 au dernier, soit $3 \times 2 \times 1 = 6$ feuilles.}
+\end{popfigure}
+
+\courssub{Nombre de permutations : la factorielle}
+
+Comptons maintenant dans le cas général. Pour ranger $n$ objets en file :
+\begin{itemize}
+\item il y a $n$ choix possibles pour la première place ;
+\item il reste alors $n-1$ choix pour la deuxième place ;
+\item puis $n-2$ pour la troisième, et ainsi de suite ;
+\item pour la dernière place, il ne reste qu'un seul objet : 1 choix.
+\end{itemize}
+
+Par le principe de multiplication (vu avec les p-listes), le nombre total de rangements est $n \times (n-1) \times (n-2) \times \cdots \times 2 \times 1$. Ce produit porte un nom et une notation.
+
+\begin{definition}[Factorielle]
+Pour tout entier naturel $n \geq 1$, on appelle \cle{factorielle de $n$}, notée $n!$ (lire « $n$ factorielle »), le produit :
+\[ n! = n \times (n-1) \times (n-2) \times \cdots \times 2 \times 1. \]
+Par convention, on pose $0! = 1$.
+\end{definition}
+
+\begin{propriete}[Nombre de permutations — théorème]
+Le nombre de permutations d'un ensemble à $n$ éléments ($n \geq 1$) est :
+\[ n! = n \times (n-1) \times \cdots \times 2 \times 1. \]
+\end{propriete}
+
+\begin{experience}[Démonstration par récurrence]
+Notons $P_n$ le nombre de permutations d'un ensemble à $n$ éléments. Montrons par récurrence que $P_n = n!$ pour tout $n \geq 1$.
+
+\textbf{Initialisation.} Pour $n = 1$, un ensemble à un seul élément n'admet qu'un seul rangement : $P_1 = 1 = 1!$. La propriété est vraie au rang 1.
+
+\textbf{Hérédité.} Supposons que $P_{n-1} = (n-1)!$ pour un entier $n \geq 2$ fixé. Considérons un ensemble $E$ à $n$ éléments. Pour construire une permutation de $E$ :
+\begin{enumerate}
+\item on choisit l'élément placé en \textbf{première position} : il y a $n$ choix possibles ;
+\item on range ensuite les $n-1$ éléments restants sur les $n-1$ places restantes : par hypothèse de récurrence, il y a $(n-1)!$ façons de le faire.
+\end{enumerate}
+Par le principe de multiplication :
+\[ P_n = n \times (n-1)! = n!. \]
+La propriété est donc héréditaire.
+
+\textbf{Conclusion.} Par le principe de récurrence, pour tout entier $n \geq 1$, le nombre de permutations d'un ensemble à $n$ éléments est $n!$.
+\end{experience}
+
+La figure suivante illustre l'idée clé de la démonstration : chaque permutation de $n-1$ éléments donne naissance à $n$ permutations de $n$ éléments, en insérant le nouvel élément dans l'une des $n$ positions possibles.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small]
+\node[fill=popblueL, rounded corners=3pt, inner sep=4pt] (base) at (0,0) {$(a\,;\,b\,;\,c)$ : une permutation de 3 éléments};
+\node[fill=popgreenL, rounded corners=3pt, inner sep=3pt] (p1) at (7,2.4) {$(\mathbf{d}\,;\,a\,;\,b\,;\,c)$};
+\node[fill=popgreenL, rounded corners=3pt, inner sep=3pt] (p2) at (7,0.8) {$(a\,;\,\mathbf{d}\,;\,b\,;\,c)$};
+\node[fill=popgreenL, rounded corners=3pt, inner sep=3pt] (p3) at (7,-0.8) {$(a\,;\,b\,;\,\mathbf{d}\,;\,c)$};
+\node[fill=popgreenL, rounded corners=3pt, inner sep=3pt] (p4) at (7,-2.4) {$(a\,;\,b\,;\,c\,;\,\mathbf{d})$};
+\draw[-{Stealth}, thick, popblue] (base) -- (p1);
+\draw[-{Stealth}, thick, popblue] (base) -- (p2);
+\draw[-{Stealth}, thick, popblue] (base) -- (p3);
+\draw[-{Stealth}, thick, popblue] (base) -- (p4);
+\node[popdark] at (4.6,1.5) {insertion de $d$};
+\node[popdark] at (4.6,1.0) {en 4 positions};
+\end{tikzpicture}
+\end{center}
+\legende{Schéma de récurrence : chaque permutation de 3 éléments engendre 4 permutations de 4 éléments par insertion du nouvel élément $d$. D'où $4! = 4 \times 3!$.}
+\end{popfigure}
+
+\begin{methode}[Calculer $n!$ étape par étape]
+Pour calculer une factorielle sans se tromper :
+\begin{enumerate}
+\item Écrire le produit complet : $n! = n \times (n-1) \times \cdots \times 2 \times 1$.
+\item Calculer de proche en proche en partant de 1 : $1\,;\ 1\times 2 = 2\,;\ 2\times 3 = 6\,;\ 6 \times 4 = 24\,;\ 24 \times 5 = 120\ldots$
+\item Vérifier le résultat avec la touche \textbf{factorielle} de la calculatrice (souvent notée $n!$ ou $x!$).
+\end{enumerate}
+Valeurs à connaître par cœur : $1! = 1$, $2! = 2$, $3! = 6$, $4! = 24$, $5! = 120$, $6! = 720$.
+\end{methode}
+
+\begin{attention}[$0! = 1$ : une convention indispensable]
+On pose $0! = 1$. Ce n'est pas un résultat que l'on démontre, c'est une \textbf{convention}. Elle est indispensable pour que les formules des arrangements et des combinaisons (sections suivantes) restent valables dans tous les cas, y compris lorsque $p = 0$ ou $p = n$. Ne jamais écrire $0! = 0$ : c'est une erreur classique à l'examen.
+\end{attention}
+
+\courssub{Exemples concrets}
+
+\begin{exemplebox}[Rangement de 5 livres sur une étagère]
+Un technicien range 5 manuels différents sur une étagère, côte à côte. Le nombre de rangements possibles est :
+\[ 5! = 5 \times 4 \times 3 \times 2 \times 1 = 120. \]
+Il y a donc \textbf{120 façons} de ranger ces 5 livres.
+\end{exemplebox}
+
+\begin{exemplebox}[Ordre de passage de 6 candidats]
+Au concours d'entrée d'un lycée technique, 6 candidats passent une épreuve pratique, chacun son tour. Le nombre d'ordres de passage possibles est :
+\[ 6! = 720. \]
+Le jury peut donc établir \textbf{720 plannings différents}.
+\end{exemplebox}
+
+\begin{exoresolu}[Classement de 7 équipes]
+Sept équipes participent au tournoi de football inter-ateliers d'un lycée technique. On suppose qu'il n'y a pas d'ex æquo. Combien de classements finaux différents sont possibles ?
+\tcblower
+Un classement final est un rangement des 7 équipes de la 1\textsuperscript{re} à la 7\textsuperscript{e} place : chaque équipe apparaît exactement une fois. C'est donc une \cle{permutation} des 7 équipes. Le nombre de classements est :
+\begin{align*}
+7! &= 7 \times 6 \times 5 \times 4 \times 3 \times 2 \times 1 \\
+&= 7 \times 6 \times 5 \times 4 \times 6 \\
+&= 5040.
+\end{align*}
+Il y a \textbf{5040 classements finaux possibles}.
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item Ne pas confondre permutation et p-liste : dans une permutation, \textbf{tous} les éléments sont utilisés et \textbf{aucun n'est répété}. Un code PIN à 4 chiffres n'est pas une permutation (les chiffres peuvent se répéter).
+\item Le nombre de permutations de $n$ éléments est $n!$, et non $n^n$ : $n^n$ compte les n-listes \emph{avec} répétitions.
+\item La factorielle croît extrêmement vite : $10! = \num{3628800}$ et $13!$ dépasse déjà 6 milliards. Ne pas s'étonner de très grands résultats.
+\end{itemize}
+\end{attention}
+
+\courssub{Permutations avec répétitions (mention pour la Terminale)}
+
+Que se passe-t-il si certains objets sont \emph{identiques} ? Par exemple, combien de mots (ayant un sens ou non) peut-on former avec les lettres du mot « ATELIER » ? Ici, la lettre E apparaît deux fois : échanger les deux E ne crée pas un nouveau mot. Il faut donc diviser le nombre total de permutations par les rangements internes des lettres identiques.
+
+\begin{propriete}[Permutations avec répétitions — admise]
+Si parmi $n$ objets, $n_1$ sont identiques d'une première sorte, $n_2$ identiques d'une deuxième sorte, \ldots, $n_k$ identiques d'une $k$-ième sorte (avec $n_1 + n_2 + \cdots + n_k = n$), alors le nombre de rangements distinguables est :
+\[ \frac{n!}{n_1!\, n_2!\, \cdots\, n_k!}. \]
+Cette formule sera étudiée en détail en \textbf{Terminale} ; elle est simplement présentée ici à titre de culture.
+\end{propriete}
+
+\begin{exemplebox}[Anagrammes de « ATELIER »]
+Le mot ATELIER comporte 7 lettres, dont la lettre E répétée 2 fois. Le nombre d'anagrammes est :
+\[ \frac{7!}{2!} = \frac{5040}{2} = 2520. \]
+\end{exemplebox}
+
+\begin{savaistu}[La factorielle, une croissance vertigineuse]
+La légende de l'échiquier illustre la puissance des croissances rapides, mais la factorielle est encore plus redoutable : le nombre de façons de mélanger un jeu de 52 cartes est $52!$, un nombre à 68 chiffres, si grand qu'il est quasi certain qu'aucun mélange bien brassé dans l'histoire de l'humanité n'a jamais été reproduit deux fois. Au Cameroun, les permutations interviennent concrètement dans l'organisation des tournées de livraison, les plannings de chantier et les tirages de loterie : dès qu'un \emph{ordre} entre en jeu, la factorielle n'est jamais loin.
+\end{savaistu}
+
+\begin{exercice}
+\begin{enumerate}
+\item Calculer $4!$, $5!$ et $\dfrac{8!}{6!}$.
+\item Huit ouvriers d'un atelier doivent se présenter un par un devant le chef d'atelier. Combien d'ordres de passage différents sont possibles ?
+\item Un code d'accès est formé en rangeant les chiffres 1, 2, 3, 4, 5 chacun une seule fois. Combien de codes différents peut-on former ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $4! = 4 \times 3 \times 2 \times 1 = 24$ ; $5! = 120$ ; $\dfrac{8!}{6!} = \dfrac{8 \times 7 \times 6!}{6!} = 8 \times 7 = 56$.
+\item C'est une permutation de 8 éléments : $8! = \num{40320}$ ordres de passage possibles.
+\item Chaque code est un rangement sans répétition des 5 chiffres : $5! = 120$ codes différents.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel sur les permutations]
+\begin{itemize}
+\item Une \cle{permutation} d'un ensemble $E$ à $n$ éléments est une bijection de $E$ dans $E$, c'est-à-dire un rangement de tous les éléments, chacun une seule fois.
+\item Le nombre de permutations d'un ensemble à $n$ éléments est $n! = n \times (n-1) \times \cdots \times 2 \times 1$.
+\item Convention : $0! = 1$.
+\item Si certains objets sont identiques, on divise par les factorielles des effectifs répétés : $\dfrac{n!}{n_1!\,n_2!\cdots n_k!}$ (approfondi en Terminale).
+\end{itemize}
+\end{aretenir}
+
+\coursec{Arrangements d'ordre p parmi n éléments}
+
+Dans la section précédente, nous avons étudié les \cle{permutations} : il s'agissait de ranger \emph{tous} les éléments d'un ensemble à $n$ éléments, et nous avons établi qu'il existe $n!$ tels rangements. Mais dans la vie professionnelle, on ne range pas toujours tout le monde. Un atelier compte 8 techniciens, mais il faut seulement désigner un chef d'équipe, un adjoint et un magasinier : trois postes \emph{différents}, trois personnes \emph{distinctes}, et l'ordre compte (être chef d'équipe n'est pas être magasinier). Comment compter ces choix ? C'est exactement l'objet des \cle{arrangements}.
+
+\courssub{Intuition et définition}
+
+Imaginons une course cycliste avec 10 coureurs au départ. On s'intéresse uniquement au \emph{podium} : la médaille d'or, la médaille d'argent et la médaille de bronze. Deux podiums qui contiennent les mêmes trois coureurs mais dans un ordre différent ne sont \textbf{pas} identiques : finir premier ou troisième, ce n'est pas la même chose. De plus, un même coureur ne peut pas occuper deux places à la fois : les choix sont \emph{sans répétition}.
+
+Un arrangement, c'est donc un choix \textbf{ordonné} de $p$ éléments \textbf{distincts} pris dans un ensemble de $n$ éléments. On retient les deux conditions essentielles :
+\begin{itemize}
+\item l'\textbf{ordre} des éléments choisis compte ;
+\item chaque élément ne peut être choisi \textbf{qu'une seule fois} (pas de répétition), ce qui impose $p \leq n$.
+\end{itemize}
+
+\begin{definition}[Arrangement d'ordre p de n éléments]
+Soit $E$ un ensemble fini à $n$ éléments et $p$ un entier naturel tel que $1 \leq p \leq n$. On appelle \cle{arrangement} d'ordre $p$ de $E$ (ou arrangement de $p$ éléments parmi $n$) toute $p$-liste $(a_1, a_2, \ldots, a_p)$ d'éléments de $E$ \textbf{deux à deux distincts}.
+\end{definition}
+
+Autrement dit, un arrangement est une $p$-liste (section 1) à laquelle on interdit les répétitions. Le couple $(a_1, a_2)$ et le couple $(a_2, a_1)$ sont deux arrangements \emph{différents} : c'est toute la différence avec les combinaisons que nous étudierons dans la section 4.
+
+\begin{exemplebox}[Premiers exemples d'arrangements]
+Soit $E = \{a, b, c, d\}$. Les arrangements d'ordre 2 de $E$ sont :
+\[ (a,b),\ (a,c),\ (a,d),\ (b,a),\ (b,c),\ (b,d),\ (c,a),\ (c,b),\ (c,d),\ (d,a),\ (d,b),\ (d,c). \]
+Il y en a $12 = 4 \times 3$. Remarquons que $(a,b)$ et $(b,a)$ comptent pour deux arrangements distincts.
+\end{exemplebox}
+
+\courssub{Le nombre d'arrangements : formule et démonstration}
+
+Comptons les arrangements d'ordre $p$ d'un ensemble à $n$ éléments en appliquant le \textbf{principe de multiplication} vu avec les produits cartésiens. Pour construire un arrangement $(a_1, a_2, \ldots, a_p)$ :
+\begin{itemize}
+\item il y a $n$ choix possibles pour le premier élément $a_1$ ;
+\item une fois $a_1$ choisi, il reste $n-1$ choix pour $a_2$ (car $a_2 \neq a_1$) ;
+\item il reste ensuite $n-2$ choix pour $a_3$, et ainsi de suite ;
+\item pour le dernier élément $a_p$, il reste $n - (p-1) = n-p+1$ choix.
+\end{itemize}
+
+\begin{propriete}[Nombre d'arrangements — théorème démontré]
+Soient $n$ et $p$ deux entiers naturels tels que $1 \leq p \leq n$. Le nombre d'arrangements d'ordre $p$ d'un ensemble à $n$ éléments, noté $A_n^p$ (ou $A(n,p)$), est :
+\[ A_n^p = n \times (n-1) \times (n-2) \times \cdots \times (n-p+1) = \frac{n!}{(n-p)!}. \]
+Par convention, si $p > n$, on pose $A_n^p = 0$ (on ne peut pas choisir $p$ éléments distincts parmi moins de $p$ éléments).
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de la formule $A_n^p = \dfrac{n!}{(n-p)!}$]
+\textbf{Étape 1 — Principe de multiplication.} Construire un arrangement, c'est remplir $p$ cases ordonnées avec des éléments distincts : $n$ choix pour la case 1, $n-1$ pour la case 2, ..., $n-p+1$ pour la case $p$. Le principe de multiplication donne :
+\[ A_n^p = n \times (n-1) \times \cdots \times (n-p+1). \]
+Ce produit contient exactement $p$ facteurs.
+
+\textbf{Étape 2 — Écriture avec les factorielles.} Multiplions et divisons par le produit des entiers de $1$ à $n-p$ :
+\begin{align*}
+A_n^p &= n \times (n-1) \times \cdots \times (n-p+1) \\
+&= \frac{n \times (n-1) \times \cdots \times (n-p+1) \times (n-p) \times \cdots \times 2 \times 1}{(n-p) \times \cdots \times 2 \times 1} \\
+&= \frac{n!}{(n-p)!}.
+\end{align*}
+
+\textbf{Étape 3 — Vérification sur un exemple.} Pour $n = 5$ et $p = 2$ : $A_5^2 = 5 \times 4 = 20$ et $\dfrac{5!}{(5-2)!} = \dfrac{120}{6} = 20$. Les deux écritures coïncident. \hfill $\blacksquare$
+\end{experience}
+
+\begin{attention}[Conditions d'application : ne pas oublier $p \leq n$]
+Avant tout calcul, vérifier que $p \leq n$. Si l'on demande de choisir 5 éléments \emph{distincts} dans un ensemble de 3 éléments, c'est impossible : $A_3^5 = 0$. De même, la formule $\dfrac{n!}{(n-p)!}$ n'a de sens que si $n - p \geq 0$. Autre piège fréquent : le produit $n(n-1)\cdots(n-p+1)$ contient $p$ facteurs, pas $p-1$ ni $p+1$. Par exemple $A_8^3 = 8 \times 7 \times 6$ s'arrête à $6 = 8-3+1$, et non à $5$.
+\end{attention}
+
+\courssub{Lien avec les permutations}
+
+Un cas particulier fondamental relie cette section à la précédente : lorsque $p = n$, choisir $n$ éléments distincts et ordonnés parmi $n$, c'est ranger \emph{tous} les éléments de l'ensemble. On retrouve exactement les permutations :
+\[ A_n^n = n \times (n-1) \times \cdots \times 1 = n!. \]
+Avec la formule en factorielles : $A_n^n = \dfrac{n!}{(n-n)!} = \dfrac{n!}{0!} = \dfrac{n!}{1} = n!$, car par convention $0! = 1$.
+
+\begin{aretenir}[À retenir]
+\begin{itemize}
+\item Un arrangement de $p$ éléments parmi $n$ est un choix \textbf{ordonné} et \textbf{sans répétition}.
+\item $A_n^p = n(n-1)\cdots(n-p+1) = \dfrac{n!}{(n-p)!}$ (produit de $p$ facteurs).
+\item Cas particulier : $A_n^n = n!$ (permutations) et $A_n^1 = n$.
+\item Si $p > n$, alors $A_n^p = 0$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Méthodes de calcul et exemples chiffrés}
+
+\begin{methode}[Calculer $A_n^p$]
+Pour calculer le nombre d'arrangements $A_n^p$, deux méthodes équivalentes :
+\begin{enumerate}
+\item \textbf{Produit successif} (rapide pour $p$ petit) : partir de $n$ et multiplier $p$ facteurs consécutifs décroissants. Exemple : $A_8^3 = 8 \times 7 \times 6 = 336$.
+\item \textbf{Factorielles} (pratique à la calculatrice ou pour simplifier des quotients) : $A_n^p = \dfrac{n!}{(n-p)!}$. Exemple : $A_{10}^3 = \dfrac{10!}{7!} = 10 \times 9 \times 8 = 720$.
+\end{enumerate}
+Dans les deux cas, vérifier d'abord que $p \leq n$ et que la situation est bien \emph{ordonnée sans répétition}.
+\end{methode}
+
+\begin{exemplebox}[Bureau d'un atelier : $A_8^3 = 336$]
+Un atelier compte 8 techniciens. On doit désigner un \textbf{président}, un \textbf{vice-président} et un \textbf{secrétaire}, une même personne ne pouvant cumuler deux postes. Les trois postes sont distincts, donc l'ordre compte : il s'agit d'arrangements d'ordre 3 parmi 8.
+\[ A_8^3 = 8 \times 7 \times 6 = 336. \]
+Il y a \textbf{336 façons} différentes de constituer ce bureau.
+\end{exemplebox}
+
+\begin{exoresolu}[Podium d'une course]
+Dix coureurs participent à une course. De combien de façons peut-on attribuer les trois médailles (or, argent, bronze), sachant qu'un coureur ne peut recevoir qu'une seule médaille ?
+\tcblower
+\textbf{Analyse.} Les trois médailles sont distinctes (l'ordre compte) et un coureur ne peut pas être médaillé deux fois (pas de répétition) : c'est un arrangement d'ordre $p = 3$ parmi $n = 10$.
+
+\textbf{Calcul.}
+\[ A_{10}^3 = 10 \times 9 \times 8 = 720. \]
+\textbf{Vérification par les factorielles :} $A_{10}^3 = \dfrac{10!}{7!} = \dfrac{10 \times 9 \times 8 \times 7!}{7!} = 720$.
+
+\textbf{Conclusion.} Il existe $720$ podiums possibles.
+\end{exoresolu}
+
+\begin{exoresolu}[Mots de 4 lettres distinctes]
+Combien de mots de 4 lettres \emph{toutes distinctes} peut-on former à partir des 7 lettres du mot $\{A, B, C, D, E, F, G\}$ ? (Un « mot » est ici toute suite de lettres, ayant un sens ou non.)
+\tcblower
+\textbf{Analyse.} Former un mot de 4 lettres distinctes, c'est choisir 4 lettres différentes \emph{et} les ordonner : $ABCD$ et $BACD$ sont deux mots différents. C'est un arrangement d'ordre $p = 4$ parmi $n = 7$ (on a bien $p \leq n$).
+
+\textbf{Calcul.}
+\[ A_7^4 = 7 \times 6 \times 5 \times 4 = 840. \]
+
+\textbf{Conclusion.} On peut former $840$ mots de 4 lettres distinctes.
+\end{exoresolu}
+
+\courssub{Illustration : l'arbre des arrangements $A_5^2$}
+
+Pour bien visualiser le principe de multiplication, représentons l'arbre des choix pour $A_5^2$ : on choisit un premier élément parmi 5 (5 branches), puis un second parmi les 4 restants (4 sous-branches par branche). Le nombre total de chemins est $5 \times 4 = 20$.
+
+\begin{popfigure}
+\begin{tikzpicture}[grow=right, level distance=2.6cm,
+level 1/.style={sibling distance=1.9cm},
+level 2/.style={sibling distance=0.42cm},
+every node/.style={font=\small},
+edge from parent/.style={draw=popblue, thick}]
+\node[circle, fill=popblue, text=white, inner sep=1.5pt] {Départ}
+child { node {5} child { node {4} } child { node {3} } child { node {2} } child { node {1} } }
+child { node {4} child { node {5} } child { node {3} } child { node {2} } child { node {1} } }
+child { node {3} child { node {5} } child { node {4} } child { node {2} } child { node {1} } }
+child { node {2} child { node {5} } child { node {4} } child { node {3} } child { node {1} } }
+child { node {1} child { node {5} } child { node {4} } child { node {3} } child { node {2} } };
+\end{tikzpicture}
+\legende{Arbre des arrangements d'ordre 2 d'un ensemble à 5 éléments : 5 choix puis 4, soit $A_5^2 = 5 \times 4 = 20$ chemins.}
+\end{popfigure}
+
+Chaque chemin de la racine à une feuille représente un arrangement : par exemple le chemin passant par 3 puis 5 correspond au couple $(3,5)$, différent du couple $(5,3)$. On lit directement sur l'arbre le principe de multiplication : le nombre de feuilles est le produit des nombres de choix à chaque niveau.
+
+\courssub{Tableau récapitulatif des valeurs de $A_n^p$}
+
+Le tableau suivant donne les valeurs de $A_n^p$ pour $n$ de 1 à 6 et $p \leq n$. On observe sur chaque ligne que la dernière valeur ($p = n$) est exactement $n!$, ce qui confirme le lien avec les permutations.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} $A_n^p$ & $p=1$ & $p=2$ & $p=3$ & $p=4$ & $p=5$ & $p=6$ \\
+\hline
+$n=1$ & 1 & --- & --- & --- & --- & --- \\
+\hline
+$n=2$ & 2 & 2 & --- & --- & --- & --- \\
+\hline
+$n=3$ & 3 & 6 & 6 & --- & --- & --- \\
+\hline
+$n=4$ & 4 & 12 & 24 & 24 & --- & --- \\
+\hline
+$n=5$ & 5 & 20 & 60 & 120 & 120 & --- \\
+\hline
+$n=6$ & 6 & 30 & 120 & 360 & 720 & 720 \\
+\hline
+\end{tabularx}
+\end{center}
+
+Quelques lectures utiles : $A_5^2 = 20$ (l'arbre ci-dessus), $A_6^3 = 6 \times 5 \times 4 = 120$, et sur la diagonale $A_4^4 = 24 = 4!$, $A_6^6 = 720 = 6!$.
+
+\begin{attention}[Erreurs fréquentes à éviter]
+\begin{itemize}
+\item \textbf{Confondre arrangement et $p$-liste.} Dans une $p$-liste, la répétition est autorisée (nombre : $n^p$) ; dans un arrangement, elle est interdite (nombre : $A_n^p$). Un code PIN à 4 chiffres est une $p$-liste ($10^4$ possibilités) car un chiffre peut se répéter ; un podium est un arrangement.
+\item \textbf{Confondre arrangement et combinaison.} Si l'ordre ne compte pas (par exemple choisir 3 délégués ayant le \emph{même} rôle), ce n'est pas un arrangement : ce sera une combinaison (section 4).
+\item \textbf{Se tromper de nombre de facteurs.} $A_n^p$ est un produit de $p$ facteurs : $A_{10}^3 = 10 \times 9 \times 8$ (trois facteurs), pas $10 \times 9 \times 8 \times 7$.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Les arrangements dans la vie technique]
+Les arrangements apparaissent partout dans les métiers techniques : ordre de passage de véhicules au contrôle technique, attribution de postes distincts dans une équipe de chantier, classement des candidats à un concours d'entrée dans une école de formation, planification de tâches successives confiées à des machines différentes. À chaque fois que l'on choisit quelques personnes ou objets \emph{en leur attribuant des rôles différents}, on dénombre des arrangements. Au Cameroun, le tirage des affiches des demi-finales d'un tournoi de football entre 4 équipes qualifiées correspond à $A_4^2 = 12$ affiches possibles pour la première demi-finale désignée.
+\end{savaistu}
+
+\begin{exercice}[À faire]
+\begin{enumerate}
+\item Calculer $A_9^2$, $A_7^3$ et $A_5^5$ de deux façons (produit successif puis factorielles).
+\item Une entreprise de BTP emploie 12 ouvriers qualifiés. Le chef de chantier doit désigner un responsable sécurité et un responsable matériel, deux postes occupés par deux personnes différentes. Combien de choix possibles ?
+\item Combien de nombres de 3 chiffres tous distincts peut-on écrire avec les chiffres $1, 2, 3, 4, 5, 6$ ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item $A_9^2 = 9 \times 8 = 72$ et $\dfrac{9!}{7!} = 72$. $A_7^3 = 7 \times 6 \times 5 = 210$ et $\dfrac{7!}{4!} = \dfrac{5040}{24} = 210$. $A_5^5 = 5! = 120$ et $\dfrac{5!}{0!} = 120$.
+\item Les deux postes sont distincts (l'ordre compte) et occupés par des personnes différentes : $A_{12}^2 = 12 \times 11 = 132$ choix possibles.
+\item Un nombre de 3 chiffres distincts est un arrangement d'ordre 3 parmi 6 : $A_6^3 = 6 \times 5 \times 4 = 120$ nombres.
+\end{enumerate}
+\end{corrige}
+
+Nous savons désormais compter les choix ordonnés sans répétition. Reste une question : que se passe-t-il lorsque l'ordre ne compte \emph{plus}, par exemple lorsqu'on choisit 3 délégués ayant exactement le même rôle ? C'est l'objet de la section suivante, consacrée aux \cle{combinaisons}.
+
+\coursec{Combinaisons de p éléments parmi n}
+
+\courssub{Du choix ordonné au choix non ordonné}
+
+Dans la section précédente, nous avons étudié les \textbf{arrangements} : nous choisissions $p$ éléments parmi $n$ \emph{en tenant compte de l'ordre}. Par exemple, pour former un code à 3 chiffres distincts parmi $\{1,2,3,4,5\}$, les codes $123$ et $321$ sont deux arrangements différents.
+
+Or, de nombreuses situations techniques ou concrètes ne font \emph{pas} de distinction selon l'ordre :
+\begin{itemize}
+    \item Constitution d'un \textbf{comité} ou d'une équipe : les membres $\{Alice, Bob, Charlie\}$ forment le même groupe que $\{Charlie, Alice, Bob\}$.
+    \item Tirage au \textbf{Loto} : les numéros $\{5, 12, 23, 34, 45\}$ sortent dans un certain ordre, mais le gain dépend uniquement de l'ensemble des numéros cochés.
+    \item Choix de \textbf{pièces} dans un stock pour un montage : l'ordre de prélèvement n'importe pas, seule la nature des pièces compte.
+\end{itemize}
+Nous passons donc du \emph{choix ordonné} (arrangements) au \emph{choix non ordonné} : les \textbf{combinaisons}.
+
+\begin{definition}[Combinaison de $p$ éléments parmi $n$]
+Soit $E$ un ensemble fini à $n$ éléments ($n \in \mathbb{N}^*$) et $p$ un entier naturel tel que $0 \le p \le n$.
+On appelle \textbf{combinaison de $p$ éléments parmi $n$} (ou \textbf{$p$-combinaison}) tout \textbf{sous-ensemble} de $E$ contenant exactement $p$ éléments.
+L'ordre des éléments dans le sous-ensemble \textbf{ne compte pas} : $\{a,b,c\} = \{c,a,b\}$.
+Le nombre de telles combinaisons est noté $\binom{n}{p}$ ou $C_n^p$ (lu « $C$ $n$ $p$ » ou « nombre de combinaisons de $p$ parmi $n$ »).
+\end{definition}
+
+\begin{attention}[L'ordre ne compte pas !]
+C'est la différence fondamentale avec les arrangements ($A_n^p$).
+\begin{itemize}
+    \item \textbf{Arrangement} : $(a,b,c) \neq (b,a,c)$. C'est un $p$-uplet (liste ordonnée).
+    \item \textbf{Combinaison} : $\{a,b,c\} = \{b,a,c\}$. C'est un ensemble (liste non ordonnée).
+\end{itemize}
+Si l'énoncé parle de « groupe », « équipe », « comité », « tirage simultané », « sous-ensemble », « poignée de main » : c'est une \textbf{combinaison}.
+S'il parle de « code », « classement », « ordre de passage », « mot de passe », « rang » : c'est un \textbf{arrangement}.
+\end{attention}
+
+\courssub{Relation entre arrangements et combinaisons : démonstration de la formule}
+
+Prenons un exemple concret pour comprendre le lien. Soit $E = \{A, B, C, D, E\}$ ($n=5$). Combien y a-t-il de combinaisons de $3$ éléments ($p=3$) ?
+
+\begin{experience}[Découverte : du nombre d'arrangements au nombre de combinaisons]
+\textbf{Étape 1 :} Comptons les arrangements de $3$ parmi $5$.
+$A_5^3 = 5 \times 4 \times 3 = 60$.
+Listons-en quelques-uns : $(A,B,C), (A,C,B), (B,A,C), (B,C,A), (C,A,B), (C,B,A), \dots$
+
+\textbf{Étape 2 :} Regroupons ces arrangements par \emph{ensemble d'éléments} constitués.
+Le groupe correspondant à l'ensemble $\{A,B,C\}$ contient les $3! = 6$ permutations de ces trois lettres :
+$(A,B,C), (A,C,B), (B,A,C), (B,C,A), (C,A,B), (C,B,A)$.
+
+\textbf{Étape 3 :} Chaque combinaison (chaque sous-ensemble à 3 éléments) engendre exactement $p! = 3! = 6$ arrangements différents.
+Les 60 arrangements se partitionnent donc en paquets de 6 arrangements identiques « à l'ordre près ».
+
+\textbf{Étape 4 :} Le nombre de combinaisons est le quotient :
+$C_5^3 = \dfrac{A_5^3}{3!} = \dfrac{60}{6} = 10$.
+\end{experience}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.85, every node/.style={font=\small}]
+% Styles
+\tikzset{
+    arr/.style={draw=popblue, fill=popblue!10, rounded corners=3pt, inner sep=3pt, minimum width=1.8cm, minimum height=0.7cm},
+    comb/.style={draw=popgreen, fill=popgreen!15, rounded corners=5pt, inner sep=5pt, minimum width=3.5cm, minimum height=2.5cm},
+    arrow/.style={->, thick, poporange},
+    labelbox/.style={font=\bfseries\small, text=popdark}
+}
+% Arrangements (left column)
+\node[labelbox] at (0, 7.5) {\textcolor{popblue}{Arrangements $A_5^3 = 60$}};
+% Group 1: {A,B,C}
+\node[comb] (c1) at (-5, 5) {};
+\node[labelbox, popgreen] at (-5, 6.5) {Combinaison $\{A,B,C\}$};
+\node[arr] (a11) at (-7, 5.3) {$(A,B,C)$};
+\node[arr] (a12) at (-7, 4.6) {$(A,C,B)$};
+\node[arr] (a13) at (-5, 5.3) {$(B,A,C)$};
+\node[arr] (a14) at (-5, 4.6) {$(B,C,A)$};
+\node[arr] (a15) at (-3, 5.3) {$(C,A,B)$};
+\node[arr] (a16) at (-3, 4.6) {$(C,B,A)$};
+\draw[arrow] (a11) -- (c1);
+\draw[arrow] (a12) -- (c1);
+\draw[arrow] (a13) -- (c1);
+\draw[arrow] (a14) -- (c1);
+\draw[arrow] (a15) -- (c1);
+\draw[arrow] (a16) -- (c1);
+
+% Group 2: {A,B,D}
+\node[comb] (c2) at (3, 5) {};
+\node[labelbox, popgreen] at (3, 6.5) {Combinaison $\{A,B,D\}$};
+\node[arr] (a21) at (1, 5.3) {$(A,B,D)$};
+\node[arr] (a22) at (1, 4.6) {$(A,D,B)$};
+\node[arr] (a23) at (3, 5.3) {$(B,A,D)$};
+\node[arr] (a24) at (3, 4.6) {$(B,D,A)$};
+\node[arr] (a25) at (5, 5.3) {$(D,A,B)$};
+\node[arr] (a26) at (5, 4.6) {$(D,B,A)$};
+\draw[arrow] (a21) -- (c2);
+\draw[arrow] (a22) -- (c2);
+\draw[arrow] (a23) -- (c2);
+\draw[arrow] (a24) -- (c2);
+\draw[arrow] (a25) -- (c2);
+\draw[arrow] (a26) -- (c2);
+
+% Dots
+\node at (0, 3.5) {\Large $\vdots$};
+\node at (0, 3) {\Large $\vdots$};
+
+% Group 10: {C,D,E}
+\node[comb] (c10) at (-1, 1) {};
+\node[labelbox, popgreen] at (-1, 2.5) {Combinaison $\{C,D,E\}$ (10ème)};
+\node[arr] (a101) at (-3, 1.3) {$(C,D,E)$};
+\node[arr] (a102) at (-3, 0.6) {$(C,E,D)$};
+\node[arr] (a103) at (-1, 1.3) {$(D,C,E)$};
+\node[arr] (a104) at (-1, 0.6) {$(D,E,C)$};
+\node[arr] (a105) at (1, 1.3) {$(E,C,D)$};
+\node[arr] (a106) at (1, 0.6) {$(E,D,C)$};
+\draw[arrow] (a101) -- (c10);
+\draw[arrow] (a102) -- (c10);
+\draw[arrow] (a103) -- (c10);
+\draw[arrow] (a104) -- (c10);
+\draw[arrow] (a105) -- (c10);
+\draw[arrow] (a106) -- (c10);
+
+% Formula box
+\node[draw=poppurple, fill=poppurple!10, rounded corners=5pt, inner sep=8pt, align=center, font=\normalsize\bfseries, text=poppurple] at (0, -1.5) {
+    $C_n^p = \dfrac{A_n^p}{p!} = \dfrac{n!}{p!(n-p)!}$ \\
+    \textcolor{popdark}{\small Ici : $C_5^3 = \frac{60}{6} = 10$}
+};
+\end{tikzpicture}
+\legende{Regroupement des 60 arrangements de 3 parmi 5 en 10 combinaisons (chaque combinaison = 3! = 6 arrangements).}
+\end{popfigure}
+
+\begin{propriete}[Formule du nombre de combinaisons — Théorème démontré]
+Pour tous entiers $n \in \mathbb{N}^*$ et $p \in \mathbb{N}$ tels que $0 \le p \le n$, le nombre de combinaisons de $p$ éléments parmi $n$ est :
+\[
+\boxed{C_n^p = \binom{n}{p} = \frac{A_n^p}{p!} = \frac{n!}{p!\,(n-p)!}}
+\]
+\textbf{Démonstration (exigible au Probatoire) :}
+\begin{enumerate}
+    \item On compte les arrangements de $p$ éléments parmi $n$ : il y en a $A_n^p = \frac{n!}{(n-p)!}$.
+    \item Chaque combinaison (sous-ensemble à $p$ éléments) peut être ordonnée de $p!$ façons différentes (les permutations de ses $p$ éléments).
+    \item Les $A_n^p$ arrangements se partitionnent donc en classes d'équivalence de taille $p!$, chaque classe correspondant à une unique combinaison.
+    \item Par le principe du quotient (ou principe du berger), le nombre de classes (donc de combinaisons) est le quotient $\frac{A_n^p}{p!}$.
+\end{enumerate}
+\end{propriete}
+
+\begin{aretenir}[Cas particuliers utiles]
+\begin{align*}
+C_n^0 &= \frac{n!}{0!\,n!} = 1 \quad \text{(l'ensemble vide, ou « ne rien choisir »)} \\
+C_n^1 &= \frac{n!}{1!\,(n-1)!} = n \quad \text{(choisir 1 élément parmi $n$)} \\
+C_n^n &= \frac{n!}{n!\,0!} = 1 \quad \text{(choisir tous les éléments)} \\
+C_n^{n-1} &= \frac{n!}{(n-1)!\,1!} = n \quad \text{(équivaut à choisir celui qu'on laisse de côté)}
+\end{align*}
+\end{aretenir}
+
+\courssub{Calcul pratique et propriété de symétrie}
+
+La formule factorielle $C_n^p = \frac{n!}{p!(n-p)!}$ est la définition, mais pour calculer numériquement sans calculatrice (ou pour simplifier), on utilise la forme « produit de $p$ facteurs » issue des arrangements :
+
+\[
+C_n^p = \frac{n \times (n-1) \times \dots \times (n-p+1)}{p \times (p-1) \times \dots \times 1}
+\]
+
+\begin{methode}[Calculer $C_n^p$ efficacement à la main]
+\begin{enumerate}
+    \item \textbf{Appliquez la symétrie} (voir ci-dessous) : si $p > n-p$, calculez $C_n^{n-p}$ à la place (moins de facteurs).
+    \item Écrivez le numérateur : produit des $p$ entiers descendants depuis $n$.
+    \item Écrivez le dénominateur : $p!$.
+    \item \textbf{Simplifiez au maximum} \emph{avant} de multiplier (barrer les facteurs communs).
+    \item Effectuez les multiplications restantes.
+\end{enumerate}
+\end{methode}
+
+\begin{propriete}[Symétrie des combinaisons]
+Pour tout $n \in \mathbb{N}^*$ et $0 \le p \le n$ :
+\[
+\boxed{C_n^p = C_n^{n-p}}
+\]
+\textbf{Preuve algébrique :} $C_n^{n-p} = \frac{n!}{(n-p)!\,(n-(n-p))!} = \frac{n!}{(n-p)!\,p!} = C_n^p$.
+\textbf{Preuve combinatoire (intuitive) :} Choisir $p$ éléments à \textbf{garder} revient exactement à choisir les $n-p$ éléments à \textbf{laisser de côté}. Il y a une bijection entre les sous-ensembles à $p$ éléments et leurs complémentaires à $n-p$ éléments.
+\end{propriete}
+
+\begin{exemplebox}[Calculs simplifiés par symétrie]
+\begin{enumerate}
+    \item $C_{100}^{98} = C_{100}^{2} = \frac{100 \times 99}{2 \times 1} = 50 \times 99 = 4\,950$. (Bien plus simple que $98$ facteurs !)
+    \item $C_{20}^{17} = C_{20}^{3} = \frac{20 \times 19 \times 18}{3 \times 2 \times 1} = 20 \times 19 \times 3 = 1\,140$.
+    \item $C_{12}^{5} = \frac{12 \times 11 \times 10 \times 9 \times 8}{5 \times 4 \times 3 \times 2 \times 1} = \frac{\cancel{12} \times 11 \times \cancel{10}^{2} \times 9 \times \cancel{8}^{4}}{\cancel{5} \times \cancel{4} \times \cancel{3} \times \cancel{2} \times 1} = 11 \times 2 \times 9 \times 4 = 792$.
+\end{enumerate}
+\end{exemplebox}
+
+\courssub{Le triangle de Pascal et la relation de récurrence}
+
+Les nombres $C_n^p$ s'organisent naturellement dans le \textbf{triangle de Pascal} (connu bien avant Pascal, en Chine et en Perse). Cette structure sera fondamentale en Terminale pour le binôme de Newton.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7, every node/.style={font=\small}]
+% Styles
+\tikzset{
+    pascal/.style={circle, draw=popblue, fill=popblue!10, minimum size=1.2cm, inner sep=2pt, font=\bfseries\small},
+    pascalhl/.style={circle, draw=poporange, fill=poporange!20, minimum size=1.2cm, inner sep=2pt, font=\bfseries\small, thick},
+    labeln/.style={font=\bfseries, text=popdark, left=0.3cm}
+}
+% Coordinates: row n, index k. x = (k - n/2)*1.5, y = -n*1.4
+\foreach \n in {0,...,6} {
+    \node[labeln] at (-5.5, -\n*1.4) {$n=\n$ :};
+    \foreach \k in {0,...,\n} {
+        \pgfmathtruncatemacro{\val}{1}
+        % Calculate binomial coefficient iteratively or via formula
+        \ifnum\n=0 \pgfmathtruncatemacro{\val}{1} \fi
+        \ifnum\n=1 \pgfmathtruncatemacro{\val}{1} \fi
+        \ifnum\n=2 \ifnum\k=1 \pgfmathtruncatemacro{\val}{2} \else \pgfmathtruncatemacro{\val}{1} \fi \fi
+        \ifnum\n=3 \ifnum\k=1 \pgfmathtruncatemacro{\val}{3} \else \ifnum\k=2 \pgfmathtruncatemacro{\val}{3} \else \pgfmathtruncatemacro{\val}{1} \fi \fi \fi
+        \ifnum\n=4 \ifnum\k=1 \pgfmathtruncatemacro{\val}{4} \else \ifnum\k=2 \pgfmathtruncatemacro{\val}{6} \else \ifnum\k=3 \pgfmathtruncatemacro{\val}{4} \else \pgfmathtruncatemacro{\val}{1} \fi \fi \fi \fi
+        \ifnum\n=5 \ifnum\k=1 \pgfmathtruncatemacro{\val}{5} \else \ifnum\k=2 \pgfmathtruncatemacro{\val}{10} \else \ifnum\k=3 \pgfmathtruncatemacro{\val}{10} \else \ifnum\k=4 \pgfmathtruncatemacro{\val}{5} \else \pgfmathtruncatemacro{\val}{1} \fi \fi \fi \fi \fi
+        \ifnum\n=6 \ifnum\k=1 \pgfmathtruncatemacro{\val}{6} \else \ifnum\k=2 \pgfmathtruncatemacro{\val}{15} \else \ifnum\k=3 \pgfmathtruncatemacro{\val}{20} \else \ifnum\k=4 \pgfmathtruncatemacro{\val}{15} \else \ifnum\k=5 \pgfmathtruncatemacro{\val}{6} \else \pgfmathtruncatemacro{\val}{1} \fi \fi \fi \fi \fi \fi
+        
+        \pgfmathsetmacro{\x}{(\k - \n/2)*1.6}
+        \pgfmathsetmacro{\y}{-\n*1.4}
+        
+        % Highlight symmetry for n=5, k=2 and k=3
+        \ifnum\n=5
+            \ifnum\k=2 \node[pascalhl] (n5k2) at (\x, \y) {\val}; \else
+            \ifnum\k=3 \node[pascalhl] (n5k3) at (\x, \y) {\val}; \else
+                \node[pascal] at (\x, \y) {\val};
+            \fi \fi
+        \else
+            \node[pascal] at (\x, \y) {\val};
+        \fi
+        
+        % Draw arrows for Pascal relation (n=5, k=2 comes from n=4, k=1 and k=2)
+        \ifnum\n=5
+            \ifnum\k=2
+                \draw[->, poporange, thick] ($(\x-0.8, \y+1.4) + (0.2, -0.2)$) -- ($(\x, \y) + (-0.2, 0.2)$);
+                \draw[->, poporange, thick] ($(\x+0.8, \y+1.4) + (-0.2, -0.2)$) -- ($(\x, \y) + (0.2, 0.2)$);
+            \fi
+        \fi
+    }
+}
+% Legend
+\node[align=center, text=popdark, font=\small] at (0, -10) {
+    \textcolor{poporange}{\textbf{Relation de Pascal :}} $C_5^2 = C_4^1 + C_4^2 = 4 + 6 = 10$ \\
+    Chaque nombre (sauf bords) = somme des deux au-dessus.
+};
+\end{tikzpicture}
+\legende{Triangle de Pascal jusqu'à $n=6$. Les coefficients $C_n^p$ sont symétriques. Les flèches oranges illustrent la relation de Pascal pour $C_5^2$.}
+\end{popfigure}
+
+\begin{propriete}[Relation de Pascal (ou récurrence de Pascal)]
+Pour tout $n \ge 1$ et $1 \le p \le n-1$ :
+\[
+\boxed{C_n^p = C_{n-1}^{p-1} + C_{n-1}^p}
+\]
+\textbf{Interprétation combinatoire (démonstration) :} Fixons un élément particulier $x \in E$ ($|E|=n$). Les sous-ensembles à $p$ éléments de $E$ se divisent en deux classes disjointes :
+\begin{enumerate}
+    \item Ceux qui \textbf{contiennent} $x$ : il faut choisir les $p-1$ autres parmi les $n-1$ restants $\rightarrow C_{n-1}^{p-1}$.
+    \item Ceux qui \textbf{ne contiennent pas} $x$ : il faut choisir les $p$ éléments parmi les $n-1$ autres $\rightarrow C_{n-1}^{p}$.
+\end{enumerate}
+Par le principe de l'addition, $C_n^p = C_{n-1}^{p-1} + C_{n-1}^p$.
+\end{propriete}
+
+\begin{savaistu}[Les coefficients binomiaux et le binôme de Newton]
+Les nombres $C_n^p$ sont appelés \textbf{coefficients binomiaux} car ils apparaissent dans le développement de $(a+b)^n$ (programme de Terminale) :
+\[
+(a+b)^n = \sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k = C_n^0 a^n + C_n^1 a^{n-1}b + \dots + C_n^n b^n
+\]
+Par exemple $(a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$ (coefficients $1, 3, 3, 1$ : ligne $n=3$ du triangle).
+Au Cameroun, cette formule sert en algorithmique (complexité), en probabilités (loi binomiale) et en analyse numérique (interpolation).
+\end{savaistu}
+
+\courssub{Applications concrètes et exercices résolus}
+
+\begin{exoresolu}[Comité d'élèves — Choix sans ordre]
+\textbf{Énoncé :} Une classe de Première technique compte $30$ élèves. On doit former un comité de $4$ élèves pour représenter la classe au conseil de la vie lycéenne. Combien de comités différents sont possibles ?
+
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Identification :} On choisit $4$ élèves parmi $30$. L'ordre n'importe pas (le comité $\{A,B,C,D\}$ est identique à $\{D,C,B,A\}$). C'est une \textbf{combinaison}.
+    \item \textbf{Paramètres :} $n = 30$, $p = 4$.
+    \item \textbf{Formule :} $C_{30}^4 = \frac{30 \times 29 \times 28 \times 27}{4 \times 3 \times 2 \times 1}$.
+    \item \textbf{Simplification :}
+    \[
+    \frac{\cancel{30}^{5} \times 29 \times \cancel{28}^{7} \times 27}{\cancel{4} \times \cancel{3} \times \cancel{2} \times 1} = 5 \times 29 \times 7 \times 27
+    \]
+    (On a simplifié $30$ par $3\times2=6$ donnant $5$, et $28$ par $4$ donnant $7$).
+    \item \textbf{Calcul :} $5 \times 29 = 145$ ; $7 \times 27 = 189$ ; $145 \times 189 = 27\,405$.
+\end{enumerate}
+\textbf{Réponse :} Il y a \textbf{27 405} comités possibles.
+\end{exoresolu}
+
+\begin{exoresolu}[Loto 5/90 — Cas réel]
+\textbf{Énoncé :} Au Loto (type 5/90), on coche 5 numéros distincts sur une grille de 90 numéros (1 à 90). Combien de grilles différentes peut-on remplir ?
+
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Modélisation :} Choix de 5 numéros parmi 90. L'ordre de sortie du tirage n'importe pas pour le gain principal (juste l'ensemble des 5 numéros). C'est une combinaison.
+    \item \textbf{Calcul :} $C_{90}^5 = \frac{90 \times 89 \times 88 \times 87 \times 86}{5 \times 4 \times 3 \times 2 \times 1}$.
+    \item \textbf{Simplification progressive :}
+    \begin{align*}
+    \frac{90}{5} &= 18 \\
+    \frac{88}{4} &= 22 \\
+    \frac{87}{3} &= 29 \\
+    \frac{86}{2} &= 43
+    \end{align*}
+    Reste : $18 \times 89 \times 22 \times 29 \times 43$.
+    \item \textbf{Estimation / Calcul :}
+    $18 \times 22 = 396$ ; $396 \times 43 = 17\,028$ ; $17\,028 \times 29 = 493\,812$ ; $493\,812 \times 89 = 43\,949\,268$.
+    (Valeur exacte : \textbf{43 949 268} grilles).
+\end{enumerate}
+\textbf{Conclusion :} La chance de gagner au premier rang avec une grille simple est de $1$ sur $\approx 44$ millions.
+\end{exoresolu}
+
+\begin{exoresolu}[Problème inverse : retrouver $n$ ou $p$]
+\textbf{Énoncé :} On sait que $C_n^2 = 66$. Déterminer $n$.
+
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Écriture de l'équation :} $C_n^2 = \frac{n(n-1)}{2} = 66$.
+    \item \textbf{Résolution :} $n(n-1) = 132 \iff n^2 - n - 132 = 0$.
+    \item \textbf{Discriminant :} $\Delta = (-1)^2 - 4(1)(-132) = 1 + 528 = 529 = 23^2$.
+    \item \textbf{Racines :} $n = \frac{1 \pm 23}{2}$. La racine positive est $n = \frac{24}{2} = 12$.
+    \item \textbf{Vérification :} $C_{12}^2 = \frac{12 \times 11}{2} = 66$. \quad \checkmark
+\end{enumerate}
+\textbf{Réponse :} $n = 12$.
+\end{exoresolu}
+
+\begin{exercice}[Entraînement : Combinaisons en situation]
+\begin{enumerate}
+    \item \textbf{Équipe de maintenance :} Un chef d'atelier doit choisir 3 techniciens parmi 12 pour une intervention urgente. Combien d'équipes différentes peut-il former ?
+    \item \textbf{Échantillonnage qualité :} Dans un lot de 50 pièces, on prélève 5 pièces pour un test destructif. Combien d'échantillons de 5 pièces distincts sont possibles ?
+    \item \textbf{Handshakes (Poignées de main) :} Lors d'une réunion de 15 ingénieurs, chacun serre la main de tous les autres une seule fois. Combien y a-t-il eu de poignées de main au total ? (Indication : une poignée de main = un couple de personnes).
+    \item \textbf{Calculer :} $C_{15}^{13}$, $C_{20}^{4}$, $C_{100}^{98}$.
+    \item \textbf{Équation :} Résoudre $C_n^3 = 56$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°4]
+\begin{enumerate}
+    \item $C_{12}^3 = \frac{12 \times 11 \times 10}{3 \times 2 \times 1} = 2 \times 11 \times 10 = \textbf{220}$ équipes.
+    \item $C_{50}^5 = \frac{50 \times 49 \times 48 \times 47 \times 46}{120}$. Simplification : $\frac{50}{5}=10$, $\frac{48}{4}=12$, $\frac{46}{2}=23$, reste $\frac{49 \times 47}{3 \times 1}$... calcul final : \textbf{2 118 760} échantillons.
+    \item Chaque poignée de main correspond à un couple non ordonné : $C_{15}^2 = \frac{15 \times 14}{2} = \textbf{105}$ poignées de main.
+    \item $C_{15}^{13} = C_{15}^2 = 105$ ; $C_{20}^4 = \frac{20 \times 19 \times 18 \times 17}{24} = 4845$ ; $C_{100}^{98} = C_{100}^2 = 4950$.
+    \item $C_n^3 = \frac{n(n-1)(n-2)}{6} = 56 \Rightarrow n(n-1)(n-2) = 336$. Test $n=8 : 8 \times 7 \times 6 = 336$. \textbf{$n=8$}.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[Bilan : Comment choisir la bonne formule ?]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\textbf{Question clé} & \textbf{Arrangement $A_n^p$} & \textbf{Combinaison $C_n^p$} \\ \hline
+L'ordre compte-t-il ? & \textbf{OUI} (liste, code, classement, rang) & \textbf{NON} (groupe, équipe, comité, tirage, sous-ensemble) \\ \hline
+Formule & $\frac{n!}{(n-p)!} = n(n-1)\dots(n-p+1)$ & $\frac{n!}{p!(n-p)!} = \frac{A_n^p}{p!}$ \\ \hline
+Symétrie & Non ($A_n^p \neq A_n^{n-p}$) & \textbf{OUI} ($C_n^p = C_n^{n-p}$) \\ \hline
+Lien & $A_n^p = C_n^p \times p!$ & $C_n^p = \frac{A_n^p}{p!}$ \\ \hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\coursec{Relations, propriétés et cas particuliers}
+
+Après avoir construit pas à pas les notions de \emph{produit cartésien}, de \emph{permutations}, d'\emph{arrangements} et de \emph{combinaisons}, nous disposons maintenant d'une boîte à outils complète. Cette section a pour but de \textbf{synthétiser les formules}, d'\textbf{établir les liens} entre ces outils, de présenter les \textbf{cas particuliers} fréquents et de vous donner une \textbf{méthode infaillible} pour choisir le bon outil face à un problème concret. C'est la « carte d'identité » du dénombrement qui vous servira de référence tout au long de l'année et en Terminale.
+
+\courssub{Récapitulatif des formules fondamentales}
+
+Avant d'aller plus loin, fixons les notations et les résultats acquis. Soit $E$ un ensemble fini de cardinal $n$ ($n \in \mathbb{N}^*$) et $p$ un entier tel que $0 \le p \le n$.
+
+\begin{propriete}[Tableau de synthèse des outils de dénombrement]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Outil} & \textbf{Notation} & \textbf{Formule (Cardinal)} \\ \hline
+Produit cartésien $E \times F$ & $|E \times F|$ & $|E| \times |F|$ \\ \hline
+$p$-listes \textbf{sans répétition} (Arrangements) & $A_n^p$ ou $A(n,p)$ & $\dfrac{n!}{(n-p)!} = n(n-1)\dots(n-p+1)$ \\ \hline
+$p$-listes \textbf{avec répétition} & $|E|^p$ & $n^p$ \\ \hline
+Permutations de $E$ (cas $p=n$) & $n!$ & $n! = n \times (n-1) \times \dots \times 2 \times 1$ \\ \hline
+Combinaisons (sous-ensembles à $p$ éléments) & $C_n^p$ ou $C(n,p)$ ou $\binom{n}{p}$ & $\dfrac{n!}{p!\,(n-p)!} = \dfrac{A_n^p}{p!}$ \\ \hline
+\end{tabularx}
+\end{center}
+\end{propriete}
+
+\begin{attention}[Notations et conventions]
+\begin{itemize}
+    \item Par convention, $0! = 1$. Cela assure la cohérence des formules : $A_n^0 = 1$, $C_n^0 = 1$, $C_n^n = 1$.
+    \item $A_n^p$ se lit « arrangements de $p$ parmi $n$ » ou « $p$-listes sans répétition ».
+    \item $C_n^p$ se lit « combinaisons de $p$ parmi $n$ » ou « nombre de sous-ensembles à $p$ éléments ».
+    \item La notation $\binom{n}{p}$ (lu « $n$ choisi $p$ ») est standard en probabilités et en Terminale ; elle désigne exactement $C_n^p$.
+\end{itemize}
+\end{attention}
+
+\courssub{Identités et propriétés remarquables}
+
+Les formules du tableau ne sont pas isolées ; elles sont liées par des relations algébriques simples qu'il faut connaître par cœur pour manipuler les expressions rapidement.
+
+\begin{propriete}[Lien fondamental entre Arrangements et Combinaisons]
+Pour tout $n \in \mathbb{N}^*$ et $p \in \{0, \dots, n\}$ :
+\[
+A_n^p = C_n^p \times p! \qquad \text{et donc} \qquad C_n^p = \frac{A_n^p}{p!}.
+\]
+\begin{proof}[Justification (exigible au Probatoire)]
+Une $p$-liste sans répétition (arrangement) s'obtient en deux étapes indépendantes :
+\begin{enumerate}
+    \item Choisir les $p$ éléments qui composeront la liste : $C_n^p$ façons (l'ordre ne compte pas encore).
+    \item Ordonner ces $p$ éléments choisis : $p!$ façons (permutations de ces $p$ éléments).
+\end{enumerate}
+D'après le principe multiplicatif, le total est $C_n^p \times p!$, ce qui est exactement la définition de $A_n^p$.
+\end{proof}
+\end{propriete}
+
+\begin{propriete}[Valeurs limites et symétrie des combinaisons]
+Pour tout $n \in \mathbb{N}^*$ et $p \in \{0, \dots, n\}$ :
+\begin{enumerate}
+    \item $C_n^0 = C_n^n = 1$ (il y a une seule façon de ne choisir personne, ou de choisir tout le monde).
+    \item $C_n^1 = C_n^{n-1} = n$ (choisir 1 élément parmi $n$, ou en exclure 1 parmi $n$).
+    \item \textbf{Symétrie (identité de Pascal)} : $\displaystyle C_n^p = C_n^{n-p}$.
+\end{enumerate}
+\end{propriete}
+
+\begin{proof}[Démonstration de la symétrie (exigible)]
+\emph{Preuve combinatoire :} Choisir un sous-ensemble $A$ de $p$ éléments dans $E$ revient \emph{exactement} à choisir son complémentaire $\overline{A} = E \setminus A$, qui a $n-p$ éléments. Il y a une bijection entre les sous-ensembles à $p$ éléments et ceux à $n-p$ éléments. Donc $C_n^p = C_n^{n-p}$.
+
+\emph{Preuve algébrique :}
+\[
+C_n^{n-p} = \frac{n!}{(n-p)!\,(n-(n-p))!} = \frac{n!}{(n-p)!\,p!} = C_n^p.
+\]
+\end{proof}
+
+\begin{savaistu}[Le triangle de Pascal : la mémoire visuelle des $C_n^p$]
+Blaise Pascal (1623--1662) a mis en évidence un triangle où chaque nombre est la somme des deux au-dessus de lui :
+\[
+\begin{array}{c@{\hspace{2pt}}c@{\hspace{2pt}}c@{\hspace{2pt}}c@{\hspace{2pt}}c@{\hspace{2pt}}c@{\hspace{2pt}}c@{\hspace{2pt}}c}
+n=0: & & & & 1 & & & \\
+n=1: & & & 1 & & 1 & & \\
+n=2: & & 1 & & 2 & & 1 & \\
+n=3: & 1 & & 3 & & 3 & & 1 \\
+n=4: & 1 & 4 & 6 & 4 & 1 \\
+n=5: & 1 & 5 & 10 & 10 & 5 & 1
+\end{array}
+\]
+La ligne $n$ (en commençant à $0$) contient $C_n^0, C_n^1, \dots, C_n^n$.
+\textbf{Propriété fondamentale (relation de Stifel) :} $C_n^p = C_{n-1}^{p-1} + C_{n-1}^p$ (pour $1 \le p \le n-1$).
+Cela permet de calculer $C_{10}^3$ sans factorielle : $C_{10}^3 = C_9^2 + C_9^3 = 36 + 84 = 120$. Utile pour vérifier un résultat ou programmer une calculatrice sans débordement !
+\end{savaistu}
+
+\courssub{Cas des \texorpdfstring{$p$}{p}-listes avec répétition}
+
+Jusqu'ici, les arrangements ($A_n^p$) supposaient qu'on ne pouvait pas réutiliser un élément déjà choisi (\emph{sans remise} / \emph{sans répétition}). Dans de nombreuses situations techniques (codes, mots de passe, lancers de dé), la répétition est autorisée.
+
+\begin{definition}[$p$-liste avec répétition]
+Une \cle{$p$-liste avec répétition} d'éléments d'un ensemble $E$ (de cardinal $n$) est un $uplet$ $(x_1, x_2, \dots, x_p)$ où chaque $x_i \in E$, \textbf{sans condition de distinctivité}. Les éléments peuvent se répéter.
+\end{definition}
+
+\begin{propriete}[Nombre de $p$-listes avec répétition]
+Le nombre de $p$-listes avec répétition formées à partir d'un ensemble à $n$ éléments est :
+\[
+n^p = \underbrace{n \times n \times \dots \times n}_{p \text{ fois}}.
+\]
+\begin{proof}
+Pour chaque position $i$ ($1$ à $p$), on a $n$ choix possibles, indépendamment des choix précédents (remise). Principe multiplicatif direct.
+\end{proof}
+\end{propriete}
+
+\begin{exemplebox}[Code d'accès à 4 chiffres]
+Un digicode utilise les 10 chiffres $\{0,1,\dots,9\}$. Un code est une suite de 4 chiffres. La répétition est autorisée (ex: 1123, 0000).
+Nombre de codes possibles : $10^4 = 10\,000$.
+\emph{Attention :} Si le code ne doit pas avoir de chiffre répété, c'est un arrangement : $A_{10}^4 = 5040$.
+\end{exemplebox}
+
+\begin{attention}[Piège classique : Arrangement vs $p$-liste avec répétition]
+Ne confondez jamais :
+\begin{itemize}
+    \item \textbf{Arrangement $A_n^p$} : \emph{Sans répétition} (on pioche sans remise). Nombre de cas : $\frac{n!}{(n-p)!}$.
+    \item \textbf{$p$-liste avec répétition} : \emph{Avec répétition} (on pioche avec remise). Nombre de cas : $n^p$.
+\end{itemize}
+La question clé est toujours : \textbf{« Un même élément peut-il être choisi plusieurs fois ? »}
+\end{attention}
+
+\courssub{Permutations avec répétitions (aperçu Terminale)}
+
+En Première, nous avons vu les permutations d'un ensemble où \textbf{tous les éléments sont distincts} ($n!$). En Terminale (et dans certains problèmes de Première), on rencontre des ensembles où certains éléments sont \textbf{identiques} (multiset). La formule s'adapte simplement.
+
+\begin{propriete}[Permutations d'un multiset — Formule à connaître pour la Terminale]
+Soit un ensemble de $n$ objets contenant $k$ types distincts. Le type $i$ apparaît $n_i$ fois ($n_1 + n_2 + \dots + n_k = n$). Le nombre de permutations distinctes de ces $n$ objets est :
+\[
+\frac{n!}{n_1! \, n_2! \, \dots \, n_k!}.
+\]
+\end{propriete}
+
+\begin{exemplebox}[Anagrammes du mot « CAMEROUN »]
+Le mot a 8 lettres : C, A, M, E, R, O, U, N. Toutes distinctes $\Rightarrow 8! = 40\,320$ anagrammes.
+Le mot « BANANE » a 6 lettres : B(1), A(2), N(2), E(1). $n=6, n_A=2, n_N=2$.
+Nombre d'anagrammes distincts : $\dfrac{6!}{2!\,2!\,1!\,1!} = \dfrac{720}{4} = 180$.
+\end{exemplebox}
+
+\courssub{Stratégie de choix : l'arbre de décision}
+
+Face à un problème de dénombrement, ne devinez pas : \textbf{répondez à trois questions dans l'ordre}. C'est la méthode universelle.
+
+\begin{methode}[Choisir le bon outil en 3 questions]
+Pour dénombrer les façons de former un groupe/liste de $p$ éléments à partir de $n$ éléments disponibles :
+\begin{enumerate}
+    \item \textbf{L'ordre compte-t-il ?}
+    \begin{itemize}
+        \item \textbf{OUI} (liste, code, classement, rangement) $\rightarrow$ Aller à la question 2.
+        \item \textbf{NON} (équipe, main de cartes, sous-ensemble, lot) $\rightarrow$ \textbf{Combinaison $C_n^p$}. \emph{Stop.}
+    \end{itemize}
+    \item \textbf{La répétition est-elle autorisée ?} (Un même élément peut-il être repris ?)
+    \begin{itemize}
+        \item \textbf{OUI} (code, mot de passe, lancers de dé, choix avec remise) $\rightarrow$ \textbf{$p$-liste avec répétition : $n^p$}. \emph{Stop.}
+        \item \textbf{NON} (tirage sans remise, personnes distinctes, cartes) $\rightarrow$ Aller à la question 3.
+    \end{itemize}
+    \item \textbf{Choisit-on tous les éléments ?} ($p = n$ ou $p < n$ ?)
+    \begin{itemize}
+        \item $p = n$ (on range/tout classe) $\rightarrow$ \textbf{Permutation : $n!$}.
+        \item $p < n$ (on choisit une partie) $\rightarrow$ \textbf{Arrangement : $A_n^p$}.
+    \end{itemize}
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=1.8cm and 2.5cm,
+    decision/.style={diamond, draw=popblue, thick, fill=popblue!10, text width=3.2cm, text badly centered, inner sep=2pt, font=\small},
+    process/.style={rectangle, draw=popgreen, thick, fill=popgreen!10, text width=3.5cm, text centered, rounded corners, inner sep=4pt, font=\small\bfseries},
+    start/.style={ellipse, draw=poporange, thick, fill=poporange!10, text centered, inner sep=4pt, font=\small\bfseries},
+    arrow/.style={-Stealth, thick, popdark},
+    yesno/.style={font=\footnotesize, sloped, pos=0.5, inner sep=2pt}
+]
+\node[start, align=center] (start){Problème de dénombrement\\$n$ dispo, choisir $p$};
+\node[decision, below of=start] (q1) {L'ordre compte-t-il ?};
+\node[process, right=of q1, xshift=1.5cm, align=center] (comb){Combinaison\\$C_n^p = \frac{n!}{p!(n-p)!}$};
+\node[decision, below of=q1] (q2) {Répétition autorisée ?};
+\node[process, right=of q2, xshift=1.5cm, align=center] (prep){$p$-liste avec répétition\\$n^p$};
+\node[decision, below of=q2] (q3) {$p = n$ ?};
+\node[process, left=of q3, xshift=-1.5cm, align=center] (perm){Permutation\\$n!$};
+\node[process, right=of q3, xshift=1.5cm, align=center] (arr){Arrangement\\$A_n^p = \frac{n!}{(n-p)!}$};
+
+\draw[arrow] (start) -- (q1);
+\draw[arrow] (q1) -- node[yesno, left] {NON} (comb);
+\draw[arrow] (q1) -- node[yesno, right] {OUI} (q2);
+\draw[arrow] (q2) -- node[yesno, left] {OUI} (prep);
+\draw[arrow] (q2) -- node[yesno, right] {NON} (q3);
+\draw[arrow] (q3) -- node[yesno, above] {OUI} (perm);
+\draw[arrow] (q3) -- node[yesno, above] {NON} (arr);
+\end{tikzpicture}
+\legende{Arbre de décision : trois questions pour identifier l'outil exact.}
+\end{popfigure}
+
+\courssub{Applications concrètes et pièges à éviter}
+
+Mettons la méthode à l'épreuve sur des cas classiques du Probatoire.
+
+\begin{exoresolu}[Main de poker — Combinaison classique]
+\emph{Énoncé :} Un jeu de 52 cartes. On tire 5 cartes simultanément (une « main »). Combien de mains différentes sont possibles ?
+\tcblower
+\emph{Solution :}
+\begin{enumerate}
+    \item \textbf{Ordre ?} Non, une main est un ensemble de cartes, l'ordre de tirage n'importe pas.
+    \item $\rightarrow$ \textbf{Combinaison} $C_{52}^5$.
+    \item Calcul : $C_{52}^5 = \dfrac{52!}{5!\,47!} = \dfrac{52 \times 51 \times 50 \times 49 \times 48}{5 \times 4 \times 3 \times 2 \times 1}$.
+    \item Simplification : $\dfrac{52}{4}=13$, $\dfrac{51}{3}=17$, $\dfrac{50}{5}=10$, $\dfrac{48}{2}=24$.
+    \item $13 \times 17 \times 10 \times 49 \times 24 = 2\,598\,960$.
+\end{enumerate}
+\emph{Réponse :} \textbf{2 598 960} mains différentes.
+\end{exoresolu}
+
+\begin{exoresolu}[Code de sécurité — Arrangement vs répétition]
+\emph{Énoncé :} Un code de 3 symboles doit être formé à partir des 5 symboles $\{A, B, C, D, E\}$.
+\begin{enumerate}
+    \item Combien de codes si les symboles sont tous distincts ?
+    \item Combien de codes si les symboles peuvent se répéter ?
+\end{enumerate}
+\tcblower
+\emph{Solution :}
+\begin{enumerate}
+    \item \textbf{Ordre ?} Oui (code). \textbf{Répétition ?} Non (distincts). \textbf{$p=n$ ?} Non ($p=3, n=5$).
+    $\rightarrow$ Arrangement $A_5^3 = 5 \times 4 \times 3 = \mathbf{60}$.
+    \item \textbf{Ordre ?} Oui. \textbf{Répétition ?} Oui.
+    $\rightarrow$ $p$-liste avec répétition : $5^3 = \mathbf{125}$.
+\end{enumerate}
+\emph{Remarque :} La répétition multiplie les possibilités par plus de 2 ici.
+\end{exoresolu}
+
+\begin{attention}[Erreur fatale : Le double comptage (ordre vs non-ordre)]
+\textbf{Situation :} « Choisir un président et un secrétaire parmi 10 personnes. »
+\begin{itemize}
+    \item \textbf{Mauvaise réponse :} $C_{10}^2 = 45$. \emph{Pourquoi ?} Cela compte $\{\text{Alice, Bob}\}$ une seule fois. Mais Alice présidente + Bob secrétaire est \textbf{différent} de Bob président + Alice secrétaire. L'ordre compte (les rôles sont distincts).
+    \item \textbf{Bonne réponse :} $A_{10}^2 = 10 \times 9 = 90$. Ou : choisir le duo ($C_{10}^2$) puis désigner le président dans le duo ($\times 2$) : $45 \times 2 = 90$.
+\end{itemize}
+\textbf{Règle d'or :} Si les positions/rôles sont \emph{distincts} (1er, 2e ; président/secrétaire ; chiffre des centaines/chiffre des unités), c'est de l'\textbf{ordre} $\rightarrow$ Arrangement. Si les positions sont \emph{identiques} (membres d'un comité, cartes en main), c'est \textbf{non-ordre} $\rightarrow$ Combinaison.
+\end{attention}
+
+\begin{exoresolu}[Comité avec rôles — Cas mixte]
+\emph{Énoncé :} Parmi 12 ingénieurs, on doit former un comité de 4 personnes \textbf{où l'un sera désigné chef de projet}. Combien de façons ?
+\tcblower
+\emph{Solution (Méthode 1 : Étapes successives)}
+\begin{enumerate}
+    \item Choisir les 4 membres du comité (ordre indifférent) : $C_{12}^4 = 495$.
+    \item Choisir le chef de projet parmi ces 4 : $4$ façons.
+    \item Total : $495 \times 4 = \mathbf{1980}$.
+\end{enumerate}
+\emph{Solution (Méthode 2 : Choix direct du chef puis du reste)}
+\begin{enumerate}
+    \item Choisir le chef de projet parmi les 12 : $12$ façons.
+    \item Choisir les 3 autres membres parmi les 11 restants : $C_{11}^3 = 165$.
+    \item Total : $12 \times 165 = \mathbf{1980}$.
+\end{enumerate}
+\emph{Les deux méthodes donnent le même résultat (vérification croisée).}
+\end{exoresolu}
+
+\begin{savaistu}[Dénombrement et métiers techniques]
+\begin{itemize}
+    \item \textbf{Électricité / Domotique :} Câblage d'un tableau (ordre des circuits), adressage IP (combinaisons d'octets), configurations de commutateurs ($2^n$ états).
+    \item \textbf{Mécanique / Usinage :} Ordre des opérations sur une pièce (arrangements), gammes de montage, tolérances (combinaisons de défauts).
+    \item \textbf{Gestion / Logistique :} Tournées de livraison (permutations/arrangements — problème du voyageur de commerce), constitution de lots (combinaisons), codes-barres / QR codes ($p$-listes avec répétition).
+    \item \textbf{Informatique / Réseau :} Mots de passe (force = $n^p$), permutations de tri, combinaisons de clés.
+\end{itemize}
+Maîtriser le dénombrement, c'est savoir \textbf{modéliser} une situation technique en un problème mathématique précis.
+\end{savaistu}
+
+\begin{exercice}[Entraînement ciblé — Probatoire]
+\begin{enumerate}
+    \item Combien y a-t-il de façons de choisir 3 stagiaires parmi 20 pour une mission \textbf{si l'ordre de passage compte} ? Et \textbf{s'il ne compte pas} ?
+    \item Un mot de passe de 6 caractères utilise les 26 lettres minuscules + 10 chiffres. Combien de mots de passe possibles si : (a) la répétition est autorisée ; (b) la répétition est interdite ?
+    \item Dans un lot de 15 pièces, 2 sont défectueuses. On en choisit 4 au hasard. Combien de choix contiennent \textbf{exactement} 1 pièce défectueuse ? (Indication : choisir la défectueuse $\times$ choisir les 3 bonnes).
+    \item Calculer $C_{100}^{98}$ sans calculatrice (astuce symétrie).
+    \item Vrai ou Faux ? Justifiez. $A_n^p = C_n^p \times (n-p)!$
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n]
+\begin{enumerate}
+    \item Ordre compte : Arrangement $A_{20}^3 = 20 \times 19 \times 18 = 6840$. Ordre ne compte pas : Combinaison $C_{20}^3 = \frac{20 \times 19 \times 18}{6} = 1140$.
+    \item Alphabet de 36 symboles. (a) Répétition autorisée : $36^6 = 2\,176\,782\,336$. (b) Répétition interdite : $A_{36}^6 = 36 \times 35 \times 34 \times 33 \times 32 \times 31 = 1\,402\,410\,240$.
+    \item Choisir 1 défectueuse parmi 2 : $C_2^1 = 2$. Choisir 3 bonnes parmi 13 : $C_{13}^3 = 286$. Total : $2 \times 286 = \mathbf{572}$.
+    \item $C_{100}^{98} = C_{100}^2 = \frac{100 \times 99}{2} = 4950$.
+    \item \textbf{Faux.} $A_n^p = C_n^p \times p!$. Le facteur est $p!$ (permutations des $p$ choisis), pas $(n-p)!$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Applications concrètes et résolution de problèmes}
+
+Dans les sections précédentes, nous avons établi les relations fondamentales entre les outils du dénombrement : $A_n^p = \dfrac{n!}{(n-p)!}$, $\dbinom{n}{p} = \dfrac{A_n^p}{p!}$, ainsi que les propriétés de symétrie $\dbinom{n}{p} = \dbinom{n}{n-p}$ et la relation de Pascal $\dbinom{n}{p} = \dbinom{n-1}{p-1} + \dbinom{n-1}{p}$. Nous disposons donc désormais d'une \cle{boîte à outils} complète : $p$-listes, permutations, arrangements et combinaisons. Mais savoir calculer ne suffit pas au Probatoire : il faut surtout savoir \cle{reconnaître} quel outil utiliser face à une situation concrète, et \cle{rédiger} une justification complète. C'est l'objet de cette dernière section, entièrement consacrée à la résolution de problèmes.
+
+\courssub{La démarche générale de résolution}
+
+Face à un problème de dénombrement, l'erreur la plus fréquente est de se précipiter sur une formule. Un bon raisonnement commence toujours par des \emph{questions} avant les calculs.
+
+\begin{methode}[Étapes types pour résoudre un problème de dénombrement]
+\begin{enumerate}
+\item \textbf{Identifier l'ensemble de départ} : combien d'objets distincts $n$ a-t-on à disposition ? (chiffres, élèves, équipes, matières\ldots)
+\item \textbf{Identifier ce que l'on choisit} : combien d'objets $p$ sélectionne-t-on ou ordonne-t-on ?
+\item \textbf{Se poser les deux questions décisives} :
+\begin{itemize}
+\item L'\cle{ordre} compte-t-il ? (le classement $1^{\text{er}}$, $2^{\text{e}}$ est-il différent d'un simple groupe ?)
+\item Y a-t-il \cle{répétition} possible ? (peut-on choisir deux fois le même élément, c'est-à-dire y a-t-il remise ?)
+\end{itemize}
+\item \textbf{Sélectionner la formule} grâce au tableau de décision ci-dessous.
+\item \textbf{Calculer} en détaillant les étapes (factorielles, simplifications).
+\item \textbf{Conclure} par une phrase complète qui répond à la question posée, avec le nombre trouvé.
+\end{enumerate}
+\end{methode}
+
+\begin{aretenir}[Tableau de décision : quel outil choisir ?]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Situation} & \textbf{Ordre compte ?} & \textbf{Formule} \\
+\hline
+$p$-liste (code, mot, numéro) & Oui, avec répétition possible & $n^p$ \\
+\hline
+Arrangement (podium, bureau, classement) & Oui, sans répétition & $A_n^p = \dfrac{n!}{(n-p)!}$ \\
+\hline
+Permutation (ordre de passage, rangement) & Oui, tous les éléments & $n!$ \\
+\hline
+Combinaison (comité, tirage, grille de loto) & Non, sans répétition & $\dbinom{n}{p} = \dfrac{n!}{p!(n-p)!}$ \\
+\hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\begin{attention}[Ordre imposé ou ordre libre ? Avec ou sans remise ?]
+Les pièges classiques de l'énoncé :
+\begin{itemize}
+\item « Former un \textbf{bureau} (président, secrétaire, trésorier) » : les postes sont distincts, donc l'\textbf{ordre compte} $\rightarrow$ arrangement.
+\item « Former un \textbf{comité} de 3 personnes » : aucun rôle n'est distingué, l'ordre \textbf{ne compte pas} $\rightarrow$ combinaison.
+\item « Tirer 3 boules \textbf{successivement avec remise} » : répétition possible $\rightarrow$ $p$-liste, $n^p$.
+\item « Tirer 3 boules \textbf{simultanément} » : pas d'ordre, pas de répétition $\rightarrow$ combinaison.
+\item « Chiffres \textbf{distincts} » signifie « sans répétition » : ne pas utiliser $n^p$ !
+\end{itemize}
+Souligner ces mots-clés dans l'énoncé est le premier réflexe du candidat au Probatoire.
+\end{attention}
+
+\courssub{Modélisation de situations réelles}
+
+\textbf{Codes d'accès.} Un code de porte est une suite ordonnée de chiffres : l'ordre compte évidemment (1234 n'est pas 4321). Si la répétition est autorisée, c'est une $p$-liste ; si les chiffres doivent être distincts, c'est un arrangement, avec parfois une contrainte supplémentaire (premier chiffre non nul) qu'il faut traiter \emph{en premier}.
+
+\begin{exemplebox}[Code de porte à 5 chiffres distincts, premier chiffre non nul]
+On veut composer un code de 5 chiffres, tous distincts, le premier chiffre étant différent de 0.
+\begin{itemize}
+\item \textbf{1\textsuperscript{er} chiffre} : 9 choix possibles (1 à 9, le 0 est interdit).
+\item \textbf{2\textsuperscript{e} chiffre} : 9 choix (le 0 redevient disponible, mais un chiffre est déjà utilisé).
+\item \textbf{3\textsuperscript{e} chiffre} : 8 choix ; \textbf{4\textsuperscript{e}} : 7 choix ; \textbf{5\textsuperscript{e}} : 6 choix.
+\end{itemize}
+Par le principe multiplicatif :
+\[ 9 \times 9 \times 8 \times 7 \times 6 = \num{27216} \text{ codes possibles.} \]
+\end{exemplebox}
+
+\textbf{Tirages sportifs.} Dans un tournoi, « tirer au sort 2 équipes parmi 10 pour un match » ne distingue pas l'ordre des équipes : c'est une combinaison, $\dbinom{10}{2} = 45$ affiches possibles. En revanche, « attribuer les médailles d'or, d'argent et de bronze parmi 8 athlètes » distingue les places : c'est un arrangement, $A_8^3 = 8 \times 7 \times 6 = 336$ podiums possibles.
+
+\textbf{Comités et délégations.} Choisir 4 délégués parmi 30 élèves : combinaison, $\dbinom{30}{4} = \num{27405}$. Mais si l'on choisit un délégué principal, un adjoint, un secrétaire et un trésorier : arrangement, $A_{30}^4 = 30 \times 29 \times 28 \times 27 = \num{657720}$.
+
+\textbf{Loteries.} Une grille de loto où l'on coche 6 numéros parmi 49 est une combinaison : $\dbinom{49}{6} = \num{13983816}$ grilles possibles. C'est précisément ce dénombrement qui permettra, dans la leçon sur les probabilités, de calculer la chance de gagner : $\dfrac{1}{\num{13983816}}$.
+
+\courssub{Exemple complet résolu : l'emploi du temps}
+
+\begin{exoresolu}[Grilles d'emploi du temps]
+Un lycée technique doit construire l'emploi du temps de 5 classes. Pour chaque classe, on choisit 3 créneaux de cours magistral parmi les 8 créneaux de la semaine, puis on attribue ces choix aux classes. Combien de grilles d'emploi du temps différentes peut-on construire ?
+\tcblower
+\textbf{Étape 1 : identifier les ensembles.} Il y a $n = 8$ créneaux disponibles et $5$ classes distinctes.
+
+\textbf{Étape 2 : ordre et répétition.} Pour une classe donnée, choisir 3 créneaux parmi 8 : l'ordre des créneaux choisis ne compte pas (l'ensemble \{lundi 8h, mardi 10h, jeudi 14h\} est le même quel que soit l'ordre d'énumération) et il n'y a pas de répétition. C'est donc une \textbf{combinaison} :
+\[ \dbinom{8}{3} = \dfrac{8!}{3!\,5!} = \dfrac{8 \times 7 \times 6}{3 \times 2 \times 1} = 56. \]
+
+\textbf{Étape 3 : attribution aux classes.} Les 5 classes sont distinctes (classe A, B, C, D, E). Ordonner les 5 classes revient à compter les \textbf{permutations} de 5 éléments :
+\[ 5! = 120. \]
+
+\textbf{Étape 4 : principe multiplicatif et conclusion.}
+\[ 56 \times 5! = 56 \times 120 = \num{6720}. \]
+Il y a donc $\num{6720}$ grilles d'emploi du temps différentes.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  grow=right, level distance=3.6cm,
+  level 1/.style={sibling distance=2.2cm},
+  level 2/.style={sibling distance=1.1cm},
+  every node/.style={font=\small},
+  edge from parent/.style={draw=popblue, thick}
+]
+\node[draw=popdark, fill=popblueL, rounded corners, align=center] {Choisir 3 créneaux\\ parmi 8 : $\binom{8}{3}=56$}
+  child { node[draw=popgreen, fill=popgreenL, rounded corners, align=center] {Ordre des 5 classes\\ $5! = 120$}
+    child { node[draw=poporange, fill=poporangeL, rounded corners] {Grille 1} }
+    child { node[draw=poporange, fill=poporangeL, rounded corners] {$\vdots$} }
+    child { node[draw=poporange, fill=poporangeL, rounded corners] {Grille 120} }
+  }
+  child { node[draw=popgreen, fill=popgreenL, rounded corners, align=center] {$\vdots$} }
+  child { node[draw=popgreen, fill=popgreenL, rounded corners, align=center] {Ordre des 5 classes\\ $5! = 120$} };
+\end{tikzpicture}
+\end{center}
+\legende{Arbre de décision : pour chacun des 56 choix de créneaux, il y a $5! = 120$ façons d'ordonner les classes, soit $56 \times 120 = \num{6720}$ grilles.}
+\end{popfigure}
+
+\courssub{Rédiger une justification complète (attendu du Probatoire)}
+
+Au Probatoire technique, une réponse numérique seule ne rapporte pas tous les points. La copie doit contenir quatre éléments :
+
+\begin{enumerate}
+\item \textbf{La modélisation} : « On choisit 3 élèves parmi 25, sans ordre ni répétition : il s'agit d'une combinaison. »
+\item \textbf{La formule citée} : $\dbinom{n}{p} = \dfrac{n!}{p!(n-p)!}$.
+\item \textbf{Le calcul détaillé} : $\dbinom{25}{3} = \dfrac{25 \times 24 \times 23}{3 \times 2 \times 1} = \num{2300}$.
+\item \textbf{La conclusion} : « Il y a donc $\num{2300}$ délégations possibles. »
+\end{enumerate}
+
+\begin{attention}[Pièges de rédaction et de calcul]
+\begin{itemize}
+\item Ne pas écrire $\dbinom{25}{3} = \dfrac{25!}{3!}$ : c'est faux, il manque $(25-3)! = 22!$ au dénominateur.
+\item Simplifier \emph{avant} de calculer : $\dfrac{25 \times 24 \times 23}{6}$ est bien plus rapide que de calculer $25!$.
+\item Vérifier la cohérence : un nombre de combinaisons est toujours un entier, et $\dbinom{n}{p} \leq n^p$.
+\item Ne pas confondre $A_n^p$ et $\dbinom{n}{p}$ : $A_n^p = p! \times \dbinom{n}{p}$, donc l'arrangement donne toujours un résultat plus grand (ou égal si $p \leq 1$).
+\end{itemize}
+\end{attention}
+
+\courssub{Exercices types Probatoire}
+
+\begin{exercice}[Exercice 1 : podium d'atelier]
+Lors d'un concours de mécanique, 12 apprentis participent à une épreuve. On attribue une médaille d'or, une d'argent et une de bronze. Combien de podiums différents sont possibles ?
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+L'ordre compte (or $\neq$ argent) et il n'y a pas de répétition : c'est un arrangement.
+\[ A_{12}^3 = 12 \times 11 \times 10 = \num{1320}. \]
+Il y a $\num{1320}$ podiums possibles.
+\end{corrige}
+
+\begin{exercice}[Exercice 2 : délégation de classe]
+Une classe de Première technique compte 35 élèves. On veut former un comité de 4 élèves pour organiser la visite d'une entreprise. Combien de comités différents peut-on former ?
+\end{exercice}
+
+\begin{corrige}[Exercice 2]
+L'ordre ne compte pas, pas de répétition : combinaison.
+\[ \dbinom{35}{4} = \dfrac{35 \times 34 \times 33 \times 32}{4 \times 3 \times 2 \times 1} = \dfrac{\num{1308720}}{24} = \num{52360}. \]
+Il y a $\num{52360}$ comités possibles.
+\end{corrige}
+
+\begin{exercice}[Exercice 3 : plaque d'immatriculation]
+Une plaque est formée de 2 lettres distinctes (alphabet de 26 lettres) suivies de 3 chiffres (répétition autorisée). Combien de plaques différentes existe-t-il ?
+\end{exercice}
+
+\begin{corrige}[Exercice 3]
+Lettres distinctes, ordre important : arrangement $A_{26}^2 = 26 \times 25 = 650$. Chiffres avec répétition : $10^3 = \num{1000}$. Par le principe multiplicatif :
+\[ 650 \times \num{1000} = \num{650000} \text{ plaques.} \]
+\end{corrige}
+
+\begin{exercice}[Exercice 4 : rangement en atelier]
+Un technicien range 7 outils différents sur 7 emplacements numérotés d'un panneau. De combien de façons peut-il les disposer ?
+\end{exercice}
+
+\begin{corrige}[Exercice 4]
+On ordonne les 7 outils : c'est une permutation.
+\[ 7! = \num{5040} \text{ rangements possibles.} \]
+\end{corrige}
+
+\begin{savaistu}[Du dénombrement aux probabilités]
+Les principes de dénombrement que tu viens d'apprendre sont la \textbf{base de la probabilité}, objet de la prochaine leçon. En effet, lorsque les issues sont équiprobables, la probabilité d'un événement est le quotient $\dfrac{\text{nombre de cas favorables}}{\text{nombre de cas possibles}}$ : les deux nombres se calculent par dénombrement ! Par exemple, la probabilité de gagner au loto $6/49$ avec une grille est $\dfrac{1}{\dbinom{49}{6}} = \dfrac{1}{\num{13983816}}$. Au Cameroun, les jeux de tirage, les tombolas de quartier et les loteries sportives reposent tous sur ces calculs.
+\end{savaistu}
+
+\courssub{Auto-évaluation : checklist des compétences}
+
+Avant de passer à la leçon suivante, vérifie que tu maîtrises chaque point :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popgreenL} \textbf{Compétence} & \textbf{Je sais\ldots} \\
+\hline
+Définir & énoncer ce qu'est une $p$-liste, une permutation, un arrangement, une combinaison, et donner chaque formule. \\
+\hline
+Démontrer & justifier $A_n^p = p! \times \dbinom{n}{p}$ et la relation de Pascal. \\
+\hline
+Appliquer & analyser un énoncé (ordre ? répétition ?), choisir la bonne formule et calculer sans erreur. \\
+\hline
+Communiquer & rédiger une solution complète : modélisation, formule, calcul détaillé, phrase de conclusion. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{aretenir}[Checklist de résolution]
+\begin{itemize}
+\item[\checkmark] \textbf{Définir} les ensembles : qui est $n$ ? qui est $p$ ?
+\item[\checkmark] \textbf{Choisir} la formule : ordre ? répétition ? ($n^p$, $A_n^p$, $n!$ ou $\dbinom{n}{p}$)
+\item[\checkmark] \textbf{Calculer} en simplifiant les factorielles avant tout calcul numérique.
+\item[\checkmark] \textbf{Justifier} par une rédaction complète et conclure par une phrase.
+\end{itemize}
+\end{aretenir}
+
+Cette leçon de dénombrement t'a donné des outils puissants pour compter sans énumérer. Ces outils, combinés au principe multiplicatif, te serviront dans toute la suite du programme : probabilités, statistiques, et même dans ta spécialité technique pour estimer des configurations, des codes ou des plannings de production.
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+À l'issue de cette activité d'intégration, l'élève doit être capable de :
+\begin{itemize}
+\item reconnaître, dans une situation concrète d'organisation d'un tournoi, quel outil de dénombrement utiliser : \cle{produit cartésien}, \cle{p-liste}, \cle{arrangement}, \cle{combinaison} ou \cle{permutation} ;
+\item distinguer les situations où \textbf{l'ordre compte} de celles où il ne compte pas, et celles où la \textbf{répétition} est permise ou interdite ;
+\item appliquer correctement les formules $n^p$, $A_n^p = \dfrac{n!}{(n-p)!}$, $\binom{n}{p} = \dfrac{n!}{p!\,(n-p)!}$ et $n!$ ;
+\item rédiger et justifier une démarche complète, présenter ses résultats dans un tableau récapitulatif et les défendre oralement devant la classe ;
+\item vérifier la cohérence des résultats obtenus (contrôle par un raisonnement alternatif).
+\end{itemize}
+
+\courssub{Situation}
+
+\textbf{Le tournoi de la FESIC de Yaoundé.}\par
+Le lycée technique de Nkol-Eton (Yaoundé) organise, à l'occasion de la semaine de la jeunesse, un mini-tournoi de football inter-classes appelé \og Coupe du Proviseur \fg. Le comité d'organisation, composé d'élèves de Première technique, dispose des informations suivantes :
+\begin{itemize}
+\item \textbf{8 équipes} sont inscrites : $E_1$ (1re F4), $E_2$ (1re G1), $E_3$ (1re F3), $E_4$ (1re G2), $E_5$ (Tle F4), $E_6$ (Tle G1), $E_7$ (2de C) et $E_8$ (2de D) ;
+\item le tournoi se déroule à \textbf{élimination directe} : quarts de finale (4 matchs), demi-finales (2 matchs), petite finale et finale ;
+\item le terrain annexe n'est disponible que \textbf{le samedi matin} : les 4 quarts de finale doivent être programmés \textbf{dans un ordre précis} (match 1 à 7h30, match 2 à 8h45, match 3 à 10h, match 4 à 11h15) ;
+\item pour la finale, chaque équipe qualifiée doit fournir un \textbf{capitaine} et un \textbf{gardien} distincts parmi ses 11 joueurs ;
+\item à la fin du tournoi, on établit le \textbf{classement des 4 demi-finalistes} (1\textsuperscript{er}, 2\textsuperscript{e}, 3\textsuperscript{e}, 4\textsuperscript{e}), chaque rang étant distinct.
+\end{itemize}
+Le proviseur demande au comité de prévoir, \emph{avant} le tirage au sort, le nombre total de configurations possibles afin d'imprimer les bons tableaux d'affichage et de vérifier qu'aucune erreur de programmation n'est possible. Le comité doit donc répondre à une série de questions de dénombrement et présenter ses résultats au proviseur sous forme d'un tableau récapitulatif justifié.
+
+\courssub{Consignes}
+
+Travail en groupes de 4 élèves. Chaque groupe répond aux questions suivantes, en \textbf{justifiant chaque réponse} par le nom de l'outil utilisé et la formule appliquée, puis remplit le tableau récapitulatif fourni. Un rapporteur par groupe présente les résultats au tableau.
+
+\begin{enumerate}
+\item \textbf{Choix des affiches des quarts de finale.} On veut d'abord savoir combien de \emph{paires d'équipes} différentes peuvent se rencontrer en quart de finale (sans tenir compte de l'ordre des équipes dans la paire). Calculer le nombre de paires possibles parmi les 8 équipes. Quel outil utilise-t-on et pourquoi ?
+\item \textbf{Programmation des 4 matchs.} Une fois le tirage effectué, on obtient 4 matchs (4 paires disjointes). De combien de façons peut-on \emph{ordonner} ces 4 matchs sur les 4 créneaux horaires du samedi matin ? Quel outil utilise-t-on ?
+\item \textbf{Composition des demi-finales.} Après les quarts, on connaît les 4 vainqueurs $V_1$, $V_2$, $V_3$, $V_4$. Le règlement impose : le vainqueur du match 1 affronte le vainqueur du match 2, et le vainqueur du match 3 affronte le vainqueur du match 4. Chaque quart de finale a 2 issues possibles. En utilisant le \cle{produit cartésien}, déterminer le nombre de listes de 4 vainqueurs possibles $(V_1, V_2, V_3, V_4)$.
+\item \textbf{Capitaine et gardien.} Pour la finale, l'équipe $E_1$ (11 joueurs) doit désigner un capitaine puis un gardien, deux joueurs \emph{distincts}. De combien de façons peut-elle le faire ? S'agit-il d'un arrangement ou d'une combinaison ? Justifier.
+\item \textbf{Classement final.} De combien de façons peut-on classer les 4 demi-finalistes du 1\textsuperscript{er} au 4\textsuperscript{e} rang (sans ex æquo) ? Quel outil utilise-t-on ?
+\item \textbf{Question de synthèse.} Le proviseur affirme : \og Il y a plus de façons de classer les 8 équipes inscrites que de façons de choisir les 4 équipes qui participeront aux demi-finales. \fg A-t-il raison ? Comparer $8!$ et $\binom{8}{4}$ et conclure par une phrase rédigée.
+\item \textbf{Contrôle.} Vérifier le résultat de la question 1 par un raisonnement direct : la première équipe a 7 adversaires possibles, la deuxième en a 6 nouveaux, etc. Retrouve-t-on le même nombre ?
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils du dénombrement]
+\begin{itemize}
+\item \textbf{Produit cartésien / principe multiplicatif} : si une situation se décompose en $p$ choix successifs ayant respectivement $n_1, n_2, \ldots, n_p$ possibilités, le nombre total est $n_1 \times n_2 \times \cdots \times n_p$. En particulier, le nombre de \cle{p-listes} (ou $p$-uplets) d'un ensemble à $n$ éléments est $n^p$.
+\item \textbf{Permutations} : le nombre de façons d'\emph{ordonner} $n$ éléments distincts est $n! = n \times (n-1) \times \cdots \times 2 \times 1$.
+\item \textbf{Arrangements} : le nombre de façons de choisir et d'\emph{ordonner} $p$ éléments parmi $n$ (sans répétition) est $A_n^p = \dfrac{n!}{(n-p)!}$, avec $1 \le p \le n$.
+\item \textbf{Combinaisons} : le nombre de façons de \emph{choisir} $p$ éléments parmi $n$ (sans ordre, sans répétition) est $\binom{n}{p} = \dfrac{n!}{p!\,(n-p)!}$, avec $0 \le p \le n$.
+\end{itemize}
+\textbf{Question réflexe} : l'ordre compte-t-il ? Oui $\rightarrow$ arrangement ou permutation ; Non $\rightarrow$ combinaison. La répétition est-elle permise ? Oui $\rightarrow$ p-liste ($n^p$).
+\end{aretenir}
+
+\begin{methode}[Choisir le bon outil de dénombrement]
+\begin{enumerate}
+\item Identifier ce que l'on compte : des listes ordonnées, des sous-ensembles, des classements ?
+\item Se poser la question : \textbf{l'ordre compte-t-il ?} (un classement, un couple de rôles distincts : oui ; une affiche de match, un groupe : non).
+\item Se poser la question : \textbf{la répétition est-elle permise ?} (un même élément peut-il être choisi plusieurs fois ?).
+\item Choisir l'outil : répétition permise $\rightarrow$ p-liste $n^p$ ; ordre sans répétition $\rightarrow$ arrangement $A_n^p$ (ou permutation $n!$ si $p=n$) ; ni ordre ni répétition $\rightarrow$ combinaison $\binom{n}{p}$.
+\item Écrire la formule, effectuer le calcul, puis conclure par une phrase.
+\end{enumerate}
+\end{methode}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Organisation de la Coupe du Proviseur — corrigé complet]
+Énoncé : répondre aux 7 questions de la situation du tournoi à 8 équipes (affiches des quarts, programmation ordonnée, demi-finales par produit cartésien, désignation capitaine--gardien, classement final, synthèse et contrôle).
+\tcblower
+\textbf{Question 1 — Nombre de paires d'équipes (quarts de finale).}\par
+Choisir une affiche, c'est choisir 2 équipes parmi 8, \emph{sans ordre} (le match \og $E_1$ contre $E_5$ \fg{} est le même que \og $E_5$ contre $E_1$ \fg) et sans répétition. On utilise donc une \cle{combinaison} :
+\[
+\binom{8}{2} = \frac{8!}{2!\,6!} = \frac{8 \times 7}{2 \times 1} = 28.
+\]
+Il y a \textbf{28 affiches possibles} pour un quart de finale.
+
+\textbf{Question 2 — Ordre des 4 matchs sur les créneaux.}\par
+Programmer les 4 matchs tirés sur les 4 créneaux horaires, c'est \emph{ordonner} 4 éléments distincts : c'est une \cle{permutation} de 4 éléments :
+\[
+4! = 4 \times 3 \times 2 \times 1 = 24.
+\]
+Il y a \textbf{24 programmations possibles} des 4 quarts de finale sur le samedi matin.
+
+\textbf{Question 3 — Listes de 4 vainqueurs possibles.}\par
+Chacun des 4 quarts a 2 issues possibles. Une liste de vainqueurs $(V_1, V_2, V_3, V_4)$ est un élément du \cle{produit cartésien} $\{A_1, B_1\} \times \{A_2, B_2\} \times \{A_3, B_3\} \times \{A_4, B_4\}$, où $A_i, B_i$ sont les deux équipes du match $i$. Par le principe multiplicatif (4-liste à 2 choix par position) :
+\[
+2 \times 2 \times 2 \times 2 = 2^4 = 16.
+\]
+Il y a \textbf{16 listes de demi-finalistes possibles} (avec leur position dans le tableau).
+
+\textbf{Question 4 — Capitaine et gardien.}\par
+On choisit 2 joueurs parmi 11, et \emph{l'ordre compte} (être capitaine n'est pas être gardien), sans répétition (les deux joueurs sont distincts). C'est un \cle{arrangement} de 2 éléments parmi 11 :
+\[
+A_{11}^2 = \frac{11!}{(11-2)!} = 11 \times 10 = 110.
+\]
+Il y a \textbf{110 façons} de désigner le capitaine puis le gardien. Ce n'est \emph{pas} une combinaison, car les rôles sont différents : la paire (Mballa capitaine, Etoundi gardien) est distincte de (Etoundi capitaine, Mballa gardien).
+
+\textbf{Question 5 — Classement des 4 demi-finalistes.}\par
+Classer 4 équipes du 1\textsuperscript{er} au 4\textsuperscript{e} rang, c'est ordonner 4 éléments : \cle{permutation} de 4 éléments :
+\[
+4! = 24.
+\]
+Il y a \textbf{24 classements finaux possibles} des demi-finalistes.
+
+\textbf{Question 6 — Synthèse : le proviseur a-t-il raison ?}\par
+Nombre de classements complets des 8 équipes : $8! = 40320$.\par
+Nombre de choix des 4 demi-finalistes (sans ordre) :
+\[
+\binom{8}{4} = \frac{8!}{4!\,4!} = \frac{8 \times 7 \times 6 \times 5}{4 \times 3 \times 2 \times 1} = \frac{1680}{24} = 70.
+\]
+Comme $40320 > 70$, \textbf{le proviseur a raison} : il y a beaucoup plus de façons de classer les 8 équipes (l'ordre total compte) que de façons de choisir 4 équipes parmi 8 (l'ordre ne compte pas).
+
+\textbf{Question 7 — Contrôle de la question 1.}\par
+$E_1$ a 7 adversaires possibles ; $E_2$ en a 6 \emph{nouveaux} (la paire avec $E_1$ est déjà comptée) ; $E_3$ en a 5 nouveaux, etc. Total :
+\[
+7 + 6 + 5 + 4 + 3 + 2 + 1 = 28.
+\]
+On retrouve bien $\binom{8}{2} = 28$ : le résultat est confirmé par un raisonnement différent.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[grow=right, level distance=2.2cm,
+level 1/.style={sibling distance=2.4cm},
+level 2/.style={sibling distance=1.2cm},
+every node/.style={font=\small}]
+\node {Match 1}
+  child { node[popblue] {$B_1$}
+    child { node[popmuted] {\ldots} }
+    child { node[popmuted] {\ldots} } }
+  child { node[poporange] {$A_1$}
+    child { node[popmuted] {\ldots} }
+    child { node[popmuted] {\ldots} } };
+\end{tikzpicture}
+\end{center}
+\legende{Arbre des issues du match 1 : chaque match a 2 issues, d'où $2^4 = 16$ listes de vainqueurs pour les 4 quarts de finale.}
+\end{popfigure}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|l|l|}\hline
+\rowcolor{popblueL} \textbf{Question} & \textbf{Situation} & \textbf{Outil} & \textbf{Résultat} \\ \hline
+1 & Affiche d'un quart de finale (2 équipes parmi 8, sans ordre) & Combinaison $\binom{8}{2}$ & 28 \\ \hline
+2 & Ordre des 4 matchs sur les créneaux & Permutation $4!$ & 24 \\ \hline
+3 & Listes de 4 vainqueurs (2 issues par match) & Produit cartésien $2^4$ & 16 \\ \hline
+4 & Capitaine puis gardien (2 joueurs distincts parmi 11, ordre) & Arrangement $A_{11}^2$ & 110 \\ \hline
+5 & Classement des 4 demi-finalistes & Permutation $4!$ & 24 \\ \hline
+6 & Comparaison $8!$ et $\binom{8}{4}$ & Permutation / combinaison & $40320 > 70$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Erreurs fréquentes à éviter dans cette activité]
+\begin{itemize}
+\item Utiliser $A_8^2 = 56$ à la question 1 : cela compterait deux fois chaque match ($E_1$--$E_5$ et $E_5$--$E_1$). Une affiche est une \emph{paire non ordonnée} : c'est $\binom{8}{2} = 28$.
+\item Confondre \og nombre d'affiches possibles \fg{} (28) et \og nombre de tableaux complets de 4 matchs disjoints \fg : ce sont deux questions différentes.
+\item À la question 4, répondre $\binom{11}{2} = 55$ : c'est faux car capitaine et gardien ont des rôles distincts, l'ordre compte.
+\item Oublier de justifier : au Probatoire comme au Baccalauréat technique, toute réponse de dénombrement doit nommer l'outil utilisé et écrire la formule avant le calcul.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan de l'activité}
+
+Cette activité a permis de mettre en évidence les points suivants :
+\begin{itemize}
+\item \textbf{Le choix de l'outil dépend de deux questions} : l'ordre compte-t-il ? la répétition est-elle permise ? Une même situation réelle (le tournoi) mobilise les quatre outils de la leçon selon la question posée : combinaison pour les affiches, permutation pour l'ordre des matchs et le classement, produit cartésien (p-liste) pour les issues des matchs, arrangement pour le couple capitaine--gardien.
+\item \textbf{Le principe multiplicatif est transversal} : il sous-tend le produit cartésien, les p-listes, et permet de contrôler les résultats par un raisonnement direct (question 7).
+\item \textbf{Une formule ne suffit pas, il faut la justifier} : la rédaction (nom de l'outil, formule, calcul, conclusion en phrase) est une compétence évaluée au Probatoire et au Baccalauréat technique.
+\item \textbf{Le dénombrement sert à décider} : le comité d'organisation sait désormais qu'il existe 28 affiches possibles, 24 ordres de programmation et 24 classements finaux, ce qui lui permet d'imprimer les bons documents et d'anticiper toutes les configurations du tableau d'affichage.
+\item \textbf{Vérifier par un autre chemin} est une démarche mathématique essentielle : deux raisonnements différents qui donnent le même résultat renforcent la confiance dans la réponse.
+\end{itemize}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Produit cartésien et p‑listes}
+
+\begin{definition}[Produit cartésien et p-uplets]
+Soient $E_1, E_2, \dots, E_p$ des ensembles finis. Le \textbf{produit cartésien} $E_1 \times E_2 \times \dots \times E_p$ est l'ensemble des \textbf{p-uplets} (ou \textbf{p-listes}) $(x_1, x_2, \dots, x_p)$ tels que $x_i \in E_i$ pour tout $i$.
+Lorsque tous les ensembles sont égaux à un même ensemble $E$, on note $E^p = E \times \dots \times E$ ($p$ fois) l'ensemble des p-listes d'éléments de $E$ \textbf{avec répétition autorisée}.
+\end{definition}
+
+\begin{propriete}[Cardinal d'un produit cartésien]
+Si $E_1, \dots, E_p$ sont des ensembles finis de cardinaux respectifs $n_1, \dots, n_p$, alors :
+\[
+\text{Card}(E_1 \times \dots \times E_p) = n_1 \times n_2 \times \dots \times n_p.
+\]
+En particulier, pour un ensemble $E$ à $n$ éléments, le nombre de p-listes (répétition autorisée) est $\text{Card}(E^p) = n^p$.
+\end{propriete}
+
+\begin{methode}[Compter les éléments d'un produit cartésien et former des p-listes]
+\textbf{Objectif :} Déterminer le nombre de couples (ou p-uplets) possibles à partir d'ensembles finis.
+\begin{enumerate}
+    \item \textbf{Identifier les ensembles} sources $E_1, E_2, \dots, E_p$ et leurs cardinaux $n_1, n_2, \dots, n_p$.
+    \item \textbf{Vérifier l'indépendance} : le choix dans un ensemble ne restreint pas les choix dans les autres (produit cartésien pur).
+    \item \textbf{Appliquer le principe multiplicatif} : $\text{Card}(E_1 \times \dots \times E_p) = n_1 \times n_2 \times \dots \times n_p$.
+    \item \textbf{Pour une p-liste d'un même ensemble $E$} (avec répétition autorisée) : le nombre est $n^p$ où $n = \text{Card}(E)$.
+    \item \textbf{Conclure} par une phrase : « Il y a \dots p-uplets (ou couples) possibles. »
+\end{enumerate}
+\textbf{Formule clé :} $\text{Card}(A \times B) = \text{Card}(A) \times \text{Card}(B)$ ; nombre de p-listes de $E$ (répétition) $= n^p$.
+\end{methode}
+
+\begin{exoresolu}[Code d'accès atelier -- Produit cartésien]
+\textbf{Énoncé :} Dans un atelier de mécanique, les codes d'accès aux machines sont formés d'une lettre majuscule choisie parmi $\{\text{M}, \text{E}, \text{C}, \text{H}\}$ suivie de deux chiffres choisis parmi $\{1, 3, 5, 7, 9\}$. Les répétitions sont autorisées pour les chiffres.
+\begin{enumerate}
+    \item Combien de codes différents peut-on former ?
+    \item On décide d'ajouter un dernier symbole : un tiret « - » ou une barre « / ». Combien de codes au total maintenant ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Analyse :} Un code est un 3-uplet (lettre, chiffre 1, chiffre 2).
+    \begin{itemize}
+        \item Ensemble des lettres $L = \{\text{M}, \text{E}, \text{C}, \text{H}\}$, $\text{Card}(L) = 4$.
+        \item Ensemble des chiffres $C = \{1, 3, 5, 7, 9\}$, $\text{Card}(C) = 5$.
+    \end{itemize}
+    Les choix sont indépendants (répétition autorisée pour les chiffres). C'est un produit cartésien $L \times C \times C$.
+    \textbf{Calcul :} $\text{Nombre de codes} = \text{Card}(L) \times \text{Card}(C) \times \text{Card}(C) = 4 \times 5 \times 5 = 100$.
+    \item \textbf{Nouvelle contrainte :} On ajoute un 4ème symbole $S \in \{-, /\}$, $\text{Card}(S) = 2$.
+    Le nombre total de codes devient : $100 \times 2 = 200$.
+    \textbf{Conclusion :} On peut former \textbf{100} codes initiaux et \textbf{200} codes avec le symbole final.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Code de badge -- Application]
+\textbf{Énoncé :} Un badge d'accès à un chantier est composé de 2 lettres majuscules (A à Z, répétition autorisée) suivies de 3 chiffres (0 à 9, répétition autorisée).
+\begin{enumerate}
+    \item Combien de badges différents peut-on fabriquer ?
+    \item Si on interdit la répétition des lettres (mais pas des chiffres), combien de badges ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Code de badge]
+\begin{enumerate}
+    \item $26 \times 26 \times 10 \times 10 \times 10 = 26^2 \times 10^3 = 676\,000$.
+    \item Lettres sans répétition : $26 \times 25$. Chiffres avec répétition : $10^3$. Total : $26 \times 25 \times 1000 = 650\,000$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Permutations d'un ensemble à n éléments}
+
+\begin{definition}[Permutation]
+Une \textbf{permutation} d'un ensemble $E$ à $n$ éléments est un arrangement ordonné de \textbf{tous} les éléments de $E$. C'est une bijection de $E$ dans $E$. L'ordre compte, pas de répétition, on utilise tous les éléments.
+\end{definition}
+
+\begin{propriete}[Nombre de permutations]
+Le nombre de permutations d'un ensemble à $n$ éléments est :
+\[
+P_n = n! = n \times (n-1) \times \dots \times 2 \times 1.
+\]
+Par convention, $0! = 1$.
+\end{propriete}
+
+\begin{methode}[Calculer le nombre de permutations d'un ensemble à n éléments]
+\textbf{Objectif :} Compter les façons de ranger \textbf{tous} les éléments distincts d'un ensemble (ordre important, pas de répétition, on utilise tout).
+\begin{enumerate}
+    \item \textbf{Vérifier les conditions} : On range \textbf{tous} les $n$ éléments distincts. L'ordre compte. Pas de répétition.
+    \item \textbf{Identifier $n$} : le nombre total d'objets à ranger.
+    \item \textbf{Appliquer la formule} : $P_n = n! = n \times (n-1) \times \dots \times 2 \times 1$.
+    \item \textbf{Calculer} factorielle (à la main pour petits $n$, calculette sinon).
+    \item \textbf{Conclure} : « Il y a $n!$ permutations possibles. »
+\end{enumerate}
+\textbf{Attention :} $0! = 1$ par convention. Au Probatoire, écrire $n!$ suffit si le calcul est simple, sinon donner le résultat numérique.
+\end{methode}
+
+\begin{exoresolu}[Rangement de plans sur un établi -- Permutations]
+\textbf{Énoncé :} Un chef de chantier doit ranger 6 plans de construction distincts (Plan A, B, C, D, E, F) dans un porte-plans vertical à 6 emplacements.
+\begin{enumerate}
+    \item De combien de façons peut-il ranger ces 6 plans ?
+    \item Si le Plan A (plan général) doit obligatoirement être tout en haut (1er emplacement), combien de rangements restent possibles ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item On range les 6 plans distincts dans 6 emplacements. C'est une permutation de 6 éléments.
+    $P_6 = 6! = 6 \times 5 \times 4 \times 3 \times 2 \times 1 = 720$.
+    \textbf{Il y a 720 façons de ranger les 6 plans.}
+    \item Condition : Plan A fixé en position 1. Il reste 5 plans (B, C, D, E, F) à ranger dans les 5 emplacements restants.
+    C'est une permutation de 5 éléments : $P_5 = 5! = 5 \times 4 \times 3 \times 2 \times 1 = 120$.
+    \textbf{Il reste 120 rangements possibles avec le Plan A en haut.}
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Mots anagrammes -- Permutations]
+\textbf{Énoncé :} Combien de mots différents (sensibles ou non) peut-on former en permutant toutes les lettres du mot :
+\begin{enumerate}
+    \item « CHANTIER » ?
+    \item « BETON » ?
+    \item « OUTILS » ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Mots anagrammes]
+Tous les mots ont des lettres distinctes.
+\begin{enumerate}
+    \item 8 lettres $\rightarrow 8! = 40\,320$.
+    \item 5 lettres $\rightarrow 5! = 120$.
+    \item 6 lettres $\rightarrow 6! = 720$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Arrangements d'ordre p parmi n éléments}
+
+\begin{definition}[Arrangement]
+Un \textbf{arrangement d'ordre $p$} ($p \le n$) d'un ensemble $E$ à $n$ éléments est un choix ordonné de $p$ éléments distincts de $E$. L'ordre compte, pas de répétition, on ne prend qu'une partie des éléments.
+\end{definition}
+
+\begin{propriete}[Nombre d'arrangements]
+Le nombre d'arrangements d'ordre $p$ parmi $n$ éléments ($1 \le p \le n$) est :
+\[
+A_n^p = n \times (n-1) \times \dots \times (n-p+1) = \frac{n!}{(n-p)!}.
+\]
+On a $A_n^n = n! = P_n$.
+\end{propriete}
+
+\begin{methode}[Calculer le nombre d'arrangements d'ordre p parmi n éléments]
+\textbf{Objectif :} Compter les façons de choisir \textbf{p} éléments parmi \textbf{n} distincts \textbf{et de les ranger} (ordre important, pas de répétition, $p \le n$).
+\begin{enumerate}
+    \item \textbf{Vérifier les conditions} : Choix de $p$ éléments parmi $n$ distincts. L'ordre de sélection/arrangement compte. Pas de répétition. $p \le n$.
+    \item \textbf{Identifier $n$ et $p$} : $n$ = total d'éléments disponibles, $p$ = nombre d'éléments à choisir et ranger.
+    \item \textbf{Appliquer la formule} : $A_n^p = n \times (n-1) \times \dots \times (n-p+1) = \dfrac{n!}{(n-p)!}$.
+    \item \textbf{Calculer} : Produit de $p$ facteurs décroissants depuis $n$.
+    \item \textbf{Conclure} : « Il y a $A_n^p$ arrangements possibles. »
+\end{enumerate}
+\textbf{Repère :} Si $p=n$, $A_n^n = n!$ (permutation). Si on ne range pas (ordre sans importance), c'est une combinaison.
+\end{methode}
+
+\begin{exoresolu}[Équipe de maintenance et podium -- Arrangements]
+\textbf{Énoncé :} Une équipe de maintenance compte 10 techniciens distincts.
+\begin{enumerate}
+    \item On doit désigner un chef d'équipe, un adjoint et un secrétaire (3 postes distincts). Combien de trios différents peut-on former ?
+    \item Pour une compétition interne, on classe les 3 premiers sur 10 au terme d'une épreuve. Combien de podiums (1er, 2e, 3e) différents sont possibles ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Analyse :} On choisit 3 personnes parmi 10 pour des postes \textbf{distincts} (Chef $\neq$ Adjoint $\neq$ Secrétaire). L'ordre compte. Pas de répétition (une personne ne peut pas avoir deux postes). C'est un arrangement d'ordre 3 parmi 10 : $A_{10}^3$.
+    \textbf{Calcul :} $A_{10}^3 = 10 \times 9 \times 8 = 720$.
+    \textbf{Il y a 720 trios possibles.}
+    \item \textbf{Analyse :} Classer les 3 premiers sur 10. Les places (1er, 2e, 3e) sont distinctes $\rightarrow$ l'ordre compte. Pas de répétition. C'est exactement le même calcul : $A_{10}^3 = 720$.
+    \textbf{Il y a 720 podiums possibles.}
+\end{enumerate}
+\textbf{Remarque :} Les deux questions modélisent la même situation mathématique : choisir et ranger 3 éléments parmi 10.
+\end{exoresolu}
+
+\begin{exercice}[Classement et codes -- Arrangements]
+\textbf{Énoncé :}
+\begin{enumerate}
+    \item Dans une course de 8 coureurs, combien de façons y a-t-il d'attribuer les médailles d'or, d'argent et de bronze ?
+    \item Un code de sécurité à 4 chiffres est formé avec des chiffres distincts choisis parmi $\{1,2,3,4,5,6,7\}$. Combien de codes possibles ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Classement et codes]
+\begin{enumerate}
+    \item $A_8^3 = 8 \times 7 \times 6 = 336$.
+    \item $A_7^4 = 7 \times 6 \times 5 \times 4 = 840$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Combinaisons de p éléments parmi n}
+
+\begin{definition}[Combinaison et Coefficient binomial]
+Une \textbf{combinaison de $p$ éléments parmi $n$} ($p \le n$) est un sous-ensemble à $p$ éléments d'un ensemble à $n$ éléments. L'ordre \textbf{ne compte pas}, pas de répétition.
+Le nombre de telles combinaisons est noté $C_n^p$ ou $\dbinom{n}{p}$ (coefficient binomial).
+\end{definition}
+
+\begin{propriete}[Nombre de combinaisons et propriétés fondamentales]
+Pour $0 \le p \le n$ :
+\[
+C_n^p = \dbinom{n}{p} = \frac{n!}{p!\,(n-p)!} = \frac{A_n^p}{p!}.
+\]
+\textbf{Propriétés usuelles (exigibles au Probatoire) :}
+\begin{itemize}
+    \item \textbf{Symétrie :} $C_n^p = C_n^{n-p}$.
+    \item \textbf{Relation de Pascal :} $C_n^p = C_{n-1}^p + C_{n-1}^{p-1}$ pour $1 \le p \le n-1$.
+    \item \textbf{Valeurs limites :} $C_n^0 = C_n^n = 1$.
+\end{itemize}
+\end{propriete}
+
+\begin{methode}[Calculer le nombre de combinaisons de p éléments parmi n]
+\textbf{Objectif :} Compter les façons de choisir \textbf{p} éléments parmi \textbf{n} distincts \textbf{sans tenir compte de l'ordre} (ordre sans importance, pas de répétition, $p \le n$).
+\begin{enumerate}
+    \item \textbf{Vérifier les conditions} : Choix de $p$ éléments parmi $n$ distincts. L'ordre \textbf{ne compte pas} (sous-ensemble). Pas de répétition. $p \le n$.
+    \item \textbf{Identifier $n$ et $p$}.
+    \item \textbf{Appliquer la formule} : $C_n^p = \dbinom{n}{p} = \dfrac{n!}{p!\,(n-p)!} = \dfrac{A_n^p}{p!}$.
+    \item \textbf{Simplifier avant de calculer} : Utiliser la symétrie $C_n^p = C_n^{n-p}$ pour prendre le plus petit des deux ($p$ ou $n-p$). Annuler les factorielles.
+    \item \textbf{Conclure} : « Il y a $C_n^p$ combinaisons (ou sous-ensembles) possibles. »
+\end{enumerate}
+\textbf{Astuce calcul :} $C_n^p = \dfrac{n \times (n-1) \times \dots \times (n-p+1)}{p \times (p-1) \times \dots \times 1}$ (produit de $p$ facteurs au numérateur et dénominateur).
+\end{methode}
+
+\begin{exoresolu}[Choix de câbles et échantillonnage -- Combinaisons]
+\textbf{Énoncé :} Un électricien dispose d'un stock de 12 câbles de couleurs toutes différentes. Il doit en prélever 5 pour un câblage spécifique (l'ordre de pose dans le conduit n'importe pas, seul le lot choisi compte).
+\begin{enumerate}
+    \item Combien de lots de 5 câbles différents peut-il constituer ?
+    \item Parmi ces 12 câbles, 3 sont des câbles de terre (vert/jaune). Combien de lots de 5 câbles contiennent \textbf{exactement 2} câbles de terre ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item Choix de 5 parmi 12, ordre sans importance $\rightarrow$ Combinaison $C_{12}^5$.
+    $C_{12}^5 = \dfrac{12!}{5!\,7!} = \dfrac{12 \times 11 \times 10 \times 9 \times 8}{5 \times 4 \times 3 \times 2 \times 1}$.
+    \textbf{Simplification rigoureuse :}
+    \begin{align*}
+    \frac{12 \times 11 \times 10 \times 9 \times 8}{5 \times 4 \times 3 \times 2 \times 1}
+    &= \frac{12}{3} \times 11 \times \frac{10}{5} \times 9 \times \frac{8}{4 \times 2} \\
+    &= 4 \times 11 \times 2 \times 9 \times 1 \\
+    &= 4 \times 11 \times 18 = 792.
+    \end{align*}
+    \textbf{Il peut constituer 792 lots différents.}
+    \item \textbf{Stratégie :} Choix en deux étapes indépendantes (Produit cartésien de combinaisons).
+    \begin{itemize}
+        \item Étape 1 : Choisir 2 câbles de terre parmi les 3 disponibles : $C_3^2 = \dfrac{3 \times 2}{2 \times 1} = 3$ façons.
+        \item Étape 2 : Choisir les 3 câbles restants parmi les 9 câbles non-terre : $C_9^3 = \dfrac{9 \times 8 \times 7}{3 \times 2 \times 1} = 3 \times 4 \times 7 = 84$ façons.
+    \end{itemize}
+    \textbf{Total :} $3 \times 84 = 252$ lots.
+    \textbf{Il y a 252 lots contenant exactement 2 câbles de terre.}
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exercice}[Équipe de projet -- Combinaisons]
+\textbf{Énoncé :} Un chef de projet doit constituer une équipe de 4 personnes parmi 9 ingénieurs (5 spécialistes structure, 4 spécialistes fluides).
+\begin{enumerate}
+    \item Combien d'équipes de 4 personnes peut-il former au total ?
+    \item Combien d'équipes contiennent exactement 2 spécialistes structure et 2 spécialistes fluides ?
+    \item Combien d'équipes contiennent au moins 3 spécialistes structure ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Équipe de projet]
+\begin{enumerate}
+    \item $C_9^4 = \frac{9 \times 8 \times 7 \times 6}{4 \times 3 \times 2 \times 1} = 126$.
+    \item $C_5^2 \times C_4^2 = 10 \times 6 = 60$.
+    \item Cas disjoints : (3S, 1F) ou (4S, 0F).
+    $C_5^3 \times C_4^1 + C_5^4 \times C_4^0 = 10 \times 4 + 5 \times 1 = 45$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Relations, propriétés et cas particuliers}
+
+\begin{propriete}[Relations fondamentales entre Permutations, Arrangements, Combinaisons]
+Pour $0 \le p \le n$ :
+\begin{align*}
+A_n^p &= C_n^p \times p! \quad \text{(Choisir le groupe puis le ranger)} \\
+C_n^p &= C_n^{n-p} \quad \text{(Symétrie)} \\
+C_n^p &= C_{n-1}^p + C_{n-1}^{p-1} \quad \text{(Relation de Pascal)}
+\end{align*}
+\end{propriete}
+
+\begin{experience}[Démonstration de la relation de Pascal]
+\textbf{Objectif :} Prouver $C_n^p = C_{n-1}^p + C_{n-1}^{p-1}$ par un raisonnement ensembliste.
+\begin{enumerate}
+    \item Soit $E$ un ensemble à $n$ éléments et $x \in E$ un élément fixé.
+    \item On classe les parties de $E$ à $p$ éléments selon qu'elles contiennent $x$ ou non.
+    \item \textbf{Cas 1 :} Parties contenant $x$. Il faut choisir $p-1$ autres éléments parmi les $n-1$ restants : $C_{n-1}^{p-1}$.
+    \item \textbf{Cas 2 :} Parties ne contenant pas $x$. Il faut choisir $p$ éléments parmi les $n-1$ restants : $C_{n-1}^p$.
+    \item Ces deux ensembles de parties sont disjoints et leur réunion est l'ensemble de toutes les parties à $p$ éléments.
+    \item Par le principe de la somme : $C_n^p = C_{n-1}^{p-1} + C_{n-1}^p$.
+\end{enumerate}
+\end{experience}
+
+\begin{methode}[Choisir l'outil adapté : Permutation, Arrangement ou Combinaison ?]
+\textbf{Objectif :} Identifier la bonne formule face à un énoncé concret.
+\begin{enumerate}
+    \item \textbf{Question 1 :} Est-ce qu'on utilise \textbf{tous} les éléments ($p=n$) ? \textbf{OUI} $\rightarrow$ Permutation ($n!$). \textbf{NON} $\rightarrow$ Question 2.
+    \item \textbf{Question 2 :} L'ordre des éléments choisis a-t-il une importance (postes distincts, rang, code, podium) ? \textbf{OUI} $\rightarrow$ Arrangement ($A_n^p$). \textbf{NON} (lot, équipe, sous-ensemble, main de cartes) $\rightarrow$ Combinaison ($C_n^p$).
+    \item \textbf{Question 3 (Piège) :} Y a-t-il répétition autorisée ? Si OUI et ordre important $\rightarrow$ p-listes ($n^p$). Si OUI et ordre sans importance $\rightarrow$ Combinaisons avec répétition (hors programme 1re Tech, formule $C_{n+p-1}^p$).
+    \item \textbf{Vérifier $p \le n$} pour Arrangement/Combinaison sans répétition.
+\end{enumerate}
+\textbf{Mots-clés :} « Ranger / Classer / Code / Postes distincts / Ordre » $\rightarrow$ Arrangement/Permutation. « Choisir / Constituer un groupe / Lot / Équipe / Sous-ensemble » $\rightarrow$ Combinaison.
+\end{methode}
+
+\begin{exoresolu}[Concours de soudure : qualifications et finale -- Choix d'outils]
+\textbf{Énoncé :} 15 soudeurs participent à un concours.
+\begin{enumerate}
+    \item Pour la phase de qualification, le jury doit établir un classement complet des 15 soudeurs. Combien de classements possibles ?
+    \item Seuls les 3 premiers sont qualifiés pour la finale (pas de classement entre eux pour l'instant, juste le groupe des 3 qualifiés). Combien de groupes de 3 qualifiés possibles ?
+    \item En finale, les 3 qualifiés sont classés Or, Argent, Bronze. Pour un groupe de 3 qualifiés donné, combien de podiums différents ?
+    \item En combinant les deux étapes (choix des 3 qualifiés PUIS classement final), retrouver le nombre de classements des 3 premiers parmi les 15 (Arrangement $A_{15}^3$).
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item Classement complet de 15 $\rightarrow$ Permutation : $15!$.
+    \item Choix d'un groupe de 3 parmi 15, ordre sans importance $\rightarrow$ Combinaison : $C_{15}^3 = \dfrac{15 \times 14 \times 13}{3 \times 2 \times 1} = 5 \times 7 \times 13 = 455$.
+    \item Pour 3 personnes fixes, classement Or/Argent/Bronze $\rightarrow$ Permutation de 3 : $3! = 6$.
+    \item \textbf{Produit des étapes :} (Choix du groupe) $\times$ (Classement du groupe) $= C_{15}^3 \times 3! = \dfrac{15!}{3!\,12!} \times 3! = \dfrac{15!}{12!} = 15 \times 14 \times 13 = A_{15}^3 = 2730$.
+    \textbf{Cela confirme la relation fondamentale :} $A_n^p = C_n^p \times p!$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{methode}[Résoudre un problème de dénombrement par cas disjoints (Somme) et/ou étapes successives (Produit)]
+\textbf{Objectif :} Décomposer un problème complexe en sous-problèmes simples (Arrangements, Combinaisons, Produit cartésien).
+\begin{enumerate}
+    \item \textbf{Lire et surligner} les contraintes (obligations, interdictions, « au moins », « au plus », « exactement »).
+    \item \textbf{Décomposer} en \textbf{Cas Disjoints} (Somme $\sum$) si les situations s'excluent mutuellement (ex: « exactement 2 filles OU exactement 3 filles »).
+    \item \textbf{Décomposer} en \textbf{Étapes Successives} (Produit $\times$) si les choix sont indépendants et simultanés (ex: « choisir le président PUIS le secrétaire » ou « choisir 2 filles ET 3 garçons »).
+    \item \textbf{Traiter chaque sous-cas} avec l'outil adapté (Permutation, Arrangement, Combinaison, p-listes).
+    \item \textbf{Additionner} les résultats des cas disjoints, \textbf{Multiplier} les résultats des étapes successives.
+    \item \textbf{Vérifier la cohérence} (ordre de grandeur, symétrie).
+\end{enumerate}
+\textbf{Mots-clés :} « OU » (exclusif) $\rightarrow$ $+$ (Somme). « ET » (simultané/indépendant) $\rightarrow$ $\times$ (Produit).
+\end{methode}
+
+\begin{exoresolu}[Constitution d'une brigade de chantier -- Cas disjoints et Produit]
+\textbf{Énoncé :} Une entreprise de BTP doit former une brigade de 5 ouvriers pour un chantier urgent. Elle dispose de 8 maçons (dont 3 chefs d'équipe) et 6 électriciens. La brigade doit comporter \textbf{au moins 2 maçons} et \textbf{au moins 1 électricien}. Combien de brigades différentes peut-on former ?
+\tcblower
+\textbf{Solution détaillée :}
+\textbf{Analyse :} Total 14 ouvriers. Brigade de 5. Contraintes : $M \ge 2$ et $E \ge 1$ (donc $M \le 4$).
+Les cas disjoints possibles pour la composition (Maçons, Électriciens) :
+\begin{itemize}
+    \item Cas 1 : 2 Maçons ET 3 Électriciens.
+    \item Cas 2 : 3 Maçons ET 2 Électriciens.
+    \item Cas 3 : 4 Maçons ET 1 Électricien.
+\end{itemize}
+(Cas 5 Maçons impossible car $E \ge 1$ ; Cas 1 Maçon impossible car $M \ge 2$).
+
+\textbf{Calculs (Choix simultanés $\rightarrow$ Produit, Cas disjoints $\rightarrow$ Somme) :}
+\begin{itemize}
+    \item \textbf{Cas 1 :} $C_8^2 \times C_6^3 = \dfrac{8 \times 7}{2} \times \dfrac{6 \times 5 \times 4}{6} = 28 \times 20 = 560$.
+    \item \textbf{Cas 2 :} $C_8^3 \times C_6^2 = \dfrac{8 \times 7 \times 6}{6} \times \dfrac{6 \times 5}{2} = 56 \times 15 = 840$.
+    \item \textbf{Cas 3 :} $C_8^4 \times C_6^1 = \dfrac{8 \times 7 \times 6 \times 5}{24} \times 6 = 70 \times 6 = 420$.
+\end{itemize}
+\textbf{Total :} $560 + 840 + 420 = 1820$.
+\textbf{Conclusion :} L'entreprise peut former \textbf{1820 brigades} différentes respectant les contraintes.
+\end{exoresolu}
+
+\begin{propriete}[Propriétés des coefficients binomiaux et Binôme de Newton]
+\begin{itemize}
+    \item \textbf{Somme ligne $n$ :} $\displaystyle\sum_{k=0}^n C_n^k = 2^n$ (Nombre total de parties d'un ensemble à $n$ éléments).
+    \item \textbf{Binôme de Newton :} $\forall (a,b) \in \mathbb{R}^2,\; (a+b)^n = \displaystyle\sum_{k=0}^n C_n^k a^k b^{n-k}$.
+    \item \textbf{Identités classiques :}
+    $\sum_{k=0}^n k C_n^k = n 2^{n-1}$,
+    $\sum_{k=0}^n (k+1) C_n^k = n 2^{n-1} + 2^n = (n+2)2^{n-1}$.
+\end{itemize}
+\end{propriete}
+
+\begin{exoresolu}[Propriétés et somme de combinaisons -- Démonstration et Calcul]
+\textbf{Énoncé :}
+\begin{enumerate}
+    \item Démontrer la relation de Pascal : $C_n^p = C_{n-1}^p + C_{n-1}^{p-1}$ pour $1 \le p \le n-1$.
+    \item Calculer sans calculette : $S = C_8^0 + C_8^1 + C_8^2 + \dots + C_8^8$.
+    \item Calculer $T = C_8^0 + 2C_8^1 + 3C_8^2 + \dots + 9C_8^8$.
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée :}
+\begin{enumerate}
+    \item \textbf{Démonstration :} Soit $E$ un ensemble à $n$ éléments et $x \in E$ un élément fixé.
+    Les parties de $E$ à $p$ éléments se partagent en deux classes disjointes :
+    \begin{itemize}
+        \item Celles qui \textbf{contiennent} $x$ : il faut choisir les $p-1$ autres éléments parmi les $n-1$ éléments de $E \setminus \{x\}$. Nombre : $C_{n-1}^{p-1}$.
+        \item Celles qui \textbf{ne contiennent pas} $x$ : il faut choisir les $p$ éléments parmi les $n-1$ éléments de $E \setminus \{x\}$. Nombre : $C_{n-1}^p$.
+    \end{itemize}
+    Par le principe de la somme (union disjointe), le total est $C_n^p = C_{n-1}^{p-1} + C_{n-1}^p$. \qed
+    \item \textbf{Somme $S$ :} C'est la somme des coefficients binomiaux de rang 8. $S = \sum_{k=0}^8 C_8^k = 2^8 = 256$.
+    \item \textbf{Somme $T$ :} On utilise l'identité $\sum k C_n^k = n 2^{n-1}$ (démontrée par dérivation du binôme ou par $k C_n^k = n C_{n-1}^{k-1}$).
+    $\sum_{k=0}^8 k C_8^k = 8 \times 2^7 = 8 \times 128 = 1024$.
+    Or $T = \sum_{k=0}^8 (k+1) C_8^k = \sum_{k=0}^8 k C_8^k + \sum_{k=0}^8 C_8^k = 1024 + 256 = 1280$.
+    \textbf{Résultats :} $S = 256$ ; $T = 1280$.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{savaistu}[Le triangle de Pascal et Blaise Pascal]
+Blaise Pascal (1623--1662), mathématicien, physicien et philosophe français, a systématisé l'étude du triangle arithmétique (connu en Chine bien avant lui). Chaque ligne $n$ donne les coefficients $C_n^k$. La relation de Pascal permet de construire le triangle ligne par ligne : chaque nombre est la somme des deux au-dessus. Au Probatoire, on doit savoir construire les premières lignes et utiliser la relation pour simplifier des calculs (ex: $C_{10}^4 = C_9^4 + C_9^3$).
+\end{savaistu}
+
+\coursec{Applications concrètes et résolution de problèmes}
+
+\begin{aretenir}[Stratégie globale de résolution (Probatoire)]
+\begin{enumerate}
+    \item \textbf{Modéliser :} Identifier les objets (distincts ? identiques ?), l'ordre (important ?), la répétition (autorisée ?), les contraintes.
+    \item \textbf{Choisir l'outil :} p-listes ($n^p$), Permutation ($n!$), Arrangement ($A_n^p$), Combinaison ($C_n^p$).
+    \item \textbf{Décomposer :} Cas disjoints ($+$) / Étapes indépendantes ($\times$).
+    \item \textbf{Calculer :} Simplifier les factorielles \textbf{avant} de multiplier.
+    \item \textbf{Rédiger :} Justifier chaque étape, écrire la formule, donner le résultat numérique, conclure par une phrase.
+\end{enumerate}
+\end{aretenir}
+
+\begin{exercice}[Problèmes synthétiques -- Entraînement Probatoire]
+\textbf{Énoncé :}
+\begin{enumerate}
+    \item \textbf{(Gestion de stock)} Un magasin a 10 modèles de perceuses différents. Un client veut en acheter 3.
+    \begin{itemize}
+        \item[a)] Combien de choix possibles s'il veut 3 modèles différents (ordre sans importance) ?
+        \item[b)] Combien de choix s'il peut prendre plusieurs fois le même modèle (ordre sans importance) ? \textit{Indication : combinaisons avec répétition $C_{n+p-1}^p$.}
+    \end{itemize}
+    \item \textbf{(Électricité)} Un tableau électrique a 8 emplacements pour disjoncteurs. On dispose de 5 disjoncteurs 10A (identiques), 2 disjoncteurs 16A (identiques) et 1 disjoncteur 32A (identique). De combien de façons peut-on les installer dans les 8 emplacements ? \textit{Indication : permutations avec répétition.}
+    \item \textbf{(Réseau)} Dans un réseau local, 6 serveurs doivent être connectés deux à deux par des câbles directs (chaque paire reliée par au plus un câble). Combien de câbles sont nécessaires pour relier chaque paire ?
+    \item \textbf{(Maintenance)} Une équipe de 12 techniciens (7 hommes, 5 femmes). On forme un binôme pour une intervention.
+    \begin{itemize}
+        \item[a)] Combien de binômes mixtes (1 homme, 1 femme) ?
+        \item[b)] Combien de binômes non mixtes (2 hommes ou 2 femmes) ?
+    \end{itemize}
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice Problèmes synthétiques]
+\begin{enumerate}
+    \item \textbf{(Gestion de stock)}
+    \begin{itemize}
+        \item[a)] Choix de 3 distincts parmi 10, ordre sans importance : $C_{10}^3 = \frac{10 \times 9 \times 8}{6} = 120$.
+        \item[b)] Combinaisons avec répétition (hors programme mais culture) : $C_{10+3-1}^3 = C_{12}^3 = \frac{12 \times 11 \times 10}{6} = 220$.
+    \end{itemize}
+    \item \textbf{(Électricité)} Permutations des 8 objets dont 5 identiques (10A), 2 identiques (16A), 1 unique (32A).
+    Nombre $= \frac{8!}{5!\,2!\,1!} = \frac{8 \times 7 \times 6}{2} = 168$.
+    \item \textbf{(Réseau)} Relier chaque paire de 6 serveurs $\rightarrow$ Choix de 2 parmi 6, ordre sans importance : $C_6^2 = \frac{6 \times 5}{2} = 15$ câbles.
+    \item \textbf{(Maintenance)}
+    \begin{itemize}
+        \item[a)] 1 homme parmi 7 ET 1 femme parmi 5 $\rightarrow C_7^1 \times C_5^1 = 7 \times 5 = 35$.
+        \item[b)] Cas disjoints : (2 hommes) OU (2 femmes).
+        $C_7^2 + C_5^2 = \frac{7 \times 6}{2} + \frac{5 \times 4}{2} = 21 + 10 = 31$.
+        \textit{Vérification :} Total binômes $C_{12}^2 = 66$. $35 + 31 = 66$. OK.
+    \end{itemize}
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+    \item \textbf{Confondre Arrangement et Combinaison :} Ne pas lire « ordre important » ou « postes distincts » (Arrangement) vs « groupe », « lot », « équipe » sans ordre (Combinaison). \textbf{Réflexe :} « Est-ce que permuter deux personnes change la situation ? » Oui $\rightarrow$ Arrangement. Non $\rightarrow$ Combinaison.
+    \item \textbf{Oublier la condition $p \le n$ :} Écrire $A_5^7$ ou $C_5^7$ sans signaler l'impossibilité (résultat 0). Vérifier toujours que le nombre d'éléments choisis ne dépasse pas le stock.
+    \item \textbf{Erreur de factorielle / simplification :} Calculer $C_{12}^5 = \frac{12!}{5!7!}$ sans simplifier $\rightarrow$ nombres géants, erreur de calculette. \textbf{Méthode :} Écrire le produit de $p$ facteurs : $\frac{12 \times 11 \times 10 \times 9 \times 8}{5 \times 4 \times 3 \times 2 \times 1}$ et simplifier \textbf{avant} de multiplier.
+    \item \textbf{Mauvaise gestion des cas (Somme vs Produit) :} Multiplier au lieu d'additionner pour des cas disjoints (ex: « 2 maçons OU 3 maçons »), ou additionner au lieu de multiplier pour des étapes indépendantes (ex: « choisir les maçons ET les électriciens »). \textbf{Mots-clés :} « OU exclusif » = $+$ ; « ET simultané » = $\times$.
+    \item \textbf{Rédaction incomplète :} Donner seulement le résultat numérique sans justifier le choix de la formule ($A_n^p$ vs $C_n^p$), sans définir $n$ et $p$, et sans phrase de conclusion. Au Probatoire, \textbf{le raisonnement vaut plus que le chiffre final}.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : Notions de base]
+Parmi les affirmations suivantes, une seule est exacte. Laquelle ?
+\begin{enumerate}
+    \item Le nombre de p-listes d'un ensemble à $n$ éléments est $n^p$.
+    \item Le nombre de permutations d'un ensemble à $n$ éléments est $A_n^p$.
+    \item Le nombre d'arrangements d'ordre $p$ parmi $n$ éléments est $C_n^p$.
+    \item Le cardinal du produit cartésien $E \times F$ est $\text{Card}(E) + \text{Card}(F)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou Faux ? Justifiez]
+Dire si les affirmations sont vraies ou fausses en justifiant brièvement.
+\begin{enumerate}
+    \item $A_5^3 = 5 \times 4 \times 3$.
+    \item $C_n^p = C_n^{n-p}$ pour tout entier $p$ tel que $0 \le p \le n$.
+    \item Le nombre de façons de choisir 3 élèves parmi une classe de 20 pour former un groupe (sans ordre) est un arrangement.
+    \item Si $E = \{a,b,c\}$ et $F = \{1,2\}$, alors $(a,1) \in E \times F$ et $(1,a) \in E \times F$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Effectuer les calculs suivants (laisser les résultats sous forme factorielle ou calculer explicitement).
+\begin{enumerate}
+    \item $A_8^3$ et $C_8^3$.
+    \item $5!$ et $A_5^5$.
+    \item $C_{10}^2$ et $C_{10}^8$.
+    \item Le nombre de 4-listes d'un ensemble à 6 éléments.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions et notations]
+Donner la définition précise et la notation associée pour chacun des objets suivants :
+\begin{enumerate}
+    \item Un arrangement d'ordre $p$ parmi $n$ éléments.
+    \item Une combinaison de $p$ éléments parmi $n$.
+    \item Le produit cartésien de deux ensembles $E$ et $F$.
+    \item Une permutation des éléments d'un ensemble fini $E$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Mots formés à partir de « CAMEROUN »]
+Combien de mots de 4 lettres distinctes peut-on former avec les lettres du mot « CAMEROUN » ?
+(On considère que toutes les lettres sont distinctes et qu'un « mot » est une suite ordonnée de lettres, pas nécessairement sensée).
+\end{exercice}
+
+\begin{exercice}[Code de sécurité]
+Un code de sécurité à 6 chiffres est formé avec les chiffres 0 à 9. Le premier chiffre ne peut pas être 0 et les chiffres peuvent se répéter. Combien de codes différents sont possibles ?
+\end{exercice}
+
+\begin{exercice}[Tirages d'une urne]
+Une urne contient 5 boules rouges, 4 boules bleues et 3 boules vertes (les boules de même couleur sont indiscernables). On tire simultanément 4 boules.
+Combien de tirages contiennent exactement 2 boules rouges ?
+\end{exercice}
+
+\begin{exercice}[Élection d'une commission]
+Une commission de 5 membres doit être élue parmi 12 candidats dont 3 sont des professeurs. Combien de commissions différentes contiennent au moins 1 professeur ?
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Identité de Pascal — Démonstration combinatoire]
+Soient $n$ et $p$ deux entiers naturels tels que $1 \le p \le n$. On note $C_n^p$ le nombre de sous-ensembles à $p$ éléments d'un ensemble à $n$ éléments.
+\begin{enumerate}
+    \item Soit $E$ un ensemble à $n$ éléments et $x \in E$. En classant les sous-ensembles à $p$ éléments de $E$ selon qu'ils contiennent $x$ ou non, montrer que :
+    \[ C_n^p = C_{n-1}^{p-1} + C_{n-1}^p. \]
+    \item En déduire la valeur de $C_7^3$ en connaissant $C_6^2 = 15$ et $C_6^3 = 20$.
+    \item Représenter les premiers coefficients binomiaux jusqu'à $n=5$ sous forme du triangle de Pascal.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Permutations du mot « YAOUNDÉ » et application]
+\begin{enumerate}
+    \item Calculer le nombre de permutations des lettres du mot « YAOUNDÉ » (on suppose que les lettres sont toutes distinctes).
+    \item On forme des mots de 7 lettres en utilisant toutes les lettres de « YAOUNDÉ ». Combien de ces mots commencent par une voyelle et se terminent par une consonne ?
+    \item Parmi ces mots, combien ont les 3 voyelles (A, O, U, É — attention, il y a 4 voyelles : A, O, U, É) consécutives (dans n'importe quel ordre) ?
+    \textit{Précision : on considère les 4 voyelles A, O, U, É et les 3 consonnes Y, N, D.}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Produit cartésien et lien Arrangements/Combinaisons]
+Soient les ensembles $A = \{1, 2, 3, 4\}$ et $B = \{a, b\}$.
+\begin{enumerate}
+    \item Représenter graphiquement le produit cartésien $A \times B$ (schéma en flèches ou grille).
+    \item Donner le cardinal de $A \times B$ et vérifier la formule $\text{Card}(A \times B) = \text{Card}(A) \times \text{Card}(B)$.
+    \item Calculer $A_{10}^4$ et $C_{10}^4$.
+    \item Vérifier numériquement la relation $A_n^p = C_n^p \times p!$ pour $n=10$ et $p=4$.
+    \item Expliquer, par une argumentation combinatoire (choix puis rangement), pourquoi cette relation est vraie pour tous $n$ et $p$ ($1 \le p \le n$).
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : Notions de base]
+La seule affirmation exacte est l'affirmation \textbf{1} : le nombre de $p$-listes d'un ensemble à $n$ éléments est bien $n^p$ (pour chacune des $p$ positions, on a $n$ choix, avec répétition possible).
+
+Justification du rejet des autres affirmations :
+\begin{itemize}
+    \item \textbf{2. Fausse} : le nombre de permutations d'un ensemble à $n$ éléments est $n!$ (et non $A_n^p$ ; on a d'ailleurs $A_n^n = n!$).
+    \item \textbf{3. Fausse} : le nombre d'arrangements d'ordre $p$ parmi $n$ éléments est $A_n^p = \dfrac{n!}{(n-p)!}$ ; $C_n^p$ désigne le nombre de combinaisons.
+    \item \textbf{4. Fausse} : $\text{Card}(E \times F) = \text{Card}(E) \times \text{Card}(F)$ (produit, pas somme).
+\end{itemize}
+\textbf{Réponse : affirmation 1.}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou Faux ? Justifiez]
+\begin{enumerate}
+    \item \textbf{Vrai.} $A_5^3 = \dfrac{5!}{(5-3)!} = \dfrac{5!}{2!} = 5 \times 4 \times 3 = 60$. Un arrangement d'ordre $p$ est un produit de $p$ facteurs entiers consécutifs en partant de $n$.
+    \item \textbf{Vrai.} Choisir $p$ éléments parmi $n$ revient à choisir les $n-p$ éléments que l'on \emph{ne prend pas}. D'où $C_n^p = C_n^{n-p}$. Vérification algébrique : $C_n^{n-p} = \dfrac{n!}{(n-p)!\,(n-(n-p))!} = \dfrac{n!}{(n-p)!\,p!} = C_n^p$.
+    \item \textbf{Faux.} Former un groupe de 3 élèves parmi 20, sans ordre et sans répétition, est une \cle{combinaison} : le nombre de groupes est $C_{20}^3 = 1140$. Un arrangement supposerait que l'ordre des élèves choisis compte.
+    \item \textbf{Faux.} $(a,1) \in E \times F$ est vrai (première coordonnée dans $E$, seconde dans $F$). Mais $(1,a) \notin E \times F$ car $1 \notin E$ ; en fait $(1,a) \in F \times E$. Le produit cartésien n'est pas commutatif.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Calculs directs]
+\begin{enumerate}
+    \item $A_8^3 = 8 \times 7 \times 6 = 336$.\quad
+    $C_8^3 = \dfrac{A_8^3}{3!} = \dfrac{336}{6} = 56$.
+    \item $5! = 5 \times 4 \times 3 \times 2 \times 1 = 120$.\quad
+    $A_5^5 = \dfrac{5!}{0!} = \dfrac{120}{1} = 120$ (on retrouve le fait que $A_n^n = n!$ : un arrangement de $n$ éléments parmi $n$ est une permutation).
+    \item $C_{10}^2 = \dfrac{10 \times 9}{2!} = \dfrac{90}{2} = 45$.\quad
+    $C_{10}^8 = C_{10}^{10-8} = C_{10}^2 = 45$ (propriété de symétrie).
+    \item Le nombre de 4-listes d'un ensemble à 6 éléments est $6^4 = 1296$ (avec répétition possible, 6 choix pour chacune des 4 positions).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Définitions et notations]
+\begin{enumerate}
+    \item \textbf{Arrangement d'ordre $p$ parmi $n$ éléments} ($1 \le p \le n$) : toute suite ordonnée de $p$ éléments \emph{distincts} choisis parmi les $n$ éléments d'un ensemble. Notation : $A_n^p$, avec $A_n^p = \dfrac{n!}{(n-p)!} = n(n-1)\cdots(n-p+1)$.
+    \item \textbf{Combinaison de $p$ éléments parmi $n$} ($0 \le p \le n$) : tout sous-ensemble (partie) à $p$ éléments d'un ensemble à $n$ éléments ; l'ordre ne compte pas. Notation : $C_n^p$, avec $C_n^p = \dfrac{n!}{p!\,(n-p)!}$.
+    \item \textbf{Produit cartésien} de $E$ et $F$ : ensemble de tous les couples $(x,y)$ avec $x \in E$ et $y \in F$ :
+    \[ E \times F = \{(x,y) \mid x \in E \text{ et } y \in F\}, \qquad \text{Card}(E \times F) = \text{Card}(E) \times \text{Card}(F). \]
+    \item \textbf{Permutation} d'un ensemble fini $E$ à $n$ éléments : toute suite ordonnée formée de \emph{tous} les éléments de $E$, chacun pris une seule fois (équivalent : bijection de $E$ sur $E$). Leur nombre est $n!$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Mots formés à partir de « CAMEROUN »]
+Le mot « CAMEROUN » contient 8 lettres toutes distinctes : C, A, M, E, R, O, U, N.
+
+Un « mot » de 4 lettres distinctes est une suite \emph{ordonnée} de 4 lettres \emph{distinctes} choisies parmi 8 : c'est un \cle{arrangement} d'ordre 4 parmi 8.
+\[ A_8^4 = 8 \times 7 \times 6 \times 5 = 1680. \]
+\textbf{Conclusion :} on peut former $1680$ mots de 4 lettres distinctes.
+
+\emph{Vérification :} $8 \times 7 = 56$ ; $56 \times 6 = 336$ ; $336 \times 5 = 1680$.
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Code de sécurité]
+Un code est une 6-liste de chiffres (l'ordre compte, les répétitions sont autorisées), avec une contrainte sur la première position.
+
+\begin{itemize}
+    \item Premier chiffre : 9 choix possibles (chiffres de 1 à 9, le 0 étant interdit).
+    \item Chacun des 5 chiffres suivants : 10 choix possibles (0 à 9, répétitions permises).
+\end{itemize}
+
+Par le principe multiplicatif (produit cartésien) :
+\[ 9 \times 10^5 = 9 \times 100\,000 = 900\,000. \]
+\textbf{Conclusion :} $900\,000$ codes différents sont possibles.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Tirages d'une urne]
+On tire \emph{simultanément} 4 boules : l'ordre n'intervient pas, on utilise des \cle{combinaisons}. On veut exactement 2 boules rouges parmi les 4 tirées.
+
+\begin{itemize}
+    \item Choix des 2 boules rouges parmi les 5 rouges : $C_5^2 = \dfrac{5 \times 4}{2} = 10$.
+    \item Les 2 autres boules doivent être non rouges : il y a $4 + 3 = 7$ boules non rouges (bleues ou vertes). Choix : $C_7^2 = \dfrac{7 \times 6}{2} = 21$.
+\end{itemize}
+
+Par le principe multiplicatif :
+\[ C_5^2 \times C_7^2 = 10 \times 21 = 210. \]
+\textbf{Conclusion :} $210$ tirages contiennent exactement 2 boules rouges.
+
+\emph{Remarque :} l'hypothèse « boules de même couleur indiscernables » ne change pas le dénombrement par combinaisons : on dénombre les poignées de boules, et le résultat $210$ compte les tirages selon la répartition des couleurs obtenue par choix de boules.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Élection d'une commission]
+Une commission est un choix \emph{non ordonné} de 5 personnes parmi 12 : on utilise les combinaisons.
+
+\textbf{Méthode par le complémentaire} (la plus rapide) :
+\begin{itemize}
+    \item Nombre total de commissions : $C_{12}^5 = \dfrac{12 \times 11 \times 10 \times 9 \times 8}{5!} = \dfrac{95\,040}{120} = 792$.
+    \item Commissions \emph{sans aucun} professeur : on choisit les 5 membres parmi les $12 - 3 = 9$ non-professeurs : $C_9^5 = C_9^4 = \dfrac{9 \times 8 \times 7 \times 6}{4!} = \dfrac{3024}{24} = 126$.
+\end{itemize}
+\[ \text{Commissions avec au moins 1 professeur} = 792 - 126 = 666. \]
+
+\textbf{Vérification par dénombrement direct} (exactement 1, 2 ou 3 professeurs) :
+\begin{align*}
+C_3^1 \times C_9^4 &= 3 \times 126 = 378,\\
+C_3^2 \times C_9^3 &= 3 \times 84 = 252,\\
+C_3^3 \times C_9^2 &= 1 \times 36 = 36.
+\end{align*}
+Total : $378 + 252 + 36 = 666$. \checkmark
+
+\textbf{Conclusion :} $666$ commissions contiennent au moins 1 professeur.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Identité de Pascal — Démonstration combinatoire]
+\begin{enumerate}
+    \item Soit $E$ un ensemble à $n$ éléments et $x \in E$ fixé. Les sous-ensembles de $E$ à $p$ éléments se répartissent en deux catégories \emph{disjointes} :
+    \begin{itemize}
+        \item \textbf{Ceux qui contiennent $x$} : un tel sous-ensemble est formé de $x$ et de $p-1$ autres éléments choisis dans $E \setminus \{x\}$, qui a $n-1$ éléments. Il y en a $C_{n-1}^{p-1}$.
+        \item \textbf{Ceux qui ne contiennent pas $x$} : ce sont les sous-ensembles à $p$ éléments de $E \setminus \{x\}$. Il y en a $C_{n-1}^{p}$.
+    \end{itemize}
+    Ces deux catégories étant disjointes et recouvrant tous les cas, on ajoute :
+    \[ C_n^p = C_{n-1}^{p-1} + C_{n-1}^{p}. \]
+    \item Avec $n = 7$ et $p = 3$ : $C_7^3 = C_6^2 + C_6^3 = 15 + 20 = 35$.
+    \item Triangle de Pascal jusqu'à $n = 5$ (chaque case est la somme des deux cases situées au-dessus) :
+    \begin{center}
+    \begin{tabular}{|c|cccccc|}\hline
+    $n \backslash p$ & $0$ & $1$ & $2$ & $3$ & $4$ & $5$ \\ \hline
+    $0$ & $1$ & & & & & \\ \hline
+    $1$ & $1$ & $1$ & & & & \\ \hline
+    $2$ & $1$ & $2$ & $1$ & & & \\ \hline
+    $3$ & $1$ & $3$ & $3$ & $1$ & & \\ \hline
+    $4$ & $1$ & $4$ & $6$ & $4$ & $1$ & \\ \hline
+    $5$ & $1$ & $5$ & $10$ & $10$ & $5$ & $1$ \\ \hline
+    \end{tabular}
+    \end{center}
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 5 points) :} 2 pts pour la décomposition en deux cas disjoints avec justification des cardinaux ; 1 pt pour l'application numérique ; 2 pts pour le triangle complet et correct.
+
+\textbf{Points de vigilance :} préciser que les deux catégories sont \emph{disjointes} et que leur réunion donne \emph{tous} les sous-ensembles à $p$ éléments ; citer les conditions $1 \le p \le n$ ; ne pas confondre $C_{n-1}^{p-1}$ (avec $x$) et $C_{n-1}^{p}$ (sans $x$).
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Permutations du mot « YAOUNDÉ » et application]
+Le mot « YAOUNDÉ » comporte 7 lettres toutes distinctes : Y, A, O, U, N, D, É. Voyelles : A, O, U, É (4 voyelles) ; consonnes : Y, N, D (3 consonnes).
+
+\begin{enumerate}
+    \item Nombre de permutations des 7 lettres : $7! = 5040$.
+    \item Mots commençant par une voyelle et se terminant par une consonne :
+    \begin{itemize}
+        \item 1\iere{} lettre (voyelle) : 4 choix ;
+        \item 7\ieme{} lettre (consonne) : 3 choix ;
+        \item les 5 lettres restantes se placent librement dans les 5 positions centrales : $5! = 120$ façons.
+    \end{itemize}
+    \[ 4 \times 3 \times 5! = 12 \times 120 = 1440 \text{ mots.} \]
+    \item Mots où les 4 voyelles sont consécutives : on traite le bloc des 4 voyelles comme un seul « super-élément ». On permute alors 4 objets : le bloc V et les 3 consonnes Y, N, D, soit $4! = 24$ placements. À l'intérieur du bloc, les 4 voyelles se permutent de $4! = 24$ façons.
+    \[ 4! \times 4! = 24 \times 24 = 576 \text{ mots.} \]
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 6 points) :} 1 pt pour la question 1 ; 2 pts pour la question 2 (décomposition en choix successifs) ; 3 pts pour la question 3 (idée du bloc + double décompte).
+
+\textbf{Points de vigilance :} bien identifier que les 7 lettres sont distinctes (sinon il faudrait diviser par les factorielles des répétitions) ; pour la question 3, ne pas oublier de multiplier par les permutations \emph{internes} du bloc ; justifier chaque facteur par un choix concret.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Produit cartésien et lien Arrangements/Combinaisons]
+\begin{enumerate}
+    \item Représentation en grille de $A \times B$ (chaque point est un couple) :
+    \begin{popfigure}
+    \begin{tikzpicture}[scale=0.9]
+        \foreach \x in {1,2,3,4} {
+            \foreach \y in {1,2} {
+                \fill[popblue] (\x,\y) circle (3pt);
+            }
+            \node[below] at (\x,0.7) {\x};
+        }
+        \node[left] at (0.6,1) {$a$};
+        \node[left] at (0.6,2) {$b$};
+        \node[below] at (2.5,0.1) {éléments de $A$};
+        \node[left, rotate=90, anchor=south] at (0.1,1.5) {éléments de $B$};
+    \end{tikzpicture}
+    \legende{Grille des 8 couples de $A \times B$ : ligne $a$ = couples $(x,a)$, ligne $b$ = couples $(x,b)$.}
+    \end{popfigure}
+
+    Les 8 couples sont : $(1,a), (2,a), (3,a), (4,a), (1,b), (2,b), (3,b), (4,b)$.
+
+    \item $\text{Card}(A \times B) = 8$. Vérification : $\text{Card}(A) \times \text{Card}(B) = 4 \times 2 = 8$. \checkmark
+
+    \item $A_{10}^4 = 10 \times 9 \times 8 \times 7 = 5040$.\quad
+    $C_{10}^4 = \dfrac{10 \times 9 \times 8 \times 7}{4!} = \dfrac{5040}{24} = 210$.
+
+    \item Vérification de $A_n^p = C_n^p \times p!$ pour $n = 10$, $p = 4$ :
+    \[ C_{10}^4 \times 4! = 210 \times 24 = 5040 = A_{10}^4. \checkmark \]
+
+    \item \textbf{Argumentation combinatoire :} construire un arrangement d'ordre $p$ parmi $n$ éléments (suite ordonnée de $p$ éléments distincts) peut se faire en deux étapes :
+    \begin{itemize}
+        \item \textbf{Étape 1 — choix :} choisir les $p$ éléments, sans tenir compte de l'ordre : $C_n^p$ possibilités ;
+        \item \textbf{Étape 2 — rangement :} ordonner ces $p$ éléments, c'est-à-dire les permuter : $p!$ possibilités.
+    \end{itemize}
+    Par le principe multiplicatif, le nombre total d'arrangements est $C_n^p \times p!$. Or ce nombre est par définition $A_n^p$. Donc :
+    \[ A_n^p = C_n^p \times p!, \qquad \text{d'où } C_n^p = \dfrac{A_n^p}{p!} = \dfrac{n!}{p!\,(n-p)!}. \]
+\end{enumerate}
+
+\textbf{Barème indicatif (sur 7 points) :} 1 pt pour la représentation ; 1 pt pour le cardinal et la vérification ; 1 pt pour les calculs de $A_{10}^4$ et $C_{10}^4$ ; 1 pt pour la vérification numérique ; 3 pts pour l'argumentation en deux étapes clairement rédigée.
+
+\textbf{Points de vigilance :} dans la grille, ne pas inverser les coordonnées ($(x,a)$ avec $x \in A$ en premier) ; pour la question 5, exiger la mention explicite « choix sans ordre puis mise en ordre » et le principe multiplicatif ; rappeler la condition $1 \le p \le n$ pour la validité des formules.
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    mindmap,
+    grow cyclic,
+    every node/.style={concept, execute at begin node=\hskip0pt},
+    root concept/.append style={concept color=popdark, font=\large\bfseries, text width=3.5cm, align=center},
+    level 1 concept/.append style={font=\normalsize\bfseries, text width=2.8cm, align=center, sibling angle=360/6, level distance=4.5cm},
+    level 2 concept/.append style={font=\small, text width=2.2cm, align=center, level distance=3.5cm}
+  ]
+  \node[root concept, align=center]{Dénombrement\\ \small (1\textsuperscript{re} Tech)}
+    child[concept color=popblue] { node[concept, align=center]{Produit cartésien\\ \& p-listes}
+      child[concept color=popblue!60] { node[concept] {$E \times F$} }
+      child[concept color=popblue!60] { node[concept] {p-uplets} }
+      child[concept color=popblue!60] { node[concept] {$n^p$ (avec rép.)} }
+    }
+    child[concept color=poporange] { node[concept] {Permutations}
+      child[concept color=poporange!60] { node[concept] {Ordre total} }
+      child[concept color=poporange!60] { node[concept] {$n!$} }
+      child[concept color=poporange!60] { node[concept] {Sans répétition} }
+    }
+    child[concept color=popgreen] { node[concept] {Arrangements}
+      child[concept color=popgreen!60] { node[concept] {Ordre partiel ($p$)} }
+      child[concept color=popgreen!60] { node[concept] {$A_n^p = \frac{n!}{(n-p)!}$} }
+      child[concept color=popgreen!60] { node[concept] {Sans répétition} }
+    }
+    child[concept color=poppurple] { node[concept] {Combinaisons}
+      child[concept color=poppurple!60] { node[concept] {Sans ordre ($p$)} }
+      child[concept color=poppurple!60] { node[concept] {$C_n^p = \frac{n!}{p!(n-p)!}$} }
+      child[concept color=poppurple!60] { node[concept] {Sous-ensembles} }
+    }
+    child[concept color=poppink] { node[concept] {Relations \& Prop.}
+      child[concept color=poppink!60] { node[concept] {Pascal: $C_n^p=C_{n-1}^p+C_{n-1}^{p-1}$} }
+      child[concept color=poppink!60] { node[concept] {Symétrie: $C_n^p=C_n^{n-p}$} }
+      child[concept color=poppink!60] { node[concept] {Somme: $\sum C_n^p = 2^n$} }
+    }
+    child[concept color=popgold] { node[concept] {Applications Tech.}
+      child[concept color=popgold!60] { node[concept] {Codes, mots de passe} }
+      child[concept color=popgold!60] { node[concept] {Équipes, chantiers} }
+      child[concept color=popgold!60] { node[concept] {Élec.: câblage, bornes} }
+    };
+\end{tikzpicture}
+\legende{Carte mentale : Dénombrement — Première Technique}
+\end{popfigure}
+
+\begin{bilan}
+
+\courssub{Définitions clés}
+
+\begin{itemize}
+  \item \textbf{Produit cartésien} $E \times F$ : ensemble des couples ordonnés $(x,y)$ avec $x \in E, y \in F$. Cardinal : $\operatorname{Card}(E \times F) = \operatorname{Card}(E) \times \operatorname{Card}(F)$.
+  \item \textbf{p-liste (p-uplet)} : suite ordonnée de $p$ éléments d'un ensemble $E$ à $n$ éléments. \textbf{La répétition est autorisée}. Nombre : $n^p$.
+  \item \textbf{Permutation} : arrangement de la totalité des $n$ éléments ($p=n$). \textbf{Ordre important, pas de répétition}. Nombre : $n! = n \times (n-1) \times \dots \times 1$. Par convention $0! = 1$.
+  \item \textbf{Arrangement d'ordre $p$} : choix ordonné de $p$ éléments distincts parmi $n$ ($1 \le p \le n$). \textbf{Ordre important, pas de répétition}. Nombre : $A_n^p = n \times (n-1) \times \dots \times (n-p+1) = \dfrac{n!}{(n-p)!}$.
+  \item \textbf{Combinaison de $p$ éléments} : choix non ordonné de $p$ éléments distincts parmi $n$. \textbf{Ordre sans importance, pas de répétition}. Nombre : $C_n^p = \dbinom{n}{p} = \dfrac{n!}{p!(n-p)!} = \dfrac{A_n^p}{p!}$.
+\end{itemize}
+
+\courssub{Formules à connaître par cœur}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Notion} & \textbf{Formule} & \textbf{Condition} & \textbf{Question type} \\ \hline
+Produit cartésien & $\operatorname{Card}(A \times B) = \operatorname{Card}(A) \times \operatorname{Card}(B)$ & $A,B$ finis & « Nombre de couples possibles ? » \\ \hline
+p-listes (répétition) & $n^p$ & $n$ choix, $p$ positions, répétition \textbf{oui} & « Codes, mots de passe, numéros » \\ \hline
+Permutations & $n!$ & $p=n$, ordre \textbf{oui}, répétition \textbf{non} & « Rangements, classements complets » \\ \hline
+Arrangements $A_n^p$ & $\dfrac{n!}{(n-p)!}$ & $p \le n$, ordre \textbf{oui}, répétition \textbf{non} & « Podium, président/secrétaire, bornes » \\ \hline
+Combinaisons $C_n^p$ & $\dfrac{n!}{p!(n-p)!}$ & $p \le n$, ordre \textbf{non}, répétition \textbf{non} & « Équipes, lots, sous-ensembles » \\ \hline
+\end{tabularx}
+\end{center}
+
+\courssub{Propriétés utiles (Probatoire)}
+
+\begin{itemize}
+  \item \textbf{Relation de Pascal} : $C_n^p = C_{n-1}^p + C_{n-1}^{p-1}$ (construction triangle de Pascal).
+  \item \textbf{Symétrie} : $C_n^p = C_n^{n-p}$ (choisir $p$ revient à écarter $n-p$).
+  \item \textbf{Somme des combinaisons} : $\displaystyle\sum_{p=0}^{n} C_n^p = 2^n$ (nombre total de parties d'un ensemble à $n$ éléments).
+  \item \textbf{Lien Arrangement/Combinaison} : $A_n^p = p! \times C_n^p$.
+\end{itemize}
+
+\courssub{Méthode express : Choisir la bonne formule}
+
+\begin{enumerate}
+  \item \textbf{Analyser l'énoncé} : Y a-t-il \textbf{répétition} possible ? (Oui $\to$ p-listes $n^p$ / Non $\to$ suite).
+  \item \textbf{L'ordre compte-t-il ?} (Oui $\to$ Arrangement ou Permutation / Non $\to$ Combinaison).
+  \item \textbf{Combien d'éléments choisis ?} ($p=n$ $\to$ Permutation $n!$ / $p<n$ $\to$ Arrangement $A_n^p$ ou Combinaison $C_n^p$).
+  \item \textbf{Calculer} : Simplifier les factorielles avant de multiplier (ex: $A_8^3 = 8 \times 7 \times 6$).
+  \item \textbf{Conclure} par une phrase : « Il y a \dots façons de \dots ».
+\end{enumerate}
+
+\courssub{Erreurs fréquentes (Pièges)}
+
+\begin{itemize}
+  \item Confondre \textbf{Arrangement} (ordre) et \textbf{Combinaison} (pas d'ordre). \emph{Astuce : si on nomme les postes (Président, Secrétaire) $\to$ Arrangement. Si on forme juste un groupe $\to$ Combinaison.}
+  \item Oublier la condition $p \le n$ pour $A_n^p$ et $C_n^p$.
+  \item Croire que $C_n^p = \frac{n^p}{p!}$ (faux, c'est $\frac{A_n^p}{p!}$).
+  \item Ne pas simplifier les factorielles : calculer $12!$ au lieu de $12 \times 11 \times 10$ pour $A_{12}^3$.
+  \item Oublier $0! = 1$ et $C_n^0 = C_n^n = 1$.
+\end{itemize}
+
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+  $\square$ Je sais calculer le cardinal d'un produit cartésien $E \times F$.\par
+  $\square$ Je distingue clairement : p-listes (répétition), Arrangements (ordre, pas rép.), Permutations ($p=n$), Combinaisons (pas d'ordre, pas rép.).\par
+  $\square$ Je connais par cœur les formules : $n^p$, $n!$, $A_n^p = \frac{n!}{(n-p)!}$, $C_n^p = \frac{n!}{p!(n-p)!}$.\par
+  $\square$ Je sais simplifier une expression factorielle (ex: $\frac{10!}{8!} = 10 \times 9$).\par
+  $\square$ J'applique la relation de Pascal : $C_n^p = C_{n-1}^p + C_{n-1}^{p-1}$.\par
+  $\square$ J'utilise la symétrie $C_n^p = C_n^{n-p}$ pour simplifier les calculs.\par
+  $\square$ Je sais que $\sum_{p=0}^n C_n^p = 2^n$ (nombre de parties d'un ensemble).\par
+  $\square$ Je sais modéliser un problème technique (codes d'accès, équipes de maintenance, câblage, ordonnancement de tâches).\par
+  $\square$ Je rédige une réponse justifiée : identification de la situation $\to$ formule $\to$ calcul $\to$ conclusion.\par
+  $\square$ Je vérifie la cohérence : $C_n^p \le A_n^p \le n^p$ (pour $p \ge 1$).\par
+  $\square$ Je gère les cas particuliers : $p=0$, $p=1$, $p=n$, éléments identiques (non au programme mais bon à savoir : permutations avec répétitions).
+\end{aretenir}
+
+\findecours
+
+\end{document}

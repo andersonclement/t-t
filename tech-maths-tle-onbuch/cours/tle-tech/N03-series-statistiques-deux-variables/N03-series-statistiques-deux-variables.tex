@@ -1,0 +1,3001 @@
+% Séries statistiques à deux variables — Mathématiques Tle Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N03-series-statistiques-deux-variables.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Terminale technique}
+\newcommand{\DOCLECON}{N03}
+\newcommand{\DOCTITRE}{Séries statistiques à deux variables}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Séries statistiques à deux variables}{Mathématiques}{Tle Tech}{Mathématiques – classe de Terminale technique}{N03}{4 séances (fiche de progression harmonisée)}{Cette leçon aborde l'analyse des séries statistiques à deux variables : représentation graphique (nuage de points), calcul du point moyen, détermination de la droite de régression par la méthode de Mayer et son utilisation pour la prévision. Elle développe la rigueur du raisonnement statistique appliqué à des contextes socio-économiques camerounais.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais représenter graphiquement une série statistique à deux variables sous forme de nuage de points dans un repère orthonormé.
+\item Je sais calculer les coordonnées du point moyen G(x̄, ȳ) et l'interpréter comme centre de gravité du nuage de points.
+\item Je sais déterminer l'équation de la droite de régression linéaire par la méthode de Mayer (point moyen + pente par quadrants).
+\item Je sais tracer la droite de Mayer sur le nuage de points et vérifier qu'elle passe par G.
+\item Je sais utiliser la droite de régression pour estimer une valeur de y connaissant x (interpolation) ou prévoir hors de l'intervalle observé (extrapolation) avec prudence.
+\item Je sais calculer et interpréter le coefficient de corrélation linéaire r (rappel/approfondissement) pour juger de la qualité de l'ajustement.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item 1. Nuage de points et vocabulaire
+\item 2. Point moyen G (Centre de gravité)
+\item 3. Ajustement linéaire : Méthode de Mayer
+\item 4. Utilisation de la droite de Mayer : Prévision et Interprétation
+\item 5. Qualité de l'ajustement et Limites du modèle (Complément Terminale)
+\item 6. Synthèse et Résolution de problèmes complets
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais représenter graphiquement une série statistique à deux variables sous forme de nuage de points dans un repère orthonormé.
+\item Je sais calculer les coordonnées du point moyen G(x̄, ȳ) et l'interpréter comme centre de gravité du nuage de points.
+\item Je sais déterminer l'équation de la droite de régression linéaire par la méthode de Mayer (point moyen + pente par quadrants).
+\item Je sais tracer la droite de Mayer sur le nuage de points et vérifier qu'elle passe par G.
+\item Je sais utiliser la droite de régression pour estimer une valeur de y connaissant x (interpolation) ou prévoir hors de l'intervalle observé (extrapolation) avec prudence.
+\item Je sais calculer et interpréter le coefficient de corrélation linéaire r (rappel/approfondissement) pour juger de la qualité de l'ajustement.
+\item Je sais rédiger une conclusion argumentée en langage courant à partir des résultats statistiques obtenus.
+\item Je sais identifier les limites du modèle linéaire (non-linéarité, valeurs aberrantes, confusion corrélation/causalité).
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Séries statistiques à une variable : effectifs, moyenne, médiane, quartiles (classe de Première).
+\item Coordonnées de points dans un repère orthonormé, équation réduite d'une droite (y = ax + b), calcul de pente (Seconde).
+\item Calcul de moyennes pondérées, manipulation de tableaux de valeurs (Seconde/Première).
+\item Notion de proportionnalité et variation linéaire (collège/Seconde).
+\item Utilisation de la calculatrice (mode STAT) pour saisir des listes et calculer moyennes/régressions (Pratique courante).
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Nuage de points et vocabulaire}
+
+\textbf{Situation d'accroche.} Dans la plaine fertile du Moungo, l'entreprise agro-industrielle \textbf{CDC} (Cameroon Development Corporation) fait face à un dilemme quotidien : faut-il épandre beaucoup d'engrais sur les bananeraies de plantain pour espérer un meilleur rendement ? L'engrais coûte cher, et en mettre trop peut même brûler les plants. Les agronomes de la CDC ont relevé, sur dix parcelles expérimentales, la \cle{dose d'engrais} utilisée (en kg/ha) et le \cle{rendement} obtenu (en tonnes/ha). Deux colonnes de chiffres, dix lignes... et une question qui vaut des millions de francs CFA : \emph{existe-t-il une relation entre la dose d'engrais et le rendement, et peut-on l'utiliser pour prévoir le rendement d'une parcelle non encore testée ?}
+
+\textbf{Problématique.} Comment représenter et lire des données à deux caractères pour déceler une éventuelle liaison entre elles, avant tout calcul ? C'est l'objet de cette première section : construire et interpréter un \cle{nuage de points}.
+
+\courssub{Qu'est-ce qu'une série statistique à deux variables ?}
+
+\textbf{Intuition.} En classe de Première, vous avez étudié des séries statistiques à \emph{une} variable : la taille des élèves d'une classe, les notes à un devoir. Mais dans la vie technique et économique, on s'intéresse souvent à \emph{deux} caractères mesurés \emph{simultanément} sur les mêmes individus : dose d'engrais et rendement, heures de fonctionnement d'un moteur et sa consommation de carburant, prix d'un article et quantité vendue. On veut alors savoir si les deux caractères « bougent ensemble ».
+
+\begin{definition}[Série statistique à deux variables]
+On considère une \cle{population} de $n$ individus sur laquelle on étudie simultanément deux caractères quantitatifs $X$ et $Y$. Pour chaque individu $i$ (avec $1 \leq i \leq n$), on relève le couple de valeurs $(x_i, y_i)$. L'ensemble des $n$ couples $(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)$ s'appelle une \cle{série statistique à deux variables} (ou série double) de taille $n$.
+\begin{itemize}
+\item $X$ est la \cle{variable explicative} (la « cause » supposée), placée en général en \textbf{abscisse} ;
+\item $Y$ est la \cle{variable à expliquer} (l'« effet » supposé), placée en général en \textbf{ordonnée}.
+\end{itemize}
+\end{definition}
+
+\begin{exemplebox}[La série de la CDC au Moungo]
+La population étudiée est l'ensemble des $n = 10$ parcelles expérimentales. Sur chaque parcelle $i$, on mesure $x_i$ = dose d'engrais (kg/ha) et $y_i$ = rendement (t/ha). La série double est présentée dans le tableau ci-dessous.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|X|X|X|X|}
+\hline
+\rowcolor{popblueL} Parcelle $i$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\
+\hline Engrais $x_i$ (kg/ha) & 50 & 60 & 55 & 80 & 90 & 70 & 65 & 95 & 85 & 75 \\
+\hline Rendement $y_i$ (t/ha) & 12 & 14 & 13 & 18 & 20 & 16 & 15 & 21 & 19 & 17 \\
+\hline
+\end{tabularx}
+\end{center}
+Ici, la variable explicative est $X$ (l'engrais, que l'agronome \emph{choisit} d'épandre) et la variable à expliquer est $Y$ (le rendement, qui en \emph{résulte}).
+\end{exemplebox}
+
+\begin{attention}[Qui est la cause, qui est l'effet ?]
+L'erreur la plus fréquente au Probatoire est d'\textbf{inverser les axes} : placer en abscisse la variable à expliquer et en ordonnée la variable explicative. Avant de tracer quoi que ce soit, posez-vous la question : « \emph{quelle grandeur influence l'autre ?} ». Celle qui influence (temps, dose, prix, vitesse...) va en abscisse ; celle qui subit (rendement, consommation, ventes...) va en ordonnée. Attention : la statistique met en évidence une \emph{liaison}, pas forcément une \emph{causalité} — deux grandeurs peuvent évoluer ensemble sans que l'une cause l'autre !
+\end{attention}
+
+\courssub{Le nuage de points : définition et construction}
+
+\textbf{Intuition.} Un tableau de vingt nombres ne « parle » pas à l'œil. Mais si chaque couple $(x_i, y_i)$ devient un point dans un repère, la \emph{forme} de l'ensemble des points révèle immédiatement si les deux caractères sont liés. C'est toute la force du nuage de points : transformer des chiffres en image.
+
+\begin{definition}[Nuage de points]
+Dans un repère du plan, on associe à chaque couple $(x_i, y_i)$ de la série double le point $M_i$ de coordonnées $(x_i, y_i)$. L'ensemble des points $M_1, M_2, \ldots, M_n$ obtenu s'appelle le \cle{nuage de points} associé à la série statistique double.
+\end{definition}
+
+\begin{methode}[Construire un nuage de points sur papier]
+\begin{enumerate}
+\item \textbf{Identifier les variables} : $X$ (explicative) en abscisse, $Y$ (à expliquer) en ordonnée.
+\item \textbf{Repérer les valeurs extrêmes} : ici $x$ varie de 50 à 95 et $y$ de 12 à 21.
+\item \textbf{Choisir les échelles} pour « bien étaler » le nuage sur toute la feuille : par exemple 1 cm pour 10 kg/ha en abscisse et 1 cm pour 2 t/ha en ordonnée. Les échelles peuvent être \emph{différentes} sur les deux axes, et l'origine du repère n'est pas obligatoirement $(0,0)$ : on peut commencer l'axe des abscisses à 40 et celui des ordonnées à 10.
+\item \textbf{Graduer et nommer les axes} avec leurs unités (kg/ha ; t/ha).
+\item \textbf{Placer les points} $M_i(x_i, y_i)$ un par un, avec une croix ou un point bien visible.
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Visualiser le nuage à la calculatrice]
+\textbf{Sur Casio (Graph 35/90)} : menu \textsf{STAT} $\to$ entrer les $x_i$ dans \textsf{List 1} et les $y_i$ dans \textsf{List 2} $\to$ \textsf{GRPH} (F1) $\to$ \textsf{SET} (F6) : choisir \textsf{Graph Type : Scatter}, \textsf{XList : List 1}, \textsf{YList : List 2} $\to$ \textsf{GPH1} (F1). Le nuage apparaît à l'écran.
+
+\textbf{Sur NumWorks} : application \textsf{Régressions} $\to$ onglet \textsf{Données} : saisir les $x_i$ dans la colonne X1 et les $y_i$ dans Y1 $\to$ onglet \textsf{Graphe} : le nuage s'affiche automatiquement.
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  xlabel={Engrais $X$ (kg/ha)}, ylabel={Rendement $Y$ (t/ha)},
+  xmin=40, xmax=100, ymin=10, ymax=23,
+  xtick={40,50,60,70,80,90,100}, ytick={10,12,14,16,18,20,22},
+  grid=both, grid style={popline!40},
+  axis lines=left]
+\addplot[only marks, mark=*, mark size=2.2pt, popblue] coordinates {
+  (50,12) (60,14) (55,13) (80,18) (90,20) (70,16) (65,15) (95,21) (85,19) (75,17)};
+\addplot[only marks, mark=square*, mark size=3pt, poporange] coordinates {(72.5,16.5)};
+\node[poporange, anchor=south west] at (axis cs:73,16.6) {$G$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Nuage de points de la série CDC : 10 parcelles du Moungo. Les points s'organisent autour d'une direction croissante. Le carré orange marque le point moyen $G(72,5\,;\,16,5)$, étudié en section 2.}
+\end{popfigure}
+
+\courssub{Le choix des échelles : un geste professionnel}
+
+Sur une feuille de papier millimétré ou dans un rapport technique, un nuage mal échelonné est illisible : points tassés dans un coin, ou écrasés sur une ligne. Le schéma ci-dessous illustre le principe : \emph{adapter chaque échelle à l'étendue des valeurs} pour que le nuage occupe l'essentiel du graphique.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+% Axes
+\draw[->, thick, popdark] (0,0) -- (9.5,0) node[below left] {Engrais (kg/ha)};
+\draw[->, thick, popdark] (0,0) -- (0,5.2) node[below left, rotate=90, anchor=south east] {Rendement (t/ha)};
+% Graduations X : 1 cm pour 10 kg/ha, origine 40
+\foreach \x/\lab in {1/50, 3/70, 5/90}
+  \draw[popdark] (\x,0.08) -- (\x,-0.08) node[below] {\lab};
+\node[below, popmuted] at (0,-0.05) {40};
+% Graduations Y : 1 cm pour 2 t/ha, origine 10
+\foreach \y/\lab in {1/12, 2/14, 3/16, 4/18, 5/20}
+  \draw[popdark] (0.08,\y) -- (-0.08,\y) node[left] {\lab};
+\node[left, popmuted] at (-0.05,0) {10};
+% Points (x = (val-40)/10, y = (val-10)/2)
+\foreach \p in {(1,1),(2,2),(1.5,1.5),(4,4),(5,5),(3,3),(2.5,2.5),(5.5,5.5),(4.5,4.5),(3.5,3.5)}
+  \fill[popblue] \p circle (2.2pt);
+% Annotations échelles
+\draw[<->, poporange, thick] (1,-0.9) -- (2,-0.9) node[midway, below, poporange] {\footnotesize 1 cm $\leftrightarrow$ 10 kg/ha};
+\draw[<->, poporange, thick] (7.2,1) -- (7.2,2) node[midway, right, poporange] {\footnotesize 1 cm $\leftrightarrow$ 2 t/ha};
+\end{tikzpicture}
+\end{center}
+\legende{Repère à échelles différentes : l'axe des abscisses démarre à 40 kg/ha (1 cm pour 10 kg/ha), l'axe des ordonnées à 10 t/ha (1 cm pour 2 t/ha). Le nuage est ainsi « bien étalé » et lisible.}
+\end{popfigure}
+
+\begin{aretenir}[Règles d'or de la construction]
+\begin{itemize}
+\item Les deux axes peuvent avoir des \textbf{échelles différentes} et des \textbf{origines différentes de zéro}.
+\item Chaque axe doit être \textbf{gradué régulièrement}, \textbf{nommé} et accompagné de son \textbf{unité}.
+\item Le nuage doit occuper la plus grande partie possible du graphique.
+\item Le \textbf{point moyen} $G(\bar{x},\bar{y})$ (centre de gravité) se repère facilement une fois les moyennes calculées ; il sera central pour la méthode de Mayer.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Lecture graphique d'un nuage de points}
+
+Une fois le nuage tracé, l'œil du statisticien cherche trois choses : la \textbf{forme}, la \textbf{dispersion} et les éventuels \textbf{points isolés}.
+
+\begin{definition}[Formes usuelles d'un nuage]
+\begin{itemize}
+\item Nuage \textbf{allongé « en cigare »} (ou « en goutte d'eau ») autour d'une direction droite : on soupçonne une \cle{liaison linéaire} entre $X$ et $Y$. Si le cigar monte de gauche à droite, la liaison est \textbf{positive} (croissante) ; s'il descend, elle est \textbf{négative}.
+\item Nuage \textbf{courbé} (en arc de parabole, en exponentielle...) : la liaison existe mais n'est \textbf{pas linéaire} ; l'ajustement par une droite n'est pas adapté.
+\item Nuage \textbf{sans forme particulière} (points répartis « au hasard ») : \textbf{absence de liaison} apparente entre les deux caractères.
+\end{itemize}
+Un point nettement écarté des autres est appelé \cle{valeur aberrante} (ou point atypique) : il peut provenir d'une erreur de saisie ou d'un événement exceptionnel (parcelle touchée par une maladie, par exemple).
+\end{definition}
+
+\begin{exoresolu}[Lecture du nuage de la CDC]
+\textbf{Énoncé.} À partir du nuage des 10 parcelles tracé ci-dessus : (1) décrire la forme du nuage ; (2) dire si une liaison linéaire entre la dose d'engrais et le rendement est plausible ; (3) le nuage présente-t-il une valeur aberrante ?
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item Les points s'alignent approximativement le long d'une direction montante : le nuage est \textbf{allongé en cigare}, orienté de bas en haut et de gauche à droite.
+\item Une \textbf{liaison linéaire positive} est donc plausible : lorsque la dose d'engrais augmente, le rendement tend à augmenter. Un ajustement linéaire (méthode de Mayer, section 3) se justifiera.
+\item Tous les points restent proches de la direction générale : \textbf{aucune valeur aberrante} n'apparaît. La parcelle 8 (95 kg/ha ; 21 t/ha) est la plus extrême mais reste cohérente avec la tendance.
+\end{enumerate}
+\textbf{Conclusion rédigée :} le nuage suggère une liaison linéaire croissante entre engrais et rendement ; il est légitime de chercher une droite d'ajustement pour faire des prévisions.
+\end{exoresolu}
+
+\begin{attention}[Pièges de lecture]
+\begin{itemize}
+\item Ne concluez jamais « liaison linéaire » sans avoir \textbf{tracé le nuage} : deux séries très différentes peuvent donner des moyennes identiques.
+\item Un nuage en cigare \textbf{très large} indique une liaison \emph{faible} : la droite d'ajustement donnera des prévisions peu fiables.
+\item Ne prolongez pas la tendance trop loin en dehors de la zone des points : prévoir le rendement pour 200 kg/ha à partir de données allant jusqu'à 95 kg/ha est une \textbf{extrapolation} risquée.
+\end{itemize}
+\end{attention}
+
+\begin{exercice}[À vous de tracer]
+Un atelier de mécanique à Douala relève, pour 8 véhicules, le kilométrage $X$ (en milliers de km) et la consommation moyenne $Y$ (en L/100 km) : $(30\,;\,\num{6,5})$, $(45\,;\,\num{6,8})$, $(60\,;\,\num{7,2})$, $(80\,;\,\num{7,6})$, $(95\,;\,\num{8,1})$, $(110\,;\,\num{8,4})$, $(130\,;\,\num{9,0})$, $(150\,;\,\num{9,5})$.
+\begin{enumerate}
+\item Préciser la variable explicative et la variable à expliquer.
+\item Construire le nuage de points sur papier millimétré (choisir les échelles et les origines des axes).
+\item Décrire la forme du nuage et conclure sur la nature de la liaison.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : À vous de tracer]
+\begin{enumerate}
+\item $X$ (kilométrage) est la variable explicative, en abscisse ; $Y$ (consommation) est la variable à expliquer, en ordonnée : c'est l'usure du véhicule qui influence la consommation.
+\item $X$ varie de 30 à 150 : prendre par exemple 1 cm pour 20 milliers de km, axe commençant à 20. $Y$ varie de \num{6,5} à \num{9,5} : prendre 2 cm pour 1 L/100 km, axe commençant à 6. On place ensuite les 8 points.
+\item Le nuage est allongé en cigare, montant de gauche à droite : il existe une \textbf{liaison linéaire positive} entre le kilométrage et la consommation. Un ajustement linéaire est justifié.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Le nuage d'abord, les calculs ensuite]
+Le nuage de points est la \textbf{première étape obligatoire} de toute étude statistique à deux variables : avant de calculer quoi que ce soit, on \emph{regarde}. Le statisticien Francis Anscombe a construit en 1973 quatre séries très différentes — un cigare, une courbe, une ligne avec un point aberrant, un empilement vertical — donnant pourtant les \emph{mêmes} moyennes et la \emph{même} droite de régression ! Seul le dessin du nuage permet de les distinguer. Au Cameroun, les agronomes de la CDC, de la SODECOTON ou de l'IRAD commencent toujours leurs rapports par ces graphiques : un nuage « en cigare » est le feu vert pour chercher une droite d'ajustement, comme nous le ferons avec la méthode de Mayer dans la section 3.
+\end{savaistu}
+
+\coursec{Point moyen G (Centre de gravité)}
+
+\courssub{Rappel et transition : du nuage de points à sa synthèse numérique}
+
+Dans la section précédente, nous avons appris à représenter graphiquement une série statistique à deux variables sous forme d'un \textbf{nuage de points}. Chaque point $M_i(x_i ; y_i)$ correspond à une observation (une parcelle, un élève, une pièce mécanique, etc.). L'œil humain perçoit souvent une tendance globale (linéaire, parabolique, aucune), mais l'interprétation visuelle reste subjective et imprécise.
+
+Pour passer de l'intuition graphique à une analyse rigoureuse, nous avons besoin d'indicateurs numériques qui \emph{résument} la position de l'ensemble du nuage. Le plus fondamental de ces indicateurs est le \textbf{point moyen}, aussi appelé \textbf{centre de gravité} du nuage. C'est le « point d'équilibre » de la distribution : si l'on plaçait des masses proportionnelles aux effectifs en chaque point du nuage, le système s'équilibrerait exactement en ce point.
+
+\courssub{Définition et calcul des coordonnées du point moyen G}
+
+Soit une série statistique à deux variables $(x ; y)$ comportant $N$ observations (effectif total). Les valeurs prises par le couple $(x ; y)$ sont $(x_1 ; y_1), (x_2 ; y_2), \dots, (x_k ; y_k)$ avec les effectifs respectifs $n_1, n_2, \dots, n_k$. On note $N = \sum_{i=1}^k n_i$.
+
+\begin{definition}[Point moyen (Centre de gravité) d'une série à deux variables]
+Le \textbf{point moyen} $G$, noté $G(\bar{x} ; \bar{y})$, est le point du plan dont les coordonnées sont les moyennes arithmétiques pondérées (par les effectifs) de chaque variable :
+\[
+\bar{x} = \frac{\sum_{i=1}^k n_i x_i}{N} = \frac{1}{N}\sum_{i=1}^k n_i x_i
+\qquad\text{et}\qquad
+\bar{y} = \frac{\sum_{i=1}^k n_i y_i}{N} = \frac{1}{N}\sum_{i=1}^k n_i y_i
+\]
+Pour une série \textbf{brute} (chaque effectif $n_i = 1$), les formules se simplifient en :
+\[
+\bar{x} = \frac{x_1 + x_2 + \dots + x_N}{N}
+\qquad\text{et}\qquad
+\bar{y} = \frac{y_1 + y_2 + \dots + y_N}{N}
+\]
+\end{definition}
+
+\begin{attention}[Piège fréquent : Oublier les effectifs dans les séries groupées]
+\emph{Erreur classique :} Calculer $\bar{x} = \frac{x_1 + x_2 + \dots + x_k}{k}$ (moyenne des \textbf{valeurs distinctes}) au lieu de $\frac{n_1x_1 + \dots + n_kx_k}{N}$ (moyenne des \textbf{observations}).
+\par\medskip
+\textbf{Règle d'or :} Vérifiez toujours que la somme des effectifs utilisés au dénominateur est bien égale à l'effectif total $N$ du tableau. Si le tableau donne des classes (ex: $[70; 75[$), utilisez le \textbf{centre de la classe} comme valeur $x_i$.
+\end{attention}
+
+\courssub{Propriété fondamentale : G est le barycentre du nuage}
+
+Le terme « centre de gravité » n'est pas une simple image : c'est une propriété mathématique exacte. Le point $G$ est le barycentre du système de points $M_i(x_i ; y_i)$ affectés des masses $n_i$ (les effectifs).
+
+\begin{propriete}[Caractérisation du centre de gravité]
+Le point $G(\bar{x} ; \bar{y})$ est l'unique point du plan tel que la somme des vecteurs $\overrightarrow{GM_i}$ pondérés par les effectifs soit nulle :
+\[
+\sum_{i=1}^k n_i \, \overrightarrow{GM_i} = \vec{0}
+\]
+Ce qui se traduit par les deux égalités scalaires (projections sur les axes) :
+\[
+\sum_{i=1}^k n_i (x_i - \bar{x}) = 0
+\qquad\text{et}\qquad
+\sum_{i=1}^k n_i (y_i - \bar{y}) = 0
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée : Pourquoi la somme des écarts à la moyenne est nulle]
+\emph{Objectif :} Prouver que $\sum n_i (x_i - \bar{x}) = 0$ à partir de la définition de $\bar{x}$.
+
+\begin{enumerate}
+\item \textbf{Rappel de la définition :} $\bar{x} = \frac{1}{N}\sum n_i x_i \quad\Longleftrightarrow\quad N\bar{x} = \sum n_i x_i$.
+\item \textbf{Développement de la somme des écarts :}
+      \[
+      \sum n_i (x_i - \bar{x}) = \sum (n_i x_i - n_i \bar{x}) = \sum n_i x_i - \sum n_i \bar{x}
+      \]
+\item \textbf{Factorisation :} $\bar{x}$ est une constante (ne dépend pas de $i$), on peut la sortir de la somme :
+      \[
+      \sum n_i \bar{x} = \bar{x} \sum n_i = \bar{x} \times N
+      \]
+\item \textbf{Conclusion :}
+      \[
+      \sum n_i (x_i - \bar{x}) = \underbrace{\sum n_i x_i}_{= N\bar{x}} - \underbrace{\bar{x} N}_{= N\bar{x}} = 0
+      \]
+      Le raisonnement est identique pour $y$.
+\end{enumerate}
+\emph{Interprétation physique :} Les écarts positifs (points à droite de $G$) compensent exactement les écarts négatifs (points à gauche de $G$) quand on les pondère par les effectifs. $G$ est bien le point d'équilibre.
+\end{experience}
+
+\courssub{Application chiffrée : L'exemple des parcelles CDC (N = 10)}
+
+Reprenons les données brutes de l'exemple de la section 1 (10 parcelles de cacao). Le tableau récapitule les apports d'engrais $x$ (en kg/ha) et les rendements $y$ (en t/ha).
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{10}{C|}}\hline
+\textbf{Parcelle $i$} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline
+$x_i$ (kg/ha) & 50 & 55 & 60 & 65 & 70 & 75 & 80 & 85 & 90 & 95 \\ \hline
+$y_i$ (t/ha)  & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Calcul détaillé de $\bar{x}$ et $\bar{y}$ pour $N=10$]
+\textbf{Énoncé :} Déterminer les coordonnées du point moyen $G$ pour cette série brute.
+
+\textbf{Solution détaillée :}
+
+\noindent\textbf{1. Calcul de $\bar{x}$ (moyenne des apports d'engrais) :}
+Comme $n_i = 1$ pour tout $i$, $N = 10$.
+\[
+\sum x_i = 50 + 55 + 60 + 65 + 70 + 75 + 80 + 85 + 90 + 95
+\]
+\emph{Astuce :} Suite arithmétique de premier terme 50, dernier terme 95, 10 termes.
+\[
+\sum x_i = \frac{10 \times (50 + 95)}{2} = 5 \times 145 = 725
+\]
+\[
+\bar{x} = \frac{725}{10} = \mathbf{72,5 \text{ kg/ha}}
+\]
+
+\noindent\textbf{2. Calcul de $\bar{y}$ (moyenne des rendements) :}
+\[
+\sum y_i = 12 + 13 + 14 + 15 + 16 + 17 + 18 + 19 + 20 + 21
+\]
+Suite arithmétique de premier terme 12, dernier terme 21, 10 termes.
+\[
+\sum y_i = \frac{10 \times (12 + 21)}{2} = 5 \times 33 = 165
+\]
+\[
+\bar{y} = \frac{165}{10} = \mathbf{16,5 \text{ t/ha}}
+\]
+
+\noindent\textbf{3. Coordonnées de G :}
+\[
+\boxed{G(72,5 \; ; \; 16,5)}
+\]
+\emph{Interprétation :} En moyenne, sur ces 10 parcelles, l'apport d'engrais est de 72,5 kg/ha pour un rendement de 16,5 t/ha. Ce point résume le « profil type » de l'exploitation.
+\end{exoresolu}
+
+\courssub{Méthode pratique : Calcul sur calculatrice (Mode STAT)}
+
+Au Probatoire / Baccalauréat technique, l'utilisation de la calculatrice est autorisée et recommandée pour éviter les erreurs de calcul et gagner du temps.
+
+\begin{methode}[Calcul de $\bar{x}$ et $\bar{y}$ sur calculatrice (Type Casio fx-92 / fx-350 / Graph 35+)]
+\textbf{Série brute (listes de valeurs) :}
+\begin{enumerate}
+\item Entrer en mode \texttt{STAT} (ou \texttt{MENU} $\to$ \texttt{STAT}).
+\item Choisir \texttt{2-VAR} (ou \texttt{A+BX} pour régression).
+\item Dans la colonne \texttt{X}, saisir les $x_i$ (50, 55, 60...). Dans la colonne \texttt{Y}, saisir les $y_i$ (12, 13, 14...). La colonne \texttt{FREQ} reste à 1 (par défaut).
+\item Appuyer sur \texttt{CALC} (ou \texttt{F2} / \texttt{F1} selon modèles) $\to$ \texttt{2-VAR}.
+\item Lire : $\bar{x}$ (moyenne de X) et $\bar{y}$ (moyenne de Y).
+\end{enumerate}
+
+\textbf{Série groupée (valeurs + effectifs) :}
+\begin{enumerate}
+\item Mode \texttt{STAT} $\to$ \texttt{2-VAR} (ou \texttt{A+BX}).
+\item Colonne \texttt{X} : valeurs $x_i$ (ou centres de classes). Colonne \texttt{Y} : valeurs $y_i$.
+\item Colonne \texttt{FREQ} : saisir les effectifs $n_i$ correspondants.
+\item \texttt{CALC} $\to$ Lire $\bar{x}$ et $\bar{y}$.
+\end{enumerate}
+\emph{Vérification systématique :} Regarder la valeur de $N$ (ou $\sum$ FREQ) affichée par la machine : elle doit correspondre à l'effectif total de l'énoncé.
+\end{methode}
+
+\courssub{Interprétation géométrique et rôle central de G}
+
+\begin{aretenir}[Pourquoi G est-il indispensable pour la suite ?]
+\begin{itemize}
+\item \textbf{Résumé de position :} $G$ localise le « cœur » du nuage. Si on translate le repère pour placer l'origine en $G$, les nouvelles coordonnées sont les \textbf{écarts à la moyenne} ($x_i' = x_i - \bar{x}$, $y_i' = y_i - \bar{y}$). Cela simplifie considérablement les formules de régression.
+\item \textbf{Propriété des droites de régression :} Toute droite de régression linéaire « raisonnable » (Méthode des Moindres Carrés \textbf{MCO} ou Méthode de \textbf{Mayer}) \textbf{passe obligatoirement par le point $G$}.
+\item \textbf{Point de passage forcé :} Quand on trace une droite d'ajustement, on \textbf{doit} la faire passer par $G$. C'est un contrôle visuel immédiat : si votre droite ne passe pas par $G$, elle est fausse.
+\end{itemize}
+\end{aretenir}
+
+\begin{propriete}[Propriété du passage par G (Admise pour Mayer, Démontrée pour MCO en complément)]
+Quelle que soit la méthode d'ajustement linéaire utilisée (Mayer ou Moindres Carrés), la droite de régression obtenue passe par le point moyen $G(\bar{x} ; \bar{y})$.
+\par\medskip
+\emph{Justification intuitive pour Mayer :} La méthode de Mayer coupe le nuage en deux groupes d'effectifs égaux (ou quasi égaux) de part et d'autre de $G$ (médiane des $x$). Les points moyens de chaque groupe ($G_1$ et $G_2$) sont alignés avec $G$. La droite de Mayer passe par $G_1$ et $G_2$, donc elle passe par $G$.
+\end{propriete}
+
+\courssub{Illustration graphique : Visualisation de G et des quadrants}
+
+La figure ci-dessous représente le nuage de points de l'exemple CDC, le point moyen $G(72,5 ; 16,5)$ marqué par une croix rouge, et les deux droites parallèles aux axes passant par $G$. Ces droites divisent le plan en quatre quadrants relatifs à $G$. On observe la symétrie des effectifs autour de $G$ (5 points dans le quadrant « bas-gauche », 5 dans « haut-droit »).
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.75, every node/.style={font=\small}]
+    % Axes
+    \draw[->, thick, popdark] (40, 10) -- (100, 10) node[right] {$x$ (kg/ha)};
+    \draw[->, thick, popdark] (40, 10) -- (40, 24) node[above] {$y$ (t/ha)};
+    
+    % Graduations
+    \foreach \x in {50,60,70,80,90,100} {
+        \draw (\x, 9.8) -- (\x, 10.2) node[below, popdark] {\x};
+    }
+    \foreach \y in {12,14,16,18,20,22} {
+        \draw (39.8, \y) -- (40.2, \y) node[left, popdark] {\y};
+    }
+    
+    % Grille légère
+    \draw[popline, very thin] (40,10) grid (100,22);
+    
+    % Droites passant par G (72.5, 16.5)
+    \draw[popred, dashed, thick] (40, 16.5) -- (100, 16.5) node[right, popred] {$y = \bar{y}$};
+    \draw[popred, dashed, thick] (72.5, 10) -- (72.5, 22) node[above, popred] {$x = \bar{x}$};
+    
+    % Nuage de points
+    \foreach \x/\y in {50/12, 55/13, 60/14, 65/15, 70/16, 75/17, 80/18, 85/19, 90/20, 95/21} {
+        \fill[popblue] (\x, \y) circle (3pt);
+    }
+    
+    % Point moyen G
+    \draw[popred, very thick] (71.5, 15.5) -- (73.5, 17.5);
+    \draw[popred, very thick] (71.5, 17.5) -- (73.5, 15.5);
+    \node[popred, above right] at (73.5, 17.5) {$G(72,5 ; 16,5)$};
+    
+    % Légendes quadrants (optionnel, pour visualisation)
+    \node[popmuted, opacity=0.6] at (55, 13) {Q3 : $x<\bar{x}, y<\bar{y}$};
+    \node[popmuted, opacity=0.6] at (88, 19) {Q1 : $x>\bar{x}, y>\bar{y}$};
+    \node[popmuted, opacity=0.6] at (55, 19) {Q2 : $x<\bar{x}, y>\bar{y}$};
+    \node[popmuted, opacity=0.6] at (88, 13) {Q4 : $x>\bar{x}, y<\bar{y}$};
+\end{tikzpicture}
+\legende{Nuage de points CDC : Point moyen $G$ (croix rouge) et quadrants relatifs à $G$. On compte 5 points dans Q3 et 5 dans Q1, 0 dans Q2 et Q4 (corrélation positive parfaite).}
+\end{popfigure}
+
+\courssub{Le saviez-vous ? : Le centre de gravité en physique et en data science}
+
+\begin{savaistu}[Du tableau de stats au laboratoire de mécanique]
+La formule du point moyen $G(\bar{x} ; \bar{y})$ est \textbf{identique} à celle du centre de gravité (barycentre) d'un système de points matériels en physique.
+\begin{itemize}
+\item En physique : Des masses $m_i$ placées aux coordonnées $(x_i, y_i)$. Le centre de gravité $G$ a pour coordonnées $\left(\frac{\sum m_i x_i}{\sum m_i} ; \frac{\sum m_i y_i}{\sum m_i}\right)$.
+\item En statistiques : Les « masses » sont les \textbf{effectifs} $n_i$ (ou fréquences). Le « système de points » est le nuage de points.
+\end{itemize}
+\par\medskip
+\emph{Application concrète au Cameroun :} Dans la gestion d'un réseau de distribution d'eau (CAMWATER) ou d'électricité (ENEO), les compteurs clients sont des points $(x_i, y_i)$ avec une « masse » égale à leur consommation. Le centre de gravité $G$ de ce nuage indique l'emplacement optimal pour implanter un nouveau réservoir ou un poste de transformation afin de minimiser les pertes de charge (distance pondérée par la consommation). C'est un problème classique de \textbf{logistique et recherche opérationnelle} (problème du médian / barycentre pondéré).
+\end{savaistu}
+
+\courssub{Exercice d'application immédiate}
+
+\begin{exercice}[Calcul de G sur série groupée — Gestion de stock]
+Un magasin de matériel électrique a relevé les ventes mensuelles (en centaines d'unités) de câbles selon la section (en mm²) sur une année.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|C|C|C|C|C|}\hline
+\textbf{Section $x_i$ (mm²)} & 1,5 & 2,5 & 4 & 6 & 10 \\ \hline
+\textbf{Ventes $y_i$ (centaines)} & 20 & 30 & 25 & 15 & 10 \\ \hline
+\textbf{Effectif $n_i$ (mois)} & 3 & 4 & 2 & 2 & 1 \\ \hline
+\end{tabularx}
+\end{center}
+\begin{enumerate}
+\item Vérifier l'effectif total $N$.
+\item Calculer les coordonnées du point moyen $G(\bar{x} ; \bar{y})$.
+\item Interpréter $\bar{x}$ et $\bar{y}$ dans le contexte du magasin.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Gestion de stock]
+\begin{enumerate}
+\item $N = 3 + 4 + 2 + 2 + 1 = 12$ mois (une année complète). ✓
+\item \textbf{Calcul de $\bar{x}$ :}
+      \[
+      \sum n_i x_i = 3(1,5) + 4(2,5) + 2(4) + 2(6) + 1(10) = 4,5 + 10 + 8 + 12 + 10 = 44,5
+      \]
+      \[
+      \bar{x} = \frac{44,5}{12} = \frac{89}{24} \approx \mathbf{3,71 \text{ mm}^2}
+      \]
+      \textbf{Calcul de $\bar{y}$ :}
+      \[
+      \sum n_i y_i = 3(20) + 4(30) + 2(25) + 2(15) + 1(10) = 60 + 120 + 50 + 30 + 10 = 270
+      \]
+      \[
+      \bar{y} = \frac{270}{12} = \mathbf{22,5 \text{ centaines d'unités}} \quad (\text{soit } 2250 \text{ unités})
+      \]
+      \textbf{Point moyen :} $G(3,71 ; 22,5)$.
+\item \textbf{Interprétation :} Sur l'année, la section moyenne de câble vendue (pondérée par le nombre de mois de vente) est d'environ 3,7 mm². Le volume moyen mensuel de ventes (pour les mois où il y a eu vente) est de 2250 unités. Ce point $G$ représente le « profil type » d'un mois d'activité pour ce produit.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Synthèse de la section}
+
+\begin{aretenir}[À retenir absolument : Le Point Moyen G]
+\begin{itemize}
+\item \textbf{Formules :} $\bar{x} = \frac{\sum n_i x_i}{N}$, $\bar{y} = \frac{\sum n_i y_i}{N}$. (Attention aux effectifs $n_i$ !)
+\item \textbf{Propriété physique :} $\sum n_i(x_i - \bar{x}) = 0$ et $\sum n_i(y_i - \bar{y}) = 0$. $G$ est le centre de gravité (barycentre) du nuage.
+\item \textbf{Rôle central :} Toute droite de régression linéaire (Mayer ou Moindres Carrés) \textbf{passe par $G$}.
+\item \textbf{Calculatrice :} Mode STAT $\to$ 2-VAR $\to$ Saisir X, Y, FREQ $\to$ Lire $\bar{x}, \bar{y}, N$.
+\item \textbf{Exemple CDC :} $G(72,5 ; 16,5)$.
+\end{itemize}
+\end{aretenir}
+
+\emph{Transition vers la section 3 :} Maintenant que nous savons localiser le « cœur » du nuage ($G$) et que nous connaissons la propriété fondamentale selon laquelle la droite de régression doit passer par ce point, nous allons voir comment \textbf{construire} cette droite avec la \textbf{méthode de Mayer}, méthode officielle au programme de Terminale Technique, simple, robuste et ne nécessitant pas de calculs de carrés.
+
+\coursec{Ajustement linéaire : Méthode de Mayer}
+
+\noindent Dans la section précédente, nous avons vu comment résumer un nuage de points par son \cle{point moyen} $G(\bar{x}\,;\,\bar{y})$, centre de gravité de la distribution. Si les points semblent s'aligner grossièrement selon une tendance linéaire, il est naturel de chercher une \cle{droite de régression} qui « passe au plus près » de l'ensemble du nuage. La \cle{méthode de Mayer}, proposée par le statisticien français Maurice Mayer en 1940, offre une procédure simple, robuste et parfaitement adaptée au travail manuel — ce qui en fait l'outil de référence dans l'enseignement technique.
+
+\courssub{Principe de l'ajustement linéaire}
+
+\noindent On dispose d'une série statistique à deux variables $(x_i, y_i)_{i=1..n}$. Le nuage de points suggère une liaison affine : $y \approx ax + b$. Nous cherchons les coefficients $a$ (pente) et $b$ (ordonnée à l'origine) de la \cle{droite de Mayer} $\mathcal{D}_M : y = ax + b$.
+
+\begin{propriete}[Contrainte du passage par le point moyen]
+Toute droite d'ajustement linéaire « raisonnable » doit passer par le point moyen $G(\bar{x}\,;\,\bar{y})$. En effet, si la droite modélise la tendance centrale, le barycentre des points observés doit lui appartenir.
+\end{propriete}
+
+\noindent Cette condition impose une relation entre $a$ et $b$ :
+\[
+\bar{y} = a\bar{x} + b \quad\Longrightarrow\quad b = \bar{y} - a\bar{x}.
+\]
+Il ne reste plus qu'à déterminer la \cle{pente $a$}. C'est tout l'objet de la méthode de Mayer.
+
+\courssub{Algorithme de la méthode de Mayer (4 étapes)}
+
+\begin{methode}[Tracer la droite de Mayer — Algorithme en 4 étapes]
+\begin{enumerate}
+\item \textbf{Trier et séparer :} Ranger les $n$ couples $(x_i, y_i)$ par valeurs croissantes de $x$ (les $y$ suivent leur $x$ associé !). Couper la liste en deux groupes de même effectif total.
+\begin{itemize}
+\item Si $n$ est \textbf{pair} : la séparation se fait par la \cle{médiane de $X$} (moyenne des deux valeurs centrales). Les deux groupes ont $n/2$ couples.
+\item Si $n$ est \textbf{impair} : on \textbf{exclut} le couple dont $x$ est la médiane (valeur centrale). Les deux groupes ont $(n-1)/2$ couples chacun.
+\end{itemize}
+\item \textbf{Calculer les centres de gravité partiels :} Pour chaque sous-nuage, calculer le point moyen :
+$G_1(\bar{x}_1\,;\,\bar{y}_1)$ pour le groupe des $x$ les plus petits,
+$G_2(\bar{x}_2\,;\,\bar{y}_2)$ pour le groupe des $x$ les plus grands.
+\item \textbf{Calculer la pente $a$ :} La pente de la droite de Mayer est la pente de la droite $(G_1G_2)$ :
+\[
+a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1}.
+\]
+\item \textbf{Écrire l'équation :} Avec $b = \bar{y} - a\bar{x}$ (calculé sur la série \textbf{totale}), la droite de Mayer est $\mathcal{D}_M : y = ax + b$. Elle passe par $G$ et est \textbf{parallèle} à $(G_1G_2)$.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Piège fréquent : couples $(x,y)$ indissociables]
+\emph{Ne séparez jamais $x$ et $y$ !} L'erreur classique est de trier la colonne $X$ seule, de faire deux groupes d'effectifs égaux sur $X$, puis de calculer $\bar{y}_1$ et $\bar{y}_2$ sur les $y$ \emph{restés dans l'ordre initial}. Les couples $(x_i, y_i)$ sont liés : quand on trie par $x$, le $y$ correspondant \textbf{doit suivre}. Le sous-nuage 1 contient les couples dont $x \le \text{médiane}(X)$ (ou $x < \text{médiane}(X)$ si $n$ impair et médiane exclue), le sous-nuage 2 les autres.
+\end{attention}
+
+\courssub{Justification et propriété fondamentale}
+
+\begin{propriete}[Propriété géométrique de la droite de Mayer]
+La droite de Mayer $\mathcal{D}_M$ est l'unique droite qui :
+\begin{itemize}
+\item passe par le point moyen global $G(\bar{x}\,;\,\bar{y})$,
+\item a pour pente celle de la droite joignant les centres de gravité $G_1$ et $G_2$ des deux sous-nuages séparés par la médiane de $X$.
+\end{itemize}
+\end{propriete}
+
+\noindent \textbf{Pourquoi cela fonctionne-t-il ?} La méthode des moindres carrés (MCO) minimise $\sum (y_i - (ax_i+b))^2$. Sa pente est $a_{\text{MCO}} = \frac{\text{Cov}(X,Y)}{\text{Var}(X)}$. La méthode de Mayer approxime cette pente en remplaçant les sommes par des différences entre moyennes de deux moitiés équilibrées. Elle est :
+\begin{itemize}
+\item \textbf{Robuste :} peu sensible aux valeurs extrêmes (outliers) car elle utilise des moyennes sur des groupes, pas des carrés d'écarts individuels.
+\item \textbf{Pédagogique :} pas de calculs de $\sum x^2$, $\sum y^2$, $\sum xy$ — seulement des moyennes.
+\item \textbf{Proche de la MCO :} sur des nuages sans outliers forts, $a_{\text{Mayer}} \approx a_{\text{MCO}}$.
+\end{itemize}
+
+\courssub{Application complète sur l'exemple CDC}
+
+\noindent Reprenons les données de consommation de carburant (CDC) introduites en section 1. On a $n=10$ véhicules. Les couples $(x_i, y_i)$ sont déjà triés par $x$ (cylindrée en $10\,\text{cm}^3$) :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{10}{X|}}\hline
+$i$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ \hline
+$x_i$ & 50 & 55 & 60 & 65 & 70 & 75 & 80 & 85 & 90 & 95 \\ \hline
+$y_i$ & 12 & 13 & 13,5 & 14 & 15 & 16 & 18 & 19 & 20 & 22 \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Calcul complet de la droite de Mayer sur les données CDC]
+\noindent \textbf{Étape 1 — Séparation par la médiane de $X$.}
+$n=10$ (pair). La médiane de $X$ est la moyenne des 5\textsuperscript{ème} et 6\textsuperscript{ème} valeurs : $\frac{70+75}{2} = 72,5$.
+\begin{itemize}
+\item \textbf{Groupe 1} ($x \le 72,5$) : 5 couples : $(50,12),\ (55,13),\ (60,13,5),\ (65,14),\ (70,15)$.
+\item \textbf{Groupe 2} ($x > 72,5$) : 5 couples : $(75,16),\ (80,18),\ (85,19),\ (90,20),\ (95,22)$.
+\end{itemize}
+
+\noindent \textbf{Étape 2 — Points moyens $G_1$ et $G_2$.}
+\begin{align*}
+\bar{x}_1 &= \frac{50+55+60+65+70}{5} = \frac{300}{5} = 60, &
+\bar{y}_1 &= \frac{12+13+13,5+14+15}{5} = \frac{67,5}{5} = 13,5, \\
+\bar{x}_2 &= \frac{75+80+85+90+95}{5} = \frac{425}{5} = 85, &
+\bar{y}_2 &= \frac{16+18+19+20+22}{5} = \frac{95}{5} = 19,5.
+\end{align*}
+Donc $G_1(60\,;\,13,5)$ et $G_2(85\,;\,19,5)$.
+
+\noindent \textbf{Étape 3 — Pente $a$.}
+\[
+a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1} = \frac{19,5 - 13,5}{85 - 60} = \frac{6}{25} = 0,24.
+\]
+
+\noindent \textbf{Étape 4 — Point moyen global $G$ et équation.}
+\[
+\bar{x} = \frac{5\cdot60 + 5\cdot85}{10} = 72,5,\qquad
+\bar{y} = \frac{5\cdot13,5 + 5\cdot19,5}{10} = 16,5 \quad\Rightarrow\quad G(72,5\,;\,16,5).
+\]
+\[
+b = \bar{y} - a\bar{x} = 16,5 - 0,24\times 72,5 = 16,5 - 17,4 = -0,9.
+\]
+
+\noindent \textbf{Droite de Mayer :} $\boxed{y = 0,24\,x - 0,9}$ \quad (avec $x$ en $10\,\text{cm}^3$, $y$ en L/100 km).
+
+\tcblower
+\noindent \textbf{Interprétation :} Pour une augmentation de $10\,\text{cm}^3$ de cylindrée, la consommation augmente en moyenne de $0,24\,\text{L/100 km}$. L'ordonnée à l'origine $-0,9$ n'a pas de sens physique (cylindrée nulle impossible) : c'est une extrapolation hors domaine des données.
+\end{exoresolu}
+
+\courssub{Représentation graphique}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth,
+    height=0.6\linewidth,
+    xlabel={Cylindrée $x$ ($10\,\text{cm}^3$)},
+    ylabel={Consommation $y$ (L/100 km)},
+    xmin=45, xmax=100,
+    ymin=10, ymax=24,
+    grid=major,
+    grid style={popline},
+    tick label style={font=\small},
+    label style={font=\small},
+    legend style={font=\small, at={(0.02,0.98)}, anchor=north west, fill=white, fill opacity=0.9},
+    clip=false
+]
+% Nuage de points
+\addplot[only marks, mark=*, mark size=2.5, popblue] coordinates {
+    (50,12) (55,13) (60,13.5) (65,14) (70,15)
+    (75,16) (80,18) (85,19) (90,20) (95,22)
+};
+\addlegendentry{Données CDC}
+
+% Ligne verticale médiane X = 72.5
+\addplot[dashed, popmuted, thick, domain=10:24] ({72.5}, x);
+\addlegendentry{Médiane $X = 72,5$}
+
+% Points G1 et G2
+\addplot[only marks, mark=square*, mark size=3.5, poporange] coordinates {(60,13.5)};
+\addlegendentry{$G_1(60;13,5)$}
+\addplot[only marks, mark=square*, mark size=3.5, poppurple] coordinates {(85,19.5)};
+\addlegendentry{$G_2(85;19,5)$}
+
+% Point moyen global G
+\addplot[only marks, mark=triangle*, mark size=3.5, popgreen] coordinates {(72.5,16.5)};
+\addlegendentry{$G(72,5;16,5)$}
+
+% Droite (G1G2) en pointillés (segment entre G1 et G2 pour bien voir la construction)
+\addplot[dashed, thick, poporange!80!popdark, domain=60:85] {0.24*x - 0.9};
+\addlegendentry{Droite $(G_1G_2)$ (pente $a$)}
+
+% Droite de Mayer (même équation, trait plein rouge sur tout le domaine)
+\addplot[solid, very thick, poppink, domain=45:100] {0.24*x - 0.9};
+\addlegendentry{Droite de Mayer $y=0,24x-0,9$}
+
+% Annotations
+\node[poporange!80!popdark, anchor=south west, font=\small] at (axis cs:60,13.5) {$G_1$};
+\node[poppurple, anchor=south west, font=\small] at (axis cs:85,19.5) {$G_2$};
+\node[popgreen, anchor=south east, font=\small] at (axis cs:72.5,16.5) {$G$};
+\end{axis}
+\end{tikzpicture}
+\legende{Nuage CDC divisé par la médiane $x=72,5$. Les centres de gravité $G_1$ et $G_2$ définissent la pente $a=0,24$. La droite de Mayer (rose, trait plein) passe par $G$ et est parallèle à $(G_1G_2)$ (orange, pointillés). Dans cet exemple symétrique, les trois points $G_1$, $G_2$ et $G$ sont alignés.}
+\end{popfigure}
+
+\courssub{Comparaison avec la méthode des moindres carrés (Complément Terminale)}
+
+\begin{savaistu}[Mayer vs Moindres Carrés : une histoire de robustesse]
+La \cle{méthode des moindres carrés (MCO)}, due à Gauss et Legendre (vers 1805), minimise la somme des carrés des résidus verticaux. Sa pente est $a_{\text{MCO}} = \frac{\sum(x_i-\bar{x})(y_i-\bar{y})}{\sum(x_i-\bar{x})^2} = \frac{\text{Cov}(X,Y)}{\text{Var}(X)}$.
+
+Maurice Mayer (1940), inspecteur général de l'enseignement technique français, a proposé sa méthode pour permettre aux élèves de terminale technique de faire de la régression \textbf{sans calculatrice} et \textbf{résistante aux valeurs aberrantes}. Sur l'exemple CDC :
+\[
+a_{\text{MCO}} = \frac{\text{Cov}(X,Y)}{\text{Var}(X)} \approx \frac{116,25}{487,5} \approx 0,2385 \quad\text{vs}\quad a_{\text{Mayer}} = 0,24.
+\]
+Les deux droites sont quasi confondues. Mais si l'on ajoute un point extrême $(100, 50)$, $a_{\text{MCO}}$ bondit alors que $a_{\text{Mayer}}$ bouge peu car la médiane de $X$ et les moyennes de groupes sont stables.
+\end{savaistu}
+
+\begin{aretenir}[Bilan — Droite de Mayer]
+\begin{itemize}
+\item \textbf{But :} Trouver $y = ax + b$ qui résume la tendance linéaire d'un nuage.
+\item \textbf{Contrainte :} La droite passe par $G(\bar{x},\bar{y}) \Rightarrow b = \bar{y} - a\bar{x}$.
+\item \textbf{Méthode de Mayer (4 étapes) :}
+\begin{enumerate}
+\item Trier par $x$, couper à la médiane de $X$ en 2 groupes d'effectifs égaux (couples $(x,y)$ intacts ; si $n$ impair, exclure le couple médian).
+\item Calculer $G_1(\bar{x}_1,\bar{y}_1)$ et $G_2(\bar{x}_2,\bar{y}_2)$.
+\item Pente $a = \dfrac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1}$.
+\item Équation : $y = ax + (\bar{y} - a\bar{x})$ avec $\bar{x},\bar{y}$ de la série totale.
+\end{enumerate}
+\item \textbf{Avantages :} Calculs simples (moyennes seulement), robuste aux outliers, pédagogique.
+\item \textbf{Limite :} Moins précise que MCO si le nuage est très dispersé ou non linéaire ; ne donne pas de coefficient de corrélation.
+\end{itemize}
+\end{aretenir}
+
+\noindent Nous savons maintenant \emph{comment} construire la droite de Mayer. La section 4 montrera \emph{comment l'utiliser} : prévoir une consommation pour une cylindrée donnée, interpréter la pente dans le métier, et évaluer la qualité de l'ajustement.
+
+\coursec{Utilisation de la droite de Mayer : Prévision et Interprétation}
+
+\courssub{De l'ajustement à l'exploitation : transition}
+
+Dans la section précédente, nous avons construit la \textbf{droite de Mayer} d'équation $y = ax + b$ qui résume au mieux la tendance linéaire du nuage de points. Cette droite n'est pas une fin en soi : elle devient un \textbf{outil de prévision} et un \textbf{support d'interprétation} pour le technicien.
+
+Rappelons que les coefficients $a$ (coefficient directeur) et $b$ (ordonnée à l'origine) ont été calculés à partir des points moyens des deux sous-groupes $G_1(\bar{x}_1\,;\,\bar{y}_1)$ et $G_2(\bar{x}_2\,;\,\bar{y}_2)$ :
+\[
+a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1} \qquad
+b = \bar{y} - a\bar{x} \quad \text{(où $G(\bar{x}\,;\,\bar{y})$ est le point moyen global)}
+\]
+Désormais, nous allons voir comment \emph{utiliser} cette équation concrètement : estimer une valeur de $y$ pour un $x$ donné, comprendre le sens physique de $a$ et $b$, et mesurer la fiabilité de nos prévisions.
+
+\begin{savaistu}[Le technicien et le statisticien]
+En atelier ou sur chantier, on cherche souvent à \textbf{prédire} un résultat (rendement, consommation, résistance) en fonction d'un paramètre qu'on maîtrise (dose d'engrais, température, temps de cuisson). La droite de Mayer offre une \emph{règle de proportionnalité affine} simple, utilisable sans ordinateur. Mais le technicien averti sait que \textbf{toute prévision a une zone de validité} : interpoler (rester à l'intérieur des données observées) est généralement sûr ; extrapoler (sortir de cet intervalle) est risqué.
+\end{savaistu}
+
+\courssub{Interpolation et extrapolation : définitions et prudence}
+
+Soit une série statistique à deux variables $(x_i\,;\,y_i)$. On note $x_{\min}$ la plus petite valeur observée de $x$ et $x_{\max}$ la plus grande. La droite de Mayer est $y = ax + b$.
+
+\begin{definition}[Interpolation et Extrapolation]
+\begin{itemize}
+    \item \textbf{Interpolation :} prédire $y_0 = ax_0 + b$ pour une valeur $x_0$ telle que $x_{\min} \le x_0 \le x_{\max}$. On reste \emph{à l'intérieur} de l'intervalle d'observation.
+    \item \textbf{Extrapolation :} prédire $y_0 = ax_0 + b$ pour une valeur $x_0$ \emph{en dehors} de cet intervalle ($x_0 < x_{\min}$ ou $x_0 > x_{\max}$). On \emph{prolonge} la droite au-delà des données.
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Danger de l'extrapolation]
+L'hypothèse de linéarité n'est vérifiée \textbf{que sur l'intervalle observé}. Hors de cet intervalle, le phénomène peut changer de comportement (saturation, seuil de toxicité, rupture de pente, loi non linéaire). Une extrapolation peut donner des résultats \textbf{physiquement absurdes} (rendements négatifs, résistances infinies).
+
+\textbf{Exemple :} si la dose maximale testée est 95 kg/ha, prévoir le rendement pour 200 kg/ha avec la même droite suppose que le rendement continue à croître indéfiniment, ce qui est faux (loi des rendements décroissants).
+
+\emph{Au Probatoire :} si un exercice demande une extrapolation, \textbf{calculez la valeur demandée} mais \textbf{ajoutez systématiquement une phrase de prudence} : \og Cette prévision est une extrapolation ; elle est peu fiable car la linéarité n'est pas garantie au-delà de 95 kg/ha. \fg{}
+\end{attention}
+
+\begin{methode}[Prévoir une valeur avec la droite de Mayer]
+\begin{enumerate}
+    \item \textbf{Identifier l'intervalle d'observation :} relever $x_{\min}$ et $x_{\max}$ dans le tableau de données.
+    \item \textbf{Situer la valeur $x_0$ à prédire :} est-elle dans $[x_{\min}\,;\,x_{\max}]$ (interpolation) ou hors de l'intervalle (extrapolation) ?
+    \item \textbf{Calculer $y_0 = ax_0 + b$} avec les coefficients $a$ et $b$ de la droite de Mayer.
+    \item \textbf{Formuler la réponse :} donner la valeur avec son \textbf{unité}, préciser \og interpolation \fg{} ou \og extrapolation \fg{}, et ajouter une \textbf{réserve} si c'est une extrapolation.
+\end{enumerate}
+\end{methode}
+
+\courssub{Interprétation physique des coefficients $a$ et $b$}
+
+L'équation $y = ax + b$ n'est pas qu'une formule de calcul ; ses coefficients racontent l'histoire du phénomène technique.
+
+\begin{propriete}[Interprétation du coefficient directeur $a$]
+$a$ est le \textbf{taux de variation moyen} de $y$ par rapport à $x$ :
+\begin{center}
+\og Pour une augmentation de \textbf{1 unité de $x$}, la variable $y$ \textbf{augmente (si $a>0$) ou diminue (si $a<0$)} en moyenne de \textbf{$|a|$ unités de $y$}. \fg{}
+\end{center}
+\emph{Unités :} $[a] = \dfrac{[y]}{[x]}$ (par exemple t/ha par kg/ha, ou FCFA par heure, ou MPa par degré).
+\end{propriete}
+
+\begin{propriete}[Interprétation de l'ordonnée à l'origine $b$]
+$b = y(0)$ est la \textbf{valeur théorique de $y$ pour $x=0$}.
+\begin{itemize}
+    \item Si $0 \in [x_{\min}\,;\,x_{\max}]$ (le zéro fait partie des valeurs observées), $b$ a un \textbf{sens physique réel} (exemple : rendement sans engrais, consommation au repos).
+    \item Si $0 \notin [x_{\min}\,;\,x_{\max}]$ (cas fréquent), $b$ est une \textbf{extrapolation théorique} souvent \textbf{sans sens physique} (exemple : un rendement négatif est impossible).
+\end{itemize}
+\end{propriete}
+
+\begin{attention}[Corrélation n'est pas causalité — piège majeur au Probatoire]
+\begin{itemize}
+    \item \textbf{Interdit :} \og L'engrais \textbf{fait} augmenter le rendement. \fg{} (Relation de cause à effet non prouvée par la seule statistique.)
+    \item \textbf{Correct :} \og Il existe une \textbf{liaison linéaire positive} entre la dose d'engrais et le rendement ; \textbf{en moyenne}, quand la dose augmente de 1 kg/ha, le rendement augmente de $a$ t/ha. \fg{}
+\end{itemize}
+D'autres facteurs (météo, variété, nature du sol) influencent $y$. La droite de Mayer décrit une \textbf{tendance moyenne}, pas un déterminisme strict.
+\end{attention}
+
+\courssub{Qualité locale de l'ajustement : les résidus}
+
+La droite de Mayer passe par le point moyen $G$, mais \textbf{ne passe généralement par aucun point expérimental}. L'écart entre la valeur observée et la valeur théorique s'appelle le \textbf{résidu}.
+
+\begin{definition}[Résidu (écart à la droite)]
+Pour un point $M_i(x_i\,;\,y_i)$ du nuage, son \textbf{résidu} (ou écart résiduel) est :
+\[
+e_i = y_i - \hat{y}_i = y_i - (ax_i + b)
+\]
+où $\hat{y}_i$ est la valeur \emph{théorique} (lue sur la droite) pour $x_i$.
+\begin{itemize}
+    \item $e_i > 0$ : le point est \textbf{au-dessus} de la droite (résultat \emph{meilleur} que la tendance).
+    \item $e_i < 0$ : le point est \textbf{en-dessous} de la droite (résultat \emph{moins bon} que la tendance).
+    \item $e_i = 0$ : le point est \textbf{sur} la droite (cas rare).
+\end{itemize}
+\emph{Propriété :} la somme des résidus est nulle : $\sum e_i = 0$ (car la droite passe par le point moyen $G$).
+\end{definition}
+
+\begin{exemplebox}[Analyse des résidus sur un exemple agronomique]
+Reprenons l'exemple de la section 3 (engrais $x$ en kg/ha, rendement $y$ en t/ha).
+
+Données : $(10\,;\,1,2)$, $(20\,;\,3,8)$, $(30\,;\,6,5)$, $(40\,;\,8,9)$, $(50\,;\,11,2)$, $(60\,;\,13,8)$, $(70\,;\,16,5)$, $(80\,;\,18,9)$, $(90\,;\,21,5)$, $(95\,;\,22,8)$.
+
+Droite de Mayer trouvée : $\hat{y} = 0,24x - 0,9$ (coefficients arrondis au centième).
+
+Calculons les résidus pour quelques points :
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}\hline
+$x_i$ & $y_i$ (observé) & $\hat{y}_i = 0,24x_i - 0,9$ & $e_i = y_i - \hat{y}_i$ & Interprétation \\ \hline
+10 & 1,2 & 1,5 & $-0,3$ & Légèrement sous la tendance \\ \hline
+50 & 11,2 & 11,1 & $+0,1$ & Quasi sur la droite \\ \hline
+95 & 22,8 & 21,9 & $+0,9$ & \textbf{Au-dessus} : meilleur rendement que prévu \\ \hline
+\end{tabular}
+\end{center}
+Le résidu maximal (en valeur absolue) parmi ces trois points est $0,9$ t/ha pour $x = 95$ kg/ha. Cela montre que localement, l'erreur de prévision peut atteindre près d'une tonne par hectare.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth, height=9cm,
+    xlabel={Dose d'engrais $x$ (kg/ha)}, ylabel={Rendement $y$ (t/ha)},
+    xmin=0, xmax=115, ymin=0, ymax=27,
+    grid=major, grid style={popline},
+    legend style={at={(0.02,0.98)}, anchor=north west, fill=white, fill opacity=0.9, font=\small}
+]
+% Zone d'interpolation (bleu clair) et zones d'extrapolation (orange clair)
+\fill[popblue!12] (axis cs:10,0) rectangle (axis cs:95,27);
+\fill[poporange!18] (axis cs:95,0) rectangle (axis cs:115,27);
+\fill[poporange!18] (axis cs:0,0) rectangle (axis cs:10,27);
+
+% Droite de Mayer
+\addplot[popcurve, domain=0:110, samples=2, thick] {0.24*x - 0.9};
+\addlegendentry{Droite de Mayer : $y=0,24x-0,9$}
+
+% Nuage de points
+\addplot[only marks, mark=*, mark size=2.5pt, popdark] coordinates {
+    (10,1.2) (20,3.8) (30,6.5) (40,8.9) (50,11.2) (60,13.8) (70,16.5) (80,18.9) (90,21.5) (95,22.8)
+};
+\addlegendentry{Données observées}
+
+% Résidus (segments verticaux) pour 3 points
+\draw[poppink, very thick] (axis cs:10,1.5) -- (axis cs:10,1.2);
+\draw[poppink, very thick] (axis cs:50,11.1) -- (axis cs:50,11.2);
+\draw[poppink, very thick] (axis cs:95,21.9) -- (axis cs:95,22.8);
+\node[poppink, anchor=east, font=\small] at (axis cs:9,1.35) {$e=-0,3$};
+\node[poppink, anchor=west, font=\small] at (axis cs:51,11.15) {$e=+0,1$};
+\node[poppink, anchor=east, font=\small] at (axis cs:94,22.4) {$e=+0,9$};
+
+% Annotations des zones
+\node[popblue!80!black, font=\small\bfseries] at (axis cs:52,25.5) {Zone d'interpolation};
+\node[poporange!80!black, font=\small\bfseries, rotate=90] at (axis cs:105,13) {Extrapolation};
+\end{axis}
+\end{tikzpicture}
+\legende{Droite de Mayer tracée sur le nuage. Segments roses = résidus $e_i = y_i - \hat{y}_i$. Zone bleue = interpolation fiable. Zones orange = extrapolation risquée.}
+\end{popfigure}
+
+\courssub{Mesure globale de la liaison : coefficient de corrélation linéaire $r$}
+
+Les résidus donnent une vision \emph{locale} (point par point). Le coefficient de corrélation linéaire $r$ (de Bravais-Pearson) donne une vision \emph{globale} de la force du lien linéaire entre $x$ et $y$.
+
+\begin{propriete}[Coefficient de corrélation linéaire $r$]
+\[
+r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \; \sum (y_i - \bar{y})^2}}
+\]
+Propriétés :
+\begin{itemize}
+    \item $-1 \le r \le 1$.
+    \item $r \approx 1$ : liaison linéaire \textbf{forte et positive} (points presque alignés sur une droite croissante).
+    \item $r \approx -1$ : liaison linéaire \textbf{forte et négative} (points presque alignés sur une droite décroissante).
+    \item $r \approx 0$ : \textbf{pas de liaison linéaire} (nuage dispersé, ou relation non linéaire).
+\end{itemize}
+\emph{Au Probatoire :} le calcul exact de $r$ à la main est fastidieux. \textbf{Utilisez la calculatrice} (mode statistiques à deux variables, régression linéaire). On demande souvent d'\textbf{interpréter} une valeur donnée ou calculée à la machine.
+\end{propriete}
+
+\begin{aretenir}[Interprétation usuelle de $|r|$ (seuils indicatifs)]
+\begin{center}
+\begin{tabular}{|c|c|}\hline
+Valeur de $|r|$ & Interprétation \\ \hline
+$|r| \ge 0,9$ & Liaison linéaire \textbf{très forte} \\ \hline
+$0,7 \le |r| < 0,9$ & Liaison linéaire \textbf{forte} \\ \hline
+$0,5 \le |r| < 0,7$ & Liaison linéaire \textbf{modérée} \\ \hline
+$|r| < 0,5$ & Liaison linéaire \textbf{faible ou nulle} \\ \hline
+\end{tabular}
+\end{center}
+\emph{Attention :} $r$ ne mesure \textbf{que} la linéarité. Un nuage disposé le long d'une parabole parfaite peut donner un $r$ proche de 0.
+\end{aretenir}
+
+\courssub{Exemple complet résolu : prévision, interprétation, résidus et $r$}
+
+\begin{exoresolu}[Exploitation complète — Rendement en fonction de l'engrais]
+\textbf{Énoncé.} On reprend les données de l'exemple précédent (doses $x$ en kg/ha, rendements $y$ en t/ha). La droite de Mayer est $\hat{y} = 0,24x - 0,9$. La calculatrice donne $r = 0,986$.
+
+\begin{enumerate}
+    \item Prédire le rendement pour une dose de \textbf{70 kg/ha} puis pour \textbf{100 kg/ha}. Préciser la nature de chaque prévision.
+    \item Interpréter le coefficient $a = 0,24$ et l'ordonnée à l'origine $b = -0,9$ dans le contexte.
+    \item Calculer le résidu pour $x = 95$ kg/ha (où $y = 22,8$ t/ha). Que signifie-t-il ?
+    \item Interpréter la valeur de $r$.
+\end{enumerate}
+
+\tcblower
+
+\textbf{Solution détaillée.}
+
+\textbf{1. Prédictions.}
+
+Intervalle d'observation : $x \in [10\,;\,95]$.
+\begin{itemize}
+    \item \textbf{Pour $x_0 = 70$ :} $70 \in [10\,;\,95]$, donc c'est une \textbf{interpolation}.
+    \[ \hat{y} = 0,24 \times 70 - 0,9 = 16,8 - 0,9 = \textbf{15,9 t/ha}. \]
+    \item \textbf{Pour $x_0 = 100$ :} $100 > 95$, donc c'est une \textbf{extrapolation}.
+    \[ \hat{y} = 0,24 \times 100 - 0,9 = 24 - 0,9 = \textbf{23,1 t/ha}. \]
+    \emph{Réserve :} cette valeur est peu fiable, car on sort de la zone où la linéarité a été observée (risque de saturation du sol en engrais).
+\end{itemize}
+
+\textbf{2. Interprétation des coefficients.}
+\begin{itemize}
+    \item $a = 0,24$ t/ha par kg/ha : \og \textbf{En moyenne, pour 1 kg/ha d'engrais supplémentaire, le rendement augmente de 0,24 t/ha (soit 240 kg/ha).} \fg{}
+    \item $b = -0,9$ t/ha : c'est le rendement théorique pour 0 kg/ha. Comme $0 \notin [10\,;\,95]$, \textbf{cette valeur n'a pas de sens physique} (un rendement négatif est impossible). Elle sert seulement à positionner la droite dans le repère.
+\end{itemize}
+
+\textbf{3. Résidu pour $x = 95$.}
+\[ \hat{y}_{95} = 0,24 \times 95 - 0,9 = 22,8 - 0,9 = 21,9 \text{ t/ha}. \]
+\[ e = y - \hat{y} = 22,8 - 21,9 = \textbf{+0,9 t/ha}. \]
+Le point réel est \textbf{0,9 t/ha au-dessus} de la droite : cette parcelle a donné un rendement \textbf{meilleur} que la tendance moyenne (sol plus fertile, meilleure météo, variété plus performante, etc.).
+
+\textbf{4. Interprétation de $r = 0,986$.}
+
+$|r| = 0,986 \ge 0,9$ : la liaison linéaire est \textbf{très forte et positive}. Le nuage de points est très bien aligné le long d'une droite croissante. La droite de Mayer est donc un \textbf{bon modèle} pour résumer cette relation \emph{dans l'intervalle observé}.
+\end{exoresolu}
+
+\courssub{Limites du modèle linéaire : le complément indispensable}
+
+La droite de Mayer est un \textbf{modèle linéaire global} : elle suppose que la relation entre $x$ et $y$ est une droite \emph{partout}. Or, en technique, les phénomènes sont souvent \textbf{non linéaires} (lois de saturation, seuils, cinétiques).
+
+\begin{savaistu}[La loi des rendements décroissants — pourquoi l'extrapolation échoue]
+En agronomie, la réponse d'une culture à un facteur (engrais, eau) suit généralement une \textbf{courbe concave} qui se rapproche d'un plafond :
+\begin{itemize}
+    \item au début, le rendement augmente vite (la partie est proche d'une droite) ;
+    \item puis l'augmentation ralentit (rendements décroissants) ;
+    \item enfin, un \textbf{maximum} est atteint (saturation) : ajouter de l'engrais ne sert plus à rien, et peut même devenir toxique (baisse du rendement).
+\end{itemize}
+La droite de Mayer, elle, continue de monter indéfiniment. \textbf{C'est pour cela que l'extrapolation est dangereuse :} elle ignore la courbure réelle du phénomène.
+\end{savaistu}
+
+\begin{attention}[Check-list de validation avant d'utiliser la droite de Mayer]
+Avant de prévoir ou d'interpréter, le technicien vérifie :
+\begin{enumerate}
+    \item \textbf{Nuage de points :} aspect \emph{globalement} linéaire ? (Pas de courbure évidente, pas de deux groupes distincts.)
+    \item \textbf{Coefficient $r$ :} a-t-on $|r| \ge 0,7$ (liaison au moins forte) ?
+    \item \textbf{Résidus :} sont-ils \emph{petits} et répartis \emph{aléatoirement} autour de 0 (pas de structure en U ou en V) ?
+    \item \textbf{Domaine :} la prévision demandée est-elle une \textbf{interpolation} ?
+\end{enumerate}
+Si l'une des réponses est NON, le \textbf{modèle linéaire n'est pas adapté} (il faudrait transformer les variables ou changer de modèle — hors programme de Terminale technique).
+\end{attention}
+
+\begin{exercice}[Entraînement — Consommation électrique d'un four industriel]
+Un technicien relève la consommation électrique $y$ (en kWh) d'un four en fonction de la température de consigne $x$ (en degrés Celsius).
+
+Données : $(100\,;\,45)$, $(150\,;\,68)$, $(200\,;\,92)$, $(250\,;\,115)$, $(300\,;\,138)$.
+
+La droite de Mayer est $\hat{y} = 0,46x - 1,2$ et le coefficient de corrélation vaut $r = 0,998$.
+
+\begin{enumerate}
+    \item Prédire la consommation pour $x = 220$ degrés puis pour $x = 350$ degrés. Préciser la nature de chaque prévision.
+    \item Interpréter $a = 0,46$ et $b = -1,2$.
+    \item Calculer le résidu pour $x = 250$ (où $y = 115$). Commenter.
+    \item Que penser de la fiabilité du modèle ? (Examiner $r$ et l'intervalle d'observation.)
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice — Consommation du four]
+\begin{enumerate}
+    \item Intervalle d'observation : $[100\,;\,300]$.
+    \begin{itemize}
+        \item $x = 220 \in [100\,;\,300]$ : \textbf{interpolation}.
+        \[ \hat{y} = 0,46 \times 220 - 1,2 = 101,2 - 1,2 = \textbf{100 kWh}. \]
+        \item $x = 350 > 300$ : \textbf{extrapolation}.
+        \[ \hat{y} = 0,46 \times 350 - 1,2 = 161 - 1,2 = \textbf{159,8 kWh}. \]
+        \emph{Prudence :} au-delà de 300 degrés, les pertes thermiques augmentent souvent plus vite que linéairement ; la consommation réelle sera probablement \textbf{supérieure} à 159,8 kWh.
+    \end{itemize}
+    \item $a = 0,46$ kWh par degré : \og En moyenne, pour 1 degré supplémentaire de consigne, la consommation augmente de 0,46 kWh. \fg{}
+    
+    $b = -1,2$ kWh : consommation théorique à 0 degré. Cette valeur est \textbf{sans sens physique} : 0 degré est hors de l'intervalle d'observation et une consommation ne peut pas être négative.
+    \item Pour $x = 250$ : $\hat{y} = 0,46 \times 250 - 1,2 = 115 - 1,2 = 113,8$ kWh.
+    \[ e = y - \hat{y} = 115 - 113,8 = \textbf{+1,2 kWh}. \]
+    Le four a consommé 1,2 kWh de \textbf{plus} que la tendance moyenne (porte restée ouverte ? isolation vieillissante ?).
+    \item $r = 0,998$, très proche de 1 : la liaison linéaire est \textbf{très forte}. Le modèle est donc fiable \textbf{dans l'intervalle $[100\,;\,300]$}. En revanche, l'extrapolation à 350 degrés reste physiquement risquée.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Qualité de l'ajustement et limites du modèle}
+
+Après avoir construit la droite de Mayer et l'avoir utilisée pour prévoir ou interpréter une relation entre deux variables, une question essentielle se pose : \textbf{peut-on faire confiance à ce modèle ?} Cette section vous donne les outils, accessibles avec les seuls savoirs du programme (nuage de points, point moyen, droite de Mayer), pour \emph{valider} ou \emph{mettre en doute} un ajustement linéaire, détecter les points suspects et comprendre les limites de la prévision.
+
+\courssub{Première validation : le nuage de points et le point moyen}
+
+\begin{propriete}[Conditions de validité d'un ajustement linéaire par Mayer]
+Un ajustement linéaire par la méthode de Mayer est \textbf{pertinent} lorsque :
+\begin{enumerate}
+    \item le \textbf{nuage de points} a une forme allongée, proche d'une bande rectiligne (les points sont « presque alignés ») ;
+    \item la droite obtenue \textbf{passe par le point moyen} $G(\bar{x}\,;\,\bar{y})$ du nuage : c'est un contrôle de calcul obligatoire ;
+    \item les points sont répartis de part et d'autre de la droite, sans qu'un point isolé ne « tire » la droite à lui tout seul.
+\end{enumerate}
+\end{propriete}
+
+\begin{methode}[Contrôler sa droite de Mayer en trois vérifications]
+\begin{enumerate}
+    \item \textbf{Vérification graphique :} tracer le nuage et la droite sur le même graphique. La droite doit traverser le nuage « en son milieu », avec sensiblement autant de points au-dessus qu'en dessous.
+    \item \textbf{Vérification par le point moyen :} calculer $\bar{x}$ et $\bar{y}$, puis vérifier que $\bar{y} = a\bar{x} + b$ où $y = ax + b$ est l'équation trouvée. Si l'égalité n'est pas vérifiée (aux arrondis près), il y a une erreur de calcul.
+    \item \textbf{Vérification du sens :} le signe du coefficient directeur $a$ doit correspondre au sens de variation observé sur le nuage ($a > 0$ si $y$ augmente avec $x$, $a < 0$ sinon) et à la réalité du problème concret.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Contrôle du passage par le point moyen]
+Un atelier relève le temps de fabrication $Y$ (en min) en fonction du nombre de pièces $X$. Les calculs donnent $\bar{x} = 20$, $\bar{y} = 64$, et la droite de Mayer : $y = 2{,}5x + 14$.
+\medskip
+
+\textbf{Contrôle :} $a\bar{x} + b = 2{,}5 \times 20 + 14 = 50 + 14 = 64 = \bar{y}$. \checkmark
+\medskip
+
+La droite passe bien par $G(20\,;\,64)$ : le calcul est cohérent. Si l'on avait trouvé $y = 2{,}5x + 10$, on aurait $2{,}5 \times 20 + 10 = 60 \neq 64$ : il faudrait alors \textbf{refaire les calculs} des points moyens partiels $G_1$ et $G_2$.
+\end{exemplebox}
+
+\begin{attention}[Erreur fréquente : oublier le contrôle par $G$]
+Au Probatoire et au Baccalauréat technique, beaucoup de candidats perdent des points en donnant une droite de Mayer qui ne passe pas par $G$. \textbf{Rédigez explicitement la vérification} : « On a bien $\bar{y} = a\bar{x} + b$, donc $G \in (D)$ ». C'est une justification attendue.
+\end{attention}
+
+\courssub{Les écarts (résidus) : mesurer la qualité point par point}
+
+\begin{definition}[Écart ou résidu]
+Pour un point $M_i(x_i\,;\,y_i)$ du nuage et une droite d'ajustement d'équation $y = ax + b$, on appelle \textbf{écart} (ou \textbf{résidu}) du point $M_i$ le nombre :
+\[
+e_i = y_i - \hat{y}_i \qquad \text{où } \hat{y}_i = a x_i + b \text{ est la valeur donnée par la droite.}
+\]
+\begin{itemize}
+    \item $e_i > 0$ : le point est \textbf{au-dessus} de la droite (la droite sous-estime) ;
+    \item $e_i < 0$ : le point est \textbf{en dessous} de la droite (la droite surestime) ;
+    \item $e_i = 0$ : le point est exactement sur la droite.
+\end{itemize}
+\end{definition}
+
+\begin{propriete}[Lecture des écarts]
+\begin{itemize}
+    \item Si les écarts sont \textbf{petits} (par rapport aux valeurs de $y$) et de \textbf{signes variés}, répartis sans ordre particulier, l'ajustement linéaire est de \textbf{bonne qualité}.
+    \item Si les écarts sont \textbf{tous de même signe} sur une plage de valeurs de $x$, ou s'ils suivent une \textbf{forme régulière} (d'abord négatifs, puis positifs, puis négatifs...), c'est le signe que la relation n'est \textbf{pas linéaire} : la droite n'est pas le bon modèle.
+    \item Si \textbf{un seul écart est très grand} devant tous les autres, le point correspondant est \textbf{suspect} (point aberrant).
+\end{itemize}
+\end{propriete}
+
+\begin{exoresolu}[Calcul et lecture des écarts : consommation électrique et température]
+\textbf{Énoncé.} Une usine relève sa consommation électrique quotidienne $Y$ (en MWh) et la température moyenne $X$ (en °C) pendant 6 jours d'hiver :
+\[
+\begin{array}{c|cccccc}
+x_i\ (^\circ\mathrm{C}) & 2 & 5 & 8 & 11 & 14 & 17 \\ \hline
+y_i\ (\mathrm{MWh}) & 85 & 76 & 68 & 60 & 53 & 46
+\end{array}
+\]
+La droite de Mayer obtenue est : $\hat{y} = -2{,}6x + 90{,}2$.
+\begin{enumerate}
+    \item Compléter le tableau des valeurs ajustées $\hat{y}_i$ et des écarts $e_i$.
+    \item L'ajustement linéaire semble-t-il de bonne qualité ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+    \item On calcule $\hat{y}_i = -2{,}6 x_i + 90{,}2$ puis $e_i = y_i - \hat{y}_i$ :
+\begin{center}
+\begin{tabular}{|c|c|c|c|}\hline
+\rowcolor{popblueL} $x_i$ & $y_i$ & $\hat{y}_i$ & $e_i = y_i - \hat{y}_i$ \\ \hline
+2 & 85 & $85{,}0$ & $0{,}0$ \\ \hline
+5 & 76 & $77{,}2$ & $-1{,}2$ \\ \hline
+8 & 68 & $69{,}4$ & $-1{,}4$ \\ \hline
+11 & 60 & $61{,}6$ & $-1{,}6$ \\ \hline
+14 & 53 & $53{,}8$ & $-0{,}8$ \\ \hline
+17 & 46 & $46{,}0$ & $0{,}0$ \\ \hline
+\end{tabular}
+\end{center}
+    \item Les écarts sont \textbf{tous petits} (au maximum $1{,}6$ MWh, soit environ $2\%$ des valeurs de $y$) et les points sont répartis de part et d'autre de la droite (deux points sur la droite, quatre légèrement en dessous). \textbf{Conclusion :} l'ajustement linéaire est de bonne qualité ; on peut utiliser la droite pour des prévisions \emph{à l'intérieur} de la plage observée.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Points aberrants : détection et conduite à tenir}
+
+\begin{definition}[Point aberrant]
+Un point du nuage est dit \textbf{aberrant} s'il est nettement éloigné de l'alignement formé par les autres points. Sur le graphique, il apparaît « isolé » ; son écart $e_i$ est très grand devant ceux des autres points.
+\end{definition}
+
+\begin{attention}[Un point aberrant peut fausser toute la droite]
+La méthode de Mayer repose sur les points moyens $G_1$ et $G_2$ des deux sous-nuages. Un point aberrant déplace fortement le point moyen de son groupe, donc \textbf{modifie la pente et l'ordonnée à l'origine} de la droite. Un seul point peut ainsi rendre le modèle trompeur.
+\medskip
+
+\textbf{Conduite à tenir :}
+\begin{enumerate}
+    \item \textbf{Repérer} le point suspect sur le nuage (point isolé, écart $e_i$ très grand).
+    \item \textbf{Chercher une explication concrète} : erreur de saisie, appareil de mesure défaillant, jour exceptionnel (panne, jour férié...).
+    \item \textbf{Ne jamais supprimer un point sans justification.} Si le point est explicable (erreur avérée), on peut l'écarter en le signalant. Sinon, on le conserve et on mentionne son influence dans la conclusion.
+    \item Si possible, \textbf{refaire l'ajustement sans le point} et comparer les deux droites pour mesurer son influence.
+\end{enumerate}
+\end{attention}
+
+\begin{exemplebox}[Influence d'un point aberrant]
+Un garage note la distance parcourue $X$ (en milliers de km) et l'usure des pneus $Y$ (en mm) sur 7 véhicules. Six points sont bien alignés ; le septième, $(50\,;\,1)$, correspond à un véhicule dont les pneus viennent d'être changés : son usure est quasi nulle alors que la distance est grande.
+\medskip
+
+Ce point est \textbf{aberrant} (pneus neufs, pas usés). S'il est conservé, il « tire » la droite vers le bas à droite et diminue la pente. Justification concrète trouvée (pneus neufs), on peut l'écarter de l'ajustement \textbf{en le précisant dans la rédaction}.
+\end{exemplebox}
+
+\courssub{Interpolation et extrapolation : les limites de la prévision}
+
+\begin{definition}[Interpolation et extrapolation]
+Soit $[x_{\min}\,;\,x_{\max}]$ l'intervalle des valeurs observées de la variable $X$.
+\begin{itemize}
+    \item Prévoir $y$ pour une valeur $x$ \textbf{à l'intérieur} de cet intervalle s'appelle une \textbf{interpolation} : c'est un usage fiable de la droite d'ajustement (si celui-ci est validé).
+    \item Prévoir $y$ pour une valeur $x$ \textbf{à l'extérieur} de cet intervalle s'appelle une \textbf{extrapolation} : c'est un usage \textbf{risqué}, car rien ne garantit que la relation linéaire se poursuive au-delà des observations.
+\end{itemize}
+\end{definition}
+
+\begin{attention}[L'extrapolation aveugle : l'erreur majeure]
+La droite de Mayer est un modèle \textbf{local}, construit à partir des seules données observées. Au-delà, la réalité peut changer de comportement.
+\medskip
+
+\textbf{Exemple.} Avec la droite $\hat{y} = -2{,}6x + 90{,}2$ (consommation en fonction de la température, observée entre $2\,^\circ\mathrm{C}$ et $17\,^\circ\mathrm{C}$), une prévision pour $x = 35\,^\circ\mathrm{C}$ (été) donnerait $\hat{y} = -2{,}6 \times 35 + 90{,}2 = -0{,}8$ MWh : une consommation \textbf{négative}, ce qui est absurde ! En réalité, par forte chaleur, la climatisation fait \emph{remonter} la consommation.
+\medskip
+
+\textbf{Rédaction attendue :} « Cette prévision est une extrapolation, hors du domaine des observations ; elle doit donc être prise avec une grande prudence. »
+\end{attention}
+
+\begin{propriete}[Limites du modèle linéaire — à retenir]
+\begin{enumerate}
+    \item Le modèle n'est valable que sur l'\textbf{intervalle des valeurs observées} de $X$.
+    \item Une prévision lointaine (extrapolation) n'a de valeur qu'\textbf{indicative} et doit être signalée comme telle.
+    \item Le modèle linéaire suppose une \textbf{variation constante} : quand $x$ augmente de 1, $y$ varie de $a$. De nombreux phénomènes techniques ne vérifient cela qu'approximativement et sur une plage limitée (usure qui s'accélère, rendement qui plafonne, seuil de rupture...).
+    \item Le coefficient directeur $a$ et l'ordonnée à l'origine $b$ doivent avoir un \textbf{sens concret} : si l'interprétation métier est absurde (coût négatif, durée négative...), le modèle est à rejeter ou à restreindre.
+\end{enumerate}
+\end{propriete}
+
+\courssub{La démarche complète de modélisation : le cycle du technicien}
+
+En Terminale technique, vous ne devez pas seulement « appliquer une formule » : vous devez adopter la démarche d'un technicien supérieur, qui \textbf{observe, modélise, valide, prévoit puis critique} son modèle.
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=1.6cm and 2.2cm,
+    every node/.style={font=\small, align=center},
+    box/.style={rectangle, rounded corners=4pt, draw=popdark, thick, fill=popcream, minimum width=3.2cm, minimum height=1.5cm},
+    arrow/.style={-Stealth, thick, popdark},
+    arrowback/.style={-Stealth, thick, poporange}
+]
+\node[box, align=center] (obs){\textbf{1. OBSERVER}\\Collecter les données\\Tracer le nuage de points};
+\node[box, right=of obs, align=center] (mod){\textbf{2. MODÉLISER}\\Calculer $G$, $G_1$, $G_2$\\Tracer la droite de Mayer};
+\node[box, below=of mod, align=center] (val){\textbf{3. VALIDER}\\Droite passant par $G$ ?\\Écarts petits et variés ?\\Points aberrants ?};
+\node[box, left=of val, align=center] (pred){\textbf{4. PRÉVOIR}\\Interpolation : fiable\\Extrapolation : prudence};
+\node[box, above=of pred, align=center] (crit){\textbf{5. CRITIQUER}\\Sens concret des résultats ?\\Limites du domaine ?};
+\draw[arrow] (obs) -- (mod);
+\draw[arrow] (mod) -- (val);
+\draw[arrow] (val) -- (pred);
+\draw[arrow] (pred) -- (crit);
+\draw[arrow] (crit) -- (obs);
+\draw[arrowback] (val.east) to[bend right=25] node[midway, right, poporange, font=\scriptsize] {si échec} (mod.east);
+\end{tikzpicture}
+\legende{Le cycle de la modélisation statistique : si la validation échoue (écarts structurés, point aberrant), on revient à l'étape de modélisation.}
+\end{popfigure}
+
+\begin{aretenir}[Check-list de validation d'un ajustement par la droite de Mayer]
+Avant de communiquer un résultat ou de faire une prévision, vérifiez :
+\begin{enumerate}
+    \item \textbf{Nuage de points :} la relation paraît-elle linéaire (points presque alignés) ?
+    \item \textbf{Point moyen :} la droite passe-t-elle par $G(\bar{x}\,;\,\bar{y})$ ? (contrôle de calcul obligatoire).
+    \item \textbf{Écarts :} sont-ils petits, de signes variés, sans structure régulière ?
+    \item \textbf{Points aberrants :} y en a-t-il ? Sont-ils expliqués ? Leur influence a-t-elle été discutée ?
+    \item \textbf{Domaine de validité :} la prévision demandée est-elle une interpolation (fiable) ou une extrapolation (à signaler avec prudence) ?
+    \item \textbf{Sens concret :} le signe de la pente et les valeurs prévues sont-ils compatibles avec la réalité du métier ?
+\end{enumerate}
+\end{aretenir}
+
+\begin{savaistu}[Pourquoi les techniciens se méfient des prévisions]
+Dans l'industrie, une extrapolation mal maîtrisée peut coûter cher : prévoir la durée de vie d'une machine au-delà des essais réalisés, estimer une production pour des cadences jamais testées, dimensionner une poutre pour des charges jamais mesurées... C'est pourquoi les bureaux d'études accompagnent toujours leurs prévisions de la mention du \textbf{domaine de validité} du modèle et réalisent des essais complémentaires avant toute extrapolation importante. La statistique donne des outils puissants, mais le jugement professionnel reste indispensable.
+\end{savaistu}
+
+\courssub{Exercices d'entraînement}
+
+\begin{exercice}[Analyse critique d'un ajustement — 12 pts]
+Un technicien de maintenance étudie l'usure $Y$ (en mm) d'un outil de coupe en fonction du temps de fonctionnement $X$ (en heures). Sur 12 mesures, le temps varie de 10 h à 200 h. Il obtient la droite de Mayer $\hat{y} = 0{,}02 + 0{,}015x$ et conclut : « L'usure est parfaitement linéaire, je peux prévoir l'usure à 500 h. »
+\begin{enumerate}
+    \item Calculer l'usure prévue par le modèle à 100 h, puis à 500 h.
+    \item Le point moyen du nuage est $G(105\,;\,1{,}6)$. La droite passe-t-elle par $G$ ? Que conclure sur les calculs du technicien ?
+    \item La prévision à 500 h est-elle fiable ? Nommer le concept mis en jeu et justifier.
+    \item Citer deux vérifications que le technicien aurait dû faire avant d'affirmer que l'usure est « parfaitement linéaire ».
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 5.1]
+\begin{enumerate}
+    \item À 100 h : $\hat{y} = 0{,}02 + 0{,}015 \times 100 = 1{,}52$ mm. À 500 h : $\hat{y} = 0{,}02 + 0{,}015 \times 500 = 7{,}52$ mm.
+    \item $0{,}02 + 0{,}015 \times 105 = 0{,}02 + 1{,}575 = 1{,}595 \approx 1{,}6 = \bar{y}$. La droite passe bien par $G$ (à $0{,}005$ près, dû aux arrondis) : les calculs sont cohérents.
+    \item Non : 500 h est très au-delà du maximum observé (200 h). C'est une \textbf{extrapolation} : rien ne garantit que l'usure reste linéaire (elle peut s'accélérer, ou l'outil casser). La valeur $7{,}52$ mm n'est qu'indicative et doit être signalée comme telle.
+    \item Il aurait dû : (a) \textbf{tracer le nuage de points} pour vérifier visuellement l'alignement ; (b) \textbf{calculer les écarts} $e_i = y_i - \hat{y}_i$ et vérifier qu'ils sont petits, de signes variés et sans structure régulière (et repérer d'éventuels points aberrants).
+\end{enumerate}
+\end{corrige}
+
+\begin{exercice}[Validation par les écarts — 8 pts]
+On a ajusté un nuage de 5 points par la droite de Mayer $\hat{y} = 3x + 2$. Les données sont :
+\[
+\begin{array}{c|ccccc}
+x_i & 1 & 2 & 3 & 4 & 5 \\ \hline
+y_i & 5{,}2 & 7{,}8 & 11{,}3 & 13{,}9 & 17{,}1
+\end{array}
+\]
+\begin{enumerate}
+    \item Calculer les cinq écarts $e_i = y_i - \hat{y}_i$.
+    \item L'ajustement vous semble-t-il de bonne qualité ? Justifier précisément.
+    \item Le point moyen est $G(3\,;\,11{,}06)$. La droite passe-t-elle par $G$ ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 5.2]
+\begin{enumerate}
+    \item Valeurs ajustées : $\hat{y}_1 = 5$, $\hat{y}_2 = 8$, $\hat{y}_3 = 11$, $\hat{y}_4 = 14$, $\hat{y}_5 = 17$. D'où les écarts :
+    \[
+    e_1 = 0{,}2 \ ;\quad e_2 = -0{,}2 \ ;\quad e_3 = 0{,}3 \ ;\quad e_4 = -0{,}1 \ ;\quad e_5 = 0{,}1.
+    \]
+    \item Les écarts sont \textbf{très petits} (au plus $0{,}3$, soit moins de $3\%$ des valeurs de $y$), de \textbf{signes variés} et sans structure régulière : les points sont bien répartis de part et d'autre de la droite. L'ajustement est de \textbf{bonne qualité}.
+    \item $3 \times 3 + 2 = 11 \neq 11{,}06$. La droite ne passe pas exactement par $G$ : l'écart ($0{,}06$) est faible mais doit inciter à \textbf{vérifier les calculs} des points moyens partiels $G_1$ et $G_2$ (une erreur d'arrondi ou de calcul est possible).
+\end{enumerate}
+\end{corrige}
+
+\coursec{Synthèse et Résolution de problèmes complets}
+
+Après avoir étudié la qualité de l'ajustement et les limites du modèle linéaire, nous sommes désormais en mesure de mener une étude statistique complète, de la collecte des données jusqu'à la rédaction d'une conclusion argumentée, telle qu'attendue lors de l'épreuve du Probatoire. Cette section synthétise l'ensemble de la leçon à travers un protocole rigoureux, un sujet type intégral résolu, et les points de vigilance pour maximiser votre note.
+
+\courssub{Protocole complet de traitement d'un problème concret}
+
+Face à un sujet d'examen portant sur une série statistique à deux variables, suivez impérativement les huit étapes ci-dessous. Elles structurent votre copie, garantissent que vous ne sautez aucune étape notée et facilitent la lecture par le correcteur.
+
+\begin{methode}[Protocole en 8 étapes — Sujet Probatoire « Séries à 2 variables »]
+\begin{enumerate}
+    \item \textbf{Contexte \& Variables} : Identifiez la variable explicative $X$ (souvent en abscisse) et la variable expliquée $Y$ (en ordonnée). Précisez leurs unités. Exemple : « $X$ : Budget publicité (en kFCFA), $Y$ : Chiffre d'affaires (en MFCFA) ».
+    \item \textbf{Tableau \& Nuage de points} : Recopiez ou complétez le tableau de valeurs. Construisez le nuage de points sur papier millimétré : choix des échelles (1 cm pour $k$ unités), axes gradués, étiquetés, points représentés par des croix ($\times$) ou des points pleins.
+    \item \textbf{Point moyen $G(\bar{x}\,;\,\bar{y})$} : Calculez les moyennes $\bar{x} = \frac{\sum x_i}{n}$ et $\bar{y} = \frac{\sum y_i}{n}$ (ou pondérées par les effectifs si classes). Placez $G$ sur le nuage (souvent au centre de la « masse » des points).
+    \item \textbf{Droite de Mayer (équation)} : Calculez les coefficients $a$ et $b$ de la droite $y = ax + b$ passant par $G$.
+    \begin{itemize}
+        \item $a = \dfrac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}$ (ou formules équivalentes avec $\sum x_i y_i$).
+        \item $b = \bar{y} - a\bar{x}$.
+    \end{itemize}
+    Donnez l'équation réduite exacte (ou arrondie selon consigne, ex: $10^{-2}$).
+    \item \textbf{Tracé de la droite} : Sur le nuage, tracez la droite de Mayer. Méthode sûre : placez $G$, puis un second point $M(x_G + 1\,;\, y_G + a)$ ou utilisez l'ordonnée à l'origine $b$. Tracez la règle sur toute la largeur du nuage.
+    \item \textbf{Prévision / Estimation} : Utilisez l'équation pour calculer $y_0$ pour une valeur $x_0$ donnée (interpolation si $x_0 \in [x_{\min}, x_{\max}]$, extrapolation sinon). Inversement, résolvez $x = \frac{y - b}{a}$ si on cherche $x$ pour un $y$ donné.
+    \item \textbf{Interprétation ($a$, $r$, $R^2$)} : 
+    \begin{itemize}
+        \item Signe de $a$ : liaison positive ($a>0$) ou négative ($a<0$).
+        \item Valeur de $a$ : « Une augmentation de 1 unité de $X$ entraîne une variation moyenne de $a$ unités de $Y$ ».
+        \item Coefficient de corrélation linéaire $r$ (donné ou calculé) : $|r| \approx 1$ liaison forte, $|r| \approx 0$ liaison faible. Précisez le sens.
+        \item Coefficient de détermination $R^2 = r^2$ : « Le modèle linéaire explique $100 \times R^2\,\%$ de la variabilité de $Y$ ».
+    \end{itemize}
+    \item \textbf{Conclusion rédigée} : Phrase complète, contextualisée, avec unités, mention de l'interpolation/extrapolation et nuance sur la fiabilité (voir boîte \texttt{methode} ci-dessous).
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[
+    node distance=1.2cm and 2cm,
+    startstop/.style={rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=popblue, fill=popblueL, thick},
+    process/.style={rectangle, minimum width=3.5cm, minimum height=1cm, text centered, draw=popdark, fill=popcream, thick},
+    decision/.style={diamond, minimum width=3cm, minimum height=1cm, text centered, draw=poporange, fill=poporangeL, thick, aspect=2},
+    arrow/.style={-Stealth, thick, popdark},
+    connector/.style={-Stealth, thick, popmuted, dashed}
+]
+\node (start) [startstop] {DÉBUT : Lire le sujet, identifier $(X,Y)$ et unités};
+\node (data) [process, below of=start, align=center]{1. Tableau des données \\ (brutes ou groupées)};
+\node (cloud) [process, below of=data, align=center]{2. Nuage de points \\ (échelles, axes, points)};
+\node (g) [process, below of=cloud, align=center]{3. Point moyen $G(\bar{x},\bar{y})$ \\ Calcul + placement};
+\node (mayer) [process, below of=g, align=center]{4. Droite de Mayer \\ $a = \frac{\sum(x-\bar{x})(y-\bar{y})}{\sum(x-\bar{x})^2}$ \\ $b = \bar{y} - a\bar{x}$ \\ $y = ax + b$};
+\node (trace) [process, below of=mayer, align=center]{5. Tracé de la droite \\ (passage par $G$ obligatoire)};
+\node (prev) [process, below of=trace, align=center]{6. Prévision / Estimation \\ Interpolation ou Extrapolation};
+\node (interp) [process, below of=prev, align=center]{7. Interprétation \\ $a$, $r$, $R^2$, sens, force, \% expliqué};
+\node (concl) [process, below of=interp, align=center]{8. Conclusion rédigée \\ Contexte + Unités + Précautions};
+\node (end) [startstop, below of=concl] {FIN : Relire, vérifier unités, échelles, signature $G$};
+
+\draw [arrow] (start) -- (data);
+\draw [arrow] (data) -- (cloud);
+\draw [arrow] (cloud) -- (g);
+\draw [arrow] (g) -- (mayer);
+\draw [arrow] (mayer) -- (trace);
+\draw [arrow] (trace) -- (prev);
+\draw [arrow] (prev) -- (interp);
+\draw [arrow] (interp) -- (concl);
+\draw [arrow] (concl) -- (end);
+
+% Annotation latérale
+\node [left=0.5cm of g, text width=3cm, align=right, font=\small\itshape, popmuted] {Vérif : $\sum(x-\bar{x})=0$};
+\node [left=0.5cm of mayer, text width=3cm, align=right, font=\small\itshape, popmuted] {Calculatrice : STAT $\to$ REG $\to$ a,b,r};
+\node [right=0.5cm of prev, text width=3cm, align=left, font=\small\itshape, popmuted] {Distinction Inter/Extra cruciale};
+\node [right=0.5cm of interp, text width=3cm, align=left, font=\small\itshape, popmuted] {$r$ donné ou à calculer};
+\end{tikzpicture}
+\legende{Organigramme : Algorithme de résolution type « Sujet Probatoire Séries à 2 variables »}
+\end{popfigure}
+
+\courssub{Exercice type « Probatoire » : Données brutes et groupées}
+
+Au Probatoire, l'exercice porte soit sur une série \textbf{brute} (liste de couples $(x_i, y_i)$), soit sur une série \textbf{groupée en classes} (tableau de contingence ou tableaux de valeurs moyennes par classe avec effectifs). La méthode de Mayer s'adapte : les sommes deviennent des sommes pondérées par les effectifs $n_i$.
+
+\begin{propriete}[Formules de Mayer pour série groupée (effectifs $n_i$)]
+Soit une série groupée en $k$ classes. On note $(x_i, y_i)$ les valeurs moyennes (ou représentants) de la classe $i$ et $n_i$ son effectif. $N = \sum n_i$.
+\begin{align*}
+\bar{x} &= \frac{\sum n_i x_i}{N}, \quad \bar{y} = \frac{\sum n_i y_i}{N} \\[4pt]
+a &= \frac{\sum n_i (x_i - \bar{x})(y_i - \bar{y})}{\sum n_i (x_i - \bar{x})^2}
+   = \frac{\sum n_i x_i y_i - N\bar{x}\bar{y}}{\sum n_i x_i^2 - N\bar{x}^2} \\[4pt]
+b &= \bar{y} - a\bar{x}
+\end{align*}
+Le coefficient de corrélation $r$ s'écrit :
+\[ r = \frac{\sum n_i (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum n_i (x_i - \bar{x})^2} \sqrt{\sum n_i (y_i - \bar{y})^2}} \]
+\end{propriete}
+
+\begin{attention}[Piège série groupée : Représentants de classes]
+Pour une classe d'amplitude $[a; b[$, le représentant $x_i$ est le \textbf{centre de la classe} : $x_i = \frac{a+b}{2}$.
+\textbf{Erreur fréquente :} Prendre la borne inférieure $a$ ou la borne supérieure $b$ comme valeur de $x_i$. Cela décale le point moyen $G$ et fausse la pente $a$.
+\end{attention}
+
+\courssub{Rédaction mathématique et vocabulaire précis}
+
+Le correcteur attend un vocabulaire technique exact. Voici les termes à maîtriser et à employer spontanément.
+
+\begin{aretenir}[Vocabulaire exigé au Probatoire]
+\begin{itemize}
+    \item \cle{Variable quantitative} : Variable numérique (discrète ou continue). $X$ et $Y$ sont quantitatives.
+    \item \cle{Effectif} ($n_i$ ou $n$) : Nombre d'observations. $N = \sum n_i$.
+    \item \cle{Modalité} : Valeur prise par la variable (pour série brute) ou classe (pour série groupée).
+    \item \cle{Interpolation} : Prévision pour une valeur $x_0$ \textbf{à l'intérieur} de l'intervalle des observations $[\min X ; \max X]$. Fiable si $r$ fort.
+    \item \cle{Extrapolation} : Prévision pour $x_0$ \textbf{à l'extérieur} de l'intervalle. Risquée, à signaler explicitement.
+    \item \cle{Résidu} : Écart $e_i = y_i - (ax_i + b)$ entre valeur observée et valeur théorique. La méthode de Mayer minimise $\sum e_i^2$ (ou $\sum n_i e_i^2$).
+    \item \cle{Coefficient de corrélation linéaire ($r$)} : Mesure l'intensité et le sens de la liaison linéaire. $-1 \le r \le 1$.
+    \item \cle{Coefficient de détermination ($R^2$)} : Proportion de la variance de $Y$ expliquée par $X$. $R^2 = r^2$.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Utilisation optimale de la calculatrice}
+
+La calculatrice (mode \texttt{STAT} / \texttt{REG}) est votre alliée pour \textbf{vérifier} vos calculs manuels et gagner du temps sur l'interprétation. Ne l'utilisez pas pour remplacer la démonstration des formules de Mayer (souvent demandée : « Déterminer $a$ et $b$ par la méthode de Mayer »).
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[
+    scale=0.85,
+    screen/.style={rectangle, draw=popdark, fill=popcream, rounded corners=3pt, minimum width=10cm, minimum height=7cm},
+    btn/.style={rectangle, draw=popdark, fill=popblueL, minimum width=1.2cm, minimum height=0.7cm, font=\ttfamily\small},
+    lbl/.style={font=\ttfamily\small, popdark},
+    biglbl/.style={font=\ttfamily\normalsize\bfseries, popblue}
+]
+\node[screen] (scr) {};
+% Écran contenu
+\node[below right=0.3cm and 0.5cm of scr.north west, anchor=north west, align=left, font=\ttfamily\small, popdark] (txt) {
+\texttt{MODE > 2:STAT > 2:A+BX} \\
+\texttt{} \\
+\texttt{X:  10  20  30  40  50} \\
+\texttt{Y:  25  48  72  95 118} \\
+\texttt{} \\
+\texttt{SHIFT > 1:STAT > 5:Reg > 1:A} \\
+\texttt{A = 2.31} \\
+\texttt{SHIFT > 1:STAT > 5:Reg > 2:B} \\
+\texttt{B = 2.10} \\
+\texttt{SHIFT > 1:STAT > 5:Reg > 3:r} \\
+\texttt{r = 0.998} \\
+\texttt{SHIFT > 1:STAT > 4:Var > 2:$\bar{x}$} \\
+\texttt{$\bar{x}$ = 30} \\
+\texttt{SHIFT > 1:STAT > 4:Var > 4:$\bar{y}$} \\
+\texttt{$\bar{y}$ = 71.6}
+};
+% Cadre calculatrice
+\draw[popdark, thick, rounded corners=5pt] ($(scr.north west)+(-0.5,0.5)$) rectangle ($(scr.south east)+(0.5,-1.5)$);
+% Boutons bas
+\foreach \i/\lab in {1/AC, 2/SHIFT, 3/MODE, 4/STAT, 5/EXE} {
+    \node[btn] at ($(scr.south west)+(1.5*\i-6, -1.2)$) {\lab};
+}
+\node[biglbl] at ($(scr.north)+(0,0.8)$) {Écran Calculatrice — Mode RÉGRESSION LINÉAIRE};
+\end{tikzpicture}
+\legende{Capture simulée : Résultats régression $y = 2,31x + 2,10$, $r=0,998$, $\bar{x}=30$, $\bar{y}=71,6$}
+\end{popfigure}
+
+\begin{methode}[Bon usage de la calculatrice en examen]
+\begin{enumerate}
+    \item \textbf{Saisie} : Mode \texttt{STAT}, choisir \texttt{A+BX} (linéaire). Entrer $X$ et $Y$ (et $FREQ$ = effectifs si groupé).
+    \item \textbf{Vérification moyennes} : Lire $\bar{x}, \bar{y}$ (menu \texttt{VAR}). Comparer à vos calculs manuels.
+    \item \textbf{Récupération $a, b, r$} : Menu \texttt{REG}. Noter $a, b, r$ avec 3 à 4 décimales.
+    \item \textbf{Écriture sur la copie} : Recopiez l'équation $y = ax + b$ avec les valeurs \textbf{arrondies selon la consigne} (souvent $10^{-2}$ ou $10^{-3}$). Montrez la formule de $a$ et $b$ \textbf{avant} de donner le résultat numérique.
+\end{enumerate}
+\end{methode}
+
+\courssub{Sujet complet type Bac/Probatoire — Résolution guidée}
+
+Voici un sujet intégral représentatif, traité pas à pas selon le protocole.
+
+\begin{exoresolu}[Sujet : Brasserie « Mutzig » — Publicité et Ventes]
+\textbf{Énoncé.} La direction d'une brasserie souhaite analyser l'impact du budget publicitaire sur les ventes. On relève les données mensuelles suivantes (budget en kFCFA, ventes en MFCFA) :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{6}{X|}}\hline
+Mois & Janv & Fév & Mar & Avr & Mai & Juin \\ \hline
+Publicité $x_i$ (kFCFA) & 10 & 20 & 30 & 40 & 50 & 60 \\ \hline
+Ventes $y_i$ (MFCFA) & 25 & 48 & 72 & 95 & 118 & 142 \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Questions.}
+\begin{enumerate}
+    \item Représenter le nuage de points. Choisir les échelles.
+    \item Calculer les coordonnées du point moyen $G$. Le placer sur le nuage.
+    \item Déterminer l'équation de la droite de Mayer $y = ax + b$ (arrondir à $10^{-2}$).
+    \item Tracer cette droite sur le nuage.
+    \item Prévision : Estimer les ventes pour un budget de 35 kFCFA. Pour 80 kFCFA. Préciser la nature de chaque prévision.
+    \item Le coefficient de corrélation linéaire vaut $r = 0,997$. Interpréter ce résultat et donner le coefficient de détermination.
+    \item Rédiger une conclusion pour la direction.
+\end{enumerate}
+
+\tcblower
+
+\textbf{Solution détaillée.}
+
+\textbf{1. Contexte \& Variables.}
+$X$ : Budget publicitaire mensuel (en kFCFA). Variable explicative.
+$Y$ : Ventes mensuelles (en MFCFA). Variable expliquée.
+$n = 6$ mois.
+
+\textbf{2. Tableau \& Nuage de points.}
+Échelles suggérées : Abscisses : 1 cm pour 10 kFCFA (origine 0). Ordonnées : 1 cm pour 20 MFCFA (origine 0).
+Points : $(10;25), (20;48), (30;72), (40;95), (50;118), (60;142)$.
+Le nuage présente un alignement net, croissant.
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[scale=0.65]
+\begin{axis}[
+    width=\linewidth, height=8cm,
+    axis lines=middle,
+    xlabel={$x$ (kFCFA)}, ylabel={$y$ (MFCFA)},
+    xmin=0, xmax=70, ymin=0, ymax=160,
+    xtick={0,10,20,30,40,50,60,70},
+    ytick={0,20,40,60,80,100,120,140,160},
+    grid=major, grid style={popline},
+    tick label style={font=\small},
+    label style={font=\small},
+    clip=false
+]
+% Points
+\addplot[only marks, mark=*, mark size=2.5, popblue] coordinates {
+    (10,25) (20,48) (30,72) (40,95) (50,118) (60,142)
+};
+% Point moyen G
+\addplot[only marks, mark=*, mark size=3, poporange] coordinates {(35, 83.33)};
+\node[above right, poporange, font=\small\bfseries] at (axis cs:35,83.33) {$G(35; 83,33)$};
+% Droite de Mayer y = 2.34x + 1.53
+\addplot[popcurve, domain=0:70, samples=2, popred, thick] {2.34*x + 1.53};
+\node[above left, popred, font=\small\bfseries] at (axis cs:60, 140) {$y = 2,34x + 1,53$};
+% Point prévision 35
+\addplot[only marks, mark=square*, mark size=2.5, popgreen] coordinates {(35, 83.43)};
+\node[below right, popgreen, font=\small] at (axis cs:35, 83.43) {$P_{35}$};
+\end{axis}
+\end{tikzpicture}
+\legende{Nuage de points, point moyen $G$, droite de Mayer et prévision pour $x=35$}
+\end{popfigure}
+
+\textbf{3. Point moyen $G$.}
+\[ \bar{x} = \frac{10+20+30+40+50+60}{6} = \frac{210}{6} = 35 \]
+\[ \bar{y} = \frac{25+48+72+95+118+142}{6} = \frac{500}{6} \approx 83,33 \]
+$G(35\,;\, 83,33)$. Placé sur le graphique.
+
+\textbf{4. Droite de Mayer.}
+Calculs intermédiaires (tableau de calcul recommandé sur copie) :
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}\hline
+$x_i$ & $y_i$ & $x_i-\bar{x}$ & $y_i-\bar{y}$ & $(x_i-\bar{x})(y_i-\bar{y})$ & $(x_i-\bar{x})^2$ \\ \hline
+10 & 25 & -25 & -58,33 & 1458,25 & 625 \\
+20 & 48 & -15 & -35,33 & 529,95 & 225 \\
+30 & 72 & -5 & -11,33 & 56,65 & 25 \\
+40 & 95 & 5 & 11,67 & 58,35 & 25 \\
+50 & 118 & 15 & 34,67 & 520,05 & 225 \\
+60 & 142 & 25 & 58,67 & 1466,75 & 625 \\ \hline
+\multicolumn{2}{|c|}{Total} & 0 & 0 & \textbf{4090} & \textbf{1750} \\ \hline
+\end{tabular}
+\end{center}
+\[ a = \frac{4090}{1750} = \frac{409}{175} \approx 2,3371 \approx \textbf{2,34} \text{ (arrondi $10^{-2}$)} \]
+\[ b = \bar{y} - a\bar{x} = 83,33 - 2,3371 \times 35 \approx 83,33 - 81,80 = \textbf{1,53} \]
+\textbf{Équation :} $y = 2,34x + 1,53$ (avec arrondi $10^{-2}$).
+\textit{Note : La calculatrice donne $a=2,337$, $b=1,53$, $r=0,997$. L'arrondi $a=2,34$ est correct.}
+
+\textbf{5. Tracé.}
+Droite passant par $G(35; 83,33)$ et par exemple $M(0; 1,53)$ ou $M(10; 24,93)$. Tracée à la règle sur la figure.
+
+\textbf{6. Prévisions.}
+\begin{itemize}
+    \item Pour $x_0 = 35$ kFCFA (interpolation car $35 \in [10; 60]$) :
+    $y = 2,34 \times 35 + 1,53 = 81,9 + 1,53 = \textbf{83,43 MFCFA}$.
+    \item Pour $x_0 = 80$ kFCFA (extrapolation car $80 > 60 = \max X$) :
+    $y = 2,34 \times 80 + 1,53 = 187,2 + 1,53 = \textbf{188,73 MFCFA}$.
+\end{itemize}
+
+\textbf{7. Interprétation ($r$ et $R^2$).}
+$r = 0,997 \approx 1$. Liaison linéaire \textbf{très forte}, positive.
+$R^2 = r^2 \approx 0,994 = \textbf{99,4\,\%}$.
+Le modèle linéaire explique 99,4\% de la variabilité des ventes. La pente $a = 2,34$ signifie : \emph{« En moyenne, une augmentation de 1 kFCFA du budget publicitaire entraîne une augmentation de 2,34 MFCFA des ventes. »}
+
+\textbf{8. Conclusion.}
+\emph{« Le nuage de points révèle une liaison linéaire positive très forte ($r=0,997$) entre le budget publicitaire et les ventes. La droite de Mayer d'équation $y = 2,34x + 1,53$ permet de prévoir que pour un budget de 35 kFCFA (interpolation), les ventes atteindraient environ 83,4 MFCFA, prévision fiable. Pour 80 kFCFA (extrapolation), le modèle donne 188,7 MFCFA, mais cette prévision est hasardeuse car elle sort du domaine d'observation et la relation linéaire pourrait ne plus être valide (saturation du marché). La direction peut s'appuyer sur ce modèle pour des budgets proches de ceux observés. »}
+\end{exoresolu}
+
+\courssub{Auto-évaluation : Check-list avant de rendre la copie}
+
+Utilisez cette liste mentalement ou sur brouillon dans les 5 dernières minutes de l'épreuve.
+
+\begin{aretenir}[Check-list « Zéro point perdu » — Séries à 2 variables]
+$\square$ \textbf{Échelles \& Nuage} : Origine $(0;0)$ si possible ? Échelles régulières, unités notées sur axes ? Points en croix ($\times$) bien visibles ? Titre du graphique ?
+$\square$ \textbf{Point moyen $G$} : Coordonnées calculées \textbf{exactes} (ou fraction) ? $G$ placé \textbf{visiblement} sur le graphique (cercle ou croix distincte) ?
+$\square$ \textbf{Droite de Mayer} : Formule de $a$ et $b$ \textbf{écrite} avant calcul numérique ? Calculs intermédiaires lisibles (tableau) ? Équation finale $y = ax + b$ avec arrondi demandé ? \textbf{La droite passe-t-elle visiblement par $G$ sur le graphique ?}
+$\square$ \textbf{Prévisions} : Valeur $x_0$ remplacée dans l'équation ? Résultat avec \textbf{unité} (MFCFA, tonnes, etc.) ? Distinction \textbf{Interpolation / Extrapolation} explicitement écrite ?
+$\square$ \textbf{Interprétation} : Signe de $a$ commenté ? Valeur de $r$ commentée (force + sens) ? $R^2$ donné en pourcentage ? Phrase : « Une augmentation de 1 unité de $X$ entraîne... » ?
+$\square$ \textbf{Conclusion} : Phrase unique, contextualisée, avec unités, mention interpolation/extrapolation, nuance de fiabilité (voir méthode ci-dessous).
+$\square$ \textbf{Propreté} : Ratures propres (trait unique), numérotation des questions respectée, copies lisibles.
+\end{aretenir}
+
+\begin{methode}[Rédiger une conclusion type « Probatoire » (Modèle à adapter)]
+Structurez votre phrase finale en 4 segments :
+\begin{enumerate}
+    \item \textbf{Constat graphique} : « Le nuage de points suggère une liaison linéaire [positive/négative] [forte/fable/quasi nulle]. »
+    \item \textbf{Modèle} : « La droite de Mayer d'équation $y = \dots x + \dots$ (unités !) permet de modéliser cette relation. »
+    \item \textbf{Prévision chiffrée} : « Pour $X = \dots$ [unité], on prévoit $Y \approx \dots$ [unité]. Il s'agit d'une [interpolation/extrapolation]. »
+    \item \textbf{Nuance / Fiabilité} : « Le coefficient de corrélation $r = \dots$ indique une liaison [forte/fable]. [Si extrapolation :] Cependant, cette prévision reste une extrapolation, sa fiabilité est limitée car le modèle linéaire n'est pas garanti hors de l'intervalle observé. [Si interpolation :] Cette prévision est fiable compte tenu de la force de la liaison. »
+\end{enumerate}
+\textbf{Exemple :} « Le nuage suggère une liaison linéaire positive forte. La droite de Mayer $y = 2,34x + 1,53$ (ventes en MFCFA, pub en kFCFA) prévoit 83,4 MFCFA pour 35 kFCFA (interpolation, fiable) et 188,7 MFCFA pour 80 kFCFA (extrapolation, prudence). $r=0,997$ confirme la qualité du modèle dans l'intervalle observé. »
+\end{methode}
+
+\begin{attention}[Erreurs fatales au Probatoire — À ne JAMAIS commettre]
+\begin{itemize}
+    \item \textbf{Oublier les unités} dans la réponse finale (ex: écrire « 83,4 » au lieu de « 83,4 MFCFA »). \textbf{Perte de 1 à 2 pts systématique.}
+    \item Donner l'équation $y = ax + b$ \textbf{sans dire qu'elle est issue de la méthode de Mayer} (ou « droite de régression » sans précision). Le programme impose Mayer.
+    \item Tracer la droite de Mayer \textbf{sans la faire passer par $G$} (ou sans avoir calculé/placé $G$). Le correcteur vérifie visuellement le passage par $G$.
+    \item Confondre \textbf{interpolation et extrapolation} (ou ne pas le préciser). L'extrapolation sans avertissement = erreur d'interprétation.
+    \item Calculer $a$ avec la formule $\frac{\sum xy - n\bar{x}\bar{y}}{\sum x^2 - n\bar{x}^2}$ mais \textbf{oublier de diviser par $n$} dans les termes $\bar{x}\bar{y}$ et $\bar{x}^2$ (erreur de formule « raccourcie »).
+    \item Pour série groupée : utiliser les bornes de classes au lieu des centres pour $x_i, y_i$.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Le Probatoire : Où sont les points ?]
+L'exercice de statistiques à 2 variables vaut généralement \textbf{5 à 7 points} sur 20.
+La répartition type est souvent :
+\begin{itemize}
+    \item \textbf{1,5 à 2 pts} : Nuage de points (échelles 0,5 ; axes 0,5 ; points 0,5 ; titre/unités 0,5).
+    \item \textbf{1,5 à 2 pts} : Point moyen $G$ (calcul 1 pt ; placement graphique 0,5 pt).
+    \item \textbf{1,5 à 2 pts} : Méthode de Mayer (formules 0,5 ; calculs 0,5 ; équation finale 0,5 ; tracé droite 0,5).
+    \item \textbf{1 à 2 pts} : Prévisions + Interprétation ($r$, $R^2$, phrase conclusion).
+\end{itemize}
+\textbf{Stratégie gagnante :} Soignez le graphique et les calculs de Mayer (étapes 1 à 4). Ils rapportent \textbf{la majorité des points} même si l'interprétation finale est imparfaite. Ne laissez jamais le graphique blanc !
+\end{savaistu}
+
+\courssub{Complément Terminale : Régression de $Y$ sur $X$ vs $X$ sur $Y$}
+
+Le programme de Terminale technique impose l'ajustement de $Y$ en fonction de $X$ ($X$ variable explicative). Il existe une seconde droite : la droite de Mayer de $X$ sur $Y$ (pour prédire $X$ connaissant $Y$).
+
+\begin{aretenir}[Complément : Deux droites de Mayer distinctes]
+\begin{itemize}
+    \item \textbf{Droite de $Y$ sur $X$ (officielle) :} $y = a_{y/x}x + b_{y/x}$ avec $a_{y/x} = \frac{\sigma_{xy}}{\sigma_x^2} = r\frac{\sigma_y}{\sigma_x}$. Elle minimise la somme des carrés des écarts \textbf{verticaux} (résidus en $y$). On l'utilise pour \textbf{prédire $Y$}.
+    \item \textbf{Droite de $X$ sur $Y$ :} $x = a_{x/y}y + b_{x/y}$ avec $a_{x/y} = \frac{\sigma_{xy}}{\sigma_y^2} = r\frac{\sigma_x}{\sigma_y}$. Elle minimise les écarts \textbf{horizontaux}. On l'utilise pour \textbf{prédire $X$}.
+\end{itemize}
+\textbf{Propriété :} Les deux droites se coupent en $G(\bar{x}, \bar{y})$. Elles sont \textbf{différentes} sauf si $|r| = 1$ (liaison fonctionnelle parfaite). Dans ce cas, elles se confondent.
+\textbf{Attention :} Si l'énoncé demande « Prévoir $X$ pour une valeur de $Y$ donnée », deux méthodes :
+\begin{enumerate}
+    \item Soit on inverse l'équation officielle : $x = \frac{y - b_{y/x}}{a_{y/x}}$ (méthode acceptée, simple).
+    \item Soit on calcule la droite de Mayer de $X$ sur $Y$ (méthode rigoureuse mais hors programme explicite, à réserver si l'énoncé le demande expressément).
+\end{enumerate}
+Au Probatoire, l'inversion de la droite $Y$ sur $X$ est la pratique standard pour la prévision inverse.
+\end{aretenir}
+
+\begin{experience}[Démonstration guidée : Pourquoi la droite de Mayer passe-t-elle par $G$ ?]
+\textbf{Objectif :} Prouver que le point moyen $G(\bar{x}, \bar{y})$ appartient à la droite de régression $y = ax + b$ qui minimise $\sum (y_i - ax_i - b)^2$.
+
+\begin{enumerate}
+    \item On cherche $a, b$ minimisant $S(a,b) = \sum_{i=1}^n (y_i - ax_i - b)^2$.
+    \item Annuler la dérivée partielle selon $b$ : $\frac{\partial S}{\partial b} = -2 \sum (y_i - ax_i - b) = 0$.
+    \item $\Rightarrow \sum y_i - a\sum x_i - nb = 0 \iff n\bar{y} - a n\bar{x} - nb = 0$.
+    \item $\Rightarrow \bar{y} = a\bar{x} + b \iff b = \bar{y} - a\bar{x}$.
+    \item L'équation s'écrit $y = ax + \bar{y} - a\bar{x} \iff y - \bar{y} = a(x - \bar{x})$.
+    \item Pour $x = \bar{x}$, on a $y = \bar{y}$. \textbf{La droite passe bien par $G(\bar{x}, \bar{y})$.} \hfill$\square$
+\end{enumerate}
+Cette démonstration (niveau Terminale) justifie l'étape obligatoire « Calculer $G$ puis imposer le passage par $G$ pour tracer ».
+\end{experience}
+
+\begin{exercice}[Entraînement : Série groupée — Usine de peinture]
+Une usine produit de la peinture. On étudie l'influence de la température de séchage $X$ (°C) sur la dureté $Y$ (échelle de Shore). Données groupées :
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}\hline
+Température $X$ (°C) & $[20;30[$ & $[30;40[$ & $[40;50[$ & $[50;60[$ & $[60;70[$ \\ \hline
+Effectifs $n_i$ & 5 & 10 & 15 & 10 & 5 \\ \hline
+Dureté moyenne $y_i$ & 42 & 55 & 68 & 78 & 85 \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{Questions.}
+\begin{enumerate}
+    \item Déterminer les valeurs représentatives $x_i$ des classes de température.
+    \item Calculer le point moyen $G(\bar{x}, \bar{y})$.
+    \item Établir l'équation de la droite de Mayer $y = ax + b$ (arrondi $10^{-2}$).
+    \item Prévision : Dureté attendue pour $X = 45°C$ (interpolation ou extrapolation ?). Pour $X = 75°C$ ?
+    \item Sachant que $r = 0,96$, interpréter et conclure.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Usine de peinture]
+\begin{enumerate}
+    \item Centres des classes : $x_i = 25,\ 35,\ 45,\ 55,\ 65$.
+    \item $N = 5+10+15+10+5 = 45$.
+    $\bar{x} = \frac{5(25)+10(35)+15(45)+10(55)+5(65)}{45} = \frac{125+350+675+550+325}{45} = \frac{2025}{45} = 45$.
+    $\bar{y} = \frac{5(42)+10(55)+15(68)+10(78)+5(85)}{45} = \frac{210+550+1020+780+425}{45} = \frac{2985}{45} = \frac{199}{3} \approx 66,33$.
+    $G(45\,;\, 66,33)$.
+    \item Calculs pondérés :
+    $\sum n_i x_i y_i = 5(25\cdot42) + 10(35\cdot55) + 15(45\cdot68) + 10(55\cdot78) + 5(65\cdot85) = 5250 + 19250 + 45900 + 42900 + 27625 = 140925$.
+    $\sum n_i x_i^2 = 5(625) + 10(1225) + 15(2025) + 10(3025) + 5(4225) = 3125 + 12250 + 30375 + 30250 + 21125 = 97125$.
+    $a = \frac{\sum n_i x_i y_i - N\bar{x}\bar{y}}{\sum n_i x_i^2 - N\bar{x}^2} = \frac{140925 - 45\cdot45\cdot\frac{199}{3}}{97125 - 45\cdot45^2} = \frac{140925 - 134325}{97125 - 91125} = \frac{6600}{6000} = 1,10$.
+    $b = \bar{y} - a\bar{x} = 66,33 - 1,10 \times 45 = 66,33 - 49,50 = 16,83$.
+    \textbf{Droite : $y = 1,10x + 16,83$}.
+    \item $x=45 \in [20;70]$ $\Rightarrow$ \textbf{Interpolation}. $y = 1,10(45) + 16,83 = 49,50 + 16,83 = \textbf{66,33}$ Shore.
+    $x=75 \notin [20;70]$ $\Rightarrow$ \textbf{Extrapolation}. $y = 1,10(75) + 16,83 = 82,50 + 16,83 = \textbf{99,33}$ Shore (prudence).
+    \item $r=0,96 \approx 1$ : liaison linéaire positive forte. $R^2 = 0,9216 \approx 92\%$. Le modèle explique 92\% de la variabilité de la dureté. Conclusion : La température influence fortement la dureté. Pour 45°C, dureté fiable 66,3 Shore. Pour 75°C, prévision 99,3 Shore mais extrapolation risquée (phénomènes physiques non linéaires possibles à haute température).
+\end{enumerate}
+\end{corrige}
+
+\par\bigskip\noindent
+\textbf{FIN DE LA LEÇON N°3 — Séries statistiques à deux variables.}
+Vous maîtrisez désormais le nuage de points, le point moyen, la méthode de Mayer, l'interprétation via $r$ et $R^2$, et la rédaction d'une conclusion complète. Appliquez ce protocole sur les annales Probatoire pour gagner en rapidité et en rigueur.
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+Cette activité d'intégration vise à mobiliser l'ensemble des savoir-faire de la leçon « Séries statistiques à deux variables » dans une situation professionnelle authentique. À l'issue de cette activité, l'élève doit être capable de :
+\begin{itemize}
+    \item Construire et interpréter un \cle{nuage de points} à partir de données brutes réelles.
+    \item Calculer et interpréter le \cle{point moyen} $G(\bar{x};\bar{y})$ (centre de gravité).
+    \item Mettre en œuvre la \cle{méthode de Mayer} pour déterminer l'équation de la droite d'ajustement linéaire.
+    \item Utiliser cette droite pour faire des \cle{prévisions} (interpolation et extrapolation) en explicitant la fiabilité de chacune.
+    \item Calculer le \cle{coefficient de corrélation linéaire $r$} et en donner une interprétation précise.
+    \item Analyser la \cle{qualité de l'ajustement} (résidus, dispersion) et formuler une \cle{recommandation technique} argumentée.
+    \item Rédiger un \cle{rapport technique} structuré, rigoureux et adapté au destinataire (hiérarchie administrative).
+\end{itemize}
+
+\courssub{Situation : « Conseiller les planteurs de Penja »}
+\vspace{0.2cm}
+\noindent \textbf{Contexte.} La zone de Penja (département du Moungo, Région du Littoral) est réputée pour sa production d'ananas de haute qualité. La délégation départementale du MINADER (Ministère de l'Agriculture et du Développement Rural) souhaite disposer d'un outil simple pour conseiller les planteurs sur le rendement prévisionnel en fonction de la surface cultivée.
+
+\vspace{0.2cm}
+\noindent \textbf{Données.} Une enquête a été menée sur $20$ parcelles sélectionnées de manière représentative. Pour chaque parcelle, on a relevé la surface cultivée en ananas ($x$, en hectares) et la production totale récoltée ($y$, en tonnes) lors de la dernière campagne.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{10}{X|}c|}\hline
+\rowcolor{popblueL}
+\textbf{Parcelle} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & \textbf{Total G1} \\ \hline
+$x_i$ (ha) & 0,8 & 1,2 & 1,5 & 2,0 & 2,5 & 3,0 & 3,2 & 4,0 & 4,5 & 5,0 & 27,7 \\ \hline
+$y_i$ (t)  & 9,2 & 12,5 & 16,0 & 21,0 & 24,5 & 31,0 & 33,5 & 40,0 & 46,0 & 51,0 & 284,7 \\ \hline
+\end{tabularx}
+\end{center}
+\vspace{0.2cm}
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{10}{X|}c|}\hline
+\rowcolor{poporangeL}
+\textbf{Parcelle} & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & \textbf{Total G2} \\ \hline
+$x_i$ (ha) & 5,5 & 6,0 & 6,5 & 7,0 & 7,5 & 8,0 & 8,5 & 9,0 & 9,5 & 10,0 & 77,5 \\ \hline
+$y_i$ (t)  & 54,0 & 60,5 & 66,0 & 71,0 & 76,5 & 81,0 & 86,0 & 91,5 & 96,0 & 101,0 & 783,5 \\ \hline
+\end{tabularx}
+\end{center}
+
+\vspace{0.3cm}
+\noindent \textbf{Votre mission.} En tant que statisticien junior au MINADER, vous devez rédiger une \emph{note de synthèse d'une page maximum} adressée au Délégué Départemental de l'Agriculture. Ce document servira de base aux conseils techniques donnés aux planteurs lors de la prochaine session de formation.
+
+\courssub{Consignes}
+Le travail se fait par binôme. La note de synthèse doit impérativement contenir les éléments suivants, présentés dans l'ordre :
+\begin{enumerate}
+    \item \textbf{Nuage de points :} Représentation graphique sur papier millimétré (échelles choisies judicieusement, axes gradués et nommés, points tracés avec précision).
+    \item \textbf{Point moyen $G$ :} Calcul des moyennes $\bar{x}$ et $\bar{y}$, coordonnées de $G$, placement de $G$ sur le nuage. Interprétation concrète de $\bar{x}$ et $\bar{y}$.
+    \item \textbf{Droite de Mayer :} 
+    \begin{itemize}
+        \item Constitution des deux groupes (premiers 10 / derniers 10 après tri par $x$ croissant).
+        \item Calcul des points moyens $G_1$ et $G_2$ de chaque groupe.
+        \item Calcul du coefficient directeur $a$ (formule de Mayer).
+        \item Détermination de l'ordonnée à l'origine $b$ en utilisant le passage par $G$.
+        \item Équation finale de la droite $y = ax + b$ (arrondis au centième).
+        \item Tracé de la droite sur le nuage de points.
+    \end{itemize}
+    \item \textbf{Prévisions :} 
+    \begin{itemize}
+        \item Production estimée pour une nouvelle parcelle de $5$ ha (interpolation).
+        \item Production estimée pour une parcelle de $15$ ha (extrapolation).
+        \item Commentaire sur la fiabilité de ces deux prévisions.
+    \end{itemize}
+    \item \textbf{Coefficient de corrélation $r$ :} Calcul (formule de Bravais-Pearson), valeur arrondie au millième, interprétation de la force et du sens de la liaison.
+    \item \textbf{Analyse critique du modèle :} 
+    \begin{itemize}
+        \item Observation visuelle des résidus (écarts verticaux entre points et droite).
+        \item Discussion sur la pertinence du modèle linéaire (hétéroscédasticité ? points influents ?).
+    \end{itemize}
+    \item \textbf{Conclusion et Recommandation :} Synthèse en 3-4 phrases : le modèle est-il utilisable ? Quelle recommandation concrète pour un planteur qui voudrait s'installer sur 6 ha ? Sur 12 ha ?
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+\begin{propriete}[Formules utiles]
+Pour une série $(x_i; y_i)_{i=1..n}$ triée par $x$ croissant ($n$ pair) :
+\begin{itemize}
+    \item \textbf{Moyennes :} $\bar{x} = \frac{1}{n}\sum x_i$, $\bar{y} = \frac{1}{n}\sum y_i$. Point moyen $G(\bar{x}; \bar{y})$.
+    \item \textbf{Méthode de Mayer :} 
+    \begin{align*}
+        G_1(\bar{x}_1; \bar{y}_1) &\text{ moyennes des } n/2 \text{ premiers couples}, \\
+        G_2(\bar{x}_2; \bar{y}_2) &\text{ moyennes des } n/2 \text{ derniers couples}, \\
+        a &= \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1}, \\
+        b &= \bar{y} - a\bar{x} \quad (\text{car } G \in \text{droite}).
+    \end{align*}
+    \item \textbf{Coefficient de corrélation (Bravais-Pearson) :}
+    \[ r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}} = \frac{\text{Cov}(X,Y)}{\sigma_X \sigma_Y} \]
+    \item \textbf{Interprétation de $r$ :} $|r| \approx 1$ liaison forte ; $|r| \approx 0$ liaison faible. $r>0$ croissante, $r<0$ décroissante.
+    \item \textbf{Prévision :} Pour une valeur $x_0$, $\hat{y}_0 = a x_0 + b$. \cle{Interpolation} si $x_0 \in [\min x_i; \max x_i]$, \cle{extrapolation} sinon (risquée).
+\end{itemize}
+\end{propriete}
+
+\courssub{Démarche et corrigé commenté}
+\begin{exoresolu}[Corrigé détaillé de l'activité « Conseiller les planteurs de Penja »]
+\textbf{1. Nuage de points.} 
+Sur un papier millimétré, on choisit : 
+\begin{itemize}
+    \item Axe horizontal (Surface $x$) : 1 cm pour 1 ha $\rightarrow$ $[0; 11]$ ha tient sur 11 cm.
+    \item Axe vertical (Production $y$) : 1 cm pour 10 t $\rightarrow$ $[0; 110]$ t tient sur 11 cm.
+\end{itemize}
+Les 20 points $M_i(x_i; y_i)$ sont reportés. Le nuage présente un alignement net, orienté en haut à droite, suggérant une liaison linéaire positive forte.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7]
+\begin{axis}[
+    width=\linewidth, height=8cm,
+    xlabel={Surface $x$ (ha)}, ylabel={Production $y$ (t)},
+    xmin=0, xmax=11, ymin=0, ymax=110,
+    xtick={0,2,4,6,8,10}, ytick={0,20,40,60,80,100},
+    grid=major, grid style={popline},
+    axis lines=middle,
+    tick label style={font=\small},
+    label style={font=\small},
+]
+% Points
+\addplot[only marks, mark=*, mark size=2, popblue] coordinates {
+    (0.8,9.2) (1.2,12.5) (1.5,16) (2,21) (2.5,24.5) (3,31) (3.2,33.5) (4,40) (4.5,46) (5,51)
+    (5.5,54) (6,60.5) (6.5,66) (7,71) (7.5,76.5) (8,81) (8.5,86) (9,91.5) (9.5,96) (10,101)
+};
+% Point moyen G
+\addplot[only marks, mark=*, mark size=3, poporange] coordinates {(5.26,53.41)};
+% Droite de Mayer y = 10.016x + 0.73
+\addplot[popcurve, domain=0:11, samples=2, thick] {10.016*x + 0.73};
+\end{axis}
+\end{tikzpicture}
+\legende{Nuage de points, point moyen $G$ (orange) et droite de Mayer (bleu).}
+\end{popfigure}
+
+\textbf{2. Point moyen $G$.}
+\[
+\sum x_i = 105,2 \quad \Rightarrow \quad \bar{x} = \frac{105,2}{20} = 5,26 \text{ ha}
+\]
+\[
+\sum y_i = 1068,2 \quad \Rightarrow \quad \bar{y} = \frac{1068,2}{20} = 53,41 \text{ t}
+\]
+$G(5,26 ; 53,41)$. \emph{Interprétation :} En moyenne, une parcelle de l'échantillon fait 5,26 ha et produit 53,41 t d'ananas.
+
+\textbf{3. Droite de Mayer.}
+Les données sont déjà triées par $x$ croissant. $n=20$, groupes de 10.
+\begin{itemize}
+    \item \textbf{Groupe 1 (parcelles 1 à 10) :}
+    $\bar{x}_1 = 27,7 / 10 = 2,77$ ha ; $\bar{y}_1 = 284,7 / 10 = 28,47$ t. $G_1(2,77 ; 28,47)$.
+    \item \textbf{Groupe 2 (parcelles 11 à 20) :}
+    $\bar{x}_2 = 77,5 / 10 = 7,75$ ha ; $\bar{y}_2 = 783,5 / 10 = 78,35$ t. $G_2(7,75 ; 78,35)$.
+    \item \textbf{Coefficient directeur $a$ :}
+    \[ a = \frac{78,35 - 28,47}{7,75 - 2,77} = \frac{49,88}{4,98} \approx 10,016 \approx 10,02 \text{ t/ha} \]
+    \item \textbf{Ordonnée à l'origine $b$ (passage par $G$) :}
+    \[ b = \bar{y} - a\bar{x} = 53,41 - 10,016 \times 5,26 = 53,41 - 52,684 = 0,726 \approx 0,73 \text{ t} \]
+\end{itemize}
+\textbf{Équation de la droite de Mayer :} $\boxed{y = 10,02\,x + 0,73}$ (avec $x$ en ha, $y$ en t).
+\emph{Interprétation du coefficient 10,02 :} En moyenne, chaque hectare supplémentaire cultivé apporte environ 10,02 tonnes de production supplémentaire.
+
+\textbf{4. Prévisions.}
+\begin{itemize}
+    \item \textbf{Parcelle de 5 ha (Interpolation, $5 \in [0,8; 10]$) :}
+    $\hat{y} = 10,02 \times 5 + 0,73 = 50,10 + 0,73 = 50,83$ t.
+    \emph{Fiabilité :} Bonne, car à l'intérieur de l'intervalle d'observation et liaison forte.
+    \item \textbf{Parcelle de 15 ha (Extrapolation, $15 > 10$) :}
+    $\hat{y} = 10,02 \times 15 + 0,73 = 150,30 + 0,73 = 151,03$ t.
+    \emph{Fiabilité :} Faible à modérée. Le modèle linéaire suppose que le rendement par hectare reste constant, or pour de grandes surfaces, des effets de saturation (main-d'œuvre, intrants, irrigation) peuvent faire baisser le rendement marginal. Cette valeur est une borne supérieure théorique.
+\end{itemize}
+
+\textbf{5. Coefficient de corrélation $r$.}
+Calculs intermédiaires (sommes déjà calculées ou à faire) :
+$\sum x_i^2 = 716,32$, $\sum y_i^2 = 73510,14$, $\sum x_i y_i = 7256,06$.
+\[
+\text{Cov}(X,Y) = \frac{1}{n}\sum x_i y_i - \bar{x}\bar{y} = \frac{7256,06}{20} - 5,26 \times 53,41 = 362,803 - 280,9366 = 81,8664
+\]
+\[
+\sigma_X^2 = \frac{716,32}{20} - 5,26^2 = 35,816 - 27,6676 = 8,1484 \Rightarrow \sigma_X \approx 2,855
+\]
+\[
+\sigma_Y^2 = \frac{73510,14}{20} - 53,41^2 = 3675,507 - 2852,628 = 822,879 \Rightarrow \sigma_Y \approx 28,686
+\]
+\[
+r = \frac{81,8664}{2,855 \times 28,686} = \frac{81,8664}{81,90} \approx 0,9996
+\]
+\emph{Interprétation :} $r \approx 1,000$ (au millième). Il existe une liaison linéaire \textbf{très forte, positive}, quasi parfaite entre la surface et la production. Le modèle linéaire explique plus de 99,9\% de la variabilité de la production ($r^2 \approx 0,999$).
+
+\textbf{6. Analyse critique (Résidus).}
+Visuellement sur le graphique, les points sont extrêmement proches de la droite. Les résidus $e_i = y_i - (10,02 x_i + 0,73)$ sont de l'ordre de $\pm 0,5$ t maximum, sans structure apparente (pas de courbure, pas d'évasement de la dispersion). Le modèle linéaire simple est \textbf{très pertinent} sur l'intervalle observé $[0,8; 10]$ ha. L'hypothèse d'homoscédasticité (variance constante des résidus) semble vérifiée.
+
+\textbf{7. Conclusion et Recommandation (Projet de note pour le Délégué).}
+\begin{quote}
+\textsc{Note de synthèse -- Campagne Ananas Penja 2025}
+
+\emph{Objet : Modélisation Production = f(Surface) et préconisations.}
+
+L'analyse statistique sur 20 parcelles représentatives met en évidence une relation linéaire quasi parfaite ($r \approx 1,000$) entre la surface cultivée ($x$) et la production ($y$) : $\hat{y} = 10,02 x + 0,73$. Le rendement moyen est de 10,02 t/ha.
+
+\textbf{Recommandations :}
+\begin{itemize}
+    \item \textbf{Pour 6 ha (interpolation) :} Prévision fiable à $\approx 60,9$ t. Conseiller cette surface comme objectif standard.
+    \item \textbf{Pour 12 ha et plus (extrapolation) :} Le modèle prévoit 121 t, mais la prudence s'impose. Au-delà de 10 ha, la gestion technique (main-d'œuvre qualifiée, drainage, intrants) devient critique et le rendement/ha risque de chuter. Recommander un accompagnement technique renforcé (conseil agricole, mécanisation) avant toute extension au-delà de 10 ha.
+\end{itemize}
+Le modèle est un outil d'aide à la décision performant pour les surfaces courantes ($< 10$ ha), à coupler avec l'expertise terrain.
+\end{quote}
+\tcblower
+\textbf{Commentaires pédagogiques sur le corrigé :}
+\begin{itemize}
+    \item \textbf{Justesse des calculs :} Vérifier l'arrondi final ($a=10,02$, $b=0,73$) et la cohérence $G \in$ droite ($10,02\times 5,26 + 0,73 = 53,43 \approx 53,41$).
+    \item \textbf{Qualité graphique :} Échelles régulières, origine $(0,0)$ si possible (ici $b \approx 0$ le permet), point $G$ visible, droite tracée à la règle passant par $G_1$ et $G_2$ (ou $G$ et un second point).
+    \item \textbf{Rigueur rédactionnelle :} Unités systématiques (ha, t), phrases complètes, distinction interpolation/extrapolation explicite.
+    \item \textbf{Esprit critique :} Ne pas dire « le modèle est parfait ». Dire « très fort sur l'intervalle observé, extrapolation risquée pour raisons agronomiques ». C'est la marque de l'esprit technique attendu au Probatoire.
+\end{itemize}
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+Cette activité a permis de mettre en évidence les points suivants, essentiels pour l'examen du Probatoire :
+\begin{itemize}
+    \item La \cle{méthode de Mayer} est algorithmique et robuste : elle ne nécessite pas de calculs de sommes de carrés croisés lourds, seulement des moyennes sur deux groupes. Elle est donc idéale en examen (gain de temps, moins d'erreurs de copie).
+    \item Le \cle{point moyen $G$} est le pivot central : il valide les calculs (la droite doit passer par $G$) et donne une interprétation concrète immediate (« profil moyen » de l'échantillon).
+    \item L'\cle{interpolation} est l'usage légitime et fiable du modèle ; l'\cle{extrapolation} doit toujours être accompagnée d'une réserve argumentée (contexte métier, physique du phénomène).
+    \item Le \cle{coefficient $r$} quantifie ce que l'œil voit sur le nuage. Une valeur proche de 1 ne dispense pas de l'analyse des résidus (vérification de la linéarité, homoscédasticité).
+    \item La \cle{rédaction technique} (note de synthèse) est une compétence transversale évaluée : structurer l'information (Données $\rightarrow$ Méthode $\rightarrow$ Résultats $\rightarrow$ Interprétation $\rightarrow$ Recommandation), utiliser le vocabulaire précis, adapter le discours au décideur non statisticien.
+\end{itemize}
+\begin{attention}[Pièges à éviter pour le Probatoire]
+\begin{itemize}
+    \item Oublier de trier les $x_i$ par ordre croissant avant de faire les groupes pour Mayer (si le tableau n'est pas trié).
+    \item Calculer $a$ avec les moyennes globales $\bar{x}, \bar{y}$ au lieu de $\bar{x}_1, \bar{y}_1, \bar{x}_2, \bar{y}_2$.
+    \item Ne pas vérifier que $G$ appartient à la droite trouvée (test de cohérence rapide).
+    \item Confondre interpolation et extrapolation, ou affirmer qu'une extrapolation est « fiable » sans réserve.
+    \item Donner $r$ sans interprétation (sens, force) ni lien avec $r^2$ (part de variabilité expliquée).
+    \item Rendre un graphique sans échelle, sans unités sur les axes, ou avec des points « au pif ».
+\end{itemize}
+\end{attention}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Nuage de points et vocabulaire}
+
+\begin{methode}[Construction et lecture d'un nuage de points]
+\textbf{Objectif :} Représenter graphiquement une série statistique à deux variables $(x_i, y_i)$ et en donner une première interprétation.
+\begin{enumerate}
+    \item \textbf{Identifier les variables :} $X$ (variable explicative, en abscisse) et $Y$ (variable à expliquer, en ordonnée). Vérifier les unités.
+    \item \textbf{Choisir les échelles :} Sur l'axe des abscisses ($X$) et l'axe des ordonnées ($Y$), choisir des échelles adaptées à l'étendue des valeurs (origines non nécessairement à $(0,0)$, mais échelles régulières). Indiquer les unités.
+    \item \textbf{Repérer les points :} Pour chaque couple $(x_i, y_i)$, placer le point $M_i(x_i, y_i)$.
+    \item \textbf{Analyser la forme du nuage :}
+    \begin{itemize}
+        \item \textbf{Alignement approximatif :} liaison linéaire possible (croissante si pente $>0$, décroissante si pente $<0$).
+        \item \textbf{Forme courbe (parabolique, exponentielle...) :} liaison non linéaire $\rightarrow$ la méthode de Mayer n'est pas adaptée directement.
+        \item \textbf{Nuage « circulaire » / dispersé :} pas de liaison apparente.
+    \end{itemize}
+    \item \textbf{Conclure :} « Le nuage de points suggère une liaison linéaire [croissante/décroissante] / ne suggère pas de liaison linéaire. »
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Nuage de points : Consommation électrique d'un atelier]
+Un électricien relève la consommation électrique (en kWh) de son atelier en fonction de la température extérieure moyenne (en °C) sur 10 jours.
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{10}{X|}}\hline
+Température $x_i$ (°C) & 12 & 14 & 9 & 16 & 11 & 18 & 10 & 15 & 13 & 17 \\ \hline
+Conso $y_i$ (kWh) & 85 & 78 & 92 & 70 & 88 & 65 & 90 & 75 & 82 & 68 \\ \hline
+\end{tabularx}
+\end{center}
+\begin{enumerate}
+    \item Construire le nuage de points associé. (On prendra 1 cm pour 1°C en abscisse et 1 cm pour 5 kWh en ordonnée, origine $(8; 60)$).
+    \item Quelle allure présente ce nuage ? Quelle conjecture peut-on faire sur la liaison entre $X$ et $Y$ ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Construction :}
+    \begin{itemize}
+        \item Axe des abscisses (Température $X$) : valeurs entre 9 et 18. Échelle : 1 cm $\leftrightarrow$ 1°C. Origine repère à 8°C.
+        \item Axe des ordonnées (Conso $Y$) : valeurs entre 65 et 92. Échelle : 1 cm $\leftrightarrow$ 5 kWh. Origine repère à 60 kWh.
+        \item Points à tracer : $M_1(12;85)$, $M_2(14;78)$, $M_3(9;92)$, $M_4(16;70)$, $M_5(11;88)$, $M_6(18;65)$, $M_7(10;90)$, $M_8(15;75)$, $M_9(13;82)$, $M_{10}(17;68)$.
+    \end{itemize}
+    \begin{popfigure}
+    \begin{tikzpicture}[scale=0.7]
+    \draw[->, thick] (0,0) -- (11,0) node[right] {$x$ (°C)};
+    \draw[->, thick] (0,0) -- (0,8) node[above] {$y$ (kWh)};
+    \foreach \x/\xlabel in {1/9, 2/10, 3/11, 4/12, 5/13, 6/14, 7/15, 8/16, 9/17, 10/18}
+        \draw (\x, -0.1) -- (\x, 0.1) node[below] {\small $\xlabel$};
+    \foreach \y/\ylabel in {1/65, 2/70, 3/75, 4/80, 5/85, 6/90}
+        \draw (-0.1, \y) -- (0.1, \y) node[left] {\small $\ylabel$};
+    % Points
+    \foreach \x/\y in {4/5, 6/3.6, 1/6.4, 8/2, 3/5.6, 10/1, 2/6, 7/3, 5/4.4, 9/1.6}
+        \fill[popblue] (\x, \y) circle (3pt);
+    \end{tikzpicture}
+    \legende{Nuage de points Consommation vs Température}
+    \end{popfigure}
+    \item \textbf{Analyse :} Les points s'alignent grossièrement selon une droite descendante. Lorsque la température augmente, la consommation diminue.
+    \textbf{Conjecture :} Il existe une liaison linéaire \textbf{décroissante} entre la température extérieure et la consommation électrique (probablement due au chauffage).
+\end{enumerate}
+\end{exoresolu}
+
+\coursec{Point moyen G (Centre de gravité)}
+
+\begin{definition}[Point moyen]
+Pour une série statistique à deux variables $(x_i, y_i)_{i=1..n}$ (éventuellement avec effectifs $n_i$), le \textbf{point moyen} $G$, aussi appelé centre de gravité du nuage, a pour coordonnées :
+\[ \bar{x} = \frac{\sum_{i=1}^n n_i x_i}{\sum_{i=1}^n n_i} \quad \text{et} \quad \bar{y} = \frac{\sum_{i=1}^n n_i y_i}{\sum_{i=1}^n n_i} \]
+Toute droite d'ajustement linéaire (Mayer, médiane, moindres carrés) passe par $G$.
+\end{definition}
+
+\begin{methode}[Calcul du point moyen $G(\bar{x}; \bar{y})$]
+\textbf{Objectif :} Déterminer les coordonnées du centre de gravité du nuage de points.
+\begin{enumerate}
+    \item \textbf{Rappeler les formules :}
+    \[ \bar{x} = \frac{\sum x_i}{n} \quad \text{et} \quad \bar{y} = \frac{\sum y_i}{n} \]
+    (Si effectifs $n_i$ : $\bar{x} = \frac{\sum n_i x_i}{\sum n_i}$, idem pour $\bar{y}$).
+    \item \textbf{Calculer les sommes :} $\sum x_i$ et $\sum y_i$ (ou $\sum n_i x_i$, $\sum n_i y_i$). Vérifier $n = \sum n_i$.
+    \item \textbf{Diviser par l'effectif total $n$.}
+    \item \textbf{Arrondir raisonnablement :} En général, on garde une décimale de plus que les données brutes, ou on donne la valeur exacte (fraction) si les calculs suivants l'exigent.
+    \item \textbf{Écrire la conclusion :} « Le point moyen est $G(\bar{x}; \bar{y})$. »
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Point moyen : Production vs Main-d'œuvre]
+Un chef de chantier note le nombre d'ouvriers $x_i$ et la production quotidienne $y_i$ (en m$^3$ de béton coulé) sur 8 jours.
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{8}{X|}}\hline
+Ouvriers $x_i$ & 5 & 8 & 6 & 10 & 7 & 9 & 6 & 8 \\ \hline
+Production $y_i$ & 12 & 20 & 15 & 25 & 17 & 22 & 14 & 19 \\ \hline
+\end{tabularx}
+\end{center}
+Calculer les coordonnées du point moyen $G$.
+\tcblower
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Effectif total :} $n = 8$ jours.
+    \item \textbf{Somme des $x_i$ :}
+    \[ \sum x_i = 5 + 8 + 6 + 10 + 7 + 9 + 6 + 8 = 59 \]
+    \item \textbf{Somme des $y_i$ :}
+    \[ \sum y_i = 12 + 20 + 15 + 25 + 17 + 22 + 14 + 19 = 144 \]
+    \item \textbf{Moyennes :}
+    \[ \bar{x} = \frac{59}{8} = 7,375 \approx 7,4 \text{ ouvriers} \]
+    \[ \bar{y} = \frac{144}{8} = 18 \text{ m}^3 \]
+    \item \textbf{Conclusion :} Le point moyen est $G(7,375 ; 18)$ ou $G(7,4 ; 18)$.
+\end{enumerate}
+\end{exoresolu}
+
+\coursec{Ajustement linéaire : Méthode de Mayer}
+
+\begin{propriete}[Droite de Mayer]
+La droite de Mayer est la droite d'ajustement linéaire $y = ax + b$ qui :
+\begin{itemize}
+    \item Passe par le point moyen $G(\bar{x}; \bar{y})$.
+    \item A pour coefficient directeur $a = \dfrac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1}$, où $G_1(\bar{x}_1; \bar{y}_1)$ et $G_2(\bar{x}_2; \bar{y}_2)$ sont les points moyens de deux sous-groupes de même effectif (au plus 1 d'écart), formés en triant les données par $x$ croissant.
+\end{itemize}
+\textbf{Condition d'application :} $\bar{x}_2 \neq \bar{x}_1$ (sinon droite verticale, méthode inapplicable).
+\end{propriete}
+
+\begin{methode}[Ajustement linéaire par la méthode de Mayer]
+\textbf{Objectif :} Déterminer l'équation réduite $y = ax + b$ de la droite de Mayer passant par $G(\bar{x}; \bar{y})$.
+\begin{enumerate}
+    \item \textbf{Calculer le point moyen $G(\bar{x}; \bar{y})$} (voir méthode précédente).
+    \item \textbf{Séparer le nuage en deux sous-groupes de même effectif (ou au plus 1 d'écart) :}
+    \begin{itemize}
+        \item Trier les données par $x_i$ croissant.
+        \item Si $n$ pair : deux groupes de $n/2$. Si $n$ impair : groupe 1 avec $(n+1)/2$ points (les plus petits $x$), groupe 2 avec $(n-1)/2$ points (les plus grands $x$). \textbf{Le point médian (si $n$ impair) appartient au premier groupe.}
+    \end{itemize}
+    \item \textbf{Calculer les points moyens partiels $G_1(\bar{x}_1; \bar{y}_1)$ et $G_2(\bar{x}_2; \bar{y}_2)$ :}
+    \[ \bar{x}_1 = \frac{\sum_{G_1} x_i}{n_1},\quad \bar{y}_1 = \frac{\sum_{G_1} y_i}{n_1} \quad ; \quad \bar{x}_2 = \frac{\sum_{G_2} x_i}{n_2},\quad \bar{y}_2 = \frac{\sum_{G_2} y_i}{n_2} \]
+    \item \textbf{Calculer le coefficient directeur $a$ (pente) :}
+    \[ a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1} \]
+    \textbf{Attention :} $\bar{x}_2 \neq \bar{x}_1$ (sinon droite verticale, méthode inapplicable).
+    \item \textbf{Calculer l'ordonnée à l'origine $b$ en utilisant $G(\bar{x}; \bar{y}) \in \text{droite} :$}
+    \[ \bar{y} = a\bar{x} + b \iff b = \bar{y} - a\bar{x} \]
+    \item \textbf{Rédiger l'équation réduite :} $y = ax + b$ (arrondir $a$ et $b$ à $10^{-2}$ ou $10^{-3}$ selon contexte).
+    \item \textbf{Tracer la droite :} Placer $G$ et un second point (ex: $x=0 \to y=b$ ou $x = \bar{x}_2 \to y = \bar{y}_2$).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Droite de Mayer : Température vs Consommation (Suite Exo 1)]
+Reprenons les données de l'exercice 1 (triées par $x$ croissant) :
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{10}{X|}}\hline
+$x_i$ (°C) & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 & 17 & 18 \\ \hline
+$y_i$ (kWh) & 92 & 90 & 88 & 85 & 82 & 78 & 75 & 70 & 68 & 65 \\ \hline
+\end{tabularx}
+\end{center}
+Déterminer l'équation de la droite de Mayer. Tracer cette droite sur le nuage.
+\tcblower
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Point moyen $G$ :}
+    $\sum x = 135 \Rightarrow \bar{x} = 13,5$ ; $\sum y = 793 \Rightarrow \bar{y} = 79,3$.
+    $G(13,5 ; 79,3)$.
+    \item \textbf{Séparation en deux groupes ($n=10$ pair $\rightarrow$ 2 groupes de 5) :}
+    \textbf{Groupe 1 (5 plus petits $x$) :} $(9;92), (10;90), (11;88), (12;85), (13;82)$.
+    \textbf{Groupe 2 (5 plus grands $x$) :} $(14;78), (15;75), (16;70), (17;68), (18;65)$.
+    \item \textbf{Points moyens partiels :}
+    \textbf{$G_1$ :} $\sum x_1 = 55 \Rightarrow \bar{x}_1 = 11$. $\sum y_1 = 437 \Rightarrow \bar{y}_1 = 87,4$.
+    \textbf{$G_2$ :} $\sum x_2 = 80 \Rightarrow \bar{x}_2 = 16$. $\sum y_2 = 356 \Rightarrow \bar{y}_2 = 71,2$.
+    \item \textbf{Pente $a$ :}
+    \[ a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1} = \frac{71,2 - 87,4}{16 - 11} = \frac{-16,2}{5} = -3,24 \]
+    \item \textbf{Ordonnée à l'origine $b$ :}
+    \[ b = \bar{y} - a\bar{x} = 79,3 - (-3,24 \times 13,5) = 79,3 + 43,74 = 123,04 \]
+    \item \textbf{Équation de la droite de Mayer :}
+    \[ \boxed{y = -3,24x + 123,04} \]
+    \item \textbf{Tracé :} La droite passe par $G(13,5; 79,3)$ et par exemple par $G_2(16; 71,2)$ (ou $y=123,04$ pour $x=0$).
+\end{enumerate}
+\end{exoresolu}
+
+\coursec{Utilisation de la droite de Mayer : Prévision et Interprétation}
+
+\begin{methode}[Utilisation de la droite de Mayer : Prévision et Interprétation]
+\textbf{Objectif :} Utiliser l'équation $y = ax + b$ pour prévoir une valeur ou interpréter les paramètres.
+\begin{enumerate}
+    \item \textbf{Prévision (Interpolation / Extrapolation) :}
+    \begin{itemize}
+        \item \textbf{Interpolation :} $x_0$ dans l'intervalle des $x_i$ observés. Fiable si liaison forte.
+        \item \textbf{Extrapolation :} $x_0$ en dehors de l'intervalle. \textbf{Risqué}, à faire avec prudence et en le signalant explicitement.
+    \end{itemize}
+    Calculer $y_0 = ax_0 + b$. Écrire : « Pour $x = x_0$, on prévoit $y \approx y_0$ (unité). »
+    \item \textbf{Interprétation du coefficient directeur $a$ :}
+    « Lorsque $X$ augmente de 1 unité, $Y$ varie de $a$ unités (augmente si $a>0$, diminue si $a<0$). »
+    \item \textbf{Interprétation de l'ordonnée à l'origine $b$ (si $0 \in [x_{\min}, x_{\max}]$) :}
+    « $b$ est la valeur prévue de $Y$ lorsque $X=0$. » Si $0$ hors intervalle, $b$ n'a pas de sens physique direct.
+    \item \textbf{Résolution d'équation (Seuil) :} Pour trouver $x$ tel que $y = y_{\text{seuil}}$, résoudre $ax + b = y_{\text{seuil}} \iff x = \frac{y_{\text{seuil}} - b}{a}$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Prévision et Seuil : Atelier électricité (Suite Exo 3)]
+Avec la droite de Mayer $y = -3,24x + 123,04$ :
+\begin{enumerate}
+    \item Prévision : Quelle consommation prévoir pour une journée à $10^\circ$C ? Et à $25^\circ$C ? Commenter.
+    \item Interprétation : Que signifie le coefficient $-3,24$ dans le contexte ?
+    \item Seuil : À partir de quelle température la consommation descend-elle sous les 50 kWh ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Prévisions :}
+    \begin{itemize}
+        \item $x=10$ (dans $[9;18]$ $\rightarrow$ \textbf{Interpolation}) : $y = -3,24 \times 10 + 123,04 = 90,64$ kWh. \emph{Prévision fiable : environ 91 kWh.}
+        \item $x=25$ (hors $[9;18]$ $\rightarrow$ \textbf{Extrapolation}) : $y = -3,24 \times 25 + 123,04 = 42,04$ kWh. \emph{Attention : extrapolation risquée. Le modèle linéaire peut ne plus valider (ex: climatisation l'été).}
+    \end{itemize}
+    \item \textbf{Interprétation de $a = -3,24$ :} Lorsque la température extérieure augmente de $1^\circ$C, la consommation électrique de l'atelier \textbf{diminue en moyenne de 3,24 kWh}. (Signe moins cohérent : moins de chauffage).
+    \item \textbf{Seuil 50 kWh :} Résoudre $-3,24x + 123,04 < 50$.
+    \[ -3,24x < 50 - 123,04 \iff -3,24x < -73,04 \iff x > \frac{73,04}{3,24} \approx 22,54 \]
+    La consommation passe sous 50 kWh pour une température \textbf{supérieure à $22,5^\circ$C environ}. (Note : c'est une extrapolation).
+\end{enumerate}
+\end{exoresolu}
+
+\coursec{Qualité de l'ajustement et Limites du modèle (Complément Terminale)}
+
+\begin{definition}[Coefficient de corrélation linéaire (Pearson)]
+Le coefficient de corrélation linéaire $r$ mesure l'intensité de la liaison linéaire entre $X$ et $Y$.
+\[ r = \frac{\text{cov}(X,Y)}{\sigma_x \sigma_y} \quad \text{avec } -1 \le r \le 1 \]
+où $\text{cov}(X,Y) = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{n} = \frac{\sum x_i y_i}{n} - \bar{x}\bar{y}$ (covariance)
+et $\sigma_x^2 = \frac{\sum (x_i - \bar{x})^2}{n} = \frac{\sum x_i^2}{n} - \bar{x}^2$ (variance), idem pour $\sigma_y$.
+\end{definition}
+
+\begin{methode}[Calcul et interprétation du coefficient de corrélation $r$]
+\textbf{Objectif :} Quantifier l'intensité de la liaison linéaire pour valider l'usage de la droite de Mayer.
+\begin{enumerate}
+    \item \textbf{Calculer les moyennes $\bar{x}, \bar{y}$.}
+    \item \textbf{Calculer les variances et la covariance (formules simplifiées) :}
+    \[ \sigma_x^2 = \frac{\sum x_i^2}{n} - \bar{x}^2,\quad \sigma_y^2 = \frac{\sum y_i^2}{n} - \bar{y}^2,\quad \text{cov}(X,Y) = \frac{\sum x_i y_i}{n} - \bar{x}\bar{y} \]
+    \item \textbf{Calculer $r$ :}
+    \[ r = \frac{\text{cov}(X,Y)}{\sigma_x \sigma_y} \]
+    \item \textbf{Interpréter $|r|$ (échelle de référence Probatoire) :}
+    \begin{itemize}
+        \item $|r| \ge 0,9$ : Liaison linéaire \textbf{très forte} (ajustement excellent).
+        \item $0,7 \le |r| < 0,9$ : Liaison linéaire \textbf{forte} (ajustement bon).
+        \item $0,5 \le |r| < 0,7$ : Liaison linéaire \textbf{moyenne} (ajustement acceptable avec réserve).
+        \item $|r| < 0,5$ : Liaison linéaire \textbf{faible ou nulle} (droite de Mayer peu pertinente).
+    \end{itemize}
+    \item \textbf{Conclure :} « Le coefficient de corrélation vaut $r \approx \dots$ La liaison linéaire est [très forte/forte/moyenne/faible], l'ajustement par la droite de Mayer est [très pertinent / pertinent / à utiliser avec prudence / déconseillé]. »
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Coefficient de corrélation : Validation du modèle (Suite Exo 1)]
+Calculer le coefficient de corrélation linéaire $r$ pour la série Température/Consommation et interpréter.
+Données : $\sum x = 135$, $\sum y = 793$, $\sum x^2 = 1905$, $\sum y^2 = 63715$, $\sum xy = 10445$, $n=10$.
+\tcblower
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Moyennes :} $\bar{x} = 13,5$, $\bar{y} = 79,3$.
+    \item \textbf{Variances et Covariance (formules simplifiées) :}
+    \[ \sigma_x^2 = \frac{1905}{10} - (13,5)^2 = 190,5 - 182,25 = 8,25 \Rightarrow \sigma_x \approx 2,872 \]
+    \[ \sigma_y^2 = \frac{63715}{10} - (79,3)^2 = 6371,5 - 6288,49 = 83,01 \Rightarrow \sigma_y \approx 9,111 \]
+    \[ \text{cov}(X,Y) = \frac{10445}{10} - (13,5 \times 79,3) = 1044,5 - 1070,55 = -26,05 \]
+    \item \textbf{Coefficient $r$ :}
+    \[ r = \frac{-26,05}{2,872 \times 9,111} = \frac{-26,05}{26,17} \approx -0,995 \]
+    \item \textbf{Interprétation :} $|r| = 0,995 \ge 0,9$. La liaison linéaire est \textbf{très forte} (négative). L'ajustement par la droite de Mayer est \textbf{très pertinent}. Les prévisions par interpolation sont fiables.
+\end{enumerate}
+\end{exoresolu}
+
+\coursec{Synthèse et Résolution de problèmes complets}
+
+\begin{methode}[Résolution d'un problème complet (Type Probatoire)]
+\textbf{Objectif :} Enchaîner toutes les étapes de manière autonome et rédactionnelle.
+\begin{enumerate}
+    \item \textbf{Lire et structurer :} Identifier variables, unités, effectifs. Construire le tableau de valeurs (trié par $x$ si besoin).
+    \item \textbf{Nuage de points :} Tracer (si demandé) ou décrire l'allure attendue. \textbf{Ne pas oublier les échelles et unités sur le schéma.}
+    \item \textbf{Point moyen $G$ :} Calculer $\bar{x}, \bar{y}$. Encadrer le résultat.
+    \item \textbf{Droite de Mayer :}
+    \begin{itemize}
+        \item Séparer en 2 groupes (expliquer la règle du partage).
+        \item Calculer $G_1, G_2$.
+        \item Calculer $a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1}$.
+        \item Calculer $b = \bar{y} - a\bar{x}$.
+        \item Écrire l'équation réduite $y = ax + b$ \textbf{encadrée}.
+    \end{itemize}
+    \item \textbf{Exploitation :} Prévision (interpolation/extrapolation signalée), interprétation de $a$, résolution seuil.
+    \item \textbf{Qualité (si au programme/si données permettent) :} Calculer $r$, interpréter, valider le modèle.
+    \item \textbf{Conclusion finale :} Phrase récapitulative répondant à la question posée.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Problème complet : Rentabilité publicitaire]
+Une PME étudie l'impact de son budget publicitaire $X$ (en milliers de FCFA) sur son Chiffre d'Affaires $Y$ (en millions de FCFA) sur 12 mois.
+\begin{center}
+\begin{tabularx}{\linewidth}{|c|*{12}{X|}}\hline
+Budget Pub $x_i$ & 5 & 8 & 12 & 15 & 18 & 20 & 22 & 25 & 28 & 30 & 32 & 35 \\ \hline
+CA $y_i$ & 12 & 15 & 18 & 22 & 25 & 27 & 29 & 33 & 35 & 38 & 40 & 42 \\ \hline
+\end{tabularx}
+\end{center}
+\begin{enumerate}
+    \item Déterminer l'équation de la droite de Mayer.
+    \item Prévision : CA prévu pour un budget de 24 mille FCFA ? Pour 50 mille FCFA ?
+    \item Calculer le coefficient de corrélation $r$ (données : $\sum x = 250, \sum y = 336, \sum x^2 = 6224, \sum y^2 = 10494, \sum xy = 8049$). Interpréter.
+    \item Le directeur veut un CA de 50 millions. Quel budget publicitaire minimal prévoir ?
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item \textbf{Données triées (déjà fait). $n=12$ (pair).}
+    \textbf{Point moyen $G$ :} $\bar{x} = 250/12 \approx 20,833$ ; $\bar{y} = 336/12 = 28$. $G(20,83 ; 28)$.
+    \textbf{Groupes (6 et 6) :}
+    $G_1$ (6 premiers) : $\sum x_1 = 78 \Rightarrow \bar{x}_1 = 13$ ; $\sum y_1 = 119 \Rightarrow \bar{y}_1 = 119/6 \approx 19,833$.
+    $G_2$ (6 derniers) : $\sum x_2 = 172 \Rightarrow \bar{x}_2 \approx 28,667$ ; $\sum y_2 = 217 \Rightarrow \bar{y}_2 = 217/6 \approx 36,167$.
+    \textbf{Pente $a$ :}
+    \[ a = \frac{\bar{y}_2 - \bar{y}_1}{\bar{x}_2 - \bar{x}_1} = \frac{217/6 - 119/6}{172/6 - 78/6} = \frac{98/6}{94/6} = \frac{98}{94} = \frac{49}{47} \approx 1,043 \]
+    \textbf{Ordonnée $b$ :}
+    \[ b = \bar{y} - a\bar{x} = 28 - \frac{49}{47} \times \frac{250}{12} = 28 - \frac{12250}{564} = \frac{15792 - 12250}{564} = \frac{3542}{564} = \frac{1771}{282} \approx 6,28 \]
+    \textbf{Droite de Mayer :} $\boxed{y = 1,04x + 6,28}$ (arrondi au centième).
+    \item \textbf{Prévisions :}
+    $x=24 \in [5;35]$ (Interpolation) : $y = 1,04 \times 24 + 6,28 = 31,24$ millions FCFA.
+    $x=50 \notin [5;35]$ (Extrapolation) : $y = 1,04 \times 50 + 6,28 = 58,28$ millions FCFA. \emph{Prévision peu fiable (saturation du marché probable).}
+    \item \textbf{Coefficient $r$ :}
+    $\sigma_x^2 = \frac{6224}{12} - (20,833)^2 \approx 518,67 - 434,03 = 84,64 \Rightarrow \sigma_x \approx 9,20$.
+    $\sigma_y^2 = \frac{10494}{12} - 28^2 = 874,5 - 784 = 90,5 \Rightarrow \sigma_y \approx 9,51$.
+    $\text{cov} = \frac{8049}{12} - 20,833 \times 28 = 670,75 - 583,33 = 87,42$.
+    $r = \frac{87,42}{9,20 \times 9,51} = \frac{87,42}{87,49} \approx 0,999$.
+    \textbf{Interprétation :} $r \approx 0,999 > 0,9$. Liaison linéaire \textbf{très forte} (croissante). Modèle très pertinent.
+    \item \textbf{Seuil CA = 50 :} $1,04x + 6,28 = 50 \iff 1,04x = 43,72 \iff x \approx 42,04$.
+    Budget minimal : \textbf{42,1 mille FCFA} (arrondi au supérieur pour garantir l'objectif). \emph{Note : extrapolation au-delà de 35, à confirmer.}
+\end{enumerate}
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+    \item \textbf{Mauvaise séparation des groupes (Mayer) :} Ne pas trier les $x_i$ par ordre croissant avant de couper en deux. Ou mettre le point médian dans le 2ème groupe si $n$ impair (il va dans le 1er). Ou faire des groupes d'effectifs très différents ($>1$ d'écart).
+    \item \textbf{Oublier le point moyen $G$ dans le calcul de $b$ :} Calculer $b$ avec $G_1$ ou $G_2$ au lieu de $G(\bar{x}; \bar{y})$. \textbf{Rappel :} La droite de Mayer passe \textbf{obligatoirement} par $G$.
+    \item \textbf{Confusion Interpolation / Extrapolation :} Faire une prévision pour $x$ hors intervalle sans le signaler, ou affirmer qu'une extrapolation est « fiable ». \cle{Extrapolation = risque}.
+    \item \textbf{Erreur de signe du coefficient directeur $a$ :} Nuage décroissant $\rightarrow a$ doit être négatif. Vérifier la cohérence visuelle (nuage) et numérique (signe de $\bar{y}_2-\bar{y}_1$ et $\bar{x}_2-\bar{x}_1$).
+    \item \textbf{Unités oubliées ou incohérentes :} Donner $a$ ou $b$ sans unité (ex: $a = -3,24$ kWh/°C, $b = 123,04$ kWh). Ne pas convertir les unités si le tableau mélange unités (ex: $x$ en cm, $y$ en m $\rightarrow$ tout ramener en m ou cm avant calcul).
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : vocabulaire et point moyen]
+Pour chaque question, une seule réponse est exacte. Recopie la lettre correspondante.
+\begin{enumerate}
+\item Le point moyen $G$ d'une série statistique à deux variables $(x_i\,;\,y_i)$ a pour coordonnées :
+\begin{enumerate}
+\item[a)] $\left(\dfrac{\sum x_i}{n}\,;\,\dfrac{\sum y_i}{n}\right)$
+\item[b)] $\left(\dfrac{\sum x_i y_i}{n}\,;\,\dfrac{\sum y_i}{n}\right)$
+\item[c)] $\left(\dfrac{\sum x_i + \sum y_i}{2}\,;\,n\right)$
+\end{enumerate}
+\item La droite de Mayer passe nécessairement :
+\begin{enumerate}
+\item[a)] par l'origine du repère ;
+\item[b)] par tous les points du nuage ;
+\item[c)] par les points moyens $G_1$ et $G_2$ des deux sous-nuages.
+\end{enumerate}
+\item Pour appliquer la méthode de Mayer, on partage le nuage en deux sous-nuages après avoir rangé les points :
+\begin{enumerate}
+\item[a)] par ordre croissant des valeurs de $x$ ;
+\item[b)] par ordre croissant des valeurs de $y$ ;
+\item[c)] dans l'ordre donné par le tableau.
+\end{enumerate}
+\item Un coefficient de corrélation linéaire $r = -0{,}97$ indique :
+\begin{enumerate}
+\item[a)] une absence de corrélation ;
+\item[b)] une forte corrélation linéaire négative ;
+\item[c)] une forte corrélation linéaire positive.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+Réponds par Vrai ou Faux et justifie chaque réponse par une phrase ou un calcul.
+\begin{enumerate}
+\item Le point moyen $G$ est toujours un point du nuage.
+\item Si tous les points du nuage sont alignés sur une droite de pente négative, alors $r = -1$.
+\item La droite de Mayer permet de faire des prévisions pour des valeurs de $x$ situées en dehors des valeurs observées, sans aucune précaution.
+\item Si l'effectif total $n$ est impair, on peut laisser le point médian dans l'un des deux sous-nuages pour appliquer la méthode de Mayer.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions]
+\begin{enumerate}
+\item Définis ce qu'on appelle \cle{nuage de points} associé à une série statistique à deux variables.
+\item Définis le \cle{point moyen} d'un nuage de points et donne ses coordonnées en fonction des données.
+\item Explique, en deux ou trois phrases, le principe de l'\cle{ajustement linéaire par la méthode de Mayer}.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Un atelier de mécanique relève, pour 5 machines, le nombre d'heures de fonctionnement $x$ (en centaines d'heures) et le nombre de pannes $y$ :
+\begin{center}
+\begin{tabular}{|l|ccccc|}
+\hline
+\rowcolor{popblueL} $x_i$ & 2 & 4 & 5 & 7 & 9 \\
+\hline
+$y_i$ & 1 & 2 & 3 & 4 & 5 \\
+\hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+\item Calcule les coordonnées du point moyen $G$ du nuage.
+\item On partage la série en deux sous-nuages : les deux premiers points et les trois derniers. Calcule les coordonnées de $G_1$ et $G_2$.
+\item Détermine l'équation réduite de la droite de Mayer $(G_1G_2)$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Températures et ventes de boissons]
+Une buvette du lycée technique relève la température maximale $x$ (en \textdegree C) et le nombre $y$ de bouteilles d'eau vendues, pendant 6 journées :
+\begin{center}
+\begin{tabular}{|l|cccccc|}
+\hline
+\rowcolor{popblueL} $x_i$ (en \textdegree C) & 25 & 27 & 28 & 30 & 32 & 34 \\
+\hline
+$y_i$ (bouteilles) & 40 & 48 & 55 & 70 & 78 & 90 \\
+\hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+\item Représente le nuage de points dans un repère orthogonal bien choisi (1 cm pour 2 \textdegree C en abscisse, en commençant à 24 ; 1 cm pour 10 bouteilles en ordonnée, en commençant à 30).
+\item Calcule les coordonnées du point moyen $G$ et place-le sur le graphique.
+\item Partage le nuage en deux sous-nuages de trois points, calcule $G_1$ et $G_2$, puis détermine l'équation de la droite de Mayer.
+\item Trace cette droite sur le graphique.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Prévision de consommation de carburant]
+Un transporteur de Yaoundé note, pour 8 trajets, la charge $x$ du camion (en tonnes) et la consommation $y$ de gasoil (en litres) :
+\begin{center}
+\begin{tabular}{|l|cccccccc|}
+\hline
+\rowcolor{popblueL} $x_i$ (t) & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+\hline
+$y_i$ (L) & 22 & 26 & 29 & 33 & 38 & 41 & 45 & 50 \\
+\hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+\item Calcule les coordonnées du point moyen $G$.
+\item Détermine l'équation de la droite de Mayer en partageant le nuage en deux sous-nuages de quatre points.
+\item Estime la consommation pour une charge de 10 tonnes.
+\item Estime la charge correspondant à une consommation de 35 litres.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Coefficient de corrélation]
+Une entreprise de Bafoussam étudie le lien entre les dépenses publicitaires $x$ (en dizaines de milliers de FCFA) et le chiffre d'affaires $y$ (en millions de FCFA) sur 6 mois :
+\begin{center}
+\begin{tabular}{|l|cccccc|}
+\hline
+\rowcolor{popblueL} $x_i$ & 5 & 8 & 10 & 12 & 15 & 18 \\
+\hline
+$y_i$ & 12 & 15 & 17 & 20 & 24 & 28 \\
+\hline
+\end{tabular}
+\end{center}
+On donne : $\sum x_i = 68$, $\sum y_i = 116$, $\sum x_i^2 = 942$, $\sum y_i^2 = 2418$, $\sum x_i y_i = 1456$.
+\begin{enumerate}
+\item Calcule les moyennes $\bar{x}$ et $\bar{y}$, puis les variances $V(x)$ et $V(y)$.
+\item Calcule la covariance $\mathrm{Cov}(x,y)$.
+\item Calcule le coefficient de corrélation linéaire $r$. Arrondis à $10^{-3}$.
+\item Un ajustement linéaire est-il justifié ? Justifie ta réponse.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Lecture et interprétation d'un ajustement]
+Pour une série statistique, on a obtenu la droite de Mayer d'équation $y = 3{,}2x + 15$, où $x$ est le nombre d'années d'expérience d'un ouvrier et $y$ son salaire mensuel (en dizaines de milliers de FCFA).
+\begin{enumerate}
+\item Interprète en français courant la valeur du coefficient directeur $3{,}2$.
+\item Interprète la valeur de l'ordonnée à l'origine $15$.
+\item Quel salaire mensuel peut-on prévoir pour un ouvrier ayant 5 ans d'expérience ? Donne le résultat en FCFA.
+\item Un ouvrier a 20 ans d'expérience. Le modèle prévoit-il un salaire réaliste ? Commente.
+\end{enumerate}
+\end{exercice}
+
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{corrige}[Exercice 1 — QCM : vocabulaire et point moyen]
+\begin{enumerate}
+\item \textbf{Réponse a)}. Par définition, le point moyen a pour coordonnées les moyennes arithmétiques des deux séries : $G\left(\bar{x}\,;\,\bar{y}\right)$ avec $\bar{x}=\dfrac{\sum x_i}{n}$ et $\bar{y}=\dfrac{\sum y_i}{n}$.
+\item \textbf{Réponse c)}. Par construction, la droite de Mayer est la droite $(G_1G_2)$ : elle passe par les points moyens des deux sous-nuages. Elle ne passe ni par l'origine, ni (en général) par les points du nuage.
+\item \textbf{Réponse a)}. Avant de partager le nuage, on range toujours les points par ordre \cle{croissant des valeurs de $x$}.
+\item \textbf{Réponse b)}. $r=-0{,}97$ est proche de $-1$ : la corrélation linéaire est \cle{forte} et \cle{négative} (quand $x$ augmente, $y$ diminue).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, en justifiant]
+\begin{enumerate}
+\item \textbf{Faux.} Le point moyen $G$ est le barycentre des points du nuage : il appartient au plan du nuage mais ne coïncide pas nécessairement avec l'un des points $M_i$. Contre-exemple : les points $(0\,;\,0)$ et $(2\,;\,2)$ ont pour point moyen $(1\,;\,1)$, qui n'est pas un point du nuage.
+\item \textbf{Vrai.} Si tous les points sont exactement alignés sur une droite, la corrélation linéaire est parfaite : $r=1$ ou $r=-1$. La pente étant négative, on a $r=-1$.
+\item \textbf{Faux.} Une prévision hors de l'intervalle des valeurs observées est une \cle{extrapolation} : elle n'est fiable que si l'on suppose que la tendance linéaire se poursuit, ce qui doit être justifié et reste incertain. Il faut donc prendre des précautions.
+\item \textbf{Vrai.} Si $n$ est impair, on ne peut pas partager en deux sous-nuages de même effectif : on place alors le point médian dans l'un des deux groupes (par exemple le premier), puis on calcule $G_1$ et $G_2$ normalement.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions]
+\begin{enumerate}
+\item Le \cle{nuage de points} associé à une série statistique à deux variables $(x_i\,;\,y_i)$, $1\le i\le n$, est l'ensemble des $n$ points $M_i$ de coordonnées $(x_i\,;\,y_i)$ placés dans un repère du plan.
+\item Le \cle{point moyen} d'un nuage de $n$ points est le point $G$ dont les coordonnées sont les moyennes arithmétiques des coordonnées des points du nuage :
+\[ G\left(\bar{x}\,;\,\bar{y}\right) \quad \text{avec} \quad \bar{x}=\frac{1}{n}\sum_{i=1}^{n}x_i \quad \text{et} \quad \bar{y}=\frac{1}{n}\sum_{i=1}^{n}y_i. \]
+\item L'\cle{ajustement linéaire par la méthode de Mayer} consiste à ranger les points par ordre croissant des $x_i$, à partager le nuage en deux sous-nuages, puis à calculer les points moyens $G_1$ et $G_2$ de chaque sous-nuage. La droite $(G_1G_2)$, appelée droite de Mayer, constitue l'ajustement linéaire du nuage : elle résume la tendance globale et permet des prévisions.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item $\bar{x}=\dfrac{2+4+5+7+9}{5}=\dfrac{27}{5}=5{,}4$ et $\bar{y}=\dfrac{1+2+3+4+5}{5}=\dfrac{15}{5}=3$. Donc $G(5{,}4\,;\,3)$.
+\item Sous-nuage 1 (points d'abscisses 2 et 4) :
+\[ G_1\left(\frac{2+4}{2}\,;\,\frac{1+2}{2}\right) = G_1(3\,;\,1{,}5). \]
+Sous-nuage 2 (points d'abscisses 5, 7 et 9) :
+\[ G_2\left(\frac{5+7+9}{3}\,;\,\frac{3+4+5}{3}\right) = G_2(7\,;\,4). \]
+\item Le coefficient directeur de $(G_1G_2)$ est :
+\[ a=\frac{y_{G_2}-y_{G_1}}{x_{G_2}-x_{G_1}}=\frac{4-1{,}5}{7-3}=\frac{2{,}5}{4}=0{,}625. \]
+L'équation est de la forme $y=0{,}625x+b$. En utilisant $G_1(3\,;\,1{,}5)$ : $1{,}5=0{,}625\times 3+b$, d'où $b=1{,}5-1{,}875=-0{,}375$.
+\[ \boxed{y=0{,}625x-0{,}375} \]
+Vérification avec $G_2$ : $0{,}625\times 7-0{,}375=4{,}375-0{,}375=4$. Correct.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je m'entraîne}
+
+\begin{corrige}[Exercice 5 — Températures et ventes de boissons]
+\begin{enumerate}
+\item On place les points $M_1(25\,;\,40)$, $M_2(27\,;\,48)$, $M_3(28\,;\,55)$, $M_4(30\,;\,70)$, $M_5(32\,;\,78)$, $M_6(34\,;\,90)$ dans le repère indiqué (origine décalée : 24 \textdegree C en abscisse, 30 bouteilles en ordonnée). Les points sont presque alignés, en progression croissante.
+\item $\bar{x}=\dfrac{25+27+28+30+32+34}{6}=\dfrac{176}{6}=\dfrac{88}{3}\approx 29{,}33$ ;
+$\bar{y}=\dfrac{40+48+55+70+78+90}{6}=\dfrac{381}{6}=63{,}5$.
+Donc $G\left(\dfrac{88}{3}\,;\,63{,}5\right)\approx(29{,}33\,;\,63{,}5)$. On le place sur le graphique (par exemple avec une croix de couleur).
+\item Les valeurs de $x$ sont déjà rangées par ordre croissant.
+\[ G_1\left(\frac{25+27+28}{3}\,;\,\frac{40+48+55}{3}\right)=G_1\left(\frac{80}{3}\,;\,\frac{143}{3}\right)\approx(26{,}67\,;\,47{,}67). \]
+\[ G_2\left(\frac{30+32+34}{3}\,;\,\frac{70+78+90}{3}\right)=G_2\left(32\,;\,\frac{238}{3}\right)\approx(32\,;\,79{,}33). \]
+Coefficient directeur :
+\[ a=\frac{\frac{238}{3}-\frac{143}{3}}{32-\frac{80}{3}}=\frac{\frac{95}{3}}{\frac{16}{3}}=\frac{95}{16}=5{,}9375. \]
+Ordonnée à l'origine, avec $G_2(32\,;\,\frac{238}{3})$ : $b=\dfrac{238}{3}-5{,}9375\times 32=\dfrac{238}{3}-190=\dfrac{238-570}{3}=-\dfrac{332}{3}\approx -110{,}67$.
+\[ \boxed{y=5{,}9375\,x-110{,}67} \]
+\item On trace la droite passant par $G_1\approx(26{,}67\,;\,47{,}67)$ et $G_2\approx(32\,;\,79{,}33)$ ; on vérifie qu'elle passe aussi par $G\approx(29{,}33\,;\,63{,}5)$, ce qui est toujours le cas pour la droite de Mayer.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Prévision de consommation de carburant]
+\begin{enumerate}
+\item $\bar{x}=\dfrac{2+3+4+5+6+7+8+9}{8}=\dfrac{44}{8}=5{,}5$ ;
+$\bar{y}=\dfrac{22+26+29+33+38+41+45+50}{8}=\dfrac{284}{8}=35{,}5$.
+Donc $G(5{,}5\,;\,35{,}5)$.
+\item Les $x_i$ sont déjà croissants ; on partage en deux groupes de quatre.
+\[ G_1\left(\frac{2+3+4+5}{4}\,;\,\frac{22+26+29+33}{4}\right)=G_1(3{,}5\,;\,27{,}5). \]
+\[ G_2\left(\frac{6+7+8+9}{4}\,;\,\frac{38+41+45+50}{4}\right)=G_2(7{,}5\,;\,43{,}5). \]
+Coefficient directeur : $a=\dfrac{43{,}5-27{,}5}{7{,}5-3{,}5}=\dfrac{16}{4}=4$.
+Avec $G_1$ : $27{,}5=4\times 3{,}5+b$, d'où $b=27{,}5-14=13{,}5$.
+\[ \boxed{y=4x+13{,}5} \]
+\item Pour $x=10$ : $y=4\times 10+13{,}5=53{,}5$. On estime la consommation à \textbf{53,5 litres} pour une charge de 10 tonnes. (Il s'agit d'une extrapolation, 10 t étant hors de l'intervalle observé $[2\,;\,9]$ : le résultat est à prendre avec prudence.)
+\item Pour $y=35$ : $35=4x+13{,}5$, d'où $4x=21{,}5$ et $x=\dfrac{21{,}5}{4}=5{,}375$. Une consommation de 35 litres correspond à une charge d'environ \textbf{5,4 tonnes} (interpolation, donc estimation fiable).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Coefficient de corrélation]
+\begin{enumerate}
+\item Moyennes : $\bar{x}=\dfrac{68}{6}=\dfrac{34}{3}\approx 11{,}33$ et $\bar{y}=\dfrac{116}{6}=\dfrac{58}{3}\approx 19{,}33$.
+Variances :
+\[ V(x)=\frac{\sum x_i^2}{n}-\bar{x}^2=\frac{942}{6}-\left(\frac{34}{3}\right)^2=157-\frac{1156}{9}=\frac{1413-1156}{9}=\frac{257}{9}\approx 28{,}56. \]
+\[ V(y)=\frac{\sum y_i^2}{n}-\bar{y}^2=\frac{2418}{6}-\left(\frac{58}{3}\right)^2=403-\frac{3364}{9}=\frac{3627-3364}{9}=\frac{263}{9}\approx 29{,}22. \]
+\item Covariance :
+\[ \mathrm{Cov}(x,y)=\frac{\sum x_i y_i}{n}-\bar{x}\,\bar{y}=\frac{1456}{6}-\frac{34}{3}\times\frac{58}{3}=\frac{728}{3}-\frac{1972}{9}=\frac{2184-1972}{9}=\frac{212}{9}\approx 23{,}56. \]
+\item Coefficient de corrélation linéaire :
+\[ r=\frac{\mathrm{Cov}(x,y)}{\sqrt{V(x)\,V(y)}}=\frac{\frac{212}{9}}{\sqrt{\frac{257}{9}\times\frac{263}{9}}}=\frac{212}{\sqrt{257\times 263}}=\frac{212}{\sqrt{67\,591}}\approx\frac{212}{259{,}98}\approx 0{,}815. \]
+\item Oui, un ajustement linéaire est justifié : $r\approx 0{,}815$ est nettement supérieur à $0{,}75$ (seuil usuel) et proche de $1$. Il existe donc une \cle{forte corrélation linéaire positive} entre les dépenses publicitaires et le chiffre d'affaires : chercher une droite d'ajustement a du sens.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Lecture et interprétation d'un ajustement]
+\begin{enumerate}
+\item Le coefficient directeur $3{,}2$ signifie que, selon le modèle, \textbf{chaque année d'expérience supplémentaire se traduit par une augmentation moyenne du salaire de 3,2 dizaines de milliers de FCFA, soit \num{32000} FCFA}.
+\item L'ordonnée à l'origine $15$ correspond à $x=0$ : un ouvrier \textbf{débutant (sans expérience)} gagnerait, selon le modèle, 15 dizaines de milliers de FCFA, soit \textbf{\num{150000} FCFA} par mois.
+\item Pour $x=5$ : $y=3{,}2\times 5+15=16+15=31$. Le salaire prévu est de 31 dizaines de milliers de FCFA, soit \textbf{\num{310000} FCFA}.
+\item Pour $x=20$ : $y=3{,}2\times 20+15=79$, soit \num{790000} FCFA. Ce calcul est une \cle{extrapolation} : si les données observées portaient sur des expériences nettement inférieures à 20 ans, rien ne garantit que la progression linéaire se poursuive (plafonnements de grille salariale, changements de poste...). Le résultat est donc à considérer avec prudence, même s'il donne un ordre de grandeur.
+\end{enumerate}
+\end{corrige}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{corrige}[Exercice 9 — Type Probatoire : température et consommation d'électricité à Douala]
+\begin{attention}[Énoncé incomplet]
+L'énoncé de cet exercice est tronqué dans le document source (le tableau des 12 relevés mensuels et les questions ne sont pas fournis). Le corrigé ci-dessous donne la \textbf{trame complète de résolution} d'un exercice de ce type, telle qu'elle est attendue au Probatoire technique ; il suffira d'y substituer les valeurs du tableau le jour de l'épreuve.
+\end{attention}
+\textbf{Démarche type (à adapter aux données) :}
+\begin{enumerate}
+\item \textbf{Nuage de points.} On choisit un repère orthogonal avec des origines décalées (par exemple abscisses à partir de 24 \textdegree C, ordonnées à partir de la plus petite consommation observée), on indique les unités sur chaque axe, puis on place les 12 points $M_i(x_i\,;\,y_i)$.
+\item \textbf{Point moyen.} On calcule $\bar{x}=\dfrac{\sum x_i}{12}$ et $\bar{y}=\dfrac{\sum y_i}{12}$, on écrit $G(\bar{x}\,;\,\bar{y})$ et on le place sur le graphique avec un symbole distinct.
+\item \textbf{Droite de Mayer.} On vérifie que les $x_i$ sont rangés par ordre croissant, on partage en deux sous-nuages de 6 points, on calcule $G_1$ et $G_2$, puis :
+\[ a=\frac{y_{G_2}-y_{G_1}}{x_{G_2}-x_{G_1}}, \qquad b=y_{G_1}-a\,x_{G_1}, \qquad y=ax+b. \]
+On trace la droite $(G_1G_2)$ et on vérifie qu'elle passe par $G$.
+\item \textbf{Prévision.} Pour estimer la consommation à une température donnée $x_0$, on calcule $y_0=ax_0+b$ ; pour estimer la température correspondant à une consommation $y_0$, on résout $x_0=\dfrac{y_0-b}{a}$. On précise s'il s'agit d'une interpolation (fiable) ou d'une extrapolation (prudence).
+\item \textbf{Interprétation.} On conclut en langage courant : par exemple « chaque degré supplémentaire entraîne en moyenne une hausse de $a$ unités de consommation (climatisation) ».
+\end{enumerate}
+\textbf{Barème indicatif (sur 10 points) :}
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|c|}
+\hline
+\rowcolor{popblueL} \textbf{Élément de réponse} & \textbf{Points} \\
+\hline
+Nuage de points correct (axes, échelles, unités, points) & 2 \\
+\hline
+Calcul et placement du point moyen $G$ & 1,5 \\
+\hline
+Calcul de $G_1$ et $G_2$ (partage justifié) & 2 \\
+\hline
+Équation de la droite de Mayer (calculs de $a$ et $b$ détaillés) & 2 \\
+\hline
+Prévision(s) avec résolution correcte & 1,5 \\
+\hline
+Interprétation et conclusion rédigées & 1 \\
+\hline
+\end{tabularx}
+\end{center}
+\textbf{Points de vigilance :}
+\begin{itemize}
+\item Citer la condition d'application : \emph{« les points sont rangés par ordre croissant des valeurs de $x$ avant le partage »} ;
+\item Justifier la pertinence de l'ajustement (points sensiblement alignés, ou $r$ proche de $\pm 1$ si demandé) ;
+\item Ne pas confondre $G_1$ et $G_2$ avec $G$ : la droite de Mayer passe par les trois points, ce qui fournit une vérification ;
+\item Pour une prévision hors de l'intervalle observé, écrire explicitement qu'il s'agit d'une \cle{extrapolation} ;
+\item Arrondir uniquement le résultat final et conserver les fractions exactes dans les calculs intermédiaires.
+\end{itemize}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small},
+  root concept/.append style={concept color=popdark, font=\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=60},
+  level 2/.append style={level distance=2.2cm, sibling angle=45, font=\scriptsize}]
+\node[root concept]{Séries statistiques à deux variables}
+  child[concept color=popblue]{ node {Nuage de points}
+    child { node {point $M_i(x_i\,;\,y_i)$} }
+    child { node {forme : allongée $\Rightarrow$ ajustement} }
+  }
+  child[concept color=popgreen]{ node {Point moyen $G$}
+    child { node {$x_G=\bar x$} }
+    child { node {$y_G=\bar y$} }
+  }
+  child[concept color=poporange]{ node {Méthode de Mayer}
+    child { node {2 sous-nuages} }
+    child { node {$G_1$ et $G_2$} }
+    child { node {droite $(G_1G_2)$} }
+  }
+  child[concept color=poppurple]{ node {Équation $y=ax+b$}
+    child { node {$a=\dfrac{y_{G_2}-y_{G_1}}{x_{G_2}-x_{G_1}}$} }
+    child { node {$b=y_{G_1}-a\,x_{G_1}$} }
+  }
+  child[concept color=poppink]{ node {Prévision}
+    child { node {interpolation} }
+    child { node {extrapolation (prudence)} }
+  }
+  child[concept color=popgold]{ node {Limites}
+    child { node {corrélation $\neq$ causalité} }
+    child { node {points aberrants} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon : séries statistiques à deux variables}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{Définitions clés}
+\begin{itemize}
+  \item \cle{Série statistique double} : on étudie simultanément deux caractères quantitatifs $x$ et $y$ sur une même population ; les données sont des couples $(x_i\,;\,y_i)$.
+  \item \cle{Nuage de points} : ensemble des points $M_i(x_i\,;\,y_i)$ placés dans un repère. Si le nuage a une forme \emph{allongée}, un ajustement linéaire est envisageable.
+  \item \cle{Point moyen} : le point $G(\bar x\,;\,\bar y)$ avec $\bar x=\dfrac{1}{n}\sum x_i$ et $\bar y=\dfrac{1}{n}\sum y_i$. C'est le \og centre de gravité \fg{} du nuage.
+  \item \cle{Ajustement linéaire} : remplacer le nuage par une droite $y=ax+b$ passant \og au plus près \fg{} des points.
+\end{itemize}
+
+\textbf{Formules à connaître par c\oe ur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\rowcolor{popblueL} \textbf{Objet} & \textbf{Formule} \\ \hline
+Point moyen & $G\left(\bar x\,;\,\bar y\right)$ avec $\bar x=\dfrac{x_1+\cdots+x_n}{n}$ et $\bar y=\dfrac{y_1+\cdots+y_n}{n}$ \\ \hline
+Sous-points moyens (Mayer) & $G_1$ : moyenne des $p$ premiers points ; $G_2$ : moyenne des $n-p$ derniers points (série ordonnée selon $x$ croissant) \\ \hline
+Droite de Mayer & droite $(G_1G_2)$ d'équation $y=ax+b$ \\ \hline
+Coefficient directeur & $a=\dfrac{y_{G_2}-y_{G_1}}{x_{G_2}-x_{G_1}}$ \\ \hline
+Ordonnée à l'origine & $b=y_{G_1}-a\,x_{G_1}$ \quad (ou $b=y_{G_2}-a\,x_{G_2}$) \\ \hline
+Propriété fondamentale & La droite de Mayer passe par le point moyen $G$ du nuage complet \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthode express : déterminer la droite de Mayer}
+\begin{enumerate}
+  \item Ranger les couples par valeurs de $x$ \textbf{croissantes}.
+  \item Partager la série en deux sous-nuages (effectifs égaux ou quasi égaux).
+  \item Calculer les coordonnées de $G_1$ et $G_2$.
+  \item Calculer $a=\dfrac{y_{G_2}-y_{G_1}}{x_{G_2}-x_{G_1}}$ puis $b=y_{G_1}-a\,x_{G_1}$.
+  \item Écrire l'équation $y=ax+b$ et vérifier que $G(\bar x\,;\,\bar y)$ appartient à la droite.
+\end{enumerate}
+
+\textbf{Méthode express : utiliser la droite}
+\begin{itemize}
+  \item \cle{Prévision} : pour estimer $y$ à partir d'une valeur $x_0$, calculer $y_0=ax_0+b$.
+  \item \cle{Interpolation} ($x_0$ à l'intérieur de la plage observée) : prévision fiable.
+  \item \cle{Extrapolation} ($x_0$ hors de la plage observée) : résultat à manier avec prudence.
+  \item \cle{Interprétation} : $a$ est la variation moyenne de $y$ quand $x$ augmente d'une unité ; $b$ est la valeur estimée de $y$ pour $x=0$.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je sais représenter un nuage de points dans un repère bien gradué.
+  \item[$\square$] Je sais repérer si le nuage est allongé et justifier qu'un ajustement linéaire est pertinent.
+  \item[$\square$] Je sais calculer les coordonnées du point moyen $G(\bar x\,;\,\bar y)$.
+  \item[$\square$] Je pense à \textbf{ordonner les valeurs de $x$} avant de partager le nuage en deux.
+  \item[$\square$] Je sais calculer les points moyens partiels $G_1$ et $G_2$.
+  \item[$\square$] Je sais calculer $a$ puis $b$ et écrire l'équation $y=ax+b$ de la droite de Mayer.
+  \item[$\square$] Je vérifie que le point moyen $G$ appartient à la droite obtenue.
+  \item[$\square$] Je sais tracer la droite de Mayer à partir de deux points ($G_1$ et $G_2$).
+  \item[$\square$] Je sais faire une prévision en remplaçant $x$ par la valeur donnée dans $y=ax+b$.
+  \item[$\square$] Je distingue interpolation et extrapolation, et je reste prudent pour l'extrapolation.
+  \item[$\square$] Je sais interpréter concrètement $a$ et $b$ dans le contexte de l'énoncé (atelier, ventes, consommation...).
+  \item[$\square$] Je rédige ma conclusion en justifiant chaque étape de la démarche.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

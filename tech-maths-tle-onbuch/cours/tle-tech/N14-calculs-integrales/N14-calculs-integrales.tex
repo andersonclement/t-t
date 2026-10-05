@@ -1,0 +1,3303 @@
+% Calculs des intégrales — Mathématiques Tle Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N14-calculs-integrales.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{Tle Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Terminale technique}
+\newcommand{\DOCLECON}{N14}
+\newcommand{\DOCTITRE}{Calculs des intégrales}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Calculs des intégrales}{Mathématiques}{Tle Tech}{Mathématiques – classe de Terminale technique}{N14}{5 séances (fiche de progression harmonisée)}{Cette leçon consolide la notion d'intégrale d'une fonction continue : propriétés algébriques, inégalité de la moyenne et valeur moyenne, techniques de calcul (primitives, intégration par parties), puis applications géométriques au calcul d'aires et de volumes, et enfin approximation numérique par la méthode des rectangles.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir l'intégrale d'une fonction continue sur un segment et interpréter graphiquement sa valeur
+\item À la fin de cette leçon, je sais appliquer les propriétés de l'intégrale (linéarité, relation de Chasles, positivité, comparaison) pour transformer et majorer des intégrales
+\item À la fin de cette leçon, je sais énoncer et utiliser l'inégalité de la moyenne pour encadrer une intégrale
+\item À la fin de cette leçon, je sais calculer la valeur moyenne d'une fonction sur un intervalle et l'interpréter dans une situation concrète
+\item À la fin de cette leçon, je sais calculer une intégrale à l'aide d'une primitive et par intégration par parties
+\item À la fin de cette leçon, je sais calculer l'aire d'un domaine plan délimité par une ou deux courbes
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Intégrale d'une fonction continue : présentation et propriétés
+\item Inégalité de la moyenne et valeur moyenne
+\item Méthodes de calcul des intégrales
+\item Calcul d'aires planes
+\item Calcul de volumes de solides de révolution
+\item Valeurs approchées : méthode des rectangles
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir l'intégrale d'une fonction continue sur un segment et interpréter graphiquement sa valeur
+\item À la fin de cette leçon, je sais appliquer les propriétés de l'intégrale (linéarité, relation de Chasles, positivité, comparaison) pour transformer et majorer des intégrales
+\item À la fin de cette leçon, je sais énoncer et utiliser l'inégalité de la moyenne pour encadrer une intégrale
+\item À la fin de cette leçon, je sais calculer la valeur moyenne d'une fonction sur un intervalle et l'interpréter dans une situation concrète
+\item À la fin de cette leçon, je sais calculer une intégrale à l'aide d'une primitive et par intégration par parties
+\item À la fin de cette leçon, je sais calculer l'aire d'un domaine plan délimité par une ou deux courbes
+\item À la fin de cette leçon, je sais calculer le volume d'un solide de révolution engendré par la rotation d'une courbe
+\item À la fin de cette leçon, je sais approcher une intégrale par la méthode des rectangles et contrôler la précision
+\item À la fin de cette leçon, je sais rédiger et justifier une démarche complète de résolution de problème concret faisant appel au calcul intégral
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion de primitive d'une fonction et tableau des primitives usuelles (leçon précédente)
+\item Lecture graphique : courbe représentative, signe d'une fonction, repère orthonormé
+\item Aires des figures usuelles (rectangle, triangle, trapèze) et formules de volumes (cylindre, cône, sphère)
+\item Sommes finies et notion de découpage d'un intervalle en subdivisions
+\item Fonctions usuelles de Terminale : polynômes, exponentielle, logarithme, fonctions trigonométriques
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Intégrale d'une fonction continue : présentation et propriétés}
+
+M. Nkoulou, entrepreneur à Douala, vient de remporter le marché de rénovation d'une salle de spectacle. Son problème : le mur principal n'est pas droit, son profil suit une courbe. Pour commander la bonne quantité de peinture, il doit connaître l'aire de cette surface incurvée. Son maçon, homme de terrain, lui propose une idée simple : « Découpons le mur en fines bandes rectangulaires verticales, calculons l'aire de chaque bande, et additionnons ! » Plus les bandes sont fines, plus la somme se rapproche de l'aire exacte. De son côté, une station de pompage de la SODECAO doit déterminer le volume d'un réservoir obtenu par rotation d'une courbe autour d'un axe : même logique, on découpe en fines tranches.
+
+\textbf{Problématique :} comment passer d'une somme de petits morceaux à une valeur exacte ? Comment calculer rigoureusement l'aire d'une surface limitée par une courbe ? C'est toute la puissance du \cle{calcul intégral} que nous allons découvrir dans cette leçon.
+
+\courssub{De la primitive à l'aire sous la courbe}
+
+\textbf{Intuition.} Reprenons l'idée du maçon. Soit $f$ une fonction \cle{continue} et \cle{positive} sur un intervalle $[a\,;b]$, de courbe représentative $\mathcal{C}_f$ dans un repère orthogonal. On cherche l'aire du domaine situé sous la courbe, au-dessus de l'axe des abscisses, entre les droites verticales d'équations $x=a$ et $x=b$. En découpant ce domaine en rectangles très fins et en additionnant leurs aires, on obtient une valeur approchée ; en faisant tendre la largeur des rectangles vers $0$, on obtient la valeur exacte. Le résultat remarquable, c'est que cette aire se calcule à l'aide d'une \cle{primitive} de $f$.
+
+\begin{definition}[Intégrale d'une fonction continue]
+Soit $f$ une fonction continue sur un intervalle $[a\,;b]$ et $F$ une primitive de $f$ sur $[a\,;b]$. On appelle \cle{intégrale de $f$ entre $a$ et $b$} le nombre réel noté $\displaystyle\int_a^b f(x)\,\mathrm{d}x$ et défini par :
+\[ \int_a^b f(x)\,\mathrm{d}x = F(b)-F(a) = \big[F(x)\big]_a^b. \]
+On lit : « intégrale de $a$ à $b$ de $f(x)\,\mathrm{d}x$ ». Les nombres $a$ et $b$ sont les \cle{bornes} de l'intégrale, $x$ est la variable d'intégration (variable \emph{muette} : on peut la remplacer par $t$, $u$, etc.).
+\end{definition}
+
+\begin{attention}[La primitive n'est pas unique, et ce n'est pas grave]
+Une fonction continue admet une infinité de primitives, qui diffèrent d'une constante. Si $F$ et $G$ sont deux primitives de $f$, alors $G(x)=F(x)+k$, donc :
+\[ G(b)-G(a) = \big(F(b)+k\big)-\big(F(a)+k\big) = F(b)-F(a). \]
+La valeur de l'intégrale ne dépend donc pas de la primitive choisie. On prend en général la plus simple (constante nulle).
+\end{attention}
+
+\begin{aretenir}[Lien avec l'aire : unité d'aire]
+Si $f$ est continue et \textbf{positive} sur $[a\,;b]$, alors l'aire $\mathcal{A}$ du domaine sous la courbe, exprimée en \cle{unités d'aire} (u.a.), est :
+\[ \mathcal{A} = \int_a^b f(x)\,\mathrm{d}x \quad \text{(en u.a.)}. \]
+L'unité d'aire est l'aire du rectangle unité du repère : si l'axe des abscisses est gradué en unités de longueur $p$ et l'axe des ordonnées en unités $q$, alors $1\ \text{u.a.} = p \times q$. Par exemple, si 1 unité en abscisse vaut \SI{2}{cm} et 1 unité en ordonnée vaut \SI{0,5}{cm}, alors $1\ \text{u.a.} = 1\ \text{cm}^2$, et une aire de $6$ u.a. vaut \SI{6}{cm^2}.
+\end{aretenir}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-0.5, xmax=3.5, ymin=-0.5, ymax=4.5,
+  xtick={0.5,2.5}, xticklabels={$a$,$b$},
+  ytick=\empty,
+  clip=false]
+\addplot[popcurve, domain=-0.3:3.2, samples=200] {0.5*(x-1.5)^2+1.2};
+\addplot[fill=popblueL, draw=none, domain=0.5:2.5, samples=100] {0.5*(x-1.5)^2+1.2} \closedcycle;
+\draw[popblue, thick] (axis cs:0.5,0) -- (axis cs:0.5,1.7);
+\draw[popblue, thick] (axis cs:2.5,0) -- (axis cs:2.5,1.7);
+\node[popdark] at (axis cs:1.5,0.7) {$\mathcal{A}=\displaystyle\int_a^b f(x)\,\mathrm{d}x$};
+\node[popink] at (axis cs:2.9,3.6) {$\mathcal{C}_f$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Pour $f$ positive, l'intégrale de $a$ à $b$ mesure l'aire du domaine hachuré sous la courbe.}
+\end{popfigure}
+
+\courssub{Aire algébrique : fonction de signe quelconque}
+
+Que se passe-t-il si $f$ prend des valeurs négatives ? La définition $\int_a^b f = F(b)-F(a)$ reste valable (elle ne suppose que la continuité), mais l'interprétation graphique change : l'intégrale devient une \cle{aire algébrique}.
+
+\begin{definition}[Aire algébrique]
+Soit $f$ continue sur $[a\,;b]$. L'intégrale $\displaystyle\int_a^b f(x)\,\mathrm{d}x$ est l'\cle{aire algébrique} du domaine compris entre la courbe et l'axe des abscisses :
+\begin{itemize}
+\item les portions de domaine situées \textbf{au-dessus} de l'axe (où $f\geq 0$) sont comptées \textbf{positivement} ;
+\item les portions situées \textbf{en dessous} de l'axe (où $f\leq 0$) sont comptées \textbf{négativement}.
+\end{itemize}
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-0.5, xmax=4.5, ymin=-2.5, ymax=2.5,
+  xtick={0.5,2,3.8}, xticklabels={$a$,$c$,$b$},
+  ytick=\empty,
+  clip=false]
+\addplot[popcurve, domain=0.3:4, samples=200] {2*sin(deg(1.8*x-0.9))};
+\addplot[fill=popgreenL, draw=none, domain=0.5:2, samples=100] {2*sin(deg(1.8*x-0.9))} \closedcycle;
+\addplot[fill=poppinkL, draw=none, domain=2:3.8, samples=100] {2*sin(deg(1.8*x-0.9))} \closedcycle;
+\node[popdark] at (axis cs:1.2,0.9) {$+\mathcal{A}_1$};
+\node[popdark] at (axis cs:2.9,-0.9) {$-\mathcal{A}_2$};
+\node[popink] at (axis cs:4.1,1.6) {$\mathcal{C}_f$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Fonction changeant de signe : $\int_a^b f = \mathcal{A}_1 - \mathcal{A}_2$ (aire algébrique).}
+\end{popfigure}
+
+\begin{attention}[Erreur fréquente : intégrale et aire géométrique]
+Ne pas confondre l'intégrale $\displaystyle\int_a^b f(x)\,\mathrm{d}x$, qui est une valeur \textbf{signée} (elle peut être négative ou nulle), avec l'\cle{aire géométrique} totale, qui est \textbf{toujours positive}. Par exemple, une fonction impaire comme $x\mapsto x^3$ vérifie $\int_{-1}^{1} x^3\,\mathrm{d}x = 0$, alors que l'aire géométrique entre la courbe et l'axe n'est pas nulle : les deux morceaux se compensent dans l'intégrale.
+\end{attention}
+
+\begin{methode}[Calculer l'aire totale quand $f$ change de signe]
+Pour obtenir l'\textbf{aire géométrique totale} entre $\mathcal{C}_f$ et l'axe des abscisses sur $[a\,;b]$ :
+\begin{enumerate}
+\item Résoudre $f(x)=0$ sur $[a\,;b]$ et dresser le tableau de signes de $f$.
+\item Découper l'intervalle $[a\,;b]$ selon le signe de $f$.
+\item Sur chaque morceau, intégrer $f$ si $f\geq 0$, intégrer $-f$ si $f\leq 0$ (autrement dit, intégrer $|f|$).
+\item Additionner les aires (positives) obtenues.
+\end{enumerate}
+Autrement dit : $\mathcal{A}_{\text{totale}} = \displaystyle\int_a^b |f(x)|\,\mathrm{d}x$, calculée en découpant selon le signe de $f$.
+\end{methode}
+
+\courssub{Propriétés fondamentales de l'intégrale}
+
+Toutes les propriétés suivantes découlent directement de la définition $\int_a^b f = F(b)-F(a)$. Les démonstrations sont courtes et formatrices : elles peuvent être demandées au Baccalauréat technique.
+
+\begin{propriete}[Linéarité de l'intégrale]
+Soient $f$ et $g$ continues sur $[a\,;b]$, et $k$ un réel. Alors :
+\[ \int_a^b \big(f(x)+g(x)\big)\,\mathrm{d}x = \int_a^b f(x)\,\mathrm{d}x + \int_a^b g(x)\,\mathrm{d}x \qquad ; \qquad \int_a^b k\,f(x)\,\mathrm{d}x = k\int_a^b f(x)\,\mathrm{d}x. \]
+\textbf{Démonstration.} Si $F$ et $G$ sont des primitives de $f$ et $g$, alors $F+G$ est une primitive de $f+g$, donc :
+\[ \int_a^b (f+g) = \big(F(b)+G(b)\big)-\big(F(a)+G(a)\big) = \big(F(b)-F(a)\big)+\big(G(b)-G(a)\big) = \int_a^b f + \int_a^b g. \]
+De même, $kF$ est une primitive de $kf$, donc $\int_a^b kf = kF(b)-kF(a) = k\big(F(b)-F(a)\big) = k\int_a^b f$. \hfill$\blacksquare$
+\end{propriete}
+
+\begin{propriete}[Relation de Chasles]
+Soit $f$ continue sur un intervalle contenant $a$, $b$ et $c$. Alors :
+\[ \int_a^b f(x)\,\mathrm{d}x = \int_a^c f(x)\,\mathrm{d}x + \int_c^b f(x)\,\mathrm{d}x. \]
+\textbf{Démonstration.} Avec $F$ une primitive de $f$ :
+\[ \int_a^c f + \int_c^b f = \big(F(c)-F(a)\big)+\big(F(b)-F(c)\big) = F(b)-F(a) = \int_a^b f. \quad \blacksquare \]
+\textbf{Conséquences utiles :} $\displaystyle\int_a^a f(x)\,\mathrm{d}x = 0$ et $\displaystyle\int_b^a f(x)\,\mathrm{d}x = -\int_a^b f(x)\,\mathrm{d}x$ (inversion des bornes).
+\end{propriete}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=5.5cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-0.5, xmax=4.5, ymin=-0.5, ymax=3.5,
+  xtick={0.5,2,3.8}, xticklabels={$a$,$c$,$b$},
+  ytick=\empty,
+  clip=false]
+\addplot[popcurve, domain=0.2:4.1, samples=200] {0.3*(x-2)^2+0.8};
+\addplot[fill=poporangeL, draw=none, domain=0.5:2, samples=80] {0.3*(x-2)^2+0.8} \closedcycle;
+\addplot[fill=popgreenL, draw=none, domain=2:3.8, samples=80] {0.3*(x-2)^2+0.8} \closedcycle;
+\draw[popdark, thick, dashed] (axis cs:2,0) -- (axis cs:2,0.8);
+\node[popdark] at (axis cs:1.2,0.4) {$\displaystyle\int_a^c f$};
+\node[popdark] at (axis cs:3,0.4) {$\displaystyle\int_c^b f$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Relation de Chasles : l'aire de $a$ à $b$ est la somme des aires de $a$ à $c$ et de $c$ à $b$.}
+\end{popfigure}
+
+\begin{propriete}[Positivité et croissance de l'intégrale (admise)]
+Soient $f$ et $g$ continues sur $[a\,;b]$ avec $a\leq b$.
+\begin{itemize}
+\item \textbf{Positivité :} si $f(x)\geq 0$ pour tout $x\in[a\,;b]$, alors $\displaystyle\int_a^b f(x)\,\mathrm{d}x \geq 0$.
+\item \textbf{Croissance (comparaison) :} si $f(x)\geq g(x)$ pour tout $x\in[a\,;b]$, alors $\displaystyle\int_a^b f(x)\,\mathrm{d}x \geq \int_a^b g(x)\,\mathrm{d}x$.
+\end{itemize}
+\emph{Justification graphique (admise) :} si $f\geq 0$, l'intégrale est une aire située au-dessus de l'axe, donc positive. Si $f\geq g$, alors $f-g\geq 0$, donc par positivité $\int_a^b (f-g)\geq 0$, et par linéarité $\int_a^b f \geq \int_a^b g$.
+\end{propriete}
+
+\begin{attention}[Conditions d'application à ne pas oublier]
+\begin{itemize}
+\item La positivité exige $a\leq b$ : si on inverse les bornes, le signe change !
+\item La réciproque est fausse : on peut avoir $\int_a^b f \geq 0$ sans que $f$ soit positive partout (les compensations sont possibles).
+\item Pour comparer deux intégrales par la croissance, il faut la \textbf{même} paire de bornes et vérifier l'inégalité $f\geq g$ sur \textbf{tout} l'intervalle.
+\end{itemize}
+\end{attention}
+
+\courssub{Exemples résolus}
+
+\begin{exoresolu}[Calcul direct et interprétation graphique]
+\textbf{Énoncé.} Calculer $\displaystyle I = \int_0^2 \left(3x^2-2x+1\right)\mathrm{d}x$ et interpréter le résultat graphiquement.
+\tcblower
+\textbf{Solution détaillée.}
+
+\emph{Étape 1 : recherche d'une primitive.} Une primitive de $x\mapsto 3x^2-2x+1$ est :
+\[ F(x) = x^3 - x^2 + x. \]
+
+\emph{Étape 2 : application de la définition.}
+\begin{align*}
+I &= F(2)-F(0) = \big(2^3-2^2+2\big)-\big(0-0+0\big) \\
+  &= (8-4+2)-0 = 6.
+\end{align*}
+
+\emph{Étape 3 : interprétation.} Sur $[0\,;2]$, le trinôme $3x^2-2x+1$ a un discriminant $\Delta = 4-12 = -8 < 0$ : il est du signe de $3$, donc strictement positif. La fonction est positive sur $[0\,;2]$, donc $I=6$ u.a. représente l'aire du domaine sous la courbe entre $x=0$ et $x=2$. Si le repère a pour unités \SI{1}{cm} sur chaque axe, cette aire vaut \SI{6}{cm^2}.
+\end{exoresolu}
+
+\begin{exoresolu}[Aire totale avec changement de signe]
+\textbf{Énoncé.} Soit $f(x)=x-1$ sur $[0\,;3]$. Calculer $\displaystyle\int_0^3 f(x)\,\mathrm{d}x$, puis l'aire géométrique totale entre la courbe et l'axe des abscisses.
+\tcblower
+\textbf{Solution détaillée.}
+
+\emph{Étape 1 : signe de $f$.} $f(x)=x-1$ s'annule en $x=1$ ; $f\leq 0$ sur $[0\,;1]$ et $f\geq 0$ sur $[1\,;3]$.
+
+\emph{Étape 2 : intégrale (valeur signée).} Une primitive est $F(x)=\dfrac{x^2}{2}-x$ :
+\[ \int_0^3 (x-1)\,\mathrm{d}x = F(3)-F(0) = \left(\tfrac{9}{2}-3\right)-0 = \tfrac{3}{2}. \]
+
+\emph{Étape 3 : aire totale, par la relation de Chasles en découpant en $x=1$.}
+\[ \mathcal{A} = \int_0^1 (1-x)\,\mathrm{d}x + \int_1^3 (x-1)\,\mathrm{d}x. \]
+Or $\displaystyle\int_0^1 (1-x)\,\mathrm{d}x = \left[x-\tfrac{x^2}{2}\right]_0^1 = \tfrac{1}{2}$ et $\displaystyle\int_1^3 (x-1)\,\mathrm{d}x = F(3)-F(1) = \tfrac{3}{2}-\left(-\tfrac{1}{2}\right) = 2$.
+
+Donc $\mathcal{A} = \dfrac{1}{2}+2 = \dfrac{5}{2}$ u.a. On vérifie que l'intégrale signée vaut bien $-\dfrac{1}{2}+2 = \dfrac{3}{2}$ : les deux notions ne coïncident pas !
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+\begin{enumerate}
+\item Calculer $\displaystyle\int_1^3 (2x+1)\,\mathrm{d}x$ et donner l'aire correspondante en cm$^2$ si 1 unité vaut \SI{0,5}{cm} sur chaque axe.
+\item Montrer que pour tout $x\in[0\,;1]$, $x^2\leq x$, puis en déduire une comparaison entre $\displaystyle\int_0^1 x^2\,\mathrm{d}x$ et $\displaystyle\int_0^1 x\,\mathrm{d}x$. Vérifier par le calcul.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Une primitive est $F(x)=x^2+x$. Donc $\displaystyle\int_1^3 (2x+1)\,\mathrm{d}x = F(3)-F(1) = 12-2 = 10$ u.a. Comme $1\ \text{u.a.} = 0{,}5\times 0{,}5 = 0{,}25\ \text{cm}^2$, l'aire vaut $10\times 0{,}25 = 2{,}5\ \text{cm}^2$.
+\item Sur $[0\,;1]$, $x-x^2 = x(1-x)\geq 0$, donc $x^2\leq x$. Par croissance de l'intégrale : $\displaystyle\int_0^1 x^2\,\mathrm{d}x \leq \int_0^1 x\,\mathrm{d}x$. Vérification : $\int_0^1 x^2\,\mathrm{d}x = \dfrac{1}{3}$ et $\int_0^1 x\,\mathrm{d}x = \dfrac{1}{2}$, et $\dfrac{1}{3}\leq \dfrac{1}{2}$.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Le calcul intégral, un outil du quotidien au Cameroun]
+Le symbole $\displaystyle\int$ est un « S » allongé, introduit par Leibniz au XVII\textsuperscript{e} siècle : il signifie \emph{summa}, la somme (des petits rectangles du maçon de M. Nkoulou !). Aujourd'hui, le calcul intégral est partout : les ingénieurs de la SODECAO et d'ENEO l'utilisent pour dimensionner réservoirs et réseaux, les économistes pour calculer des coûts cumulés, les mécaniciens pour passer d'une accélération à une distance parcourue. Maîtriser l'intégrale, c'est disposer d'un outil universel pour « additionner l'infiniment petit ».
+\end{savaistu}
+
+\coursec{Inégalité de la moyenne et valeur moyenne}
+
+\courssub{Encadrement d'une intégrale : inégalité de la moyenne}
+
+Lorsque l'on ne peut pas calculer exactement une intégrale, ou pour en estimer l'ordre de grandeur, on utilise les bornes de la fonction.
+
+\begin{propriete}[Inégalité de la moyenne (encadrement)]
+Soit $f$ continue sur $[a\,;b]$ avec $a<b$. Soient $m = \min_{[a,b]} f(x)$ et $M = \max_{[a,b]} f(x)$. Alors :
+\[ m\,(b-a) \;\leq\; \int_a^b f(x)\,\mathrm{d}x \;\leq\; M\,(b-a). \]
+\textbf{Démonstration.} Pour tout $x\in[a,b]$, $m \leq f(x) \leq M$. Par croissance de l'intégrale (propriété admise) :
+\[ \int_a^b m\,\mathrm{d}x \leq \int_a^b f(x)\,\mathrm{d}x \leq \int_a^b M\,\mathrm{d}x. \]
+Or $\int_a^b m\,\mathrm{d}x = m(b-a)$ et $\int_a^b M\,\mathrm{d}x = M(b-a)$. \hfill$\blacksquare$
+\end{propriete}
+
+\begin{exemplebox}[Encadrer une intégrale sans la calculer]
+\textbf{Énoncé.} Encadrer $\displaystyle I = \int_0^1 \frac{\mathrm{d}x}{1+x^2}$.
+\textbf{Résolution.} Sur $[0\,;1]$, la fonction $f(x)=\frac{1}{1+x^2}$ est décroissante (dérivée négative). Son maximum est $f(0)=1$, son minimum est $f(1)=\frac{1}{2}$.
+D'après l'inégalité de la moyenne :
+\[ \frac{1}{2}\times(1-0) \leq I \leq 1\times(1-0) \quad\Rightarrow\quad \frac{1}{2} \leq I \leq 1. \]
+\emph{Remarque :} On sait par ailleurs que $I = [\arctan x]_0^1 = \frac{\pi}{4} \approx 0,785$, bien dans l'encadrement.
+\end{exemplebox}
+
+\courssub{Théorème de la valeur moyenne (ou théorème de la moyenne intégrale)}
+
+C'est un résultat d'existence fondamental, souvent utilisé en démonstration.
+
+\begin{propriete}[Théorème de la valeur moyenne]
+Soit $f$ continue sur $[a\,;b]$ avec $a<b$. Il existe au moins un réel $c \in [a\,;b]$ tel que :
+\[ \int_a^b f(x)\,\mathrm{d}x = f(c)\,(b-a). \]
+\textbf{Interprétation géométrique :} Il existe un rectangle de base $[a\,;b]$ et de hauteur $f(c)$ qui a la même aire que le domaine sous la courbe (aire algébrique).
+\textbf{Démonstration (idée).} Par l'inégalité de la moyenne, $m \leq \frac{1}{b-a}\int_a^b f \leq M$. Le nombre $\mu = \frac{1}{b-a}\int_a^b f$ est une valeur intermédiaire de $f$ sur $[a,b]$. Par le théorème des valeurs intermédiaires (TVI), il existe $c\in[a,b]$ tel que $f(c)=\mu$.
+\end{propriete}
+
+\begin{aretenir}[Valeur moyenne d'une fonction]
+La \cle{valeur moyenne} de $f$ sur $[a\,;b]$ ($a<b$) est le nombre :
+\[ \mu = \frac{1}{b-a}\int_a^b f(x)\,\mathrm{d}x. \]
+C'est la hauteur du rectangle de base $[a\,;b]$ ayant la même aire (algébrique) que le domaine sous la courbe.
+\end{aretenir}
+
+\begin{exoresolu}[Recherche de la valeur moyenne et du $c$ associé]
+\textbf{Énoncé.} Soit $f(x)=x^2$ sur $[0\,;2]$. Calculer la valeur moyenne $\mu$ de $f$ sur cet intervalle et déterminer $c\in[0\,;2]$ tel que $f(c)=\mu$.
+\tcblower
+\textbf{Solution.}
+\[ \mu = \frac{1}{2-0}\int_0^2 x^2\,\mathrm{d}x = \frac{1}{2}\left[\frac{x^3}{3}\right]_0^2 = \frac{1}{2}\times\frac{8}{3} = \frac{4}{3}. \]
+On cherche $c$ tel que $c^2 = \frac{4}{3}$, soit $c = \frac{2}{\sqrt{3}} \approx 1,155 \in [0\,;2]$.
+\end{exoresolu}
+
+\begin{exercice}[Entraînement]
+\begin{enumerate}
+\item Encadrer $\displaystyle\int_1^2 \ln x\,\mathrm{d}x$ sans le calculer (on admet que $\ln$ est croissante sur $]0,+\infty[$).
+\item Soit $f(x)=\sqrt{x}$ sur $[0\,;4]$. Calculer sa valeur moyenne et donner $c$ tel que $f(c)=\mu$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\begin{enumerate}
+\item Sur $[1\,;2]$, $\ln x$ est croissante : $m=\ln 1=0$, $M=\ln 2$. Donc $0 \leq \int_1^2 \ln x\,\mathrm{d}x \leq \ln 2$.
+\item $\mu = \frac{1}{4}\int_0^4 \sqrt{x}\,\mathrm{d}x = \frac{1}{4}\left[\frac{2}{3}x^{3/2}\right]_0^4 = \frac{1}{4}\times\frac{16}{3} = \frac{4}{3}$. $c$ tel que $\sqrt{c}=\frac{4}{3} \Rightarrow c=\frac{16}{9} \in [0\,;4]$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Méthodes de calcul des intégrales}
+
+Au-delà des primitives immédiates, trois techniques majeures permettent de calculer des intégrales plus complexes. Elles sont au cœur du programme de Terminale technique.
+
+\courssub{Intégration par parties}
+
+\begin{propriete}[Formule d'intégration par parties]
+Soient $u$ et $v$ deux fonctions de classe $\mathcal{C}^1$ sur $[a\,;b]$. Alors :
+\[ \int_a^b u(x)v'(x)\,\mathrm{d}x = \big[u(x)v(x)\big]_a^b - \int_a^b u'(x)v(x)\,\mathrm{d}x. \]
+\textbf{Démonstration.} Dériver le produit $uv$ : $(uv)' = u'v + uv'$. Intégrer entre $a$ et $b$ et utiliser la linéarité. \hfill$\blacksquare$
+\end{propriete}
+
+\begin{methode}[Choisir $u$ et $v'$ : règle « LIATE » (indicative)]
+Pour $\int u v'$, on choisit $u$ (à dériver) et $v'$ (à intégrer) dans cet ordre de priorité :
+\textbf{L}ogarithme ($\ln x$), \textbf{I}nverse trigonométrique ($\arcsin$, $\arctan$), \textbf{A}lgebrique ($x^n$), \textbf{T}rigonométrique ($\sin$, $\cos$), \textbf{E}xponentielle ($e^x$).
+\emph{But :} $u'$ doit être plus simple que $u$, et $v$ ne doit pas être plus compliqué que $v'$.
+\end{methode}
+
+\begin{exoresolu}[Intégration par parties classique]
+\textbf{Énoncé.} Calculer $\displaystyle I = \int_0^1 x e^x\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.}
+On pose $u(x)=x$ (algébrique, se simplifie en dérivant) et $v'(x)=e^x$ (exponentielle, facile à intégrer).
+Alors $u'(x)=1$ et $v(x)=e^x$.
+\[ I = \big[x e^x\big]_0^1 - \int_0^1 1\cdot e^x\,\mathrm{d}x = (1\cdot e - 0) - \big[e^x\big]_0^1 = e - (e - 1) = 1. \]
+\end{exoresolu}
+
+\begin{exoresolu}[Intégration par parties itérée]
+\textbf{Énoncé.} Calculer $\displaystyle J = \int_0^{\pi} x^2 \sin x\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.}
+Première fois : $u=x^2$, $v'=\sin x \Rightarrow u'=2x$, $v=-\cos x$.
+\[ J = \big[-x^2\cos x\big]_0^{\pi} + \int_0^{\pi} 2x\cos x\,\mathrm{d}x = \pi^2 + 2\int_0^{\pi} x\cos x\,\mathrm{d}x. \]
+Seconde fois sur $K=\int_0^{\pi} x\cos x\,\mathrm{d}x$ : $u=x$, $v'=\cos x \Rightarrow u'=1$, $v=\sin x$.
+\[ K = \big[x\sin x\big]_0^{\pi} - \int_0^{\pi} \sin x\,\mathrm{d}x = 0 - \big[-\cos x\big]_0^{\pi} = -(-1-1) = 2. \]
+Finalement $J = \pi^2 + 2\times 2 = \pi^2 + 4$.
+\end{exoresolu}
+
+\courssub{Changement de variable (substitution)}
+
+\begin{propriete}[Changement de variable]
+Soit $f$ continue sur un intervalle $I$ et $\varphi$ une fonction de classe $\mathcal{C}^1$ sur $[a\,;b]$ telle que $\varphi([a,b])\subset I$. Alors :
+\[ \int_a^b f(\varphi(t))\,\varphi'(t)\,\mathrm{d}t = \int_{\varphi(a)}^{\varphi(b)} f(u)\,\mathrm{d}u. \]
+\textbf{Démonstration.} Si $F$ est une primitive de $f$, alors $F\circ\varphi$ est une primitive de $(f\circ\varphi)\varphi'$. Appliquer la définition de l'intégrale. \hfill$\blacksquare$
+\end{propriete}
+
+\begin{methode}[Procédure pas à pas]
+\begin{enumerate}
+\item Repérer une fonction composée $f(\varphi(x))$ multipliée par $\varphi'(x)$ (ou un multiple constant).
+\item Poser $u = \varphi(x)$, calculer $\mathrm{d}u = \varphi'(x)\,\mathrm{d}x$.
+\item \textbf{Changer les bornes :} $x=a \to u=\varphi(a)$, $x=b \to u=\varphi(b)$.
+\item Calculer la nouvelle intégrale en $u$.
+\item \textbf{Ne pas revenir à $x$} (les bornes sont déjà en $u$).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Changement de variable direct]
+\textbf{Énoncé.} Calculer $\displaystyle I = \int_0^1 \frac{2x}{1+x^2}\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.}
+On remarque la forme $f(\varphi(x))\varphi'(x)$ avec $\varphi(x)=1+x^2$, $\varphi'(x)=2x$, $f(u)=\frac{1}{u}$.
+Posons $u = 1+x^2$, $\mathrm{d}u = 2x\,\mathrm{d}x$.
+Bornes : $x=0 \to u=1$ ; $x=1 \to u=2$.
+\[ I = \int_1^2 \frac{\mathrm{d}u}{u} = \big[\ln u\big]_1^2 = \ln 2 - \ln 1 = \ln 2. \]
+\end{exoresolu}
+
+\begin{exoresolu}[Changement de variable trigonométrique]
+\textbf{Énoncé.} Calculer $\displaystyle I = \int_0^1 \sqrt{1-x^2}\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.}
+Posons $x = \sin t$, $\mathrm{d}x = \cos t\,\mathrm{d}t$.
+Bornes : $x=0 \to t=0$ ; $x=1 \to t=\frac{\pi}{2}$.
+$\sqrt{1-x^2} = \sqrt{1-\sin^2 t} = \cos t$ (car $t\in[0,\pi/2] \Rightarrow \cos t \geq 0$).
+\[ I = \int_0^{\pi/2} \cos t \cdot \cos t\,\mathrm{d}t = \int_0^{\pi/2} \cos^2 t\,\mathrm{d}t. \]
+On utilise $\cos^2 t = \frac{1+\cos 2t}{2}$ :
+\[ I = \frac{1}{2}\int_0^{\pi/2} (1+\cos 2t)\,\mathrm{d}t = \frac{1}{2}\big[t + \tfrac{1}{2}\sin 2t\big]_0^{\pi/2} = \frac{1}{2}\left(\frac{\pi}{2} + 0\right) = \frac{\pi}{4}. \]
+\emph{Interprétation :} Aire d'un quart de disque unité.
+\end{exoresolu}
+
+\courssub{Intégration de fractions rationnelles (cas simples)}
+
+On se limite aux fractions rationnelles $\frac{P(x)}{Q(x)}$ où $\deg P < \deg Q$ et $Q$ se factorise en facteurs du premier degré distincts (décomposition en éléments simples).
+
+\begin{methode}[Décomposition en éléments simples (dénominateur à racines simples)]
+Pour $\frac{P(x)}{(x-a)(x-b)}$ avec $a\neq b$ et $\deg P \leq 1$ :
+On cherche $A,B$ tels que $\frac{P(x)}{(x-a)(x-b)} = \frac{A}{x-a} + \frac{B}{x-b}$.
+Méthode rapide : $A = \frac{P(a)}{a-b}$, $B = \frac{P(b)}{b-a}$.
+\end{methode}
+
+\begin{exoresolu}[Éléments simples]
+\textbf{Énoncé.} Calculer $\displaystyle I = \int_1^2 \frac{3x+2}{(x+1)(x+2)}\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.}
+Décomposition : $\frac{3x+2}{(x+1)(x+2)} = \frac{A}{x+1} + \frac{B}{x+2}$.
+$A = \frac{3(-1)+2}{-1+2} = \frac{-1}{1} = -1$.
+$B = \frac{3(-2)+2}{-2+1} = \frac{-4}{-1} = 4$.
+Vérification : $\frac{-1}{x+1}+\frac{4}{x+2} = \frac{-x-2+4x+4}{(x+1)(x+2)} = \frac{3x+2}{(x+1)(x+2)}$. OK.
+\[ I = \int_1^2 \left(-\frac{1}{x+1} + \frac{4}{x+2}\right)\mathrm{d}x = \big[-\ln(x+1) + 4\ln(x+2)\big]_1^2. \]
+\[ I = (-\ln 3 + 4\ln 4) - (-\ln 2 + 4\ln 3) = 4\ln 4 + \ln 2 - 5\ln 3 = 8\ln 2 + \ln 2 - 5\ln 3 = 9\ln 2 - 5\ln 3. \]
+\end{exoresolu}
+
+\begin{attention}[Pièges classiques]
+\begin{itemize}
+\item \textbf{Intégration par parties :} Oublier d'évaluer le terme $[uv]_a^b$ (le « crochet »).
+\item \textbf{Changement de variable :} Oublier de changer les bornes, ou oublier $\varphi'(x)$ dans $\mathrm{d}u$.
+\item \textbf{Fractions rationnelles :} Ne pas vérifier $\deg P < \deg Q$ (sinon division euclidienne d'abord).
+\item \textbf{Constante d'intégration :} Inutile pour les intégrales définies (elle s'annule dans la différence $F(b)-F(a)$.
+\end{itemize}
+\end{attention}
+
+
+\coursec{Inégalité de la moyenne et valeur moyenne}
+
+Dans la section précédente, nous avons défini l'intégrale d'une fonction continue comme l'aire algébrique du domaine situé sous sa courbe. Nous savons maintenant calculer cette aire grâce aux primitives. Mais avant de maîtriser les techniques de calcul, il est fondamental de savoir \emph{estimer} une intégrale sans la calculer exactement. C'est tout l'objet de l'inégalité de la moyenne, qui relie la valeur d'une intégrale aux valeurs extrêmes de la fonction. Cette estimation naturelle conduit à la notion de \emph{valeur moyenne}, un outil indispensable en physique, en électricité et en gestion de production.
+
+\courssub{Encadrement d'une fonction continue et inégalité de la moyenne}
+
+Rappelons une propriété fondamentale des fonctions continues sur un segment fermé.
+
+\begin{propriete}[Bornitude et atteinte des bornes]
+Soit $f$ une fonction continue sur un segment $[a;b]$ ($a<b$). Alors $f$ est bornée et atteint ses bornes : il existe deux réels $m$ et $M$ tels que :
+\[
+\forall x \in [a;b],\quad m \le f(x) \le M
+\]
+et il existe $x_m, x_M \in [a;b]$ tels que $f(x_m)=m$ et $f(x_M)=M$.
+On note $m = \min_{[a;b]} f$ et $M = \max_{[a;b]} f$.
+\end{propriete}
+
+Géométriquement, la courbe $y=f(x)$ est entièrement contenue dans la bande horizontale comprise entre les droites $y=m$ et $y=M$. Comme l'intégrale représente une aire, l'aire sous la courbe doit se situer entre l'aire du rectangle de hauteur $m$ et l'aire du rectangle de hauteur $M$, tous deux de largeur $b-a$.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.5, xmax=3.5,
+    ymin=0, ymax=5,
+    xtick={0,3}, xticklabels={$a$,$b$},
+    ytick={1,4}, yticklabels={$m$,$M$},
+    domain=0:3,
+    samples=100,
+    width=\linewidth, height=0.6\linewidth,
+    clip=false
+]
+% Rectangle min
+\addplot[popblueL!50, fill=popblueL!20, draw=popblue, thick] coordinates {(0,0) (0,1) (3,1) (3,0)} \closedcycle;
+% Rectangle max
+\addplot[poporangeL!50, fill=poporangeL!20, draw=poporange, thick] coordinates {(0,0) (0,4) (3,4) (3,0)} \closedcycle;
+% Courbe f(x) = x + 1
+\addplot[popdark, very thick, domain=0:3] {x + 1};
+% Droites m et M
+\addplot[popblue, dashed, thick, domain=-0.5:3.5] {1};
+\addplot[poporange, dashed, thick, domain=-0.5:3.5] {4};
+% Légendes
+\node[popblue, anchor=north east] at (axis cs:3,1) {$m(b-a)$};
+\node[poporange, anchor=north west] at (axis cs:0,4) {$M(b-a)$};
+\node[popdark, anchor=south] at (axis cs:1.5,3.5) {$\mathcal{C}_f$};
+\end{axis}
+\end{tikzpicture}
+\legende{Encadrement de l'aire sous la courbe par les rectangles de hauteurs $m$ et $M$ (ici $f(x)=x+1$ sur $[0;3]$, $m=1$, $M=4$).}
+\end{popfigure}
+
+Cette intuition géométrique se traduit par le théorème suivant.
+
+\begin{propriete}[Inégalité de la moyenne]
+Soit $f$ une fonction continue sur $[a;b]$ ($a<b$). Soit $m = \min_{[a;b]} f$ et $M = \max_{[a;b]} f$. Alors :
+\[
+m(b-a) \le \int_a^b f(x)\,dx \le M(b-a)
+\]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de l'inégalité de la moyenne]
+\textbf{Étape 1 : Encadrer la fonction.} Par définition du minimum et du maximum, pour tout $x \in [a;b]$ :
+\[
+m \le f(x) \le M
+\]
+
+\textbf{Étape 2 : Intégrer l'inégalité.} On utilise la propriété de monotonie de l'intégrale : si deux fonctions $g$ et $h$ satisfont $g(x) \le h(x)$ sur $[a;b]$, alors $\int_a^b g(x)\,dx \le \int_a^b h(x)\,dx$. On intègre chaque terme de $a$ à $b$ :
+\[
+\int_a^b m\,dx \le \int_a^b f(x)\,dx \le \int_a^b M\,dx
+\]
+
+\textbf{Étape 3 : Calculer les intégrales des constantes.}
+\[
+\int_a^b m\,dx = m \int_a^b dx = m(b-a) \quad\text{et}\quad \int_a^b M\,dx = M(b-a)
+\]
+
+\textbf{Conclusion :}
+\[
+m(b-a) \le \int_a^b f(x)\,dx \le M(b-a)
+\]
+\end{experience}
+
+\begin{attention}[Piège fréquent]
+L'inégalité de la moyenne donne un \emph{encadrement}, pas la valeur exacte. Ne l'utilisez pas pour « calculer » une intégrale, mais pour en vérifier l'ordre de grandeur ou pour encadrer une intégrale impossible à calculer élémentairement (ex: $\int_0^1 e^{-x^2}dx$).
+\end{attention}
+
+\begin{methode}[Encadrer une intégrale sans calculer de primitive]
+Pour encadrer $\int_a^b f(x)\,dx$ :
+\begin{enumerate}
+    \item Déterminer $m = \min_{[a;b]} f$ et $M = \max_{[a;b]} f$ (souvent aux bornes ou points critiques si $f$ est monotone).
+    \item Appliquer la formule : $m(b-a) \le \int_a^b f(x)\,dx \le M(b-a)$.
+    \item Conclure par une phrase : « L'intégrale est comprise entre ... et ... ».
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Encadrement d'une intégrale]
+Encadrer l'intégrale $I = \int_1^2 \frac{dx}{x}$ sans calculer de primitive.
+\tcblower
+\underline{Résolution.}
+Sur $[1;2]$, la fonction $f(x)=\frac{1}{x}$ est strictement décroissante.
+Son maximum est $M = f(1) = 1$.
+Son minimum est $m = f(2) = \frac{1}{2}$.
+D'après l'inégalité de la moyenne :
+\[
+m(b-a) \le I \le M(b-a) \iff \frac{1}{2}(2-1) \le I \le 1(2-1) \iff \frac{1}{2} \le I \le 1
+\]
+\underline{Conclusion :} L'intégrale $I$ est comprise entre $0,5$ et $1$. (Valeur exacte $\ln 2 \approx 0,693$, l'encadrement est correct).
+
+\end{exoresolu}
+
+\courssub{Valeur moyenne d'une fonction continue}
+
+L'inégalité de la moyenne s'écrit aussi, en divisant par $b-a>0$ :
+\[
+m \le \frac{1}{b-a}\int_a^b f(x)\,dx \le M
+\]
+Le quotient $\frac{1}{b-a}\int_a^b f(x)\,dx$ est un nombre réel compris entre le minimum et le maximum de $f$. C'est la \emph{valeur moyenne} de la fonction sur l'intervalle.
+
+\begin{definition}[Valeur moyenne d'une fonction]
+Soit $f$ une fonction continue sur $[a;b]$ ($a<b$). La \textbf{valeur moyenne} de $f$ sur $[a;b]$, notée $\mu$ (ou $\bar{f}$), est le nombre réel défini par :
+\[
+\mu = \frac{1}{b-a}\int_a^b f(x)\,dx
+\]
+\end{definition}
+
+\begin{aretenir}[Interprétation géométrique]
+$\mu$ est la hauteur du rectangle de base $[a;b]$ qui a \textbf{la même aire} que le domaine sous la courbe $y=f(x)$.
+\[
+\text{Aire}(\text{rectangle}) = \mu \times (b-a) = \int_a^b f(x)\,dx = \text{Aire}(\text{domaine sous la courbe})
+\]
+\end{aretenir}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.5, xmax=3.5,
+    ymin=0, ymax=5,
+    xtick={0,3}, xticklabels={$a$,$b$},
+    ytick={1,2.5,4}, yticklabels={$m$,$\mu$,$M$},
+    domain=0:3,
+    samples=100,
+    width=\linewidth, height=0.6\linewidth,
+    clip=false
+]
+% Aire sous la courbe
+\addplot[popgreenL!50, fill=popgreenL!30, draw=popgreen, thick, domain=0:3] {x + 1} \closedcycle;
+% Rectangle moyenne
+\addplot[poppurpleL!50, fill=poppurpleL!30, draw=poppurple, thick, dashed, domain=0:3] {2.5} \closedcycle;
+% Courbe
+\addplot[popdark, very thick, domain=0:3] {x + 1};
+% Droites m, mu, M
+\addplot[popblue, dashed, thick, domain=-0.5:3.5] {1};
+\addplot[poppurple, dashed, thick, domain=-0.5:3.5] {2.5};
+\addplot[poporange, dashed, thick, domain=-0.5:3.5] {4};
+% Légendes
+\node[popdark, anchor=south] at (axis cs:1.5,3.8) {$\mathcal{C}_f$};
+\node[poppurple, anchor=south west] at (axis cs:3.1,2.5) {$\mu = \frac{1}{b-a}\int_a^b f$};
+\node[rotate=90, anchor=south, popgreen] at (axis cs:-0.3,1.5) {Aire = $\int_a^b f$};
+\node[rotate=90, anchor=south, poppurple] at (axis cs:3.3,1.25) {Aire = $\mu(b-a)$};
+\end{axis}
+\end{tikzpicture}
+\legende{Le rectangle de hauteur $\mu$ a la même aire que le domaine sous la courbe (ici $f(x)=x+1$ sur $[0;3]$, $\mu=2,5$).}
+\end{popfigure}
+
+\courssub{Interprétations concrètes de la valeur moyenne}
+
+La valeur moyenne n'est pas qu'une construction mathématique ; elle modélise des grandeurs physiques ou économiques réelles.
+
+\begin{savaistu}[Applications professionnelles]
+\begin{itemize}
+    \item \textbf{Électricité (Puissance moyenne) :} Pour un courant alternatif $i(t) = I_{\max}\sin(\omega t)$, la puissance instantanée est $p(t) = R\,i(t)^2$. La \textbf{puissance moyenne} sur une période $T$ est $\bar{p} = \frac{1}{T}\int_0^T p(t)\,dt$. C'est cette valeur qui détermine l'échauffement des câbles et la facture d'électricité (énergie = puissance moyenne $\times$ temps).
+    \item \textbf{Hydrologie (Débit moyen) :} Le débit d'un fleuve $Q(t)$ varie au fil des saisons. Le \textbf{débit moyen} interannuel $\bar{Q} = \frac{1}{365}\int_0^{365} Q(t)\,dt$ (en $m^3/s$) est l'indicateur de référence pour dimensionner les barrages, les ponts et les installations d'irrigation au Cameroun (ex: barrage de Lagdo, fleuve Sanaga).
+    \item \textbf{Mécanique (Vitesse moyenne) :} Si $v(t)$ est la vitesse d'un mobile, la distance parcourue sur $[t_1;t_2]$ est $\int_{t_1}^{t_2} v(t)\,dt$. La \textbf{vitesse moyenne} est $\bar{v} = \frac{1}{t_2-t_1}\int_{t_1}^{t_2} v(t)\,dt$. C'est la vitesse constante qui aurait permis de parcourir la même distance en même temps.
+    \item \textbf{Gestion de production :} Si $P(t)$ est le taux de production (unités/heure), la production totale sur une journée $[0;8]$ est $\int_0^8 P(t)\,dt$. La \textbf{cadence moyenne} est $\frac{1}{8}\int_0^8 P(t)\,dt$.
+\end{itemize}
+\end{savaistu}
+
+\courssub{Théorème de la moyenne (admis)}
+
+Puisque la valeur moyenne $\mu$ est un nombre compris entre $m$ et $M$, et que la fonction $f$ est continue, le théorème des valeurs intermédiaires garantit que $f$ \emph{atteint} cette valeur moyenne au moins une fois.
+
+\begin{propriete}[Théorème de la moyenne pour les intégrales -- Admis au Probatoire]
+Soit $f$ une fonction continue sur $[a;b]$ ($a<b$). Il existe au moins un réel $c \in [a;b]$ tel que :
+\[
+f(c) = \frac{1}{b-a}\int_a^b f(x)\,dx = \mu
+\]
+\end{propriete}
+
+\begin{attention}[Point de vigilance]
+\begin{itemize}
+    \item Le théorème garantit l'\textbf{existence} d'au moins un $c$, mais ne donne pas de méthode pour le trouver (sauf cas simples).
+    \item Il peut y avoir \textbf{plusieurs} points $c$ vérifiant l'égalité.
+    \item La continuité de $f$ sur le segment \textbf{fermé} $[a;b]$ est une hypothèse \textbf{indispensable}. Si $f$ n'est pas continue (ex: fonction escalier), la valeur moyenne peut ne pas être atteinte.
+\end{itemize}
+\end{attention}
+
+\begin{exoresolu}[{Valeur moyenne et point $c$ pour $f(x)=x^2$ sur $[0;3]$}]
+Soit $f(x)=x^2$ sur $[0;3]$.
+\begin{enumerate}
+    \item Calculer la valeur moyenne $\mu$ de $f$ sur $[0;3]$.
+    \item Déterminer le(s) point(s) $c \in [0;3]$ tel(s) que $f(c)=\mu$.
+\end{enumerate}
+\tcblower
+\underline{1. Calcul de $\mu$.}
+Une primitive de $f$ sur $[0;3]$ est $F(x)=\frac{x^3}{3}$.
+\[
+\int_0^3 x^2\,dx = \left[\frac{x^3}{3}\right]_0^3 = \frac{27}{3} - 0 = 9
+\]
+La valeur moyenne est :
+\[
+\mu = \frac{1}{3-0} \times 9 = 3
+\]
+
+\underline{2. Recherche de $c$.}
+On résout $f(c) = \mu \iff c^2 = 3$.
+Comme $c \in [0;3]$, on prend la racine positive :
+\[
+c = \sqrt{3} \approx 1,732
+\]
+\underline{Conclusion :} La valeur moyenne de $x^2$ sur $[0;3]$ est $3$. Elle est atteinte pour $c=\sqrt{3}$. Graphiquement, le rectangle de base $[0;3]$ et de hauteur $3$ a la même aire ($9$) que le domaine sous la parabole.
+
+\end{exoresolu}
+
+\begin{exoresolu}[Application technique : Température moyenne]
+Dans un four industriel, la température (en °C) en fonction du temps $t$ (en heures) est modélisée par $T(t) = 200 + 50\sin\left(\frac{\pi t}{12}\right)$ sur une période de 24h ($t \in [0;24]$). Calculer la température moyenne sur cette période.
+\tcblower
+\underline{Résolution.}
+\[
+\mu = \frac{1}{24-0}\int_0^{24} \left(200 + 50\sin\left(\frac{\pi t}{12}\right)\right)dt
+\]
+Une primitive : $F(t) = 200t + 50 \times \left(-\frac{12}{\pi}\cos\left(\frac{\pi t}{12}\right)\right) = 200t - \frac{600}{\pi}\cos\left(\frac{\pi t}{12}\right)$.
+\[
+\int_0^{24} = \left[200t - \frac{600}{\pi}\cos\left(\frac{\pi t}{12}\right)\right]_0^{24}
+= \left(4800 - \frac{600}{\pi}\cos(2\pi)\right) - \left(0 - \frac{600}{\pi}\cos(0)\right)
+\]
+Comme $\cos(2\pi)=\cos(0)=1$, les termes en cosinus s'annulent :
+\[
+\int_0^{24} = 4800
+\]
+Donc $\mu = \frac{4800}{24} = 200$ °C.
+\underline{Interprétation :} La température moyenne est exactement la valeur centrale $200$°C. L'oscillation sinusoïdale est symétrique autour de cette moyenne.
+
+\end{exoresolu}
+
+\begin{exercice}[Entraînement]
+\begin{enumerate}
+    \item Encadrer $\int_0^1 \sqrt{1+x^2}\,dx$ en utilisant l'inégalité de la moyenne.
+    \item Soit $f(x) = \ln x$ sur $[1;e]$. Calculer la valeur moyenne $\mu$ de $f$ et trouver $c \in [1;e]$ tel que $f(c)=\mu$.
+    \item Un véhicule parcourt une distance $d(t) = t^3 - 6t^2 + 12t$ (en km) en fonction du temps $t$ (en h) sur $[0;2]$. Calculer sa vitesse moyenne sur cet intervalle. Vérifier le théorème de la moyenne en trouvant l'instant $c$ où la vitesse instantanée égale la vitesse moyenne.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+    \item Sur $[0;1]$, $f(x)=\sqrt{1+x^2}$ est croissante. $m=f(0)=1$, $M=f(1)=\sqrt{2}\approx 1,414$.
+    $1(1-0) \le I \le \sqrt{2}(1-0) \implies 1 \le I \le 1,414$.
+    \item Primitive de $\ln x$ : $x\ln x - x$.
+    $\int_1^e \ln x\,dx = [x\ln x - x]_1^e = (e - e) - (0 - 1) = 1$.
+    $\mu = \frac{1}{e-1} \times 1 = \frac{1}{e-1}$.
+    $f(c)=\mu \iff \ln c = \frac{1}{e-1} \iff c = e^{\frac{1}{e-1}} \approx 1,42 \in [1;e]$.
+    \item $v(t)=d'(t)=3t^2-12t+12 = 3(t-2)^2$.
+    Distance parcourue : $d(2)-d(0) = (8-24+24)-0 = 8$ km.
+    Vitesse moyenne : $\bar{v} = 8/2 = 4$ km/h.
+    $v(c)=4 \iff 3(c-2)^2=4 \iff (c-2)^2=\frac{4}{3} \iff c = 2 \pm \frac{2\sqrt{3}}{3}$.
+    Dans $[0;2]$, on garde $c = 2 - \frac{2\sqrt{3}}{3} \approx 0,845$ h.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Méthodes de calcul des intégrales}
+
+Dans la section précédente, nous avons vu que l'inégalité de la moyenne et la valeur moyenne permettent d'\emph{encadrer} ou d'\emph{interpréter} une intégrale sans la calculer exactement. Mais dans la pratique de l'atelier, du chantier ou du laboratoire, le technicien a besoin de \textbf{valeurs exactes} : aire d'une tôle à découper, travail d'une force, quantité d'électricité. Cette section donne la boîte à outils complète pour \cle{calculer effectivement} une intégrale : primitives usuelles, formes composées, transformations d'écriture, et la puissante \cle{intégration par parties}.
+
+\courssub{Calcul direct par recherche d'une primitive}
+
+\textbf{Intuition.} Le théorème fondamental vu dans les sections précédentes dit que si $F$ est une primitive de $f$ sur $[a\,;b]$, alors $\displaystyle\int_a^b f(x)\,\mathrm{d}x = F(b)-F(a)$. Tout le calcul d'intégrale se ramène donc à une question : \emph{de quelle fonction $f$ est-elle la dérivée ?} C'est une lecture « à l'envers » du tableau des dérivées.
+
+\begin{aretenir}[Tableau des primitives usuelles]
+Sur tout intervalle où les fonctions sont définies ($C$ désigne une constante réelle) :
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|l|}\hline
+\rowcolor{popblueL} \textbf{Fonction $f(x)$} & \textbf{Primitive $F(x)$} & \textbf{Intervalle} \\ \hline
+$a$ (constante) & $ax+C$ & $\mathbb{R}$ \\ \hline
+$x^n$ ($n\in\mathbb{N}$) & $\dfrac{x^{n+1}}{n+1}+C$ & $\mathbb{R}$ \\ \hline
+$\dfrac{1}{x^2}$ & $-\dfrac{1}{x}+C$ & $]0\,;+\infty[$ \\ \hline
+$\dfrac{1}{x}$ & $\ln(x)+C$ & $]0\,;+\infty[$ \\ \hline
+$\mathrm{e}^x$ & $\mathrm{e}^x+C$ & $\mathbb{R}$ \\ \hline
+$\cos(x)$ & $\sin(x)+C$ & $\mathbb{R}$ \\ \hline
+$\sin(x)$ & $-\cos(x)+C$ & $\mathbb{R}$ \\ \hline
+$1+\tan^2(x)=\dfrac{1}{\cos^2(x)}$ & $\tan(x)+C$ & $\left]-\tfrac{\pi}{2}\,;\tfrac{\pi}{2}\right[$ \\ \hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\begin{exemplebox}[Calcul direct]
+Calculer $I=\displaystyle\int_1^2 \left(3x^2+\dfrac{1}{x}\right)\mathrm{d}x$. Une primitive de $3x^2+\dfrac{1}{x}$ est $F(x)=x^3+\ln(x)$. Donc :
+\[ I = F(2)-F(1) = \left(8+\ln 2\right)-\left(1+\ln 1\right) = 7+\ln 2. \]
+\end{exemplebox}
+
+\courssub{Primitives des formes composées}
+
+Très souvent, l'intégrande est une fonction \emph{composée}. On reconnaît alors une forme $u'\times(\text{fonction de }u)$, et on lit le tableau des dérivées composées à l'envers. C'est l'application directe du changement de variable $u=u(x)$.
+
+\begin{propriete}[Formes composées à reconnaître]
+Si $u$ est une fonction dérivable sur un intervalle $I$, alors pour tout intervalle inclus dans $I$ où les expressions ont un sens :
+\[ \int u'\,u^n = \frac{u^{n+1}}{n+1}+C \ (n\neq -1), \qquad \int \frac{u'}{u} = \ln|u|+C, \]
+\[ \int u'\,\mathrm{e}^{u} = \mathrm{e}^{u}+C, \qquad \int u'\cos(u) = \sin(u)+C, \qquad \int u'\sin(u) = -\cos(u)+C. \]
+\end{propriete}
+
+\begin{methode}[Reconnaître une forme composée]
+\begin{enumerate}
+\item Identifier un « bloc » $u(x)$ dont la dérivée $u'(x)$ apparaît en facteur (à une constante près).
+\item Faire apparaître $u'$ exactement en multipliant et divisant par la constante manquante.
+\item Appliquer la formule correspondante, puis vérifier en dérivant.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Forme $u'u^n$ et forme $u'\mathrm{e}^u$]
+\textbf{Énoncé.} Calculer $A=\displaystyle\int_0^1 x\left(x^2+1\right)^3\mathrm{d}x$ et $B=\displaystyle\int_0^1 x\,\mathrm{e}^{x^2}\mathrm{d}x$.
+\tcblower
+\textbf{Solution.} Pour $A$ : posons $u(x)=x^2+1$, alors $u'(x)=2x$. On écrit $x=\tfrac{1}{2}\cdot 2x=\tfrac{1}{2}u'$. D'où :
+\[ A = \frac{1}{2}\int_0^1 2x\left(x^2+1\right)^3\mathrm{d}x = \frac{1}{2}\left[\frac{(x^2+1)^4}{4}\right]_0^1 = \frac{1}{8}\left(2^4-1^4\right) = \frac{15}{8}. \]
+Pour $B$ : $B=\dfrac{1}{2}\displaystyle\int_0^1 2x\,\mathrm{e}^{x^2}\mathrm{d}x = \dfrac{1}{2}\left[\mathrm{e}^{x^2}\right]_0^1 = \dfrac{\mathrm{e}-1}{2}$.
+\end{exoresolu}
+
+\courssub{Linéarisation et transformations d'écriture}
+
+Avant d'intégrer, il est souvent indispensable de \cle{réécrire} l'intégrande pour la ramener à une somme de formes usuelles ou composées.
+
+\begin{exemplebox}[Petites transformations utiles]
+\begin{itemize}
+\item \textbf{Développer} : $\displaystyle\int_0^1 (x+1)^2\,\mathrm{d}x = \int_0^1 \left(x^2+2x+1\right)\mathrm{d}x = \left[\frac{x^3}{3}+x^2+x\right]_0^1 = \frac{7}{3}$.
+\item \textbf{Décomposer un quotient} : $\dfrac{2x+3}{x} = 2+\dfrac{3}{x}$, donc $\displaystyle\int_1^2 \frac{2x+3}{x}\mathrm{d}x = \left[2x+3\ln x\right]_1^2 = 2+3\ln 2$.
+\item \textbf{Linéariser} avec $\cos^2(x)=\dfrac{1+\cos(2x)}{2}$ : $\displaystyle\int_0^{\pi} \cos^2(x)\,\mathrm{d}x = \left[\frac{x}{2}+\frac{\sin(2x)}{4}\right]_0^{\pi} = \frac{\pi}{2}$.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Intégration par parties}
+
+\textbf{Intuition.} Certaines fonctions, comme $x\mathrm{e}^x$ ou $\ln(x)$, ne ressemblent à aucune forme connue. Mais elles sont des \emph{produits}. Or la dérivation d'un produit obéit à la formule $(uv)'=u'v+uv'$. En « remontant » cette formule, on obtient un outil qui \emph{échange} les rôles des deux facteurs : c'est l'\cle{intégration par parties}.
+
+\begin{propriete}[Formule d'intégration par parties — démonstration exigible]
+Soient $u$ et $v$ deux fonctions dérivables sur $[a\,;b]$, de \textbf{dérivées continues}. Alors :
+\[ \int_a^b u(x)\,v'(x)\,\mathrm{d}x = \big[u(x)\,v(x)\big]_a^b - \int_a^b u'(x)\,v(x)\,\mathrm{d}x. \]
+\textbf{Démonstration.} $u$ et $v$ étant dérivables, le produit $uv$ est dérivable et $(uv)' = u'v + uv'$, donc $uv' = (uv)' - u'v$. Les fonctions en jeu étant continues, on peut intégrer cette égalité entre $a$ et $b$ :
+\[ \int_a^b u\,v'\,\mathrm{d}x = \int_a^b (uv)'\,\mathrm{d}x - \int_a^b u'v\,\mathrm{d}x. \]
+Or $uv$ est une primitive de $(uv)'$, donc $\displaystyle\int_a^b (uv)'\,\mathrm{d}x = \big[uv\big]_a^b$. D'où la formule. $\square$
+\end{propriete}
+
+\begin{methode}[Conduire une intégration par parties en 4 étapes]
+\begin{enumerate}
+\item \textbf{Choisir} : désigner $u$ (fonction que l'on va dériver) et $v'$ (fonction que l'on va primitiver). On choisit $u$ de sorte que $u'$ soit \emph{plus simple} que $u$ : typiquement $u=x$ ou $u=\ln(x)$.
+\item \textbf{Dériver} $u$ pour obtenir $u'$.
+\item \textbf{Primitiver} $v'$ pour obtenir $v$.
+\item \textbf{Conclure} en appliquant la formule : écrire le crochet $[uv]_a^b$, puis calculer la nouvelle intégrale $\int u'v$, qui doit être plus simple que celle de départ.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Polynôme $\times$ exponentielle : $\int_0^1 x\,\mathrm{e}^x\,\mathrm{d}x$]
+\textbf{Énoncé.} Calculer $I=\displaystyle\int_0^1 x\,\mathrm{e}^x\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.} On pose $u(x)=x$ et $v'(x)=\mathrm{e}^x$ (polynôme $\times$ exponentielle : on dérive le polynôme).
+\begin{itemize}
+\item Étape 2 : $u'(x)=1$ ; Étape 3 : $v(x)=\mathrm{e}^x$.
+\item Étape 4 : $I = \left[x\,\mathrm{e}^x\right]_0^1 - \displaystyle\int_0^1 \mathrm{e}^x\,\mathrm{d}x = \left(\mathrm{e}-0\right) - \left[\mathrm{e}^x\right]_0^1 = \mathrm{e}-(\mathrm{e}-1) = 1$.
+\end{itemize}
+\textbf{Vérification} : une primitive de $x\mathrm{e}^x$ est $F(x)=(x-1)\mathrm{e}^x$ ; en dérivant, $F'(x)=\mathrm{e}^x+(x-1)\mathrm{e}^x = x\mathrm{e}^x$. Correct, et $F(1)-F(0)=0-(-1)=1$.
+\end{exoresolu}
+
+\begin{exoresolu}[Le logarithme : $\int_1^{\mathrm{e}} \ln(x)\,\mathrm{d}x$]
+\textbf{Énoncé.} Calculer $J=\displaystyle\int_1^{\mathrm{e}} \ln(x)\,\mathrm{d}x$.
+\tcblower
+\textbf{Solution.} Astuce : écrire $\ln(x) = 1\times\ln(x)$. On pose $u(x)=\ln(x)$ et $v'(x)=1$.
+Alors $u'(x)=\dfrac{1}{x}$ et $v(x)=x$. D'où :
+\[ J = \big[x\ln(x)\big]_1^{\mathrm{e}} - \int_1^{\mathrm{e}} x\cdot\frac{1}{x}\,\mathrm{d}x = \left(\mathrm{e}\ln\mathrm{e} - 1\ln 1\right) - \int_1^{\mathrm{e}} 1\,\mathrm{d}x = \mathrm{e} - (\mathrm{e}-1) = 1. \]
+On retient au passage la primitive classique : $\displaystyle\int \ln(x)\,\mathrm{d}x = x\ln(x)-x+C$.
+\end{exoresolu}
+
+\begin{exoresolu}[Polynôme $\times$ trigonométrique avec vérification : $\int_0^{\pi} x\sin(x)\,\mathrm{d}x$]
+\textbf{Énoncé.} Calculer $K=\displaystyle\int_0^{\pi} x\sin(x)\,\mathrm{d}x$, puis vérifier le résultat par dérivation.
+\tcblower
+\textbf{Solution.} On pose $u(x)=x$ et $v'(x)=\sin(x)$. Alors $u'(x)=1$ et $v(x)=-\cos(x)$.
+\[ K = \big[-x\cos(x)\big]_0^{\pi} - \int_0^{\pi} \big(-\cos(x)\big)\,\mathrm{d}x = \left(-\pi\cos\pi + 0\right) + \big[\sin(x)\big]_0^{\pi} = \pi + 0 = \pi. \]
+\textbf{Vérification par dérivation.} Une primitive candidate est $G(x) = -x\cos(x)+\sin(x)$. Dérivons :
+\[ G'(x) = -\cos(x) + x\sin(x) + \cos(x) = x\sin(x). \]
+C'est bien l'intégrande. Et $G(\pi)-G(0) = (-\pi\cdot(-1)+0)-(0+0) = \pi$. Le résultat est confirmé.
+\end{exoresolu}
+
+\courssub{Intégration par parties itérée}
+
+Quand le polynôme est de degré 2 ou plus, une seule intégration par parties ne suffit pas : on la \textbf{répète} autant de fois que le degré.
+
+\begin{exemplebox}[Exemple : $\int_0^1 x^2\mathrm{e}^x\,\mathrm{d}x$]
+Première intégration par parties avec $u=x^2$, $v'=\mathrm{e}^x$ (donc $u'=2x$, $v=\mathrm{e}^x$) :
+\[ \int_0^1 x^2\mathrm{e}^x\,\mathrm{d}x = \left[x^2\mathrm{e}^x\right]_0^1 - 2\int_0^1 x\,\mathrm{e}^x\,\mathrm{d}x = \mathrm{e} - 2\int_0^1 x\mathrm{e}^x\,\mathrm{d}x. \]
+Or nous avons calculé plus haut $\displaystyle\int_0^1 x\mathrm{e}^x\,\mathrm{d}x = 1$ (deuxième intégration par parties). Donc :
+\[ \int_0^1 x^2\mathrm{e}^x\,\mathrm{d}x = \mathrm{e}-2. \]
+Chaque passage fait baisser le degré du polynôme de 1 : $x^2 \to x \to 1$.
+\end{exemplebox}
+
+\begin{attention}[Erreurs fréquentes à l'intégration par parties]
+\begin{itemize}
+\item \textbf{Oublier les bornes dans le crochet} : $[uv]_a^b$ signifie $u(b)v(b)-u(a)v(a)$. Un crochet sans bornes est une faute de rédaction sanctionnée au Baccalauréat technique.
+\item \textbf{Permuter $u$ et $v'$} : si l'on dérive l'exponentielle et primitive le polynôme, l'intégrale devient \emph{plus compliquée} (le degré monte !). Règle pratique : on dérive ce qui se simplifie par dérivation (polynômes, $\ln$), on primitive ce qui reste stable ($\mathrm{e}^x$, $\sin$, $\cos$).
+\item \textbf{Oublier le signe moins} devant la deuxième intégrale : $\int uv' = [uv] \mathbf{-} \int u'v$.
+\item \textbf{Signe de la primitive de $\sin$} : une primitive de $\sin(x)$ est $-\cos(x)$, pas $\cos(x)$.
+\end{itemize}
+\end{attention}
+
+\begin{methode}[Vérifier un résultat par dérivation]
+Pour contrôler un calcul d'intégrale ou de primitive : dériver la primitive $F$ trouvée. Si $F'$ redonne exactement l'intégrande $f$, le résultat est juste. Ce réflexe, rapide et gratuit en points, doit devenir systématique à l'examen.
+\end{methode}
+
+\courssub{Organigramme de décision : quelle méthode choisir ?}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  node distance=0.55cm and 0.9cm,
+  question/.style={draw=popblue, fill=popblueL, rounded corners, thick, text width=4.6cm, align=center, font=\small},
+  answer/.style={draw=popgreen, fill=popgreenL, rounded corners, thick, text width=4.2cm, align=center, font=\small},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}]
+\node[question] (q1) {L'intégrande est-elle une fonction usuelle (ou une somme) ?};
+\node[answer, right=of q1] (r1) {Primitive directe : tableau des primitives usuelles};
+\node[question, below=of q1] (q2) {Reconnaît-on une forme $u'u^n$, $\frac{u'}{u}$, $u'\mathrm{e}^u$, $u'\cos u$, $u'\sin u$ ?};
+\node[answer, right=of q2] (r2) {Forme composée : ajuster la constante, appliquer la formule};
+\node[question, below=of q2] (q3) {Peut-on réécrire : développer, décomposer, linéariser ?};
+\node[answer, right=of q3] (r3) {Transformer l'écriture puis revenir aux cas précédents};
+\node[question, below=of q3] (q4) {Produit polynôme $\times$ $\mathrm{e}^x$ / $\sin$ / $\cos$, ou $\ln(x)$ ?};
+\node[answer, right=of q4] (r4) {Intégration par parties (itérée si degré $\geq 2$)};
+\draw[fleche] (q1) -- node[above, font=\scriptsize]{oui} (r1);
+\draw[fleche] (q1) -- node[right, font=\scriptsize]{non} (q2);
+\draw[fleche] (q2) -- node[above, font=\scriptsize]{oui} (r2);
+\draw[fleche] (q2) -- node[right, font=\scriptsize]{non} (q3);
+\draw[fleche] (q3) -- node[above, font=\scriptsize]{oui} (r3);
+\draw[fleche] (q3) -- node[right, font=\scriptsize]{non} (q4);
+\draw[fleche] (q4) -- node[above, font=\scriptsize]{oui} (r4);
+\end{tikzpicture}
+\legende{Organigramme de décision : choisir la méthode de calcul selon la forme de l'intégrande.}
+\end{popfigure}
+
+\begin{exercice}[À faire]
+Calculer les intégrales suivantes en précisant la méthode utilisée :
+\[ I_1=\int_0^2 \frac{x}{x^2+1}\,\mathrm{d}x, \qquad I_2=\int_0^{\pi/2} x\cos(x)\,\mathrm{d}x, \qquad I_3=\int_1^{\mathrm{e}} x\ln(x)\,\mathrm{d}x. \]
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+$I_1$ : forme $\dfrac{u'}{u}$ avec $u=x^2+1$ : $I_1=\dfrac{1}{2}\left[\ln(x^2+1)\right]_0^2 = \dfrac{\ln 5}{2}$.
+$I_2$ : parties avec $u=x$, $v'=\cos x$ : $I_2 = [x\sin x]_0^{\pi/2} - [-\cos x]_0^{\pi/2} = \dfrac{\pi}{2} - 1$.
+$I_3$ : parties avec $u=\ln x$, $v' = x$ : $I_3 = \left[\dfrac{x^2}{2}\ln x\right]_1^{\mathrm{e}} - \displaystyle\int_1^{\mathrm{e}}\frac{x}{2}\,\mathrm{d}x = \frac{\mathrm{e}^2}{2} - \frac{\mathrm{e}^2-1}{4} = \frac{\mathrm{e}^2+1}{4}$.
+\end{corrige}
+
+\begin{savaistu}[La réciproque de la dérivation d'un produit]
+L'intégration par parties est la « réciproque » de la formule de dérivation d'un produit $(uv)'=u'v+uv'$, exactement comme la recherche de primitive est la réciproque de la dérivation. Cette dualité dériver/intégrer est l'un des piliers de l'analyse : en électricité, elle permet par exemple de calculer la valeur efficace d'un courant alternatif ; en mécanique, le travail d'une force variable. Au Cameroun, les techniciens en génie électrique l'utilisent pour dimensionner des installations à partir de signaux périodiques.
+\end{savaistu}
+
+\coursec{Calcul d'aires planes}
+
+\courssub{Transition depuis les méthodes de calcul des intégrales}
+Dans la section précédente nous avons maîtrisé les primitives usuelles, la linéarité de l'intégrale, l'intégration par parties et le changement de variable. Ces outils sont désormais mis au service d'une application géométrique fondamentale : le calcul d'aires planes. L'intégrale définie $\int_a^b f(x)\,dx$ représente, sous réserve de signe, l'aire du domaine borné par la courbe $y=f(x)$, l'axe des abscisses et les droites $x=a$, $x=b$. Nous allons préciser comment passer de cette interprétation à un calcul effectif, y compris lorsque la fonction change de signe ou lorsque deux courbes se croisent.
+
+\courssub{Aire sous la courbe d'une fonction positive}
+\begin{definition}[Aire d'un domaine sous une courbe positive]
+Soit $f$ une fonction continue et \textbf{positive} sur un intervalle $[a;b]$ ($f(x)\ge 0$). L'aire $\mathcal{A}$ du domaine $\mathcal{D}$ délimité par la courbe $\mathcal{C}_f$, l'axe des abscisses et les droites $x=a$, $x=b$ est donnée par
+\[
+\mathcal{A}=\int_a^b f(x)\,dx.
+\]
+\end{definition}
+
+\begin{exemplebox}[Aire sous une parabole]
+Calculer l'aire du domaine borné par $y=x^2$, l'axe des abscisses et les droites $x=0$, $x=2$.
+\tcblower
+$f(x)=x^2\ge0$ sur $[0;2]$. Une primitive est $F(x)=\frac{x^3}{3}$.
+\[
+\mathcal{A}=\int_0^2 x^2\,dx=\Bigl[\frac{x^3}{3}\Bigr]_0^2=\frac{8}{3}\ \text{unités d'aire}.
+\]
+Si le repère est gradué en centimètres, l'aire vaut $\frac{8}{3}\,\text{cm}^2\approx2,67\,\text{cm}^2$.
+\end{exemplebox}
+
+\courssub{Fonction négative ou de signe variable : découpage et valeur absolue}
+Lorsque $f$ prend des valeurs négatives, l'intégrale $\int_a^b f(x)\,dx$ donne l'aire \emph{algébrique} (partie au-dessus de l'axe moins partie en-dessous). L'aire \emph{géométrique} (toujours positive) s'obtient en intégrant la valeur absolue $|f(x)|$, ce qui impose un découpage de l'intervalle selon le signe de $f$.
+
+\begin{propriete}[Aire géométrique pour une fonction de signe variable]
+Soit $f$ continue sur $[a;b]$. Soient $a=x_0<x_1<\dots<x_n=b$ les points où $f$ change de signe (zéros de $f$ dans $]a;b[$). Alors l'aire $\mathcal{A}$ du domaine borné par $\mathcal{C}_f$, l'axe des abscisses et $x=a$, $x=b$ est
+\[
+\mathcal{A}=\sum_{k=1}^n \Bigl|\int_{x_{k-1}}^{x_k} f(x)\,dx\Bigr|
+=\int_a^b |f(x)|\,dx.
+\]
+\end{propriete}
+
+\begin{exemplebox}[Aire avec une fonction négative]
+Soit $f(x)=x^2-4$ sur $[-3;3]$. Tracer la courbe et calculer l'aire du domaine délimité par $\mathcal{C}_f$ et l'axe des abscisses.
+\tcblower
+$f(x)=0 \Leftrightarrow x=\pm2$. Sur $[-3;-2]$ et $[2;3]$, $f\ge0$ ; sur $[-2;2]$, $f\le0$.
+\[
+\begin{aligned}
+\mathcal{A}&=\int_{-3}^{-2}(x^2-4)\,dx
+-\int_{-2}^{2}(x^2-4)\,dx
++\int_{2}^{3}(x^2-4)\,dx\\
+&=\Bigl[\frac{x^3}{3}-4x\Bigr]_{-3}^{-2}
+-\Bigl[\frac{x^3}{3}-4x\Bigr]_{-2}^{2}
++\Bigl[\frac{x^3}{3}-4x\Bigr]_{2}^{3}\\
+&=\left(\frac{-8}{3}+8\right)-\left(\frac{-27}{3}+12\right)
+-\left[\left(\frac{8}{3}-8\right)-\left(\frac{-8}{3}+8\right)\right]
++\left(\frac{27}{3}-12\right)-\left(\frac{8}{3}-8\right)\\
+&=\frac{20}{3}+\frac{32}{3}+\frac{20}{3}=24\ \text{unités d'aire}.
+\end{aligned}
+\]
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-3.5, xmax=3.5,
+    ymin=-5, ymax=6,
+    domain=-3:3,
+    samples=200,
+    width=\linewidth,
+    height=8cm,
+    tick style={thick},
+    xtick={-3,-2,-1,0,1,2,3},
+    ytick={-4,-2,0,2,4},
+    grid=major,
+    grid style={popline!30},
+]
+\addplot[popcurve, thick, domain=-3:3] {x^2-4};
+\addplot[poporange, fill=poporange!30, draw=poporange, thick, domain=-3:-2] {x^2-4} \closedcycle;
+\addplot[poppurple, fill=poppurple!30, draw=poppurple, thick, domain=-2:2] {x^2-4} \closedcycle;
+\addplot[popgreen, fill=popgreen!30, draw=popgreen, thick, domain=2:3] {x^2-4} \closedcycle;
+\node[popdark, anchor=north] at (axis cs: -2.5, 1) {$f\ge0$};
+\node[popdark, anchor=south] at (axis cs: 0, -3) {$f\le0$};
+\node[popdark, anchor=north] at (axis cs: 2.5, 1) {$f\ge0$};
+\end{axis}
+\end{tikzpicture}
+\legende{Domaine sous $y=x^2-4$ : parties positives (orange, vert) et négative (violet) ; l'aire totale est la somme des aires non signées.}
+\end{popfigure}
+
+\courssub{Aire entre deux courbes}
+Soient $f$ et $g$ deux fonctions continues sur $[a;b]$ telles que $f(x)\ge g(x)$ pour tout $x\in[a;b]$. L'aire du domaine borné par les courbes $\mathcal{C}_f$, $\mathcal{C}_g$ et les droites $x=a$, $x=b$ est la différence des aires sous chaque courbe.
+
+\begin{propriete}[Aire entre deux courbes]
+Si $f\ge g$ sur $[a;b]$, l'aire $\mathcal{A}$ du domaine $\mathcal{D}$ compris entre $\mathcal{C}_f$ et $\mathcal{C}_g$ est
+\[
+\mathcal{A}=\int_a^b \bigl(f(x)-g(x)\bigr)\,dx.
+\]
+\emph{Justification :} $\mathcal{A}=\underbrace{\int_a^b f(x)\,dx}_{\text{aire sous }f}
+-\underbrace{\int_a^b g(x)\,dx}_{\text{aire sous }g}
+=\int_a^b (f-g)$ par linéarité de l'intégrale.
+\end{propriete}
+
+\begin{attention}[Piège fréquent : inverser $f$ et $g$]
+Il est \textbf{impératif} de vérifier quelle courbe est au-dessus avant d'écrire $f-g$. Si on intègre $g-f$ alors que $f\ge g$, on obtient un nombre négatif, ce qui n'a pas de sens pour une aire. Toujours tracer (ou tester un point) pour identifier l'ordre des courbes.
+\end{attention}
+
+\begin{methode}[Plan type en 5 étapes pour un calcul d'aire]
+\begin{enumerate}
+\item \textbf{Étudier le signe} : déterminer où les fonctions sont positives, négatives ou se coupent.
+\item \textbf{Trouver les intersections} : résoudre $f(x)=g(x)$ (ou $f(x)=0$) pour obtenir les bornes $a,b$ et les points de découpage.
+\item \textbf{Découper l'intervalle} : sur chaque sous-intervalle, identifier la fonction supérieure ($f$) et l'inférieure ($g$).
+\item \textbf{Calculer les intégrales} : appliquer les primitives, la linéarité, le changement de variable ou l'intégration par parties si nécessaire.
+\item \textbf{Convertir en unités concrètes} : si le repère est en cm, l'aire est en cm$^2$ ; en m, en m$^2$, etc.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[{Aire entre $y=x^2$ et $y=x$ sur $[0;1]$}]
+\emph{Énoncé :} Calculer l'aire du domaine borné par la parabole $y=x^2$ et la droite $y=x$ entre leurs points d'intersection.
+\tcblower
+\textbf{1. Intersections :} $x^2=x \Rightarrow x(x-1)=0 \Rightarrow x=0$ ou $x=1$.\\
+\textbf{2. Ordre des courbes :} Pour $x\in(0;1)$, $x > x^2$ (ex. $x=0,5 \Rightarrow 0,5 > 0,25$). Donc $f(x)=x$ (supérieure), $g(x)=x^2$ (inférieure).\\
+\textbf{3. Intégrale :}
+\[
+\mathcal{A}=\int_0^1 \bigl(x - x^2\bigr)\,dx
+=\Bigl[\frac{x^2}{2} - \frac{x^3}{3}\Bigr]_0^1
+=\frac12 - \frac13 = \frac16.
+\]
+\textbf{4. Unités :} Si le repère est en mètres, l'aire vaut $\frac16\,\text{m}^2\approx0,167\,\text{m}^2$.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.2, xmax=1.2,
+    ymin=-0.2, ymax=1.2,
+    domain=0:1,
+    samples=200,
+    width=\linewidth,
+    height=8cm,
+    tick style={thick},
+    xtick={0,0.5,1},
+    ytick={0,0.5,1},
+    grid=major,
+    grid style={popline!30},
+]
+\addplot[popcurve, thick, domain=0:1] {x^2};
+\addplot[poporange, thick, domain=0:1] {x};
+\addplot[popgreen!50, fill=popgreen!30, draw=popgreen, domain=0:1] {x} \closedcycle;
+\addplot[popgreen!50, fill=popgreen!30, draw=popgreen, domain=0:1] {x^2} \closedcycle;
+\node[popdark, anchor=south east] at (axis cs: 0.5, 0.75) {$y=x$};
+\node[popdark, anchor=north west] at (axis cs: 0.5, 0.25) {$y=x^2$};
+\node[popdark, anchor=south] at (axis cs: 0.5, 0.5) {$\mathcal{A}=\frac16$};
+\end{axis}
+\end{tikzpicture}
+\legende{Aire entre la parabole $y=x^2$ et la droite $y=x$ sur $[0;1]$ ; la zone hachurée correspond à $\int_0^1 (x-x^2)\,dx$.}
+\end{popfigure}
+
+\courssub{Applications concrètes : conversion d'unités et situations techniques}
+Dans les métiers techniques (topographie, découpe de tôle, conception de tissus, génie civil), le repère du plan est souvent gradué en centimètres ou en mètres. L'aire obtenue par l'intégrale est alors directement exprimée en cm$^2$ ou m$^2$. Il suffit de multiplier par le facteur d'échelle si le dessin n'est pas à l'échelle 1:1.
+
+\begin{exemplebox}[Surface d'un terrain aux bordures courbes]
+Un terrain est délimité par le bord d'une rivière modélisé par $y=2\sqrt{x}$ (en mètres) et par une clôture droite $y=x$ entre $x=0$ et $x=4$. Calculer la surface du terrain.
+\tcblower
+Intersections : $2\sqrt{x}=x \Rightarrow x=0$ ou $x=4$. Sur $[0;4]$, $2\sqrt{x}\ge x$ (test $x=1$: $2>1$).
+\[
+\mathcal{A}=\int_0^4 \bigl(2\sqrt{x}-x\bigr)\,dx
+=\int_0^4 \bigl(2x^{1/2}-x\bigr)\,dx
+=\Bigl[\frac{4}{3}x^{3/2}-\frac{x^2}{2}\Bigr]_0^4
+=\frac{4}{3}\cdot8 - \frac{16}{2}
+=\frac{32}{3}-8=\frac{8}{3}\ \text{m}^2\approx2,67\,\text{m}^2.
+\]
+\end{exemplebox}
+
+\begin{savaistu}[Histoire et usage]
+La méthode des indivisibles de Cavalieri (XVII$^{\text{e}}$ siècle) a préfiguré le calcul intégral pour déterminer des aires et volumes. Aujourd'hui, les logiciels de CAO (CATIA, SolidWorks) utilisent numériquement ces mêmes intégrales pour calculer des surfaces de pièces complexes avant usinage.
+\end{savaistu}
+
+\courssub{Synthèse et points de vigilance}
+\begin{itemize}
+\item L'aire géométrique est toujours positive : on intègre $|f|$ ou on découpe selon le signe.
+\item Entre deux courbes, l'ordre $f\ge g$ doit être vérifié sur chaque sous-intervalle.
+\item Les bornes d'intégration sont les abscisses des points d'intersection (résolution d'équation).
+\item La conversion d'unités se fait \emph{après} le calcul analytique, en tenant compte de l'échelle du repère.
+\end{itemize}
+
+\begin{exercice}[Entraînement]
+\begin{enumerate}
+\item Calculer l'aire du domaine borné par $y=\sin x$, l'axe des abscisses et les droites $x=0$, $x=\pi$.
+\item Déterminer l'aire entre $y=e^x$ et $y=x+1$ sur l'intervalle où elles se coupent.
+\item Un morceau de tissu a pour bord supérieur la courbe $y=3-\frac{x^2}{4}$ (en dm) et pour bord inférieur l'axe des abscisses, entre $x=-2$ et $x=2$. Quelle est sa surface en dm$^2$ ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+$\sin x\ge0$ sur $[0;\pi]$. $\mathcal{A}=\int_0^\pi \sin x\,dx=[-\cos x]_0^\pi=2$ unités d'aire.
+\end{corrige}
+
+\begin{corrige}[Exercice n°2]
+Intersections : $e^x=x+1 \Rightarrow x=0$ (unique). Mais sur $\mathbb{R}$, $e^x\ge x+1$ (inégalité classique). Pour une aire bornée, on choisit un intervalle symétrique, par exemple $[-1;1]$. Alors $\mathcal{A}=\int_{-1}^1 (e^x-x-1)\,dx = \bigl[e^x-\frac{x^2}{2}-x\bigr]_{-1}^1 = (e-\frac12-1)-(e^{-1}-\frac12+1)=e-e^{-1}-2\approx0,35$.
+\end{corrige}
+
+\begin{corrige}[Exercice n°3]
+$f(x)=3-\frac{x^2}{4}\ge0$ sur $[-2;2]$. $\mathcal{A}=\int_{-2}^2 \bigl(3-\frac{x^2}{4}\bigr)\,dx = \bigl[3x-\frac{x^3}{12}\bigr]_{-2}^2 = (6-\frac{8}{12})-(-6+\frac{8}{12}) = 12-\frac{16}{12}=12-\frac{4}{3}=\frac{32}{3}\approx10,67\ \text{dm}^2$.
+\end{corrige}
+
+\coursec{Calcul de volumes de solides de révolution}
+
+Après avoir vu comment calculer l'aire d'un domaine plan borné par une courbe, nous passons naturellement à la troisième dimension : si l'on fait tourner ce domaine autour de l'axe des abscisses, on obtient un \cle{solide de révolution}. Le volume de ce solide s'exprime encore par une intégrale, mais l'élément de volume n'est plus un rectangle, c'est un cylindre mince (une \og tranche \fg{} du solide).
+
+\courssub{Du domaine plan au solide de révolution}
+
+Soit $f$ une fonction \cle{continue} et \cle{positive} sur un intervalle $[a;b]$. Le domaine $\mathcal{D}$ compris entre la courbe $\mathcal{C}_f$, l'axe $Ox$ et les droites d'équations $x=a$ et $x=b$ est mis en rotation d'un tour complet autour de l'axe $Ox$. Chaque point $(x\,;f(x))$ décrit un cercle de rayon $f(x)$ ; l'ensemble de ces cercles remplit un solide $\mathcal{S}$.
+
+\begin{experience}[Justification par tranches cylindriques]
+On découpe l'intervalle $[a;b]$ en $n$ sous-intervalles de même largeur $\Delta x = \dfrac{b-a}{n}$. Sur le $k$-ième sous-intervalle $[x_{k-1}\,;x_k]$, on approche la courbe par la valeur constante $f(\xi_k)$ (par exemple la valeur au milieu du sous-intervalle). La rotation du petit rectangle correspondant engendre un \textbf{cylindre} de rayon $f(\xi_k)$ et de hauteur $\Delta x$, dont le volume est
+\[
+\Delta V_k = \pi \bigl[f(\xi_k)\bigr]^2 \times \Delta x.
+\]
+En additionnant les volumes de toutes les tranches, de $k=1$ à $k=n$, puis en faisant tendre $n$ vers l'infini (les tranches deviennent infiniment minces), la somme obtenue converge vers l'intégrale
+\[
+V = \lim_{n\to\infty} \sum_{k=1}^{n} \pi \bigl[f(\xi_k)\bigr]^2 \Delta x = \pi \int_a^b \bigl[f(x)\bigr]^2 \,dx.
+\]
+C'est exactement le même raisonnement que pour l'aire sous une courbe, sauf que l'on somme des volumes de cylindres au lieu d'aires de rectangles.
+\end{experience}
+
+\begin{propriete}[Formule du volume d'un solide de révolution autour de $Ox$]
+Si $f$ est continue et $f(x)\ge 0$ pour tout $x$ de $[a;b]$, alors le volume du solide engendré par la rotation du domaine sous $\mathcal{C}_f$ autour de l'axe $Ox$ est
+\[
+V = \pi \int_a^b \bigl[f(x)\bigr]^2 \,dx
+\]
+Le volume est exprimé en \textbf{unités de volume} (u.v.) : si les longueurs sont en cm, le volume est en $\text{cm}^3$.
+\end{propriete}
+
+\begin{aretenir}[L'idée à retenir]
+Volume $=$ somme des volumes des tranches cylindriques : chaque tranche a pour volume $\pi \times (\text{rayon})^2 \times (\text{épaisseur}) = \pi f(x)^2 \, dx$. D'où la formule $V = \pi \displaystyle\int_a^b f(x)^2\,dx$.
+\end{aretenir}
+
+\courssub{Méthode de calcul}
+
+\begin{methode}[Calculer un volume de révolution en 4 étapes]
+\begin{enumerate}
+\item Identifier la fonction $f$ qui donne le \textbf{rayon} de la tranche en fonction de $x$ (c'est l'ordonnée de la courbe génératrice).
+\item Déterminer les bornes $a$ et $b$ de l'intervalle sur lequel s'effectue la rotation.
+\item Élever $f(x)$ au carré et multiplier par $\pi$ : la fonction à intégrer est $\pi \bigl[f(x)\bigr]^2$.
+\item Calculer l'intégrale $\displaystyle V=\pi\int_a^b \bigl[f(x)\bigr]^2\,dx$ à l'aide d'une primitive, puis conclure avec l'unité de volume.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+\item \textbf{Oublier le carré} sur $f(x)$ : on intégrerait $\pi f(x)$ au lieu de $\pi \bigl[f(x)\bigr]^2$. C'est l'erreur la plus fréquente au Probatoire.
+\item \textbf{Oublier le facteur $\pi$} devant l'intégrale.
+\item \textbf{Confondre avec le calcul d'aire} : l'aire sous la courbe est $\displaystyle\int_a^b f(x)\,dx$ ; le volume de révolution est $\pi\displaystyle\int_a^b f(x)^2\,dx$. Ce sont deux formules différentes.
+\item \textbf{Ne pas vérifier le signe de $f$} : la formule exige $f(x)\ge 0$ sur $[a;b]$. Si la courbe passe sous l'axe $Ox$, on prend $|f(x)|$ (le carré donne de toute façon $\bigl[f(x)\bigr]^2 = |f(x)|^2$).
+\item \textbf{Oublier l'unité de volume} dans la conclusion (u.v., $\text{cm}^3$, $\text{m}^3$\ldots).
+\end{itemize}
+\end{attention}
+
+\courssub{Exemples classiques : retrouver les formules des solides usuels}
+
+\begin{exemplebox}[Volume d'un cylindre]
+Un cylindre de rayon $r$ et de hauteur $h$ est engendré par la rotation du segment $y=r$ (fonction constante) pour $x\in[0;h]$ autour de $Ox$.
+\[
+V = \pi \int_0^h r^2 \,dx = \pi r^2 \bigl[x\bigr]_0^h = \pi r^2 h.
+\]
+On retrouve la formule connue : (aire de la base) $\times$ (hauteur).
+\end{exemplebox}
+
+\begin{exemplebox}[Volume d'un cône droit]
+Un cône de hauteur $h$ et de rayon de base $r$ s'obtient en faisant tourner autour de $Ox$ la droite d'équation $y = \dfrac{r}{h}x$ pour $x\in[0;h]$ (à $x=0$ le rayon est nul, à $x=h$ le rayon vaut $r$).
+\begin{align*}
+V &= \pi \int_0^h \left(\frac{r}{h}x\right)^2 dx
+   = \pi \frac{r^2}{h^2} \int_0^h x^2 \,dx
+   = \pi \frac{r^2}{h^2} \left[\frac{x^3}{3}\right]_0^h \\
+  &= \pi \frac{r^2}{h^2} \times \frac{h^3}{3}
+   = \frac{1}{3}\pi r^2 h.
+\end{align*}
+On retrouve la formule classique du cône : $\dfrac{1}{3}\times(\text{aire de la base})\times(\text{hauteur})$.
+\end{exemplebox}
+
+\begin{exemplebox}[Volume d'une sphère]
+Une sphère de rayon $R$ est engendrée par la rotation du demi-cercle d'équation $y = \sqrt{R^2 - x^2}$, pour $x\in[-R\,;R]$, autour de $Ox$. Comme $\bigl(\sqrt{R^2-x^2}\bigr)^2 = R^2 - x^2$, le carré fait disparaître la racine :
+\begin{align*}
+V &= \pi \int_{-R}^{R} (R^2 - x^2)\,dx
+   = \pi \left[ R^2 x - \frac{x^3}{3} \right]_{-R}^{R} \\
+  &= \pi \left[ \left(R^3 - \frac{R^3}{3}\right) - \left(-R^3 + \frac{R^3}{3}\right) \right]
+   = \pi \left( \frac{2R^3}{3} + \frac{2R^3}{3} \right)
+   = \frac{4}{3}\pi R^3.
+\end{align*}
+\end{exemplebox}
+
+\courssub{Applications concrètes et conversion d'unités}
+
+Dans un atelier de tournage ou de chaudronnerie, les dimensions sont souvent données en centimètres. Le volume obtenu par l'intégrale est alors en $\text{cm}^3$. Pour convertir en litres, on utilise :
+\[
+1\ \text{L} = 1000\ \text{cm}^3 = 1\ \text{dm}^3.
+\]
+
+\begin{exoresolu}[Réservoir cylindrique surmonté d'un cône]
+Un réservoir est composé d'une partie cylindrique de rayon $r=30$ cm et de hauteur $h_1=80$ cm, surmontée d'un cône de même rayon et de hauteur $h_2=40$ cm. Calculer sa capacité en litres (on prendra $\pi \approx 3,1416$).
+\tcblower
+\textbf{Solution détaillée.} On additionne les deux volumes, obtenus par les formules démontrées ci-dessus.
+\begin{align*}
+V_{\text{cyl}} &= \pi r^2 h_1 = \pi \times 30^2 \times 80 = 72\,000\pi\ \text{cm}^3,\\
+V_{\text{cône}} &= \frac{1}{3}\pi r^2 h_2 = \frac{1}{3}\pi \times 30^2 \times 40 = 12\,000\pi\ \text{cm}^3,\\
+V_{\text{total}} &= (72\,000+12\,000)\pi = 84\,000\pi\ \text{cm}^3 \approx 263\,894\ \text{cm}^3.
+\end{align*}
+Conversion en litres :
+\[
+\text{Capacité} = \frac{263\,894}{1000} \approx 263,9\ \text{L}.
+\]
+\textbf{Conclusion :} le réservoir peut contenir environ $263,9$ litres, soit un peu plus de $263$ litres.
+\end{exoresolu}
+
+\begin{exoresolu}[Volume d'une pièce tournée]
+Un tourneur façonne une pièce dont le profil, en centimètres, est donné par la courbe d'équation $f(x)=\sqrt{x}$ pour $x\in[0\,;9]$, tournée autour de l'axe $Ox$. Calculer le volume de bois de la pièce.
+\tcblower
+\textbf{Solution détaillée.} La fonction $f(x)=\sqrt{x}$ est continue et positive sur $[0\,;9]$. On applique la formule :
+\[
+V = \pi \int_0^9 \bigl(\sqrt{x}\bigr)^2 dx = \pi \int_0^9 x\,dx = \pi \left[\frac{x^2}{2}\right]_0^9 = \pi \times \frac{81}{2} = \frac{81\pi}{2}.
+\]
+Numériquement : $V \approx \dfrac{81 \times 3,1416}{2} \approx 127,2\ \text{cm}^3$.\\
+\textbf{Conclusion :} la pièce a un volume d'environ $127,2\ \text{cm}^3$.
+\end{exoresolu}
+
+\begin{savaistu}[Les tourneurs sur bois de Foumban]
+À Foumban, dans la région de l'Ouest du Cameroun, les artisans tourneurs façonnent des bols, des pilons et des statuettes sur un tour à bois. La pièce en rotation est exactement un solide de révolution : le profil que l'artisan trace au couteau devient la fonction $f(x)$. Connaître la formule $V = \pi\displaystyle\int_a^b \bigl[f(x)\bigr]^2 dx$ permet de prévoir la quantité de bois nécessaire, d'estimer la masse finale de l'objet (masse $=$ volume $\times$ masse volumique) et d'optimiser la matière première. C'est une application directe des mathématiques techniques au savoir-faire artisanal camerounais.
+\end{savaistu}
+
+\courssub{Illustrations}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+% Axes
+\draw[->] (-0.5,0) -- (5.5,0) node[right] {$x$};
+\draw[->] (0,-0.5) -- (0,3.5) node[above] {$y$};
+% Courbe f(x) = sqrt(x)
+\draw[popblue, thick, domain=0:4, samples=100] plot (\x, {sqrt(max(0,\x))});
+\node[popblue] at (4.3,2.1) {$y=f(x)$};
+% Domaine coloré
+\fill[popblue!15] (0,0) -- plot[domain=0:4, samples=100] (\x, {sqrt(max(0,\x))}) -- (4,0) -- cycle;
+% Tranche élémentaire mise en évidence
+\fill[poporange!40] (1.5,0) rectangle (2.0,{sqrt(1.5)});
+\draw[poporange, thick] (1.5,0) -- (1.5,{sqrt(max(0,1.5))});
+\draw[poporange, thick] (2.0,0) -- (2.0,{sqrt(max(0,1.5))});
+\draw[poporange, thick] (1.5,{sqrt(max(0,1.5))}) -- (2.0,{sqrt(max(0,1.5))});
+\draw[poporange, thick] (1.5,0) -- (2.0,0);
+\node[poporange, anchor=north] at (1.75,-0.1) {$dx$};
+% Flèche de rotation
+\draw[poppurple, ->, thick] (2.8,1.6) arc (90:-90:0.4 and 1.0);
+\node[poppurple] at (3.6,1.6) {Rotation autour de $Ox$};
+% Cylindre élémentaire schématique
+\begin{scope}[shift={(7,1)}]
+\draw[popgreen, thick] (0,0) ellipse (0.6 and 0.2);
+\draw[popgreen, thick] (-0.6,0) -- (-0.6,1.2);
+\draw[popgreen, thick] (0.6,0) -- (0.6,1.2);
+\draw[popgreen, thick] (0,1.2) ellipse (0.6 and 0.2);
+\node[popgreen] at (0,1.8) {Tranche : $\pi f(x)^2\,dx$};
+\end{scope}
+\end{tikzpicture}
+\legende{Le domaine sous la courbe, une tranche élémentaire de largeur $dx$, et le cylindre mince de volume $\pi f(x)^2\,dx$ engendré par la rotation autour de $Ox$.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-3.5, xmax=3.5,
+    ymin=-3.5, ymax=3.5,
+    width=\linewidth,
+    height=0.65\linewidth,
+    tick style={thick},
+    xtick={-3,-2,-1,0,1,2,3},
+    ytick={-3,-2,-1,0,1,2,3},
+    grid=major,
+    grid style={popline},
+    axis line style={->, thick}
+]
+\addplot[popcurve, domain=-3:3, samples=200] {sqrt(max(0,9 - x^2))};
+\addplot[popblue!30, fill opacity=0.3, domain=-3:3, samples=200] {sqrt(max(0,9 - x^2))} \closedcycle;
+\addplot[poppurple, thick, dashed, domain=-3:3, samples=200] {-sqrt(max(0,9 - x^2))};
+\node[popblue, anchor=south] at (axis cs:0,3.1) {$y=\sqrt{R^2-x^2},\ R=3$};
+\node[poppurple, anchor=north] at (axis cs:0,-3.1) {Rotation $\rightarrow$ sphère};
+\end{axis}
+\end{tikzpicture}
+\legende{Demi-cercle de rayon $R=3$ (trait plein) ; sa rotation autour de $Ox$ engendre une sphère de volume $\dfrac{4}{3}\pi R^3$. Le demi-cercle en pointillés suggère le solide obtenu.}
+\end{popfigure}
+
+\courssub{Exercices d'application}
+
+\begin{exercice}[Volume d'un bol parabolique]
+Un bol est modélisé par la rotation autour de $Ox$ de la courbe d'équation $f(x)=\dfrac{x}{2}$ pour $x\in[0\,;10]$ (dimensions en cm).
+\begin{enumerate}
+\item Calculer le volume intérieur du bol en $\text{cm}^3$.
+\item Convertir ce volume en litres.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+\item La fonction $f(x)=\dfrac{x}{2}$ est continue et positive sur $[0\,;10]$.
+\[
+V = \pi \int_0^{10} \left(\frac{x}{2}\right)^2 dx = \frac{\pi}{4}\int_0^{10} x^2\,dx = \frac{\pi}{4}\left[\frac{x^3}{3}\right]_0^{10} = \frac{\pi}{4}\times\frac{1000}{3} = \frac{250\pi}{3}\ \text{cm}^3 \approx 261,8\ \text{cm}^3.
+\]
+\item $V \approx \dfrac{261,8}{1000} \approx 0,262$ L, soit environ $0,26$ litre.
+\end{enumerate}
+\end{corrige}
+
+\begin{exercice}[Pièce de révolution]
+Une pièce mécanique est obtenue par rotation autour de $Ox$ du domaine sous la courbe d'équation $f(x)=x+1$ pour $x\in[0\,;3]$ (dimensions en cm). Calculer le volume de la pièce.
+\end{exercice}
+
+\begin{corrige}[Exercice 2]
+La fonction $f(x)=x+1$ est continue et positive sur $[0\,;3]$.
+\begin{align*}
+V &= \pi \int_0^3 (x+1)^2\,dx = \pi \left[\frac{(x+1)^3}{3}\right]_0^3
+= \pi\left(\frac{4^3}{3}-\frac{1^3}{3}\right)
+= \pi \times \frac{63}{3} = 21\pi\ \text{cm}^3.
+\end{align*}
+Numériquement : $V \approx 65,97\ \text{cm}^3$, soit environ $66\ \text{cm}^3$.
+\end{corrige}
+
+\coursec{Valeurs approchées : méthode des rectangles}
+
+\courssub{Transition depuis les volumes de révolution}
+
+Dans la section précédente, nous avons vu comment l'intégrale permet de calculer \emph{exactement} le volume d'un solide de révolution, à condition de connaître une primitive de la fonction intégrande. Or, en pratique professionnelle — que ce soit en atelier pour estimer la quantité de matière d'une pièce tournée, en géométrie pour une surface complexe, ou en électronique pour l'énergie dissipée — on rencontre fréquemment des fonctions dont \textbf{aucune primitive élémentaire n'existe} (comme $e^{-x^2}$, $\frac{\sin x}{x}$, $\sqrt{1+x^3}$) ou bien on ne dispose que de \textbf{mesures discrètes} (relevés de capteurs, tableaux de valeurs expérimentaux). Il faut alors \emph{approcher} la valeur de l'intégrale. La méthode des rectangles, bien qu'élémentaire, est la pierre angulaire de tout calcul numérique d'intégrale : les logiciels modernes (Scilab, Python, Matlab, calculatrices) en utilisent des versions raffinées (Simpson, Gauss-Legendre, adaptatives). Comprendre son principe, son encadrement et son erreur est donc indispensable pour tout technicien.
+
+\courssub{Motivation : quand la primitive fait défaut}
+
+\begin{exemplebox}[Fonctions sans primitive élémentaire]
+Considérons l'intégrale $\displaystyle I = \int_0^1 e^{-x^2}\,dx$. La fonction $f(x)=e^{-x^2}$ est continue sur $[0;1]$, donc intégrable. Pourtant, \textbf{il n'existe pas de primitive de $f$ exprimable avec les fonctions usuelles} (puissances, exponentielles, logarithmes, trigonométriques). On ne peut donc pas appliquer le théorème fondamental $\int_a^b f = F(b)-F(a)$.
+
+Autre situation courante : un capteur de température enregistre des valeurs toutes les minutes. On a un tableau $(t_i, T_i)$ mais pas de formule analytique. L'énergie thermique sur une période est $\int T(t)\,dt$ : il faut l'approcher à partir des points connus.
+\end{exemplebox}
+
+\begin{aretenir}[Deux cas imposant l'approximation]
+\begin{itemize}
+    \item \textbf{Cas analytique :} $f$ continue sur $[a;b]$ mais sans primitive élémentaire connue (ex. $e^{-x^2}$, $\frac{\sin x}{x}$, $\ln(1+x^2)$).
+    \item \textbf{Cas expérimental :} on ne connaît $f$ que par un nombre fini de mesures $(x_i, f(x_i))$ — pas de formule, seulement des points.
+\end{itemize}
+Dans les deux cas, on cherche une \textbf{valeur approchée} de $\int_a^b f(x)\,dx$ avec une \textbf{erreur contrôlée}.
+\end{aretenir}
+
+\courssub{Subdivision régulière et rectangles}
+
+Soit $f$ une fonction continue sur $[a;b]$. On partage l'intervalle en $n$ sous-intervalles de même longueur.
+
+\begin{definition}[Subdivision régulière, pas $h$]
+Une \textbf{subdivision régulière} de $[a;b]$ en $n$ parties ($n\in\mathbb{N}^*$) est la suite des points
+\[
+x_0 = a < x_1 < x_2 < \dots < x_{n-1} < x_n = b
+\]
+tels que $x_{k} = a + k\,h$ pour $k=0,\dots,n$, avec le \textbf{pas}
+\[
+h = \frac{b-a}{n}.
+\]
+\end{definition}
+
+Sur chaque sous-intervalle $[x_{k-1}; x_k]$, on approxime l'aire sous la courbe par l'aire d'un rectangle. Deux choix naturels pour la hauteur :
+
+\begin{definition}[Sommes des rectangles à gauche et à droite]
+\begin{itemize}
+    \item \textbf{Rectangles à gauche (somme inférieure pour $f$ croissante) :} hauteur $f(x_{k-1})$ sur $[x_{k-1};x_k]$.
+    \[
+    R_n = h \sum_{k=1}^{n} f(x_{k-1}) = h\Bigl[f(x_0)+f(x_1)+\dots+f(x_{n-1})\Bigr].
+    \]
+    \item \textbf{Rectangles à droite (somme supérieure pour $f$ croissante) :} hauteur $f(x_k)$ sur $[x_{k-1};x_k]$.
+    \[
+    R'_n = h \sum_{k=1}^{n} f(x_k) = h\Bigl[f(x_1)+f(x_2)+\dots+f(x_n)\Bigr].
+    \]
+\end{itemize}
+\end{definition}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1]
+\begin{axis}[
+    width=\linewidth,
+    height=7cm,
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.2, xmax=5.2,
+    ymin=-0.3, ymax=3.5,
+    xtick={0,1,2,3,4,5},
+    xticklabels={$a=x_0$,$x_1$,$x_2$,$x_3$,$x_4$,$b=x_5$},
+    ytick={0,1,2,3},
+    domain=0:5,
+    samples=200,
+    clip=false,
+]
+% Function: increasing, e.g., sqrt(x) scaled
+\addplot[popcurve, thick, domain=0:5] {sqrt(max(0,x))*1.3};
+\addlegendentry{$y=f(x)$ (croissante)}
+% Left rectangles (hatched)
+\fill[popblue!20] (axis cs:0,0) rectangle (axis cs:1,0.000);
+\draw[popblue, thick] (axis cs:0,0.000) -- (axis cs:1,0.000);
+\fill[popblue!20] (axis cs:1,0) rectangle (axis cs:2,1.300);
+\draw[popblue, thick] (axis cs:1,1.300) -- (axis cs:2,1.300);
+\fill[popblue!20] (axis cs:2,0) rectangle (axis cs:3,1.838);
+\draw[popblue, thick] (axis cs:2,1.838) -- (axis cs:3,1.838);
+\fill[popblue!20] (axis cs:3,0) rectangle (axis cs:4,2.252);
+\draw[popblue, thick] (axis cs:3,2.252) -- (axis cs:4,2.252);
+\fill[popblue!20] (axis cs:4,0) rectangle (axis cs:5,2.600);
+\draw[popblue, thick] (axis cs:4,2.600) -- (axis cs:5,2.600);
+% Vertical lines at subdivision points
+\draw[popmuted, thin] (axis cs:0,0) -- (axis cs:0,0.000);
+\draw[popmuted, thin] (axis cs:1,0) -- (axis cs:1,1.300);
+\draw[popmuted, thin] (axis cs:2,0) -- (axis cs:2,1.838);
+\draw[popmuted, thin] (axis cs:3,0) -- (axis cs:3,2.252);
+\draw[popmuted, thin] (axis cs:4,0) -- (axis cs:4,2.600);
+\draw[popmuted, thin] (axis cs:5,0) -- (axis cs:5,2.907);
+\end{axis}
+\end{tikzpicture}
+\legende{Rectangles à gauche ($n=5$) sur une fonction croissante : $R_5 = h\sum_{k=0}^{4} f(x_k)$ sous-estime l'aire.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1]
+\begin{axis}[
+    width=\linewidth,
+    height=7cm,
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.2, xmax=5.2,
+    ymin=-0.3, ymax=3.5,
+    xtick={0,1,2,3,4,5},
+    xticklabels={$a=x_0$,$x_1$,$x_2$,$x_3$,$x_4$,$b=x_5$},
+    ytick={0,1,2,3},
+    domain=0:5,
+    samples=200,
+    clip=false,
+]
+% Function
+\addplot[popcurve, thick, domain=0:5] {sqrt(max(0,x))*1.3};
+\addlegendentry{$y=f(x)$ (croissante)}
+% Right rectangles (hatched differently)
+\fill[poporange!20] (axis cs:0,0) rectangle (axis cs:1,1.300);
+\draw[poporange, thick] (axis cs:0,1.300) -- (axis cs:1,1.300);
+\fill[poporange!20] (axis cs:1,0) rectangle (axis cs:2,1.838);
+\draw[poporange, thick] (axis cs:1,1.838) -- (axis cs:2,1.838);
+\fill[poporange!20] (axis cs:2,0) rectangle (axis cs:3,2.252);
+\draw[poporange, thick] (axis cs:2,2.252) -- (axis cs:3,2.252);
+\fill[poporange!20] (axis cs:3,0) rectangle (axis cs:4,2.600);
+\draw[poporange, thick] (axis cs:3,2.600) -- (axis cs:4,2.600);
+\fill[poporange!20] (axis cs:4,0) rectangle (axis cs:5,2.907);
+\draw[poporange, thick] (axis cs:4,2.907) -- (axis cs:5,2.907);
+% Vertical lines
+\draw[popmuted, thin] (axis cs:0,0) -- (axis cs:0,0.000);
+\draw[popmuted, thin] (axis cs:1,0) -- (axis cs:1,1.300);
+\draw[popmuted, thin] (axis cs:2,0) -- (axis cs:2,1.838);
+\draw[popmuted, thin] (axis cs:3,0) -- (axis cs:3,2.252);
+\draw[popmuted, thin] (axis cs:4,0) -- (axis cs:4,2.600);
+\draw[popmuted, thin] (axis cs:5,0) -- (axis cs:5,2.907);
+\end{axis}
+\end{tikzpicture}
+\legende{Rectangles à droite ($n=5$) sur la même fonction : $R'_5 = h\sum_{k=1}^{5} f(x_k)$ surestime l'aire. L'intégrale exacte est encadrée.}
+\end{popfigure}
+
+\courssub{Interprétation graphique et encadrement de l'intégrale}
+
+\begin{propriete}[Encadrement pour une fonction monotone — Admis, illustré graphiquement]
+Soit $f$ continue et \textbf{strictement monotone} sur $[a;b]$, et soit $n\in\mathbb{N}^*$.
+\begin{itemize}
+    \item Si $f$ est \textbf{croissante} : $\quad R_n \;\le\; \displaystyle\int_a^b f(x)\,dx \;\le\; R'_n$.
+    \item Si $f$ est \textbf{décroissante} : $\quad R'_n \;\le\; \displaystyle\int_a^b f(x)\,dx \;\le\; R_n$.
+\end{itemize}
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de l'encadrement (cas croissant)]
+\begin{enumerate}
+    \item Sur $[x_{k-1};x_k]$, comme $f$ est croissante, pour tout $x\in[x_{k-1};x_k]$ on a $f(x_{k-1}) \le f(x) \le f(x_k)$.
+    \item On intègre cette inégalité sur $[x_{k-1};x_k]$ : 
+    \[
+    \int_{x_{k-1}}^{x_k} f(x_{k-1})\,dx \;\le\; \int_{x_{k-1}}^{x_k} f(x)\,dx \;\le\; \int_{x_{k-1}}^{x_k} f(x_k)\,dx.
+    \]
+    \item Comme $f(x_{k-1})$ et $f(x_k)$ sont constants sur l'intervalle :
+    \[
+    h\,f(x_{k-1}) \;\le\; \int_{x_{k-1}}^{x_k} f(x)\,dx \;\le\; h\,f(x_k).
+    \]
+    \item On somme pour $k=1$ à $n$ : 
+    \[
+    h\sum_{k=1}^n f(x_{k-1}) \;\le\; \sum_{k=1}^n \int_{x_{k-1}}^{x_k} f(x)\,dx \;\le\; h\sum_{k=1}^n f(x_k).
+    \]
+    \item La somme des intégrales est exactement $\int_a^b f(x)\,dx$ (additivité de l'intégrale). D'où $R_n \le \int_a^b f \le R'_n$.
+\end{enumerate}
+\emph{Pour $f$ décroissante, les inégalités s'inversent car $f(x_{k-1}) \ge f(x) \ge f(x_k)$.}
+\end{experience}
+
+\begin{propriete}[Contrôle de la précision — Écart des deux sommes]
+Pour $f$ continue et monotone sur $[a;b]$, l'écart entre les deux approximations vaut
+\[
+|R'_n - R_n| = \frac{b-a}{n}\,\bigl|f(b)-f(a)\bigr| = h\,\bigl|f(b)-f(a)\bigr|.
+\]
+\textbf{Justification :}
+\[
+R'_n - R_n = h\Bigl(\sum_{k=1}^n f(x_k) - \sum_{k=1}^n f(x_{k-1})\Bigr) = h\bigl(f(x_n)-f(x_0)\bigr) = h\bigl(f(b)-f(a)\bigr).
+\]
+Tous les termes intermédiaires se simplifient (somme télescopique).
+Cet écart est une \textbf{majoration de l'erreur} : la valeur exacte de l'intégrale se trouve dans l'intervalle $[R_n, R'_n]$ (ou $[R'_n, R_n]$), dont la longueur est $|R'_n-R_n|$. Pour garantir une précision $\varepsilon$, il suffit de choisir $n$ tel que $h|f(b)-f(a)| < \varepsilon$.
+\end{propriete}
+
+\courssub{Mise en œuvre pratique}
+
+\begin{methode}[Algorithme des rectangles — 5 étapes]
+Pour approcher $\displaystyle\int_a^b f(x)\,dx$ avec $n$ rectangles :
+\begin{enumerate}
+    \item \textbf{Pas :} calculer $h = \dfrac{b-a}{n}$.
+    \item \textbf{Abscisses :} lister $x_k = a + k\,h$ pour $k=0,1,\dots,n$.
+    \item \textbf{Images :} calculer $f(x_k)$ pour chaque $k$ (à la calculatrice ou par programme).
+    \item \textbf{Somme :} 
+    \begin{itemize}
+        \item Rectangles à gauche : $S_{\text{gauche}} = \sum_{k=0}^{n-1} f(x_k)$.
+        \item Rectangles à droite : $S_{\text{droite}} = \sum_{k=1}^{n} f(x_k)$.
+    \end{itemize}
+    \item \textbf{Multiplier par $h$ :} $R_n = h \times S_{\text{gauche}}$, $R'_n = h \times S_{\text{droite}}$.
+\end{enumerate}
+\textbf{Choix de $n$ :} commencer par $n=10$ ou $20$, doubler $n$ jusqu'à stabilisation des décimales voulues.
+\end{methode}
+
+\begin{attention}[Erreur fréquente : oublier le facteur $h$]
+L'erreur la plus classique est de calculer la somme des images $\sum f(x_k)$ et de la donner comme résultat, \textbf{en oubliant de multiplier par le pas $h$}. 
+\begin{itemize}
+    \item Les $f(x_k)$ sont des \textbf{hauteurs} (unités : celles de $f$).
+    \item $h$ est une \textbf{largeur} (unités : celles de $x$).
+    \item L'aire (l'intégrale) a pour unité \textbf{produit des deux} : $[f]\times[x]$.
+\end{itemize}
+\textbf{Astuce de vérification :} si $f(x)=c$ (constante), l'intégrale exacte est $c(b-a)$. La méthode doit donner $R_n = h \times n \times c = (b-a)c$. Si vous trouvez $nc$, vous avez oublié $h$.
+\end{attention}
+
+\courssub{Exemple chiffré : approximation de $\displaystyle\int_0^1 \frac{dx}{1+x^2}$}
+
+On sait que $\displaystyle\int_0^1 \frac{dx}{1+x^2} = \Bigl[\arctan x\Bigr]_0^1 = \frac{\pi}{4} \approx 0,785398$. Approchons-la avec $n=4$ rectangles.
+
+\begin{exoresolu}[Approximation de $\pi/4$ par la méthode des rectangles ($n=4$)]
+\textbf{Étape 1 — Pas :} $a=0,\; b=1,\; n=4 \quad\Rightarrow\quad h = \frac{1-0}{4} = 0,25$.
+
+\textbf{Étape 2 — Abscisses :}
+\[
+x_0=0,\quad x_1=0,25,\quad x_2=0,5,\quad x_3=0,75,\quad x_4=1.
+\]
+
+\textbf{Étape 3 — Images $f(x)=\frac{1}{1+x^2}$ :}
+\begin{align*}
+f(x_0) &= \frac{1}{1+0^2} = 1,000000 \\
+f(x_1) &= \frac{1}{1+0,25^2} = \frac{1}{1,0625} \approx 0,941176 \\
+f(x_2) &= \frac{1}{1+0,5^2} = \frac{1}{1,25} = 0,800000 \\
+f(x_3) &= \frac{1}{1+0,75^2} = \frac{1}{1,5625} = 0,640000 \\
+f(x_4) &= \frac{1}{1+1^2} = \frac{1}{2} = 0,500000
+\end{align*}
+
+\textbf{Étape 4 — Sommes :}
+\begin{itemize}
+    \item Rectangles à gauche : $S_g = f(x_0)+f(x_1)+f(x_2)+f(x_3) = 1 + 0,941176 + 0,8 + 0,64 = 3,381176$.
+    \item Rectangles à droite : $S_d = f(x_1)+f(x_2)+f(x_3)+f(x_4) = 0,941176 + 0,8 + 0,64 + 0,5 = 2,881176$.
+\end{itemize}
+
+\textbf{Étape 5 — Multiplier par $h=0,25$ :}
+\begin{align*}
+R_4 &= 0,25 \times 3,381176 = \mathbf{0,845294} \\
+R'_4 &= 0,25 \times 2,881176 = \mathbf{0,720294}
+\end{align*}
+
+\textbf{Encadrement :} comme $f$ est \textbf{décroissante} sur $[0;1]$ ($f'(x)=-\frac{2x}{(1+x^2)^2}\le 0$), on a $R'_4 \le I \le R_4$, soit
+\[
+0,720294 \;\le\; \frac{\pi}{4} \;\le\; 0,845294.
+\]
+Valeur exacte : $\pi/4 \approx 0,785398$. Elle est bien dans l'intervalle.
+
+\textbf{Écart :} $R_4 - R'_4 = 0,845294 - 0,720294 = 0,125$. Vérification par la formule : $h|f(b)-f(a)| = 0,25 \times |0,5 - 1| = 0,125$. \checkmark
+
+\textbf{Précision :} l'erreur maximale est $0,125$. Pour avoir 2 décimales exactes ($<0,005$), il faudrait $n > \frac{0,25}{0,005} = 50$ (en fait $n=100$ donne $0,7853\dots$).
+\tcblower
+\textbf{Conclusion :} avec seulement 4 rectangles, on encadre $\pi/4$ entre $0,72$ et $0,85$. En augmentant $n$, l'encadrement se resserre. C'est le principe de tout calcul numérique d'intégrale.
+\end{exoresolu}
+
+\begin{exemplebox}[Même exemple avec $n=10$ (calculatrice / tableur)]
+Avec $h=0,1$, on obtient :
+$R_{10} \approx 0,809981$, $R'_{10} \approx 0,759981$, écart $=0,05$.
+La moyenne $\frac{R_{10}+R'_{10}}{2} \approx 0,784981$ approche $\pi/4$ à $0,0004$ près (méthode des trapèzes, vue en spécialité).
+\end{exemplebox}
+
+\courssub{Le savais-tu ?}
+
+\begin{savaistu}[Des rectangles aux supercalculateurs]
+Avant l'ère informatique (années 1950), les ingénieurs, astronomes et statisticiens passaient des semaines à calculer des intégrales \textbf{à la main} avec la méthode des rectangles (ou des trapèzes, ou de Simpson). Ils utilisaient des tables de logarithmes et des machines à calculer mécaniques. 
+
+Aujourd'hui, les logiciels (SciPy, MATLAB, NumPy, calculatrices Casio/NumWorks/TI) n'utilisent plus la méthode des rectangles « brute » car elle converge trop lentement (erreur $\propto 1/n$). Ils emploient des \textbf{méthodes d'ordre supérieur} :
+\begin{itemize}
+    \item \textbf{Méthode des trapèzes} (erreur $\propto 1/n^2$) — moyenne des rectangles gauche et droite.
+    \item \textbf{Méthode de Simpson} (erreur $\propto 1/n^4$) — approximation par arcs de paraboles.
+    \item \textbf{Quadratures de Gauss-Legendre} (extrêmement précises pour un nombre fixe de points).
+    \item \textbf{Méthodes adaptatives} : le pas $h$ varie automatiquement là où la courbe est plus « courbe ».
+\end{itemize}
+Mais \textbf{toutes ces méthodes reposent sur la même idée fondamentale} : remplacer l'aire sous la courbe par une somme d'aires de figures simples (rectangles, trapèzes, paraboles) sur une subdivision fine. Comprendre les rectangles, c'est comprendre le cœur de l'analyse numérique.
+\end{savaistu}
+
+\begin{exercice}[Entraînement]
+\begin{enumerate}
+    \item Approcher $\displaystyle\int_1^2 \ln x\,dx$ par les rectangles à gauche et à droite avec $n=5$. Encadrer la valeur exacte (rappel : primitive de $\ln x$ est $x\ln x - x$).
+    \item Une cuve a une section transversale dont la largeur $L(y)$ (en mètres) en fonction de la hauteur $y$ (en mètres) est donnée par le tableau ci-dessous. Estimer le volume de la cuve ($V = \int_0^4 L(y)\,dy$) par la méthode des rectangles ($n=4$).
+    \begin{center}
+    \begin{tabular}{|c|ccccc|}\hline
+    $y$ & 0 & 1 & 2 & 3 & 4 \\ \hline
+    $L(y)$ & 2,0 & 2,8 & 3,2 & 3,0 & 2,5 \\ \hline
+    \end{tabular}
+    \end{center}
+    \item Pour $f(x)=e^{-x^2}$ sur $[0;1]$, quel $n$ choisir pour garantir une erreur $< 10^{-3}$ avec les rectangles ? (Indication : $f$ est décroissante, $f(0)=1$, $f(1)=e^{-1}\approx 0,3679$).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+$h=0,2$. Abscisses : $1, 1,2, 1,4, 1,6, 1,8, 2$. 
+$f(1)=0$, $f(1,2)\approx0,1823$, $f(1,4)\approx0,3365$, $f(1,6)\approx0,4700$, $f(1,8)\approx0,5878$, $f(2)\approx0,6931$.
+$f$ croissante $\Rightarrow R_5 \le I \le R'_5$.
+$R_5 = 0,2(0+0,1823+0,3365+0,4700+0,5878) = 0,3153$.
+$R'_5 = 0,2(0,1823+0,3365+0,4700+0,5878+0,6931) = 0,4539$.
+Exact : $[x\ln x-x]_1^2 = 2\ln2-2 - (0-1) = 2\ln2-1 \approx 0,3863$. Bien dans $[0,3153; 0,4539]$.
+\end{corrige}
+
+\begin{corrige}[Exercice 2]
+$h=1$. $V \approx 1\times(2,0+2,8+3,2+3,0) = 11,0\,\text{m}^3$ (rectangles gauche) ou $1\times(2,8+3,2+3,0+2,5) = 11,5\,\text{m}^3$ (rectangles droite). Volume encadré entre $11,0$ et $11,5\,\text{m}^3$.
+\end{corrige}
+
+\begin{corrige}[Exercice 3]
+$f$ décroissante $\Rightarrow$ écart $= h(f(0)-f(1)) = \frac{1}{n}(1-e^{-1}) \approx \frac{0,6321}{n}$.
+On veut $\frac{0,6321}{n} < 0,001 \;\Rightarrow\; n > 632,1$. Donc $n = 633$ rectangles suffisent.
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Calculs des intégrales}
+
+\courssub{Objectifs de l'activité}
+\begin{itemize}
+    \item Mobiliser l'ensemble des savoirs de la leçon (intégrales, aires, volumes de révolution, méthode des rectangles) dans une situation professionnelle authentique.
+    \item Modéliser un problème technique réel : dimensionnement d'un réservoir d'eau pour une coopérative agricole.
+    \item Passer du modèle mathématique (courbe, intégrale) à la réalité physique (volume en litres, capacité de stockage).
+    \item Rédiger une note technique structurée, justifiée et concluant sur la faisabilité du projet par rapport au besoin exprimé.
+\end{itemize}
+
+\courssub{Situation}
+La coopérative agricole \textbf{« Espoir Paysan »} de Bafoussam (Région de l'Ouest, Cameroun) souhaite construire un réservoir d'eau enterré pour l'irrigation goutte-à-goutte de ses parcelles de choux et de tomates lors de la saison sèche. Le bureau d'études a proposé un design innovant : la section longitudinale du réservoir (vue de profil) est délimitée par la courbe représentative de la fonction $f(x) = \sqrt{x}$ sur l'intervalle $[0\,;\,4]$, l'axe des abscisses $(Ox)$ représentant le fond plat du réservoir et l'axe des ordonnées $(Oy)$ l'axe de symétrie de rotation.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+    \draw[->] (-0.5,0) -- (4.5,0) node[right] {$x$ (m)};
+    \draw[->] (0,-0.5) -- (0,2.5) node[above] {$y$ (m)};
+    \draw[domain=0:4, smooth, variable=\x, popblue, thick] plot ({\x}, {sqrt(max(0,\x))});
+    \draw[poporange, thick, pattern=north east lines, pattern color=poporange!60] (0,0) -- plot[domain=0:4, smooth, variable=\x] ({\x}, {sqrt(max(0,\x))}) -- (4,0) -- cycle;
+    \foreach \x in {1,2,3,4} \draw (\x, -0.1) -- (\x, 0.1) node[below] {\small $\x$};
+    \foreach \y in {1,2} \draw (-0.1, \y) -- (0.1, \y) node[left] {\small $\y$};
+    \node[popblue] at (2.5, 1.8) {$y = \sqrt{x}$};
+    \node[poporange] at (2, 0.5) {Section hachurée};
+    \draw[dashed, popdark] (4,0) -- (4,2);
+    \node[below] at (4,-0.3) {4};
+\end{tikzpicture}
+\legende{Section longitudinale du réservoir : domaine sous la courbe $y=\sqrt{x}$ sur $[0;4]$.}
+\end{popfigure}
+
+Le réservoir est obtenu par rotation de cette section autour de l'axe $(Ox)$ (axe horizontal). L'unité de longueur est le mètre (m). La coopérative a estimé son besoin en eau à \textbf{25\,000 litres} pour couvrir la période critique. En tant que techniciens géomètres-topographes stagiaires, vous devez valider la capacité de ce réservoir avant le lancement des travaux de terrassement et de maçonnerie.
+
+\courssub{Consignes}
+Travailler en groupe de 3 ou 4 élèves. Rédiger une note technique unique par groupe répondant aux questions suivantes :
+\begin{enumerate}
+    \item \textbf{Représentation :} Tracer soigneusement la courbe $y = \sqrt{x}$ sur $[0\,;\,4]$ dans un repère orthonormé (1 cm pour 1 m sur les deux axes). Hachurer le domaine correspondant à la section du réservoir.
+    \item \textbf{Aire de la section (fond) :} Calculer l'aire exacte de cette section. Interpréter ce résultat pour l'estimation de la quantité de ciment nécessaire au revêtement du fond (épaisseur 10 cm).
+    \item \textbf{Volume exact du réservoir :} Calculer le volume exact du solide de révolution engendré par la rotation de la section autour de $(Ox)$. Exprimer le résultat en $\text{m}^3$ puis en litres ($1\,\text{m}^3 = 1000\,\text{L}$).
+    \item \textbf{Valeur moyenne et inégalité de la moyenne :} Déterminer la valeur moyenne de la fonction $g(x) = \pi [f(x)]^2$ sur $[0\,;\,4]$. Vérifier l'inégalité de la moyenne pour cette fonction.
+    \item \textbf{Vérification par la méthode des rectangles :} Appliquer la méthode des rectangles (à gauche) avec $n = 4$ subdivisions pour donner une valeur approchée de l'intégrale $\int_0^4 \pi [f(x)]^2 \, dx$. Comparer cette approximation à la valeur exacte et commenter l'erreur commise (surestimation ou sous-estimation ?).
+    \item \textbf{Synthèse technique :} Rédiger la conclusion de la note technique : le réservoir répond-il au besoin de 25\,000 L ? Quelle marge de sécurité (en \%) offre-t-il ? Formuler une recommandation finale pour le chef de chantier.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+\begin{propriete}[Aire d'un domaine sous une courbe]
+Soit $f$ continue et positive sur $[a\,;\,b]$. L'aire du domaine délimité par la courbe $C_f$, l'axe $(Ox)$ et les droites $x=a$, $x=b$ est :
+\[ \mathcal{A} = \int_a^b f(x) \, dx. \]
+\end{propriete}
+
+\begin{propriete}[Volume d'un solide de révolution autour de $(Ox)$]
+Soit $f$ continue et positive sur $[a\,;\,b]$. Le volume du solide engendré par la rotation du domaine sous $C_f$ autour de $(Ox)$ est :
+\[ V = \pi \int_a^b [f(x)]^2 \, dx. \]
+\end{propriete}
+
+\begin{propriete}[Inégalité de la moyenne et valeur moyenne]
+Soit $f$ continue sur $[a\,;\,b]$. On note $m = \min_{[a,b]} f$ et $M = \max_{[a,b]} f$. Alors :
+\[ m(b-a) \le \int_a^b f(x) \, dx \le M(b-a). \]
+La \textbf{valeur moyenne} de $f$ sur $[a\,;\,b]$ est le nombre :
+\[ \mu = \frac{1}{b-a} \int_a^b f(x) \, dx. \]
+Il existe au moins un $c \in [a\,;\,b]$ tel que $f(c) = \mu$ (Théorème de la valeur moyenne).
+\end{propriete}
+
+\begin{propriete}[Méthode des rectangles (à gauche)]
+Pour approximer $\int_a^b g(x) \, dx$ par $n$ rectangles de même base $h = \frac{b-a}{n}$ :
+\[ \int_a^b g(x) \, dx \approx h \sum_{k=0}^{n-1} g(a + kh). \]
+Si $g$ est croissante, c'est une \textbf{sous-estimation} (rectangles inclus dans le domaine). Si $g$ est décroissante, c'est une \textbf{surestimation}.
+\end{propriete}
+
+\begin{aretenir}[Primitives usuelles (rappel)]
+\[ \int x^\alpha \, dx = \frac{x^{\alpha+1}}{\alpha+1} + C \quad (\alpha \neq -1) \qquad \int \sqrt{x} \, dx = \int x^{1/2} \, dx = \frac{2}{3} x^{3/2} + C. \]
+\end{aretenir}
+
+\courssub{Démarche et corrigé commenté}
+\begin{exoresolu}[Corrigé détaillé de l'activité : Réservoir de Bafoussam]
+\textbf{Énoncé complet de la situation (rappel) :} Voir partie « Situation » et « Consignes » ci-dessus.
+
+\tcblower
+
+\textbf{Solution détaillée et commentée}
+
+\textbf{1. Représentation graphique}\par
+Le tracé est réalisé dans un repère orthonormé (échelle 1 cm $\leftrightarrow$ 1 m). La courbe $y=\sqrt{x}$ passe par les points $A(0,0)$, $B(1,1)$, $C(4,2)$. Le domaine hachuré est borné par la courbe, l'axe des abscisses et la droite $x=4$. Voir la figure en début d'activité.
+
+\textbf{2. Calcul de l'aire de la section (fond du réservoir)}\par
+L'aire $\mathcal{A}$ de la section est l'intégrale de $f$ sur $[0\,;\,4]$ :
+\[ \mathcal{A} = \int_0^4 \sqrt{x} \, dx = \int_0^4 x^{1/2} \, dx. \]
+On utilise la primitive $\frac{2}{3}x^{3/2}$ :
+\[ \mathcal{A} = \left[ \frac{2}{3} x^{3/2} \right]_0^4 = \frac{2}{3} (4^{3/2} - 0) = \frac{2}{3} \times (2^3) = \frac{2}{3} \times 8 = \frac{16}{3} \,\text{m}^2. \]
+\textbf{Interprétation technique :} L'aire du fond est $\frac{16}{3} \approx 5,33\,\text{m}^2$. Pour un revêtement en ciment d'épaisseur $e = 10\,\text{cm} = 0,1\,\text{m}$, le volume de ciment nécessaire est $V_{\text{ciment}} = \mathcal{A} \times e = \frac{16}{3} \times 0,1 = \frac{1,6}{3} \approx 0,533\,\text{m}^3$ (soit environ 533 litres de mortier). Cela permet d'estimer le nombre de sacs de ciment (un sac $\approx 35\,\text{L}$ $\rightarrow$ environ 16 sacs).
+
+\textbf{3. Calcul du volume exact du réservoir}\par
+Le volume $V$ est obtenu par rotation autour de $(Ox)$ : $V = \pi \int_0^4 [f(x)]^2 \, dx$.
+Ici $[f(x)]^2 = (\sqrt{x})^2 = x$.
+\[ V = \pi \int_0^4 x \, dx = \pi \left[ \frac{x^2}{2} \right]_0^4 = \pi \left( \frac{16}{2} - 0 \right) = 8\pi \,\text{m}^3. \]
+\textbf{Valeur numérique :} $V \approx 8 \times 3,1416 = 25,1327\,\text{m}^3$.
+\textbf{Conversion en litres :} $1\,\text{m}^3 = 1000\,\text{L}$, donc $V_{\text{L}} = 25\,132,7\,\text{L} \approx \mathbf{25\,133\,L}$.
+
+\textbf{4. Valeur moyenne et inégalité de la moyenne}\par
+On considère la fonction $g(x) = \pi [f(x)]^2 = \pi x$ sur $[0\,;\,4]$. $g$ est continue et strictement croissante.
+\begin{itemize}
+    \item \textbf{Valeur moyenne $\mu$ de $g$ sur $[0;4]$ :}
+    \[ \mu = \frac{1}{4-0} \int_0^4 \pi x \, dx = \frac{1}{4} \times 8\pi = 2\pi. \]
+    \item \textbf{Inégalité de la moyenne :} $m = g(0) = 0$, $M = g(4) = 4\pi$.
+    \[ m(4-0) = 0 \le \int_0^4 \pi x \, dx = 8\pi \le 4\pi \times 4 = 16\pi = M(4-0). \]
+    L'inégalité est vérifiée. On note que $\mu = 2\pi$ est bien comprise entre $m=0$ et $M=4\pi$.
+    \item \textbf{Interprétation géométrique :} Un rectangle de base $4$ et de hauteur $2\pi$ a la même aire que le domaine sous la courbe $g$ (soit $8\pi$). C'est le rectangle "équivalent en aire".
+\end{itemize}
+
+\textbf{5. Vérification par la méthode des rectangles ($n=4$)}\par
+On approxime $I = \int_0^4 \pi x \, dx$ par la méthode des rectangles \textbf{à gauche}.
+\begin{itemize}
+    \item Pas de discrétisation : $h = \frac{4-0}{4} = 1\,\text{m}$.
+    \item Abscisses des sommets gauches : $x_0=0,\; x_1=1,\; x_2=2,\; x_3=3$.
+    \item Fonction à intégrer : $g(x) = \pi x$.
+    \item Somme de Riemann (gauche) :
+    \[ R_g = h \sum_{k=0}^{3} g(x_k) = 1 \times \pi (0 + 1 + 2 + 3) = 6\pi \,\text{m}^3. \]
+\end{itemize}
+\textbf{Valeur approchée :} $V_{\text{approx}} = 6\pi \approx 18,85\,\text{m}^3 = 18\,850\,\text{L}$.
+\textbf{Comparaison :} $V_{\text{exact}} = 8\pi \approx 25,13\,\text{m}^3$.
+L'approximation par rectangles à gauche donne $6\pi$, soit une \textbf{sous-estimation} de $2\pi \approx 6,28\,\text{m}^3$ (erreur relative $\approx 25\%$).
+\textbf{Justification :} La fonction $g(x) = \pi x$ est \textbf{strictement croissante} sur $[0\,;\,4]$. Les rectangles à gauche sont donc \emph{inscrits} dans le domaine : leur sommet haut touche la courbe à l'abscisse gauche de chaque sous-intervalle, le reste du rectangle restant sous la courbe. L'aire des rectangles est donc inférieure à l'aire exacte du domaine.
+\begin{attention}[Piège fréquent]
+Ne pas confondre la méthode des rectangles (aire de rectangles) avec la méthode des disques (volume). Ici on approxime l'intégrale $\int \pi f^2$, qui \emph{est} le volume. On ne fait pas « volume des rectangles ». De plus, avec $n=4$, l'approximation est grossière ; augmenter $n$ réduit l'erreur.
+\end{attention}
+
+\textbf{6. Synthèse technique et recommandation}\par
+\begin{itemize}
+    \item \textbf{Besoin coopérative :} $25\,000\,\text{L}$.
+    \item \textbf{Capacité exacte réservoir :} $25\,133\,\text{L}$.
+    \item \textbf{Marge :} $25\,133 - 25\,000 = 133\,\text{L}$.
+    \item \textbf{Marge en pourcentage :} $\frac{133}{25\,000} \times 100 \approx \mathbf{0,53\%}$.
+\end{itemize}
+\textbf{Conclusion de la note technique :}
+Le réservoir présente une capacité théorique exacte de \textbf{25\,133 L}, ce qui couvre \emph{juste} le besoin de 25\,000 L avec une marge infime de \textbf{133 L (0,53\%)}. Cette marge est \textbf{insuffisante} pour garantir la sécurité d'approvisionnement (évaporation, fuites, imprévus climatiques, erreurs de construction, pertes de charge).
+\textbf{Recommandation :} \textbf{Revoir le dimensionnement.} Proposer d'augmenter la borne supérieure de l'intégrale (allonger le réservoir) ou modifier le profil (ex: $f(x)=k\sqrt{x}$ avec $k>1$). Par exemple, porter la longueur à $x=4,1\,\text{m}$ donnerait $V = \pi \frac{(4,1)^2}{2} \approx 26,4\,\text{m}^3$ (marge $\approx 5,6\%$), plus raisonnable. Ne pas lancer les travaux avec le profil actuel $f(x)=\sqrt{x}$ sur $[0;4]$.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+Cette activité d'intégration a permis de :
+\begin{itemize}
+    \item \textbf{Ancrer les mathématiques dans le réel :} Le calcul d'intégrale n'est plus un exercice abstrait mais un outil de décision pour un investissement concret (coopérative, Bafoussam).
+    \item \textbf{Articuler les savoirs de la leçon :} Aire (intégrale simple), Volume (intégrale de $f^2$), Valeur moyenne et inégalité de la moyenne (encadrement de l'intégrale), Approximation numérique (rectangles).
+    \item \textbf{Développer l'esprit critique technique :} La comparaison exact/approché (rectangles à gauche) a mis en évidence le sens de l'erreur (sous-estimation pour fonction croissante), crucial pour la sécurité des ouvrages. La conclusion montre qu'un résultat mathématiquement « exact » peut être techniquement « insuffisant » (marge 0,53\%).
+    \item \textbf{Travailler la communication professionnelle :} La rédaction de la note technique (vocabulaire : terrassement, revêtement, marge de sécurité, recommandation) prépare à l'insertion professionnelle (BTS, vie active).
+\end{itemize}
+\begin{savaistu}[Le saviez-vous ?]
+Au Cameroun, la gestion de l'eau en agriculture est un enjeu majeur face au changement climatique. Les réservoirs de forme parabolique (générés par $y=\sqrt{x}$ ou $y=x^2$) offrent une bonne résistance mécanique à la pression hydrostatique car les contraintes sont bien réparties sur la paroi courbe, contrairement aux angles vifs des réservoirs rectangulaires qui concentrent les contraintes. Le calcul d'intégrale permet ici d'optimiser le volume de béton pour une capacité donnée.
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Calculs des intégrales}
+
+\courssub{Intégrale d'une fonction continue : présentation et propriétés}
+
+\begin{definition}[Intégrale d'une fonction continue]
+Soit $f$ une fonction continue sur un intervalle $[a\,;b]$ avec $a<b$. L'\cle{intégrale} de $f$ sur $[a\,;b]$, notée $\displaystyle\int_a^b f(x)\,dx$, est le nombre réel qui représente l'aire algébrique du domaine borné par la courbe $\mathcal{C}_f$, l'axe des abscisses et les droites $x=a$, $x=b$. Elle est définie comme la limite des sommes de Riemann lorsque le pas de la subdivision tend vers $0$.
+\end{definition}
+
+\begin{propriete}[Propriétés fondamentales de l'intégrale]
+Soient $f$ et $g$ deux fonctions continues sur $[a\,;b]$, et $\alpha, \beta \in \mathbb{R}$.
+\begin{enumerate}
+\item \textbf{Linéarité :} $\displaystyle\int_a^b \big(\alpha f(x) + \beta g(x)\big)dx = \alpha\int_a^b f(x)\,dx + \beta\int_a^b g(x)\,dx$.
+\item \textbf{Relation de Chasles :} $\forall c \in [a\,;b],\quad \displaystyle\int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx$.
+\item \textbf{Positivité :} Si $f(x) \geq 0$ sur $[a\,;b]$, alors $\displaystyle\int_a^b f(x)\,dx \geq 0$. Si $f \leq g$ sur $[a\,;b]$, alors $\displaystyle\int_a^b f \leq \int_a^b g$.
+\item \textbf{Bornes inversées :} $\displaystyle\int_b^a f = -\int_a^b f$ ; $\displaystyle\int_a^a f = 0$.
+\end{enumerate}
+\end{propriete}
+
+\begin{aretenir}[Tableau des primitives usuelles (sur leur domaine de définition)]
+\begin{center}
+\begin{tabular}{|c|c|}\hline
+$f(x)$ & Primitive $F(x)$ \\ \hline
+$x^n\ (n\in\mathbb{N})$ & $\dfrac{x^{n+1}}{n+1}$ \\
+$x^\alpha\ (\alpha\in\mathbb{R},\ \alpha\neq -1)$ & $\dfrac{x^{\alpha+1}}{\alpha+1}$ \\
+$\dfrac{1}{x}\ (x>0)$ & $\ln x$ \\
+$e^x$ & $e^x$ \\
+$\cos x$ & $\sin x$ \\
+$\sin x$ & $-\cos x$ \\
+$u'(x)e^{u(x)}$ & $e^{u(x)}$ \\
+$\dfrac{u'(x)}{u(x)}\ (u(x)>0)$ & $\ln u(x)$ \\ \hline
+\end{tabular}
+\end{center}
+\textbf{Rappel :} Si $F$ est une primitive de $f$ sur un intervalle, alors $F + C$ ($C$ constante) est aussi une primitive de $f$.
+\end{aretenir}
+
+\begin{methode}[Calculer $\displaystyle\int_a^b f(x)\,dx$ avec une primitive]
+Pour calculer l'intégrale d'une fonction $f$ \cle{continue} sur $[a\,;b]$ :
+\begin{enumerate}
+\item Vérifier que $f$ est continue sur $[a\,;b]$ (les fonctions usuelles : polynômes, exponentielle, logarithme sur leur domaine, le sont).
+\item Déterminer une \cle{primitive} $F$ de $f$ sur $[a\,;b]$, en utilisant le tableau des primitives usuelles ou les formules de dérivation à l'envers (reconnaissance de formes $u'f(u)$).
+\item Vérifier mentalement que $F' = f$ (réflexe de contrôle indispensable).
+\item Appliquer la formule fondamentale :
+\[ \int_a^b f(x)\,dx = \big[F(x)\big]_a^b = F(b) - F(a). \]
+\item Simplifier le résultat et conclure par une phrase.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Intégrale d'un polynôme (type Probatoire)]
+Énoncé. Calculer $I = \displaystyle\int_1^3 \left(2x^2 - 4x + 1\right) dx$.
+\tcblower
+Solution détaillée.
+
+La fonction $f : x \mapsto 2x^2 - 4x + 1$ est une fonction polynôme, donc elle est \textbf{continue sur} $\mathbb{R}$, en particulier sur $[1\,;3]$ : l'intégrale $I$ existe.
+
+\textbf{Recherche d'une primitive.} On primitive terme à terme :
+\begin{itemize}
+\item une primitive de $2x^2$ est $2\times\dfrac{x^3}{3} = \dfrac{2x^3}{3}$ ;
+\item une primitive de $-4x$ est $-4\times\dfrac{x^2}{2} = -2x^2$ ;
+\item une primitive de $1$ est $x$.
+\end{itemize}
+Donc $F(x) = \dfrac{2x^3}{3} - 2x^2 + x$ est une primitive de $f$ sur $[1\,;3]$.
+
+\textbf{Contrôle :} $F'(x) = \dfrac{2\times 3x^2}{3} - 4x + 1 = 2x^2 - 4x + 1 = f(x)$. Correct.
+
+\textbf{Calcul de l'intégrale :}
+\begin{align*}
+I &= \big[F(x)\big]_1^3 = F(3) - F(1) \\
+F(3) &= \frac{2\times 27}{3} - 2\times 9 + 3 = 18 - 18 + 3 = 3 \\
+F(1) &= \frac{2}{3} - 2 + 1 = -\frac{1}{3} \\
+I &= 3 - \left(-\frac{1}{3}\right) = 3 + \frac{1}{3} = \frac{10}{3}.
+\end{align*}
+
+\textbf{Conclusion :} $\displaystyle\int_1^3 \left(2x^2 - 4x + 1\right) dx = \dfrac{10}{3}$.
+\end{exoresolu}
+
+\begin{exoresolu}[Intégrale avec exponentielle et logarithme (reconnaissance de formes)]
+Énoncé. Calculer $J = \displaystyle\int_0^1 e^{2x}\,dx$ et $K = \displaystyle\int_1^e \frac{3}{x}\,dx$.
+\tcblower
+Solution détaillée.
+
+\textbf{Calcul de $J$.} La fonction $x \mapsto e^{2x}$ est continue sur $[0\,;1]$. On reconnaît la forme $u' e^{u}$ avec $u(x) = 2x$, donc $u'(x) = 2$. On écrit $e^{2x} = \dfrac{1}{2}\times 2e^{2x} = \dfrac{1}{2}u'e^u$.
+
+Une primitive de $u'e^u$ est $e^u$, donc une primitive de $e^{2x}$ est $F(x) = \dfrac{1}{2}e^{2x}$.
+
+Contrôle : $F'(x) = \dfrac{1}{2}\times 2e^{2x} = e^{2x}$. Correct.
+\begin{align*}
+J &= \left[\frac{1}{2}e^{2x}\right]_0^1 = \frac{1}{2}e^{2} - \frac{1}{2}e^{0} = \frac{e^2 - 1}{2}.
+\end{align*}
+
+\textbf{Calcul de $K$.} La fonction $x \mapsto \dfrac{3}{x}$ est continue sur $[1\,;e]$ (intervalle inclus dans $]0\,;+\infty[$). Une primitive de $\dfrac{1}{x}$ sur $]0\,;+\infty[$ est $\ln x$, donc une primitive de $\dfrac{3}{x}$ est $G(x) = 3\ln x$.
+\begin{align*}
+K &= \big[3\ln x\big]_1^e = 3\ln e - 3\ln 1 = 3\times 1 - 3\times 0 = 3.
+\end{align*}
+
+\textbf{Conclusion :} $J = \dfrac{e^2 - 1}{2}$ et $K = 3$.
+\end{exoresolu}
+
+\courssub{Méthodes de calcul des intégrales : reconnaissance de formes composées}
+
+\begin{methode}[Intégration par reconnaissance de forme $u' f(u)$]
+Lorsque l'intégrande s'écrit sous la forme $u'(x) \times g(u(x))$ où $g$ admet une primitive $G$ connue, alors une primitive est $G(u(x))$.
+\begin{enumerate}
+\item Identifier $u(x)$ (souvent l'expression « intérieure » : $2x$, $x^2+1$, $\ln x$\ldots).
+\item Calculer $u'(x)$.
+\item Vérifier que l'intégrande contient $u'(x)$ (éventuellement à une constante près : multiplier et diviser par la constante manquante).
+\item Appliquer : $\int u'(x) g(u(x))\,dx = G(u(x))$.
+\end{enumerate}
+\textbf{Formes types au programme :} $\int u'e^u = e^u$, $\int \frac{u'}{u} = \ln u$, $\int u' \cos u = \sin u$, $\int u' \sin u = -\cos u$.
+\end{methode}
+
+\courssub{Inégalité de la moyenne et valeur moyenne}
+
+\begin{propriete}[Inégalité de la moyenne et Théorème de la valeur moyenne]
+Soit $f$ continue sur $[a\,;b]$ ($a<b$).
+\begin{enumerate}
+\item \textbf{Inégalité de la moyenne :} Si pour tout $x \in [a\,;b]$ on a $m \leq f(x) \leq M$, alors
+\[ m(b-a) \leq \int_a^b f(x)\,dx \leq M(b-a). \]
+\item \textbf{Théorème de la valeur moyenne (exigible au Probatoire) :} Il existe au moins un $c \in [a\,;b]$ tel que
+\[ f(c) = \frac{1}{b-a}\int_a^b f(x)\,dx. \]
+Cette valeur $f(c)$ est la \cle{valeur moyenne} de $f$ sur $[a\,;b]$, notée $\mu$.
+\end{enumerate}
+\end{propriete}
+
+\begin{methode}[Encadrer une intégrale, calculer une valeur moyenne]
+\textbf{A. Inégalité de la moyenne.} Pour encadrer $\displaystyle\int_a^b f(x)\,dx$ ($a < b$) :
+\begin{enumerate}
+\item Montrer que pour tout $x \in [a\,;b]$ : $m \leq f(x) \leq M$ (en étudiant $f$ ou en utilisant des bornes connues).
+\item Conclure : $m(b-a) \leq \displaystyle\int_a^b f(x)\,dx \leq M(b-a)$.
+\end{enumerate}
+\textbf{B. Valeur moyenne.} La valeur moyenne de $f$ continue sur $[a\,;b]$ est :
+\[ \mu = \frac{1}{b-a}\int_a^b f(x)\,dx. \]
+\begin{enumerate}
+\item Calculer l'intégrale avec une primitive.
+\item Diviser par $b - a$ (attention : ne pas oublier ce facteur !).
+\item Interpréter : $\mu$ est la hauteur du rectangle de base $[a\,;b]$ ayant même aire que celle sous la courbe.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Valeur moyenne d'une température en atelier]
+Énoncé. Dans un atelier de soudure à Douala, la température (en degrés Celsius) d'une pièce métallique qui refroidit est modélisée par $T(t) = 20 + 80e^{-t}$ pour $t \in [0\,;2]$ ($t$ en heures).
+\begin{enumerate}
+\item Démontrer que pour tout $t \in [0\,;2]$ : $20 + 80e^{-2} \leq T(t) \leq 100$. En déduire un encadrement de $\displaystyle\int_0^2 T(t)\,dt$.
+\item Calculer la température moyenne de la pièce pendant ces deux heures (arrondir à $0,1$ près).
+\end{enumerate}
+\tcblower
+Solution détaillée.
+
+\textbf{1. Encadrement.} La fonction exponentielle est strictement croissante sur $\mathbb{R}$, donc pour $t \in [0\,;2]$ : $-2 \leq -t \leq 0$, puis $e^{-2} \leq e^{-t} \leq e^{0} = 1$.
+
+En multipliant par $80 > 0$ : $80e^{-2} \leq 80e^{-t} \leq 80$, puis en ajoutant $20$ :
+\[ 20 + 80e^{-2} \leq T(t) \leq 100. \]
+
+Par l'\textbf{inégalité de la moyenne} avec $m = 20 + 80e^{-2}$, $M = 100$, $b - a = 2$ :
+\[ 2\left(20 + 80e^{-2}\right) \leq \int_0^2 T(t)\,dt \leq 200. \]
+
+\textbf{2. Température moyenne.} Une primitive de $e^{-t}$ est $-e^{-t}$ (forme $u'e^u$ avec $u = -t$, $u' = -1$). Donc une primitive de $T$ est :
+\[ F(t) = 20t - 80e^{-t}. \]
+Contrôle : $F'(t) = 20 - 80\times(-e^{-t}) = 20 + 80e^{-t} = T(t)$. Correct.
+\begin{align*}
+\int_0^2 T(t)\,dt &= F(2) - F(0) = \left(40 - 80e^{-2}\right) - \left(0 - 80\right) = 120 - 80e^{-2}.
+\end{align*}
+La valeur moyenne est :
+\[ \mu = \frac{1}{2-0}\int_0^2 T(t)\,dt = \frac{120 - 80e^{-2}}{2} = 60 - 40e^{-2}. \]
+Numériquement : $e^{-2} \approx 0,1353$, donc $\mu \approx 60 - 5,41 \approx 54,6$.
+
+\textbf{Conclusion :} la température moyenne de la pièce sur les deux heures est $\mu = 60 - 40e^{-2} \approx \SI{54,6}{\degree C}$. On vérifie la cohérence : $20 + 80e^{-2} \approx 30,8 \leq 54,6 \leq 100$.
+\end{exoresolu}
+
+\begin{savaistu}[La valeur moyenne en génie climatique]
+En génie climatique et thermique, la température moyenne d'un fluide ou d'une paroi sur une durée donnée permet de dimensionner les échangeurs de chaleur, les systèmes de ventilation ou les isolants. La formule $\mu = \frac{1}{b-a}\int_a^b T(t)\,dt$ est l'outil mathématique exact pour passer d'une évolution temporelle continue à une valeur unique représentative, utilisable dans les bilans énergétiques (ex. : calcul des déperditions $Q = U \cdot S \cdot \mu \cdot \Delta t$).
+\end{savaistu}
+
+\courssub{Calcul d'aires planes}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7, domain=-2.5:2.5, samples=100]
+\draw[->] (-2.5,0) -- (2.5,0) node[right] {$x$};
+\draw[->] (0,-1) -- (0,5) node[above] {$y$};
+\draw[popblue, thick] plot (\x, {-\x*\x+4});
+\fill[popblue!20] plot[domain=-2:2] (\x, {-\x*\x+4}) -- (2,0) -- (-2,0) -- cycle;
+\draw[dashed, popmuted] (-2,0) node[below] {$-2$} -- (-2,0);
+\draw[dashed, popmuted] (2,0) node[below] {$2$} -- (2,0);
+\node[popdark] at (0,2) {$\mathcal{A} = \int_{-2}^{2} f(x)\,dx$};
+\node[popblue] at (1.5, 3) {$f(x)=-x^2+4$};
+\end{tikzpicture}
+\legende{Aire sous la courbe $f(x)=-x^2+4$ sur $[-2;2]$ (exemple de la tôlerie).}
+\end{popfigure}
+
+\begin{methode}[Aire entre une courbe et l'axe des abscisses, ou entre deux courbes]
+L'unité d'aire (u.a.) est fixée par le repère : $1$ u.a. $= \|\vec{i}\| \times \|\vec{j}\|$ (en repère orthogonal).
+\begin{enumerate}
+\item \textbf{Étudier le signe de $f$} sur $[a\,;b]$ (ou la position relative des deux courbes).
+\item Si $f \geq 0$ sur $[a\,;b]$ : $\mathcal{A} = \displaystyle\int_a^b f(x)\,dx$ (en u.a.).
+\item Si $f \leq 0$ sur $[a\,;b]$ : $\mathcal{A} = -\displaystyle\int_a^b f(x)\,dx = \displaystyle\int_a^b \big(-f(x)\big)dx$.
+\item Si $f$ change de signe : découper avec Chasles aux points où $f$ s'annule.
+\item \textbf{Aire entre deux courbes} $\mathcal{C}_f$ et $\mathcal{C}_g$ avec $f \geq g$ sur $[a\,;b]$ :
+\[ \mathcal{A} = \int_a^b \big(f(x) - g(x)\big)dx \quad \text{(courbe du dessus moins courbe du dessous).} \]
+\item Convertir en unités concrètes si demandé (multiplier par la valeur de l'u.a. en cm$^2$, m$^2$\ldots) et conclure.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Aire d'une tôle découpée]
+Énoncé. Un tôlier doit découper une pièce dont le contour suit, dans un repère orthonormé d'unité \SI{10}{cm}, la courbe de $f(x) = -x^2 + 4$ et l'axe des abscisses, pour $x \in [-2\,;2]$.
+\begin{enumerate}
+\item Justifier que $f(x) \geq 0$ sur $[-2\,;2]$.
+\item Calculer l'aire de la pièce en unités d'aire, puis en cm$^2$.
+\end{enumerate}
+\tcblower
+Solution détaillée.
+
+\textbf{1. Signe de $f$.} $f(x) = -x^2 + 4 = (2-x)(2+x)$. C'est un trinôme dont les racines sont $-2$ et $2$, avec un coefficient de $x^2$ négatif : $f(x) \geq 0$ \textbf{entre} les racines, donc $f(x) \geq 0$ pour tout $x \in [-2\,;2]$.
+
+\textbf{2. Calcul de l'aire.} Puisque $f \geq 0$ sur $[-2\,;2]$ et $f$ est continue (polynôme) :
+\[ \mathcal{A} = \int_{-2}^{2} \left(-x^2 + 4\right) dx. \]
+Une primitive de $-x^2 + 4$ est $F(x) = -\dfrac{x^3}{3} + 4x$.
+\begin{align*}
+\mathcal{A} &= \left[-\frac{x^3}{3} + 4x\right]_{-2}^{2} \\
+F(2) &= -\frac{8}{3} + 8 = \frac{16}{3} \\
+F(-2) &= \frac{8}{3} - 8 = -\frac{16}{3} \\
+\mathcal{A} &= \frac{16}{3} - \left(-\frac{16}{3}\right) = \frac{32}{3} \text{ u.a.}
+\end{align*}
+
+\textbf{Conversion :} l'unité sur chaque axe est \SI{10}{cm}, donc $1$ u.a. $= 10 \times 10 = \SI{100}{cm^2}$.
+\[ \mathcal{A} = \frac{32}{3} \times 100 = \frac{3200}{3} \approx \SI{1066,7}{cm^2}. \]
+
+\textbf{Conclusion :} l'aire de la pièce de tôle est $\dfrac{32}{3}$ u.a., soit environ $\SI{1067}{cm^2}$ (environ $\SI{0,107}{m^2}$).
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.65, domain=-1.5:2.5, samples=100]
+\draw[->] (-1.5,0) -- (2.5,0) node[right] {$x$};
+\draw[->] (0,-1) -- (0,5) node[above] {$y$};
+\draw[popblue, thick] plot (\x, {\x+2}) node[right] {$f(x)=x+2$};
+\draw[poporange, thick] plot (\x, {\x*\x}) node[right] {$g(x)=x^2$};
+\fill[popgreen!20] plot[domain=-1:2] (\x, {\x+2}) -- plot[domain=2:-1] (\x, {\x*\x}) -- cycle;
+\draw[dashed, popmuted] (-1,0) node[below] {$-1$} -- (-1,1);
+\draw[dashed, popmuted] (2,0) node[below] {$2$} -- (2,4);
+\node[popdark] at (0.5, 2.5) {$\mathcal{A} = \int_{-1}^{2} (f-g)$};
+\end{tikzpicture}
+\legende{Aire entre $\mathcal{C}_f$ ($f(x)=x+2$) et $\mathcal{C}_g$ ($g(x)=x^2$) sur $[-1;2]$.}
+\end{popfigure}
+
+\begin{exoresolu}[Aire entre deux courbes]
+Énoncé. Soient $f(x) = x + 2$ et $g(x) = x^2$ définies sur $[-1\,;2]$. On admet que $f(x) \geq g(x)$ sur $[-1\,;2]$. Calculer l'aire du domaine compris entre les courbes $\mathcal{C}_f$ et $\mathcal{C}_g$ sur $[-1\,;2]$, en unités d'aire.
+\tcblower
+Solution détaillée.
+
+\textbf{Étape 1 : position relative.} On admet que $f(x) \geq g(x)$ sur $[-1\,;2]$, c'est-à-dire que $\mathcal{C}_f$ est au-dessus de $\mathcal{C}_g$.
+
+(\emph{Vérification :} $f(x) - g(x) = -x^2 + x + 2 = -(x^2 - x - 2) = -(x-2)(x+1) \geq 0$ entre les racines $-1$ et $2$.)
+
+\textbf{Étape 2 : formule de l'aire entre deux courbes.}
+\[ \mathcal{A} = \int_{-1}^{2} \big(f(x) - g(x)\big)dx = \int_{-1}^{2} \left(-x^2 + x + 2\right) dx. \]
+
+\textbf{Étape 3 : calcul.} Une primitive est $F(x) = -\dfrac{x^3}{3} + \dfrac{x^2}{2} + 2x$.
+\begin{align*}
+F(2) &= -\frac{8}{3} + 2 + 4 = -\frac{8}{3} + 6 = \frac{10}{3} \\
+F(-1) &= \frac{1}{3} + \frac{1}{2} - 2 = \frac{2}{6} + \frac{3}{6} - \frac{12}{6} = -\frac{7}{6} \\
+\mathcal{A} &= \frac{10}{3} - \left(-\frac{7}{6}\right) = \frac{20}{6} + \frac{7}{6} = \frac{27}{6} = \frac{9}{2}.
+\end{align*}
+
+\textbf{Conclusion :} l'aire du domaine compris entre les deux courbes est $\mathcal{A} = \dfrac{9}{2} = 4,5$ u.a.
+\end{exoresolu}
+
+\courssub{Calcul de volumes de solides de révolution}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7, domain=0:4.5, samples=100]
+\draw[->] (-0.5,0) -- (4.5,0) node[right] {$x$};
+\draw[->] (0,-2.5) -- (0,2.5) node[above] {$y$};
+\draw[popblue, thick] plot (\x, {sqrt(max(0,\x))});
+\draw[popblue, thick] plot (\x, {-sqrt(max(0,\x))});
+\draw[poporange, thick, fill=poporange!20] (2,0) ellipse (0.15 and {sqrt(max(0,2))});
+\draw[<->, popdark] (2,0) -- (2,{sqrt(max(0,2))}) node[midway, right] {$R = f(x)$};
+\draw[dashed, popmuted] (2,0) node[below] {$x$} -- (2,{sqrt(max(0,2))});
+\draw[->, popdark, thick] (3.5, 1.5) arc (90:-90:{0.5} and {1}) node[right, midway] {Rotation};
+\node[popblue] at (3.5, -1.5) {$y=\sqrt{x}$};
+\node[popblue] at (3.5, 1.5) {$y=-\sqrt{x}$};
+\end{tikzpicture}
+\legende{Volume par la méthode des disques : rotation de $y=f(x)$ autour de $(Ox)$.}
+\end{popfigure}
+
+\begin{methode}[Volume engendré par rotation autour de l'axe $(Ox)$]
+Le solide engendré par la rotation de la courbe de $f$ (continue et positive) autour de l'axe des abscisses, entre $x = a$ et $x = b$, a pour volume :
+\[ V = \pi\int_a^b \big[f(x)\big]^2 dx \quad \text{(en unités de volume, u.v.)} \]
+\begin{enumerate}
+\item Identifier la fonction $f$, l'intervalle $[a\,;b]$ et vérifier que $f$ est continue.
+\item Calculer le \textbf{carré} $[f(x)]^2$ (ne pas oublier de mettre $f$ au carré !).
+\item Trouver une primitive de $[f(x)]^2$.
+\item Calculer l'intégrale, multiplier par $\pi$, puis convertir en unités concrètes si demandé ($1$ u.v. $=$ produit des trois unités des axes).
+\end{enumerate}
+\textbf{Cas particulier utile :} la rotation de la droite $y = r$ (constante) sur $[0\,;h]$ donne un cylindre : $V = \pi r^2 h$.
+\end{methode}
+
+
+
+\newpage
+
+\coursec{Exercices}
+
+\coursec{Intégrale d'une fonction continue : présentation et propriétés}
+
+\begin{definition}[Intégrale d'une fonction continue]
+Soit $f$ une fonction continue sur un intervalle $[a\,;b]$ et $F$ une primitive de $f$ sur $[a\,;b]$. L'\cle{intégrale} de $f$ sur $[a\,;b]$ est le nombre :
+\[
+\int_a^b f(x)\,\mathrm{d}x = F(b)-F(a).
+\]
+On note $\int_a^b f(x)\,\mathrm{d}x$ l'intégrale ; $a$ est la \cle{borne inférieure}, $b$ la \cle{borne supérieure}, $f(x)$ le \cle{sous-intégré} et $x$ la \cle{variable d'intégration}.
+\end{definition}
+
+\begin{propriete}[Propriétés fondamentales de l'intégrale]
+Soient $f$ et $g$ continues sur $[a\,;b]$ et $\lambda \in \mathbb{R}$.
+\begin{enumerate}
+\item \textbf{Linéarité} : $\displaystyle\int_a^b \big(\lambda f(x)+g(x)\big)\,\mathrm{d}x = \lambda\int_a^b f(x)\,\mathrm{d}x + \int_a^b g(x)\,\mathrm{d}x$.
+\item \textbf{Relation de Chasles} : $\forall c\in[a\,;b],\quad \int_a^b f(x)\,\mathrm{d}x = \int_a^c f(x)\,\mathrm{d}x + \int_c^b f(x)\,\mathrm{d}x$.
+\item \textbf{Relation de Chvarlin} : $\displaystyle\int_a^b f(x)\,\mathrm{d}x = -\int_b^a f(x)\,\mathrm{d}x$ ; en particulier $\int_a^a f(x)\,\mathrm{d}x = 0$.
+\item \textbf{Positivité} : Si $f(x)\geq 0$ sur $[a\,;b]$, alors $\int_a^b f(x)\,\mathrm{d}x \geq 0$.
+\item \textbf{Inégalité de la moyenne} : Si $m \leq f(x) \leq M$ sur $[a\,;b]$, alors $m(b-a) \leq \int_a^b f(x)\,\mathrm{d}x \leq M(b-a)$.
+\end{enumerate}
+\emph{Toutes ces propriétés sont admises et utilisables directement au Probatoire.}
+\end{propriete}
+
+\begin{aretenir}[Théorème fondamental de l'analyse]
+Si $f$ est continue sur $[a\,;b]$, elle admet des primitives sur $[a\,;b]$. Pour toute primitive $F$ de $f$ :
+\[
+\int_a^b f(x)\,\mathrm{d}x = F(b)-F(a).
+\]
+Réciproquement, la fonction $x \mapsto \int_a^x f(t)\,\mathrm{d}t$ est une primitive de $f$ sur $[a\,;b]$ qui s'annule en $a$.
+\end{aretenir}
+
+\begin{methode}[Calculer une intégrale définie]
+\begin{enumerate}
+\item Vérifier que la fonction est continue sur l'intervalle d'intégration.
+\item Déterminer une primitive $F$ du sous-intégré $f$ sur cet intervalle (tableau de primitives usuelles, linéarité, intégration par parties, changement de variable).
+\item Appliquer la formule $\int_a^b f(x)\,\mathrm{d}x = F(b)-F(a)$.
+\item Simplifier l'expression obtenue (valeur exacte) et, si demandé, donner une valeur approchée.
+\end{enumerate}
+\end{methode}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : propriétés de l'intégrale]
+Pour chaque question, une seule réponse est exacte. Entoure-la et justifie brièvement.
+\begin{enumerate}
+\item Si $F$ est une primitive de $f$ sur $[a\,;b]$, alors $\displaystyle\int_a^b f(x)\,\mathrm{d}x$ est égal à :
+\begin{itemize}
+\item[a)] $F(a)-F(b)$ \qquad b) $F(b)-F(a)$ \qquad c) $f(b)-f(a)$
+\end{itemize}
+\item $\displaystyle\int_2^5 3\,\mathrm{d}x$ est égal à :
+\begin{itemize}
+\item[a)] $3$ \qquad b) $9$ \qquad c) $15$
+\end{itemize}
+\item Si $f$ est continue et positive sur $[1\,;4]$, alors $\displaystyle\int_1^4 f(x)\,\mathrm{d}x$ représente :
+\begin{itemize}
+\item[a)] la valeur moyenne de $f$ \qquad b) l'aire du domaine sous la courbe de $f$, en unités d'aire \qquad c) le coefficient directeur de la tangente
+\end{itemize}
+\item $\displaystyle\int_a^a f(x)\,\mathrm{d}x$ est égal à :
+\begin{itemize}
+\item[a)] $f(a)$ \qquad b) $1$ \qquad c) $0$
+\end{itemize}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, en justifiant]
+Soit $f$ une fonction continue sur $[0\,;5]$. Dire si chaque affirmation est vraie ou fausse, en justifiant par une propriété du cours.
+\begin{enumerate}
+\item $\displaystyle\int_0^5 f(x)\,\mathrm{d}x = -\int_5^0 f(x)\,\mathrm{d}x$.
+\item $\displaystyle\int_0^5 f(x)\,\mathrm{d}x = \int_0^2 f(x)\,\mathrm{d}x + \int_2^5 f(x)\,\mathrm{d}x$.
+\item Si $f(x)\geq 0$ sur $[0\,;5]$, alors $\displaystyle\int_0^5 f(x)\,\mathrm{d}x \geq 0$.
+\item $\displaystyle\int_0^5 \big(f(x)+2\big)\,\mathrm{d}x = \int_0^5 f(x)\,\mathrm{d}x + 2$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Calculer les intégrales suivantes :
+\begin{enumerate}
+\item $I=\displaystyle\int_0^3 (2x+1)\,\mathrm{d}x$ ;
+\item $J=\displaystyle\int_1^4 \dfrac{1}{\sqrt{x}}\,\mathrm{d}x$ ;
+\item $K=\displaystyle\int_0^1 \mathrm{e}^{2x}\,\mathrm{d}x$ ;
+\item $L=\displaystyle\int_1^{\mathrm{e}} \dfrac{1}{x}\,\mathrm{d}x$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions]
+\begin{enumerate}
+\item Donner la définition de la \cle{valeur moyenne} d'une fonction $f$ continue sur un intervalle $[a\,;b]$.
+\item Énoncer l'\cle{inégalité de la moyenne}.
+\item Rappeler la formule du \cle{volume} du solide engendré par la rotation de la courbe d'équation $y=f(x)$ autour de l'axe $(Ox)$, pour $x\in[a\,;b]$.
+\item Décrire en deux phrases le principe de la \cle{méthode des rectangles} pour approcher $\displaystyle\int_a^b f(x)\,\mathrm{d}x$.
+\end{enumerate}
+\end{exercice}
+
+\coursec{Inégalité de la moyenne et valeur moyenne}
+
+\begin{definition}[Valeur moyenne d'une fonction]
+Soit $f$ une fonction continue sur $[a\,;b]$. La \cle{valeur moyenne} de $f$ sur $[a\,;b]$ est le nombre :
+\[
+m = \frac{1}{b-a}\int_a^b f(x)\,\mathrm{d}x.
+\]
+\end{definition}
+
+\begin{propriete}[Inégalité de la moyenne]
+Si $f$ est continue sur $[a\,;b]$ et si $m \leq f(x) \leq M$ pour tout $x\in[a\,;b]$, alors :
+\[
+m(b-a) \leq \int_a^b f(x)\,\mathrm{d}x \leq M(b-a).
+\]
+Cela permet d'encadrer une intégrale lorsque la primitive n'est pas accessible ou pour vérifier un ordre de grandeur.
+\end{propriete}
+
+\begin{exemplebox}[Application : encadrement de $\int_0^1 e^{-x^2}dx$]
+Sur $[0\,;1]$, $x^2\in[0\,;1]$ donc $-x^2\in[-1\,;0]$ et $e^{-x^2}\in[e^{-1}\,;1]$.
+D'après l'inégalité de la moyenne : $e^{-1}(1-0) \leq \int_0^1 e^{-x^2}dx \leq 1(1-0)$, soit $\frac{1}{e} \leq I \leq 1$.
+\end{exemplebox}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Vitesse moyenne entre deux villages]
+Un moto-taxi (« benskin ») relie deux villages. Sa vitesse, en km/h, $t$ heures après le départ, est modélisée par $v(t)=3t^2+1$ pour $t\in[0\,;2]$.
+\begin{enumerate}
+\item Calculer la valeur moyenne de $v$ sur $[0\,;2]$.
+\item Interpréter ce résultat : que représente-t-il pour le trajet du moto-taxi ?
+\item Calculer $\displaystyle\int_0^2 v(t)\,\mathrm{d}t$ et expliquer ce que représente cette quantité.
+\end{enumerate}
+\end{exercice}
+
+\coursec{Méthodes de calcul des intégrales}
+
+\begin{methode}[Intégration par parties]
+Pour calculer $\int u(x)v'(x)\,\mathrm{d}x$, on utilise la formule :
+\[
+\int u(x)v'(x)\,\mathrm{d}x = u(x)v(x) - \int u'(x)v(x)\,\mathrm{d}x.
+\]
+\textbf{Choix stratégique (règle LIATE) :} On choisit $u$ parmi Logarithme, Inverse trigonométrique, Algébrique (polynôme), Trigonométrique, Exponentielle (dans cet ordre de priorité) pour que $u'$ soit plus simple et $v'$ intégrable facilement.
+\end{methode}
+
+\begin{methode}[Changement de variable]
+Si $x = \varphi(t)$ est une bijection $\mathcal{C}^1$ de $[\alpha\,;\beta]$ sur $[a\,;b]$, alors :
+\[
+\int_a^b f(x)\,\mathrm{d}x = \int_\alpha^\beta f(\varphi(t))\,\varphi'(t)\,\mathrm{d}t.
+\]
+On modifie les bornes : $x=a \Rightarrow t=\alpha$, $x=b \Rightarrow t=\beta$.
+\end{methode}
+
+\begin{exoresolu}[Intégration par parties : $\int_1^e \ln x\,dx$]
+\textbf{Énoncé :} Calculer $I=\int_1^e \ln x\,dx$.
+\textbf{Solution :}
+On pose $u(x)=\ln x$ (Logarithme) et $v'(x)=1$ (Algébrique).
+Alors $u'(x)=\frac{1}{x}$ et $v(x)=x$.
+\[
+I = \Big[ x\ln x \Big]_1^e - \int_1^e x\cdot\frac{1}{x}\,dx = (e\ln e - 1\ln 1) - \int_1^e 1\,dx = (e - 0) - [x]_1^e = e - (e-1) = 1.
+\]
+\end{exoresolu}
+
+\courssub{Je m'entraîne (suite)}
+
+\begin{exercice}[Intégration par parties et aire]
+On considère la fonction $f$ définie sur $]0\,;+\infty[$ par $f(x)=\ln(x)$.
+\begin{enumerate}
+\item À l'aide d'une intégration par parties (on posera $u(x)=\ln x$ et $v'(x)=1$), calculer $\displaystyle I=\int_1^{\mathrm{e}} \ln(x)\,\mathrm{d}x$.
+\item En déduire l'aire, en unités d'aire, du domaine délimité par la courbe de $f$, l'axe des abscisses et les droites d'équations $x=1$ et $x=\mathrm{e}$.
+\item L'unité graphique étant le centimètre sur chaque axe, donner cette aire en $\mathrm{cm}^2$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Aire entre une courbe et l'axe des abscisses]
+Soit $f$ la fonction définie sur $[0\,;3]$ par $f(x)=x^2-2x$.
+\begin{enumerate}
+\item Factoriser $f(x)$ et étudier le signe de $f$ sur $[0\,;3]$ (dresser un tableau de signes).
+\item Calculer $\displaystyle A_1=\int_0^2 f(x)\,\mathrm{d}x$ et $\displaystyle A_2=\int_2^3 f(x)\,\mathrm{d}x$.
+\item En déduire l'aire \emph{totale} $\mathcal{A}$ du domaine compris entre la courbe de $f$ et l'axe des abscisses sur $[0\,;3]$.
+\end{enumerate}
+\end{exercice}
+
+\coursec{Calcul d'aires planes}
+
+\begin{propriete}[Aire d'un domaine plan]
+Soit $f$ continue sur $[a\,;b]$.
+\begin{itemize}
+\item Si $f(x)\geq 0$ sur $[a\,;b]$, l'aire du domaine borné par la courbe $y=f(x)$, l'axe des abscisses et les droites $x=a$, $x=b$ est $\mathcal{A} = \int_a^b f(x)\,\mathrm{d}x$.
+\item Si $f(x)\leq 0$ sur $[a\,;b]$, l'aire est $\mathcal{A} = -\int_a^b f(x)\,\mathrm{d}x = \int_a^b |f(x)|\,\mathrm{d}x$.
+\item Si $f$ change de signe, on découpe l'intervalle suivant les zéros de $f$ et on somme les aires de chaque partie (valeurs absolues des intégrales).
+\end{itemize}
+\end{propriete}
+
+\begin{methode}[Calculer une aire plane]
+\begin{enumerate}
+\item Étudier le signe de $f$ sur $[a\,;b]$ (tableau de signes).
+\item Découper $[a\,;b]$ en sous-intervalles où $f$ a un signe constant.
+\item Sur chaque sous-intervalle, calculer l'intégrale de $f$ (ou $|f|$).
+\item L'aire totale est la somme des valeurs absolues de ces intégrales.
+\end{enumerate}
+\end{methode}
+
+\coursec{Calcul de volumes de solides de révolution}
+
+\begin{propriete}[Volume d'un solide de révolution (méthode des disques)]
+Soit $f$ continue et positive sur $[a\,;b]$. Le volume du solide engendré par la rotation de la courbe $y=f(x)$ autour de l'axe $(Ox)$ est :
+\[
+V = \pi \int_a^b \big(f(x)\big)^2\,\mathrm{d}x.
+\]
+L'unité de volume est le cube de l'unité de longueur (ex: $\mathrm{cm}^3$, $\mathrm{dm}^3$, $\mathrm{m}^3$). Rappel : $1\,\mathrm{dm}^3 = 1\,\mathrm{L}$ ; $1\,\mathrm{m}^3 = 1000\,\mathrm{L}$.
+\end{propriete}
+
+\begin{methode}[Calculer un volume de révolution]
+\begin{enumerate}
+\item Vérifier que $f$ est continue et positive sur $[a\,;b]$.
+\item Écrire la formule $V = \pi \int_a^b [f(x)]^2\,dx$.
+\item Calculer $[f(x)]^2$ et déterminer une primitive.
+\item Appliquer le théorème fondamental et multiplier par $\pi$.
+\item Donner la valeur exacte (en $\pi$) et, si demandé, une valeur approchée (avec $\pi\approx 3,14$).
+\item Convertir dans l'unité demandée ($\mathrm{dm}^3$, $\mathrm{L}$, $\mathrm{m}^3$).
+\end{enumerate}
+\end{methode}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Type Probatoire : étude de $f(x)=x\mathrm{e}^{-x}$]
+On considère la fonction $f$ définie sur $\mathbb{R}$ par $f(x)=x\,\mathrm{e}^{-x}$, et on note $(\mathcal{C})$ sa courbe représentative dans un repère orthogonal $(O\,;\vec{\imath},\vec{\jmath})$ d'unités graphiques : \SI{2}{cm} sur $(Ox)$ et \SI{4}{cm} sur $(Oy)$.
+
+\textbf{Partie A : étude de la fonction}
+\begin{enumerate}
+\item Calculer la dérivée $f'$ de $f$ et montrer que $f'(x)=(1-x)\mathrm{e}^{-x}$.
+\item Étudier le signe de $f'(x)$ sur $[0\,;1]$ et dresser le tableau de variations de $f$ sur $[0\,;1]$.
+\item Montrer que $f(x)\geq 0$ pour tout $x\in[0\,;1]$.
+\end{enumerate}
+
+\textbf{Partie B : calcul intégral}
+\begin{enumerate}
+\item À l'aide d'une intégration par parties, déterminer une primitive de $f$ sur $\mathbb{R}$.
+\item En déduire la valeur exacte de $\displaystyle I=\int_0^1 f(x)\,\mathrm{d}x$, puis une valeur approchée à $10^{-3}$ près (on donne $\mathrm{e}^{-1}\approx 0{,}368$).
+\item Calculer l'aire $\mathcal{A}$, en $\mathrm{cm}^2$, du domaine délimité par $(\mathcal{C})$, l'axe des abscisses et les droites d'équations $x=0$ et $x=1$.
+\item Calculer la valeur moyenne de $f$ sur $[0\,;1]$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : l'artisan potier de Foumban]
+Un artisan potier fabrique des pots de forme régulière. Le profil d'un pot, en décimètres, est modélisé par la courbe de la fonction $f$ définie sur $[0\,;6]$ par $f(x)=1+\dfrac{x}{2}$. Le pot est le solide obtenu par rotation de cette courbe autour de l'axe $(Ox)$.
+
+\textbf{Partie A : volume du pot}
+\begin{enumerate}
+\item Calculer $\big(f(x)\big)^2$ et développer l'expression obtenue.
+\item Déterminer une primitive de $x\mapsto \big(f(x)\big)^2$ sur $[0\,;6]$.
+\item Montrer que le volume du pot est $\displaystyle V=\pi\int_0^6 \big(f(x)\big)^2\,\mathrm{d}x$, puis calculer $V$ en $\mathrm{dm}^3$ (donner la valeur exacte puis une valeur approchée à $0{,}1$ près, en prenant $\pi\approx 3{,}14$).
+\item Sachant que $1\ \mathrm{dm}^3 = 1$ litre, convertir ce volume en litres.
+\end{enumerate}
+
+\textbf{Partie B : production de jus de foléré}
+\begin{enumerate}
+\item L'artisan remplit chaque pot de jus de foléré. Combien de pots complets peut-on remplir avec $100$ litres de jus ?
+\item Quel volume de jus reste-t-il alors ?
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : cuve de révolution et estimation d'une aire]
+Une entreprise métallique de Douala fabrique une cuve dont la forme est obtenue par rotation, autour de l'axe $(Ox)$, de la courbe de la fonction $g$ définie sur $[0\,;4]$ par $g(x)=\sqrt{x}$ (unité : le mètre).
+
+\textbf{Partie A : volume de la cuve}
+\begin{enumerate}
+\item Justifier que le volume de la cuve est $\displaystyle V=\pi\int_0^4 x\,\mathrm{d}x$.
+\item Calculer $V$ en $\mathrm{m}^3$ (valeur exacte, puis valeur approchée avec $\pi\approx 3{,}14$).
+\item Convertir ce volume en litres.
+\end{enumerate}
+
+\textbf{Partie B : estimation d'une aire de tôle}
+Pour estimer une quantité de tôle, l'entreprise doit évaluer $\displaystyle J=\int_0^4 \sqrt{x}\,\mathrm{d}x$.
+\begin{enumerate}
+\item Calculer la valeur exacte de $J$.
+\item On partage $[0\,;4]$ en $n=4$ intervalles de même amplitude. Calculer la valeur approchée de $J$ par la méthode des rectangles à gauche (on donne $\sqrt{1}=1$ ; $\sqrt{2}\approx 1{,}414$ ; $\sqrt{3}\approx 1{,}732$).
+\item Calculer l'erreur commise en valeur absolue, puis en pourcentage de la valeur exacte (arrondir à $1\,\%$ près). Commenter.
+\end{enumerate}
+\end{exercice}
+
+\coursec{Valeurs approchées : méthode des rectangles}
+
+\begin{propriete}[Méthode des rectangles]
+Soit $f$ continue sur $[a\,;b]$. On partage $[a\,;b]$ en $n$ sous-intervalles de même amplitude $h = \frac{b-a}{n}$. On note $x_k = a + kh$ pour $k=0,\dots,n$.
+\begin{itemize}
+\item \textbf{Rectangles à gauche :} $\displaystyle R_g = h\sum_{k=0}^{n-1} f(x_k)$.
+\item \textbf{Rectangles à droite :} $\displaystyle R_d = h\sum_{k=1}^{n} f(x_k)$.
+\end{itemize}
+Si $f$ est croissante : $R_g \leq \int_a^b f \leq R_d$. Si $f$ est décroissante : $R_d \leq \int_a^b f \leq R_g$.
+L'erreur diminue quand $n$ augmente.
+\end{propriete}
+
+\begin{methode}[Approcher une intégrale par la méthode des rectangles]
+\begin{enumerate}
+\item Calculer l'amplitude $h = \frac{b-a}{n}$.
+\item Déterminer les abscisses $x_k = a + kh$.
+\item Selon la méthode demandée (gauche ou droite), calculer la somme des valeurs $f(x_k)$.
+\item Multiplier par $h$.
+\item Comparer avec la valeur exacte ou un encadrement si possible.
+\end{enumerate}
+\end{methode}
+
+\courssub{Je m'entraîne (suite)}
+
+\begin{exercice}[Encadrement et méthode des rectangles]
+On veut estimer $\displaystyle I=\int_0^1 \mathrm{e}^{-x^2}\,\mathrm{d}x$.
+\begin{enumerate}
+\item Montrer que pour tout $x\in[0\,;1]$ : $\mathrm{e}^{-1}\leq \mathrm{e}^{-x^2}\leq 1$.
+\item En déduire, à l'aide de l'inégalité de la moyenne, un encadrement de $I$.
+\item On partage $[0\,;1]$ en $n=4$ intervalles de même amplitude. Par la méthode des rectangles (rectangles à gauche), calculer une valeur approchée $R$ de $I$. On donne : $\mathrm{e}^{-0,0625}\approx 0{,}939$ ; $\mathrm{e}^{-0,25}\approx 0{,}779$ ; $\mathrm{e}^{-0,5625}\approx 0{,}570$.
+\item Vérifier que la valeur obtenue est compatible avec l'encadrement de la question 2.
+\end{enumerate}
+\end{exercice}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+\begin{axis}[
+    width=\linewidth, height=7cm,
+    axis lines=middle,
+    xlabel=$x$, ylabel=$y$,
+    xmin=-0.2, xmax=1.2,
+    ymin=-0.2, ymax=1.2,
+    xtick={0,0.25,0.5,0.75,1},
+    ytick={0,0.368,1},
+    yticklabels={$0$,$\frac{1}{e}$,$1$},
+    domain=0:1, samples=100,
+    clip=false
+]
+\addplot[popcurve, thick, domain=0:1] {exp(-x^2)};
+\addplot[popblue!30, fill opacity=0.3] coordinates {(0,0) (0,1) (0.25,1) (0.25,0)};
+\addplot[popblue!30, fill opacity=0.3] coordinates {(0.25,0) (0.25,0.939) (0.5,0.939) (0.5,0)};
+\addplot[popblue!30, fill opacity=0.3] coordinates {(0.5,0) (0.5,0.779) (0.75,0.779) (0.75,0)};
+\addplot[popblue!30, fill opacity=0.3] coordinates {(0.75,0) (0.75,0.570) (1,0.570) (1,0)};
+\node[popdark, anchor=south west] at (axis cs:0.1,0.9) {$R_g$};
+\end{axis}
+\end{tikzpicture}
+\legende{Méthode des rectangles à gauche ($n=4$) pour $\int_0^1 e^{-x^2}dx$.}
+\end{popfigure}
+
+\begin{attention}[Pièges fréquents au Probatoire]
+\begin{itemize}
+\item \textbf{Oubli du $dx$} : L'intégrale s'écrit $\int_a^b f(x)\,dx$, pas $\int_a^b f(x)$.
+\item \textbf{Ordre des bornes} : $\int_a^b = -\int_b^a$. Ne jamais écrire $\int_5^0$ sans le signe $-$ si on inverse.
+\item \textbf{Aire vs Intégrale} : L'aire est toujours positive. Si $f$ change de signe, $\mathcal{A} = \int_a^b |f(x)|\,dx \neq \int_a^b f(x)\,dx$.
+\item \textbf{Volume} : La formule est $V = \pi \int [f(x)]^2 dx$, pas $\pi \int f(x) dx$. Ne pas oublier le carré et le $\pi$.
+\item \textbf{Unités graphiques} : Pour une aire en $\mathrm{cm}^2$, multiplier l'aire en unités d'aire par (échelle $Ox$ en cm) $\times$ (échelle $Oy$ en cm).
+\item \textbf{Intégration par parties} : Bien dériver $u$ et intégrer $v'$. Vérifier que $\int u'v$ est plus simple que $\int uv'$.
+\item \textbf{Valeur moyenne} : Ne pas oublier le facteur $\frac{1}{b-a}$.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[L'intégrale dans la technique au Cameroun]
+L'intégrale est l'outil mathématique central pour le génie civil (calcul de volumes de terrassement, de béton pour des barrages comme celui de Lom Pangar), l'hydraulique (débit = intégrale de la vitesse sur la section), l'électricité (charge = intégrale du courant, énergie = intégrale de la puissance), et la mécanique (travail = intégrale de la force). La méthode des rectangles est l'ancêtre des méthodes numériques (simulation éléments finis, calculs sur logiciels CAO/DAO) utilisées aujourd'hui dans les bureaux d'études de Yaoundé et Douala.
+\end{savaistu}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Exercices corrigés et problèmes types — Calculs des intégrales}
+
+\courssub{Exercices d'application directe}
+
+\begin{corrige}[Exercice 1 — QCM : propriétés de l'intégrale]
+\begin{enumerate}
+\item \textbf{Réponse b)} : $F(b)-F(a)$. C'est la définition de l'intégrale : $\displaystyle\int_a^b f(x)\,\mathrm{d}x = F(b)-F(a)$ où $F$ est une primitive de $f$ sur $[a\,;b]$.
+\item \textbf{Réponse b)} : $9$. En effet, une primitive de $x\mapsto 3$ est $x\mapsto 3x$, donc $\displaystyle\int_2^5 3\,\mathrm{d}x = \big[3x\big]_2^5 = 15-6 = 9$. (C'est aussi l'aire d'un rectangle de longueur $3$ et de hauteur $3$.)
+\item \textbf{Réponse b)} : l'aire du domaine sous la courbe de $f$, en unités d'aire. La valeur moyenne serait $\frac{1}{4-1}\int_1^4 f$ et le coefficient directeur de la tangente est donné par la dérivée.
+\item \textbf{Réponse c)} : $0$. En effet $\displaystyle\int_a^a f(x)\,\mathrm{d}x = F(a)-F(a) = 0$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, en justifiant]
+\begin{enumerate}
+\item \textbf{Vrai.} C'est la \textbf{relation de Chasles} (orientation de l'intervalle) : $\displaystyle\int_a^b f(x)\,\mathrm{d}x = -\int_b^a f(x)\,\mathrm{d}x$, appliquée avec $a=0$ et $b=5$.
+\item \textbf{Vrai.} C'est la \textbf{relation de Chasles} (additivité) avec $c=2\in[0\,;5]$ : $\displaystyle\int_0^5 f = \int_0^2 f + \int_2^5 f$.
+\item \textbf{Vrai.} C'est la \textbf{propriété de positivité} : si $f(x)\geq 0$ sur $[0\,;5]$, alors $\displaystyle\int_0^5 f(x)\,\mathrm{d}x \geq 0$.
+\item \textbf{Faux.} Par linéarité : $\displaystyle\int_0^5 \big(f(x)+2\big)\,\mathrm{d}x = \int_0^5 f(x)\,\mathrm{d}x + \int_0^5 2\,\mathrm{d}x = \int_0^5 f(x)\,\mathrm{d}x + 2\times(5-0) = \int_0^5 f(x)\,\mathrm{d}x + 10$, et non $+2$. L'erreur consiste à oublier d'intégrer la constante sur tout l'intervalle.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Calculs directs d'intégrales]
+\begin{enumerate}
+\item Une primitive de $x\mapsto 2x+1$ sur $\mathbb{R}$ est $F(x)=x^2+x$. Donc :
+\[ I = \Big[x^2+x\Big]_0^3 = (9+3)-(0+0) = 12. \]
+\item On écrit $\dfrac{1}{\sqrt{x}} = x^{-1/2}$ pour $x>0$. Une primitive est $F(x)=2\sqrt{x}$. Donc :
+\[ J = \Big[2\sqrt{x}\Big]_1^4 = 2\sqrt{4}-2\sqrt{1} = 4-2 = 2. \]
+\item Une primitive de $x\mapsto \mathrm{e}^{2x}$ sur $\mathbb{R}$ est $F(x)=\dfrac{1}{2}\mathrm{e}^{2x}$. Donc :
+\[ K = \Big[\tfrac{1}{2}\mathrm{e}^{2x}\Big]_0^1 = \frac{1}{2}\mathrm{e}^{2}-\frac{1}{2}\mathrm{e}^{0} = \frac{\mathrm{e}^2-1}{2}. \]
+\item Une primitive de $x\mapsto \dfrac{1}{x}$ sur $]0\,;+\infty[$ est $F(x)=\ln x$. Donc :
+\[ L = \Big[\ln x\Big]_1^{\mathrm{e}} = \ln \mathrm{e} - \ln 1 = 1-0 = 1. \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Définitions et formules clés]
+\begin{enumerate}
+\item La \cle{valeur moyenne} d'une fonction $f$ continue sur $[a\,;b]$ est le nombre :
+\[ m = \frac{1}{b-a}\int_a^b f(x)\,\mathrm{d}x. \]
+\item \textbf{Inégalité de la moyenne} : si $f$ est continue sur $[a\,;b]$ et si $m \leq f(x) \leq M$ pour tout $x\in[a\,;b]$, alors :
+\[ m(b-a) \leq \int_a^b f(x)\,\mathrm{d}x \leq M(b-a). \]
+\item Le volume du solide engendré par la rotation de la courbe $y=f(x)$ (avec $f$ continue et positive) autour de l'axe $(Ox)$, pour $x\in[a\,;b]$, est donné par la \textbf{méthode des disques} :
+\[ V = \pi\int_a^b \big(f(x)\big)^2\,\mathrm{d}x. \]
+\item \textbf{Méthode des rectangles (à gauche)} : on partage l'intervalle $[a\,;b]$ en $n$ sous-intervalles de même amplitude $h=\frac{b-a}{n}$. On note $x_k = a+kh$. L'approximation de l'intégrale est :
+\[ R_g = h\sum_{k=0}^{n-1} f(x_k). \]
+(Si $f$ est croissante, $R_g$ minoré l'intégrale ; si $f$ est décroissante, $R_g$ la majoré.)
+\end{enumerate}
+\end{corrige}
+
+\courssub{Exercices d'application contextuelle}
+
+\begin{corrige}[Exercice 5 — Vitesse moyenne entre deux villages]
+\begin{enumerate}
+\item La valeur moyenne de $v$ sur $[0\,;2]$ est :
+\[ m = \frac{1}{2-0}\int_0^2 \big(3t^2+1\big)\,\mathrm{d}t. \]
+Une primitive de $t\mapsto 3t^2+1$ est $F(t)=t^3+t$. Donc :
+\[ \int_0^2 \big(3t^2+1\big)\,\mathrm{d}t = \Big[t^3+t\Big]_0^2 = (8+2)-0 = 10, \qquad m = \frac{10}{2} = 5. \]
+La vitesse moyenne est donc $m = 5$ km/h.
+\item Cela signifie que le moto-taxi a parcouru son trajet comme s'il avait roulé à la vitesse constante de $5$ km/h pendant $2$ heures.
+\item $\displaystyle\int_0^2 v(t)\,\mathrm{d}t = 10$. Comme la vitesse est la dérivée de la distance parcourue, cette intégrale représente la \textbf{distance totale parcourue} entre les deux villages, soit $10$ km. Vérification de cohérence : distance $=$ vitesse moyenne $\times$ durée $= 5\times 2 = 10$ km.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Intégration par parties et calcul d'aire]
+\begin{enumerate}
+\item On calcule $I = \displaystyle\int_1^{\mathrm{e}} \ln x\,\mathrm{d}x$ par intégration par parties.
+On pose $u(x)=\ln x$ et $v'(x)=1$, d'où $u'(x)=\dfrac{1}{x}$ et $v(x)=x$.
+Les fonctions $u$ et $v$ sont de classe $\mathcal{C}^1$ sur $[1\,;\mathrm{e}]$, la formule s'applique :
+\begin{align*}
+I &= \Big[x\ln x\Big]_1^{\mathrm{e}} - \int_1^{\mathrm{e}} x\times\frac{1}{x}\,\mathrm{d}x \\
+&= \big(\mathrm{e}\ln\mathrm{e} - 1\ln 1\big) - \int_1^{\mathrm{e}} 1\,\mathrm{d}x \\
+&= (\mathrm{e}-0) - \Big[x\Big]_1^{\mathrm{e}} = \mathrm{e}-(\mathrm{e}-1) = 1.
+\end{align*}
+Donc $I = 1$.
+\item Sur $[1\,;\mathrm{e}]$, $\ln x \geq 0$ (car $x\geq 1$), donc l'aire du domaine limité par la courbe, l'axe des abscisses et les droites $x=1$, $x=\mathrm{e}$ est :
+\[ \mathcal{A} = \int_1^{\mathrm{e}} \ln x\,\mathrm{d}x = 1 \text{ unité d'aire.} \]
+\item L'unité d'aire vaut $1\ \mathrm{cm}\times 1\ \mathrm{cm} = 1\ \mathrm{cm}^2$. Donc $\mathcal{A} = 1\ \mathrm{cm}^2$.
+\end{enumerate}
+\textbf{Point de vigilance :} le choix $u=\ln x$ est imposé par la règle LIATE (Logarithme en priorité) : c'est $\ln x$ que l'on dérive, car sa dérivée $\frac{1}{x}$ simplifie le calcul.
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Aire entre une courbe et l'axe des abscisses (changement de signe)]
+\begin{enumerate}
+\item $f(x)=x^2-2x = x(x-2)$. Les racines sont $x=0$ et $x=2$. Le trinôme est du signe de $a=1>0$ à l'extérieur des racines :
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $0$ & & $2$ & & $3$ \\ \hline
+$f(x)$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+\end{tabular}
+\end{center}
+Donc $f(x)\leq 0$ sur $[0\,;2]$ et $f(x)\geq 0$ sur $[2\,;3]$.
+\item Une primitive de $f$ sur $\mathbb{R}$ est $F(x)=\dfrac{x^3}{3}-x^2$.
+\begin{align*}
+A_1 &= \int_0^2 f(x)\,\mathrm{d}x = \Big[\tfrac{x^3}{3}-x^2\Big]_0^2 = \left(\frac{8}{3}-4\right)-0 = -\frac{4}{3}. \\
+A_2 &= \int_2^3 f(x)\,\mathrm{d}x = \Big[\tfrac{x^3}{3}-x^2\Big]_2^3 = \left(\frac{27}{3}-9\right)-\left(\frac{8}{3}-4\right) = 0-\left(-\frac{4}{3}\right) = \frac{4}{3}.
+\end{align*}
+\item L'aire totale est la somme des valeurs absolues des intégrales sur les intervalles de signe constant :
+\[ \mathcal{A} = |A_1| + |A_2| = \frac{4}{3}+\frac{4}{3} = \frac{8}{3} \text{ unités d'aire.} \]
+\textbf{Attention :} on ne calcule pas $\int_0^3 f$ directement : cela donnerait $0$, qui n'est pas l'aire (les parties au-dessus et en-dessous de l'axe se compensent algébriquement).
+\end{enumerate}
+\end{corrige}
+
+\courssub{Problèmes type Probatoire / Baccalauréat Technique}
+
+\begin{corrige}[Exercice 8 — Type Probatoire : étude de $f(x)=x\mathrm{e}^{-x}$]
+\begin{popfigure}
+\begin{tikzpicture}[scale=3, domain=0:1.2]
+\draw[->] (-0.1,0) -- (1.2,0) node[right] {$x$};
+\draw[->] (0,-0.1) -- (0,0.5) node[above] {$y$};
+\draw[popcurve, thick, domain=0:1.2, samples=100] plot (\x, {\x*exp(-\x)});
+\draw[popblue!30, fill=popblue!10, domain=0:1] plot (\x, {\x*exp(-\x)}) -- (1,0) -- (0,0) -- cycle;
+\foreach \x/\label in {1/1, 2.718/$\mathrm{e}$} \draw (\x/2.718,0.01) -- (\x/2.718,-0.01) node[below] {\label};
+\foreach \y/\label in {0.3679/$\frac{1}{\mathrm{e}}$} \draw (0.01,\y) -- (-0.01,\y) node[left] {\label};
+\draw[dashed, popmuted] (1,0) -- (1,0.3679) -- (0,0.3679);
+\end{tikzpicture}
+\legende{Représentation de $f(x)=xe^{-x}$ sur $[0\,;1]$ et aire $\mathcal{A}$.}
+\end{popfigure}
+
+\textbf{Partie A : étude de la fonction}
+\begin{enumerate}
+\item $f$ est dérivable sur $\mathbb{R}$ comme produit de fonctions dérivables. Avec $u(x)=x$, $v(x)=\mathrm{e}^{-x}$, $u'(x)=1$, $v'(x)=-\mathrm{e}^{-x}$ :
+\[ f'(x) = 1\times\mathrm{e}^{-x} + x\times(-\mathrm{e}^{-x}) = (1-x)\mathrm{e}^{-x}. \]
+\item Pour tout $x$, $\mathrm{e}^{-x}>0$, donc $f'(x)$ est du signe de $1-x$. Sur $[0\,;1]$, $1-x\geq 0$, donc $f'(x)\geq 0$ : $f$ est croissante sur $[0\,;1]$.
+\[ f(0)=0, \qquad f(1)=1\times\mathrm{e}^{-1} = \frac{1}{\mathrm{e}}. \]
+\begin{center}
+\begin{tabular}{|c|ccc|}\hline
+$x$ & $0$ & & $1$ \\ \hline
+$f'(x)$ & & $+$ & \\ \hline
+$f$ & $0$ & $\nearrow$ & $\frac{1}{\mathrm{e}}$ \\ \hline
+\end{tabular}
+\end{center}
+\item Pour $x\in[0\,;1]$ : $x\geq 0$ et $\mathrm{e}^{-x}>0$, donc $f(x)=x\mathrm{e}^{-x}\geq 0$.
+\end{enumerate}
+
+\textbf{Partie B : calcul intégral}
+\begin{enumerate}
+\item On calcule une primitive de $f$ sur $\mathbb{R}$ par intégration par parties.
+On pose $u(x)=x$, $v'(x)=\mathrm{e}^{-x}$, d'où $u'(x)=1$ et $v(x)=-\mathrm{e}^{-x}$ (fonctions $\mathcal{C}^1$ sur $\mathbb{R}$) :
+\[ \int x\mathrm{e}^{-x}\,\mathrm{d}x = -x\mathrm{e}^{-x} - \int (-\mathrm{e}^{-x})\,\mathrm{d}x = -x\mathrm{e}^{-x} - \mathrm{e}^{-x} = -(x+1)\mathrm{e}^{-x}. \]
+Une primitive de $f$ sur $\mathbb{R}$ est donc $F(x)=-(x+1)\mathrm{e}^{-x}$.
+\item $\displaystyle I = \int_0^1 f(x)\,\mathrm{d}x = F(1)-F(0) = -2\mathrm{e}^{-1} - (-1\times\mathrm{e}^{0}) = 1 - \frac{2}{\mathrm{e}}$.
+Valeur approchée : $I \approx 1 - 2\times 0{,}3679 = 1 - 0{,}7358 = 0{,}2642$.
+\item $f\geq 0$ sur $[0\,;1]$, donc l'aire en unités d'aire vaut $I = 1-\frac{2}{\mathrm{e}}$.
+L'unité d'aire vaut $2\ \mathrm{cm}\times 4\ \mathrm{cm} = 8\ \mathrm{cm}^2$. Donc :
+\[ \mathcal{A} = 8\left(1-\frac{2}{\mathrm{e}}\right) \approx 8\times 0{,}2642 \approx 2{,}11\ \mathrm{cm}^2. \]
+\item Valeur moyenne : $\displaystyle m = \frac{1}{1-0}\int_0^1 f = I = 1-\frac{2}{\mathrm{e}} \approx 0{,}264$.
+\end{enumerate}
+\textbf{Barème indicatif (10 pts) :} A1 : 1,5 pt ; A2 : 1,5 pt ; A3 : 1 pt ; B1 : 2 pts ; B2 : 1,5 pt ; B3 : 1,5 pt ; B4 : 1 pt.
+
+\textbf{Points de vigilance :} citer que $u$ et $v$ sont de classe $\mathcal{C}^1$ (ou dérivables à dérivées continues) pour l'intégration par parties ; justifier la positivité de $f$ avant d'identifier intégrale et aire ; ne pas oublier de multiplier par le produit des unités graphiques ($2\times 4 = 8$) pour l'aire en $\mathrm{cm}^2$.
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type Probatoire : l'artisan potier de Foumban]
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.6, domain=0:6]
+\draw[->] (-0.5,0) -- (6.5,0) node[right] {$x$ (dm)};
+\draw[->] (0,-0.5) -- (0,4.5) node[above] {$y$ (dm)};
+\draw[popcurve, thick, domain=0:6] plot (\x, {1+\x/2});
+\draw[poporange, thick, fill=poporange!10, domain=0:6] plot (\x, {1+\x/2}) -- (6,0) -- (0,0) -- cycle;
+\draw[dashed, popmuted] (6,0) node[below] {$6$} -- (6,4) -- (0,4) node[left] {$4$};
+\draw[dashed, popmuted] (0,1) node[left] {$1$} -- (6,1);
+\end{tikzpicture}
+\legende{Profil du pot : $y = 1 + \frac{x}{2}$ pour $x\in[0\,;6]$. Rotation autour de $(Ox)$.}
+\end{popfigure}
+
+\textbf{Partie A : volume du pot}
+\begin{enumerate}
+\item $\big(f(x)\big)^2 = \left(1+\dfrac{x}{2}\right)^2 = 1 + x + \dfrac{x^2}{4}$.
+\item Une primitive de $x\mapsto 1+x+\dfrac{x^2}{4}$ sur $\mathbb{R}$ est :
+\[ G(x) = x + \frac{x^2}{2} + \frac{x^3}{12}. \]
+\item $f$ est continue et positive sur $[0\,;6]$ (fonction affine, $f(0)=1>0$, croissante). Par la méthode des disques, le volume du solide de révolution est :
+\[ V = \pi\int_0^6 \big(f(x)\big)^2\,\mathrm{d}x = \pi\Big[G(x)\Big]_0^6 = \pi\left(6 + \frac{36}{2} + \frac{216}{12}\right) - 0 = \pi(6+18+18) = 42\pi. \]
+Donc $V = 42\pi\ \mathrm{dm}^3 \approx 42\times 3{,}14 \approx 131{,}9\ \mathrm{dm}^3$.
+\item Comme $1\ \mathrm{dm}^3 = 1$ L : $V \approx 131{,}9$ litres (valeur exacte $42\pi$ litres).
+\end{enumerate}
+
+\textbf{Partie B : production de jus de foléré}
+\begin{enumerate}
+\item Nombre de pots complets : $\dfrac{100}{42\pi} \approx \dfrac{100}{131{,}9} \approx 0{,}75$. On ne peut donc remplir \textbf{aucun pot complet} avec $100$ litres : un seul pot contient environ $131{,}9$ litres, ce qui dépasse les $100$ litres disponibles.
+\item Il reste les $100$ litres de jus (le pot n'est pas rempli complètement ; le remplissage atteint environ $\frac{100}{131{,}9}\approx 76\,\%$ de sa capacité).
+\end{enumerate}
+\textbf{Barème indicatif (8 pts) :} A1 : 1 pt ; A2 : 1,5 pt ; A3 : 2,5 pts ; A4 : 1 pt ; B1 : 1 pt ; B2 : 1 pt.
+
+\textbf{Points de vigilance :} justifier la continuité et la positivité de $f$ avant d'appliquer la formule du volume ; ne pas oublier le carré sur $f(x)$ ni le facteur $\pi$ ; donner la valeur exacte $42\pi$ avant la valeur approchée.
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Type Probatoire : cuve de révolution et estimation d'une aire]
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, domain=0:4]
+\draw[->] (-0.3,0) -- (4.5,0) node[right] {$x$ (m)};
+\draw[->] (0,-0.3) -- (0,2.5) node[above] {$y$ (m)};
+\draw[popcurve, thick, domain=0:4, samples=100] plot (\x, {sqrt(max(0,\x))});
+% Rectangles à gauche n=4
+\foreach \x in {0,1,2,3} {
+    \draw[popgreen!50, fill=popgreen!10] (\x,0) rectangle (\x+1, {sqrt(max(0,\x))});
+}
+\foreach \x/\label in {1/1, 2/2, 3/3, 4/4} \draw (\x,0.05) -- (\x,-0.05) node[below] {\label};
+\foreach \y/\label in {1/1, 2/2} \draw (0.05,\y) -- (-0.05,\y) node[left] {\label};
+\end{tikzpicture}
+\legende{Courbe $y=\sqrt{x}$ et rectangles à gauche ($n=4$) pour l'approximation de l'aire.}
+\end{popfigure}
+
+\textbf{Partie A : volume de la cuve}
+\begin{enumerate}
+\item $g$ est continue et positive sur $[0\,;4]$. Par la méthode des disques :
+\[ V = \pi\int_0^4 \big(g(x)\big)^2\,\mathrm{d}x = \pi\int_0^4 \big(\sqrt{x}\big)^2\,\mathrm{d}x = \pi\int_0^4 x\,\mathrm{d}x. \]
+\item $\displaystyle V = \pi\Big[\frac{x^2}{2}\Big]_0^4 = \pi\times\frac{16}{2} = 8\pi\ \mathrm{m}^3 \approx 8\times 3{,}14 = 25{,}12\ \mathrm{m}^3$.
+\item $1\ \mathrm{m}^3 = 1000$ L, donc $V \approx 25\,120$ litres (valeur exacte $8000\pi$ litres).
+\end{enumerate}
+
+\textbf{Partie B : estimation d'une aire de tôle (profil de la cuve)}
+\begin{enumerate}
+\item Une primitive de $\sqrt{x}=x^{1/2}$ sur $[0\,;+\infty[$ est $x\mapsto \dfrac{2}{3}x^{3/2}$. Donc :
+\[ J = \Big[\frac{2}{3}x^{3/2}\Big]_0^4 = \frac{2}{3}\times 4^{3/2} - 0 = \frac{2}{3}\times 8 = \frac{16}{3}. \]
+\item Amplitude : $h = \dfrac{4-0}{4} = 1$. Abscisses : $x_0=0$, $x_1=1$, $x_2=2$, $x_3=3$, $x_4=4$.
+Méthode des rectangles à gauche (on utilise $x_0$ à $x_{n-1}$) :
+\begin{align*}
+R_g &= h\big(g(x_0)+g(x_1)+g(x_2)+g(x_3)\big) \\
+&= 1\times\big(\sqrt{0} + \sqrt{1} + \sqrt{2} + \sqrt{3}\big) \\
+&= 0 + 1 + 1{,}414 + 1{,}732 = 4{,}146.
+\end{align*}
+\item Valeur exacte : $J = \dfrac{16}{3} \approx 5{,}333$.
+Erreur absolue : $|R_g - J| \approx |4{,}146 - 5{,}333| = 1{,}187$.
+Erreur relative : $\dfrac{1{,}187}{5{,}333} \approx 0{,}223$, soit environ $22\,\%$.
+
+\textbf{Commentaire :} l'erreur est importante car $n=4$ est trop petit et la fonction $\sqrt{x}$ varie très vite au voisinage de $0$ (tangente verticale). Comme $g$ est croissante, les rectangles à gauche minorent l'intégrale : $R_g \leq J$, ce qui est bien vérifié. Pour réduire l'erreur, il faut augmenter $n$.
+\end{enumerate}
+\textbf{Barème indicatif (10 pts) :} A1 : 1,5 pt ; A2 : 1,5 pt ; A3 : 1 pt ; B1 : 2 pts ; B2 : 2 pts ; B3 : 2 pts.
+
+\textbf{Points de vigilance :} $(\sqrt{x})^2 = x$ pour $x\geq 0$ ; dans la méthode des rectangles à gauche, on utilise $x_0$ à $x_{n-1}$ (et non $x_n$) ; vérifier la cohérence du résultat avec l'encadrement lié à la monotonie.
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Encadrement par l'inégalité de la moyenne et méthode des rectangles]
+\begin{popfigure}
+\begin{tikzpicture}[scale=3, domain=0:1]
+\draw[->] (-0.1,0) -- (1.1,0) node[right] {$x$};
+\draw[->] (0,-0.1) -- (0,1.1) node[above] {$y$};
+\draw[popcurve, thick, domain=0:1, samples=100] plot (\x, {exp(-\x*\x)});
+% Rectangles à gauche n=4
+\foreach \x in {0,0.25,0.5,0.75} {
+    \draw[poppurple!50, fill=poppurple!10] (\x,0) rectangle (\x+0.25, {exp(-\x*\x)});
+}
+\foreach \x/\label in {0.25/0,25, 0.5/0,5, 0.75/0,75, 1/1} \draw (\x,0.02) -- (\x,-0.02) node[below] {\label};
+\foreach \y/\label in {0.3679/$\frac{1}{\mathrm{e}}$, 1/1} \draw (0.02,\y) -- (-0.02,\y) node[left] {\label};
+\end{tikzpicture}
+\legende{Courbe $y=\mathrm{e}^{-x^2}$ sur $[0\,;1]$ et rectangles à gauche ($n=4$).}
+\end{popfigure}
+
+\begin{enumerate}
+\item Pour $x\in[0\,;1]$ : $0 \leq x^2 \leq 1$, donc $-1 \leq -x^2 \leq 0$. La fonction exponentielle étant strictement croissante sur $\mathbb{R}$ :
+\[ \mathrm{e}^{-1} \leq \mathrm{e}^{-x^2} \leq \mathrm{e}^{0} = 1. \]
+\item La fonction $x\mapsto \mathrm{e}^{-x^2}$ est continue sur $[0\,;1]$ et encadrée par $m=\mathrm{e}^{-1}$ et $M=1$. Par l'inégalité de la moyenne :
+\[ \mathrm{e}^{-1}(1-0) \leq I \leq 1\times(1-0), \quad \text{soit} \quad \frac{1}{\mathrm{e}} \leq I \leq 1, \quad \text{avec } \frac{1}{\mathrm{e}}\approx 0{,}3679. \]
+\item Amplitude : $h = \dfrac{1-0}{4} = 0{,}25$. Abscisses : $x_0=0$ ; $x_1=0{,}25$ ; $x_2=0{,}5$ ; $x_3=0{,}75$ ; $x_4=1$.
+Méthode des rectangles à gauche :
+\begin{align*}
+R &= h\big(f(x_0)+f(x_1)+f(x_2)+f(x_3)\big) \\
+&= 0{,}25\big(\mathrm{e}^{0} + \mathrm{e}^{-0.0625} + \mathrm{e}^{-0.25} + \mathrm{e}^{-0.5625}\big) \\
+&\approx 0{,}25\big(1 + 0{,}9394 + 0{,}7788 + 0{,}5698\big) = 0{,}25\times 3{,}288 = 0{,}822.
+\end{align*}
+\item On a bien $\dfrac{1}{\mathrm{e}} \approx 0{,}368 \leq R \approx 0{,}822 \leq 1$ : la valeur obtenue est compatible avec l'encadrement de la question 2.
+De plus, la fonction étant \textbf{décroissante} sur $[0\,;1]$ (car $f'(x)=-2x\mathrm{e}^{-x^2}\leq 0$), les rectangles à gauche donnent une valeur \emph{par excès} : $I \leq R$, ce qui est cohérent avec la valeur exacte $I \approx 0{,}747$ (intégrale de Gauss).
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[
+    mindmap,
+    concept color=popblue,
+    level 1 concept/.append style={level distance=4.5cm, sibling angle=60},
+    level 2 concept/.append style={level distance=3cm, sibling angle=45},
+    every node/.style={font=\small},
+    text=white,
+    branch1/.style={concept color=poporange},
+    branch2/.style={concept color=popgreen},
+    branch3/.style={concept color=poppurple},
+    branch4/.style={concept color=poppink},
+    branch5/.style={concept color=popgold},
+    branch6/.style={concept color=popdark}
+]
+\node[concept] {Calculs des intégrales}
+    child[branch1] { node[concept] {Présentation \& Propriétés}
+        child { node[concept] {Linéarité} }
+        child { node[concept] {Chasles} }
+        child { node[concept] {Ordre} }
+        child { node[concept] {Inégalité moyenne} }
+    }
+    child[branch2] { node[concept] {Valeur Moyenne}
+        child { node[concept] {Théorème} }
+        child { node[concept] {Interprétation géométrique} }
+        child { node[concept] {Applications techniques} }
+    }
+    child[branch3] { node[concept] {Méthodes de Calcul}
+        child { node[concept] {Primitives usuelles} }
+        child { node[concept] {Intégration par parties} }
+        child { node[concept] {Changement de variable} }
+        child { node[concept] {Décomposition rationnelle} }
+    }
+    child[branch4] { node[concept] {Calcul d'Aires}
+        child { node[concept] {Aire sous courbe} }
+        child { node[concept] {Aire entre 2 courbes} }
+        child { node[concept] {Axe des ordonnées} }
+    }
+    child[branch5] { node[concept] {Volumes de Révolution}
+        child { node[concept] {Disques (autour Ox)} }
+        child { node[concept] {Cylindres (autour Oy)} }
+        child { node[concept] {Solides creux} }
+    }
+    child[branch6] { node[concept] {Approximation}
+        child { node[concept] {Rectangles gauche} }
+        child { node[concept] {Rectangles droite} }
+        child { node[concept] {Rectangles milieu} }
+        child { node[concept] {Erreur \& convergence} }
+    };
+\end{tikzpicture}
+\legende{Carte mentale : Leçon 14 -- Calculs des intégrales (Terminale Technique)}
+\end{popfigure}
+
+\begin{bilan}
+\courssub{Essentiel à retenir}
+
+\textbf{1. Intégrale d'une fonction continue : présentation et propriétés}
+\begin{itemize}
+    \item Soit $f$ continue sur $[a,b]$. L'intégrale $\int_a^b f(x)\,dx$ est le nombre réel égal à la limite des sommes de Riemann.
+    \item \textbf{Propriétés fondamentales} (à connaître par cœur) :
+\end{itemize}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}\hline
+\textbf{Propriété} & \textbf{Formule / Énoncé} \\ \hline
+Linéarité & $\int_a^b [\lambda f(x) + \mu g(x)]\,dx = \lambda \int_a^b f(x)\,dx + \mu \int_a^b g(x)\,dx$ \\ \hline
+Chasles & $\int_a^b f(x)\,dx = \int_a^c f(x)\,dx + \int_c^b f(x)\,dx \quad (\forall c \in [a,b])$ \\ \hline
+Sens d'intégration & $\int_b^a f(x)\,dx = -\int_a^b f(x)\,dx$ ; $\int_a^a f(x)\,dx = 0$ \\ \hline
+Ordre (positivité) & Si $f(x) \ge 0$ sur $[a,b]$, alors $\int_a^b f(x)\,dx \ge 0$ \\ \hline
+Inégalité de la moyenne & Si $m \le f(x) \le M$, alors $m(b-a) \le \int_a^b f(x)\,dx \le M(b-a)$ \\ \hline
+Valeur absolue & $\left|\int_a^b f(x)\,dx\right| \le \int_a^b |f(x)|\,dx$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{2. Inégalité de la moyenne et valeur moyenne}
+\begin{itemize}
+    \item \textbf{Théorème de la valeur moyenne (TVM)} : Si $f$ est continue sur $[a,b]$, il existe $c \in [a,b]$ tel que $\int_a^b f(x)\,dx = f(c)(b-a)$.
+    \item \textbf{Valeur moyenne} : $m_f = \dfrac{1}{b-a}\int_a^b f(x)\,dx$. C'est la hauteur du rectangle de base $[a,b]$ ayant même aire que le domaine sous la courbe.
+    \item \textbf{Application technique} : Courant moyen, tension efficace, température moyenne, concentration moyenne.
+\end{itemize}
+
+\textbf{3. Méthodes de calcul des intégrales (Primitives)}
+\begin{itemize}
+    \item \textbf{Table de primitives usuelles} : $x^\alpha$, $1/x$, $e^x$, $\ln x$, $\cos x$, $\sin x$, $\frac{1}{1+x^2}$, $\frac{1}{\sqrt{1-x^2}}$, $ch$, $sh$, $\frac{1}{ch^2}$, etc.
+    \item \textbf{Intégration par parties} : $\int_a^b u(x)v'(x)\,dx = \Big[u(x)v(x)\Big]_a^b - \int_a^b u'(x)v(x)\,dx$.
+    \item \textbf{Changement de variable} : $x = \varphi(t)$, $dx = \varphi'(t)dt$, bornes modifiées : $\int_a^b f(x)\,dx = \int_{\varphi^{-1}(a)}^{\varphi^{-1}(b)} f(\varphi(t))\varphi'(t)\,dt$.
+    \item \textbf{Décomposition en éléments simples} : Fractions rationnelles $\frac{P(x)}{Q(x)}$ avec $\deg P < \deg Q$.
+\end{itemize}
+
+\textbf{4. Calcul d'aires planes}
+\begin{itemize}
+    \item Aire sous courbe $y=f(x) \ge 0$ sur $[a,b]$ : $\mathcal{A} = \int_a^b f(x)\,dx$.
+    \item Aire entre deux courbes $f \ge g$ sur $[a,b]$ : $\mathcal{A} = \int_a^b [f(x)-g(x)]\,dx$.
+    \item Aire par rapport à l'axe des ordonnées : $\mathcal{A} = \int_c^d x(y)\,dy$ (fonction réciproque).
+    \item \textbf{Attention} : Si $f$ change de signe, couper l'intervalle aux zéros et sommer les valeurs absolues.
+\end{itemize}
+
+\textbf{5. Calcul de volumes de solides de révolution}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|c|}\hline
+\textbf{Axe de rotation} & \textbf{Formule (Disques / Cylindres)} & \textbf{Condition} \\ \hline
+Autour de $Ox$ (abscisses) & $V = \pi \int_a^b [f(x)]^2\,dx$ & $f(x) \ge 0$ \\ \hline
+Autour de $Oy$ (ordonnées) & $V = \pi \int_c^d [x(y)]^2\,dy$ ou $V = 2\pi \int_a^b x f(x)\,dx$ (cylindres) & $x \ge 0$ \\ \hline
+Solide creux (autour $Ox$) & $V = \pi \int_a^b \big([f(x)]^2 - [g(x)]^2\big)\,dx$ & $f(x) \ge g(x) \ge 0$ \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{6. Valeurs approchées : Méthode des rectangles}
+\begin{itemize}
+    \item Subdivision régulière de $[a,b]$ en $n$ intervalles : pas $h = \frac{b-a}{n}$, $x_k = a + kh$.
+    \item \textbf{Rectangles à gauche} : $R_g = h \sum_{k=0}^{n-1} f(x_k)$ (sous-estimation si $f$ croissante).
+    \item \textbf{Rectangles à droite} : $R_d = h \sum_{k=1}^{n} f(x_k)$ (sur-estimation si $f$ croissante).
+    \item \textbf{Rectangles au milieu} : $R_m = h \sum_{k=0}^{n-1} f\left(\frac{x_k+x_{k+1}}{2}\right)$ (plus précis, ordre 2).
+    \item Convergence : $\lim_{n\to +\infty} R_g = \lim_{n\to +\infty} R_d = \lim_{n\to +\infty} R_m = \int_a^b f(x)\,dx$.
+\end{itemize}
+
+\courssub{Méthodes express (Fiches de révision)}
+
+\begin{methode}[Calculer une intégrale définie]
+\emph{Étape 1 :} Vérifier la continuité de $f$ sur $[a,b]$.
+\emph{Étape 2 :} Chercher une primitive $F$ de $f$ (table, parties, changement de variable, décomposition).
+\emph{Étape 3 :} Appliquer $\int_a^b f(x)\,dx = F(b) - F(a)$.
+\emph{Étape 4 :} Simplifier le résultat (forme exacte demandée au Probatoire).
+\end{methode}
+
+\begin{methode}[Calculer une aire plane]
+\emph{Étape 1 :} Tracer les courbes, repérer les intersections (résoudre $f(x)=g(x)$).
+\emph{Étape 2 :} Déterminer qui est au-dessus ($f \ge g$ ou $g \ge f$) sur chaque sous-intervalle.
+\emph{Étape 3 :} Écrire l'intégrale $\int_{x_1}^{x_2} |f(x)-g(x)|\,dx$ (souvent somme de 2 intégrales).
+\emph{Étape 4 :} Calculer et conclure avec l'unité d'aire ($u.a.$ ou $cm^2$, $m^2$).
+\end{methode}
+
+\begin{methode}[Calculer un volume de révolution]
+\emph{Étape 1 :} Identifier l'axe de rotation ($Ox$ ou $Oy$) et la région génératrice.
+\emph{Étape 2 :} Choisir la méthode : Disques (perpendiculaire à l'axe) ou Cylindres (parallèle à l'axe).
+\emph{Étape 3 :} Écrire l'intégrale : $\pi \int [R(x)]^2 dx$ ou $2\pi \int x h(x) dx$.
+\emph{Étape 4 :} Calculer l'intégrale. Unité : $u.v.$ ou $cm^3$, $m^3$.
+\end{methode}
+
+\begin{methode}[Approximer par les rectangles (algorithme)]
+\emph{Entrées :} $f$, $[a,b]$, $n$, type (gauche/droite/milieu).
+\emph{Initialiser :} $h \leftarrow (b-a)/n$, $S \leftarrow 0$.
+\emph{Pour $k$ de 0 à $n-1$ (gauche/milieu) ou 1 à $n$ (droite) :}
+\quad $x \leftarrow$ abscisse selon type.
+\quad $S \leftarrow S + f(x)$.
+\emph{Fin Pour}
+\emph{Retourner :} $h \times S$.
+\end{methode}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+$\square$ Je sais écrire la définition de l'intégrale comme limite de sommes de Riemann.
+$\square$ Je connais par cœur les 6 propriétés fondamentales (Linéarité, Chasles, Sens, Ordre, Inégalité moyenne, Valeur absolue).
+$\square$ Je sais énoncer et appliquer le Théorème de la Valeur Moyenne (existence de $c$) et calculer la valeur moyenne $m_f$.
+$\square$ Je maîtrise la table des primitives usuelles (puissances, $1/x$, exponentielle, log, trigonométriques, hyperboliques).
+$\square$ Je sais choisir et appliquer : Intégration par parties (choix $u, v'$), Changement de variable (modification des bornes), Décomposition en éléments simples.
+$\square$ Je sais calculer une aire : repérer les intersections, gérer le changement de signe (valeur absolue), intégrer la différence.
+$\square$ Je sais calculer un volume de révolution : Disques autour de $Ox$ ($\pi \int f^2$), Cylindres autour de $Oy$ ($2\pi \int x f$), Solide creux ($\pi \int (f^2-g^2)$).
+$\square$ Je connais les 3 formules des rectangles (gauche, droite, milieu) et je sais laquelle surestime/sous-estime selon la monotonie de $f$.
+$\square$ Je sais rédiger une démonstration guidée (ex: inégalité de la moyenne, formule d'intégration par parties).
+$\square$ Je sais interpréter géométriquement : intégrale = aire algébrique, valeur moyenne = hauteur du rectangle équivalent, volume = somme de disques/cylindres.
+$\square$ Je donne toujours le résultat exact (forme littérale) sauf demande explicite de valeur approchée, et je conclus avec l'unité adaptée au contexte technique.
+$\square$ Je vérifie la continuité de la fonction sur l'intervalle d'intégration avant d'appliquer le théorème fondamental.
+\end{aretenir}
+
+\findecours
+
+\end{document}

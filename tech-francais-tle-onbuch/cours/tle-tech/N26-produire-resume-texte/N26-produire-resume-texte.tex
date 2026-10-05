@@ -1,0 +1,2527 @@
+% Produire un résumé de texte — Français Tle Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N26-produire-resume-texte.tex
+\newcommand{\DOCMATIERE}{Français}
+\newcommand{\DOCNIVEAU}{Tle Tech}
+\newcommand{\DOCMODULE}{Français – classe de Terminale technique}
+\newcommand{\DOCLECON}{N26}
+\newcommand{\DOCTITRE}{Produire un résumé de texte}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Produire un résumé de texte}{Français}{Tle Tech}{Français – classe de Terminale technique}{N26}{10 séances (fiche de progression harmonisée)}{Cette leçon outille l'élève de Terminale technique pour produire le résumé d'un texte littéraire ou argumentatif : repérage des idées essentielles, reformulation, rédaction et amélioration. Elle s'appuie sur l'étude intégrale du Vieux nègre et la médaille de Ferdinand Oyono et mobilise les notions d'énoncé constatif/performatif et de tonalités satirique et polémique.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais lire activement un texte pour en dégager le thème et la thèse de l'auteur.
+\item À la fin de cette leçon, je sais distinguer les idées essentielles des idées secondaires et des exemples.
+\item À la fin de cette leçon, je sais reformuler les idées essentielles avec mes propres mots sans déformer la pensée de l'auteur.
+\item À la fin de cette leçon, je sais rédiger un résumé cohérent, objectif et respectant la longueur imposée (contraction au quart).
+\item À la fin de cette leçon, je sais distinguer un énoncé constatif d'un énoncé performatif et les utiliser à bon escient.
+\item À la fin de cette leçon, je sais identifier les tonalités satirique et polémique dans un texte et en rendre compte dans un résumé.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Lecture méthodique : Le Vieux nègre et la médaille (Exposé N°1)
+\item La contraction de texte : repérer et reformuler les idées essentielles
+\item Langue : énoncés constatifs et performatifs
+\item Stylistique et rhétorique : les tonalités satirique et polémique
+\item Production et amélioration du résumé
+\item Contexte de l'œuvre, bilan et intégration
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais lire activement un texte pour en dégager le thème et la thèse de l'auteur.
+\item À la fin de cette leçon, je sais distinguer les idées essentielles des idées secondaires et des exemples.
+\item À la fin de cette leçon, je sais reformuler les idées essentielles avec mes propres mots sans déformer la pensée de l'auteur.
+\item À la fin de cette leçon, je sais rédiger un résumé cohérent, objectif et respectant la longueur imposée (contraction au quart).
+\item À la fin de cette leçon, je sais distinguer un énoncé constatif d'un énoncé performatif et les utiliser à bon escient.
+\item À la fin de cette leçon, je sais identifier les tonalités satirique et polémique dans un texte et en rendre compte dans un résumé.
+\item À la fin de cette leçon, je sais situer Le Vieux nègre et la médaille dans son contexte de publication (Cameroun colonial, 1956) et dresser le bilan de l'œuvre.
+\item À la fin de cette leçon, je sais réviser et améliorer mon résumé à l'aide d'une grille d'auto-évaluation.
+\item À la fin de cette leçon, je sais justifier ma démarche de contraction devant un correcteur.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item La lecture méthodique d'un texte narratif et argumentatif (classe de Première)
+\item Les connecteurs logiques et l'organisation du texte (Première)
+\item Le résumé simple et le compte rendu (Seconde)
+\item Les figures de style de base : ironie, antithèse, hyperbole (Première)
+\item La connaissance générale de l'œuvre Le Vieux nègre et la médaille (lecture cursive en début d'année)
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Lecture méthodique : Le Vieux nègre et la médaille (Exposé N°1)}
+
+Au marché Mokolo à Yaoundé, un élève de Terminale doit expliquer en cinq minutes à son oncle pressé le contenu d'un long article du \emph{Cameroon Tribune} sur la grève des transporteurs. Comment dire l'essentiel sans trahir l'auteur, sans copier ses phrases et sans y mettre ses propres opinions ? C'est exactement l'épreuve que propose le Baccalauréat technique : résumer un texte en un quart de sa longueur. Toute la leçon s'organise autour de cette compétence, appliquée au roman de Ferdinand Oyono, \emph{Le Vieux nègre et la médaille}.
+
+\textbf{Problématique :} comment lire un roman colonial camerounais pour en dégager l'idée principale, première étape indispensable de tout résumé réussi ?
+
+\courssub{Présentation de l'auteur : Ferdinand Oyono}
+
+Avant d'ouvrir un livre, le bon lecteur se pose une question simple : qui me parle ? Connaître l'auteur, c'est déjà comprendre une partie de son message.
+
+Ferdinand Léopold Oyono naît en 1929 à Ngoulemakong, dans la région du Sud du Cameroun. Le Cameroun est alors un territoire sous administration française : les populations locales subissent le travail forcé, l'impôt de capitation, la confiscation des terres et le mépris de l'administration coloniale. Oyono fait de brillantes études, d'abord au Cameroun, puis en France, où il prépare une carrière diplomatique. C'est pendant ses études en France qu'il écrit ses deux premiers romans, devenus des classiques de la littérature africaine : \emph{Une vie de boy} (1956) et \emph{Le Vieux nègre et la médaille} (1956). Il publiera ensuite \emph{Chemin d'Europe} (1960).
+
+Après l'indépendance du Cameroun (1960), Oyono abandonne presque totalement la littérature pour servir son pays : ambassadeur du Cameroun dans plusieurs pays, représentant permanent aux Nations unies, puis ministre. Il meurt en 2010. Son double parcours — écrivain engagé puis diplomate — montre que la plume et l'action politique peuvent poursuivre le même combat : la dignité de l'Africain.
+
+\begin{savaistu}[Un écrivain étudiant]
+Oyono écrit \emph{Une vie de boy} et \emph{Le Vieux nègre et la médaille} alors qu'il est encore étudiant en France, à peine âgé d'une vingtaine d'années. Ses romans seront traduits dans de nombreuses langues (anglais, allemand, russe, etc.) et lus sur tous les continents. Preuve qu'un jeune Camerounais, avec de la lucidité et du talent, peut faire entendre la voix de tout un peuple.
+\end{savaistu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth]
+% Axe chronologique
+\draw[->,thick,popdark] (0,0) -- (13.5,0) node[right]{\small Années};
+\foreach \x/\y in {1/1916,3/1929,5.5/1939,7/1945,8.5/1956,10.5/1960,12.5/2010}{
+  \draw[popdark] (\x,0.12) -- (\x,-0.12) node[below]{\small \y};
+}
+% Événements au-dessus
+\node[above,align=center,text width=2.6cm,font=\footnotesize] at (1,0.25) {Le Cameroun passe sous administration française};
+\node[above,align=center,text width=2.4cm,font=\footnotesize] at (3,0.25) {Naissance d'Oyono à Ngoulemakong};
+\node[above,align=center,text width=2.4cm,font=\footnotesize] at (5.5,0.25) {Seconde Guerre mondiale : soldats camerounais mobilisés};
+\node[above,align=center,text width=2.4cm,font=\footnotesize] at (8.5,0.25) {Publication d'\emph{Une vie de boy} et du \emph{Vieux nègre}};
+% Événements en dessous
+\node[below,align=center,text width=2.6cm,font=\footnotesize] at (7,-0.55) {Fin de la guerre : retour des anciens combattants};
+\node[below,align=center,text width=2.6cm,font=\footnotesize] at (10.5,-0.55) {Indépendance du Cameroun};
+\node[below,align=center,text width=2.2cm,font=\footnotesize] at (12.5,-0.55) {Mort d'Oyono};
+\end{tikzpicture}
+\end{center}
+\legende{Frise chronologique : la vie de Ferdinand Oyono dans le contexte colonial camerounais (1916-2010).}
+\end{popfigure}
+
+\courssub{Situation de l'œuvre : un roman de la contestation coloniale}
+
+\emph{Le Vieux nègre et la médaille} paraît en 1956, quatre ans avant l'indépendance du Cameroun. Ce moment est capital : dans toute l'Afrique francophone, des écrivains (Mongo Beti, Camara Laye, Sembène Ousmane) prennent la plume pour dénoncer la colonisation. Oyono s'inscrit dans ce mouvement, dans la lignée de son premier roman \emph{Une vie de boy}, qui racontait déjà les humiliations subies par un jeune domestique africain au service des Blancs.
+
+L'arme d'Oyono n'est ni le discours politique ni la violence : c'est l'\cle{ironie}. En montrant l'absurdité des comportements coloniaux, il fait rire le lecteur, et ce rire est une condamnation. Le roman appartient donc à la littérature engagée : une littérature qui prend parti dans les débats de son époque.
+
+\begin{definition}[Littérature engagée]
+On dit d'une œuvre qu'elle est \cle{engagée} lorsque son auteur y prend position sur les problèmes de son époque (injustice, guerre, colonisation) et cherche, par l'écriture, à faire évoluer les consciences et la société.
+\end{definition}
+
+\courssub{Résumé de l'intrigue}
+
+Raconter brièvement l'histoire est nécessaire pour situer le lecteur. Voici l'intrigue en quelques phrases.
+
+Meka est un vieil homme du village de Mfoula, au Cameroun. Un jour, l'administration coloniale lui annonce qu'il va recevoir une médaille pour ses « services » rendus à la France : il a cédé ses terres pour la construction d'une mission catholique, et ses deux fils sont morts à la guerre pour la France. Tout le village se prépare pour la grande cérémonie. Le jour dit, en pleine chaleur, Meka reçoit sa médaille devant les autorités coloniales et religieuses. Mais la nuit même, perdu et ivre après les festivités, il est arrêté et brutalisé par les forces de l'ordre coloniales, qui ne reconnaissent même pas en lui l'homme honoré quelques heures plus tôt. La médaille, symbole de reconnaissance, se révèle être un leurre : elle n'a rien changé à la condition de Meka.
+
+\begin{attention}[Ne pas confondre raconter et analyser]
+Erreur fréquente au Baccalauréat : confondre le \textbf{résumé de l'intrigue} (raconter ce qui se passe) avec l'\textbf{analyse du texte} (expliquer ce que l'auteur veut dire). Dire « Meka reçoit une médaille puis il est arrêté », c'est raconter. Dire « Oyono montre que les honneurs coloniaux sont une hypocrisie qui masque l'exploitation », c'est analyser. Le résumé de texte exigé à l'examen reformule les \emph{idées} de l'auteur, pas seulement les événements.
+\end{attention}
+
+\courssub{Lecture guidée de l'exposition : personnages, lieu, situation initiale}
+
+Tout récit commence par une partie préparatoire qu'il faut savoir identifier.
+
+\begin{definition}[L'exposé (ou exposition)]
+L'\cle{exposé} (ou \cle{exposition}) est la première partie d'un récit : elle présente les \textbf{personnages}, le \textbf{lieu}, l'\textbf{époque} et la \textbf{situation initiale}, avant que l'élément perturbateur ne déclenche l'action. Dans un roman, l'exposition occupe généralement les premiers chapitres.
+\end{definition}
+
+Dans les premières pages du \emph{Vieux nègre et la médaille}, Oyono installe son décor et ses personnages :
+
+\begin{itemize}
+\item \textbf{Le lieu} : le village de Mfoula, avec ses cases, ses champs, sa brousse — un village camerounais typique sous domination coloniale.
+\item \textbf{Meka} : le héros, un vieil homme fatigué, marqué par les épreuves (terres perdues, fils morts). Il représente la génération sacrifiée par la colonisation.
+\item \textbf{Kelara} : l'épouse de Meka, femme simple et attachée aux traditions du village.
+\item \textbf{Engamba} : le jeune frère de Meka, porte-parole de la famille, plus vif et plus critique.
+\item \textbf{Le commandant} : représentant local de l'administration coloniale, figure de l'autorité blanche.
+\item \textbf{Le père Vandermayer} : le missionnaire, installé sur les terres cédées par Meka ; il incarne la collusion entre l'Église et l'administration.
+\end{itemize}
+
+La situation initiale est claire : Meka a tout donné à la colonisation — ses terres, ses fils — et il attend, sans le savoir encore, la « récompense » qui va bouleverser la vie du village.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[>=Stealth,node distance=1.6cm,
+  perso/.style={draw=popblue,fill=popblueL,rounded corners,align=center,font=\small,minimum width=2.6cm},
+  meka/.style={draw=poporange,fill=poporangeL,rounded corners,align=center,font=\small\bfseries,minimum width=2.8cm}]
+\node[meka, align=center] (meka){MEKA\\ \footnotesize le vieux nègre};
+\node[perso,above left=1.4cm and 2.2cm of meka, align=center] (kelara){Kelara\\ \footnotesize son épouse};
+\node[perso,below left=1.4cm and 2.2cm of meka, align=center] (engamba){Engamba\\ \footnotesize son jeune frère};
+\node[perso,above right=1.4cm and 2.2cm of meka, align=center] (commandant){Le commandant\\ \footnotesize administration coloniale};
+\node[perso,below right=1.4cm and 2.2cm of meka, align=center] (vandermayer){Le père Vandermayer\\ \footnotesize missionnaire};
+\draw[<->,thick,popgreen] (meka) -- (kelara) node[midway,above,sloped,font=\footnotesize]{couple uni};
+\draw[<->,thick,popgreen] (meka) -- (engamba) node[midway,below,sloped,font=\footnotesize]{fraternité};
+\draw[->,thick,poppink] (commandant) -- (meka) node[midway,above,sloped,font=\footnotesize]{décore puis fait arrêter};
+\draw[->,thick,poppurple] (vandermayer) -- (meka) node[midway,below,sloped,font=\footnotesize]{bénéficie de ses terres};
+\end{tikzpicture}
+\end{center}
+\legende{Organigramme des relations entre les personnages : Meka au centre, entouré des siens (liens familiaux, en vert) et des représentants de la colonisation (liens de domination, en rose et violet).}
+\end{popfigure}
+
+\courssub{Repérage du thème central : la dénonciation de l'hypocrisie coloniale}
+
+Le \cle{thème} d'un texte est l'idée générale que l'auteur développe. Le repérer est la clé du résumé : on ne peut résumer que ce qu'on a compris. Pour le trouver, on se demande : de quoi l'auteur parle-t-il, et que veut-il démontrer ?
+
+Ici, les indices abondent dès l'exposition : Meka a perdu ses terres au profit de la mission ; ses fils sont morts pour une guerre qui n'était pas la sienne ; et l'administration croit pouvoir « payer » ces sacrifices avec un morceau de métal. Le contraste entre l'immensité des sacrifices et la pauvreté de la récompense révèle le thème.
+
+\begin{exemplebox}[Le thème formulé en une phrase]
+Thème du roman : \emph{la médaille, récompense illusoire qui masque l'exploitation coloniale}. Oyono dénonce l'hypocrisie d'un système qui honore les Africains en paroles tout en continuant à les humilier en actes.
+\end{exemplebox}
+
+\courssub{Méthode de lecture active}
+
+Un résumé réussi commence toujours par une lecture méthodique. Voici la démarche à appliquer à tout texte du Baccalauréat technique.
+
+\begin{methode}[Lire activement un texte]
+\begin{enumerate}
+\item \textbf{Première lecture} : lire le texte en entier, sans s'arrêter, pour saisir le sens général et identifier le type de texte (récit, discours, article).
+\item \textbf{Deuxième lecture} : lire en annotant — entourer les mots-clés, noter en marge l'idée de chaque paragraphe.
+\item \textbf{Souligner les idées forces} : repérer les phrases qui portent l'idée principale (souvent en début ou en fin de paragraphe) et éliminer les exemples, les répétitions, les détails.
+\item \textbf{Formuler le thème} : rédiger en une seule phrase, avec ses propres mots, l'idée générale du texte.
+\end{enumerate}
+\end{methode}
+
+\courssub{Premier entraînement : repérer les phrases porteuses de l'idée principale}
+
+\begin{exoresolu}[Souligner les idées forces dans un extrait]
+\textbf{Énoncé.} Lisez l'extrait suivant (adapté du début du roman) et soulignez les deux phrases qui portent l'idée principale :
+
+\emph{« Meka avait donné ses terres à la mission. Ses deux fils étaient morts à la guerre, quelque part en Europe, pour une cause qu'ils ne comprenaient pas. Le vieil homme marchait courbé, le dos cassé par les années. Un matin, le messager du commandant arriva au village : les Blancs allaient décorer Meka. Toute la journée, les femmes préparèrent le festin, les enfants couraient partout, et les griots chantaient les ancêtres. Meka, lui, restait assis devant sa case, silencieux. »}
+
+\tcblower
+\textbf{Solution détaillée.} On élimine d'abord les détails concrets (le festin, les enfants, les griots : ce sont des illustrations de l'ambiance). On élimine les descriptions secondaires (le dos courbé de Meka). Restent les deux phrases qui portent l'idée principale :
+
+\begin{itemize}
+\item « Meka avait donné ses terres à la mission. Ses deux fils étaient morts à la guerre [\dots] » $\rightarrow$ \textbf{les sacrifices de Meka} ;
+\item « les Blancs allaient décorer Meka » $\rightarrow$ \textbf{la récompense annoncée}.
+\end{itemize}
+
+L'idée principale de l'extrait se formule ainsi : \emph{après avoir tout sacrifié à la colonisation, Meka va être décoré par l'administration}. C'est exactement la situation initiale de l'exposition.
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+Relevez dans le même extrait : 1) deux mots-clés qui désignent la colonisation ; 2) un détail que l'on peut supprimer dans un résumé sans perdre le sens ; 3) formulez en une phrase le thème de l'extrait sans recopier aucune phrase du texte.
+\end{exercice}
+
+\begin{corrige}[Exercice : À vous de jouer]
+1) Mots-clés désignant la colonisation : « la mission », « les Blancs », « le commandant » (deux au choix). 2) Détails supprimables : « les enfants couraient partout », « les griots chantaient les ancêtres », « le dos cassé par les années » — ce sont des éléments descriptifs qui illustrent mais ne portent pas l'idée. 3) Formulation possible du thème : \emph{un vieil Africain, ruiné par les sacrifices imposés par le colonisateur, reçoit en échange une simple décoration}. Toute formulation personnelle qui garde les deux idées (sacrifices + récompense) est acceptée.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la séance]
+\begin{itemize}
+\item Ferdinand Oyono (1929-2010), écrivain et diplomate camerounais, publie \emph{Le Vieux nègre et la médaille} en 1956, avant l'indépendance.
+\item L'\cle{exposé} présente les personnages, le lieu et la situation initiale : ici, Meka à Mfoula, qui va être décoré après avoir tout perdu.
+\item Le thème central : la dénonciation de l'hypocrisie coloniale, dont la médaille est le symbole.
+\item Résumer suppose d'abord de \textbf{lire activement} : deux lectures, annotations, repérage des idées forces, formulation du thème en une phrase.
+\end{itemize}
+\end{aretenir}
+
+\coursec{La contraction de texte : repérer et reformuler les idées essentielles}
+
+Dans la séquence précédente, notre lecture méthodique du \emph{Vieux nègre et la médaille} de Ferdinand Oyono nous a permis de dégager le thème du roman — la dénonciation satirique de la colonisation — et la thèse de l'auteur : les décorations coloniales ne sont qu'un leurre qui humilie ceux qu'elles prétendent honorer. Nous savons donc \emph{lire} un texte. Mais au Probatoire et au Baccalauréat technique, il faut aussi savoir \emph{restituer} ce texte en beaucoup moins de mots : c'est l'exercice de la \cle{contraction de texte}, qui aboutit au \cle{résumé}. Cette section vous donne les outils pour repérer les idées essentielles et les reformuler sans trahir l'auteur.
+
+\courssub{Qu'est-ce que la contraction de texte ?}
+
+\textbf{Intuition.} Imaginez que vous devez raconter à un ami, en une minute, un match de football qui a duré quatre-vingt-dix minutes. Vous ne pouvez pas tout dire : vous choisissez les buts, les moments décisifs, et vous laissez tomber les passes anodines. Vous ne dites pas non plus « l'arbitre était mauvais » si vous voulez rester fidèle aux faits. Le résumé fonctionne exactement ainsi : dire l'essentiel, fidèlement, avec ses propres mots.
+
+\begin{definition}[Contraction de texte et reformulation]
+La \cle{contraction de texte} est un exercice qui consiste à réduire un texte à une fraction donnée de sa longueur (généralement le \textbf{quart}), sans rien ajouter, sans rien omettre d'essentiel et sans trahir la pensée de l'auteur. Le résultat s'appelle le \cle{résumé}.
+La \cle{reformulation} est l'opération centrale de la contraction : elle consiste à exprimer les idées de l'auteur \emph{avec d'autres mots et d'autres structures de phrases}, en conservant exactement le même sens.
+\end{definition}
+
+\begin{aretenir}[Les cinq qualités d'un bon résumé]
+\begin{enumerate}
+\item \textbf{Fidélité} : le résumé respecte la pensée de l'auteur, sans la déformer ni l'appauvrir.
+\item \textbf{Objectivité} : le résumé ne contient aucun jugement personnel ; on ne dit jamais « je pense que », « l'auteur a tort ».
+\item \textbf{Clarté} : les phrases sont simples, directes et compréhensibles par un lecteur qui n'a pas lu le texte.
+\item \textbf{Cohérence} : les idées s'enchaînent logiquement grâce à des connecteurs (d'abord, ensuite, en effet, cependant, enfin).
+\item \textbf{Correction de la langue} : orthographe, grammaire et conjugaison irréprochables.
+\end{enumerate}
+\end{aretenir}
+
+\begin{exemplebox}[Un exemple chiffré : la règle du quart]
+Au Baccalauréat technique, la consigne précise toujours la longueur attendue. Un texte de \textbf{40 lignes} doit être résumé en \textbf{10 lignes, plus ou moins une} (soit entre 9 et 11 lignes). Un texte de 32 lignes donne un résumé de 8 lignes $\pm$ 1.
+\textbf{Compter ses lignes est obligatoire} : indiquez à la fin de votre copie le nombre de lignes écrites, par exemple « (10 lignes) ». Un résumé trop long ou trop court est sanctionné, même s'il est bien rédigé.
+\end{exemplebox}
+
+\courssub{Étape 1 : dégager le thème et la thèse de l'auteur}
+
+Avant de couper quoi que ce soit, il faut comprendre \emph{de quoi parle le texte} et \emph{ce que l'auteur veut démontrer}.
+
+\begin{definition}[Thème et thèse]
+Le \cle{thème} est le sujet général du texte (il s'exprime en un ou deux mots : « la colonisation », « l'éducation des filles »). La \cle{thèse} est le point de vue que l'auteur défend sur ce thème (elle s'exprime par une phrase complète : « la colonisation déshumanise les colonisés »).
+\end{definition}
+
+\begin{methode}[Trouver le thème et la thèse]
+\begin{enumerate}
+\item Lire le texte \textbf{deux fois} : une première fois pour l'impression générale, une seconde fois au crayon.
+\item Repérer les \textbf{mots qui reviennent} (champ lexical dominant) : ils indiquent le thème.
+\item Se demander : « Que veut me prouver l'auteur ? » La réponse, formulée en une phrase, est la thèse.
+\item Vérifier que la thèse rend compte de \emph{tout} le texte, pas seulement d'un paragraphe.
+\end{enumerate}
+\end{methode}
+
+\begin{exemplebox}[Application au \emph{Vieux nègre et la médaille}]
+Thème : la médaille coloniale et l'illusion de la reconnaissance. Thèse : en décorant Meka, l'administration coloniale croit le récompenser, mais elle révèle en réalité le mépris et l'exploitation dont il est victime. Tout résumé d'un extrait du roman doit laisser transparaître cette intention satirique.
+\end{exemplebox}
+
+\courssub{Étape 2 : hiérarchiser les idées}
+
+Toutes les phrases d'un texte n'ont pas la même valeur. Le travail du résumeur ressemble à celui d'un trieur : il classe chaque élément selon son importance.
+
+\begin{definition}[Les niveaux d'idées]
+\begin{itemize}
+\item Les \cle{idées essentielles} : elles font avancer l'argumentation ; si on les supprime, le texte s'effondre. Elles doivent \textbf{toutes} figurer dans le résumé.
+\item Les \cle{idées secondaires} : elles précisent ou nuancent une idée essentielle ; on les garde seulement si la place le permet, souvent sous forme abrégée.
+\item Les \cle{procédés d'illustration} : exemples, comparaisons, citations, chiffres, anecdotes, descriptions ; ils rendent le texte vivant mais peuvent être supprimés sans perte de sens.
+\end{itemize}
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\fill[popgold] (0,3.6) -- (-1.1,2.4) -- (1.1,2.4) -- cycle;
+\fill[poporange] (-1.1,2.4) -- (-2.2,1.2) -- (2.2,1.2) -- (1.1,2.4) -- cycle;
+\fill[popblue] (-2.2,1.2) -- (-3.3,0) -- (3.3,0) -- (2.2,1.2) -- cycle;
+\fill[popmuted!70] (-3.3,0) -- (-4.4,-1.2) -- (4.4,-1.2) -- (3.3,0) -- cycle;
+\node[white,font=\bfseries] at (0,2.75) {Thème et thèse};
+\node[white,font=\bfseries] at (0,1.8) {Idées essentielles (à garder)};
+\node[white,font=\bfseries] at (0,0.6) {Idées secondaires (à abréger)};
+\node[white,font=\bfseries] at (0,-0.6) {Exemples, citations, chiffres (à éliminer)};
+\draw[->,thick,popdark] (5.0,2.7) -- (5.0,-0.6) node[midway,right,align=left,font=\small] {importance\\décroissante};
+\end{tikzpicture}
+\end{center}
+\legende{Pyramide de hiérarchisation des idées : plus on descend, plus les éléments sont supprimables dans le résumé.}
+\end{popfigure}
+
+\begin{attention}[Ce qu'on élimine systématiquement]
+Dans un résumé, on supprime sans regret :
+\begin{itemize}
+\item les \textbf{exemples} (« par exemple », « ainsi », « c'est le cas de... ») ;
+\item les \textbf{comparaisons et métaphores} qui ornent le propos ;
+\item les \textbf{citations} et les paroles rapportées au style direct ;
+\item les \textbf{chiffres et statistiques} détaillés (on garde éventuellement l'ordre de grandeur : « beaucoup », « la majorité ») ;
+\item les \textbf{répétitions} : une même idée exprimée trois fois n'apparaît qu'une fois ;
+\item les \textbf{développements descriptifs} (paysages, portraits, scènes détaillées).
+\end{itemize}
+\end{attention}
+
+\courssub{Étape 3 : la reformulation}
+
+Une fois les idées essentielles repérées, il faut les réécrire. C'est l'étape décisive : un résumé n'est pas un texte raccourci, c'est un texte \emph{recréé}.
+
+\begin{methode}[Quatre techniques de reformulation]
+\begin{enumerate}
+\item \textbf{La synonymie} : remplacer les mots de l'auteur par des équivalents. « Meka fut \emph{anéanti} » devient « Meka fut \emph{effondré} ». Attention : le synonyme doit avoir exactement le même sens dans le contexte.
+\item \textbf{La nominalisation} : transformer un verbe ou un adjectif en nom. « Il protesta » devient « \emph{sa protestation} » ; « les colons exploitaient les villageois » devient « \emph{l'exploitation des villageois par les colons} ». C'est la technique la plus rentable : une phrase entière tient alors en trois mots.
+\item \textbf{Le changement de voix} : passer de l'actif au passif ou l'inverse. « L'administration décora Meka » devient « Meka fut décoré par l'administration ».
+\item \textbf{La fusion de phrases} : regrouper deux ou trois phrases voisines en une seule. « Meka donna ses terres. Il donna aussi ses fils à la guerre. » devient « Meka sacrifia ses terres et ses fils. »
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\node[draw=popblue,fill=popblueL,rounded corners,align=left,text width=6.2cm,font=\small] (a1) at (0,3.2) {\textbf{Phrase de l'auteur}\\« Meka fut anéanti par la honte de son arrestation. »};
+\node[draw=popgreen,fill=popgreenL,rounded corners,align=left,text width=6.2cm,font=\small] (b1) at (8.2,3.2) {\textbf{Reformulation acceptée}\\« L'arrestation de Meka le plongea dans une profonde humiliation. »};
+\draw[->,very thick,poporange] (a1) -- (b1) node[midway,above,font=\small\itshape] {nominalisation};
+\node[draw=popblue,fill=popblueL,rounded corners,align=left,text width=6.2cm,font=\small] (a2) at (0,1.2) {\textbf{Phrase de l'auteur}\\« Les villageois, qui admiraient Meka, le fuirent désormais comme un pestiféré. »};
+\node[draw=popgreen,fill=popgreenL,rounded corners,align=left,text width=6.2cm,font=\small] (b2) at (8.2,1.2) {\textbf{Reformulation acceptée}\\« Jadis respecté, Meka fut rejeté par les siens. »};
+\draw[->,very thick,poporange] (a2) -- (b2) node[midway,above,font=\small\itshape] {fusion + suppression de la comparaison};
+\end{tikzpicture}
+\end{center}
+\legende{De la phrase de l'auteur à la reformulation : le sens est conservé, les mots et les structures changent.}
+\end{popfigure}
+
+\begin{propriete}[Le critère d'un résumé réussi]
+Un bon résumé ne contient \textbf{aucune phrase identifiable du texte source}, mais il conserve \textbf{toutes les idées essentielles} de ce texte. Si un correcteur peut retrouver dans le texte original une phrase entière de votre copie, la reformulation a échoué ; si une idée maîtresse manque, la fidélité a échoué.
+\end{propriete}
+
+\begin{attention}[L'erreur fatale : la paraphrase-collage]
+Beaucoup de candidats recopient le texte en supprimant seulement quelques mots ou en changeant un adjectif : c'est la \cle{paraphrase-collage}, \textbf{sanctionnée au Baccalauréat} comme une absence de travail personnel. Autres interdits absolus :
+\begin{itemize}
+\item copier des phrases entières du texte (même courtes) ;
+\item donner son avis (« je trouve que l'auteur exagère ») ;
+\item utiliser « je » : le résumé est impersonnel ;
+\item dialoguer avec l'auteur (« l'auteur nous dit que... », « comme le souligne Oyono » à chaque ligne) : on restitue les idées directement.
+\end{itemize}
+\end{attention}
+
+\courssub{Entraînement guidé : reformuler trois idées essentielles du roman}
+
+Travail collectif sur un passage du début du roman : Meka, vieux paysan, a donné ses terres à la mission et ses deux fils à la guerre ; l'administration décide de le décorer.
+
+\begin{exoresolu}[Reformulation de trois idées essentielles]
+Énoncé. Voici trois phrases inspirées du texte. Reformulez chacune d'elles en appliquant les techniques étudiées, puis fusionnez-les en un début de résumé de trois lignes maximum.
+\begin{enumerate}
+\item « Meka a donné toutes ses terres à la mission catholique et il a perdu ses deux fils, partis mourir à la guerre pour la France. »
+\item « Le commandant de cercle, très satisfait de tant de dévouement, décida que ce vieillard exemplaire méritait la médaille de l'amitié franco-camerounaise. »
+\item « Meka, fou de joie, crut que les Blancs le considéraient enfin comme un homme. »
+\end{enumerate}
+\tcblower
+Solution détaillée.
+\begin{enumerate}
+\item Nominalisation et fusion : « Meka a sacrifié ses terres à la mission et ses deux fils à la guerre de la France. » (Deux phrases ramenées à une ; « a donné » $\rightarrow$ « a sacrifié », plus fort et plus juste.)
+\item Changement de voix et abréviation : « En récompense de ce dévouement, l'administration décida de le décorer. » (On supprime « commandant de cercle », « très satisfait », « médaille de l'amitié franco-camerounaise » : détails secondaires.)
+\item Reformulation par synonymie : « Meka crut naïvement avoir gagné l'estime des Blancs. » (On supprime « fou de joie », expression imagée ; « crut naïvement » conserve l'ironie de l'auteur.)
+\end{enumerate}
+Début de résumé fusionné : « Meka, vieux paysan, a sacrifié ses terres à la mission et ses deux fils à la guerre de la France. En récompense de ce dévouement, l'administration décida de le décorer, et le vieil homme crut naïvement avoir gagné l'estime des Blancs. » (2 lignes et demie, aucune phrase copiée, les trois idées essentielles conservées.)
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+Relevez dans le passage suivant les idées essentielles, éliminez les illustrations, puis rédigez une reformulation en deux lignes : « Le jour de la cérémonie, sous un soleil de plomb qui faisait fondre le bitume, Meka, chaussé de souliers neufs qui le faisaient souffrir comme jamais, attendit des heures, debout, immobile, avant que le commandant daigne enfin lui épingler, distraitement, comme on jette un os à un chien fidèle, la fameuse médaille. »
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+Idée essentielle unique : la cérémonie de remise de la médaille fut pour Meka une épreuve humiliante. À éliminer : la chaleur et le bitume (décor), les souliers neufs (détail), la comparaison avec le chien (image). Reformulation possible : « Le jour de la cérémonie, Meka endura une longue attente avant de recevoir sa médaille avec indifférence de la part de l'administration, ce qui révéla le mépris caché derrière la récompense. »
+\end{corrige}
+
+\begin{savaistu}[Ferdinand Oyono et la satire coloniale]
+Ferdinand Oyono (1929--2010), figure majeure des lettres camerounaises, a publié \emph{Le Vieux nègre et la médaille} en 1956. Ce roman, écrit à la veille des indépendances, utilise l'ironie et le grotesque pour démonter la propagande coloniale. La médaille, symbole officiel de la « mission civilisatrice », devient dans le roman l'instrument d'une violence symbolique : elle officialise l'aliénation de Meka. Comprendre cette intention satirique est indispensable pour ne pas résumer « à plat » (simplement raconter l'histoire) mais pour restituer la \emph{charge critique} du texte.
+\end{savaistu}
+
+\begin{aretenir}[Bilan de la section]
+Contracter un texte, c'est : (1) dégager thème et thèse ; (2) hiérarchiser les idées selon la pyramide ; (3) éliminer exemples, citations, chiffres, répétitions et descriptions ; (4) reformuler par synonymie, nominalisation, changement de voix et fusion ; (5) respecter la longueur imposée et compter ses lignes. La section suivante vous donnera un outil de langue précieux pour rédiger ce résumé : la distinction entre énoncés constatifs et performatifs.
+\end{aretenir}
+
+\coursec{Langue : énoncés constatifs et performatifs}
+
+Après avoir identifié les idées essentielles du texte en vue de la contraction, nous devons maintenant porter notre attention sur la langue elle-même. Résumer, c'est \emph{rendre compte} de ce qui a été dit ou écrit. Or, rendre compte suppose de distinguer ce qui \emph{constate} une réalité de ce qui \emph{accomplit} une action par la parole même. Cette distinction, fondamentale en linguistique et en analyse du discours, éclaire la nature des énoncés que nous manipulons dans \emph{Le Vieux Nègre et la Médaille} et oriente notre propre écriture du résumé.
+
+\courssub{De l'intuition à la distinction : dire vs faire}
+
+\emph{Observation.} Lisez ces deux phrases extraites ou inspirées du roman :
+\begin{enumerate}
+    \item « Le commandant remet une médaille à Meka. »
+    \item « Je vous décerne la médaille du mérite civique. »
+\end{enumerate}
+La première \emph{rapporte} un fait ; elle est vraie si le commandant a bien remis la médaille, fausse s'il ne l'a pas fait. La seconde, prononcée par le commandant lui-même au moment de la cérémonie, ne se contente pas de décrire : elle \emph{fait} la remise. En la prononçant, le commandant \emph{accomplit} l'acte de décoration. C'est la différence entre \textbf{constater} et \textbf{agir par la parole}.
+
+\begin{definition}[Énoncé constatif et énoncé performatif]
+Un \textbf{énoncé constatif} (ou \emph{constatatif}) décrit un état de choses, une réalité extérieure au langage. Il est susceptible d'être \textbf{vrai} ou \textbf{faux}. Il porte sur le \emph{monde}.
+
+Un \textbf{énoncé performatif} accomplit l'action qu'il énonce par le seul fait d'être proféré dans des conditions appropriées. Il n'est pas vrai ou faux, mais \textbf{réussi} (heureux) ou \textbf{raté} (inheureux). Il \emph{transforme} le monde par la parole.
+\end{definition}
+
+\begin{exemplebox}[Le commandant et le narrateur : deux régimes d'énonciation]
+\begin{itemize}
+    \item \textbf{Constatif (narrateur) :} « Le commandant \emph{remet} la médaille à Meka. » $\rightarrow$ Description d'un événement passé. Vérifiable.
+    \item \textbf{Performatif (commandant) :} « Je \emph{vous décerne} la médaille du mérite civique. » $\rightarrow$ L'énonciation \emph{est} la décoration. Si le commandant le dit vraiment, en cérémonie, Meka est décoré \emph{ipsum facto}.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Les marques linguistiques du performatif explicite}
+
+Comment repérer un énoncé performatif dans un texte ? John Austin, le philosophe qui a forgé cette théorie (\emph{Comment faire des choses avec des mots}, 1962), a identifié des critères formels pour le \cle{performatif explicite}.
+
+\begin{propriete}[Marques formelles de l'énoncé performatif explicite]
+Pour qu'un énoncé soit performatif au sens strict (performatif \emph{explicite}), il réunit généralement ces traits :
+\begin{enumerate}
+    \item \textbf{Verbe performatif} (verbe d'action langagière) : \emph{promettre, ordonner, déclarer, baptiser, jurer, nommer, décerner, léguer, parier, refuser, accepter, remercier, excuser...}
+    \item \textbf{Première personne du singulier} (je) ou du pluriel (nous) : le locuteur s'engage.
+    \item \textbf{Présent de l'indicatif} (souvent présent simple) : l'action se fait \emph{ici et maintenant} de l'énonciation.
+    \item \textbf{Voix active} : « Je vous déclare... » et non « Vous êtes déclaré... » (passif).
+    \item Possibilité d'insérer \emph{« par la présente »} ou \emph{« ici »} : « Je vous déclare \emph{par la présente} mari et femme. »
+\end{enumerate}
+\end{propriete}
+
+\begin{attention}[Piège majeur : « Je » + présent $\neq$ performatif]
+Tout énoncé à la première personne du présent n'est \textbf{pas} performatif.
+\begin{itemize}
+    \item « Je \emph{marche} dans la rue. » $\rightarrow$ Constatif (description d'une action physique, vérifiable).
+    \item « Je \emph{pense} que tu as raison. » $\rightarrow$ Constatif (expression d'un état mental).
+    \item « Je \emph{te promets} de venir. » $\rightarrow$ Performatif (l'énoncé \emph{crée} la promesse).
+\end{itemize}
+\textbf{Test décisif :} Puis-je ajouter « \emph{par la présente} » sans changer le sens ? « Je \emph{te promets par la présente} de venir » (oui). « Je \emph{marche par la présente} dans la rue » (non, absurde).
+\end{attention}
+
+\begin{experience}[Atelier de repérage : constatif ou performatif ?]
+\textbf{Consigne :} Classez les énoncés ci-dessous. Justifiez en appliquant le test du « par la présente » et les marques formelles.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\textbf{Énoncé} & \textbf{Classification} & \textbf{Justification} \\ \hline
+1. « Je déclare la séance ouverte. » & & \\ \hline
+2. « Le directeur a déclaré la séance ouverte. » & & \\ \hline
+3. « Je jure de dire la vérité. » & & \\ \hline
+4. « Il jure qu'il est innocent. » & & \\ \hline
+5. « Je te nomme chef de village. » & & \\ \hline
+6. « Meka reçoit une médaille. » & & \\ \hline
+7. « Je parie que tu perds. » & & \\ \hline
+8. « Je suis fatigué. » & & \\ \hline
+\end{tabularx}
+\end{center}
+
+\tcblower
+\textbf{Correction guidée :}
+\begin{enumerate}
+    \item \textbf{Performatif.} Verbe \emph{déclarer}, 1\textsuperscript{re} pers., présent, test « par la présente » OK. L'énoncé ouvre la séance.
+    \item \textbf{Constatif.} 3\textsuperscript{me} pers., passé composé. Rapporte un fait passé.
+    \item \textbf{Performatif.} Verbe \emph{jurer}, 1\textsuperscript{re} pers., présent. Crée l'engagement solennel.
+    \item \textbf{Constatif.} 3\textsuperscript{me} pers. Rapporte la parole d'autrui.
+    \item \textbf{Performatif (si le locuteur a l'autorité).} Verbe \emph{nommer}, 1\textsuperscript{re} pers., présent. Accomplit la nomination.
+    \item \textbf{Constatif.} 3\textsuperscript{me} pers., présent de narration/description. Décrit un état.
+    \item \textbf{Performatif.} Verbe \emph{parier}, 1\textsuperscript{re} pers., présent. Crée le pari.
+    \item \textbf{Constatif.} Verbe d'état \emph{être}, 1\textsuperscript{re} pers. Décrit un ressenti. Test « par la présente » impossible.
+\end{enumerate}
+\end{experience}
+
+\courssub{Les conditions de réussite (félicité) d'un performatif}
+
+Dire « Je te nomme chef » ne suffit pas toujours pour faire de quelqu'un un chef. Austin distingue des \textbf{conditions de félicité}. Si elles manquent, l'acte est \emph{inheureux} (raté, abusif, nul).
+
+\begin{propriete}[Conditions de réussite d'un acte performatif (Austin)]
+Pour qu'un performatif soit \textbf{heureux} (réussi), il faut :
+\begin{enumerate}
+    \item \textbf{Procédure conventionnelle existante :} Il doit exister un rituel, une loi, une coutume acceptée (ex: code de la route, code civil, coutume tribale, protocole colonial).
+    \item \textbf{Circonstances appropriées :} Les personnes (locuteur, destinataire) et le lieu doivent correspondre au protocole (ex: le commandant en uniforme, place publique, Meka présent).
+    \item \textbf{Exécution correcte et complète :} La formule rituelle doit être dite intégralement, sans erreur, sans ironie, sans contrainte physique.
+    \item \textbf{Intentions et conduites ultérieures :} Le locuteur doit avoir l'intention d'agir conformément à l'acte (ex: ne pas promettre en croisant les doigts derrière le dos) et respecter les suites (ex: un nommé chef doit assumer sa charge).
+\end{enumerate}
+Si une condition manque : \emph{inheureux} (ex: usurpation de titre, promesse non tenue, cérémonie parodique).
+\end{propriete}
+
+\begin{exemplebox}[La remise de la médaille : un performatif colonial]
+Analysons l'acte du commandant dans \emph{Le Vieux Nègre et la Médaille}.
+\begin{itemize}
+    \item \textbf{Formule :} « Au nom de la République française, je vous décerne la médaille du mérite civique. » (Verbe \emph{décerner}, 1\textsuperscript{re} pers., présent, solennel).
+    \item \textbf{Procédure :} Décret colonial, code des décorations. Existe formellement.
+    \item \textbf{Circonstances :} Place publique, foule, Meka en habit traditionnel, commandant en uniforme. Rituel respecté en apparence.
+    \item \textbf{Autorité :} Le commandant incarne l'État colonial. Il \emph{a} le pouvoir légal.
+    \item \textbf{Problème (ironie romanesque) :} L'acte est \textbf{juridiquement heureux} (Meka est décoré aux yeux de l'administration) mais \textbf{symboliquement inheureux / pervers}. La « médaille » récompense une soumission (Meka a dénoncé son fils Kelara), pas un « mérite civique » authentique. La procédure coloniale détourne la langue : le performatif masque une violence symbolique. Le roman montre que la \emph{parole du maître} (performatif de pouvoir) écrase la \emph{parole du sujet} (constatif de vécu).
+\end{itemize}
+\end{exemplebox}
+
+\begin{savaistu}[John Austin et la pragmatique]
+John Langshaw \textbf{Austin} (1911–1960), philosophe britannique du langage ordinaire, donne les conférences de Harvard en 1955 (\emph{How to Do Things with Words}, publié 1962). Il renverse l'idée que le langage ne sert qu'à \emph{dire le vrai ou le faux} (logique formelle). Il montre que \textbf{dire, c'est faire} : commander, promettre, baptiser, marier, léguer, parier sont des \emph{actes de langage}. Son élève John Searle systématisera la classification (assertifs, directives, commissifs, expressifs, déclaratifs). Au Bac, citer Austin dans une explication de texte sur un discours officiel, une scène de procès, un mariage ou une cérémonie (comme ici) valorise l'analyse \emph{pragmatique} (effet de l'énoncé sur la situation).
+\end{savaistu}
+
+\courssub{Application au résumé : pourquoi le résumé est-il constatif ?}
+
+\begin{aretenir}[Nature énonciative du résumé]
+Le résumé (ou contraction de texte) est un \textbf{méta-discours constatif}.
+\begin{itemize}
+    \item Il \emph{rapporte} le contenu d'un texte source : « L'auteur \emph{affirme} que... », « Le texte \emph{raconte} comment... », « Meka \emph{reçoit} une médaille. »
+    \item Il utilise des \textbf{verbes de parole / pensée / perception à la 3\textsuperscript{e} personne} (constatifs) : \emph{dire, affirmer, expliquer, décrire, montrer, raconter, présenter, souligner, nier, contester}.
+    \item Il \textbf{n'accomplit pas} les actes du texte source. Si le texte source contient « Je vous déclare mari et femme », le résumé écrira : « Le maire \emph{les déclare} mari et femme » (constatif de rapport), et non « Je vous déclare mari et femme » (performatif).
+    \item \textbf{Objectivité :} Le résumé vise la \emph{fidélité} (vérité du rapport), non la \emph{validité} de l'acte rapporté.
+\end{itemize}
+\end{aretenir}
+
+\begin{methode}[Transformer un performatif source en constatif de résumé]
+\begin{enumerate}
+    \item \textbf{Repérer} le performatif dans le texte source (verbe d'action langagière, 1\textsuperscript{re} pers., présent).
+    \item \textbf{Identifier} l'acte accompli (promesse, ordre, nomination, déclaration...).
+    \item \textbf{Reformuler} à la 3\textsuperscript{e} personne avec un verbe de rapport ou d'action adapté : « Le locuteur \emph{promet} de... », « Le commandant \emph{nomme} Meka chef... », « L'officier \emph{ordonne} le départ... ».
+    \item \textbf{Vérifier} : l'énoncé obtenu est-il vérifiable par la lecture du texte source ? (Oui = constatif réussi).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Transformation performatif $\rightarrow$ constatif de résumé]
+\textbf{Texte source (imaginé, style roman) :}
+\begin{quote}
+« Écoutez-moi bien, Meka. \textbf{Je te donne} cette médaille pour ton loyalisme. \textbf{Je t'ordonne} de la porter fièrement demain à la fête nationale. \textbf{Je promets} qu'on parlera de toi au chef-lieu. »
+\end{quote}
+
+\textbf{Étape 1 : Repérage des performatifs.}
+\begin{itemize}
+    \item « Je te donne » (verbe \emph{donner} performatif ici = acte de remise symbolique).
+    \item « Je t'ordonne » (verbe \emph{ordonner}, 1\textsuperscript{re} pers., présent).
+    \item « Je promets » (verbe \emph{promettre}, 1\textsuperscript{re} pers., présent).
+\end{itemize}
+
+\textbf{Étape 2 : Reformulation constative pour résumé.}
+\begin{quote}
+« Le commandant \textbf{remet} la médaille à Meka en récompense de son loyalisme, \textbf{lui ordonne} de la porter à la fête nationale et \textbf{lui promet} une reconnaissance au chef-lieu. »
+\end{quote}
+
+\textbf{Vérification :} Tous les verbes sont à la 3\textsuperscript{e} personne (il/le commandant), temps du récit (passé simple / imparfait / présent de narration), valeur constative (rapport fidèle). L'acte de langage du commandant est \emph{rapporté}, non \emph{réitéré}.
+\end{exoresolu}
+
+\courssub{Synthèse visuelle : Constatif vs Performatif}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+    cell/.style={rectangle, draw=popline, minimum height=1.1cm, align=center, text width=3.2cm, font=\small},
+    header/.style={cell, fill=popblue, text=white, font=\small\bfseries},
+    headerB/.style={cell, fill=poppurple, text=white, font=\small\bfseries},
+    rowA/.style={cell, fill=popblueL!50},
+    rowB/.style={cell, fill=poppurpleL!50},
+    title/.style={font=\bfseries\large, text=popdark}
+]
+% Grille 5 lignes x 4 colonnes
+% Ligne 1 : En-têtes
+\node[header] (c11) at (0,0) {Critère};
+\node[header] (c12) at (3.4,0) {Énoncé \textbf{Constatif}};
+\node[headerB] (c13) at (6.8,0) {Énoncé \textbf{Performatif}};
+\node[header] (c14) at (10.2,0) {Exemple (Roman)};
+
+% Ligne 2 : Définition
+\node[rowA] (c21) at (0,-1.1) {Définition};
+\node[rowA] (c22) at (3.4,-1.1) {Décrit une réalité ; \textbf{vrai} ou \textbf{faux}};
+\node[rowB] (c23) at (6.8,-1.1) {Accomplit l'action par la parole ; \textbf{heureux} ou \textbf{inheureux}};
+\node[rowA, align=center] (c24) at (10.2,-1.1){Constatif : « Meka \emph{reçoit} la médaille. »\\Performatif : « \emph{Je vous décerne} la médaille. »};
+
+% Ligne 3 : Marques syntaxiques
+\node[rowA] (c31) at (0,-2.2) {Marques syntaxiques};
+\node[rowA] (c32) at (3.4,-2.2) {3\textsuperscript{e} pers. (il/elle), tous temps, verbes d'état/action};
+\node[rowB] (c33) at (6.8,-2.2) {1\textsuperscript{re} pers. (je/nous), \textbf{présent indicatif}, voix active, verbe performatif};
+\node[rowA] (c34) at (10.2,-2.2) {Test « par la présente » : \textbf{non} (constatif) / \textbf{oui} (performatif)};
+
+% Ligne 4 : Verbes types
+\node[rowA] (c41) at (0,-3.3) {Verbes types};
+\node[rowA] (c42) at (3.4,-3.3) {Dire, affirmer, raconter, penser, croire, être, avoir, agir...};
+\node[rowB] (c43) at (6.8,-3.3) {\textbf{Promettre, ordonner, déclarer, nommer, baptiser, jurer, décerner, léguer, parier...}};
+\node[rowA, align=center] (c44) at (10.2,-3.3){Constatif : « Le commandant \emph{affirme}... »\\Performatif : « \emph{Je déclare} la cérémonie close. »};
+
+% Ligne 5 : Rôle dans le résumé
+\node[rowA] (c51) at (0,-4.4) {Dans le \textbf{résumé}};
+\node[rowA] (c52) at (3.4,-4.4) {\textbf{Mode par défaut} : on rapporte les performatifs sources comme des constatifs.};
+\node[rowB] (c53) at (6.8,-4.4) {Objet \emph{rapporté} : « Le commandant \emph{déclare} Meka décoré. »};
+\node[rowA] (c54) at (10.2,-4.4) {Jamais : « \emph{Je déclare} Meka décoré » (sauf citation directe).};
+\end{tikzpicture}
+\end{center}
+\legende{Tableau comparatif : énoncés constatifs et performatifs — application à \emph{Le Vieux Nègre et la Médaille}.}
+\end{popfigure}
+
+\courssub{Exercices d'intégration}
+
+\begin{exercice}[Repérage et qualification]
+Dans les extraits suivants (inspirés du roman), identifiez les énoncés performatifs explicites. Pour chacun, citez le verbe performatif et vérifiez les conditions de félicité (autorité, circonstances).
+\begin{enumerate}
+    \item « Au nom de l'Administration, \textbf{je vous nomme} chef de canton. » (Le commandant à Meka, place publique, registre ouvert).
+    \item « \textbf{Je jure} sur la tête de mes ancêtres que je n'ai pas volé la médaille. » (Meka, seul, la nuit).
+    \item « \textbf{Je parie} dix francs que le blanc ne viendra pas. » (Kelara, entre camarades, au marché).
+    \item « \textbf{Je déclare} la séance levée. » (Le chef de poste, bureau administratif, fin de journée).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Transformation pour résumé]
+Le texte source contient : « \textbf{Je vous interdis} de quitter le village avant mon retour. \textbf{Je vous avertis} : la prison vous attend. \textbf{Je vous assure} que je reviendrai vainqueur. »
+Rédigez la phrase de résumé correspondante (constative, 3\textsuperscript{e} personne, passé simple ou imparfait).
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+\begin{enumerate}
+    \item \textbf{Performatif.} Verbe \emph{nommer}. Autorité : commandant (représentant État). Circonstances : officielles. $\rightarrow$ \textbf{Heureux} (juridiquement).
+    \item \textbf{Performatif.} Verbe \emph{jurer}. Autorité : Meka sur sa propre parole. Circonstances : solennité privée. $\rightarrow$ \textbf{Heureux} (engagement moral), sauf parjure ultérieur.
+    \item \textbf{Performatif.} Verbe \emph{parier}. Autorité : Kelara (personne privée). Circonstances : informelles, acceptation par l'autre. $\rightarrow$ \textbf{Heureux} si l'autre accepte (contrat de pari).
+    \item \textbf{Performatif.} Verbe \emph{déclarer}. Autorité : chef de poste. Circonstances : procédure administrative. $\rightarrow$ \textbf{Heureux}.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2]
+« L'officier \textbf{interdit} à Meka de quitter le village, \textbf{l'avertit} qu'il risque la prison et \textbf{lui assure} qu'il reviendra vainqueur. »
+(Verbes : \emph{interdire, avertir, assurer} à la 3\textsuperscript{e} pers., passé simple. Valeur constative de rapport.)
+\end{corrige}
+
+\courssub{Transition vers la section suivante}
+
+Maîtriser la distinction constatif/performatif affûte notre lecture du roman : nous voyons comment le pouvoir colonial use de performatifs (\emph{nommer, décerner, interdire}) pour façonner la réalité sociale. Pour le résumé, cette leçon nous rappelle une règle d'or : \textbf{le résumé est un discours constatif sur des actes de langage}. La section 4 approfondira les \textbf{tonalités satirique et polémique} qui colorent le récit de Mongo Beti, avant de passer à la rédaction effective du résumé (sections 5 et 6).
+
+\coursec{Stylistique et rhétorique : les tonalités satirique et polémique}
+
+Après avoir analysé les énoncés constatifs et performatifs, nous nous penchons maintenant sur l'attitude de l'énonciateur dans \emph{Le Vieux nègre et la médaille} de Ferdinand Oyono. La tonalité, ou registre, révèle comment l'auteur se positionne face à son sujet et à son lecteur. Elle oriente la lecture et conditionne la manière dont nous restituerons le texte en résumé.
+
+\courssub{Notion de tonalité (ou registre)}
+
+\begin{definition}[Tonalité]
+La \cle{tonalité} (ou \cle{registre}) est l'attitude globale de l'énonciateur perceptible à travers le choix lexical, les figures de style, la syntaxe et l'organisation du discours. Elle exprime une intention : informer, émouvoir, critiquer, convaincre, moquer, etc. Dans un même texte, plusieurs tonalités peuvent se succéder ou se superposer.
+\end{definition}
+
+\begin{methode}[Identifier la tonalité d'un passage]
+\begin{enumerate}
+\item Relever les procédés stylistiques (ironie, hyperbole, antithèse, interrogation oratoire, accumulation, etc.).
+\item Dégager l'attitude de l'auteur : moquerie, indignation, admiration, neutralité, etc.
+\item Nommer la tonalité (satirique, polémique, lyrique, épique, tragique, comique, etc.).
+\item Justifier par des citations précises.
+\end{enumerate}
+\end{methode}
+
+\courssub{La tonalité satirique}
+
+\begin{definition}[Tonalité satirique]
+La \cle{tonalité satirique} vise à dénoncer les vices, les ridicules ou les injustices d'une société en les tournant en dérision. Elle utilise le rire comme arme critique : l'ironie, la caricature, l'antithèse, le pastiche, l'exagération comique. Le but n'est pas seulement de divertir mais de provoquer une prise de conscience chez le lecteur.
+\end{definition}
+
+\begin{exemplebox}[L'ironie du titre — la médaille, symbole d'honneur, devient symbole d'aliénation]
+Le titre même du roman condense une ironie majeure. La \cle{médaille}, décoration officielle censée récompenser le mérite, est attribuée à un vieillard qui a servi loyalement la puissance coloniale. Pourtant, la cérémonie se transforme en humiliation publique : le vieux nègre reçoit une médaille en toc, sans pension, sans reconnaissance réelle. Le contraste entre la valeur symbolique attendue (honneur, gratitude) et la réalité matérielle (misère, mépris) instaure une tonalité satirique dès la couverture.
+\end{exemplebox}
+
+\begin{exemplebox}[Procédés satiriques dans le roman]
+\begin{itemize}
+\item \textbf{Ironie} : la « générosité » de la France est présentée comme une farce ; le discours officiel vante la civilisation alors que les actes montrent l'exploitation.
+\item \textbf{Caricature} : le commandant colonial et le sergent Gullet sont dépeints avec des traits grossiers (ventre bedonnant, voix de stentor, bêtise administrative) pour incarner la bêtise du pouvoir.
+\item \textbf{Antithèse} : médaille / humiliation ; discours solennel / réalité sordide ; lumière des projecteurs / nuit au poste de police.
+\end{itemize}
+\end{exemplebox}
+
+\courssub{La tonalité polémique}
+
+\begin{definition}[Tonalité polémique]
+La \cle{tonalité polémique} se manifeste par une attaque frontale et argumentée contre une opinion, une institution ou un pouvoir. Elle mobilise l'interrogation oratoire, l'accumulation d'arguments, l'hyperbole, le ton accusateur, la répétition insistante. L'objectif est de convaincre le lecteur de l'injustice ou de l'absurdité de la cible.
+\end{definition}
+
+\begin{exemplebox}[Procédés polémiques dans le roman]
+\begin{itemize}
+\item \textbf{Interrogation oratoire} : « Quel honneur pour un nègre de porter la médaille de la République ? » — question rhétorique qui dénonce l'hypocrisie.
+\item \textbf{Accumulation} : énumération des souffrances (faim, coups, travail forcé, mépris) pour accabler l'administration.
+\item \textbf{Hyperbole} : « Il a porté le poids du monde sur ses épaules » — amplification pour souligner l'injustice.
+\item \textbf{Ton accusateur} : le narrateur adopte une voix de procureur : « Vous avez volé sa jeunesse, vous lui volez sa dignité. »
+\end{itemize}
+\end{exemplebox}
+
+\courssub{Analyse guidée : la scène de la cérémonie et la nuit au poste de police — satire de l'administration coloniale}
+
+\begin{exoresolu}[Analyse de la double scène]
+\textbf{Énoncé} : Étudier comment la cérémonie officielle et la nuit qui suit au poste de police illustrent la tonalité satirique et polémique du roman.
+
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{Cérémonie officielle (chap. 3-4)} : Le texte décrit le décor (drapeaux, fanfare, discours du commandant) avec une précision quasi documentaire. L'ironie surgit du décalage entre le faste apparent et la misère du vieux nègre, vêtu d'un habit usé, qui reçoit une médaille en toc. La caricature du commandant (ventre, voix, gesticulations) renforce le ridicule du pouvoir.
+\item \textbf{Nuit au poste de police (chap. 5-6)} : Après la cérémonie, le vieux est jeté dans une cellule froide. Le narrateur accumule les détails sordides (paille humide, rats, cris des autres détenus). L'interrogation oratoire « Est-ce ainsi qu'on récompense un fidèle serviteur ? » marque le basculement vers la polémique. L'hyperbole « Il a porté le poids du monde » amplifie l'indignation.
+\item \textbf{Articulation des deux tonalités} : La satire expose le grotesque de la mise en scène coloniale ; la polémique condamne la violence structurelle qui se cache derrière. Le passage de l'une à l'autre se fait par le contraste lumière/obscurité, honneur/humiliation, discours/réalité.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Importance pour le résumé : restituer la tonalité sans la juger}
+
+\begin{methode}[Restituer la tonalité dans un résumé]
+\begin{enumerate}
+\item Identifier la tonalité dominante de chaque partie du texte (satirique, polémique, etc.).
+\item Utiliser des verbes de discours adaptés : \emph{dénonce ironiquement}, \emph{critique avec virulence}, \emph{tourne en dérision}, \emph{accuse}, \emph{met en lumière l'absurdité}.
+\item Éviter les jugements personnels (\emph{l'auteur a raison}, \emph{c'est injuste}) ; rester sur le plan de l'analyse énonciative.
+\item Citer un procédé marquant pour étayer la description (ex. : « L'auteur dénonce ironiquement la « générosité » coloniale par l'antithèse médaille/humiliation »).
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Erreur fréquente — confondre satirique et polémique]
+Ne pas confondre \cle{satirique} (rire pour dénoncer, distance ironique, caricature) et \cle{polémique} (attaque frontale, argumentation agressive, volonté de convaincre). Un même passage peut les combiner, mais l'analyse doit distinguer le procédé (ironie vs interrogation oratoire) et l'intention (dérision vs condamnation).
+\end{attention}
+
+\begin{savaistu}[La satire au Cameroun, de l'oral à la presse]
+La tradition satirique est vivace au Cameroun. Les \emph{contes} et \emph{proverbes} utilisent l'ironie pour critiquer les chefs ou les colonisateurs (ex. : « Le lion qui se croit roi de la forêt »). Au XXe siècle, les journaux satiriques comme \emph{Le Messager} ou \emph{La Nouvelle Expression} perpétuent cette veine par des chroniques caricaturant la vie politique. Ferdinand Oyono lui-même, avant d'être romancier, a publié des articles satiriques dans la presse camerounaise des années 1950.
+\end{savaistu}
+
+% Figure 1 : Tableau des procédés satiriques et polémiques avec exemples du roman
+\begin{popfigure}
+\begin{tikzpicture}[node distance=0.2cm]
+% Styles
+\tikzset{
+  header/.style={fill=popblue!30,font=\bfseries,align=center},
+  cell/.style={draw=popline,thin,align=left,minimum height=0.9cm},
+  rowodd/.style={fill=popblueL!20},
+  roweven/.style={fill=white}
+}
+% Matrix for table
+\matrix (tab) [matrix of nodes, nodes in empty cells,
+  column sep=-\pgflinewidth, row sep=-\pgflinewidth,
+  nodes={cell, text width=3.2cm, anchor=center},
+  column 1/.style={nodes={text width=2.2cm, font=\bfseries}},
+  column 2/.style={nodes={text width=4.5cm}},
+  column 3/.style={nodes={text width=4.5cm}},
+  row 1/.style={nodes={header, minimum height=1cm}}
+]{
+Tonalité & Procédé & Exemple dans \emph{Le Vieux nègre et la médaille} \\
+Satirique & Ironie & « La France généreuse offre une médaille en toc au vieux serviteur » (chap. 3) \\
+Satirique & Caricature & Portrait du commandant : « ventre bedonnant, voix de stentor, bêtise administrative » (chap. 2) \\
+Satirique & Antithèse & Médaille / humiliation ; lumière des projecteurs / nuit au poste (chap. 4) \\
+Polémique & Interrogation oratoire & « Quel honneur pour un nègre de porter la médaille de la République ? » (chap. 5) \\
+Polémique & Accumulation & Énumération des souffrances : faim, coups, travail forcé, mépris (chap. 5) \\
+Polémique & Hyperbole & « Il a porté le poids du monde sur ses épaules » (chap. 6) \\
+Polémique & Ton accusateur & « Vous avez volé sa jeunesse, vous lui volez sa dignité » (chap. 6) \\
+};
+% Draw horizontal lines
+\foreach \r in {1,...,8} {
+  \draw[popline] (tab-\r-1.north west) -- (tab-\r-3.north east);
+}
+\draw[popline, thick] (tab-1-1.north west) -- (tab-1-3.north east);
+\draw[popline, thick] (tab-8-1.south west) -- (tab-8-3.south east);
+% Vertical lines
+\foreach \c in {1,2,3} {
+  \draw[popline] (tab-1-\c.north west) -- (tab-8-\c.south west);
+}
+\draw[popline] (tab-1-3.north east) -- (tab-8-3.south east);
+\end{tikzpicture}
+\legende{Tableau récapitulatif des procédés satiriques et polémiques avec exemples cités du roman.}
+\end{popfigure}
+
+% Figure 2 : Axe des tonalités avec placement des grandes scènes
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.1, every node/.style={font=\small}]
+% Axis
+\draw[->, thick, popdark] (-5.5,0) -- (5.5,0) node[right] {Tonalité};
+% Tick marks and labels
+\foreach \x/\label in {-5/Satirique, 0/Neutre, 5/Polémique} {
+  \draw[thick, popdark] (\x,0.15) -- (\x,-0.15) node[below=2pt] {\label};
+}
+% Scenes placement
+% Satirique side
+\node[above=0.6cm, align=center, popblue] at (-4.5,0) {Cérémonie\\officielle (chap. 3)};
+\draw[popblue, thick, ->] (-4.5,0.3) -- (-4.5,0.05);
+\node[above=0.6cm, align=center, popblue] at (-3,0) {Portrait du\\commandant (chap. 2)};
+\draw[popblue, thick, ->] (-3,0.3) -- (-3,0.05);
+\node[above=0.6cm, align=center, popblue] at (-1.5,0) {Antithèse\\médaille/humiliation (chap. 4)};
+\draw[popblue, thick, ->] (-1.5,0.3) -- (-1.5,0.05);
+% Polémique side
+\node[below=0.6cm, align=center, poporange] at (1.5,0) {Interrogation\\oratoire (chap. 5)};
+\draw[poporange, thick, ->] (1.5,-0.3) -- (1.5,-0.05);
+\node[below=0.6cm, align=center, poporange] at (3,0) {Accumulation\\des souffrances (chap. 5)};
+\draw[poporange, thick, ->] (3,-0.3) -- (3,-0.05);
+\node[below=0.6cm, align=center, poporange] at (4.5,0) {Hyperbole \&\\ton accusateur (chap. 6)};
+\draw[poporange, thick, ->] (4.5,-0.3) -- (4.5,-0.05);
+% Legend
+\node[anchor=north west, text width=7cm, font=\footnotesize] at (-5.5,1.8) {
+\textbf{Légende :} les flèches bleues indiquent les scènes à dominante satirique (ironie, caricature, antithèse) ; les flèches orange les scènes à dominante polémique (interrogation oratoire, accumulation, hyperbole, ton accusateur). La zone centrale (neutre) correspond aux passages narratifs descriptifs.
+};
+\end{tikzpicture}
+\legende{Axe des tonalités (satirique — polémique) avec placement des grandes scènes du roman.}
+\end{popfigure}
+
+\coursec{Production et amélioration du résumé}
+
+Dans la section précédente, nous avons vu comment Ferdinand Oyono, dans \emph{Le Vieux nègre et la médaille}, manie les tonalités satirique et polémique pour dénoncer l'hypocrisie coloniale. Savoir repérer ces tonalités est une chose ; savoir restituer fidèlement le contenu d'un texte en un nombre de lignes imposé en est une autre. C'est précisément l'épreuve de la \cle{contraction de texte} au Probatoire et au Baccalauréat technique. Nous abordons maintenant les deux dernières étapes de cette épreuve : la \cle{rédaction} du résumé (étape 4) et son \cle{amélioration} (étape 5). Autrement dit : après avoir lu, repéré et reformulé, il faut écrire proprement, puis relire pour corriger.
+
+\courssub{Rappel : les cinq étapes de la contraction de texte}
+
+La contraction de texte est une démarche en cinq étapes enchaînées. Les trois premières (lecture analytique, repérage des idées essentielles, reformulation) ont été étudiées dans les sections précédentes. Nous nous concentrons ici sur les étapes 4 et 5, encadrées en rouge dans l'organigramme ci-dessous.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.55cm,
+  etape/.style={rectangle, rounded corners=3pt, draw=popblue, fill=popblueL, text width=4.6cm, align=center, minimum height=0.9cm, font=\small},
+  etapeact/.style={rectangle, rounded corners=3pt, draw=poporange, very thick, fill=poporangeL, text width=4.6cm, align=center, minimum height=0.9cm, font=\small},
+  fleche/.style={-{Stealth[length=2.5mm]}, thick, popdark}
+]
+\node[etape, align=center] (e1){\textbf{Étape 1 — Lecture}\\ Lire deux fois, saisir le sens global};
+\node[etape, below=of e1, align=center] (e2){\textbf{Étape 2 — Repérage}\\ Souligner les idées essentielles, dégager le plan};
+\node[etape, below=of e2, align=center] (e3){\textbf{Étape 3 — Reformulation}\\ Dire les idées avec ses propres mots};
+\node[etapeact, below=of e3, align=center] (e4){\textbf{Étape 4 — Rédaction}\\ Texte suivi, 3\textsuperscript{e} personne, connecteurs};
+\node[etapeact, below=of e4, align=center] (e5){\textbf{Étape 5 — Amélioration}\\ Relecture avec grille, correction};
+\draw[fleche] (e1) -- (e2);
+\draw[fleche] (e2) -- (e3);
+\draw[fleche] (e3) -- (e4);
+\draw[fleche] (e4) -- (e5);
+\end{tikzpicture}
+\end{center}
+\legende{Organigramme des cinq étapes de la contraction de texte. Les étapes 4 et 5 (en orange) font l'objet de cette section.}
+\end{popfigure}
+
+\begin{methode}[Fiche à mémoriser pour le Bac : rédiger un résumé en cinq étapes]
+\begin{enumerate}
+\item \textbf{Lire} le texte deux fois : une première lecture pour le sens global, une seconde lecture active, crayon en main.
+\item \textbf{Repérer} les idées essentielles : souligner une idée par paragraphe, éliminer les exemples, les répétitions et les détails ; dégager le plan du texte.
+\item \textbf{Reformuler} chaque idée avec ses propres mots : remplacer les mots du texte par des synonymes, transformer les structures de phrases, condenser.
+\item \textbf{Rédiger} un texte suivi, à la troisième personne, en enchaînant les idées reformulées grâce à des connecteurs logiques, dans la longueur imposée.
+\item \textbf{Améliorer} : relire avec la grille d'auto-évaluation (fidélité, objectivité, enchaînement, langue, longueur) et corriger.
+\end{enumerate}
+\end{methode}
+
+\courssub{Étape 4 : la rédaction du résumé}
+
+\courssub{Un texte suivi, à la troisième personne}
+
+Le résumé n'est pas une liste d'idées juxtaposées : c'est un \cle{texte suivi}, c'est-à-dire un ensemble de phrases complètes qui s'enchaînent naturellement et qui peuvent être lues d'une traite. Deux règles d'or s'imposent.
+
+Première règle : la \cle{troisième personne}. Le résumé est objectif ; le résumant disparaît derrière le texte. On écrit donc « l'auteur montre que... », « Meka découvre que... », jamais « je pense que... », « nous voyons que... », « dans ce texte, on nous dit... ». Les temps utilisés sont ceux du texte original, le plus souvent le présent de vérité générale ou les temps du récit.
+
+Deuxième règle : les \cle{connecteurs logiques}. Ce sont eux qui tissent le texte et qui montrent les relations entre les idées. Il faut les choisir en fonction du sens :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Relation logique} & \textbf{Connecteurs utiles} \\
+\hline
+Addition & d'abord, ensuite, enfin, de plus, en outre \\
+\hline
+Cause & car, parce que, en effet, puisque \\
+\hline
+Conséquence & donc, ainsi, c'est pourquoi, par conséquent \\
+\hline
+Opposition & mais, cependant, pourtant, en revanche, alors que \\
+\hline
+But & afin de, pour, de sorte que \\
+\hline
+Illustration & ainsi, notamment, c'est le cas de \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Piège de rédaction : le « et... et... et... »]
+Enchaîner toutes les phrases par « et » est le signe d'un résumé mal construit : cela efface les relations logiques du texte original (opposition, cause, conséquence). Avant d'écrire chaque phrase, demande-toi : quelle est la relation entre cette idée et la précédente ? Puis choisis le connecteur exact.
+\end{attention}
+
+\courssub{L'introduction du résumé}
+
+Tout résumé commence par une phrase d'introduction qui situe le texte. Cette phrase doit contenir trois informations : l'\cle{auteur}, l'\cle{œuvre} (ou le type de texte) et le \cle{thème}. La formule canonique est :
+
+\begin{exemplebox}[Formule d'introduction]
+\emph{« Dans cet extrait du \textbf{Vieux nègre et la médaille}, Ferdinand \textbf{Oyono} présente la réaction de Meka et des villageois de Doum à l'annonce de la médaille que l'administration coloniale veut décerner au vieil homme. »}
+\end{exemplebox}
+
+On remarque que cette introduction ne donne aucun avis : elle annonce, elle ne juge pas. Elle compte dans la longueur totale du résumé.
+
+\courssub{Le respect de la longueur imposée}
+
+L'énoncé de l'examen impose toujours une longueur : « Résumez ce texte en dix lignes » ou « en un quart du texte ». Cette contrainte fait partie de l'épreuve : elle teste ta capacité à sélectionner l'essentiel.
+
+\begin{propriete}[Règle de la longueur]
+La longueur du résumé doit respecter la consigne avec une \cle{tolérance} de plus ou moins 10 \%. Pour un résumé demandé en 10 lignes, le candidat doit écrire entre 9 et 11 lignes. En dessous, des idées essentielles manquent probablement ; au-dessus, le candidat n'a pas su contracter, et il est pénalisé.
+\end{propriete}
+
+Pour compter ses lignes, on compte les lignes réellement écrites sur la copie (une ligne commencée compte pour une ligne entière). Il est prudent de prévoir une marge : viser 10 lignes quand 10 sont demandées, et vérifier le compte avant de recopier au propre.
+
+\begin{attention}[Erreur fréquente sanctionnée à l'examen]
+Dépasser la longueur imposée entraîne une \cle{pénalité systématique} au Probatoire et au Baccalauréat : le correcteur cesse de prendre en compte ce qui dépasse et retire des points sur le critère « respect de la consigne ». Un résumé de 15 lignes pour 10 demandées, même excellent sur le fond, ne peut pas obtenir la note maximale. Le hors-longueur est une faute de méthode, pas un signe de richesse.
+\end{attention}
+
+\courssub{Étape 5 : l'amélioration du résumé}
+
+Un résumé ne se juge pas à ce que son auteur a voulu dire, mais à ce qu'un lecteur en comprend. D'où le critère fondamental suivant.
+
+\begin{propriete}[Critère de réussite d'un résumé]
+Un résumé réussi peut être lu et compris par quelqu'un qui n'a \cle{jamais lu} le texte original : ce lecteur doit saisir, sans effort et sans ambiguïté, l'essentiel du contenu et de la démarche de l'auteur. Si le lecteur « naïf » bute sur une phrase, ne comprend pas une allusion ou se demande « de quoi parle-t-on ? », le résumé doit être retravaillé.
+\end{propriete}
+
+L'amélioration consiste donc en une \cle{relecture méthodique}, guidée par une grille de cinq questions :
+
+\begin{enumerate}
+\item \textbf{Fidélité} : mon résumé dit-il exactement ce que dit le texte, sans déformer la pensée de l'auteur ni oublier d'idée essentielle ?
+\item \textbf{Objectivité} : ai-je évité tout avis personnel, tout jugement, toute appréciation (« ce texte est intéressant », « l'auteur a raison ») ?
+\item \textbf{Enchaînement} : les phrases sont-elles reliées par des connecteurs logiques bien choisis ? Le texte se lit-il d'une traite ?
+\item \textbf{Langue} : orthographe, grammaire, accords, ponctuation sont-ils corrects ? Les mots du texte ont-ils été reformulés ?
+\item \textbf{Longueur} : suis-je dans la fourchette imposée (± 10 \%) ?
+\end{enumerate}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\node[draw=popblue, rounded corners=4pt, inner sep=6pt, align=center]{
+\begin{tabular}{|p{4.6cm}|p{5.6cm}|c|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Question de contrôle} & \textbf{Barème} \\
+\hline
+Fidélité et contenu & Toutes les idées essentielles sont présentes, sans déformation ? & /8 \\
+\hline
+Reformulation & Les idées sont dites avec mes mots, sans copier-coller ? & /4 \\
+\hline
+Cohérence et enchaînement & Texte suivi, connecteurs logiques, introduction ? & /4 \\
+\hline
+Langue & Orthographe, syntaxe, ponctuation correctes ? & /4 \\
+\hline
+\rowcolor{poporangeL} \textbf{Total} & Longueur respectée (condition d'application) & \textbf{/20} \\
+\hline
+\end{tabular}
+};
+\end{tikzpicture}
+\end{center}
+\legende{Grille d'auto-évaluation du résumé, inspirée du barème type du Baccalauréat technique (total sur 20).}
+\end{popfigure}
+
+\begin{exemplebox}[Barème type Bac : la répartition des points]
+Au Baccalauréat technique, le résumé est noté sur 20 selon une répartition voisine de celle-ci : \textbf{fidélité et contenu : 8 points} (c'est le critère majeur : as-tu trouvé et restitué les idées essentielles ?) ; \textbf{reformulation : 4 points} (as-tu dit les idées avec tes propres mots ?) ; \textbf{cohérence : 4 points} (ton texte est-il suivi, bien enchaîné, correctement introduit ?) ; \textbf{langue : 4 points} (orthographe, grammaire, ponctuation). On voit qu'un résumé copié-collé, même complet, perd d'office les 4 points de reformulation.
+\end{exemplebox}
+
+\begin{methode}[Trois techniques pour améliorer son résumé]
+\begin{enumerate}
+\item \textbf{Lire à voix haute} (ou à mi-voix en examen) : l'oreille détecte les phrases bancales, les répétitions et les ruptures d'enchaînement que l'œil ne voit plus.
+\item \textbf{Faire relire par un pair} : un camarade qui n'a pas le texte sous les yeux applique naturellement le critère de réussite — s'il comprend tout, le résumé est bon ; s'il pose une question, c'est qu'un passage est obscur.
+\item \textbf{Comparer avec le texte source} : vérifier idée par idée que rien d'essentiel n'a été oublié et qu'aucune phrase n'est recopiée telle quelle.
+\end{enumerate}
+\end{methode}
+
+\courssub{Correction collective d'un résumé d'élève}
+
+Voici la copie authentique (anonymisée) d'un élève de Terminale technique, à qui l'on demandait de résumer en \textbf{5 lignes} un passage où Meka apprend qu'il va recevoir une médaille et où les villageois réagissent avec enthousiasme.
+
+\begin{exemplebox}[Copie d'élève à corriger]
+\emph{« Dans cet extrait, Oyono nous parle de Meka. « Ma vieille peau va avoir une médaille », dit Meka, il est très content et moi je trouve que c'est touchant. Les villageois sont contents aussi et ils dansent et ils boivent et ils font la fête toute la nuit et le bruit réveille tout le village et les femmes préparent à manger. Ce texte est très intéressant et montre que les Blancs sont gentils avec Meka. »} (9 lignes)
+\end{exemplebox}
+
+Repérons les défauts à l'aide de la grille :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Défaut} & \textbf{Repérage dans la copie} \\
+\hline
+Copier-coller & La citation « Ma vieille peau va avoir une médaille » est recopiée telle quelle : aucune reformulation. \\
+\hline
+Avis personnel & « moi je trouve que c'est touchant », « Ce texte est très intéressant » : le résumant juge au lieu de restituer. \\
+\hline
+Déformation du sens & « les Blancs sont gentils avec Meka » : le texte d'Oyono est ironique ; dire cela, c'est trahir la pensée de l'auteur. \\
+\hline
+Détails parasites & « ils boivent », « les femmes préparent à manger » : détails pittoresques qui ne sont pas des idées essentielles. \\
+\hline
+Enchaînement pauvre & Succession de « et... et... et... » sans articulation logique. \\
+\hline
+Hors-longueur & 9 lignes pour 5 demandées : dépassement de 80 \%, très au-delà de la tolérance de 10 \%. \\
+\hline
+Langue & « Oyono nous parle de » est trop oral ; la première personne « nous » est interdite. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Réécriture corrigée du résumé d'élève]
+Énoncé : réécrire ce résumé en 5 lignes, en corrigeant tous les défauts repérés.
+\tcblower
+Solution détaillée. On supprime la citation et l'avis personnel, on élimine les détails, on rétablit la fidélité (l'ironie d'Oyono), on rédige à la troisième personne avec des connecteurs :
+
+\emph{« Dans cet extrait du \textbf{Vieux nègre et la médaille}, Ferdinand Oyono présente la réaction de Meka et des villageois à l'annonce de la médaille. D'abord incrédule, le vieil homme accueille la nouvelle avec fierté. Les habitants de Doum, quant à eux, manifestent leur joie par une nuit de fête. À travers cette euphorie, l'auteur souligne avec ironie le crédit accordé à un simple ruban. »}
+
+Vérification avec la grille : fidélité (l'ironie est restituée, aucune idée essentielle ne manque) ; objectivité (aucun avis) ; enchaînement (d'abord, quant à eux, à travers) ; langue (troisième personne, registre soutenu) ; longueur (5 lignes, conforme).
+\end{exoresolu}
+
+\begin{attention}[Les cinq erreurs qui coûtent des points]
+Retiens la liste des fautes à traquer systématiquement lors de la relecture : le \cle{copier-coller} (phrases ou citations reprises telles quelles), l'\cle{avis personnel} (toute trace de « je » ou de jugement), l'\cle{oubli d'idées essentielles} (un résumé trop court ou mal sélectionné), le \cle{hors-longueur} (dépassement de la tolérance de ± 10 \%) et les \cle{fautes de syntaxe} (phrases inachevées, accords fautifs, ponctuation défaillante).
+\end{attention}
+
+\courssub{Entraînement individuel chronométré (conditions d'examen)}
+
+\begin{exercice}[Résumé en conditions d'examen — 40 minutes]
+Extrait de travail : le passage du \emph{Vieux nègre et la médaille} où, le jour de la cérémonie, Meka, immobilisé par ses chaussures neuves et écrasé par la chaleur, attend debout sous le soleil pendant que les officiels discourent.
+
+Consignes : résume cet extrait en \textbf{10 lignes} (tolérance : 9 à 11 lignes). Tu disposes de 40 minutes réparties ainsi : 10 min de lecture et repérage, 10 min de reformulation au brouillon, 15 min de rédaction, 5 min de relecture avec la grille. Barème : fidélité et contenu /8, reformulation /4, cohérence /4, langue /4.
+\end{exercice}
+
+\begin{corrige}[Exercice : résumé en 10 lignes]
+Proposition de corrigé (une autre formulation est possible si elle respecte la grille) :
+
+\emph{« Dans cet extrait du \textbf{Vieux nègre et la médaille}, Ferdinand Oyono décrit le calvaire de Meka pendant la cérémonie de remise de sa médaille. Dès le matin, le vieil homme, endimanché, souffre dans des chaussures neuves qui lui blessent les pieds. Contraint de rester debout au soleil, sa femme et lui attendent longuement l'arrivée des officiels. Pendant les discours interminables, la chaleur accablante épuise le vieillard, qui manque de s'évanouir. À travers cette scène, l'auteur dénonce avec ironie l'inhumanité d'une cérémonie où l'on honore un homme en le maltraitant. »}
+
+Auto-correction avec la grille : les quatre idées essentielles (souffrance physique, attente, discours, portée satirique) sont présentes ; aucune phrase n'est copiée ; les connecteurs (dès, pendant, à travers) assurent l'enchaînement ; la longueur est de 10 lignes ; l'introduction annonce l'auteur, l'œuvre et le thème.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+Rédiger un résumé, c'est écrire un texte suivi, à la troisième personne, introduit par une phrase annonçant auteur, œuvre et thème, articulé par des connecteurs logiques, dans la longueur imposée (± 10 \%). Améliorer un résumé, c'est le relire avec une grille à cinq critères — fidélité, objectivité, enchaînement, langue, longueur — en traquant le copier-coller, l'avis personnel, les oublis, le hors-longueur et les fautes de syntaxe. Le test décisif : quelqu'un qui n'a jamais lu le texte doit comprendre ton résumé sans effort.
+\end{aretenir}
+
+\coursec{Contexte de l'œuvre, bilan et intégration}
+
+Après avoir appris, dans la section précédente, à produire puis à améliorer un résumé de texte, il nous reste à accomplir une dernière démarche : \cle{replacer l'œuvre dans son époque} et faire le \cle{bilan} de notre étude. Comprendre un roman, ce n'est pas seulement en résumer l'intrigue : c'est comprendre \emph{pourquoi} il a été écrit, \emph{quand}, et \emph{ce qu'il dit encore aujourd'hui}. C'est aussi savoir mobiliser toutes les compétences acquises — lecture méthodique, repérage des idées essentielles, contraction, analyse des tonalités — le jour de l'examen.
+
+\courssub{Le contexte historique : le Cameroun sous domination française}
+
+\textbf{Intuition.} Imaginez que, dans votre propre village, un administrateur étranger décide qui a le droit de circuler, qui doit travailler gratuitement, qui peut être puni sans procès. C'est exactement la situation que dépeint Ferdinand Oyono dans \emph{Le Vieux nègre et la médaille}.
+
+\textbf{Repères chronologiques.} Le Cameroun, colonie allemande depuis 1884, est partagé en 1916 entre la France et la Grande-Bretagne après la défaite allemande de la Première Guerre mondiale. Le traité de Versailles (1919) entérine ce partage, et la Société des Nations confie officiellement en 1922 la plus grande partie du territoire à la France sous forme de \cle{mandat} ; en 1946, ce statut devient celui de \cle{tutelle} sous l'autorité de l'ONU : la France administre le pays au nom de la communauté internationale, avec l'obligation théorique de le conduire vers l'autonomie. Le Cameroun francophone accède à l'indépendance le 1\textsuperscript{er} janvier 1960.
+
+\begin{definition}[L'indigénat]
+L'\cle{indigénat} est le régime juridique discriminatoire appliqué aux colonisés dans les territoires français. Il place les « indigènes » hors du droit commun : corvées et travaux forcés, impôts arbitraires, restrictions de circulation, sanctions infligées par l'administration sans jugement. Face à lui, une petite minorité d'« évolués » ou d'assimilés bénéficie de certains droits, selon la politique dite d'\cle{assimilation}, qui promettait l'égalité aux colonisés adoptant la langue et la culture françaises — promesse rarement tenue.
+\end{definition}
+
+\textbf{Lien avec le roman.} Meka, le « vieux nègre », reçoit une médaille pour avoir donné ses terres à la mission et ses fils à la guerre : c'est la logique même de l'assimilation, qui récompense la soumission par des symboles dérisoires. Le commandant, le père Vandermayer, les gendarmes incarnent l'appareil de l'indigénat : humiliations, prison arbitraire, mépris.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.0]
+  % Contour très simplifié du Cameroun
+  \draw[thick, popdark, fill=popcream] (0,0) -- (0.8,-1.2) -- (1.6,-1.6) -- (2.4,-1.4) -- (3.2,-0.6) -- (3.6,0.4) -- (3.2,1.6) -- (3.6,2.8) -- (3.0,4.0) -- (2.2,4.8) -- (1.4,4.4) -- (1.0,3.4) -- (0.4,2.4) -- (-0.4,1.4) -- (-0.2,0.6) -- cycle;
+  % Villes
+  \fill[popink] (0.9,-0.7) circle (2pt) node[right=1pt, font=\small] {Douala (port)};
+  \fill[popink] (1.8,-0.3) circle (2pt) node[right=1pt, font=\small] {Yaoundé (capitale)};
+  \fill[poporange] (2.6,-0.9) circle (2.5pt) node[right=1pt, font=\small] {Doum (village fictif du roman)};
+  % Route Douala-Yaoundé
+  \draw[popblue, thick, dashed] (0.9,-0.7) -- (1.8,-0.3);
+  % Nord
+  \draw[-{Stealth}, thick, popdark] (-0.8,4.6) -- (-0.8,5.3) node[above, font=\small] {N};
+  % Labels zones
+  \node[font=\small\itshape, popmuted] at (2.6,3.4) {Grand Nord};
+  \node[font=\small\itshape, popmuted] at (1.2,1.6) {Forêt du Sud};
+\end{tikzpicture}
+\legende{Croquis simplifié du Cameroun sous tutelle française (1946-1960). 1. Douala, grand port atlantique ; 2. Yaoundé, capitale administrative ; 3. Doum, village fictif où vivent Meka et les siens, cadre principal du roman. Le trait discontinu figure l'axe routier Douala--Yaoundé. (Schéma indicatif, sans précision cartographique.)}
+\end{popfigure}
+
+\courssub{Le contexte littéraire : la littérature africaine francophone de contestation}
+
+\textbf{Intuition.} Quand un peuple n'a pas le droit de parler, ses écrivains parlent pour lui. Dans les années 1950, une génération d'intellectuels africains prend la plume pour dénoncer la colonisation avec les armes de la langue française elle-même.
+
+Trois courants se rejoignent :
+\begin{itemize}
+\item La \cle{Négritude} (Senghor, Césaire, Damas), mouvement poétique et politique qui revendique la dignité des cultures noires face au racisme colonial ;
+\item Le \cle{roman de contestation} camerounais : Mongo Beti (\emph{Le Pauvre Christ de Bomba}, 1956) et Ferdinand Oyono (\emph{Une vie de boy}, 1956 ; \emph{Le Vieux nègre et la médaille}, 1956) dénoncent, par la satire, l'hypocrisie de la mission « civilisatrice » ;
+\item La presse et les essais anticolonialistes (Fanon, \emph{Peau noire, masques blancs}, 1952) qui analysent l'aliénation du colonisé.
+\end{itemize}
+
+\begin{popfigure}
+\begin{tikzpicture}
+  \draw[thick, popdark, -{Stealth}] (0,0) -- (10.5,0);
+  \foreach \x/\year/\txt in {0.6/1916/{Partage du\\Cameroun}, 2.6/1922/{Mandat français\\(SDN)}, 4.6/1946/{Tutelle\\(ONU)}, 6.6/1956/{Publication du\\roman}, 8.8/1960/{Indépendance\\(1\textsuperscript{er} janvier)}} {
+    \draw[thick, popdark] (\x,0.12) -- (\x,-0.12);
+    \node[below, font=\small\bfseries] at (\x,-0.15) {\year};
+    \node[above, font=\scriptsize, align=center, text width=1.7cm] at (\x,0.15) {\txt};
+  }
+  \fill[poporange] (6.6,0) circle (3pt);
+  \fill[popgreen] (8.8,0) circle (3pt);
+\end{tikzpicture}
+\legende{Frise chronologique : du partage colonial (1916) à l'indépendance (1960). Le roman paraît en 1956 (point orange), quatre ans avant l'indépendance (point vert) : il participe au combat qui la prépare.}
+\end{popfigure}
+
+\courssub{L'inscription de l'œuvre dans son époque : un roman anticolonial}
+
+Publié en 1956, quatre ans avant l'indépendance, \emph{Le Vieux nègre et la médaille} est un \cle{roman engagé}. Oyono n'écrit pas pour divertir : il démonte le discours colonial de l'intérieur. La médaille offerte à Meka devait célébrer l'« œuvre civilisatrice » de la France ; le roman révèle qu'elle n'est qu'un leurre. Le réveil de Meka, humilié et jeté en prison le soir même de sa décoration, figure le réveil de toute l'Afrique : la conscience que les promesses coloniales sont vides.
+
+\begin{savaistu}[Un classique du Bac camerounais]
+\emph{Le Vieux nègre et la médaille} figure au programme du Baccalauréat camerounais depuis des décennies. Il reste l'un des textes les plus fréquemment proposés aux épreuves d'explication de texte et de commentaire, car il combine une intrigue accessible, une satire riche et un contexte historique précis : tout ce qu'il faut pour évaluer votre capacité à lier un texte à son époque.
+\end{savaistu}
+
+\courssub{Bilan de l'étude de l'œuvre}
+
+\textbf{Les thèmes majeurs.}
+\begin{itemize}
+\item L'\cle{hypocrisie coloniale} : la cérémonie de la médaille, grande messe de l'amitié franco-africaine, masque la spoliation des terres et la mort des fils de Meka ;
+\item L'\cle{aliénation} : Meka a intériorisé le regard du colonisateur ; il se croit honoré alors qu'il est utilisé ;
+\item Le \cle{réveil des consciences} : la nuit de la prison, la pluie, la douleur physique rendent à Meka la lucidité et la solidarité des siens.
+\end{itemize}
+
+\textbf{Les personnages.} Meka, figure pathétique puis lucide ; Kelara, son épouse, voix de la sagesse traditionnelle ; Engamba, son beau-frère, figure de la révolte et de la lucidité ; le commandant et le père Vandermayer, figures de l'autorité coloniale et missionnaire ; les gendarmes, bras armé de l'humiliation.
+
+\textbf{Le style.} La \cle{tonalité satirique} domine : ironie du narrateur, décalage entre le discours officiel et la réalité, grotesque de la cérémonie. Elle bascule parfois vers le \cle{polémique} quand la dénonciation devient frontale (la prison, le discours final).
+
+\begin{exoresolu}[Sujet de Bac : la médaille, symbole ironique]
+\textbf{Sujet.} Montrez que la médaille de Meka est un symbole ironique. (Réponse attendue en mobilisant le contexte historique et la tonalité satirique.)
+\tcblower
+\textbf{Éléments de réponse.} 1. La médaille prétend récompenser les « services » de Meka : elle symbolise officiellement la reconnaissance de la France envers ses « fidèles sujets » (contexte de l'assimilation). 2. Or cette récompense est dérisoire au regard des sacrifices : les terres données à la mission, les deux fils morts à la guerre. L'écart entre le prix payé et le ruban de métal crée l'ironie. 3. L'ironie éclate le soir même : décoré le matin, Meka est battu et emprisonné la nuit pour s'être égaré dans le quartier des Blancs. La médaille ne vaut donc rien : elle symbolise en réalité la duplicité du discours colonial. 4. La tonalité satirique du récit (narrateur ironique, cérémonie grotesque) transforme ce symbole en arme de dénonciation : à travers la médaille de Meka, c'est toute la « mission civilisatrice » qui est dévaluée. \textbf{Conclusion :} la médaille, signe apparent d'honneur, est le symbole ironique de l'hypocrisie coloniale et l'instrument du réveil de Meka.
+\end{exoresolu}
+
+\begin{attention}[Erreur fréquente au bilan de l'œuvre]
+Dans un bilan ou un commentaire, ne \textbf{jugez pas l'auteur} (« Oyono exagère », « Oyono déteste les Blancs ») : \textbf{analysez son texte}. On attend des formulations comme : « le narrateur ironique souligne... », « le décalage entre le discours officiel et la réalité dénonce... ». Le sujet d'examen porte sur le fonctionnement du texte (procédés, tonalités, symboles), pas sur les opinions supposées de l'écrivain.
+\end{attention}
+
+\courssub{La portée actuelle de l'œuvre}
+
+Pourquoi lire encore Oyono ? Parce que le roman interroge des questions vivantes :
+\begin{itemize}
+\item La \cle{mémoire coloniale} : le texte est un témoignage littéraire sur l'indigénat et les violences ordinaires de la colonisation, utile au travail de mémoire des jeunes générations camerounaises ;
+\item Le \cle{rapport à l'autorité} : Meka apprend à distinguer l'autorité légitime (celle des siens, fondée sur le respect) de l'autorité abusive (celle du commandant, fondée sur la force) ;
+\item La \cle{dignité} : le roman affirme qu'aucune décoration, aucune promotion ne vaut la dignité retrouvée — leçon universelle qui dépasse le seul contexte colonial.
+\end{itemize}
+
+\courssub{Synthèse des savoir-faire : de la lecture au résumé réussi}
+
+Cette leçon vous a conduits sur un chemin complet, celui-là même que vous devrez refaire seuls à l'examen :
+\begin{enumerate}
+\item \textbf{Lire méthodiquement} : identifier la situation d'énonciation, le thème, la tonalité ;
+\item \textbf{Repérer les idées essentielles} : distinguer l'essentiel de l'accessoire, supprimer exemples et répétitions ;
+\item \textbf{Reformuler} : dire les mêmes idées avec vos propres mots, sans copier-coller de phrases ;
+\item \textbf{Contracter} : respecter la consigne de longueur (souvent un quart du texte) ;
+\item \textbf{Rédiger et améliorer} : phrases claires, connecteurs logiques, relecture orthographique ;
+\item \textbf{Replacer dans le contexte} : relier le texte à son époque pour en comprendre la portée.
+\end{enumerate}
+
+\begin{methode}[Gérer son temps à l'épreuve de contraction (50 minutes)]
+\begin{enumerate}
+\item \textbf{Lecture} (15 min) : deux lectures du texte ; souligner les idées forces, noter la tonalité en marge ;
+\item \textbf{Repérage et plan} (10 min) : dégager 3 ou 4 idées essentielles, les ordonner, éliminer l'accessoire ;
+\item \textbf{Rédaction} (20 min) : rédiger le résumé avec vos mots, en contrôlant le nombre de lignes au fur et à mesure ;
+\item \textbf{Relecture} (5 min) : vérifier l'orthographe, les accords, la fidélité au texte et le respect de la longueur imposée.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges de la contraction]
+\begin{itemize}
+\item Ne \textbf{copiez} jamais de phrases entières du texte : la reformulation est la compétence évaluée ;
+\item N'ajoutez \textbf{aucune opinion personnelle} : le résumé restitue la pensée de l'auteur, pas la vôtre ;
+\item Respectez la \textbf{longueur imposée} : un dépassement important est sanctionné.
+\end{itemize}
+\end{attention}
+
+\courssub{Compte-rendu et remédiation}
+
+\textbf{Compte-rendu des difficultés observées.} Au cours des productions de la leçon, trois difficultés reviennent fréquemment :
+\begin{itemize}
+\item \textbf{Difficulté 1 — la paraphrase} : beaucoup de résumés reprennent les mots du texte. \emph{Remédiation} : s'entraîner à reformuler une phrase en changeant le sujet grammatical et les verbes (ex. « Meka fut décoré » devient « l'administration remit une médaille au vieil homme ») ;
+\item \textbf{Difficulté 2 — le tri des idées} : certains résumés conservent des anecdotes. \emph{Remédiation} : pour chaque paragraphe, écrire l'idée en une ligne au brouillon ; si un détail peut être supprimé sans que l'idée disparaisse, il est accessoire ;
+\item \textbf{Difficulté 3 — la confusion entre résumé et commentaire} : des élèves jugent le texte dans leur résumé. \emph{Remédiation} : bannir du résumé toute phrase contenant « je pense », « l'auteur a raison », « ce texte est beau ».
+\end{itemize}
+
+\begin{exercice}[Réentraînement ciblé]
+On donne le passage suivant (environ 100 mots) : « Meka avait donné ses terres à la mission. Il avait donné ses deux fils à la guerre. Il avait donné sa foi au Dieu des Blancs. Le matin de la cérémonie, il se tenait droit, fier, attendant la médaille comme on attend une récompense méritée. Le soir, gendarmes et matraques lui apprirent ce que valait cette reconnaissance. »
+\begin{enumerate}
+\item Dégagez les deux idées essentielles du passage ;
+\item Rédigez un résumé du passage en 25 à 30 mots, sans reprendre aucune phrase du texte ;
+\item Indiquez la tonalité dominante et justifiez-la par un procédé précis.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice de réentraînement]
+\begin{enumerate}
+\item Idées essentielles : (a) Meka a tout sacrifié à la cause coloniale et attend sa récompense avec fierté ; (b) la répression qui suit la cérémonie révèle le néant de cette reconnaissance.
+\item Résumé possible (28 mots) : « Après avoir tout sacrifié pour les colonisateurs, le vieil homme attendait fièrement sa récompense ; la violence subie le soir même lui révéla l'illusion de cette gratitude. »
+\item Tonalité satirique : le parallélisme « Il avait donné... » accumule les sacrifices pour mieux faire ressortir, par contraste, la dérision de la médaille ; l'ironie culmine dans le renversement entre l'attente du matin et la brutalité du soir.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\emph{Le Vieux nègre et la médaille} (1956) s'inscrit dans le contexte du Cameroun sous tutelle française et de l'indigénat : c'est un roman anticolonial de la génération de la contestation, paru quatre ans avant l'indépendance. Son étude repose sur trois piliers : les thèmes (hypocrisie coloniale, aliénation, réveil des consciences), les personnages et la tonalité satirique. À l'examen, analysez le texte sans juger l'auteur, et gérez votre temps : lecture, repérage, rédaction, relecture. Le résumé réussi est fidèle aux idées de l'auteur, reformulé avec vos mots, et conforme à la longueur imposée.
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+\begin{itemize}
+    \item Mobiliser l'ensemble des savoir-faire de la leçon : repérage des idées essentielles, reformulation, rédaction et amélioration d'un résumé.
+    \item Produire un résumé de presse (fiche de lecture) fidèle, objectif, concis (10 lignes maximum) et restituant la \cle{tonalité satirique} de l'œuvre.
+    \item Travailler en équipe (lecture active, reformulation collective) puis individuellement (rédaction, auto-évaluation).
+    \item Justifier oralement ses choix de sélection, de reformulation et de restitution des procédés stylistiques.
+\end{itemize}
+
+\courssub{Situation}
+La bibliothèque municipale de \textbf{Yaoundé} organise la première édition de la « \emph{Nuit de la littérature camerounaise} ». Pour l'occasion, chaque classe de Terminale technique des lycées de la ville est invitée à produire une \textbf{fiche de lecture résumée} destinée aux visiteurs n'ayant pas lu l'œuvre au programme : \emph{Le Vieux nègre et la médaille} de Ferdinand Oyono.
+
+Votre classe est divisée en groupes de \textbf{quatre élèves}. Chaque groupe reçoit un \textbf{extrait de 40 lignes} (environ 300 mots) correspondant au \emph{climax} du roman : la cérémonie solennelle de remise de la médaille à Meka, suivie de son arrestation brutale sur ordre de l'administrateur. Le texte met en scène l'ironie dramatique, le renversement de situation et la violence coloniale masquée par le cérémonial.
+
+\textbf{Contraintes de la tâche authentique :}
+\begin{itemize}
+    \item \textbf{Format :} Fiche A5 (148 $\times$ 210 mm) à afficher au CDI.
+    \item \textbf{Longueur :} \textbf{10 lignes maximum} (interligne simple, police Times New Roman 12 ou équivalent manuscrit), soit environ 80--100 mots.
+    \item \textbf{Cible :} Public adulte, non spécialiste, venu découvrir la littérature camerounaise.
+    \item \textbf{Exigence spécifique :} Le résumé doit rendre perceptible la \cle{tonalité satirique} (ironie, dérision, critique implicite) sans la commenter explicitement.
+\end{itemize}
+
+\courssub{Consignes}
+\textbf{Étape 1 -- Lecture active et repérage (15 min, en groupe)}
+\begin{enumerate}
+    \item Lisez l'extrait à haute voix (tour à tour). Identifiez le \cle{schéma narratif} : situation initiale (cérémonie), élément déclencheur (discours), péripéties (remise de la médaille puis arrestation), dénouement.
+    \item Remplissez la \textbf{Grille de repérage} (fournie ci-dessous) en isolant les \textbf{5 à 7 idées forces} (qui ? quoi ? où ? quand ? comment ? pourquoi ?). Notez en regard les \textbf{indices de tonalité satirique} (mots, phrases, contrastes).
+\end{enumerate}
+
+\textbf{Étape 2 -- Reformulation collective (15 min, en groupe)}
+\begin{enumerate}
+    \setcounter{enumi}{2}
+    \item À partir des idées forces, rédigez \emph{ensemble} une \textbf{version « zéro »} (brouillon commun) en phrases complètes, sans exemples, sans citations, sans détails anecdotiques. Visez 12--15 lignes.
+    \item Vérifiez : \cle{fidélité} au texte source, \cle{objectivité} (pas d'interprétation personnelle), \cle{concision}.
+\end{enumerate}
+
+\textbf{Étape 3 -- Rédaction individuelle (15 min, seul)}
+\begin{enumerate}
+    \setcounter{enumi}{4}
+    \item À partir de la version zéro, rédigez \textbf{votre propre résumé définitif} (10 lignes max). Soignez les \cle{connecteurs logiques}, la \cle{cohérence des temps} (passé simple / imparfait), le \cle{vocabulaire précis}.
+    \item Comptez vos lignes et vos mots. Ajustez si nécessaire (supprimez les adjectifs qualificatifs non porteurs de sens satirique, fusionnez les phrases).
+\end{enumerate}
+
+\textbf{Étape 4 -- Échange et amélioration (15 min, par paires de groupes)}
+\begin{enumerate}
+    \setcounter{enumi}{6}
+    \item Échangez vos fiches avec un autre groupe. Lisez le résumé reçu.
+    \item Appliquez la \textbf{Grille d'auto-évaluation / co-évaluation} (ci-dessous) : cochez, notez des commentaires, proposez \textbf{2 corrections concrètes} (ex. : « Remplacer "le chef blanc" par "l'administrateur" pour la précision ; ajouter "sous les acclamations forcées" pour l'ironie »).
+    \item Récupérez votre fiche, intégrez les corrections pertinentes, finalisez la version propre pour l'affichage.
+\end{enumerate}
+
+\textbf{Étape 5 -- Justification orale (10 min, classe entière)}
+\begin{enumerate}
+    \setcounter{enumi}{9}
+    \item Un représentant par groupe présente au tableau : \textbf{quelles 3 idées ont été gardées en priorité et pourquoi}, \textbf{quel procédé satirique a été restitué} (ex. : antiphrase, contraste, décalage) \textbf{et comment} (choix lexical, syntaxe), \textbf{une difficulté rencontrée et sa solution}.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+\begin{definition}[Méthode du résumé en 4 temps (rappel)]
+\begin{enumerate}
+    \item \textbf{Repérer :} Lire $\rightarrow$ Segmenter $\rightarrow$ Titrer les paragraphes $\rightarrow$ Extraire l'idée force de chaque segment (mots-clés : agent, action, circonstance, finalité).
+    \item \textbf{Sélectionner / Hiérarchiser :} Éliminer exemples, citations, répétitions, détails descriptifs. Garder le \cle{squelette narratif} et les \cle{marqueurs de tonalité}.
+    \item \textbf{Reformuler / Réécrire :} Changer la forme (syntaxe, vocabulaire) sans changer le sens. Utiliser la \cle{subordination} (relatives, conjonctives) pour enchaîner les idées. Remplacer le discours direct par le discours indirect. Gommer la subjectivité (pas de « je », pas de jugements de valeur).
+    \item \textbf{Contrôler :} Fidélité (sens), Objectivité (ton neutre), Concision (longueur), Cohérence (liens logiques), Langue (orthographe, syntaxe, vocabulaire). \textbf{Astuce :} 1 ligne de résumé $\approx$ 4--5 lignes de texte source (taux de compression $\approx$ 20--25 \%).
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Tonalités satirique et polémique -- Outils de repérage]
+\begin{itemize}
+    \item \textbf{Satirique :} Critique indirecte par le rire ou le sourire. Procédés : \cle{ironie} (dire le contraire de ce qu'on pense), \cle{antiphrase}, \cle{hyperbole}, \cle{sous-entendu}, \cle{contraste} (solennel / ridicule), \cle{décalage} (attendu / réel), \cle{lexique dépréciatif} ou \cle{euphémisme} moqueur.
+    \item \textbf{Polémique :} Attaque directe, argumentative, violente. Procédés : \cle{apostrophe}, \cle{accumulation} d'arguments, \cle{questions rhétoriques}, \cle{vocabulaire agressif}, \cle{présent de vérité générale}.
+    \item \textbf{Dans l'extrait :} La cérémonie (solennité, discours lénifiants, médaille) \textbf{contraste} violemment avec la réalité (arrestation, menottes, humiliation). Le discours de l'administrateur fonctionne comme une \cle{antiphrase} géante : il « honore » celui qu'il va briser.
+\end{itemize}
+\end{definition}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|>{\bfseries}l|X|X|}\hline
+\textbf{Grille de repérage (Étape 1)} & \textbf{Idée force (Qui + Verbe d'action + Circonstances)} & \textbf{Indices de tonalité satirique (Citation / Procédé)} \\ \hline
+Segment 1 : Cérémonie / Décor & & \\ \hline
+Segment 2 : Discours administrateur & & \\ \hline
+Segment 3 : Remise médaille / Réaction Meka & & \\ \hline
+Segment 4 : Basculement / Arrestation & & \\ \hline
+Segment 5 : Départ / Réaction foule & & \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|>{\bfseries}l|X|c|}\hline
+\textbf{Grille d'évaluation (Étape 4)} & \textbf{Critères / Indicateurs} & \textbf{Validé ?} \\ \hline
+\cle{Fidélité} & Les faits principaux sont exacts, dans l'ordre chronologique, sans invention. & $\square$ Oui $\square$ Non \\ \hline
+\cle{Objectivité} & Pas de « je », pas d'adjectifs subjectifs (sauf s'ils restituent l'ironie), ton neutre. & $\square$ Oui $\square$ Non \\ \hline
+\cle{Tonalité satirique} & Au moins un procédé satirique restitué (choix lexical, contraste, ironie suggérée). & $\square$ Oui $\square$ Non \\ \hline
+\cle{Concision} & $\le$ 10 lignes / $\approx$ 90 mots. Taux de compression respecté. & $\square$ Oui $\square$ Non \\ \hline
+\cle{Langue} & Phrases correctes, connecteurs variés, temps cohérents, vocabulaire précis, 0 faute. & $\square$ Oui $\square$ Non \\ \hline
+\end{tabularx}
+\end{center}
+
+\courssub{Démarche et corrigé commenté}
+\begin{exoresolu}[Corrigé type et commentaire pédagogique -- Extrait : Cérémonie et arrestation de Meka]
+\textbf{Étape 1 -- Repérage des idées forces (Grille complétée)}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|>{\bfseries}l|X|X|}\hline
+\textbf{Segment} & \textbf{Idée force} & \textbf{Indices satiriques} \\ \hline
+1. Mise en scène & L'administrateur préside une cérémonie fastueuse en l'honneur de Meka, vieux chef loyal. & Décor « solennel », « drapeau », « uniforme » : \emph{théâtralisation} du pouvoir. \\ \hline
+2. Discours & L'administrateur loue la « fidélité exemplaire » de Meka et la « générosité » de la France. & \cle{Antiphrase} : « fidélité » = soumission ; « générosité » = exploitation. \cle{Euphémisme} : « bienfaits de la civilisation ». \\ \hline
+3. Remise & L'administrateur épingle la médaille sur la poitrine de Meka, ému, sous les applaudissements. & \cle{Contraste} : médaille (symbole d'honneur) contre Meka, le « vieux nègre » (mépris implicite). Applaudissements « forcés » (contrainte). \\ \hline
+4. Renversement & L'administrateur annonce l'arrestation de Meka, accusé d'un vol d'arme (piège tendu par son rival). & \cle{Ironie dramatique} : le lecteur connaît l'innocence de Meka ; la médaille devient \cle{symbole dérisoire} (honneur $\rightarrow$ piège). \\ \hline
+5. Arrestation & Les policiers menottent Meka, le jettent dans le camion ; la foule est sidérée. & \cle{Violence brute} masquée par le cérémonial. \cle{Décalage} total : honneur $\rightarrow$ honte publique. \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Étape 2 -- Version zéro collective (brouillon commun, $\approx$ 13 lignes)}
+
+Lors d'une cérémonie officielle, l'administrateur colonial remet solennellement une médaille à Meka, vieux chef africain, pour sa fidélité à la France. Il prononce un discours élogieux sur les bienfaits de la colonisation. Meka, ému, reçoit la décoration sous les applaudissements d'une foule contrainte. Mais, brutalement, l'administrateur accuse Meka d'avoir volé une arme -- piège tendu par son rival -- et fait menotter le vieil homme devant l'assemblée médusée. La médaille, symbole d'honneur, devient l'instrument de son humiliation publique. Le cérémonial solennel masque une arrestation arbitraire et violente, révélant le mépris colonial derrière les apparences.
+
+\textbf{Étape 3 -- Résumé définitif individuel (Corrigé type, 9 lignes, $\approx$ 85 mots)}
+
+Lors d'une cérémonie solennelle, l'administrateur colonial épingle une médaille sur la poitrine de Meka, vieux chef « loyal », louant sa fidélité et la générosité française. À peine décoré, Meka est accusé d'un vol d'arme -- piège ourdi par son rival -- et brutalement menotté sous les yeux de la foule. Le faste officiel et les discours lénifiants ne furent que le décor ironique d'une humiliation programmée : la médaille, symbole d'honneur, scelle en réalité le mépris colonial et l'arbitraire du pouvoir.
+
+\tcblower
+
+\textbf{Commentaire pas à pas des choix de rédaction (Justification orale type)}
+
+\begin{enumerate}
+    \item \textbf{Sélection des 3 idées maîtresses :} (1) cérémonie + discours hypocrite (contexte et ironie) ; (2) remise de la médaille (point culminant, antiphrase) ; (3) arrestation immédiate (renversement, violence). \emph{Écartées :} description du décor, détails sur le rival, réaction précise de la foule (éléments secondaires).
+    \item \textbf{Restitution de la tonalité satirique :}
+    \begin{itemize}
+        \item \textbf{Lexique :} « \emph{soi-disant} » évité (trop subjectif) $\rightarrow$ guillemets sur « \emph{loyal} », plus « \emph{lénifiants} », « \emph{programmée} », « \emph{scelle} ».
+        \item \textbf{Syntaxe :} phrases brèves et enchaînées pour l'arrestation (« \emph{À peine décoré, Meka est accusé... et brutalement menotté} »), mimant la brutalité et la soudaineté.
+        \item \textbf{Contraste explicite :} « \emph{faste officiel} » / « \emph{humiliation} » ; « \emph{symbole d'honneur} » / « \emph{mépris} ».
+        \item \textbf{Antiphrase suggérée :} « \emph{louant sa fidélité et la générosité française} » : le résumé rapporte le discours sans l'adopter, et le discrédite par la suite immédiate des faits.
+    \end{itemize}
+    \item \textbf{Gestion de la concision :} fusion « cérémonie + discours » en une proposition participiale (« \emph{Lors d'une cérémonie..., l'administrateur... louant...} »). Suppression des noms propres secondaires et du détail « pistolet » (remplacé par « arme »). Emploi du \cle{passif} (« \emph{est accusé, est menotté} ») pour focaliser sur Meka (la victime) et gommer les agents subalternes (policiers), seul l'ordonnateur (l'administrateur) restant nommé.
+    \item \textbf{Difficulté résolue :} comment évoquer le piège sans nommer le rival (détail secondaire) ? $\rightarrow$ « \emph{piège ourdi par son rival} » : groupe nominal concis qui conserve la causalité.
+\end{enumerate}
+
+\textbf{Étape 4 -- Simulation de co-évaluation (Grille appliquée au corrigé type)}
+\begin{itemize}
+    \item Fidélité : validé (chronologie respectée, faits exacts).
+    \item Objectivité : validé (pas de « je », guillemets de distance, verbes de parole « louant », « accusé »).
+    \item Tonalité : validé (guillemets, « lénifiants », « programmée », contraste final explicite).
+    \item Concision : validé (9 lignes manuscrites standard, environ 85 mots).
+    \item Langue : validé (connecteurs : « Lors de », « À peine », « ne furent que », « en réalité » ; temps : imparfait pour le cadre, passé simple et passif pour les actions -- cohérence aspectuelle).
+\end{itemize}
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+\begin{aretenir}[Bilan des compétences -- Résumé de presse satirique]
+\textbf{Savoir-faire validés :}
+\begin{itemize}
+    \item \cle{Repérage} : distinguer l'essentiel (squelette narratif + marqueurs tonaux) de l'accessoire dans un texte littéraire dense.
+    \item \cle{Reformulation} : passer du style romanesque (descriptif, dialogué, subjectif) au style résumé (informatif, condensé, neutre \textbf{mais} porteur de l'intention ironique de l'auteur).
+    \item \cle{Rédaction sous contrainte} : calibrer la longueur (10 lignes), gérer le taux de compression ($\approx$ 20 \%), choisir un vocabulaire dense (verbes d'action, noms abstraits).
+    \item \cle{Évaluation critique} : utiliser une grille critériée (fidélité, objectivité, tonalité, langue) pour améliorer un texte -- compétence transférable à toute production écrite (épreuve de contraction au Probatoire et au Baccalauréat technique).
+    \item \cle{Argumentation orale} : expliquer \emph{comment} le fond et la forme servent l'intention satirique (métacognition).
+\end{itemize}
+
+\textbf{Points de vigilance pour l'examen (Probatoire / Baccalauréat technique) :}
+\begin{itemize}
+    \item \textbf{Piège n°1 :} faire une \emph{analyse} ou un \emph{commentaire} au lieu d'un résumé (pas de « l'auteur montre que... », pas d'interprétation explicite).
+    \item \textbf{Piège n°2 :} perdre la tonalité en « aplatissant » le texte (résumé plat = perte de sens). \emph{Stratégie :} garder 1 ou 2 mots-clés « chargés » (guillemets, adjectifs forts, contraste syntaxique).
+    \item \textbf{Piège n°3 :} dépasser la longueur imposée. \emph{Stratégie :} compter les lignes \textbf{avant} la copie propre ; s'entraîner régulièrement sur copies doubles.
+    \item \textbf{Piège n°4 :} incohérence temporelle (mélange présent / passé). \emph{Règle :} résumé de récit $\rightarrow$ passé simple (actions) + imparfait (cadre, habitudes) + passé antérieur (antériorité). Discours rapporté $\rightarrow$ subordonnées complétives en « que » ou propositions infinitives.
+\end{itemize}
+
+\textbf{Transférabilité :} cette compétence (synthétiser une information complexe en restituant sa charge critique ou ironique) est essentielle en \cle{communication professionnelle} (notes de synthèse, veille médiatique, rapports techniques) et en \cle{veille citoyenne} (décrypter la propagande et les discours officiels).
+\end{aretenir}
+
+\begin{savaistu}[Contexte camerounais -- Ferdinand Oyono et \emph{Le Vieux nègre et la médaille}]
+\begin{itemize}
+    \item \textbf{Ferdinand Oyono (1929--2010) :} écrivain, diplomate et homme d'État camerounais, né à Ngoulemakong (région du Sud). \emph{Le Vieux nègre et la médaille} (1956) paraît la même année qu'\emph{Une vie de boy} ; \emph{Chemin d'Europe} suivra en 1960.
+    \item \textbf{Portée historique :} publié à la veille des indépendances (1960), le roman dénonce l'assimilation « à la française » et l'instrumentalisation des chefs traditionnels par l'administration coloniale. Meka incarne le vieux chef décoré puis rejeté : une allégorie du sort réservé aux auxiliaires zélés du système colonial.
+    \item \textbf{Réalisme satirique :} Oyono utilise le rire (la satire) pour dire l'indicible : humiliation, violence, aliénation. La « Nuit de la littérature camerounaise » fictive de l'activité s'inspire d'événements réels (salons et journées du livre à Yaoundé), où la médiation culturelle (fiches de lecture, résumés) est une compétence professionnelle recherchée (métiers du livre, documentation, communication).
+\end{itemize}
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Leçon 26 : Produire un résumé de texte}
+
+\courssub{Lecture méthodique : Le Vieux nègre et la médaille (Exposé N°1)}
+
+\begin{exemplebox}[Texte support — Exposé N°1 (adapté)]
+« Meka, vieillard respecté de son village, apprend qu'il va recevoir une médaille des mains du commandant. Tout le village l'envie. Sa femme, Kelara, prépare le grand voyage. Les anciens commentent l'événement : être décoré par les Blancs, quel honneur ! Meka, lui, sent confusément que cette médaille ne changera rien à sa condition, mais il se laisse porter par l'enthousiasme général. »
+\end{exemplebox}
+
+\begin{methode}[Dégager les idées essentielles]
+Pour contracter un texte sans le trahir, il faut d'abord identifier ce qui fait sa charpente.
+\begin{enumerate}
+\item Lire le texte \textbf{deux fois} : une première lecture globale pour saisir le thème, une seconde lecture analytique, crayon à la main.
+\item Repérer la \textbf{situation d'énonciation} : qui parle ? à qui ? de quoi ? dans quel but ?
+\item Découper le texte en \textbf{unités de sens} (souvent un paragraphe = une idée).
+\item Pour chaque unité, formuler l'idée en \textbf{une phrase simple} (sujet + verbe + complément), sans exemple ni détail.
+\item Éliminer les \textbf{répétitions}, les exemples, les comparaisons, les citations, les énumérations, les anecdotes : ce sont des procédés d'illustration, pas des idées.
+\item Vérifier la \textbf{hiérarchie} : distinguer l'idée principale (la thèse) des idées secondaires (arguments).
+\end{enumerate}
+\begin{aretenir}[Réflexe-clé]
+Une idée essentielle est une idée dont la suppression rend le texte incompréhensible. Un détail est un élément dont la suppression laisse le sens intact.
+\end{aretenir}
+\end{methode}
+
+\begin{exoresolu}[Repérage des idées essentielles]
+\textbf{Énoncé.} Lisez le passage ci-dessus (Exposé N°1). Relevez les idées essentielles de ce passage en trois phrases maximum.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Thème du passage} : l'annonce de la décoration de Meka et ses effets.
+\item \textbf{Unités de sens} : (a) l'annonce de la médaille ; (b) la réaction du village et de l'entourage (envie, préparatifs, commentaires) ; (c) le sentiment intime de Meka (doute sur la valeur réelle de cette distinction).
+\item \textbf{Élimination des détails} : le nom de Kelara, les préparatifs concrets, les propos des anciens sont des illustrations de l'enthousiasme collectif ; ils peuvent être condensés en « l'entourage s'enthousiasme ».
+\item \textbf{Formulation des idées essentielles} :
+\begin{itemize}
+\item Idée 1 : Meka apprend qu'il va être décoré par l'administration coloniale.
+\item Idée 2 : Son entourage et le village entier manifestent une grande admiration.
+\item Idée 3 : Meka éprouve pourtant un doute sur la valeur réelle de cette médaille.
+\end{itemize}
+\end{enumerate}
+\textbf{Conclusion.} Le passage repose sur trois idées : l'annonce de la décoration, l'enthousiasme collectif, le doute intime du héros. Tout le reste (noms, gestes, paroles) est illustration et doit disparaître du résumé.
+\end{exoresolu}
+
+\courssub{La contraction de texte : repérer et reformuler les idées essentielles}
+
+\begin{methode}[Techniques de reformulation]
+La contraction exige de dire la même chose avec ses propres mots.
+\begin{enumerate}
+\item \textbf{Nominaliser} : transformer une proposition verbale en groupe nominal. Ex. : « le village envie Meka » devient « l'envie du village ».
+\item \textbf{Fusionner} : réunir plusieurs phrases proches en une seule. Ex. : « Kelara prépare le voyage. Le village commente. » devient « Tout l'entourage se mobilise avec ferveur. »
+\item \textbf{Généraliser} : remplacer une énumération par un terme générique. Ex. : « la femme, les anciens, les voisins » devient « l'entourage ».
+\item \textbf{Substituer} : remplacer les mots du texte par des synonymes (attention au sens exact) et changer la construction des phrases.
+\item \textbf{Neutraliser le style} : supprimer les images, le ton ironique ou pathétique, les exclamations ; le résumé est un texte \cle{objectif} et \cle{informatif}.
+\item \textbf{Respecter la logique} : conserver les connecteurs qui expriment les rapports (cause, opposition, conséquence) : \emph{mais, car, donc, cependant}.
+\end{enumerate}
+\begin{attention}[Interdit absolu]
+On ne recopie \textbf{jamais} une phrase entière du texte dans un résumé : c'est de la citation déguisée, sanctionnée à l'examen. On ne donne pas non plus son avis personnel.
+\end{attention}
+\end{methode}
+
+\begin{exoresolu}[Reformulation d'un passage]
+\textbf{Énoncé.} Reformulez en deux phrases, sans recopier aucune phrase du texte, le passage suivant : « Les Blancs donnent une médaille à Meka ! s'exclame un ancien. Quel bonheur pour notre village ! Nos pères n'auraient jamais osé rêver d'une telle faveur. Meka est désormais un grand homme, un homme que le commandant lui-même honorera devant tous. »
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Idées contenues} : (a) la médaille est perçue comme un honneur exceptionnel ; (b) elle élève le statut de Meka aux yeux de tous.
+\item \textbf{Éléments à supprimer} : l'exclamation, l'interlocuteur (« un ancien »), la référence aux ancêtres (comparaison illustrative), la répétition « grand homme / homme honoré ».
+\item \textbf{Techniques employées} : nominalisation (« s'exclame » $\rightarrow$ « l'enthousiasme »), fusion des deux dernières phrases, substitution (« Quel bonheur » $\rightarrow$ « fierté »).
+\item \textbf{Reformulation proposée} : « L'attribution de la médaille à Meka suscite l'enthousiasme des villageois, qui y voient une faveur inespérée. Cette distinction élève le vieillard au rang de personnage honoré par l'administration. »
+\end{enumerate}
+\textbf{Conclusion.} La reformulation conserve les deux idées (enthousiasme, élévation sociale) en supprimant le ton exclamatif, les détails et les répétitions : c'est bien une contraction, non une paraphrase.
+\end{exoresolu}
+
+\courssub{Langue : énoncés constatifs et performatifs}
+
+\begin{methode}[Identifier constatif et performatif]
+\begin{enumerate}
+\item \textbf{Énoncé constatif} : il \cle{décrit} un état de fait ; on peut le juger \textbf{vrai ou faux}. Ex. : « Meka reçoit une médaille. »
+\item \textbf{Énoncé performatif} : il \cle{accomplit} l'action qu'il énonce, par le seul fait d'être prononcé ; il n'est ni vrai ni faux, mais \textbf{réussi ou raté}. Ex. : « Je te décerne », « Je vous déclare mariés », « Je promets ».
+\item \textbf{Test pratique} : si l'on peut insérer « par ces paroles, je... » devant le verbe sans changer le sens, l'énoncé est performatif.
+\item Repérer les \textbf{marques} : verbes de parole à la 1$^{\text{re}}$ personne du présent (\emph{je promets, j'ordonne, je déclare, je félicite, je jure}), contexte institutionnel (cérémonie, tribunal, mariage).
+\item Attention aux \textbf{performatifs déguisés} : « La séance est ouverte » (forme passive) accomplit l'ouverture de la séance.
+\end{enumerate}
+\begin{aretenir}[Critère décisif]
+Constatif = dire ce qui est (vrai/faux). Performatif = faire en disant (réussi/raté).
+\end{aretenir}
+\end{methode}
+
+\begin{exoresolu}[Constatif ou performatif ?]
+\textbf{Énoncé.} Classez les énoncés suivants en constatifs ou performatifs, en justifiant : (1) « Je te décerne cette médaille au nom de la République. » (2) « Meka portait une médaille sur la poitrine. » (3) « Je promets de servir fidèlement le village. » (4) « Le commandant a décoré le vieillard devant la foule. »
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Énoncé (1)} : verbe de parole à la 1$^{\text{re}}$ personne du présent, dans un contexte de cérémonie. Prononcer cette phrase, c'est \emph{accomplir} la décoration. Test : « par ces paroles, je te décerne... » fonctionne. $\Rightarrow$ \textbf{performatif}.
+\item \textbf{Énoncé (2)} : phrase descriptive au passé ; on peut vérifier si c'est vrai ou faux (Meka portait-il réellement la médaille ?). $\Rightarrow$ \textbf{constatif}.
+\item \textbf{Énoncé (3)} : « je promets » : dire cette phrase, c'est faire une promesse ; elle ne peut être ni vraie ni fausse au moment où elle est dite. $\Rightarrow$ \textbf{performatif}.
+\item \textbf{Énoncé (4)} : récit d'une action passée à la 3$^{\text{e}}$ personne ; l'énoncé rapporte un fait vérifiable. $\Rightarrow$ \textbf{constatif}.
+\end{enumerate}
+\textbf{Conclusion.} Les énoncés (1) et (3) sont performatifs (ils réalisent l'acte de décorer et de promettre) ; les énoncés (2) et (4) sont constatifs (ils décrivent des faits susceptibles d'être vrais ou faux).
+\end{exoresolu}
+
+\courssub{Stylistique et rhétorique : les tonalités satirique et polémique}
+
+\begin{exemplebox}[Texte support — Exposé N°2 (adapté)]
+« Le matin, on lui épingle une médaille ; le soir, on le jette en prison. Voilà comment les Blancs honorent leurs amis. »
+\end{exemplebox}
+
+\begin{methode}[Analyser une tonalité]
+\begin{enumerate}
+\item \textbf{Tonalité satirique} : l'énonciateur \cle{ridiculise} un personnage, une institution ou une société pour les dénoncer. Procédés : ironie, caricature, exagération, contraste entre apparence et réalité, décalage.
+\item \textbf{Tonalité polémique} : l'énonciateur \cle{attaque ouvertement} une thèse ou un adversaire pour la réfuter. Procédés : interrogations oratoires, négations, vocabulaire péjoratif, opposition frontale, ton véhément.
+\item \textbf{Démarche d'analyse} : (a) identifier la cible (qui est critiqué ?) ; (b) relever les procédés linguistiques (mots, figures, ton) ; (c) montrer l'effet produit (rire, indignation, réflexion) ; (d) conclure sur l'intention de l'auteur.
+\item Dans \emph{Le Vieux nègre et la médaille}, Oyono tourne en dérision l'administration coloniale et l'illusion de la « reconnaissance » : la médaille, symbole d'honneur, devient symbole d'absurdité.
+\end{enumerate}
+\begin{attention}[Piège classique]
+Ne pas confondre satire et simple humour : la satire a toujours une \textbf{visée critique}. Et la polémique n'est pas une insulte : elle s'appuie sur des arguments.
+\end{attention}
+\end{methode}
+
+\begin{exoresolu}[Analyse d'une tonalité]
+\textbf{Énoncé.} « Le matin, on lui épingle une médaille ; le soir, on le jette en prison. Voilà comment les Blancs honorent leurs amis. » Identifiez la tonalité de ce passage inspiré de \emph{Le Vieux nègre et la médaille} et justifiez votre réponse par l'analyse des procédés.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Cible} : l'administration coloniale (« les Blancs ») et sa prétendue générosité.
+\item \textbf{Procédés relevés} :
+\begin{itemize}
+\item \textbf{Contraste temporel et antithèse} : « le matin... le soir », « médaille » / « prison » : l'opposition brutale entre l'honneur et l'humiliation crée un décalage frappant.
+\item \textbf{Ironie} : « Voilà comment les Blancs honorent leurs amis » : le verbe « honorer » est employé à contresens, puisque l'action décrite est une arrestation. Le mot « amis » est également ironique.
+\item \textbf{Phrase conclusive sentencieuse} : la dernière phrase généralise le cas de Meka en loi du système colonial.
+\end{itemize}
+\item \textbf{Effet} : le lecteur mesure l'absurdité et l'hypocrisie de la colonisation ; le rire provoqué par le décalage se change en indignation.
+\item \textbf{Intention} : Oyono dénonce, par le ridicule, l'illusion de la reconnaissance coloniale.
+\end{enumerate}
+\textbf{Conclusion.} La tonalité est \textbf{satirique} : par l'antithèse médaille/prison et l'ironie du mot « honorer », le passage ridiculise l'administration coloniale afin de dénoncer son hypocrisie. (Si le passage attaquait nommément un adversaire avec véhémence et arguments, on parlerait de tonalité polémique.)
+\end{exoresolu}
+
+\courssub{Production et amélioration du résumé}
+
+\begin{methode}[Construire et rédiger le résumé]
+\begin{enumerate}
+\item Respecter la \textbf{longueur imposée} : généralement le quart du texte (compter les mots : un texte de 400 mots donne un résumé d'environ 100 mots, avec une marge de $\pm 10\,\%$).
+\item Rédiger un texte \textbf{continu}, en paragraphes liés, jamais une liste de phrases juxtaposées.
+\item Employer la \textbf{troisième personne} et le présent de vérité générale (ou les temps du texte pour un récit) ; ne jamais écrire « l'auteur dit que » à chaque phrase.
+\item Assurer la \textbf{cohésion} : connecteurs logiques (\emph{d'abord, ensuite, cependant, enfin}), reprises nominales, pronoms bien choisis.
+\item Ne rien \textbf{ajouter} : ni jugement personnel, ni exemple nouveau, ni explication extérieure au texte.
+\item Indiquer le \textbf{nombre de mots} à la fin, entre parenthèses.
+\item \textbf{Amélioration} : relire pour corriger l'orthographe, vérifier qu'aucune phrase n'est recopiée, supprimer les lourdeurs, vérifier que le résumé se comprend seul, sans le texte.
+\end{enumerate}
+\begin{aretenir}[Formule à retenir]
+Résumé réussi = idées essentielles + reformulation + enchaînement logique + longueur respectée + objectivité totale.
+\end{aretenir}
+\end{methode}
+
+\begin{exoresolu}[Rédaction d'un résumé]
+\textbf{Énoncé.} Résumez en 60 mots environ (marge de 10 \%) le texte suivant (240 mots) : « Après la cérémonie de la médaille, Meka est arrêté par la police coloniale pour s'être trouvé, la nuit, dans un quartier interdit aux indigènes. Lui qui, le matin même, était l'ami des Blancs, le voilà traité comme un délinquant. Dans la cellule, il réfléchit. La médaille, posée sur sa poitrine quelques heures plus tôt, ne l'a pas protégé. Il comprend alors que la distinction des Blancs n'est qu'un masque : elle n'efface ni la barrière raciale, ni le mépris, ni l'arbitraire. Les autres prisonniers se moquent de lui et de sa médaille. Meka rentrera au village changé : l'illusoire honneur s'est dissipé, laissant place à une lucidité amère sur la réalité coloniale. »
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Calcul de la longueur} : le quart de 240 mots = 60 mots ; fourchette admise : 54 à 66 mots.
+\item \textbf{Idées essentielles} : (a) Meka est arrêté le soir même de sa décoration ; (b) la médaille ne le protège pas ; (c) il comprend que la distinction coloniale est illusoire ; (d) il revient au village lucide et amer.
+\item \textbf{Détails éliminés} : la cellule (lieu), la formule « masque » (image), certains détails du quartier interdit (précision illustrative).
+\item \textbf{Rédaction} (texte continu, 3e personne, connecteurs) :
+
+« Le soir même de sa décoration, Meka est arrêté par la police coloniale dans un quartier interdit. Sa médaille, censée le protéger, ne lui sert à rien : il découvre que cet honneur n'abolit ni la discrimination raciale ni l'arbitraire administratif. Les moqueries des codétenus achèvent de lui ouvrir les yeux. Cette épreuve dissipe ses illusions, et il regagne son village avec une lucidité amère sur la réalité coloniale. »
+\item \textbf{Comptage} : Le(1) soir(2) même(3) de(4) sa(5) décoration(6), Meka(7) est(8) arrêté(9) par(10) la(11) police(12) coloniale(13) dans(14) un(15) quartier(16) interdit(17). Sa(18) médaille(19), censée(20) le(21) protéger(22), ne(23) lui(24) sert(25) à(26) rien(27) : il(28) découvre(29) que(30) cet(31) honneur(32) n'abolit(33) ni(34) la(35) discrimination(36) raciale(37) ni(38) l'arbitraire(39) administratif(40). Les(41) moqueries(42) des(43) codétenus(44) achèvent(45) de(46) lui(47) ouvrir(48) les(49) yeux(50). Cette(51) épreuve(52) dissipe(53) ses(54) illusions(55), et(56) il(57) regagne(58) son(59) village(60) avec(61) une(62) lucidité(63) amère(64) sur(65) la(66) réalité(67) coloniale(68). \textbf{(68 mots)} — \emph{Note : on peut supprimer « raciale » et « administratif » pour atteindre 66 mots exactement, limite haute de la marge.}
+\end{enumerate}
+\textbf{Conclusion.} Le résumé produit (66 mots après ajustement) respecte la contrainte de longueur, conserve les quatre idées essentielles dans l'ordre du texte, ne recopie aucune phrase et reste parfaitement objectif.
+\end{exoresolu}
+
+\courssub{Contexte de l'œuvre, bilan et intégration}
+
+\begin{methode}[Inscrire une œuvre dans son contexte]
+\begin{enumerate}
+\item Identifier l'\textbf{auteur} : Ferdinand Oyono, écrivain camerounais, figure de la littérature africaine francophone.
+\item Dater l'œuvre : \emph{Le Vieux nègre et la médaille} paraît en \textbf{1956}, à la fin de la période coloniale, peu avant les indépendances.
+\item Nommer le \textbf{contexte historique} : la colonisation française au Cameroun, l'assimilation, le système des distinctions honorifiques accordées aux « évolués ».
+\item Relier l'œuvre au \textbf{courant littéraire} : le roman réaliste et satirique de dénonciation coloniale (comme \emph{Une vie de boy} du même auteur).
+\item Dégager la \textbf{portée} : critique de l'illusion de l'assimilation et de l'hypocrisie coloniale ; éveil des consciences.
+\item Pour \textbf{justifier une réponse} : toujours appuyer chaque affirmation sur un élément précis du texte (citation courte, procédé, situation) et sur une connaissance du contexte.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Question de synthèse sur l'œuvre]
+\textbf{Énoncé.} Question type examen : « Montrez, en vous appuyant sur le contexte de parution du \emph{Vieux nègre et la médaille} (1956), que le roman de Ferdinand Oyono constitue une dénonciation de la colonisation. » (Réponse en un paragraphe argumenté de 8 à 10 lignes.)
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Amorce} : rappeler l'auteur, l'œuvre, la date.
+\item \textbf{Argument 1 (contexte)} : en 1956, le Cameroun est sous administration française ; la politique d'assimilation promet aux Africains « évolués » une reconnaissance symbolique (médailles, titres).
+\item \textbf{Argument 2 (texte)} : le parcours de Meka — décoré le matin, emprisonné le soir — montre que cette reconnaissance est un leurre : la médaille n'efface ni la discrimination ni l'arbitraire.
+\item \textbf{Argument 3 (procédé)} : la tonalité satirique (ironie, antithèses) ridiculise l'administration coloniale et ses représentants.
+\item \textbf{Conclusion} : en dévoilant l'hypocrisie du système, Oyono participe, à la veille des indépendances, de la contestation littéraire de la colonisation.
+\end{enumerate}
+\textbf{Paragraphe rédigé (modèle)} : « Paru en 1956, à la veille des indépendances africaines, \emph{Le Vieux nègre et la médaille} de Ferdinand Oyono s'inscrit dans le contexte de la colonisation française au Cameroun. La politique d'assimilation y promettait aux Africains dits "évolués" une reconnaissance symbolique, incarnée par les médailles. Or le destin de Meka dément cette promesse : décoré le matin, il est jeté en prison le soir même, preuve que la distinction coloniale n'abolit ni la discrimination ni l'arbitraire. Par l'ironie et la satire, Oyono ridiculise l'administration et dévoile l'hypocrisie d'un système qui honore pour mieux mépriser. Le roman constitue ainsi une véritable dénonciation de la colonisation et contribue à l'éveil des consciences. »
+\textbf{Conclusion.} La réponse est complète car elle articule contexte historique, analyse du texte et procédés stylistiques, et elle se termine par une conclusion explicite qui répond à la question posée.
+\end{exoresolu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points à l'examen (Probatoire / Baccalauréat technique)]
+\begin{enumerate}
+\item \textbf{Recopier des phrases du texte} dans le résumé : toute phrase reprise mot à mot est sanctionnée. Reformulez toujours, même partiellement.
+\item \textbf{Dépasser ou sous-estimer la longueur imposée} : comptez vos mots et indiquez le total ; hors de la marge de $\pm 10\,\%$, des points sont retirés.
+\item \textbf{Donner son avis personnel} (« je trouve que l'auteur a raison... ») : le résumé est un exercice d'objectivité ; le commentaire, lui, autorise l'argumentation personnelle. Ne confondez pas les deux exercices.
+\item \textbf{Confondre constatif et performatif} : appliquez le test « par ces paroles, je... » et vérifiez la personne et le temps du verbe avant de conclure ; un énoncé au passé ou à la 3$^{\text{e}}$ personne est presque toujours constatif.
+\item \textbf{Affirmer une tonalité sans la prouver} : écrire « le ton est satirique » sans relever un seul procédé (ironie, antithèse, exagération) ne rapporte aucun point. Chaque étiquette stylistique doit être justifiée par un élément précis du texte.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : le résumé de texte]
+Entoure la (ou les) bonne(s) réponse(s).
+\begin{enumerate}
+\item Un résumé de texte doit contenir :
+\begin{enumerate}
+\item toutes les idées du texte, y compris les exemples ;
+\item uniquement les idées essentielles, reformulées avec ses propres mots ;
+\item l'avis personnel du lecteur sur le texte.
+\end{enumerate}
+\item Si le texte de départ compte 40 lignes et que la consigne demande le quart, le résumé doit comporter :
+\begin{enumerate}
+\item 4 lignes ; \item 10 lignes ; \item 20 lignes.
+\end{enumerate}
+\item Dans un résumé, il faut éliminer en priorité :
+\begin{enumerate}
+\item les idées principales ;
+\item les répétitions, les exemples, les citations et les détails ;
+\item les connecteurs logiques.
+\end{enumerate}
+\item L'énoncé « Je déclare la séance ouverte » est :
+\begin{enumerate}
+\item un énoncé constatif ; \item un énoncé performatif ; \item une question.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, à justifier]
+Réponds par \textbf{vrai} ou \textbf{faux}, puis justifie ta réponse en une ou deux phrases.
+\begin{enumerate}
+\item On peut recopier dans son résumé des phrases entières du texte de départ.
+\item La tonalité satirique vise à ridiculiser un personnage ou une situation pour le dénoncer.
+\item « Le commandant a signé le document » est un énoncé performatif.
+\item Dans \emph{Le Vieux nègre et la médaille}, la médaille remise à Meka récompense réellement son mérite.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions]
+Définis en deux ou trois phrases chacun des termes suivants, en donnant un exemple pour chacun :
+\begin{enumerate}
+\item la contraction de texte ;
+\item l'énoncé constatif ;
+\item l'énoncé performatif ;
+\item la tonalité polémique.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calcul de longueur]
+Un texte à résumer compte 60 lignes.
+\begin{enumerate}
+\item Calcule la longueur du résumé si la consigne exige le quart du texte.
+\item Calcule la longueur du résumé si la consigne exige le tiers du texte.
+\item Ton résumé compte 18 lignes alors que la consigne exigeait le quart. De combien de lignes dépasses-tu la limite ? Que risques-tu à l'examen ?
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Hiérarchisation des idées]
+Voici 12 idées relevées dans un texte sur la colonisation.
+\begin{enumerate}
+\item Le colonisateur impose sa langue aux populations.
+\item Par exemple, les enfants sont punis s'ils parlent leur langue à l'école.
+\item La colonisation dépossède les Africains de leurs terres.
+\item Le colonisateur impose sa langue aux populations.
+\item Comme le dit un proverbe, « la terre est la mère de l'homme ».
+\item L'école coloniale dévalorise les cultures locales.
+\item Les terres les plus fertiles sont données aux colons.
+\item La résistance des populations est réprimée.
+\item La colonisation dépossède les Africains de leurs terres.
+\item Un chef qui refuse est arrêté et déporté.
+\item L'école coloniale dévalorise les cultures locales.
+\item La résistance des populations est réprimée.
+\end{enumerate}
+\begin{enumerate}
+\item Barre les 6 idées à éliminer (exemples, répétitions, citations) en justifiant chaque élimination.
+\item Ordonne les 6 idées essentielles restantes et rédige un court paragraphe de résumé (5 lignes maximum) avec des connecteurs logiques.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Constatifs et performatifs]
+Voici cinq énoncés inspirés de l'univers du \emph{Vieux nègre et la médaille} :
+\begin{enumerate}
+\item « Meka a donné ses terres à la mission. »
+\item « Je vous décore de la médaille de l'amitié. »
+\item « Le commandant a déclaré la cérémonie terminée. »
+\item « Je promets de veiller sur cette paroisse. »
+\item « Les villageois dansaient sous la pluie. »
+\end{enumerate}
+\begin{enumerate}
+\item Classe chaque énoncé dans un tableau à deux colonnes : constatif / performatif. Justifie chaque classement.
+\item Transforme les énoncés 1, 3 et 5 en énoncés performatifs.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Reformulation]
+Reformule chacune des phrases suivantes avec tes propres mots, sans changer le sens, comme on le fait dans un résumé.
+\begin{enumerate}
+\item « Meka, vieillard courbé par les années, avait offert ses terres aux pères blancs, espérant ainsi gagner le ciel. »
+\item « Le commandant, raide dans son uniforme, épingla la médaille sur la poitrine du vieillard comme on accroche un trophée. »
+\item « Cette nuit-là, au poste de police, Meka comprit que la médaille n'était qu'un morceau de métal sans valeur. »
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Correction guidée d'un résumé d'élève]
+Voici le résumé rédigé par un élève à partir d'un texte de 40 lignes (consigne : 10 lignes maximum) :
+\begin{quote}
+« Meka donna ses terres à la mission, espérant ainsi gagner le ciel. Le commandant, raide dans son uniforme, épingla la médaille sur la poitrine du vieillard comme on accroche un trophée. Je trouve que ce vieillard est vraiment naïf et que l'auteur a raison de se moquer de lui. La médaille est un symbole important. Le texte parle aussi de la pluie, du village, des danses, des chants, du festin, des cadeaux, des discours et de la fatigue de Meka. Cette nuit-là, au poste de police, Meka comprit que la médaille n'était qu'un morceau de métal sans valeur. En plus, le texte est intéressant. »
+\end{quote}
+\begin{enumerate}
+\item Releve dans ce résumé cinq défauts types (copie de phrases, avis personnel, hors-longueur, oubli d'une idée essentielle, mauvais connecteur) et cite le passage fautif pour chacun.
+\item Propose une version corrigée du résumé en 10 lignes maximum.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Type Bac : résumé d'un extrait]
+\textbf{Texte support} (extrait adapté de Ferdinand Oyono, \emph{Le Vieux nègre et la médaille}, la nuit au poste de police) :
+\begin{quote}
+« On jeta Meka dans la salle où dormaient déjà une douzaine d'hommes. Personne ne le reconnut dans l'obscurité. Il s'assit contre le mur, la médaille encore pendue à sa poitrine. Toute la journée, on l'avait promené, fêté, complimenté ; le commandant lui-même lui avait serré la main. Et maintenant, parce qu'il s'était égaré dans la nuit, loin de son village, le voilà traité comme un vagabond. Les hommes autour de lui riaient : "Toi aussi, vieux, ils t'ont eu !" Meka toucha la médaille. Ce métal froid ne l'avait pas protégé. Il pensa à ses terres données aux pères, à ses fils morts pour la France, à toute sa vie de soumission. Pour la première fois, une colère sourde monta en lui. La médaille pesait sur sa poitrine comme une pierre. Il aurait voulu la jeter, mais ses doigts tremblaient. Dehors, la pluie continuait de tomber sur le village endormi. »
+\end{quote}
+\textbf{Consignes :}
+\begin{enumerate}
+\item Résume cet extrait de 40 lignes en \textbf{10 lignes maximum} (une marge de plus ou moins une ligne est tolérée). Tu reformuleras avec tes propres mots, sans avis personnel ni citation.
+\item Justifie par écrit \textbf{trois de tes choix de reformulation} : indique la formulation du texte, ta reformulation, et explique pourquoi elle conserve le sens en gagnant en concision.
+\item Indique le nombre de lignes de ton résumé.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Probatoire : langue et stylistique]
+\textbf{Partie A — Énoncés.} On donne les énoncés suivants, tirés ou inspirés du roman :
+\begin{enumerate}
+\item « Je te nomme chef de canton. »
+\item « Meka reçut la médaille des mains du commandant. »
+\item « Je te baptise au nom du Père. »
+\item « La pluie tombait sur le village. »
+\item « Nous vous remercions de votre fidélité. »
+\end{enumerate}
+\begin{enumerate}
+\item Identifie et classe ces cinq énoncés en constatifs ou performatifs, en justifiant chaque réponse par le critère approprié.
+\item Transforme trois énoncés constatifs de la liste en énoncés performatifs.
+\end{enumerate}
+\textbf{Partie B — Stylistique.} Relis l'extrait proposé dans l'exercice précédent.
+\begin{enumerate}
+\item Releve \textbf{trois procédés satiriques} (ironie, caricature, contraste ridiculisant...) en citant le texte, et explique leur effet.
+\item Releve \textbf{deux procédés polémiques} (opposition frontale, dénonciation directe, accumulation accusatrice...) en citant le texte.
+\item Montre en un paragraphe de 5 à 8 lignes comment ces procédés servent la dénonciation de l'entreprise coloniale.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Type Bac : question de synthèse et intégration]
+Après l'étude complète de l'œuvre, tu répondras aux questions suivantes.
+\begin{enumerate}
+\item Situe \emph{Le Vieux nègre et la médaille} dans son contexte : auteur, date de publication (1956), situation historique du Cameroun à cette époque, place de l'œuvre dans la littérature africaine de langue française. (5 lignes maximum)
+\item Rappelle brièvement le parcours de Meka et les trois étapes de sa prise de conscience. (5 lignes maximum)
+\item Rédige une réponse de synthèse en \textbf{15 lignes maximum} à la question suivante : « Montrez en quoi la médaille est un symbole ironique dans le roman. » Tu organiseras ta réponse avec une courte introduction, deux ou trois arguments appuyés sur le texte, et une brève conclusion.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM : le résumé de texte]
+\begin{enumerate}
+\item \textbf{Réponse b}. Un résumé ne conserve que les idées essentielles, reformulées avec les mots du lecteur. Les exemples sont éliminés (réponse a fausse) et l'avis personnel est interdit (réponse c fausse).
+\item \textbf{Réponse b : 10 lignes}. Calcul : $40 \div 4 = 10$ lignes. Le quart de 40 lignes est 10 lignes.
+\item \textbf{Réponse b}. On élimine en priorité les répétitions, les exemples, les citations et les détails. Les idées principales doivent être conservées et les connecteurs logiques sont indispensables à la cohérence du résumé.
+\item \textbf{Réponse b : énoncé performatif}. Dire « je déclare la séance ouverte », c'est \emph{accomplir} l'action de l'ouvrir par les mots mêmes : l'énonciation réalise l'acte. Un constatif se contente de décrire une réalité.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux, à justifier]
+\begin{enumerate}
+\item \textbf{Faux}. Le résumé exige la reformulation avec ses propres mots : recopier des phrases entières est une faute de méthode (plagiat du texte), sanctionnée à l'examen.
+\item \textbf{Vrai}. La satire repose sur le rire critique : elle ridiculise un personnage ou une situation (caricature, ironie, exagération) afin de dénoncer un défaut ou une injustice. C'est le cas du portrait de Meka et des administrateurs chez Oyono.
+\item \textbf{Faux}. « Le commandant a signé le document » \emph{rapporte} une action accomplie : c'est un énoncé constatif, à la troisième personne et au passé. Le performatif correspondant serait : « Je signe le document » (première personne, présent, l'énonciation accomplit l'acte).
+\item \textbf{Faux}. La médaille ne récompense pas un mérite réel : elle couronne la soumission de Meka (don de ses terres, mort de ses fils pour la France) et sert la propagande coloniale. La nuit au poste de police révèle son inutilité : c'est un symbole ironique.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions]
+\begin{enumerate}
+\item \textbf{La contraction de texte} est une technique de production écrite qui consiste à réduire un texte à une fraction imposée de sa longueur (le quart, le tiers...) en ne conservant que les idées essentielles, reformulées avec ses propres mots et reliées par des connecteurs logiques. \emph{Exemple :} résumer un texte de 40 lignes en 10 lignes.
+\item \textbf{L'énoncé constatif} est un énoncé qui décrit ou rapporte un fait, une réalité ; il peut être déclaré vrai ou faux. \emph{Exemple :} « Meka a donné ses terres à la mission. »
+\item \textbf{L'énoncé performatif} est un énoncé qui accomplit l'action qu'il énonce : la dire, c'est la faire. Il emploie généralement la première personne du présent et un verbe d'action déclarative (déclarer, promettre, nommer, baptiser). \emph{Exemple :} « Je vous décore de la médaille de l'amitié. »
+\item \textbf{La tonalité polémique} est l'attitude d'un énonciateur qui attaque frontalement une thèse, une institution ou un adversaire, par la dénonciation directe, l'opposition ou l'accumulation accusatrice. \emph{Exemple :} un pamphlet dénonçant ouvertement les abus de l'administration coloniale.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calcul de longueur]
+\begin{enumerate}
+\item Le quart de 60 lignes : $60 \div 4 = 15$. Le résumé doit comporter \textbf{15 lignes}.
+\item Le tiers de 60 lignes : $60 \div 3 = 20$. Le résumé doit comporter \textbf{20 lignes}.
+\item Dépassement : $18 - 15 = 3$. Tu dépasses la limite de \textbf{3 lignes}. À l'examen, le correcteur peut cesser la lecture à la 15\up{e} ligne ou pénaliser le non-respect de la consigne : tu risques donc de \textbf{perdre des points} et de voir la fin de ton résumé ignorée. Il faut compter ses lignes et couper avant la limite.
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Point de vigilance]
+La longueur exigée est une \cle{consigne contractuelle} : la marge tolérée est d'environ une ligne en plus ou en moins, jamais trois.
+\end{attention}
+
+\begin{corrige}[Exercice 5 — Hiérarchisation des idées]
+\textbf{1. Idées à éliminer (6) :}
+\begin{itemize}
+\item Idée 2 : \emph{exemple} (« par exemple, les enfants sont punis... ») illustrant l'idée 1.
+\item Idée 4 : \emph{répétition} de l'idée 1 (formulation identique).
+\item Idée 5 : \emph{citation} (proverbe), à supprimer dans un résumé.
+\item Idée 7 : \emph{détail} précisant l'idée 3 (les terres fertiles données aux colons).
+\item Idée 9 : \emph{répétition} de l'idée 3.
+\item Idée 10 : \emph{exemple} (le chef arrêté) illustrant l'idée 8.
+\end{itemize}
+Restent les 6 idées essentielles : 1, 3, 6, 8, 11, 12 — soit en réalité 4 idées distinctes, car 11 répète 6 et 12 répète 8.
+
+\textbf{2. Résumé possible (5 lignes maximum) :}
+
+La colonisation dépossède d'abord les Africains de leurs terres. Ensuite, le colonisateur impose sa langue aux populations. De plus, l'école coloniale dévalorise les cultures locales. Enfin, la résistance des populations est réprimée.
+
+(4 lignes ; connecteurs utilisés : \emph{d'abord, ensuite, de plus, enfin}.)
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Constatifs et performatifs]
+\textbf{1. Classement :}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Énoncé} & \textbf{Type} & \textbf{Justification} \\
+\hline
+1. « Meka a donné ses terres à la mission. » & Constatif & Rapporte un fait passé, 3\up{e} personne ; vérifiable (vrai ou faux). \\
+\hline
+2. « Je vous décore de la médaille de l'amitié. » & Performatif & Dire « je vous décore », c'est décorer : l'énonciation accomplit l'acte (1\up{re} personne, présent). \\
+\hline
+3. « Le commandant a déclaré la cérémonie terminée. » & Constatif & Rapporte un acte de parole accompli par un tiers ; l'énoncé lui-même ne termine rien. \\
+\hline
+4. « Je promets de veiller sur cette paroisse. » & Performatif & Dire « je promets », c'est promettre : l'acte est réalisé par la parole. \\
+\hline
+5. « Les villageois dansaient sous la pluie. » & Constatif & Décrit une scène ; énoncé descriptif vérifiable. \\
+\hline
+\end{tabularx}
+\end{center}
+\textbf{2. Transformations en performatifs :}
+\begin{itemize}
+\item Énoncé 1 : « Je donne mes terres à la mission. »
+\item Énoncé 3 : « Je déclare la cérémonie terminée. »
+\item Énoncé 5 : « Je déclare la danse ouverte. » (verbe déclaratif à la 1\up{re} personne du présent ; « Nous dansons » reste une description d'action en cours, non un acte de langage performatif au sens strict).
+\end{itemize}
+\textbf{Critère à retenir :} passage à la première personne du présent et choix d'un verbe dont l'énonciation accomplit l'action (verbe déclaratif ou commissif).
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Reformulation]
+\textbf{Reformulations possibles} (toute formulation équivalente, sans copie de phrase, est acceptable) :
+\begin{enumerate}
+\item « Âgé et fatigué, Meka avait cédé ses terres aux missionnaires dans l'espoir d'obtenir le salut. » (On condense « vieillard courbé par les années » en « âgé et fatigué » ; « gagner le ciel » devient « obtenir le salut ».)
+\item « Le commandant, guindé, remit la médaille à Meka comme une simple récompense d'apparat. » (On supprime la comparaison développée « comme on accroche un trophée », résumée par « récompense d'apparat ».)
+\item « Enfermé au poste cette nuit-là, Meka prit conscience de la vanité de sa médaille. » (La métaphore « morceau de métal sans valeur » est reformulée par « vanité ».)
+\end{enumerate}
+\textbf{Méthode :} on conserve le sens et les rapports logiques (cause, but), on remplace les images par des formulations neutres, on supprime les expansions descriptives.
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Correction guidée d'un résumé d'élève]
+\textbf{1. Cinq défauts relevés :}
+\begin{itemize}
+\item \textbf{Copie de phrases du texte} : « espérant ainsi gagner le ciel » et « Cette nuit-là, au poste de police, Meka comprit que la médaille n'était qu'un morceau de métal sans valeur » sont reprises mot à mot au lieu d'être reformulées.
+\item \textbf{Avis personnel} : « Je trouve que ce vieillard est vraiment naïf et que l'auteur a raison de se moquer de lui » — le résumé doit rester objectif.
+\item \textbf{Énumération de détails} : « la pluie, du village, des danses, des chants, du festin, des cadeaux, des discours » — liste d'éléments secondaires à éliminer.
+\item \textbf{Mauvais connecteur / appréciation parasite} : « En plus, le texte est intéressant » — jugement de valeur hors sujet, introduit par un connecteur oral et relâché.
+\item \textbf{Formulation vague et hors-longueur} : « La médaille est un symbole important » n'apporte aucune idée précise ; l'ensemble dépasse les 10 lignes exigées.
+\end{itemize}
+\textbf{2. Version corrigée (10 lignes maximum) :}
+
+Meka, vieillard soumis à l'administration coloniale, a offert ses terres à la mission dans l'espoir du salut. En récompense de sa fidélité, le commandant lui remet solennellement une médaille lors d'une grande cérémonie. Mais le soir même, égaré loin de son village, Meka est arrêté et enfermé au poste de police comme un vagabond. Cette humiliation lui révèle que la médaille ne le protège de rien : il prend conscience de la vanité de sa soumission et de l'illusion coloniale.
+
+(Environ 7 lignes ; reformulé, objectif, sans citation ni avis personnel, idées essentielles hiérarchisées.)
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Type Bac : résumé d'un extrait]
+\textbf{1. Résumé possible (10 lignes maximum) :}
+
+Jeté en prison parmi d'autres détenus qui ne le reconnaissent pas, Meka garde sa médaille sur la poitrine. Le même jour, il avait été fêté et honoré par le commandant ; le voici maintenant traité en vagabond pour s'être perdu dans la nuit. Les détenus se moquent de lui. En touchant la médaille, il constate qu'elle ne l'a pas protégé. Il repense alors à ses terres cédées aux missionnaires, à ses fils morts pour la France et à sa vie de soumission. Une colère nouvelle naît en lui : la médaille lui devient insupportable, mais il n'a pas la force de l'arracher.
+
+(Environ 9 lignes : dans la marge tolérée.)
+
+\textbf{2. Trois choix de reformulation justifiés :}
+\begin{itemize}
+\item Texte : « On jeta Meka dans la salle où dormaient déjà une douzaine d'hommes. Personne ne le reconnut dans l'obscurité. » $\rightarrow$ Résumé : « Jeté en prison parmi d'autres détenus qui ne le reconnaissent pas ». Les deux phrases sont fusionnées en une seule : le sens est conservé (arrestation, anonymat) avec un gain de concision.
+\item Texte : « Ce métal froid ne l'avait pas protégé » $\rightarrow$ « elle ne l'a pas protégé ». On supprime l'image (« métal froid ») sans perdre l'idée essentielle : l'inefficacité de la médaille.
+\item Texte : « Il pensa à ses terres données aux pères, à ses fils morts pour la France, à toute sa vie de soumission » $\rightarrow$ « Il repense alors à ses terres cédées aux missionnaires, à ses fils morts pour la France et à sa vie de soumission ». L'accumulation, idée essentielle du bilan de Meka, est conservée mais resserrée (« pères » $\rightarrow$ « missionnaires », plus précis).
+\end{itemize}
+\textbf{3. Nombre de lignes : 9} (à adapter au comptage réel sur la copie).
+
+\textbf{Barème indicatif (sur 10) :} respect de la longueur (2 pts) ; reformulation sans copie ni citation (3 pts) ; fidélité au sens et idées essentielles (3 pts) ; cohérence et connecteurs (1 pt) ; correction de la langue (1 pt).
+\end{corrige}
+
+\begin{attention}[Points de vigilance]
+Aucune phrase recopiée, aucun avis personnel, aucune citation ; annoncer le nombre de lignes ; rester dans la marge de plus ou moins une ligne.
+\end{attention}
+
+\begin{corrige}[Exercice 10 — Type Probatoire : langue et stylistique]
+\textbf{Partie A — Énoncés.}
+
+\textbf{1. Classement :}
+\begin{itemize}
+\item 1. « Je te nomme chef de canton » : \textbf{performatif} — prononcer cette phrase, c'est nommer effectivement (1\up{re} personne, présent, verbe déclaratif).
+\item 2. « Meka reçut la médaille des mains du commandant » : \textbf{constatif} — rapporte un fait passé à la 3\up{e} personne.
+\item 3. « Je te baptise au nom du Père » : \textbf{performatif} — l'énonciation accomplit le baptême.
+\item 4. « La pluie tombait sur le village » : \textbf{constatif} — description d'une réalité.
+\item 5. « Nous vous remercions de votre fidélité » : \textbf{performatif} — dire « nous vous remercions », c'est remercier.
+\end{itemize}
+\textbf{2. Transformations possibles :}
+\begin{itemize}
+\item 2 $\rightarrow$ « Je remets cette médaille à Meka. »
+\item 4 $\rightarrow$ « Je constate que la pluie tombe sur le village. » (ou, selon le contexte : « Je déclare la cérémonie maintenue malgré la pluie. »)
+\item Tout constatif peut devenir performatif par un verbe déclaratif à la 1\up{re} personne du présent.
+\end{itemize}
+
+\textbf{Partie B — Stylistique.}
+
+\textbf{1. Trois procédés satiriques :}
+\begin{itemize}
+\item \textbf{Contraste ridiculisant} : « Toute la journée, on l'avait promené, fêté, complimenté [...] Et maintenant [...] le voilà traité comme un vagabond » : l'écart entre les honneurs du jour et l'humiliation de la nuit ridiculise la cérémonie coloniale.
+\item \textbf{Ironie} : « Toi aussi, vieux, ils t'ont eu ! » — le rire des détenus souligne cruellement la naïveté de Meka et l'illusion de la médaille.
+\item \textbf{Caricature / image dévalorisante} : « la médaille encore pendue à sa poitrine » et « La médaille pesait sur sa poitrine comme une pierre » : l'insigne d'honneur devient un poids, objet de dérision.
+\end{itemize}
+\textbf{2. Deux procédés polémiques :}
+\begin{itemize}
+\item \textbf{Accumulation accusatrice} : « ses terres données aux pères, à ses fils morts pour la France, à toute sa vie de soumission » — l'énumération dresse le réquisitoire de ce que la colonisation a pris à Meka.
+\item \textbf{Opposition frontale / dénonciation directe} : « Ce métal froid ne l'avait pas protégé » — affirmation sèche qui dénonce l'imposture de la récompense coloniale.
+\end{itemize}
+\textbf{3. Paragraphe de synthèse (5 à 8 lignes) :}
+
+Dans cet extrait, Oyono conjugue satire et polémique pour dénoncer l'entreprise coloniale. Le contraste entre la cérémonie fastueuse et la nuit de prison réduit à néant le prestige de la médaille : l'ironie montre que les honneurs coloniaux ne valent que pour la propagande. L'accumulation des sacrifices de Meka (terres, fils, soumission) transforme le portrait individuel en réquisitoire contre un système qui exploite puis humilie. Ainsi, le rire satirique prépare la colère polémique : la prise de conscience finale de Meka (« une colère sourde monta en lui ») signifie l'échec moral de la colonisation, incapable de gratitude envers celui qui lui a tout donné.
+
+\textbf{Barème indicatif (sur 10) :} Partie A : classement justifié (2 pts), transformations (1 pt). Partie B : procédés satiriques cités et expliqués (3 pts), procédés polémiques (2 pts), paragraphe de synthèse cohérent (2 pts).
+\end{corrige}
+
+\begin{attention}[Points de vigilance]
+Tout procédé doit être \emph{cité} puis \emph{expliqué} (effet produit) ; un relevé sans explication ne vaut que la moitié des points. Ne pas confondre satire (rire qui dénonce) et polémique (attaque frontale).
+\end{attention}
+
+\begin{corrige}[Exercice 11 — Type Bac : question de synthèse et intégration]
+\textbf{1. Contexte (5 lignes maximum) :}
+
+\emph{Le Vieux nègre et la médaille} est un roman du Camerounais Ferdinand Oyono, publié en 1956, alors que le Cameroun est encore sous administration française et que montent les revendications nationalistes. Avec \emph{Une vie de boy}, cette œuvre fait d'Oyono l'une des grandes voix de la littérature africaine de langue française, celle des romans anticolonialistes de la génération des indépendances.
+
+\textbf{2. Parcours de Meka (5 lignes maximum) :}
+
+Vieillard soumis, Meka a donné ses terres à la mission et perdu ses fils morts pour la France ; il reçoit une médaille en récompense de sa fidélité. Sa prise de conscience se fait en trois étapes : la fierté naïve lors de la cérémonie ; le malaise et la fatigue pendant les festivités ; enfin la lucidité et la colère, la nuit au poste de police, où il comprend que la médaille ne le protège de rien.
+
+\textbf{3. Réponse de synthèse (15 lignes maximum) : « La médaille, symbole ironique » :}
+
+\emph{Introduction.} Dans le roman d'Oyono, la médaille remise à Meka est censée couronner une vie de mérite. Or elle fonctionne comme un symbole ironique : elle dit le contraire de ce qu'elle prétend signifier.
+
+\emph{Argument 1.} La médaille ne récompense pas un mérite mais une soumission : Meka est décoré parce qu'il a donné ses terres aux missionnaires et sacrifié ses fils à la France. L'honneur colonial paie l'aliénation, non la valeur.
+
+\emph{Argument 2.} La médaille est un instrument de propagande : la cérémonie sert l'image de la colonisation généreuse, comme le montre le commandant qui « épingla la médaille [...] comme on accroche un trophée ». Meka n'est qu'un accessoire de mise en scène.
+
+\emph{Argument 3.} La médaille se révèle impuissante : la nuit au poste de police, Meka est traité en vagabond malgré sa décoration ; « ce métal froid ne l'avait pas protégé ». Le symbole d'honneur devient « une pierre » qui pèse sur sa poitrine.
+
+\emph{Conclusion.} Symbole renversé, la médaille incarne l'imposture coloniale : elle promet la reconnaissance et n'apporte que l'humiliation. C'est cette ironie qui déclenche la prise de conscience de Meka et fonde la charge satirique du roman.
+
+\textbf{Barème indicatif (sur 10) :} contexte exact et concis (2 pts) ; parcours et trois étapes correctement dégagés (2 pts) ; synthèse structurée (introduction, arguments appuyés sur le texte, conclusion) (4 pts) ; correction de la langue et respect des longueurs (2 pts).
+\end{corrige}
+
+\begin{attention}[Points de vigilance]
+Citer des faits précis du roman (don des terres, fils morts, nuit au poste) ; éviter le résumé de l'intrigue à la place de l'argumentation ; respecter strictement les limites de lignes annoncées.
+\end{attention}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\coursec{Produire un résumé de texte}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    mindmap,
+    concept color=popblue,
+    level 1/.style={level distance=3.5cm, sibling angle=45},
+    level 2/.style={level distance=2.5cm, sibling angle=30},
+    every node/.style={font=\small, text=white},
+    branch1/.style={concept color=poporange, grow=90},
+    branch2/.style={concept color=popgreen, grow=45},
+    branch3/.style={concept color=poppurple, grow=0},
+    branch4/.style={concept color=poppink, grow=-45},
+    branch5/.style={concept color=popgold, grow=-90},
+    branch6/.style={concept color=popdark, grow=-135}
+]
+\node[concept, minimum size=2.2cm, text width=2.2cm, align=center] {Résumé\\ de texte}
+    child[branch1] { node[concept, minimum size=1.8cm, text width=1.8cm, align=center] {Œuvre\\ \emph{Le Vieux nègre}\\\emph{ et la médaille}} 
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Exposé 1 :\\ Lecture} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Exposé 2 :\\ Contexte/Bilan} }
+    }
+    child[branch2] { node[concept, minimum size=1.8cm, text width=1.8cm, align=center] {Contraction\\ de texte}
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Repérage idées} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Reformulation} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Rédaction finale} }
+    }
+    child[branch3] { node[concept, minimum size=1.8cm, text width=1.8cm, align=center] {Langue\\ Énoncés}
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Constatif :\\ Vrai/Faux} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Performatif :\\ Action} }
+    }
+    child[branch4] { node[concept, minimum size=1.8cm, text width=1.8cm, align=center] {Stylistique\\ Tonalités}
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Satirique :\\ Ironie/Rire} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Polémique :\\ Attaque/Débat} }
+    }
+    child[branch5] { node[concept, minimum size=1.8cm, text width=1.8cm, align=center] {Méthode\\ Résumé}
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {1. Lire/Analyser} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {2. Sélectionner} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {3. Réécrire} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {4. Contrôler} }
+    }
+    child[branch6] { node[concept, minimum size=1.8cm, text width=1.8cm, align=center] {Critères\\ Évaluation}
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Fidélité} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Concision} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Cohérence} }
+        child { node[concept, minimum size=1.4cm, text width=1.4cm, align=center] {Langue} }
+    };
+\end{tikzpicture}
+\legende{Carte mentale de la leçon 26 : Produire un résumé de texte (Terminale Technique).}
+\end{popfigure}
+
+\courssub{Définitions clés}
+
+\begin{definition}[Résumé (Contraction de texte)]
+Texte court qui restitue fidèlement les \textbf{idées essentielles} d'un texte source, sans en copier les phrases, en respectant l'ordre logique et le point de vue de l'auteur. Longueur imposée (souvent 1/4 ou 1/3 du texte original).
+\end{definition}
+
+\begin{definition}[Énoncé constatif]
+Énoncé qui \textbf{describe un état de choses} et peut être jugé \textbf{vrai ou faux} (ex. : « Le soleil se lève à l'est »). Il porte sur le réel.
+\end{definition}
+
+\begin{definition}[Énoncé performatif]
+Énoncé qui \textbf{réalise l'action} qu'il énonce par le seul fait d'être prononcé (dans des conditions rituelles). Il n'est ni vrai ni faux, mais \textbf{heureux ou infortuné} (ex. : « Je vous déclare mari et femme », « Je promets »).
+\end{definition}
+
+\begin{definition}[Tonalité satirique]
+Mode d'expression qui \textbf{critique par le rire, l'ironie, l'exagération ou la caricature} pour corriger les mœurs ou dénoncer des travers (ridicule, vice).
+\end{definition}
+
+\begin{definition}[Tonalité polémique]
+Mode d'expression \textbf{agressif, direct et combatif} qui vise à \textbf{réfuter un adversaire} ou une thèse, souvent par l'argumentation violente, l'invective ou la satire féroce.
+\end{definition}
+
+\courssub{Repères théoriques (à connaître par cœur)}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL}
+\textbf{Notion} & \textbf{Caractéristiques principales} & \textbf{Indices textuels} \\
+\hline
+Constatif & Vérité / Fausseté -- Description & Verbes d'état, indicateurs de temps, négation possible \\
+\hline
+Performatif & Action accomplie -- Heureux / Infortuné & Verbes performatifs (1\textsuperscript{re} pers. présent indicatif), « Je... », contexte rituel \\
+\hline
+Satirique & Rire correcteur -- Ironie -- Distance & Antiphrase, hyperbole, sous-entendu, caricature, humour \\
+\hline
+Polémique & Attaque frontale -- Engagement -- Violence verbale & Apostrophe, anaphore, gradation, vocabulaire péjoratif, arguments d'autorité \\
+\hline
+Résumé réussi & Fidélité + Concision + Cohérence + Correction & Propre énonciation (pas de « l'auteur dit »), connecteurs logiques, vocabulaire propre \\
+\hline
+\end{tabularx}
+\end{center}
+
+\courssub{Méthodes express}
+
+\begin{methode}[Réaliser un résumé (4 étapes)]
+\begin{enumerate}
+\item \textbf{Analyser le texte source} : Identifier le thème, la thèse, la structure (paragraphes), le type/ton. Repérer les connecteurs logiques.
+\item \textbf{Sélectionner \& Hiérarchiser} : Souligner les idées \textbf{essentielles} (thèses, arguments majeurs). Éliminer exemples, détails, répétitions, commentaires. Grouper les idées voisines.
+\item \textbf{Reformuler \& Rédiger} : Réécrire les idées sélectionnées \textbf{avec ses propres mots} (changement de syntaxe, vocabulaire). Respecter l'enchaînement logique. Utiliser des connecteurs (\emph{donc, par conséquent, en outre, cependant}). \textbf{Ne pas citer l'auteur} (« L'auteur affirme » $\to$ éviter).
+\item \textbf{Contrôler \& Ajuster} : Compter les mots (respecter la contrainte $\pm 10\%$). Vérifier : Fidélité au sens ? Cohérence interne ? Correction langue (orthographe, grammaire, ponctuation) ? Neutralité (pas d'opinion personnelle) ?
+\end{enumerate}
+\end{methode}
+
+\begin{methode}[Identifier Constatif vs Performatif]
+\begin{enumerate}
+\item Chercher le \textbf{sujet} (souvent « Je » ou « Nous » pour performatif).
+\item Identifier le \textbf{verbe} : action symbolique (promettre, jurer, nommer, déclarer, baptiser) $\to$ Performatif. Verbe d'état/description $\to$ Constatif.
+\item Tester la \textbf{négation} : « Je ne promets pas » (infortuné) vs « Il ne pleut pas » (vrai/faux).
+\item Vérifier le \textbf{contexte} (autorité, rituel, convention) pour valider le performatif « heureux ».
+\end{enumerate}
+\end{methode}
+
+\courssub{Contexte de l'œuvre et bilan d'étude}
+
+\begin{savaistu}[Le Vieux nègre et la médaille -- Ferdinand Oyono]
+\textbf{Auteur} : Ferdinand Oyono (1929--2010), écrivain et diplomate camerounais. Figure majeure de la littérature africaine d'expression française.
+\textbf{Publication} : 1956 (éd. Julliard). Prix Sainte-Beuve 1956.
+\textbf{Contexte historique} : Cameroun sous tutelle française (années 50). Montée des nationalismes, guerre d'Algérie, décolonisation. Critique du système colonial et de la néocolonisation naissante.
+\textbf{Thèmes majeurs} : L'assimilation et ses illusions, la collaboration/résistance, le ridicule de l'ordre colonial (médailles), la solitude du vieillard, le choc des cultures.
+\textbf{Structure narrative} : Roman court, structure circulaire (début/fin : la médaille), focalisation interne sur Meka, ton satirique et polémique.
+\textbf{Bilan d'étude} : L'œuvre illustre parfaitement les tonalités étudiées (satirique : ridicule de Meka ; polémique : dénonciation de l'ordre colonial). Elle sert de support idéal pour l'exercice de contraction (texte argumentatif/narratif à thèse implicite).
+\end{savaistu}
+
+\begin{aretenir}[Checklist avant le Bac]
+\begin{itemize}
+\item $\square$ Je sais définir le résumé (fidélité, concision, cohérence, neutralité).
+\item $\square$ Je maîtrise la méthode en 4 étapes : Analyser -- Sélectionner -- Reformuler -- Contrôler.
+\item $\square$ Je distingue \textbf{constatif} (description, V/F) et \textbf{performatif} (action, heureux/infortuné).
+\item $\square$ Je repère les indices du performatif : 1\textsuperscript{re} pers. sg/pl, présent indicatif, verbe d'action symbolique, contexte rituel.
+\item $\square$ Je reconnais la \textbf{tonalité satirique} (ironie, rire correcteur, caricature, antiphrase).
+\item $\square$ Je reconnais la \textbf{tonalité polémique} (agression verbale, réfutation, vocabulaire violent, engagement).
+\item $\square$ Je connais le contexte de \emph{Le Vieux nègre et la médaille} (Ferdinand Oyono, néocolonialisme, critique de l'assimilation, médailles/ordre du mérite).
+\item $\square$ Je sais repérer la structure d'un texte argumentatif (thèse, arguments, exemples, conclusion) pour le résumer.
+\item $\square$ Je reformule sans plagier : changement de structure syntaxique et lexicale (synonymie, nominalisation, verbalisation).
+\item $\square$ Je gère la contrainte de longueur (comptage mots, suppression du superflu, fusion des phrases).
+\item $\square$ Je relis mon résumé pour corriger la langue (accords, temps, connecteurs, ponctuation).
+\item $\square$ Je suis capable d'analyser un énoncé performatif infortuné (conditions non remplies : autorité, sincérité, convention).
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

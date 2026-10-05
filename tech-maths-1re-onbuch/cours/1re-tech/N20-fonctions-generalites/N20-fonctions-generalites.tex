@@ -1,0 +1,2976 @@
+% Fonctions: Généralités — Mathématiques 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N20-fonctions-generalites.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Première technique}
+\newcommand{\DOCLECON}{N20}
+\newcommand{\DOCTITRE}{Fonctions: Généralités}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Fonctions: Généralités}{Mathématiques}{1re Tech}{Mathématiques – classe de Première technique}{N20}{1 séance (fiche de progression harmonisée)}{Cette leçon introduit la parité des fonctions (fonctions paires et impaires) et les éléments de symétrie d'une courbe représentative (axe de symétrie, centre de symétrie). L'élève apprend à étudier algébriquement la parité d'une fonction, à justifier l'existence d'éléments de symétrie et à en tirer profit pour réduire le domaine d'étude et construire rapidement les courbes.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir une fonction paire et une fonction impaire
+\item À la fin de cette leçon, je sais vérifier qu'un ensemble est symétrique par rapport à 0
+\item À la fin de cette leçon, je sais étudier algébriquement la parité d'une fonction en comparant f(-x) et f(x)
+\item À la fin de cette leçon, je sais interpréter graphiquement la parité : axe de symétrie (Oy) pour une fonction paire, centre de symétrie O pour une fonction impaire
+\item À la fin de cette leçon, je sais démontrer qu'une droite x = a est axe de symétrie d'une courbe ou qu'un point Ω(a ; b) est centre de symétrie
+\item À la fin de cette leçon, je sais réduire le domaine d'étude d'une fonction paire ou impaire et compléter sa courbe par symétrie
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item Rappels : fonctions et ensemble de définition
+\item Fonctions paires
+\item Fonctions impaires
+\item Éléments de symétrie d'une courbe : cas général
+\item Parité et réduction du domaine d'étude
+\item Applications concrètes et synthèse
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item À la fin de cette leçon, je sais définir une fonction paire et une fonction impaire
+\item À la fin de cette leçon, je sais vérifier qu'un ensemble est symétrique par rapport à 0
+\item À la fin de cette leçon, je sais étudier algébriquement la parité d'une fonction en comparant f(-x) et f(x)
+\item À la fin de cette leçon, je sais interpréter graphiquement la parité : axe de symétrie (Oy) pour une fonction paire, centre de symétrie O pour une fonction impaire
+\item À la fin de cette leçon, je sais démontrer qu'une droite x = a est axe de symétrie d'une courbe ou qu'un point Ω(a ; b) est centre de symétrie
+\item À la fin de cette leçon, je sais réduire le domaine d'étude d'une fonction paire ou impaire et compléter sa courbe par symétrie
+\item À la fin de cette leçon, je sais rédiger et justifier une démarche complète d'étude de parité
+\item À la fin de cette leçon, je sais appliquer la parité et les symétries à des situations concrètes de la vie courante (motifs, économie de calcul, lecture de courbes)
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion de fonction, ensemble de définition (classe de Seconde)
+\item Calcul algébrique : développer (a+b)², factoriser, simplifier des fractions
+\item Symétrie axiale et symétrie centrale (classe de 4e)
+\item Lecture et tracé de courbes dans un repère orthonormé
+\item Valeur absolue et opposé d'un nombre réel
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Rappels : fonctions et ensemble de définition}
+
+Mme Ngo Bell, couturière à Douala, confectionne des pagnes dont le motif central est parfaitement symétrique : plié en deux, le tissu se superpose exactement. De même, l'artisan qui sculpte un masque traditionnel veille à ce que les deux moitiés du visage soient l'image l'une de l'autre. En mathématiques, certaines courbes de fonctions possèdent exactement ces propriétés : symétrie par rapport à l'axe des ordonnées ou par rapport à l'origine du repère. Comment reconnaître ces fonctions, appelées \cle{fonctions paires} et \cle{fonctions impaires}, et comment exploiter ces symétries pour étudier une fonction deux fois plus vite ?
+
+Avant de répondre à cette question, il faut d'abord bien maîtriser le vocabulaire de base des fonctions : qu'est-ce qu'une fonction ? Qu'est-ce que son ensemble de définition ? Et surtout, qu'est-ce qu'un ensemble \emph{symétrique par rapport à $0$}, condition indispensable pour parler de parité ? C'est l'objet de ces rappels.
+
+\courssub{Fonction numérique d'une variable réelle : l'idée intuitive}
+
+Une \cle{fonction} est une « machine » qui, à un nombre réel $x$ donné en entrée, associe un unique nombre réel en sortie, noté $f(x)$ et appelé \cle{image} de $x$.
+
+Pensons à l'atelier : le prix $P$ d'une découpe de tôle dépend de la longueur $x$ découpée ; la résistance équivalente $R$ d'un circuit dépend de la valeur $x$ d'une résistance variable. À chaque valeur de $x$ correspond \emph{une seule} valeur de sortie : c'est cela, une fonction.
+
+\begin{definition}[Fonction numérique d'une variable réelle]
+Soit $D$ une partie de $\mathbb{R}$. Une \cle{fonction numérique} $f$ définie sur $D$ est un procédé qui, à tout réel $x$ de $D$, associe un unique réel noté $f(x)$.
+\begin{itemize}
+\item $x$ est appelé la \cle{variable} ;
+\item $f(x)$ est l'\cle{image} de $x$ par $f$ ;
+\item si $y = f(x)$, on dit que $x$ est un \cle{antécédent} de $y$ par $f$.
+\end{itemize}
+On note : $f : D \to \mathbb{R}$, \quad $x \mapsto f(x)$.
+\end{definition}
+
+\begin{attention}[Image et antécédent : ne pas confondre]
+Un réel $x$ possède \textbf{au plus une} image par $f$ (c'est l'unicité qui fait la fonction). En revanche, un réel $y$ peut avoir \textbf{plusieurs antécédents}, ou \textbf{aucun}. Par exemple, pour $f(x) = x^2$, le nombre $9$ a deux antécédents : $3$ et $-3$ ; le nombre $-1$ n'en a aucun.
+\end{attention}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1]
+\draw[fill=popblueL,draw=popblue,thick] (0,0.6) ellipse (1.6 and 1.5);
+\draw[fill=poporangeL,draw=poporange,thick] (5,0.6) ellipse (1.6 and 1.5);
+\node[popblue] at (0,2.4) {\textbf{Ensemble de départ } $D_f$};
+\node[poporange] at (5,2.4) {\textbf{Ensemble d'arrivée } $\mathbb{R}$};
+\fill[popdark] (-0.5,1.1) circle (1.5pt) node[left]{$-2$};
+\fill[popdark] (0,0.5) circle (1.5pt) node[left]{$0$};
+\fill[popdark] (0.5,-0.2) circle (1.5pt) node[right]{$3$};
+\fill[popdark] (5,1.1) circle (1.5pt) node[right]{$4$};
+\fill[popdark] (5,0.3) circle (1.5pt) node[right]{$0$};
+\fill[popdark] (5,-0.5) circle (1.5pt) node[right]{$9$};
+\draw[-{Stealth},thick,popink] (-0.4,1.1) to[bend left=15] (4.8,1.1);
+\draw[-{Stealth},thick,popink] (0.1,0.5) to[bend right=5] (4.8,0.3);
+\draw[-{Stealth},thick,popink] (0.6,-0.2) to[bend right=15] (4.9,-0.5);
+\node[popink] at (2.5,1.9) {$f(x)=x^2$};
+\end{tikzpicture}
+\end{center}
+\legende{Diagramme sagittal : la fonction $f(x)=x^2$ associe à chaque réel $x$ son image $f(x)$.}
+\end{popfigure}
+
+\courssub{Ensemble de définition d'une fonction}
+
+Toutes les « machines » n'acceptent pas tous les nombres en entrée. La machine « racine carrée » refuse les nombres négatifs ; la machine « inverse » refuse le nombre $0$. L'ensemble des réels que la machine accepte s'appelle l'\cle{ensemble de définition}.
+
+\begin{definition}[Ensemble de définition]
+L'\cle{ensemble de définition} d'une fonction $f$, noté $D_f$, est l'ensemble de tous les réels $x$ pour lesquels $f(x)$ existe (c'est-à-dire pour lesquels le calcul de $f(x)$ est possible).
+\end{definition}
+
+En classe de Première technique, deux obstacles peuvent empêcher le calcul de $f(x)$ :
+
+\begin{aretenir}[Les deux conditions d'existence à connaître]
+\begin{enumerate}
+\item \textbf{Un dénominateur ne doit jamais être nul.} Pour un quotient $\dfrac{A(x)}{B(x)}$, on exige $B(x) \neq 0$.
+\item \textbf{Une racine carrée ne s'applique qu'à une quantité positive ou nulle.} Pour $\sqrt{A(x)}$, on exige $A(x) \geq 0$.
+\end{enumerate}
+\end{aretenir}
+
+\begin{methode}[Déterminer l'ensemble de définition d'une fonction]
+\begin{enumerate}
+\item Repérer dans l'expression de $f(x)$ les éventuels \textbf{dénominateurs} et les éventuelles \textbf{racines carrées}.
+\item S'il n'y a ni dénominateur ni racine carrée (polynôme, par exemple), alors $D_f = \mathbb{R}$.
+\item Pour chaque dénominateur $B(x)$, résoudre l'équation $B(x) = 0$ : les solutions sont les \textbf{valeurs interdites}, à exclure de $\mathbb{R}$.
+\item Pour chaque racine carrée $\sqrt{A(x)}$, résoudre l'\textbf{inéquation} $A(x) \geq 0$ (tableau de signes si nécessaire).
+\item Conclure en écrivant $D_f$ sous forme d'intervalle ou de réunion d'intervalles, et vérifier la cohérence du résultat.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Ensemble de définition d'un quotient]
+Déterminer l'ensemble de définition de la fonction $f$ définie par $f(x) = \dfrac{1}{x^2 - 4}$.
+\tcblower
+\textbf{Solution détaillée.}
+
+L'expression de $f$ contient un dénominateur : $x^2 - 4$. On cherche donc les valeurs interdites en résolvant :
+\begin{align*}
+x^2 - 4 = 0 &\iff x^2 = 4 \\
+&\iff x = 2 \quad \text{ou} \quad x = -2.
+\end{align*}
+Les valeurs $2$ et $-2$ annulent le dénominateur : elles sont interdites. Tous les autres réels conviennent. Donc :
+\[ D_f = \mathbb{R} \setminus \{-2 \; ; \; 2\} = \left]-\infty \; ; \; -2\right[ \cup \left]-2 \; ; \; 2\right[ \cup \left]2 \; ; \; +\infty\right[. \]
+\textbf{Vérification :} $f(3) = \dfrac{1}{9-4} = \dfrac{1}{5}$ existe bien, tandis que $f(2)$ donnerait $\dfrac{1}{0}$, ce qui n'a pas de sens.
+\end{exoresolu}
+
+\begin{exemplebox}[Ensemble de définition avec une racine carrée]
+Soit $g(x) = \sqrt{2x - 6}$. La quantité sous la racine doit être positive ou nulle :
+\[ 2x - 6 \geq 0 \iff 2x \geq 6 \iff x \geq 3. \]
+Donc $D_g = [3 \; ; \; +\infty[$. Par exemple $g(5) = \sqrt{4} = 2$, mais $g(1)$ n'existe pas car $2 \times 1 - 6 = -4 < 0$.
+\end{exemplebox}
+
+\courssub{Courbe représentative d'une fonction}
+
+\begin{definition}[Courbe représentative]
+Dans un repère $(O \; ; \vec{i}, \vec{j})$ du plan, la \cle{courbe représentative} de $f$, notée $\mathcal{C}_f$, est l'ensemble des points $M(x \; ; \; y)$ tels que :
+\[ x \in D_f \quad \text{et} \quad y = f(x). \]
+\end{definition}
+
+Autrement dit, un point $M(a \; ; \; b)$ appartient à $\mathcal{C}_f$ si et seulement si $a \in D_f$ et $b = f(a)$. Cette double condition est un outil de vérification très utile.
+
+\begin{exemplebox}[Appartenance d'un point à une courbe]
+Soit $f(x) = x^2 - 3$. Le point $A(2 \; ; \; 1)$ appartient-il à $\mathcal{C}_f$ ? On calcule $f(2) = 4 - 3 = 1$ : oui, $A \in \mathcal{C}_f$. En revanche $B(1 \; ; \; 0)$ n'appartient pas à $\mathcal{C}_f$ car $f(1) = 1 - 3 = -2 \neq 0$.
+\end{exemplebox}
+
+\courssub{Ensembles symétriques par rapport à 0}
+
+Revenons au pagne de Mme Ngo Bell : pour que le tissu plié en deux se superpose exactement, il faut que le motif existe \emph{des deux côtés} du pli. De même, pour qu'une courbe puisse être symétrique par rapport à l'axe des ordonnées ou à l'origine, il faut d'abord que la fonction soit définie « des deux côtés de $0$ » : si $x$ est dans le domaine, alors $-x$ doit aussi y être. C'est l'idée d'ensemble symétrique par rapport à $0$.
+
+\begin{definition}[Ensemble symétrique par rapport à 0]
+Une partie $D$ de $\mathbb{R}$ est dite \cle{symétrique par rapport à 0} (ou \cle{centrée en 0}) lorsque :
+\[ \text{pour tout réel } x, \quad x \in D \implies -x \in D. \]
+Autrement dit, dès qu'un nombre appartient à $D$, son opposé y appartient aussi.
+\end{definition}
+
+\begin{exemplebox}[Ensembles symétriques ou non]
+\begin{itemize}
+\item $\mathbb{R}$ est symétrique par rapport à $0$ : l'opposé de tout réel est un réel.
+\item $[-2 \; ; \; 2]$ est symétrique par rapport à $0$ : si $-2 \leq x \leq 2$, alors $-2 \leq -x \leq 2$.
+\item $\mathbb{R}^* = \mathbb{R} \setminus \{0\}$ est symétrique par rapport à $0$ : l'opposé d'un réel non nul est non nul.
+\item $[0 \; ; \; +\infty[$ n'est \textbf{pas} symétrique par rapport à $0$ : $3$ y appartient, mais $-3$ non.
+\item $[-1 \; ; \; 3]$ n'est \textbf{pas} symétrique par rapport à $0$ : $3$ y appartient, mais $-3 \notin [-1 \; ; \; 3]$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.05]
+% Axe 1 : [-2 ; 2] symétrique
+\draw[-{Stealth},thick,popdark] (-3.4,0) -- (3.4,0);
+\foreach \x in {-3,-2,-1,1,2,3}{\draw[popdark] (\x,-0.08) -- (\x,0.08) node[above=2pt]{\footnotesize $\x$};}
+\draw[popdark] (0,-0.08) -- (0,0.08) node[above=2pt]{\footnotesize $0$};
+\draw[line width=3pt,popblue] (-2,0) -- (2,0);
+\fill[popblue] (-2,0) circle (2.5pt);
+\fill[popblue] (2,0) circle (2.5pt);
+\draw[-{Stealth},poporange,thick] (1.2,-0.45) to[bend right=40] (-1.2,-0.45);
+\node[poporange] at (0,-1.05) {\footnotesize $x \mapsto -x$};
+\node[popblue] at (0,0.55) {\footnotesize $[-2\,;\,2]$ : symétrique};
+% Axe 2 : [-1 ; 3] non symétrique
+\begin{scope}[yshift=-2.6cm]
+\draw[-{Stealth},thick,popdark] (-3.4,0) -- (3.4,0);
+\foreach \x in {-3,-2,-1,1,2,3}{\draw[popdark] (\x,-0.08) -- (\x,0.08) node[above=2pt]{\footnotesize $\x$};}
+\draw[popdark] (0,-0.08) -- (0,0.08) node[above=2pt]{\footnotesize $0$};
+\draw[line width=3pt,popgreen] (-1,0) -- (3,0);
+\fill[popgreen] (-1,0) circle (2.5pt);
+\fill[popgreen] (3,0) circle (2.5pt);
+\draw[-{Stealth},poporange,thick] (3,-0.45) to[bend right=40] (-3,-0.45);
+\fill[popink] (-3,0) circle (2.5pt);
+\node[popink] at (-3,-0.85) {\footnotesize $-3 \notin [-1\,;\,3]$};
+\node[popgreen] at (1,0.55) {\footnotesize $[-1\,;\,3]$ : non symétrique};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+\legende{Sur la droite réelle : $[-2\,;\,2]$ est symétrique par rapport à $0$ (l'opposé de tout point de l'intervalle reste dans l'intervalle), tandis que $[-1\,;\,3]$ ne l'est pas (l'opposé de $3$ n'y appartient pas).}
+\end{popfigure}
+
+\begin{exoresolu}[Un ensemble de définition symétrique par rapport à 0]
+On reprend la fonction $f(x) = \dfrac{1}{x^2 - 4}$, dont l'ensemble de définition est $D_f = \mathbb{R} \setminus \{-2 \; ; \; 2\}$. Montrer que $D_f$ est symétrique par rapport à $0$.
+\tcblower
+\textbf{Solution détaillée.}
+
+Soit $x \in D_f$. Cela signifie que $x \neq 2$ et $x \neq -2$. Alors $-x \neq -2$ et $-x \neq 2$ (en multipliant les inégalités par $-1$). Donc $-x$ n'est ni $2$ ni $-2$, c'est-à-dire $-x \in D_f$.
+
+On peut aussi remarquer directement que le dénominateur ne « voit » pas le signe de $x$ : $(-x)^2 - 4 = x^2 - 4$, donc le calcul de $f(-x)$ est possible exactement quand celui de $f(x)$ l'est.
+
+Conclusion : $D_f = \mathbb{R} \setminus \{-2 \; ; \; 2\}$ est symétrique par rapport à $0$. L'étude de la parité de $f$ est donc \emph{autorisée}.
+\end{exoresolu}
+
+\begin{attention}[Erreur fréquente : oublier de vérifier la symétrie de $D_f$]
+Avant toute étude de parité (fonction paire ou impaire), il est \textbf{obligatoire} de vérifier que $D_f$ est symétrique par rapport à $0$. Si ce n'est pas le cas, la fonction n'est \textbf{ni paire ni impaire}, et il est inutile de calculer $f(-x)$ !
+
+Exemple : soit $h(x) = \dfrac{1}{x - 2}$. On a $D_h = \mathbb{R} \setminus \{2\}$, qui n'est pas symétrique ($2 \notin D_h$ mais $-2 \in D_h$). Même si le calcul de $h(-x)$ donne une expression différente de $h(x)$, la conclusion correcte est : $h$ n'est ni paire ni impaire \emph{parce que son ensemble de définition n'est pas symétrique par rapport à $0$}.
+\end{attention}
+
+\begin{savaistu}[Pourquoi cette obsession de la symétrie ?]
+Dans les métiers techniques, la symétrie est partout : une pièce tournée au tour est symétrique autour de son axe, un pont bien conçu répartit ses charges de façon symétrique, et en électricité les signaux alternatifs présentent des symétries que les techniciens exploitent pour analyser les circuits. En mathématiques, détecter une symétrie dans une courbe permet de n'étudier la fonction que sur une \emph{moitié} de son domaine, puis de compléter la courbe par symétrie : un gain de temps considérable, que nous exploiterons dans la suite de cette leçon.
+\end{savaistu}
+
+\begin{exercice}[Pour s'entraîner]
+\begin{enumerate}
+\item Déterminer l'ensemble de définition de chacune des fonctions suivantes :
+\[ f(x) = \frac{3}{x+1}, \qquad g(x) = \sqrt{5 - x}, \qquad h(x) = \frac{x}{x^2 - 9}. \]
+\item Pour chacun des ensembles suivants, dire s'il est symétrique par rapport à $0$ et justifier :
+\[ \mathbb{R}^*, \qquad [-4 \; ; \; 4], \qquad ]-3 \; ; \; 2], \qquad \mathbb{R} \setminus \{-1 \; ; \; 1\}, \qquad [1 \; ; \; +\infty[. \]
+\item La fonction $k(x) = \dfrac{1}{x^2 - 9}$ a-t-elle un ensemble de définition symétrique par rapport à $0$ ? Peut-on envisager d'étudier sa parité ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+\item $f$ : $x + 1 \neq 0 \iff x \neq -1$, donc $D_f = \mathbb{R} \setminus \{-1\}$. $g$ : $5 - x \geq 0 \iff x \leq 5$, donc $D_g = \left]-\infty \; ; \; 5\right]$. $h$ : $x^2 - 9 = 0 \iff x = 3$ ou $x = -3$, donc $D_h = \mathbb{R} \setminus \{-3 \; ; \; 3\}$.
+\item $\mathbb{R}^*$ : symétrique (l'opposé d'un non nul est non nul). $[-4 \; ; \; 4]$ : symétrique. $]-3 \; ; \; 2]$ : non symétrique ($-2{,}5$ y est, mais $2{,}5$ non). $\mathbb{R} \setminus \{-1 \; ; \; 1\}$ : symétrique. $[1 \; ; \; +\infty[$ : non symétrique ($2$ y est, $-2$ non).
+\item $D_k = \mathbb{R} \setminus \{-3 \; ; \; 3\}$. Si $x \neq 3$ et $x \neq -3$, alors $-x \neq -3$ et $-x \neq 3$, donc $-x \in D_k$ : $D_k$ est symétrique par rapport à $0$. L'étude de la parité de $k$ est donc possible.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de cette section]
+\begin{itemize}
+\item Une fonction $f$ associe à tout $x$ de $D_f$ une \textbf{unique} image $f(x)$ ; $x$ est un antécédent de $f(x)$.
+\item L'\textbf{ensemble de définition} $D_f$ s'obtient en excluant les valeurs qui annulent un dénominateur et en imposant aux quantités sous une racine carrée d'être positives ou nulles.
+\item La courbe $\mathcal{C}_f$ est l'ensemble des points $M(x \; ; \; f(x))$ avec $x \in D_f$.
+\item Un ensemble $D$ est \textbf{symétrique par rapport à $0$} si, pour tout $x \in D$, on a aussi $-x \in D$.
+\item La symétrie de $D_f$ par rapport à $0$ est la \textbf{condition préalable} à toute étude de parité : c'est la porte d'entrée des sections suivantes.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Fonctions paires}
+
+Dans la section précédente, nous avons rappelé ce qu'est une fonction et comment déterminer son ensemble de définition $D_f$. Nous allons maintenant étudier une première propriété remarquable que certaines fonctions possèdent : la \cle{parité}. Observer cette propriété avant de commencer l'étude complète d'une fonction est un réflexe très rentable : elle permet de diviser le travail par deux, comme nous le verrons à la fin de cette leçon.
+
+\courssub{Une idée simple : le miroir}
+
+\textbf{Intuition}\par
+
+Regardez un papillon, une feuille pliée en deux, ou le motif d'un pagne : la moitié gauche est l'image en miroir de la moitié droite. Certaines courbes de fonctions possèdent exactement cette propriété : si l'on plie la feuille le long de l'axe des ordonnées $(Oy)$, les deux moitiés de la courbe se superposent parfaitement.
+
+Prenons la fonction $f(x) = x^2$. Calculons quelques images :
+\begin{center}
+\begin{tabular}{|c|ccccc|}\hline
+$x$ & $-2$ & $-1$ & $0$ & $1$ & $2$ \\ \hline
+$f(x)$ & $4$ & $1$ & $0$ & $1$ & $4$ \\ \hline
+\end{tabular}
+\end{center}
+On constate que $f(-2) = f(2)$, $f(-1) = f(1)$ : deux nombres \cle{opposés} ont la \textbf{même image}. C'est exactement cela, une fonction paire : les points $M(x\,;f(x))$ et $M'(-x\,;f(x))$ sont symétriques par rapport à l'axe $(Oy)$.
+
+\courssub{Définition d'une fonction paire}
+
+\begin{definition}[Fonction paire]
+Soit $f$ une fonction définie sur un ensemble $D_f$. On dit que $f$ est \cle{paire} lorsque les deux conditions suivantes sont remplies :
+\begin{enumerate}
+\item l'ensemble $D_f$ est \textbf{symétrique par rapport à $0$}, c'est-à-dire : pour tout $x \in D_f$, on a aussi $-x \in D_f$ ;
+\item pour tout $x \in D_f$ : \[ f(-x) = f(x). \]
+\end{enumerate}
+\end{definition}
+
+\begin{attention}[La condition sur l'ensemble de définition est souvent oubliée]
+Avant même de calculer $f(-x)$, il faut vérifier que $D_f$ est symétrique par rapport à $0$. Par exemple, une fonction définie sur $D_f = [0\,;+\infty[$ ou sur $D_f = [-2\,;3]$ ne peut \textbf{jamais} être paire : le nombre $-2$ appartient au domaine mais pas $2$ (pour $[-2,3]$, $3$ appartient mais pas $-3$). Un domaine symétrique est par exemple $\mathbb{R}$, $[-3\,;3]$, $\mathbb{R}^*$ ou $[-5\,;-1] \cup [1\,;5]$.
+\end{attention}
+
+\courssub{Exemples fondamentaux et contre-exemples}
+
+\begin{exemplebox}[Fonctions paires de référence]
+\begin{itemize}
+\item $f(x) = x^2$ : pour tout $x \in \mathbb{R}$, $f(-x) = (-x)^2 = x^2 = f(x)$. Donc $f$ est paire.
+\item $f(x) = |x|$ : pour tout $x \in \mathbb{R}$, $f(-x) = |-x| = |x| = f(x)$. Donc $f$ est paire.
+\item $f(x) = \cos x$ : pour tout $x \in \mathbb{R}$, $\cos(-x) = \cos x$. La fonction cosinus est paire.
+\item $f(x) = x^4 + 3$ : $f(-x) = (-x)^4 + 3 = x^4 + 3 = f(x)$. Donc $f$ est paire.
+\end{itemize}
+\end{exemplebox}
+
+\begin{exemplebox}[Contre-exemples : fonctions qui ne sont pas paires]
+\begin{itemize}
+\item $f(x) = x^3$ : $f(-x) = (-x)^3 = -x^3 = -f(x) \neq f(x)$ (par exemple $f(-2) = -8$ alors que $f(2) = 8$). Cette fonction n'est pas paire (elle est impaire, voir section suivante).
+\item $f(x) = x + 1$ : $f(-x) = -x + 1$, qui n'est égal ni à $f(x)$ ni à $-f(x)$. Par exemple $f(1) = 2$ et $f(-1) = 0$. Cette fonction n'est \textbf{ni paire ni impaire}.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Erreur fréquente : conclure sur un seul exemple]
+Vérifier que $f(-1) = f(1)$ ne suffit \textbf{pas} à conclure que $f$ est paire ! Par exemple, pour $f(x) = x^2 + x$, on a $f(1) = 2$ et $f(-1) = 0$... mais prenons $g(x) = x^3 - x + x^2$ : on a $g(1) = 1$ et $g(-1) = 1$, pourtant $g(2) = 10$ et $g(-2) = -2 \neq 10$, donc $g$ n'est pas paire. La relation $f(-x) = f(x)$ doit être démontrée \textbf{pour tout $x$ de $D_f$}, par un calcul littéral général. En revanche, un seul contre-exemple suffit pour prouver qu'une fonction n'est \textbf{pas} paire.
+\end{attention}
+
+\courssub{Interprétation graphique : axe de symétrie}
+
+\begin{propriete}[Symétrie de la courbe d'une fonction paire — admise]
+La fonction $f$ est paire si et seulement si sa courbe représentative $\mathcal{C}_f$ admet l'\textbf{axe des ordonnées $(Oy)$ pour axe de symétrie}.
+\end{propriete}
+
+\begin{experience}[Pourquoi la courbe est-elle symétrique par rapport à $(Oy)$ ?]
+Cette propriété est admise, mais elle se comprend grâce à la symétrie axiale étudiée en classe de 4\textsuperscript{e}.
+\begin{enumerate}
+\item Soit $M$ un point de la courbe $\mathcal{C}_f$, d'abscisse $x > 0$. Ses coordonnées sont $M(x\,;f(x))$.
+\item Le symétrique de $M$ par rapport à l'axe $(Oy)$ est le point $M'$ de même ordonnée et d'abscisse opposée : $M'(-x\,;f(x))$.
+\item Or, puisque $f$ est paire, $f(-x) = f(x)$. Donc $M'$ a pour coordonnées $(-x\,;f(-x))$ : c'est bien un point de la courbe $\mathcal{C}_f$.
+\item Ainsi, le symétrique de \textbf{tout} point de la courbe appartient encore à la courbe : l'axe $(Oy)$ est un axe de symétrie de $\mathcal{C}_f$.
+\end{enumerate}
+\end{experience}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-3.2, xmax=3.2, ymin=-0.5, ymax=5,
+  xtick={-2,-1,0,1,2}, ytick={1,2,3,4},
+  grid=both, grid style={popline!40},
+]
+\addplot[popcurve,domain=-2.1:2.1,samples=200]{x^2};
+\addplot[only marks,mark=*,mark size=2pt,poporange] coordinates {(1.5,2.25) (-1.5,2.25)};
+\draw[dashed,poporange] (axis cs:1.5,0) -- (axis cs:1.5,2.25) -- (axis cs:-1.5,2.25) -- (axis cs:-1.5,0);
+\node[poporange,above right] at (axis cs:1.5,2.25) {$M(x\,;f(x))$};
+\node[poporange,above left] at (axis cs:-1.5,2.25) {$M'(-x\,;f(x))$};
+\node[popblue,rotate=90,above] at (axis cs:0.12,4.2) {axe $(Oy)$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x)=x^2$ : les points $M$ et $M'$ sont symétriques par rapport à l'axe $(Oy)$.}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=6.5cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-3.2, xmax=3.2, ymin=-0.5, ymax=3.5,
+  xtick={-2,-1,0,1,2}, ytick={1,2,3},
+  grid=both, grid style={popline!40},
+]
+\addplot[popcurve,domain=-3:3,samples=200]{abs(x)};
+\addplot[only marks,mark=*,mark size=2pt,poppurple] coordinates {(2,2) (-2,2)};
+\draw[dashed,poppurple] (axis cs:2,0) -- (axis cs:2,2) -- (axis cs:-2,2) -- (axis cs:-2,0);
+\node[poppurple,above right] at (axis cs:2,2) {$M$};
+\node[poppurple,above left] at (axis cs:-2,2) {$M'$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{Courbe de $f(x)=|x|$ : la symétrie par rapport à $(Oy)$ est visible à l'œil nu.}
+\end{popfigure}
+
+\courssub{Méthode rédigée : étudier la parité d'une fonction}
+
+\begin{methode}[Montrer qu'une fonction est paire (ou non)]
+\begin{enumerate}
+\item \textbf{Vérifier la symétrie du domaine.} Déterminer $D_f$ et montrer que pour tout $x \in D_f$, on a $-x \in D_f$. Si ce n'est pas le cas, conclure immédiatement : $f$ n'est ni paire ni impaire.
+\item \textbf{Calculer $f(-x)$.} Remplacer $x$ par $-x$ dans l'expression de $f$ et simplifier soigneusement (attention aux puissances : $(-x)^2 = x^2$ mais $(-x)^3 = -x^3$).
+\item \textbf{Comparer et conclure.} Si $f(-x) = f(x)$ pour tout $x$, alors $f$ est paire. Sinon, exhiber un contre-exemple (une valeur de $x$ pour laquelle $f(-x) \neq f(x)$) et conclure que $f$ n'est pas paire.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Montrer que $f(x) = 3x^2 - 5$ est paire]
+Soit $f$ la fonction définie par $f(x) = 3x^2 - 5$. Montrer que $f$ est une fonction paire.
+\tcblower
+\textbf{Étape 1 : ensemble de définition.} $f$ est une fonction polynôme, donc $D_f = \mathbb{R}$. Pour tout réel $x$, $-x$ est aussi un réel : $D_f$ est symétrique par rapport à $0$.
+
+\textbf{Étape 2 : calcul de $f(-x)$.} Pour tout $x \in \mathbb{R}$ :
+\begin{align*}
+f(-x) &= 3(-x)^2 - 5 \\
+&= 3x^2 - 5 \quad \text{car } (-x)^2 = x^2.
+\end{align*}
+
+\textbf{Étape 3 : comparaison et conclusion.} On obtient $f(-x) = f(x)$ pour tout $x \in \mathbb{R}$. Les deux conditions de la définition sont remplies : la fonction $f$ est \textbf{paire}. Sa courbe représentative (une parabole) admet donc l'axe $(Oy)$ pour axe de symétrie.
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+Montrer que la fonction $g$ définie sur $\mathbb{R}$ par $g(x) = |x| + x^2 - 2$ est paire. La fonction $h$ définie par $h(x) = x^2 - 2x$ est-elle paire ? Justifier.
+\end{exercice}
+
+\begin{corrige}[Exercice 1]
+Pour $g$ : $D_g = \mathbb{R}$, symétrique par rapport à $0$. Pour tout $x$ : $g(-x) = |-x| + (-x)^2 - 2 = |x| + x^2 - 2 = g(x)$. Donc $g$ est paire.
+
+Pour $h$ : $h(-x) = (-x)^2 - 2(-x) = x^2 + 2x \neq h(x)$. Contre-exemple : $h(1) = -1$ et $h(-1) = 3 \neq h(1)$. Donc $h$ n'est pas paire.
+\end{corrige}
+
+\courssub{Conséquence pratique : réduire le domaine d'étude}
+
+\begin{aretenir}[Le gain de travail offert par la parité]
+Si $f$ est paire, il \textbf{suffit d'étudier $f$ sur} $D_f \cap [0\,;+\infty[$ (la moitié « positive » du domaine), puis de compléter la courbe sur l'autre moitié \textbf{par symétrie par rapport à l'axe $(Oy)$}. Le tableau de variations, le signe de la dérivée, le tracé : tout est fait une seule fois, puis déduit par le « miroir ». C'est une économie de temps précieuse à l'examen.
+\end{aretenir}
+
+\begin{savaistu}[Les symétries dans l'artisanat camerounais]
+Les motifs des pagnes wax vendus dans les marchés de Douala et de Yaoundé, ainsi que les toiles de bambou tressées du Nord-Ouest (région de Bamenda), exploitent très souvent des \textbf{symétries axiales} : un motif de base est reproduit en miroir de part et d'autre d'un axe central. C'est exactement la traduction artisanale de la propriété $f(-x) = f(x)$ ! Les tisserands appliquent sans le savoir le principe mathématique des fonctions paires : créer la moitié du motif, puis le compléter par symétrie. La prochaine fois que vous observerez un pagne, cherchez l'axe $(Oy)$ du motif...
+\end{savaistu}
+
+\coursec{Fonctions impaires}
+
+Dans la section précédente, nous avons étudié les fonctions \emph{paires}, dont la courbe est symétrique par rapport à l'axe des ordonnées : plier la feuille le long de cet axe superpose les deux moitiés de la courbe. Il existe une deuxième famille de fonctions « régulières », tout aussi précieuse : celles dont la courbe est symétrique par rapport à un \emph{point}, l'origine du repère. Ce sont les fonctions \emph{impaires}. L'idée est la suivante : si l'on fait tourner la courbe d'un demi-tour autour de l'origine $O$, elle retombe exactement sur elle-même. Cette propriété se rencontre souvent dans les métiers techniques : la tension alternative d'un circuit électrique, la courbe effort-déformation d'un ressort autour de sa position d'équilibre, ou encore la caractéristique d'un capteur présentent ce type de symétrie.
+
+\courssub{Définition d'une fonction impaire}
+
+Commençons par l'intuition. Pour une fonction paire, deux valeurs opposées de la variable ($x$ et $-x$) donnent des images \emph{égales}. Pour une fonction impaire, deux valeurs opposées de la variable donnent des images \emph{opposées} : si $x$ a pour image $f(x)$, alors $-x$ a pour image $-f(x)$. Le signe « se propage » à travers la fonction.
+
+\begin{definition}[Fonction impaire]
+Soit $f$ une fonction définie sur un ensemble $D_f$. On dit que $f$ est \cle{impaire} lorsque les deux conditions suivantes sont satisfaites :
+\begin{enumerate}
+\item l'ensemble de définition $D_f$ est \cle{symétrique par rapport à 0} : pour tout $x \in D_f$, on a aussi $-x \in D_f$ ;
+\item pour tout $x \in D_f$ :
+\[ f(-x) = -f(x). \]
+\end{enumerate}
+\end{definition}
+
+\begin{attention}[Les deux conditions sont indispensables]
+Avant de calculer $f(-x)$, il faut \textbf{toujours} vérifier que $D_f$ est symétrique par rapport à $0$. Si un nombre $x$ appartient à $D_f$ sans que $-x$ y appartienne, la fonction ne peut être ni paire ni impaire, et il est inutile de poursuivre. Par exemple, $f(x) = \sqrt{x}$ est définie sur $[0\,;\,+\infty[$, qui n'est pas symétrique par rapport à $0$ : la question de la parité ne se pose même pas.
+\end{attention}
+
+\courssub{Exemples fondamentaux}
+
+Quatre fonctions de référence sont impaires ; il faut les connaître par cœur.
+
+\begin{exemplebox}[Fonctions impaires de référence]
+\begin{itemize}
+\item \textbf{La fonction identité} $f(x) = x$ : définie sur $\mathbb{R}$, et $f(-x) = -x = -f(x)$. Elle est impaire.
+\item \textbf{La fonction cube} $f(x) = x^3$ : définie sur $\mathbb{R}$, et $f(-x) = (-x)^3 = -x^3 = -f(x)$. Elle est impaire.
+\item \textbf{La fonction inverse} $f(x) = \dfrac{1}{x}$ : définie sur $\mathbb{R}^* = ]-\infty\,;\,0[ \cup ]0\,;\,+\infty[$, ensemble symétrique par rapport à $0$, et $f(-x) = \dfrac{1}{-x} = -\dfrac{1}{x} = -f(x)$. Elle est impaire.
+\item \textbf{La fonction sinus} $f(x) = \sin x$ : définie sur $\mathbb{R}$, et $\sin(-x) = -\sin x$. Elle est impaire.
+\end{itemize}
+\end{exemplebox}
+
+\begin{aretenir}[Parité des puissances]
+Une règle pratique permet de retenir les exemples : les puissances \emph{impaires} de $x$ (c'est-à-dire $x^1$, $x^3$, $x^5$, \dots, ainsi que $x^{-1} = \dfrac{1}{x}$) donnent des fonctions \emph{impaires}, tandis que les puissances \emph{paires} ($x^2$, $x^4$, \dots) donnent des fonctions \emph{paires}. C'est d'ailleurs l'origine des mots « pair » et « impair » en mathématiques !
+\end{aretenir}
+
+\courssub{Interprétation graphique : symétrie par rapport à l'origine}
+
+\begin{propriete}[Centre de symétrie (admise)]
+La fonction $f$ est impaire si et seulement si sa courbe représentative $\mathcal{C}_f$ admet l'\cle{origine} $O$ du repère pour \cle{centre de symétrie}.
+\end{propriete}
+
+Cette propriété est admise ; elle se justifie par la symétrie centrale étudiée en classe de Quatrième. Rappelons l'argument : le symétrique du point $M(x\,;\,y)$ par rapport à l'origine $O$ est le point $M'(-x\,;\,-y)$. Or, si $M(x\,;\,f(x))$ appartient à la courbe d'une fonction impaire, alors le point de coordonnées $(-x\,;\,f(-x)) = (-x\,;\,-f(x))$ est exactement le symétrique de $M$ par rapport à $O$, et il appartient lui aussi à la courbe. La courbe est donc invariante par la symétrie de centre $O$ : un demi-tour autour de $O$ la laisse inchangée.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-2.2, xmax=2.2, ymin=-4.5, ymax=4.5,
+  xtick={-2,-1,1,2}, ytick={-4,-2,2,4},
+  grid=both, grid style={popline!40},
+  axis line style={->, popdark},
+]
+\addplot[popcurve, domain=-1.55:1.55, samples=200]{x^3};
+\addplot[only marks, mark=*, mark size=2pt, poporange] coordinates {(1.2,1.728)};
+\addplot[only marks, mark=*, mark size=2pt, popblue] coordinates {(-1.2,-1.728)};
+\addplot[only marks, mark=*, mark size=2.5pt, popdark] coordinates {(0,0)};
+\draw[dashed, popmuted] (axis cs:1.2,1.728) -- (axis cs:-1.2,-1.728);
+\node[poporange, above right] at (axis cs:1.2,1.728) {$M(x\,;\,f(x))$};
+\node[popblue, below left] at (axis cs:-1.2,-1.728) {$M'(-x\,;\,-f(x))$};
+\node[popdark, below right] at (axis cs:0,0) {$O$};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe de $f(x) = x^3$ : les points $M$ et $M'$ sont symétriques par rapport à l'origine $O$.}
+\end{center}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-4.2, xmax=4.2, ymin=-4.2, ymax=4.2,
+  xtick={-4,-2,2,4}, ytick={-4,-2,2,4},
+  grid=both, grid style={popline!40},
+  axis line style={->, popdark},
+]
+\addplot[popcurve, domain=0.25:4, samples=200]{1/x};
+\addplot[popcurve, domain=-4:-0.25, samples=200]{1/x};
+\addplot[only marks, mark=*, mark size=2pt, poporange] coordinates {(2,0.5)};
+\addplot[only marks, mark=*, mark size=2pt, popblue] coordinates {(-2,-0.5)};
+\draw[dashed, popmuted] (axis cs:2,0.5) -- (axis cs:-2,-0.5);
+\node[poporange, above] at (axis cs:2,0.5) {$M$};
+\node[popblue, below] at (axis cs:-2,-0.5) {$M'$};
+\node[popdark, below right] at (axis cs:0,0) {$O$};
+\end{axis}
+\end{tikzpicture}
+\legende{Hyperbole de la fonction inverse $f(x) = \dfrac{1}{x}$ : symétrie centrale de centre $O$.}
+\end{center}
+\end{popfigure}
+
+\courssub{Une conséquence immédiate : $f(0) = 0$}
+
+\begin{propriete}[Image de 0 par une fonction impaire]
+Si $f$ est une fonction impaire et si $0 \in D_f$, alors :
+\[ f(0) = 0. \]
+Autrement dit, la courbe d'une fonction impaire définie en $0$ passe obligatoirement par l'origine du repère.
+\end{propriete}
+
+Cette propriété est démontrable et la démonstration est formatrice : elle montre comment exploiter la relation $f(-x) = -f(x)$ avec une valeur bien choisie.
+
+\begin{experience}[Démonstration guidée]
+On suppose que $f$ est impaire et que $0 \in D_f$.
+\begin{enumerate}
+\item Puisque $f$ est impaire, pour tout $x \in D_f$ on a $f(-x) = -f(x)$. Appliquons cette égalité avec $x = 0$ :
+\[ f(-0) = -f(0). \]
+\item Or $-0 = 0$, donc le membre de gauche s'écrit simplement $f(0)$. L'égalité devient :
+\[ f(0) = -f(0). \]
+\item Ajoutons $f(0)$ aux deux membres :
+\[ f(0) + f(0) = 0 \quad \text{c'est-à-dire} \quad 2f(0) = 0. \]
+\item En divisant par $2$, on obtient $f(0) = 0$. \hfill $\square$
+\end{enumerate}
+\end{experience}
+
+\begin{attention}[Attention à l'hypothèse $0 \in D_f$]
+La conclusion $f(0) = 0$ n'a de sens que si $0$ appartient à l'ensemble de définition. La fonction inverse $f(x) = \dfrac{1}{x}$ est impaire, mais $0 \notin D_f$ : on ne peut évidemment pas parler de $f(0)$. Ne rédigez jamais « $f$ impaire donc $f(0) = 0$ » sans vérifier au préalable que $0 \in D_f$.
+\end{attention}
+
+\courssub{Exemple chiffré : montrer qu'une fonction est impaire}
+
+\begin{exoresolu}[Étude de la parité de $f(x) = x^3 - 2x$]
+\textbf{Énoncé.} Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x) = x^3 - 2x$. Montrer que $f$ est impaire.
+\tcblower
+\textbf{Solution détaillée.}
+\begin{enumerate}
+\item \textbf{Ensemble de définition.} $f$ est une fonction polynôme, donc $D_f = \mathbb{R}$, qui est symétrique par rapport à $0$ : si $x \in \mathbb{R}$, alors $-x \in \mathbb{R}$.
+\item \textbf{Calcul de $f(-x)$.} Pour tout réel $x$ :
+\begin{align*}
+f(-x) &= (-x)^3 - 2(-x) \\
+&= -x^3 + 2x \\
+&= -(x^3 - 2x) \\
+&= -f(x).
+\end{align*}
+\item \textbf{Conclusion.} Pour tout $x \in \mathbb{R}$, $f(-x) = -f(x)$ : la fonction $f$ est \textbf{impaire}. Sa courbe admet donc l'origine $O$ pour centre de symétrie.
+\end{enumerate}
+\textbf{Vérification numérique.} Prenons $x = 2$ : $f(2) = 2^3 - 2\times 2 = 8 - 4 = 4$ et $f(-2) = (-2)^3 - 2\times(-2) = -8 + 4 = -4 = -f(2)$. Le résultat est cohérent.
+\end{exoresolu}
+
+\courssub{Une fonction peut être ni paire ni impaire}
+
+Une erreur de raisonnement très répandue consiste à croire que toute fonction est forcément paire ou impaire, comme si c'était une alternative obligatoire. C'est faux : la parité est une propriété \emph{exceptionnelle}, et l'immense majorité des fonctions n'est ni paire ni impaire.
+
+\begin{attention}[Erreur fréquente]
+Ne jamais écrire : « $f(-x) \neq f(x)$, donc $f$ est impaire ». L'égalité $f(-x) = -f(x)$ doit être vérifiée \emph{pour tout} $x$ de $D_f$, pas simplement être différente de $f(x)$. Une fonction qui n'est pas paire n'est pas automatiquement impaire : elle est le plus souvent \textbf{ni paire ni impaire}.
+\end{attention}
+
+\begin{exemplebox}[La fonction $f(x) = x^2 + x$ n'est ni paire ni impaire]
+Soit $f$ définie sur $\mathbb{R}$ par $f(x) = x^2 + x$. Son ensemble de définition est bien symétrique par rapport à $0$.
+\begin{itemize}
+\item Est-elle paire ? $f(-x) = (-x)^2 + (-x) = x^2 - x$, qui n'est pas égal à $f(x) = x^2 + x$. Donc $f$ n'est pas paire.
+\item Est-elle impaire ? $-f(x) = -x^2 - x$, qui n'est pas égal à $f(-x) = x^2 - x$. Donc $f$ n'est pas impaire.
+\end{itemize}
+Conclusion : $f$ est \textbf{ni paire ni impaire}. On remarque au passage que $f(0) = 0$ : cela prouve aussi que la condition $f(0) = 0$, nécessaire pour l'imparité, n'est pas suffisante.
+\end{exemplebox}
+
+\begin{methode}[Prouver « ni paire ni impaire » par un contre-exemple]
+Pour montrer qu'une fonction n'est ni paire ni impaire, il suffit de trouver \textbf{un seul} nombre bien choisi (un \cle{contre-exemple}) qui mette en défaut chaque égalité. Procéder ainsi :
+\begin{enumerate}
+\item Vérifier que $D_f$ est symétrique par rapport à $0$ (sinon, c'est terminé : ni paire ni impaire).
+\item Choisir une valeur simple $a \in D_f$ (souvent $a = 1$) et calculer $f(a)$ et $f(-a)$.
+\item Si $f(-a) \neq f(a)$, alors $f$ n'est pas paire.
+\item Si $f(-a) \neq -f(a)$, alors $f$ n'est pas impaire.
+\item Conclure : $f$ est ni paire ni impaire.
+\end{enumerate}
+Pour $f(x) = x^2 + x$ avec $a = 1$ : $f(1) = 2$ et $f(-1) = 0$. Comme $0 \neq 2$, $f$ n'est pas paire ; comme $0 \neq -2$, $f$ n'est pas impaire. Un seul calcul suffit à tout trancher !
+\end{methode}
+
+\courssub{Démarche rédigée complète : étude de $f(x) = x + \dfrac{1}{x}$}
+
+Voici un modèle de rédaction complet, tel qu'attendu au Probatoire et au Baccalauréat technique, sur une fonction mélangeant une puissance impaire et la fonction inverse.
+
+\begin{exoresolu}[Parité de $f(x) = x + \dfrac{1}{x}$]
+\textbf{Énoncé.} Soit $f$ la fonction définie par $f(x) = x + \dfrac{1}{x}$. Étudier la parité de $f$.
+\tcblower
+\textbf{Solution rédigée.}
+\begin{enumerate}
+\item \textbf{Ensemble de définition.} L'expression $f(x)$ existe si et seulement si $x \neq 0$ (à cause du dénominateur). Donc :
+\[ D_f = \mathbb{R}^* = ]-\infty\,;\,0[ \cup ]0\,;\,+\infty[. \]
+Cet ensemble est symétrique par rapport à $0$ : si $x \in D_f$, alors $x \neq 0$, donc $-x \neq 0$, c'est-à-dire $-x \in D_f$.
+\item \textbf{Calcul de $f(-x)$.} Pour tout $x \in D_f$ :
+\begin{align*}
+f(-x) &= (-x) + \frac{1}{-x} \\
+&= -x - \frac{1}{x} \\
+&= -\left(x + \frac{1}{x}\right) \\
+&= -f(x).
+\end{align*}
+\item \textbf{Conclusion.} L'ensemble $D_f$ est symétrique par rapport à $0$ et, pour tout $x \in D_f$, $f(-x) = -f(x)$. La fonction $f$ est donc \textbf{impaire} : sa courbe représentative admet l'origine $O$ du repère pour centre de symétrie.
+\end{enumerate}
+\textbf{Remarque.} Ici $0 \notin D_f$, donc la question de $f(0)$ ne se pose pas. En revanche, la symétrie par rapport à $O$ permettra, dans la suite de la leçon, de n'étudier $f$ que sur $]0\,;\,+\infty[$ et d'en déduire le comportement sur $]-\infty\,;\,0[$ par symétrie : c'est tout l'intérêt pratique de la parité.
+\end{exoresolu}
+
+\begin{exercice}[À vous de jouer]
+\begin{enumerate}
+\item Montrer que la fonction $g$ définie sur $\mathbb{R}$ par $g(x) = 2x^3 + 5x$ est impaire.
+\item La fonction $h$ définie sur $\mathbb{R}$ par $h(x) = x^3 + 1$ est-elle impaire ? Justifier par un contre-exemple.
+\item Soit $k$ une fonction impaire définie sur $\mathbb{R}$ telle que $k(3) = -7$. Déterminer $k(-3)$ et $k(0)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+\item $D_g = \mathbb{R}$ est symétrique par rapport à $0$. Pour tout réel $x$ :
+\[ g(-x) = 2(-x)^3 + 5(-x) = -2x^3 - 5x = -(2x^3 + 5x) = -g(x). \]
+Donc $g$ est impaire.
+\item $h(1) = 1^3 + 1 = 2$ et $h(-1) = (-1)^3 + 1 = 0$. On a $h(-1) = 0 \neq -2 = -h(1)$, donc $h$ n'est pas impaire. (Elle n'est pas paire non plus puisque $h(-1) \neq h(1)$.)
+\item Par imparité, $k(-3) = -k(3) = -(-7) = 7$. Comme $k$ est impaire et $0 \in D_k = \mathbb{R}$, on a $k(0) = 0$.
+\end{enumerate}
+\end{corrige}
+
+\begin{savaistu}[Symétries et électricité]
+En électrotechnique, la tension d'un réseau alternatif (comme celui qui alimente les prises au Cameroun) se modélise par une fonction sinusoïdale $u(t) = U_{\max}\sin(\omega t)$, qui est une fonction \emph{impaire} du temps. Cette symétrie par rapport à l'origine traduit physiquement l'alternance parfaite entre les demi-périodes positives et négatives : l'aire sous la courbe sur une période complète est nulle, ce qui explique pourquoi on parle de valeur moyenne nulle et de valeur efficace pour caractériser une telle tension.
+\end{savaistu}
+
+\begin{aretenir}[L'essentiel sur les fonctions impaires]
+\begin{itemize}
+\item $f$ est \cle{impaire} si $D_f$ est symétrique par rapport à $0$ \textbf{et} si, pour tout $x \in D_f$, $f(-x) = -f(x)$.
+\item La courbe d'une fonction impaire admet l'\cle{origine} $O$ pour \cle{centre de symétrie}.
+\item Si $f$ est impaire et $0 \in D_f$, alors $f(0) = 0$.
+\item Fonctions impaires de référence : $x$, $x^3$, $\dfrac{1}{x}$, $\sin x$.
+\item Une fonction qui n'est pas paire n'est pas forcément impaire : la plupart des fonctions sont \textbf{ni paires ni impaires}, et un contre-exemple bien choisi suffit à le prouver.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Éléments de symétrie d'une courbe : cas général}
+
+Dans les deux sections précédentes, nous avons découvert les fonctions \cle{paires}, dont la courbe admet l'axe des ordonnées $(Oy)$ pour axe de symétrie, et les fonctions \cle{impaires}, dont la courbe admet l'origine $O$ pour centre de symétrie. Mais dans la pratique — en mécanique, en électricité, en bâtiment — les phénomènes symétriques ne sont pas toujours centrés sur l'origine du repère. Une voûte de pont, une trajectoire de projectile, une façade d'atelier présentent souvent une symétrie \emph{décalée}. Cette section généralise les notions de parité à un axe de symétrie vertical quelconque et à un centre de symétrie quelconque.
+
+\courssub{Axe de symétrie vertical d'équation $x = a$}
+
+\textbf{Intuition.} Pliez mentalement le plan le long d'une droite verticale $\Delta$ d'équation $x = a$. Si les deux moitiés de la courbe $\mathcal{C}_f$ se superposent exactement, alors $\Delta$ est un \cle{axe de symétrie} de la courbe. Un point $M$ d'abscisse $a + h$ (à droite de $\Delta$, à distance $h$) a pour symétrique le point $M'$ d'abscisse $a - h$ (à gauche de $\Delta$, à la même distance $h$). Pour que la courbe soit symétrique, ces deux points doivent avoir la \emph{même ordonnée}.
+
+\begin{definition}[Axe de symétrie vertical]
+Soit $f$ une fonction de courbe représentative $\mathcal{C}_f$ dans un repère orthogonal, et $a$ un nombre réel. La droite $\Delta$ d'équation $x = a$ est un \cle{axe de symétrie} de $\mathcal{C}_f$ lorsque, pour tout point $M$ de $\mathcal{C}_f$, le symétrique de $M$ par rapport à $\Delta$ appartient encore à $\mathcal{C}_f$.
+\end{definition}
+
+\begin{propriete}[Condition analytique d'axe de symétrie — admise]
+La droite d'équation $x = a$ est axe de symétrie de la courbe $\mathcal{C}_f$ si et seulement si :
+\begin{itemize}
+\item l'ensemble de définition $D_f$ est symétrique par rapport à $a$ (c'est-à-dire : si $a + h \in D_f$, alors $a - h \in D_f$) ;
+\item pour tout réel $h$ tel que $a + h$ et $a - h$ appartiennent à $D_f$ :
+\[ f(a + h) = f(a - h). \]
+\end{itemize}
+Cette propriété est \textbf{admise} au niveau de la classe de Première technique ; elle sera illustrée graphiquement et vérifiée par le calcul sur des exemples.
+\end{propriete}
+
+\begin{attention}[Bien vérifier les deux conditions]
+Avant de calculer $f(a+h)$ et $f(a-h)$, vérifiez toujours que l'ensemble de définition est symétrique par rapport à $a$. Par exemple, si $D_f = [0 \,;\, 4]$ et que l'on teste $a = 2$, tout se passe bien ; mais avec $a = 1$, le point $1 + 2 = 3$ est dans $D_f$ alors que $1 - 2 = -1$ n'y est pas : la droite $x = 1$ ne peut pas être axe de symétrie, inutile de poursuivre le calcul.
+\end{attention}
+
+\begin{exemplebox}[La parabole décalée $f(x) = (x-2)^2 + 1$]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x) = (x-2)^2 + 1$. Montrons que la droite d'équation $x = 2$ est axe de symétrie de $\mathcal{C}_f$.
+
+Ici $a = 2$ et $D_f = \mathbb{R}$, qui est symétrique par rapport à $2$. Pour tout réel $h$ :
+\begin{align*}
+f(2 + h) &= (2 + h - 2)^2 + 1 = h^2 + 1, \\
+f(2 - h) &= (2 - h - 2)^2 + 1 = (-h)^2 + 1 = h^2 + 1.
+\end{align*}
+Donc $f(2+h) = f(2-h)$ pour tout $h$ : la droite $x = 2$ est bien axe de symétrie de la courbe. Le sommet de la parabole, le point $S(2 \,;\, 1)$, se trouve sur cet axe.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-1.5, xmax=5.5, ymin=-0.5, ymax=6.5,
+  xtick={-1,0,1,2,3,4,5}, ytick={1,2,3,4,5,6},
+  grid=both, grid style={popline!40},
+  legend style={at={(0.02,0.98)}, anchor=north west, font=\small}
+]
+\addplot[popcurve,domain=-0.7:4.7,samples=200]{(x-2)^2+1};
+\addlegendentry{$f(x)=(x-2)^2+1$}
+\addplot[poporange, dashed, thick] coordinates {(2,-0.5) (2,6.5)};
+\addlegendentry{axe $x=2$}
+\addplot[only marks, mark=*, popgreen] coordinates {(1,2) (3,2) (0,5) (4,5)};
+\addplot[only marks, mark=*, poppurple] coordinates {(2,1)};
+\node[popgreen, font=\small] at (axis cs:0.9,2.35) {$M$};
+\node[popgreen, font=\small] at (axis cs:3.15,2.35) {$M'$};
+\node[poppurple, font=\small] at (axis cs:2.25,0.7) {$S(2\,;\,1)$};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La parabole d'équation $y=(x-2)^2+1$ et son axe de symétrie $x=2$ : les points $M$ et $M'$, symétriques par rapport à l'axe, ont la même ordonnée.}
+\end{popfigure}
+
+\begin{attention}[Ne pas confondre axe $(Oy)$ et axe $x = a$]
+Une fonction paire vérifie $f(-x) = f(x)$ : c'est le cas particulier $a = 0$ de la condition $f(a+h) = f(a-h)$. Dire « la courbe est symétrique » ne suffit pas : il faut \textbf{préciser l'axe}. La fonction $f(x) = (x-2)^2 + 1$ n'est \emph{pas} paire (sa courbe n'est pas symétrique par rapport à $(Oy)$), pourtant elle possède bien un axe de symétrie : la droite $x = 2$.
+\end{attention}
+
+\courssub{Centre de symétrie $\Omega(a\,;\,b)$}
+
+\textbf{Intuition.} Un point $\Omega$ est \cle{centre de symétrie} d'une courbe si, en faisant tourner la courbe d'un demi-tour autour de $\Omega$, on retombe exactement sur la courbe. Prenons un point $M$ d'abscisse $a + h$. Son symétrique par rapport à $\Omega(a\,;\,b)$ est le point $M'$ d'abscisse $a - h$. Le milieu du segment $[MM']$ doit être $\Omega$ : en particulier, la moyenne des ordonnées de $M$ et $M'$ doit valoir $b$.
+
+\begin{definition}[Centre de symétrie]
+Soit $f$ une fonction de courbe $\mathcal{C}_f$ et $\Omega(a\,;\,b)$ un point du plan. On dit que $\Omega$ est un \cle{centre de symétrie} de $\mathcal{C}_f$ lorsque, pour tout point $M$ de $\mathcal{C}_f$, le symétrique de $M$ par rapport à $\Omega$ appartient encore à $\mathcal{C}_f$.
+\end{definition}
+
+\begin{propriete}[Condition analytique de centre de symétrie — admise]
+Le point $\Omega(a\,;\,b)$ est centre de symétrie de la courbe $\mathcal{C}_f$ si et seulement si :
+\begin{itemize}
+\item l'ensemble de définition $D_f$ est symétrique par rapport à $a$ ;
+\item pour tout réel $h$ tel que $a + h$ et $a - h$ appartiennent à $D_f$ :
+\[ f(a + h) + f(a - h) = 2b. \]
+\end{itemize}
+De manière équivalente : $\dfrac{f(a+h) + f(a-h)}{2} = b$, ce qui traduit exactement le fait que $\Omega$ est le milieu de $[MM']$. Cette propriété est \textbf{admise} ; elle sera vérifiée par le calcul sur des exemples.
+\end{propriete}
+
+\begin{methode}[Prouver qu'un point $\Omega(a\,;\,b)$ est centre de symétrie de $\mathcal{C}_f$]
+\begin{enumerate}
+\item \textbf{Vérifier l'ensemble de définition} : s'assurer que $D_f$ est symétrique par rapport à $a$ (si $a + h \in D_f$ alors $a - h \in D_f$).
+\item \textbf{Calculer séparément} $f(a + h)$ et $f(a - h)$ en fonction de $h$, en simplifiant soigneusement.
+\item \textbf{Additionner} les deux expressions : les termes en $h$ doivent s'éliminer.
+\item \textbf{Conclure} : si la somme est constante et égale à $2b$, alors $\Omega(a\,;\,b)$ est centre de symétrie de $\mathcal{C}_f$. Sinon, ce n'est pas un centre de symétrie.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Centre de symétrie de la courbe de $f(x) = \dfrac{1}{x-1} + 3$]
+\textbf{Énoncé.} Soit $f$ la fonction définie par $f(x) = \dfrac{1}{x-1} + 3$. Démontrer que le point $\Omega(1\,;\,3)$ est centre de symétrie de la courbe $\mathcal{C}_f$.
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{Étape 1 : ensemble de définition.} $f$ est définie lorsque $x - 1 \neq 0$, donc $D_f = \mathbb{R} \setminus \{1\} = \left]-\infty\,;\,1\right[ \cup \left]1\,;\,+\infty\right[$. Si $1 + h \in D_f$, alors $h \neq 0$, donc $1 - h \neq 1$ et $1 - h \in D_f$ : l'ensemble est bien symétrique par rapport à $1$.
+
+\textbf{Étape 2 : calcul de $f(1+h)$ et $f(1-h)$.} Pour tout $h \neq 0$ :
+\begin{align*}
+f(1 + h) &= \frac{1}{(1+h) - 1} + 3 = \frac{1}{h} + 3, \\
+f(1 - h) &= \frac{1}{(1-h) - 1} + 3 = \frac{1}{-h} + 3 = -\frac{1}{h} + 3.
+\end{align*}
+
+\textbf{Étape 3 : somme.}
+\[ f(1+h) + f(1-h) = \frac{1}{h} + 3 - \frac{1}{h} + 3 = 6 = 2 \times 3. \]
+
+\textbf{Étape 4 : conclusion.} Pour tout $h \neq 0$, $f(1+h) + f(1-h) = 2 \times 3$. Donc le point $\Omega(1\,;\,3)$ est bien un centre de symétrie de la courbe $\mathcal{C}_f$.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+  width=0.85\linewidth, height=7.5cm,
+  axis lines=middle,
+  xlabel={$x$}, ylabel={$y$},
+  xmin=-3.5, xmax=5.5, ymin=-1.5, ymax=7.5,
+  xtick={-3,-2,-1,0,1,2,3,4,5}, ytick={-1,0,1,2,3,4,5,6,7},
+  grid=both, grid style={popline!40},
+  legend style={at={(0.02,0.02)}, anchor=south west, font=\small},
+  restrict y to domain=-2:8
+]
+\addplot[popcurve,domain=-3.4:0.6,samples=150]{1/(x-1)+3};
+\addplot[popcurve,domain=1.4:5.4,samples=150]{1/(x-1)+3};
+\addlegendentry{$f(x)=\dfrac{1}{x-1}+3$}
+\addplot[popmuted, dashed] coordinates {(1,-1.5) (1,7.5)};
+\addplot[popmuted, dashed] coordinates {(-3.5,3) (5.5,3)};
+\addplot[only marks, mark=*, poporange, mark size=2.5pt] coordinates {(1,3)};
+\node[poporange, font=\small] at (axis cs:1.35,3.35) {$\Omega(1\,;\,3)$};
+\addplot[only marks, mark=*, popgreen] coordinates {(3,3.5) (-1,2.5)};
+\node[popgreen, font=\small] at (axis cs:3.15,3.85) {$M$};
+\node[popgreen, font=\small] at (axis cs:-1.3,2.15) {$M'$};
+\addplot[popgreen, thin, dashed] coordinates {(3,3.5) (-1,2.5)};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\legende{La courbe de $f(x)=\dfrac{1}{x-1}+3$ admet $\Omega(1\,;\,3)$ pour centre de symétrie : $M(3\,;\,3{,}5)$ et $M'(-1\,;\,2{,}5)$ sont symétriques par rapport à $\Omega$, milieu de $[MM']$.}
+\end{popfigure}
+
+\begin{attention}[Erreur fréquente : confondre axe de symétrie et centre de symétrie]
+Les deux conditions se ressemblent mais sont \textbf{différentes} :
+\begin{itemize}
+\item Axe de symétrie $x = a$ : $f(a+h) = f(a-h)$ — les ordonnées sont \emph{égales}. Cas particulier $a = 0$ : fonction \textbf{paire}, axe $(Oy)$.
+\item Centre de symétrie $\Omega(a\,;\,b)$ : $f(a+h) + f(a-h) = 2b$ — la \emph{somme} des ordonnées est constante. Cas particulier $a = 0$, $b = 0$ : fonction \textbf{impaire}, centre $O$.
+\end{itemize}
+Ne rédigez jamais « $f(a+h) = f(a-h)$ donc $\Omega$ est centre de symétrie » : c'est un mélange des deux notions, sanctionné à l'examen. Identifiez d'abord ce que l'on vous demande (axe ou centre), puis appliquez la bonne condition.
+\end{attention}
+
+\courssub{Lien avec la parité : retour aux cas particuliers}
+
+Les notions de cette section généralisent celles des sections précédentes :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Élément de symétrie} & \textbf{Condition générale} & \textbf{Cas particulier ($a=0$, $b=0$)} \\
+\hline
+Axe vertical $x = a$ & $f(a+h) = f(a-h)$ & $f(-h) = f(h)$ : fonction \textbf{paire}, axe $(Oy)$ \\
+\hline
+Centre $\Omega(a\,;\,b)$ & $f(a+h) + f(a-h) = 2b$ & $f(-h) = -f(h)$ : fonction \textbf{impaire}, centre $O$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+Autrement dit : une fonction paire est une fonction dont la courbe admet l'axe $x = 0$ ; une fonction impaire est une fonction dont la courbe admet le centre $\Omega(0\,;\,0)$. La parité n'est donc qu'un \emph{cas particulier} de la symétrie générale.
+
+\begin{aretenir}[Les deux conditions à connaître par cœur]
+\begin{itemize}
+\item La droite $x = a$ est axe de symétrie de $\mathcal{C}_f$ $\iff$ $f(a+h) = f(a-h)$ pour tout $h$ admissible.
+\item Le point $\Omega(a\,;\,b)$ est centre de symétrie de $\mathcal{C}_f$ $\iff$ $f(a+h) + f(a-h) = 2b$ pour tout $h$ admissible.
+\item Dans les deux cas, on commence par vérifier que $D_f$ est symétrique par rapport à $a$.
+\end{itemize}
+\end{aretenir}
+
+\begin{savaistu}[Symétrie et changement de repère — vers la Terminale]
+Il existe une méthode élégante pour ramener toute symétrie à la parité : le \cle{changement de repère}. En posant $X = x - a$ et $Y = y - b$, on place l'origine d'un nouveau repère au point $\Omega(a\,;\,b)$. La courbe y devient celle d'une nouvelle fonction $F(X)$, et :
+\begin{itemize}
+\item si $F$ est \textbf{paire}, alors $x = a$ est axe de symétrie de $\mathcal{C}_f$ ;
+\item si $F$ est \textbf{impaire}, alors $\Omega(a\,;\,b)$ est centre de symétrie de $\mathcal{C}_f$.
+\end{itemize}
+Par exemple, avec $f(x) = \dfrac{1}{x-1} + 3$, le changement $X = x - 1$, $Y = y - 3$ donne $Y = \dfrac{1}{X}$, fonction impaire bien connue : on retrouve immédiatement le centre $\Omega(1\,;\,3)$. Cette technique sera étudiée en détail en Terminale technique ; elle n'est \textbf{pas exigible} au Probatoire de Première, mais elle éclaire profondément les conditions vues dans cette section.
+\end{savaistu}
+
+\begin{savaistu}[La symétrie autour de nous]
+En architecture, la façade de nombreux bâtiments publics de Yaoundé présente un axe de symétrie vertical, exactement comme la courbe d'une parabole décalée $f(x) = (x-a)^2 + c$. Les techniciens du bâtiment exploitent cette symétrie au quotidien : pour connaître la hauteur d'une charpente en un point situé à gauche du faitage, il suffit de mesurer au point symétrique à droite — c'est la propriété $f(a+h) = f(a-h)$ à l'œuvre sur un chantier. De même, en mécanique, une pièce tournée autour d'un axe possède des profils symétriques que l'on contrôle en vérifiant l'égalité des cotes de part et d'autre de l'axe.
+\end{savaistu}
+
+\begin{exercice}[À vous de jouer]
+Soit $g$ la fonction définie sur $\mathbb{R}$ par $g(x) = x^2 - 4x + 7$.
+\begin{enumerate}
+\item Montrer que pour tout réel $x$, $g(x) = (x-2)^2 + 3$.
+\item En déduire que la droite d'équation $x = 2$ est axe de symétrie de la courbe $\mathcal{C}_g$.
+\item Soit $h$ la fonction définie sur $\mathbb{R} \setminus \{2\}$ par $h(x) = \dfrac{2}{x-2} - 1$. Montrer que le point $\Omega(2\,;\,-1)$ est centre de symétrie de la courbe de $h$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : axe et centre de symétrie]
+\begin{enumerate}
+\item Développons : $(x-2)^2 + 3 = x^2 - 4x + 4 + 3 = x^2 - 4x + 7 = g(x)$. L'égalité est vérifiée.
+\item $D_g = \mathbb{R}$ est symétrique par rapport à $2$. Pour tout réel $h$ :
+\[ g(2+h) = h^2 + 3 \quad \text{et} \quad g(2-h) = (-h)^2 + 3 = h^2 + 3. \]
+Donc $g(2+h) = g(2-h)$ : la droite $x = 2$ est axe de symétrie de $\mathcal{C}_g$.
+\item $D_h = \mathbb{R} \setminus \{2\}$ est symétrique par rapport à $2$. Pour tout $t \neq 0$ :
+\[ h(2+t) = \frac{2}{t} - 1 \quad \text{et} \quad h(2-t) = -\frac{2}{t} - 1. \]
+Donc $h(2+t) + h(2-t) = -2 = 2 \times (-1)$ : le point $\Omega(2\,;\,-1)$ est centre de symétrie de la courbe de $h$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Parité et réduction du domaine d'étude}
+
+Dans la section précédente, nous avons vu qu'une fonction paire possède un axe de symétrie (l'axe des ordonnées) et qu'une fonction impaire possède un centre de symétrie (l'origine du repère). Nous allons maintenant exploiter concrètement ces symétries : au lieu d'étudier une fonction sur tout son ensemble de définition, nous n'en étudierons que la \emph{moitié}, puis nous compléterons les résultats \og gratuitement \fg{} par symétrie. C'est un gain de temps considérable, en classe comme dans la vie professionnelle.
+
+\courssub{Le principe : n'étudier que la moitié du domaine}
+
+\textbf{Intuition.} Imagine un tailleur de quartier qui doit couper les deux manches d'une chemise. Les deux manches sont symétriques : il lui suffit de tracer soigneusement un seul patron, puis de le retourner pour obtenir la deuxième manche. Tracer deux fois le même patron serait une perte de temps. En mathématiques, c'est exactement la même idée : si la courbe d'une fonction est symétrique, il suffit de la construire d'un seul côté, puis de \og retourner le patron \fg.
+
+\begin{methode}[Réduire le domaine d'étude d'une fonction paire ou impaire]
+Pour étudier une fonction $f$ définie sur un ensemble $D_f$ symétrique par rapport à $0$ :
+\begin{enumerate}
+\item \textbf{Vérifier la parité} de $f$ : calculer $f(-x)$ et le comparer à $f(x)$.
+\item \textbf{Restreindre l'étude} à la moitié positive du domaine : $D_f \cap [0\,;\,+\infty[$. On y calcule les valeurs, on y étudie le sens de variation, on y trace la demi-courbe.
+\item \textbf{Compléter par symétrie} :
+\begin{itemize}
+\item si $f$ est \cle{paire}, on complète la courbe par \cle{symétrie axiale} d'axe l'axe des ordonnées ;
+\item si $f$ est \cle{impaire}, on complète la courbe par \cle{symétrie centrale} de centre l'origine $O$.
+\end{itemize}
+\item \textbf{Conclure} sur tout le domaine $D_f$ : tableau de valeurs complet, tableau de variations complet, courbe complète.
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Bien choisir la bonne symétrie]
+L'erreur la plus fréquente au Probatoire est de compléter la courbe d'une fonction \emph{impaire} par une symétrie \emph{axiale} (par rapport à l'axe des ordonnées), comme si elle était paire. Retiens bien :
+\begin{itemize}
+\item fonction \textbf{paire} $\Rightarrow$ symétrie \textbf{axiale} (axe des ordonnées) : les points $(x\,;\,f(x))$ et $(-x\,;\,f(x))$ sont à la \emph{même hauteur} ;
+\item fonction \textbf{impaire} $\Rightarrow$ symétrie \textbf{centrale} (centre $O$) : les points $(x\,;\,f(x))$ et $(-x\,;\,-f(x))$ sont à des hauteurs \emph{opposées}.
+\end{itemize}
+Avant de compléter une courbe, écris toujours sur ta copie : \og $f$ est paire (resp. impaire), donc sa courbe admet ... pour élément de symétrie \fg.
+\end{attention}
+
+\courssub{Parité et sens de variation}
+
+\textbf{Intuition.} La symétrie ne transmet pas seulement les \emph{valeurs} de la fonction : elle transmet aussi son \emph{comportement} (montée ou descente). Mais attention, la transmission dépend du type de symétrie.
+
+Prenons la fonction carré $f(x)=x^2$, qui est paire. Sur $[0\,;\,+\infty[$, elle est croissante (la courbe monte). Par symétrie axiale, la branche de gauche est le \og miroir \fg{} de la branche de droite : un miroir transforme une montée en descente. Donc $f$ est décroissante sur $]-\infty\,;\,0]$. Les variations sont \emph{opposées}.
+
+Prenons maintenant la fonction cube $g(x)=x^3$, qui est impaire. Sur $[0\,;\,+\infty[$, elle est croissante. Par symétrie centrale (demi-tour autour de $O$), une montée reste une montée : $g$ est aussi croissante sur $]-\infty\,;\,0]$. Les variations sont \emph{les mêmes}.
+
+\begin{propriete}[Parité et variations (admise)]
+Soit $f$ une fonction définie sur un ensemble $D_f$ symétrique par rapport à $0$.
+\begin{itemize}
+\item Si $f$ est \cle{paire}, alors $f$ a des variations \textbf{opposées} sur $D_f \cap [0\,;\,+\infty[$ et sur $D_f \cap \,]-\infty\,;\,0]$ : croissante d'un côté, décroissante de l'autre.
+\item Si $f$ est \cle{impaire}, alors $f$ a \textbf{les mêmes variations} sur $D_f \cap [0\,;\,+\infty[$ et sur $D_f \cap \,]-\infty\,;\,0]$ : croissante des deux côtés, ou décroissante des deux côtés.
+\end{itemize}
+Cette propriété est admise à ce niveau ; on l'illustrera sur des exemples et on pourra la vérifier graphiquement.
+\end{propriete}
+
+\begin{aretenir}[Ce que la parité permet de diviser par deux]
+Quand $f$ est paire ou impaire, on ne fait qu'\textbf{une moitié du travail} :
+\begin{itemize}
+\item une seule moitié du \textbf{tableau de valeurs} : $f(-x)$ se déduit de $f(x)$ sans nouveau calcul ;
+\item une seule moitié de l'\textbf{étude des variations} : le sens de variation de l'autre côté s'en déduit ;
+\item une seule moitié du \textbf{tracé} : on trace pour $x \geq 0$, puis on complète par symétrie.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Exemple complet guidé : $f(x) = x^2 - 2|x|$}
+
+\begin{exoresolu}[Étude complète de $f(x) = x^2 - 2|x|$]
+\textbf{Énoncé.} Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x) = x^2 - 2|x|$.
+\begin{enumerate}
+\item Étudier la parité de $f$.
+\item Dresser un tableau de valeurs réduit pour $x \in \{0\,;\,1\,;\,2\,;\,3\}$, puis compléter pour $x < 0$ sans calcul.
+\item Tracer la courbe de $f$ sur $[-3\,;\,3]$.
+\item Donner le tableau de variations de $f$ sur $\mathbb{R}$ (on admet que $f$ est décroissante sur $[0\,;\,1]$ et croissante sur $[1\,;\,+\infty[$).
+\end{enumerate}
+\tcblower
+\textbf{Solution détaillée.}
+
+\textbf{1. Parité.} L'ensemble de définition $\mathbb{R}$ est symétrique par rapport à $0$. Pour tout réel $x$ :
+\[ f(-x) = (-x)^2 - 2|-x| = x^2 - 2|x| = f(x). \]
+Donc $f$ est \cle{paire} : sa courbe est symétrique par rapport à l'axe des ordonnées. On peut restreindre l'étude à $[0\,;\,+\infty[$.
+
+\textbf{2. Tableau de valeurs réduit.} Pour $x \geq 0$, on a $|x| = x$, donc $f(x) = x^2 - 2x$.
+\begin{align*}
+f(0) &= 0 - 0 = 0 & f(1) &= 1 - 2 = -1\\
+f(2) &= 4 - 4 = 0 & f(3) &= 9 - 6 = 3
+\end{align*}
+Comme $f$ est paire, $f(-x) = f(x)$ : on obtient \emph{gratuitement} $f(-1) = -1$, $f(-2) = 0$, $f(-3) = 3$.
+
+\begin{center}
+\begin{tabular}{|c|ccccccc|}
+\hline
+$x$ & $-3$ & $-2$ & $-1$ & $0$ & $1$ & $2$ & $3$ \\
+\hline
+$f(x)$ & $3$ & $0$ & $-1$ & $0$ & $-1$ & $0$ & $3$ \\
+\hline
+ & \multicolumn{3}{c|}{\textit{obtenus par symétrie}} & & \multicolumn{3}{c|}{\textit{calculés}} \\
+\hline
+\end{tabular}
+\end{center}
+
+\textbf{3. Tracé.} On place les points pour $x \geq 0$, on trace la demi-courbe, puis on complète par symétrie axiale (voir la figure ci-dessous).
+
+\textbf{4. Variations.} Sur $[0\,;\,+\infty[$ : $f$ décroît sur $[0\,;\,1]$ puis croît sur $[1\,;\,+\infty[$. Comme $f$ est paire, les variations sont \emph{opposées} de l'autre côté : $f$ croît sur $[-1\,;\,0]$ et décroît sur $]-\infty\,;\,-1]$.
+
+\begin{center}
+\begin{tabular}{|c|ccccc|}
+\hline
+$x$ & $-3$ & & $0$ & & $3$ \\
+\hline
+ & & $-1$ & & $1$ & \\
+\hline
+$f$ & $3$ $\searrow$ & $-1$ $\nearrow$ & $0$ $\searrow$ & $-1$ $\nearrow$ & $3$ \\
+\hline
+\end{tabular}
+\end{center}
+
+On observe deux minima égaux à $-1$, atteints en $x = -1$ et $x = 1$ : la symétrie se lit directement dans le tableau.
+\end{exoresolu}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[width=0.48\linewidth,axis lines=middle,xlabel={$x$},ylabel={$y$},xmin=-3.5,xmax=3.5,ymin=-1.8,ymax=3.8,xtick={-3,-2,-1,1,2,3},ytick={-1,1,2,3},tick label style={font=\scriptsize},title={Étape 1 : demi-courbe ($x \geq 0$)},title style={font=\small}]
+\addplot[popcurve,domain=0:3.2,samples=100]{x^2-2*x};
+\addplot[popmuted,dashed,domain=-3.2:0,samples=2]{0};
+\end{axis}
+\end{tikzpicture}\hfill
+\begin{tikzpicture}
+\begin{axis}[width=0.48\linewidth,axis lines=middle,xlabel={$x$},ylabel={$y$},xmin=-3.5,xmax=3.5,ymin=-1.8,ymax=3.8,xtick={-3,-2,-1,1,2,3},ytick={-1,1,2,3},tick label style={font=\scriptsize},title={Étape 2 : courbe complétée par symétrie},title style={font=\small}]
+\addplot[popcurve,domain=0:3.2,samples=100]{x^2-2*x};
+\addplot[poporange,thick,domain=-3.2:0,samples=100]{x^2+2*x};
+\addplot[popmuted,dashed] coordinates {(-1,-1) (1,-1)};
+\end{axis}
+\end{tikzpicture}
+\legende{Construction de la courbe de $f(x)=x^2-2|x|$ : on trace d'abord la moitié pour $x \geq 0$, puis on complète par symétrie axiale (branche orange) car $f$ est paire.}
+\end{popfigure}
+
+\courssub{Tableau de valeurs réduit : une moitié de calculs suffit}
+
+Reprenons le tableau de valeurs de l'exemple précédent. La parité agit comme une \og photocopieuse \fg{} : chaque valeur calculée à droite de $0$ donne immédiatement la valeur à gauche.
+
+\begin{center}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\rowcolor{popblueL}
+$x$ & $0$ & $1$ & $2$ & $3$ \\
+\hline
+$f(x) = x^2 - 2x$ (calculé) & $0$ & $-1$ & $0$ & $3$ \\
+\hline
+$f(-x) = f(x)$ (gratuit) & $0$ & $f(-1)=-1$ & $f(-2)=0$ & $f(-3)=3$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Pour une fonction \emph{impaire}, le principe est le même, à un détail près : $f(-x) = -f(x)$, donc la valeur gratuite est l'\emph{opposée} de la valeur calculée. Par exemple, pour $g(x) = x^3$ : $g(2) = 8$, donc $g(-2) = -8$.
+
+\begin{attention}[Conditions d'application]
+Avant de réduire le domaine d'étude, deux vérifications sont \textbf{indispensables} :
+\begin{itemize}
+\item l'ensemble de définition doit être \emph{symétrique par rapport à $0$} (si $x \in D_f$ alors $-x \in D_f$) ;
+\item il faut avoir \emph{démontré} la parité par le calcul de $f(-x)$, pas seulement l'avoir devinée sur la courbe.
+\end{itemize}
+Si $f$ n'est ni paire ni impaire, aucune réduction n'est possible : il faut étudier la fonction sur tout $D_f$.
+\end{attention}
+
+\courssub{Intérêt concret : économie de temps et de calcul}
+
+\begin{savaistu}[Les ponts et la symétrie]
+Les ingénieurs qui conçoivent les ponts — par exemple les ouvrages sur le Wouri à Douala — tracent des \emph{courbes de charge} qui décrivent comment les efforts se répartissent le long de l'ouvrage. Quand le pont et son chargement sont symétriques, ces courbes sont paires : les ingénieurs ne calculent alors que la \textbf{moitié des efforts}, sur une seule moitié du pont, et déduisent l'autre moitié par symétrie. Cela divise par deux le temps de calcul et réduit les risques d'erreur. Le même principe s'applique en électricité (signaux symétriques), en mécanique (pièces tournées) et en chaudronnerie (gabarits).
+\end{savaistu}
+
+Dans la vie artisanale et commerciale, le même réflexe est précieux. Un menuisier qui fabrique une table symétrique ne mesure qu'un seul côté ; un commerçant dont le bénéfice dépend d'une quantité $x$ au carré (fonction paire en $x$) peut n'étudier que les valeurs positives, qui sont les seules concrètement utiles, tout en sachant que la courbe complète s'obtient par symétrie. Dans les problèmes d'\textbf{optimisation} (chercher un maximum de bénéfice ou un minimum de coût), repérer une parité permet de localiser l'extremum deux fois plus vite : si le minimum d'une fonction paire est atteint en $x = a > 0$, il est aussi atteint en $x = -a$, avec la \emph{même valeur}.
+
+\begin{exercice}[À toi de jouer]
+Soit $g$ la fonction définie sur $\mathbb{R}$ par $g(x) = x^3 - 3x$.
+\begin{enumerate}
+\item Montrer que $g$ est impaire.
+\item Calculer $g(0)$, $g(1)$, $g(2)$ et en déduire sans calcul $g(-1)$ et $g(-2)$.
+\item On admet que $g$ est décroissante sur $[0\,;\,1]$ et croissante sur $[1\,;\,+\infty[$. Donner, en le justifiant, le sens de variation de $g$ sur $]-\infty\,;\,0]$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+\textbf{1.} $\mathbb{R}$ est symétrique par rapport à $0$ et, pour tout réel $x$ :
+\[ g(-x) = (-x)^3 - 3(-x) = -x^3 + 3x = -(x^3 - 3x) = -g(x), \]
+donc $g$ est impaire.
+
+\textbf{2.} $g(0) = 0$ ; $g(1) = 1 - 3 = -2$ ; $g(2) = 8 - 6 = 2$. Comme $g$ est impaire, $g(-x) = -g(x)$, donc $g(-1) = -g(1) = 2$ et $g(-2) = -g(2) = -2$.
+
+\textbf{3.} Une fonction impaire a les \emph{mêmes variations} sur les deux moitiés du domaine. Donc $g$ est décroissante sur $[-1\,;\,0]$ et croissante sur $]-\infty\,;\,-1]$.
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item Fonction paire ou impaire $\Rightarrow$ on étudie sur $D_f \cap [0\,;\,+\infty[$ seulement.
+\item Paire : on complète par symétrie \emph{axiale}, variations \emph{opposées}, $f(-x) = f(x)$.
+\item Impaire : on complète par symétrie \emph{centrale}, variations \emph{identiques}, $f(-x) = -f(x)$.
+\item Le tableau de valeurs, l'étude des variations et le tracé sont tous trois divisés par deux.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Applications concrètes et synthèse}
+
+Après avoir établi les critères algébriques de parité et montré comment ils permettent de réduire le domaine d'étude d'une fonction, nous passons maintenant à l'exploitation concrète de ces notions. En classe de Première technique, les mathématiques ne sont pas une fin en soi : elles sont un outil pour modéliser, comprendre et optimiser des situations professionnelles. Cette section met en œuvre les savoir-faire du programme — « Appliquer les notions de l'unité à des situations concrètes » et « Rédiger et justifier une démarche » — à travers trois situations ancrées dans le réel camerounais, suivies d'une synthèse rigoureuse et d'un modèle de rédaction pour l'examen.
+
+\courssub{Situation 1 : Le bénéfice du vendeur de beignets — fonction paire}
+
+Imaginons un vendeur de beignets installé près du rond-point Deïdo à Douala. Son bénéfice journalier (en unités monétaires, par exemple centaines de F CFA) dépend de l'écart $x$ (en dizaines de beignets) par rapport à sa production optimale quotidienne. S'il produit exactement l'optimum ($x=0$), il écoule tout son stock sans perte ni invendu. S'il produit plus ($x>0$), les invendus représentent une perte ; s'il produit moins ($x<0$), il manque des ventes potentielles. Une modélisation simple par une fonction quadratique concave donne :
+\[
+B(x) = -x^2 + 500 \qquad \text{avec } D_B = [-20 ; 20] \text{ (bornes physiques de production).}
+\]
+
+\begin{exemplebox}[Exploitation de la parité du bénéfice $B(x) = -x^2 + 500$]
+\textbf{Énoncé.} On considère la fonction $B(x) = -x^2 + 500$ définie sur $[-20 ; 20]$.
+\begin{enumerate}
+    \item Montrer que $B$ est une fonction paire sur son ensemble de définition.
+    \item En déduire l'élément de symétrie de la courbe $\mathcal{C}_B$ dans un repère orthonormé.
+    \item Le vendeur veut connaître son bénéfice s'il produit 15 dizaines de beignets \textbf{de moins} que l'optimum. Utiliser la parité pour répondre sans recalculer $B(-15)$.
+    \item Quel est le bénéfice maximal ? Pour quelle production ?
+\end{enumerate}
+
+\textbf{Solution détaillée.}
+\begin{enumerate}
+    \item \textbf{Étude de la parité.} L'ensemble de définition $D_B = [-20 ; 20]$ est symétrique par rapport à $0$ (si $x \in D_B$ alors $-x \in D_B$). Pour tout $x \in D_B$ :
+    \[
+    B(-x) = -(-x)^2 + 500 = -x^2 + 500 = B(x).
+    \]
+    Donc $B$ est \textbf{paire} sur $D_B$.
+    \item \textbf{Symétrie graphique.} La courbe $\mathcal{C}_B$ est symétrique par rapport à l'axe des ordonnées (l'axe $Oy$, d'équation $x=0$).
+    \item \textbf{Exploitation concrète.} Produire 15 dizaines de moins que l'optimum correspond à $x = -15$. Par parité, $B(-15) = B(15)$. Or $B(15) = -15^2 + 500 = -225 + 500 = 275$. Le bénéfice est donc de \textbf{275} (unités monétaires). On a évité le calcul avec un nombre négatif.
+    \item \textbf{Maximum.} La fonction est un trinôme du second degré à coefficient directeur négatif ($a=-1$). Son maximum est atteint au sommet, d'abscisse $x=0$ (production optimale). La valeur maximale est $B(0) = 500$.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    width=\linewidth,
+    height=8cm,
+    axis lines=middle,
+    xlabel=$x$ (écart en dizaines),
+    ylabel=$B(x)$ (bénéfice),
+    xlabel style={anchor=north east},
+    ylabel style={anchor=north east},
+    domain=-22:22,
+    samples=200,
+    xmin=-22, xmax=22,
+    ymin=-100, ymax=550,
+    xtick={-20,-10,0,10,20},
+    ytick={0,100,200,300,400,500},
+    grid=major,
+    grid style={popline},
+    tick label style={font=\small},
+    clip=false
+]
+\addplot[popcurve, thick, domain=-20:20] {-x^2 + 500};
+% Axis of symmetry
+\draw[poppurple, dashed, thick] (0,-100) -- (0,550) node[above, font=\small, poppurple] {Axe de symétrie ($Oy$)};
+% Annotations
+\node[popblue, anchor=south, font=\small] at (0,520) {Bénéfice max = 500};
+\node[poporange, anchor=north west, font=\small] at (15, 275) {$B(15)=275$};
+\node[poporange, anchor=north east, font=\small] at (-15, 275) {$B(-15)=275$};
+\draw[poporange, <->] (-15, 250) -- (15, 250) node[midway, below, font=\small] {Symétrie par rapport à $Oy$};
+% Points
+\addplot[only marks, mark=*, mark size=2pt, popblue] coordinates {(0,500) (15,275) (-15,275)};
+\end{axis}
+\end{tikzpicture}
+\legende{Courbe du bénéfice $B(x)=-x^2+500$ : symétrie par rapport à l'axe des ordonnées. Produire 15 dizaines de plus ou de moins que l'optimum donne le même bénéfice (275).}
+\end{popfigure}
+
+\courssub{Situation 2 : Lecture de la symétrie d'un motif de pagne et d'un portail en fer forgé}
+
+L'artisanat camerounais regorge d'objets à symétrie axiale : les motifs de pagne (tissu wax, ndop, toghu), les portails en fer forgé des concessions à Yaoundé ou Bafoussam, les sculptures sur bois. Modéliser le profil d'un motif ou d'une barre de portail par une fonction permet d'industrialiser la découpe (commande numérique, laser, plasma).
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, every node/.style={font=\small}]
+% Axes
+\draw[->, popline] (-5,0) -- (5,0) node[right] {$x$};
+\draw[->, popline] (0,-3) -- (0,3.5) node[above] {$y$};
+\draw[poppurple, dashed, thick] (0,-3) -- (0,3.5) node[above, poppurple] {Axe de symétrie};
+% Motif symétrique (simulation d'un motif de pagne stylisé : deux boucles symétriques)
+\draw[popblue, very thick, smooth, samples=100, domain=-4:4] plot (\x, {1.5*sin(\x*45)*exp(-0.1*\x*\x)});
+\draw[poporange, very thick, smooth, samples=100, domain=-4:4] plot (\x, {-1.2*cos(\x*45)*exp(-0.1*\x*\x)});
+% Points de repère
+\foreach \x in {-3,-1,1,3} {
+    \draw[popmuted] (\x, -0.1) -- (\x, 0.1);
+    \node[below, popmuted] at (\x, 0) {\x};
+}
+\foreach \y in {-2,-1,1,2} {
+    \draw[popmuted] (-0.1, \y) -- (0.1, \y);
+    \node[left, popmuted] at (0, \y) {\y};
+}
+% Annotations
+\node[popblue, align=center] at (-4, 2.5) {Profil haut\\du motif};
+\node[poporange, align=center] at (-4, -2.5) {Profil bas\\du motif};
+\node[popgreen, align=center, font=\bfseries] at (0, -3.5) {Repère placé sur\\l'axe de symétrie};
+\end{tikzpicture}
+\legende{Schéma simplifié : un motif de pagne (ou barre de portail) symétrique modélisé par deux courbes $y=f(x)$ et $y=g(x)$ paires. Le repère est centré sur l'axe de symétrie vertical.}
+\end{popfigure}
+
+Dans ce contexte, la fonction $f$ qui décrit le bord supérieur du motif est \textbf{paire} : $f(-x)=f(x)$. L'axe de symétrie de la courbe est l'axe des ordonnées ($Oy$). Cela signifie que pour fabriquer la moitié droite du motif, l'artisan (ou la machine) n'a qu'à programmer la moitié gauche et appliquer une symétrie axiale. C'est une économie massive de temps de programmation et de vérification.
+
+\courssub{Situation 3 : Températures relevées symétriquement autour de midi}
+
+Un technicien en météorologie ou en génie climatique relève la température toutes les heures de 6h à 18h. Il observe que la courbe tracée admet un axe de symétrie vertical passant par midi (12h). On place l'origine du temps à midi : $t=0$ correspond à 12h. Les relevés donnent une fonction $T(t)$ définie sur $[-6 ; 6]$ (de 6h à 18h).
+
+La symétrie observée signifie que la température à 11h ($t=-1$) est égale à celle à 13h ($t=1$), celle à 10h ($t=-2$) égale à 14h ($t=2$), etc. Algébriquement : $T(-t) = T(t)$. La fonction $T$ est \textbf{paire} sur $[-6 ; 6]$. Son axe de symétrie est la droite $t=0$ (l'axe des ordonnées dans le repère centré sur midi).
+
+\begin{attention}[Piège : Choix de l'origine du repère]
+La symétrie par rapport à midi n'apparaît comme une parité ($f(-x)=f(x)$) \textbf{que si l'on place l'origine des abscisses à midi}. Si l'on garde l'heure légale comme abscisse ($x \in [6;18]$), l'ensemble de définition n'est \textbf{pas symétrique par rapport à $0$}. La fonction n'est donc \textbf{ni paire, ni impaire} (même si $f(11)=f(13)$ par symétrie par rapport à 12). En revanche, sa courbe admet un \textbf{axe de symétrie d'équation $x=12$}. Au Probatoire, lisez attentivement l'énoncé : « Étudier la parité » suppose un ensemble de définition symétrique par rapport à $0$. « Déterminer les éléments de symétrie de la courbe » cherche l'axe (ou le centre) quel que soit le repère.
+\end{attention}
+
+\courssub{Synthèse : Tableau récapitulatif et rédaction type}
+
+\begin{aretenir}[Parité et éléments de symétrie — Tableau de synthèse]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Type de fonction} & \textbf{Condition algébrique} & \textbf{Élément de symétrie de $\mathcal{C}_f$} & \textbf{Conséquence pratique (réduction domaine)} \\ \hline
+\textbf{Paire} & $D_f$ symétrique par rapport à $0$ \textbf{et} $\forall x \in D_f,\ f(-x)=f(x)$ & Symétrie axiale par rapport à l'axe des ordonnées ($Oy$, équation $x=0$) & Étudier $f$ sur $[0 ; +\infty[$ (ou partie positive de $D_f$) suffit. Le reste se déduit par symétrie. \\ \hline
+\textbf{Impaire} & $D_f$ symétrique par rapport à $0$ \textbf{et} $\forall x \in D_f,\ f(-x)=-f(x)$ & Symétrie centrale par rapport à l'origine $O(0;0)$ (rotation de $180^\circ$) & Étudier $f$ sur $[0 ; +\infty[$ suffit. Le reste se déduit par symétrie centrale. \\ \hline
+\textbf{Ni paire, ni impaire} & $D_f$ non symétrique \textbf{ou} conditions non vérifiées & Aucun élément de symétrie garanti par la parité (peut en avoir d'autres, ex: $x=12$) & Pas de réduction possible via la parité. Étudier sur tout $D_f$. \\ \hline
+\end{tabularx}
+\end{center}
+\vspace{0.2cm}
+\textbf{Rappel important :} La première étape est \textbf{toujours} de vérifier que l'ensemble de définition $D_f$ est symétrique par rapport à $0$ (i.e. $x \in D_f \implies -x \in D_f$). Sans cela, la fonction n'est ni paire, ni impaire.
+\end{aretenir}
+
+\begin{methode}[Modèle de rédaction complète pour justifier la parité (copie type Probatoire)]
+\textbf{Étape 1 : Énoncer l'ensemble de définition et sa symétrie.}
+\begin{quote}
+« Soit $f$ définie sur $D_f = [\dots]$. Cet ensemble est symétrique par rapport à $0$ car si $x \in D_f$ alors $-x \in D_f$. »
+\end{quote}
+
+\textbf{Étape 2 : Calculer $f(-x)$ et le comparer à $f(x)$.}
+\begin{quote}
+« Pour tout $x \in D_f$, on calcule :
+\[
+f(-x) = \dots \text{ (calculs détaillés) } \dots = f(x) \quad \text{(ou } = -f(x) \text{ pour impaire).}
+\] »
+\end{quote}
+
+\textbf{Étape 3 : Conclure sur la nature de la fonction.}
+\begin{quote}
+« Donc $f$ est une fonction \textbf{paire} (resp. \textbf{impaire}) sur $D_f$. »
+\end{quote}
+
+\textbf{Étape 4 : Déduire l'élément de symétrie de la courbe $\mathcal{C}_f$.}
+\begin{quote}
+« La courbe $\mathcal{C}_f$ admet donc pour élément de symétrie : l'axe des ordonnées ($Oy$) si $f$ est paire ; le point origine $O$ si $f$ est impaire. »
+\end{quote}
+
+\textbf{Étape 5 (si demandé) : Réduire le domaine d'étude.}
+\begin{quote}
+« On pourra donc réduire l'étude de $f$ (variations, signe, tracé) à l'intervalle $[0 ; \dots]$ (partie positive de $D_f$). »
+\end{quote}
+\end{methode}
+
+\begin{exoresolu}[Application du modèle à $B(x) = -x^2 + 500$]
+\textbf{Énoncé.} Étudier la parité de la fonction $B(x) = -x^2 + 500$ sur $D_B = [-20 ; 20]$ et en déduire l'élément de symétrie de sa courbe.
+
+\textbf{Solution.}
+\begin{enumerate}
+    \item \textbf{Ensemble de définition.} $D_B = [-20 ; 20]$. Pour tout $x \in [-20 ; 20]$, $-20 \le x \le 20 \implies -20 \le -x \le 20$, donc $-x \in D_B$. $D_B$ est symétrique par rapport à $0$.
+    \item \textbf{Calcul de $B(-x)$.} Soit $x \in D_B$.
+    \[
+    B(-x) = -(-x)^2 + 500 = -x^2 + 500 = B(x).
+    \]
+    \item \textbf{Conclusion.} $B$ est une fonction \textbf{paire} sur $[-20 ; 20]$.
+    \item \textbf{Symétrie graphique.} La courbe $\mathcal{C}_B$ est symétrique par rapport à l'axe des ordonnées ($Oy$).
+    \item \textbf{Réduction.} L'étude de $B$ peut se limiter à l'intervalle $[0 ; 20]$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Bilan des savoir-faire de la leçon et auto-évaluation rapide}
+
+À l'issue de cette leçon « Fonctions : Généralités — Parité et symétrie », vous devez être capable de :
+
+\begin{itemize}
+    \item \textbf{Identifier} l'ensemble de définition $D_f$ et vérifier sa symétrie par rapport à $0$.
+    \item \textbf{Calculer} $f(-x)$ correctement (attention aux parenthèses, aux signes, aux puissances).
+    \item \textbf{Comparer} $f(-x)$ à $f(x)$ et à $-f(x)$ pour classifier la fonction (paire, impaire, ni l'une ni l'autre).
+    \item \textbf{Énoncer} l'élément de symétrie de la courbe : axe $Oy$ (paire) ou centre $O$ (impaire).
+    \item \textbf{Exploiter} la symétrie pour réduire le domaine d'étude (tableau de variation, signe, tracé).
+    \item \textbf{Modéliser} une situation concrète (bénéfice, température, profil technique) par une fonction dont on détermine la parité.
+    \item \textbf{Rédiger} une justification complète, structurée et rigoureuse (modèle de la \texttt{methode} ci-dessus).
+\end{itemize}
+
+\begin{savaistu}[Au Probatoire technique : la parité, un investissement rentable]
+Dans les sujets du Probatoire (Mathématiques Série Technique), une question « Étudier la parité de la fonction $f$ » vaut souvent \textbf{3 à 4 points} sur 20. C'est une question \textbf{standardisée} : la méthode est toujours la même (vérifier $D_f$, calculer $f(-x)$, conclure). Les élèves qui maîtrisent la rédaction type (la \texttt{methode} ci-dessus) gagnent ces points \textbf{quasiment systématiquement} en 5 minutes. C'est le meilleur rapport « effort / points » de l'épreuve. Ne la négligez pas : entraînez-vous à écrire la démonstration complète sans sauter d'étape, même si cela vous semble « évident ».
+\end{savaistu}
+
+\begin{attention}[Erreur fréquente : Confondre graphique et algébrique]
+\begin{itemize}
+    \item \textbf{Interdit :} « La courbe a l'air symétrique, donc la fonction est paire. » $\rightarrow$ \textbf{0 point.} La symétrie graphique est une \textbf{conséquence}, pas une \textbf{preuve}.
+    \item \textbf{Interdit :} Oublier de vérifier que $D_f$ est symétrique. Si $D_f = [0; 5]$, la fonction n'est \textbf{ni paire, ni impaire} (même si la formule donne $f(-x)=f(x)$), car $-x \notin D_f$.
+    \item \textbf{Interdit :} Écrire $f(-x) = -x^2 + 500 = f(x)$ sans avoir écrit l'étape $f(-x) = -(-x)^2 + 500$. Le correcteur attend la substitution explicite.
+\end{itemize}
+\end{attention}
+
+\textbf{Auto-évaluation rapide (cochez mentalement) :}
+\begin{enumerate}
+    \item Je sais écrire la définition d'une fonction paire/impaire sans regarder le cours.
+    \item Je sais placer l'origine du repère pour faire apparaître une symétrie (ex: midi $\to t=0$).
+    \item Je sais tracer la courbe d'une fonction paire en ne calculant que pour $x \ge 0$.
+    \item Je peux expliquer à un camarade pourquoi $f(x)=x^3-x$ est impaire et $g(x)=x^2+1$ est paire.
+    \item Je connais le modèle de rédaction en 4-5 étapes pour l'examen.
+\end{enumerate}
+Si une case n'est pas cochée, relisez la \texttt{methode} et refaites l'\texttt{exemplebox} des beignets sur une feuille blanche.
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Leçon 20 : Fonctions — Généralités : Parité et symétrie}
+
+\courssub{Objectifs de la leçon}
+À l'issue de cette leçon, l'élève sera capable de :
+\begin{itemize}
+\item rappeler la définition de l'ensemble de définition d'une fonction et le vocabulaire associé ;
+\item définir une fonction \cle{paire} et une fonction \cle{impaire}, en préciser les conditions (ensemble de définition symétrique) et en déduire les éléments de symétrie de leurs courbes (axe des ordonnées, origine) ;
+\item vérifier la parité d'une fonction donnée par une expression algébrique ;
+\item utiliser la symétrie pour \cle{réduire le domaine d'étude} d'une fonction (tableau de valeurs, tracé, résolution d'équations/inéquations) ;
+\item identifier et démontrer l'existence d'un \cle{centre de symétrie} pour une courbe (relation $f(a-h)+f(a+h)=2b$) ;
+\item modéliser une situation technique (ferronnerie, construction) et exploiter la symétrie pour optimiser les calculs (longueurs, coûts, traçage).
+\end{itemize}
+
+\courssub{Rappels : ensemble de définition et parité}
+
+\begin{definition}[Ensemble de définition]
+L'\cle{ensemble de définition} d'une fonction $f$, noté $D_f$, est l'ensemble des valeurs réelles $x$ pour lesquelles $f(x)$ existe (a un sens). Pour une fonction définie par une expression algébrique, on exclut les valeurs qui annulent un dénominateur, qui rendent négatif le radicande d'une racine carrée, etc.
+\end{definition}
+
+\begin{propriete}[Ensemble de définition symétrique]
+Un ensemble $D \subset \mathbb{R}$ est \cle{symétrique par rapport à $0$} si pour tout $x \in D$, son opposé $-x$ appartient aussi à $D$. C'est une condition \textbf{nécessaire} pour étudier la parité d'une fonction.
+\end{propriete}
+
+\begin{propriete}[Fonction paire]
+Soit $f$ une fonction dont l'ensemble de définition $D_f$ est symétrique par rapport à $0$.
+$f$ est \cle{paire} si et seulement si, pour tout $x \in D_f$, $f(-x) = f(x)$.
+\emph{Conséquence graphique :} La courbe représentative $\mathcal{C}_f$ est symétrique par rapport à \cle{l'axe des ordonnées} (axe $Oy$).
+\end{propriete}
+
+\begin{exemplebox}[Exemple de fonction paire]
+$f(x) = x^2 + 1$ sur $\mathbb{R}$. $D_f = \mathbb{R}$ (symétrique). $f(-x) = (-x)^2 + 1 = x^2 + 1 = f(x)$. Donc $f$ est paire.
+\end{exemplebox}
+
+\courssub{Fonctions impaires}
+
+\begin{propriete}[Fonction impaire]
+Soit $f$ une fonction dont l'ensemble de définition $D_f$ est symétrique par rapport à $0$.
+$f$ est \cle{impaire} si et seulement si, pour tout $x \in D_f$, $f(-x) = -f(x)$.
+\emph{Conséquence graphique :} La courbe représentative $\mathcal{C}_f$ est symétrique par rapport à \cle{l'origine} $O$ (centre de symétrie $O$). C'est une rotation d'angle $\pi$ (demi-tour) autour de $O$.
+\end{propriete}
+
+\begin{exemplebox}[Exemple de fonction impaire]
+$f(x) = x^3 - 2x$ sur $\mathbb{R}$. $D_f = \mathbb{R}$ (symétrique). $f(-x) = (-x)^3 - 2(-x) = -x^3 + 2x = -(x^3 - 2x) = -f(x)$. Donc $f$ est impaire.
+\end{exemplebox}
+
+\begin{attention}[Piège : vérifier $D_f$ avant tout calcul]
+Une fonction n'est ni paire ni impaire si son ensemble de définition n'est pas symétrique par rapport à $0$.
+Exemple : $f(x) = \sqrt{x+1}$ a pour $D_f = [-1; +\infty[$, non symétrique ($2 \in D_f$ mais $-2 \notin D_f$). On ne calcule même pas $f(-x)$.
+\end{attention}
+
+\courssub{Éléments de symétrie d'une courbe : cas général}
+
+\begin{propriete}[Axe de symétrie (droite $x = a$)]
+La courbe $\mathcal{C}_f$ admet la droite $x = a$ pour axe de symétrie si, pour tout $h$ tel que $a-h$ et $a+h$ appartiennent à $D_f$ :
+\[ f(a-h) = f(a+h). \]
+C'est le cas d'une fonction paire translatée horizontalement.
+\end{propriete}
+
+\begin{propriete}[Centre de symétrie (point $\Omega(a;b)$)]
+La courbe $\mathcal{C}_f$ admet le point $\Omega(a;b)$ pour \cle{centre de symétrie} si, pour tout $h$ tel que $a-h$ et $a+h$ appartiennent à $D_f$ :
+\[ f(a-h) + f(a+h) = 2b. \]
+C'est le cas d'une fonction impaire translatée (vecteur $\overrightarrow{O\Omega}$).
+\end{propriete}
+
+\begin{methode}[Démontrer l'existence d'un centre de symétrie $\Omega(a;b)$]
+\begin{enumerate}
+\item Déterminer $D_f$ et vérifier que pour tout $h \neq 0$ (ou $h$ tel que $a\pm h \in D_f$), les deux nombres $a-h$ et $a+h$ sont dans $D_f$.
+\item Calculer $f(a-h) + f(a+h)$.
+\item Simplifier l'expression pour obtenir une constante $2b$.
+\item Conclure : la courbe admet $\Omega(a;b)$ pour centre de symétrie.
+\end{enumerate}
+\end{methode}
+
+\courssub{Parité et réduction du domaine d'étude}
+
+\begin{propriete}[Réduction du domaine d'étude]
+\begin{itemize}
+\item Si $f$ est \cle{paire} : il suffit d'étudier $f$ sur $[0; +\infty[ \cap D_f$ (valeurs positives). La courbe sur $]-\infty; 0]$ s'obtient par symétrie axiale par rapport à $Oy$.
+\item Si $f$ est \cle{impaire} : il suffit d'étudier $f$ sur $[0; +\infty[ \cap D_f$. La courbe sur $]-\infty; 0]$ s'obtient par symétrie centrale par rapport à $O$ (rotation d'angle $\pi$).
+\item Si $\mathcal{C}_f$ admet un centre $\Omega(a;b)$ : il suffit d'étudier $f$ sur un demi-domaine (ex: $[a; +\infty[ \cap D_f$).
+\end{itemize}
+\emph{Intérêt :} Diviser par deux le nombre de calculs (tableau de valeurs, limites, dérivées, tracé).
+\end{propriete}
+
+\courssub{Situation professionnelle : Le portail symétrique du lycée}
+
+\textbf{Contexte.} Le lycée technique de Bafoussam (région de l'Ouest) fait appel à M.~Tchoupo, ferronnier installé au quartier Kamdoum, pour fabriquer le portail d'entrée. Le portail a une largeur totale de \SI{6}{m}. Sa \cle{traverse supérieure} suit, dans un repère orthonormé $(O\,;\vec{\imath},\vec{\jmath})$ (origine $O$ au centre du portail, niveau du sol), la courbe de la fonction $f$ définie sur $[-3\,;3]$ par :
+\[ f(x)=ax^{2}+c \qquad (a, c \in \mathbb{R},\; x \text{ en mètres}). \]
+Le cahier des charges impose :
+\begin{itemize}
+\item hauteur au \textbf{centre} ($x=0$) : \SI{2}{m} ;
+\item hauteur aux \textbf{extrémités} ($x=-3$ et $x=3$) : \SI{0,5}{m}.
+\end{itemize}
+Des \textbf{montants verticaux} (barres de fer) relient le sol à la traverse aux abscisses $x=-2,\,-1,\,0,\,1,\,2$. Coût du mètre linéaire : \num{2500}~FCFA.
+
+\textbf{Prolongement.} Pour une console latérale, on étudie $g(x)=\dfrac{1}{x-4}+2$. M.~Tchoupo affirme que sa courbe admet un centre de symétrie $\Omega(4\,;2)$, permettant de découper la console en deux moitiés identiques par demi-tour. Vrai ou faux ?
+
+\courssub{Consignes}
+
+\begin{enumerate}
+\item \textbf{Modèle.} Traduire les mesures en équations sur $a,c$ ; déterminer $a,c$ et écrire $f(x)$.
+\item \textbf{Parité.} Préciser $D_f$, vérifier sa symétrie. Calculer $f(-x)$ et conclure sur la parité. Quel élément de symétrie pour $\mathcal{C}_f$ ? Justifier la symétrie du portail.
+\item \textbf{Tableau économique.} Compléter le tableau \textbf{en ne calculant que pour $x=0,1,2$} (parité pour le reste).
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|X|}\hline
+\rowcolor{popblueL} $x$ & $-3$ & $-2$ & $-1$ & $0$ & $1$ & $2$ & $3$ \\ \hline
+$f(x)$ & & & & & & & \\ \hline
+\end{tabularx}
+\end{center}
+\item \textbf{Tracé à l'échelle $1/50$.} Tracer $\mathcal{C}_f$ sur $[-3;3]$ (\SI{1}{m} réel = \SI{2}{cm} dessin). Placer points $x\ge 0$, déduire les autres par symétrie.
+\item \textbf{Longueurs et coût.} Calculer la longueur de chaque montant ($=f(x)$ m), la longueur totale, le coût.
+\item \textbf{Prolongement.} Pour $g$ : vérifier que $4\pm h \in D_g$ ($h\neq 0$), calculer $g(4-h)+g(4+h)$, conclure.
+\item \textbf{Conclusion rédigée.} 5 à 8 lignes : symétrie $\rightarrow$ économie calculs/mesures + esthétique/équilibre.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la leçon]
+\begin{itemize}
+\item \textbf{Fonction paire :} $D_f$ symétrique par rapport à $0$ et $\forall x\in D_f,\; f(-x)=f(x)$. Courbe symétrique par rapport à \cle{l'axe des ordonnées}.
+\item \textbf{Fonction impaire :} $D_f$ symétrique par rapport à $0$ et $\forall x\in D_f,\; f(-x)=-f(x)$. Courbe symétrique par rapport à \cle{l'origine} $O$.
+\item \textbf{Centre de symétrie $\Omega(a;b)$ :} $\forall h$ tel que $a\pm h\in D_f,\; f(a-h)+f(a+h)=2b$.
+\item \textbf{Axe de symétrie $x=a$ :} $\forall h$ tel que $a\pm h\in D_f,\; f(a-h)=f(a+h)$.
+\item \textbf{Réduction du domaine :} Si paire/impaire/centre de symétrie connu $\Rightarrow$ étude sur demi-domaine seulement.
+\item \textbf{Traduction concrète :} « Hauteur $H$ en $x=x_0$ » $\Leftrightarrow$ $f(x_0)=H$.
+\end{itemize}
+\end{aretenir}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.65, >=Stealth]
+% Axes
+\draw[->] (-7,0) -- (7,0) node[right] {$x$ (m)};
+\draw[->] (0,-0.5) -- (0,4.5) node[above] {$y$ (m)};
+% Grid
+\draw[popline, step=1] (-6.5,-0.5) grid (6.5,4);
+% Function f(x) = -1/6 x^2 + 2
+\draw[popcurve, thick, domain=-3:3, samples=100] plot (\x, {-1/6*\x*\x + 2});
+% Vertical bars (montants)
+\foreach \x in {-2,-1,0,1,2} {
+    \draw[poporange, thick] (\x,0) -- (\x, {-1/6*\x*\x + 2});
+    \node[poporange, below] at (\x,0) {\small $\x$};
+}
+% Key points
+\foreach \x/\y in {-3/0.5, -2/1.333, -1/1.833, 0/2, 1/1.833, 2/1.333, 3/0.5} {
+    \fill[popblue] (\x,\y) circle (3pt);
+}
+% Symmetry axis
+\draw[dashed, poppurple] (0,-0.5) -- (0,4.5) node[above, poppurple] {Axe de symétrie $(Oy)$};
+% Labels
+\node[below left] at (0,0) {$O$};
+\node[above left] at (0,2) {$2$};
+\node[right] at (3,0.5) {$0,5$};
+\end{tikzpicture}
+\legende{Portail : courbe $f(x)=-\frac{1}{6}x^2+2$ et montants verticaux (échelle réelle).}
+\end{popfigure}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.6, >=Stealth]
+% Axes for g(x) = 1/(x-4)+2
+\draw[->] (-1,0) -- (9,0) node[right] {$x$};
+\draw[->] (0,-3) -- (0,5) node[above] {$y$};
+% Asymptotes
+\draw[dashed, popmuted] (4,-3) -- (4,5) node[above, popmuted] {$x=4$};
+\draw[dashed, popmuted] (-1,2) -- (9,2) node[right, popmuted] {$y=2$};
+% Center of symmetry
+\fill[poppink] (4,2) circle (3pt) node[above right] {$\Omega(4;2)$};
+% Branches
+\draw[popcurve, thick, domain=-1:3.5, samples=100] plot (\x, {1/(\x-4)+2});
+\draw[popcurve, thick, domain=4.5:9, samples=100] plot (\x, {1/(\x-4)+2});
+% Symmetry illustration: points P and P'
+\coordinate (P) at (2, {1/(2-4)+2}); % (2, 1.5)
+\coordinate (Pp) at (6, {1/(6-4)+2}); % (6, 2.5)
+\draw[popgreen, dashed] (P) -- (4,2) -- (Pp);
+\fill[popgreen] (P) circle (2pt) node[below left] {$P$};
+\fill[popgreen] (Pp) circle (2pt) node[above right] {$P'$};
+\end{tikzpicture}
+\legende{Console : courbe $g(x)=\frac{1}{x-4}+2$, centre $\Omega(4;2)$ et symétrie centrale.}
+\end{popfigure}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Le portail symétrique du lycée — corrigé complet]
+\textbf{1. Détermination du modèle.}
+\tcblower
+La hauteur au centre donne $f(0)=2$ :
+\[ a\times 0^{2}+c=2 \quad\Longrightarrow\quad \boxed{c=2}. \]
+La hauteur à l'extrémité ($x=3$) donne $f(3)=0,5$ :
+\[ 9a+2=0,5 \;\Longrightarrow\; 9a=-1,5 \;\Longrightarrow\; a=-\frac{1,5}{9}=-\frac{1}{6}. \]
+Vérification à $x=-3$ : $f(-3)=-\frac{1}{6}\times 9+2=-1,5+2=0,5$. Correct.
+\[ \boxed{f(x)=-\frac{1}{6}x^{2}+2 \quad \text{sur } D_f=[-3\,;3]} \]
+
+\textbf{2. Étude de la parité.}
+$D_f=[-3\,;3]$. Si $x\in[-3\,;3]$, alors $-x\in[-3\,;3]$ : $D_f$ est symétrique par rapport à $0$.
+Pour tout $x\in D_f$ :
+\[ f(-x)=-\frac{1}{6}(-x)^{2}+2=-\frac{1}{6}x^{2}+2=f(x). \]
+$f$ est donc \cle{paire}. Sa courbe $\mathcal{C}_f$ est symétrique par rapport à l'axe des ordonnées ($Oy$), qui est l'axe vertical central du portail. \textbf{Le portail est symétrique par rapport à son axe central.}
+
+\textbf{3. Tableau de valeurs économique.}
+On calcule seulement pour $x\ge 0$ (réduction du domaine) :
+\begin{align*}
+f(0) &= 2 \\
+f(1) &= -\frac{1}{6}+2 = \frac{11}{6} \approx 1,83 \\
+f(2) &= -\frac{4}{6}+2 = \frac{4}{3} \approx 1,33 \\
+f(3) &= 0,5 \quad \text{(donnée)}
+\end{align*}
+Par parité ($f(-x)=f(x)$) : $f(-1)=f(1)$, $f(-2)=f(2)$, $f(-3)=f(3)$.
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|X|X|X|}\hline
+\rowcolor{popblueL} $x$ & $-3$ & $-2$ & $-1$ & $0$ & $1$ & $2$ & $3$ \\ \hline
+$f(x)$ & $0,5$ & $1,33$ & $1,83$ & $2$ & $1,83$ & $1,33$ & $0,5$ \\ \hline
+\end{tabularx}
+\end{center}
+\textbf{3 calculs au lieu de 7.}
+
+\textbf{4. Tracé à l'échelle $1/50$.}
+Échelle : \SI{1}{m} réel $\rightarrow$ \SI{2}{cm} dessin.
+Coordonnées des points sur le dessin (en cm) :
+\begin{center}
+\begin{tabular}{|c|c|c|}\hline
+Point réel $(x;y)$ m & Point dessin $(X;Y)$ cm \\ \hline
+$(0\,;\,2)$ & $(0\,;\,4)$ \\ \hline
+$(1\,;\,11/6\approx1,833)$ & $(2\,;\,3,67)$ \\ \hline
+$(2\,;\,4/3\approx1,333)$ & $(4\,;\,2,67)$ \\ \hline
+$(3\,;\,0,5)$ & $(6\,;\,1)$ \\ \hline
+\end{tabular}
+\end{center}
+On place ces 4 points (abscisses positives), on trace l'arc de parabole, puis on reporte les points symétriques par rapport à l'axe des ordonnées (abscisses négatives).
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.5, >=Stealth]
+% Drawing axes (cm)
+\draw[->] (-7,0) -- (7,0) node[right] {$X$ (cm)};
+\draw[->] (0,-0.5) -- (0,5) node[above] {$Y$ (cm)};
+\draw[popline, step=1] (-6.5,-0.5) grid (6.5,4.5);
+% Curve on drawing scale: x_cm = 2*x_m, y_cm = 2*y_m = 2*(-1/6 x_m^2 + 2) = -1/12 x_cm^2 + 4
+\draw[popcurve, thick, domain=-6:6, samples=100] plot (\x, {-1/12*\x*\x + 4});
+% Points
+\foreach \x/\y in {0/4, 2/3.67, 4/2.67, 6/1, -2/3.67, -4/2.67, -6/1} {
+    \fill[popblue] (\x,\y) circle (2.5pt);
+}
+% Symmetry axis
+\draw[dashed, poppurple] (0,-0.5) -- (0,5) node[above, poppurple] {Axe de symétrie};
+\node[below left] at (0,0) {$O$};
+\end{tikzpicture}
+\legende{Tracé à l'échelle 1/50 (dimensions en cm sur le papier).}
+\end{popfigure}
+
+\textbf{5. Longueur des montants et coût.}
+Longueur du montant d'abscisse $x$ = $f(x)$ mètres.
+Grâce à la parité :
+\begin{align*}
+L_0 &= f(0) = 2 \text{ m} \\
+L_1 = L_{-1} &= f(1) = \frac{11}{6} \approx 1,83 \text{ m} \\
+L_2 = L_{-2} &= f(2) = \frac{4}{3} \approx 1,33 \text{ m}
+\end{align*}
+Longueur totale :
+\[ L_{\text{tot}} = 2 + 2\times\frac{11}{6} + 2\times\frac{4}{3} = 2 + \frac{11}{3} + \frac{8}{3} = 2 + \frac{19}{3} = \frac{25}{3} \approx 8,33 \text{ m}. \]
+Coût :
+\[ \text{Coût} = \frac{25}{3} \times 2500 = \frac{62500}{3} \approx 20833 \text{ FCFA} \quad (\text{arrondi à } 21000 \text{ FCFA}). \]
+
+\textbf{6. Prolongement : centre de symétrie de $g$.}
+$g(x)=\dfrac{1}{x-4}+2$. $D_g = \mathbb{R}\setminus\{4\}$.
+Pour tout $h\neq 0$ : $4-h \neq 4$ et $4+h \neq 4$, donc $4-h \in D_g$ et $4+h \in D_g$.
+Calculons :
+\begin{align*}
+g(4-h)+g(4+h) &= \left(\frac{1}{-h}+2\right) + \left(\frac{1}{h}+2\right) \\
+&= -\frac{1}{h} + \frac{1}{h} + 4 = 4 = 2\times 2.
+\end{align*}
+La relation $g(4-h)+g(4+h)=2b$ est vérifiée avec $a=4$, $b=2$.
+\textbf{La courbe de $g$ admet bien $\Omega(4;2)$ pour centre de symétrie.} L'affirmation de M.~Tchoupo est \textbf{vraie}.
+
+\textbf{7. Conclusion rédigée.}
+La traverse du portail est modélisée par une fonction paire : sa courbe est symétrique par rapport à l'axe vertical central ($Oy$). Cette symétrie a une double utilité pratique. D'une part, elle \emph{garantit} que le portail sera équilibré et esthétique, les deux battants étant l'image l'un de l'autre par réflexion. D'autre part, elle \emph{économise} le travail de l'artisan : sur les sept points du tableau, trois calculs ont suffi ; sur les cinq montants, trois mesures de longueur ont suffi. M.~Tchoupo peut ainsi découper ses barres par paires de même longueur, limiter les erreurs de mesure et gagner un temps précieux à l'atelier, tout en maîtrisant son budget (environ \num{21000}~FCFA de fer pour les montants).
+\end{exoresolu}
+
+\courssub{Attention : pièges fréquents}
+
+\begin{attention}[Pièges à éviter]
+\begin{itemize}
+\item \textbf{Oublier de vérifier $D_f$ :} On ne peut conclure à la parité (paire ou impaire) que si l'ensemble de définition est symétrique par rapport à $0$. C'est la première phrase de la démonstration.
+\item \textbf{Erreur de signe :} $(-x)^2 = x^2$, jamais $-x^2$. De même $(-x)^3 = -x^3$.
+\item \textbf{Centre de symétrie :} La relation est $f(a-h)+f(a+h)=2b$ (somme), pas la différence. Vérifier que $a\pm h \in D_f$ pour tout $h$ (sauf celui qui tombe sur une asymptote verticale).
+\item \textbf{Échelle :} À l'échelle $1/50$, on \emph{divise} les dimensions réelles par $50$ (ou on multiplie par $0,02$). \SI{2}{m} $\rightarrow$ \SI{4}{cm} (et non \SI{100}{cm}). En coordonnées : $(x_{\text{m}}; y_{\text{m}}) \rightarrow (2x_{\text{m}}; 2y_{\text{m}})$ en cm.
+\item \textbf{Unités :} Longueurs en mètres, coûts en FCFA. Ne pas mélanger m et cm dans les calculs de coûts.
+\end{itemize}
+\end{attention}
+
+\courssub{Bilan de la leçon}
+
+Cette leçon a permis de mettre en évidence que :
+\begin{itemize}
+\item la \cle{parité} (paire/impaire) et les \cle{éléments de symétrie} (axe, centre) ne sont pas des notions abstraites : elles traduisent mathématiquement la symétrie d'objets réels (portail, console) et se démontrent rigoureusement par le calcul algébrique ($f(-x)$, $f(a-h)+f(a+h)$) ;
+\item la connaissance d'un élément de symétrie permet de \cle{réduire le domaine d'étude} : moitié moins de calculs pour un tableau de valeurs, un tracé, une étude de variations ; c'est un gain de temps et de fiabilité majeur en atelier ;
+\item la relation $f(a-h)+f(a+h)=2b$ est l'outil universel pour prouver l'existence d'un centre de symétrie, complétant le cas de l'axe de symétrie ($f(a-h)=f(a+h)$) ;
+\item les mathématiques de Première technique fournissent des réponses concrètes et chiffrées (longueurs, coûts, traçage à l'échelle) aux problèmes des métiers du bâtiment, de la ferronnerie et de la conception mécanique.
+\end{itemize}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Rappels : fonctions et ensemble de définition}
+
+\begin{definition}[Fonction, ensemble de définition, ensemble d'arrivée]
+Une \cle{fonction} $f$ de $E$ dans $F$ est une application qui associe à tout élément $x$ de $E$ un unique élément $y$ de $F$, noté $y = f(x)$.
+\begin{itemize}
+\item $E$ est l'\cle{ensemble de départ} (souvent $\mathbb{R}$ ou un intervalle).
+\item L'\cle{ensemble de définition} $D_f$ est la partie de $E$ où $f(x)$ « a un sens » (dénominateur non nul, radicande $\geq 0$, etc.).
+\item $F$ est l'\cle{ensemble d'arrivée} (souvent $\mathbb{R}$).
+\item L'\cle{ensemble image} est $f(D_f) = \{ f(x) \mid x \in D_f \}$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Ensemble symétrique par rapport à un réel]
+Un ensemble $D \subset \mathbb{R}$ est \cle{symétrique par rapport à $a \in \mathbb{R}$} si :
+\[ \forall x \in D,\quad 2a - x \in D \quad (\text{équivalent à : } a+h \in D \implies a-h \in D). \]
+\emph{Particulièrement} : symétrique par rapport à $0$ $\iff$ $\forall x \in D,\ -x \in D$.
+\end{definition}
+
+\begin{exemplebox}[Exemples d'ensembles symétriques par rapport à $0$]
+$\mathbb{R}$ ; $[-3 ; 3]$ ; $]-2 ; 2[$ ; $\mathbb{R} \setminus \{-1 ; 1\}$ ; $\{-5 ; 5\}$.
+\end{exemplebox}
+
+\begin{exemplebox}[Exemples d'ensembles \textbf{non} symétriques par rapport à $0$]
+$[0 ; +\infty[$ ; $]-\infty ; 2]$ ; $\mathbb{R} \setminus \{2\}$ (car $-2 \in D_f$ mais $2 \notin D_f$) ; $[-3 ; 5]$.
+\end{exemplebox}
+
+\begin{methode}[Déterminer l'ensemble de définition $D_f$]
+\begin{enumerate}
+\item Identifier les restrictions : dénominateur $\neq 0$, expression sous racine carrée $\geq 0$, argument de $\ln$ $> 0$, etc.
+\item Écrire $D_f$ en notation d'intervalles ou en compréhension.
+\item \textbf{Vérifier la symétrie de $D_f$ par rapport à $0$} (étape indispensable avant toute étude de parité).
+\end{enumerate}
+\end{methode}
+
+\coursec{Fonctions paires}
+
+\begin{definition}[Fonction paire]
+Soit $f$ une fonction dont l'ensemble de définition $D_f$ est symétrique par rapport à $0$.
+$f$ est \cle{paire} si et seulement si :
+\[ \forall x \in D_f,\quad f(-x) = f(x). \]
+\end{definition}
+
+\begin{propriete}[Symétrie graphique d'une fonction paire]
+Si $f$ est paire, sa courbe représentative $\mathcal{C}_f$ admet l'\cle{axe des ordonnées} (droite d'équation $x=0$) comme \cle{axe de symétrie}.
+Pour tout point $M(x ; f(x))$ de $\mathcal{C}_f$, le point $M'(-x ; f(x))$ appartient aussi à $\mathcal{C}_f$.
+\end{propriete}
+
+\begin{aretenir}[Fonctions paires classiques]
+Sur leur domaine de définition (symétrique par rapport à $0$) :
+\begin{itemize}
+\item $x \mapsto x^{2n}$ ($n \in \mathbb{N}^*$) : $x^2, x^4, \dots$
+\item $x \mapsto |x|$
+\item $x \mapsto \cos x$
+\item Toute somme, produit, quotient de fonctions paires est paire.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Méthode : Étudier la parité d'une fonction}
+
+\begin{methode}[Montrer qu'une fonction est paire ou impaire]
+Pour étudier la \cle{parité} d'une fonction $f$ :
+\begin{enumerate}
+\item \textbf{Déterminer l'ensemble de définition} $D_f$ de $f$.
+\item \textbf{Vérifier la symétrie de $D_f$ par rapport à $0$} : pour tout $x \in D_f$, a-t-on $-x \in D_f$ ? Si ce n'est pas le cas, $f$ n'est \textbf{ni paire ni impaire} : on s'arrête là.
+\item \textbf{Calculer $f(-x)$} et le comparer à $f(x)$ :
+\begin{itemize}
+\item si $f(-x) = f(x)$ pour tout $x \in D_f$, alors $f$ est \cle{paire} ;
+\item si $f(-x) = -f(x)$ pour tout $x \in D_f$, alors $f$ est \cle{impaire} ;
+\item sinon, $f$ n'est ni paire ni impaire.
+\end{itemize}
+\item \textbf{Conclure par une phrase} et préciser la conséquence graphique : axe des ordonnées axe de symétrie (fonction paire) ou origine centre de symétrie (fonction impaire).
+\end{enumerate}
+\textbf{Réflexes} : $(-x)^2 = x^2$ ; $(-x)^3 = -x^3$ ; $|-x| = |x|$. Une somme de puissances paires est paire, une somme de puissances impaires est impaire ; un mélange des deux n'est en général ni pair ni impair.
+\end{methode}
+
+\begin{exoresolu}[Parité de fonctions polynômes et rationnelles]
+Dans chaque cas, étudier la parité de la fonction $f$ définie par :
+\begin{enumerate}
+\item $f(x) = 3x^4 - 5x^2 + 1$ ;
+\item $f(x) = \dfrac{2x}{x^2 + 1}$ ;
+\item $f(x) = x^3 + x^2$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f(x) = 3x^4 - 5x^2 + 1$ est un polynôme, donc $D_f = \mathbb{R}$, qui est symétrique par rapport à $0$ : si $x \in \mathbb{R}$, alors $-x \in \mathbb{R}$.
+
+Calculons, pour tout réel $x$ :
+\begin{align*}
+f(-x) &= 3(-x)^4 - 5(-x)^2 + 1 \\
+&= 3x^4 - 5x^2 + 1 \quad \text{car } (-x)^4 = x^4 \text{ et } (-x)^2 = x^2 \\
+&= f(x).
+\end{align*}
+Donc $f$ est \textbf{paire}. Sa courbe admet l'axe des ordonnées pour axe de symétrie.
+
+\textbf{2.} $f(x) = \dfrac{2x}{x^2+1}$. Le dénominateur $x^2 + 1$ est toujours strictement positif (car $x^2 \geq 0$ donc $x^2 + 1 \geq 1 > 0$), donc $D_f = \mathbb{R}$, symétrique par rapport à $0$.
+
+Pour tout réel $x$ :
+\[ f(-x) = \frac{2(-x)}{(-x)^2 + 1} = \frac{-2x}{x^2 + 1} = -f(x). \]
+Donc $f$ est \textbf{impaire}. Sa courbe admet l'origine du repère pour centre de symétrie.
+
+\textbf{3.} $f(x) = x^3 + x^2$ est un polynôme : $D_f = \mathbb{R}$, symétrique par rapport à $0$.
+
+Pour tout réel $x$ :
+\[ f(-x) = (-x)^3 + (-x)^2 = -x^3 + x^2. \]
+Or $-x^3 + x^2 \neq f(x)$ (par exemple $f(1) = 2$ et $f(-1) = 0$) et $-x^3 + x^2 \neq -f(x) = -x^3 - x^2$. Donc $f$ n'est \textbf{ni paire ni impaire}.
+
+\textbf{Conclusion} : la fonction 1 est paire, la fonction 2 est impaire, la fonction 3 n'est ni paire ni impaire.
+\end{exoresolu}
+
+\coursec{Fonctions impaires}
+
+\begin{definition}[Fonction impaire]
+Soit $f$ une fonction dont l'ensemble de définition $D_f$ est symétrique par rapport à $0$.
+$f$ est \cle{impaire} si et seulement si :
+\[ \forall x \in D_f,\quad f(-x) = -f(x). \]
+\end{definition}
+
+\begin{propriete}[Symétrie graphique d'une fonction impaire]
+Si $f$ est impaire, sa courbe représentative $\mathcal{C}_f$ admet l'\cle{origine du repère} $O(0;0)$ comme \cle{centre de symétrie}.
+Pour tout point $M(x ; f(x))$ de $\mathcal{C}_f$, le point $M'(-x ; -f(x))$ (symétrique de $M$ par rapport à $O$) appartient aussi à $\mathcal{C}_f$.
+\end{propriete}
+
+\begin{aretenir}[Fonctions impaires classiques]
+Sur leur domaine de définition (symétrique par rapport à $0$) :
+\begin{itemize}
+\item $x \mapsto x^{2n+1}$ ($n \in \mathbb{N}$) : $x, x^3, x^5, \dots$
+\item $x \mapsto \sin x$
+\item $x \mapsto \tan x$
+\item Toute somme de fonctions impaires est impaire ; le produit de deux fonctions impaires est pair.
+\end{itemize}
+\end{aretenir}
+
+\courssub{Méthode : Exploiter la condition nécessaire sur $D_f$}
+
+\begin{methode}[Utiliser la symétrie de l'ensemble de définition]
+Avant tout calcul de $f(-x)$ :
+\begin{enumerate}
+\item Déterminer $D_f$ (dénominateur non nul, quantité sous une racine carrée positive ou nulle).
+\item Tester si $D_f$ est \cle{symétrique par rapport à $0$} : pour tout $x \in D_f$, on doit avoir $-x \in D_f$.
+\item Si $D_f$ n'est pas symétrique par rapport à $0$ (par exemple $D_f = [0 ; +\infty[$ ou $D_f = \mathbb{R} \setminus \{2\}$), conclure \textbf{immédiatement} : $f$ n'est ni paire ni impaire.
+\item Si $D_f$ est symétrique, poursuivre par le calcul de $f(-x)$.
+\end{enumerate}
+\textbf{Réflexe} : un intervalle du type $[-a ; a]$, $]-a ; a[$, $\mathbb{R}$, ou $\mathbb{R} \setminus \{-a ; a\}$ est symétrique par rapport à $0$.
+\end{methode}
+
+\begin{exoresolu}[Ensemble de définition non symétrique]
+On considère la fonction $f$ définie par $f(x) = \dfrac{x^2}{x - 2}$.
+\begin{enumerate}
+\item Déterminer l'ensemble de définition $D_f$ de $f$.
+\item La fonction $f$ peut-elle être paire ou impaire ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f(x)$ existe si et seulement si le dénominateur est non nul :
+\[ x - 2 \neq 0 \iff x \neq 2. \]
+Donc $D_f = \mathbb{R} \setminus \{2\} = ]-\infty ; 2[ \cup ]2 ; +\infty[$.
+
+\textbf{2.} Testons la symétrie de $D_f$ par rapport à $0$. On a $-2 \in D_f$ (car $-2 \neq 2$). Mais $-(-2) = 2 \notin D_f$.
+
+Autrement dit, il existe un élément $x = -2$ de $D_f$ tel que $-x = 2$ n'appartienne pas à $D_f$ : l'ensemble $D_f$ n'est \textbf{pas symétrique par rapport à $0$}.
+
+\textbf{Conclusion} : la condition nécessaire de parité n'étant pas remplie, $f$ n'est \textbf{ni paire ni impaire}, et cela sans aucun calcul de $f(-x)$. La courbe de $f$ n'admet ni l'axe des ordonnées pour axe de symétrie, ni l'origine pour centre de symétrie.
+\end{exoresolu}
+
+\coursec{Éléments de symétrie d'une courbe : cas général}
+
+\begin{definition}[Axe de symétrie $x = a$]
+Une courbe $\mathcal{C}$ admet la droite d'équation $x = a$ comme \cle{axe de symétrie} si pour tout point $M(a+h ; y)$ de $\mathcal{C}$, le point $M'(a-h ; y)$ appartient aussi à $\mathcal{C}$.
+Pour une fonction $f$ : $\mathcal{C}_f$ admet $x=a$ comme axe de symétrie $\iff$ $D_f$ symétrique par rapport à $a$ et $\forall h,\ f(a+h) = f(a-h)$.
+\end{definition}
+
+\begin{definition}[Centre de symétrie $\Omega(a ; b)$]
+Une courbe $\mathcal{C}$ admet le point $\Omega(a ; b)$ comme \cle{centre de symétrie} si pour tout point $M(a+h ; y)$ de $\mathcal{C}$, le point $M'(a-h ; 2b-y)$ (symétrique de $M$ par rapport à $\Omega$) appartient aussi à $\mathcal{C}$.
+Pour une fonction $f$ : $\mathcal{C}_f$ admet $\Omega(a;b)$ comme centre de symétrie $\iff$ $D_f$ symétrique par rapport à $a$ et $\forall h,\ f(a+h) + f(a-h) = 2b$.
+\end{definition}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, >=Stealth]
+% Axes
+\draw[->] (-3.5,0) -- (3.5,0) node[right] {$x$};
+\draw[->] (0,-2.5) -- (0,2.5) node[above] {$y$};
+% Even function: x^2 - 1 (scaled)
+\draw[popblue, thick, domain=-2.5:2.5, samples=100] plot (\x, {0.3*(\x*\x - 1)});
+\node[popblue] at (2.8, 1.5) {$f$ paire};
+\draw[dashed, popmuted] (0,-2.5) -- (0,2.5); % y-axis
+\node[popmuted] at (0.3, 2.2) {Axe $x=0$};
+% Odd function: x^3 - x (scaled)
+\draw[poporange, thick, domain=-1.8:1.8, samples=100] plot (\x, {0.15*(\x*\x*\x - \x)});
+\node[poporange] at (-2.8, -1.5) {$g$ impaire};
+\fill[poporange] (0,0) circle (2pt) node[above right] {$O$};
+% General axis x=1
+\begin{scope}[xshift=5cm]
+\draw[->] (-2.5,0) -- (2.5,0) node[right] {$x$};
+\draw[->] (0,-2) -- (0,2) node[above] {$y$};
+\draw[popgreen, thick, domain=-1.5:3.5, samples=100] plot (\x, {0.2*(\x-1)*(\x-1) - 0.5});
+\node[popgreen] at (2.2, 1.2) {Axe $x=1$};
+\draw[dashed, popmuted] (1,-2) -- (1,2);
+\node[popmuted] at (1.3, 1.7) {$x=1$};
+\end{scope}
+% General center (2,1)
+\begin{scope}[xshift=5cm, yshift=-5cm]
+\draw[->] (-1.5,0) -- (3.5,0) node[right] {$x$};
+\draw[->] (0,-2) -- (0,2) node[above] {$y$};
+\draw[poppurple, thick, domain=-0.5:2.5, samples=100] plot (\x, {1 + 1/(\x-1)});
+\node[poppurple] at (3.2, 1.5) {Centre $\Omega(1;1)$};
+\fill[poppurple] (1,1) circle (2pt) node[above right] {$\Omega$};
+\end{scope}
+\end{tikzpicture}
+\legende{Exemples de symétries : fonction paire (axe $Oy$), fonction impaire (centre $O$), axe $x=a$, centre $\Omega(a;b)$.}
+\end{popfigure}
+
+\courssub{Méthode : Axe de symétrie $x = a$}
+
+\begin{methode}[Montrer que $x = a$ est axe de symétrie de $\mathcal{C}_f$]
+\begin{enumerate}
+\item Vérifier que $D_f$ est symétrique par rapport à $a$ : si $a + h \in D_f$, alors $a - h \in D_f$.
+\item Calculer $f(a + h)$ et $f(a - h)$ pour tout réel $h$ tel que $a + h \in D_f$.
+\item Montrer que $f(a + h) = f(a - h)$.
+\item Conclure : la droite d'équation $x = a$ est \cle{axe de symétrie} de $\mathcal{C}_f$.
+\end{enumerate}
+\textbf{Cas particulier} : $a = 0$ redonne la définition d'une fonction paire ($f(-h) = f(h)$), l'axe de symétrie étant l'axe des ordonnées.
+\end{methode}
+
+\begin{exoresolu}[Axe de symétrie d'une parabole]
+Un atelier découpe une tôle dont le bord suit la courbe de la fonction $f$ définie sur $\mathbb{R}$ par $f(x) = x^2 - 4x + 7$.
+\begin{enumerate}
+\item Vérifier que pour tout réel $x$ : $f(x) = (x - 2)^2 + 3$.
+\item Démontrer que la droite d'équation $x = 2$ est axe de symétrie de la courbe $\mathcal{C}_f$.
+\end{enumerate}
+\tcblower
+\textbf{1.} Développons : pour tout réel $x$,
+\[ (x-2)^2 + 3 = x^2 - 4x + 4 + 3 = x^2 - 4x + 7 = f(x). \]
+L'égalité est vérifiée.
+
+\textbf{2.} $D_f = \mathbb{R}$ est symétrique par rapport à $2$ : si $2 + h \in \mathbb{R}$, alors $2 - h \in \mathbb{R}$.
+
+Soit $h$ un réel quelconque. Calculons en utilisant la forme de la question 1 :
+\begin{align*}
+f(2 + h) &= (2 + h - 2)^2 + 3 = h^2 + 3 ; \\
+f(2 - h) &= (2 - h - 2)^2 + 3 = (-h)^2 + 3 = h^2 + 3.
+\end{align*}
+Donc pour tout réel $h$ : $f(2 + h) = f(2 - h)$.
+
+\textbf{Conclusion} : la droite d'équation $x = 2$ est \textbf{axe de symétrie} de la courbe $\mathcal{C}_f$. Le point de la courbe d'abscisse $2$, c'est-à-dire le sommet $(2 ; 3)$, est le point le plus bas de la parabole : la hauteur minimale de la tôle est $3$ unités.
+\end{exoresolu}
+
+\courssub{Méthode : Centre de symétrie $\Omega(a ; b)$}
+
+\begin{methode}[Montrer que $\Omega(a ; b)$ est centre de symétrie de $\mathcal{C}_f$]
+\begin{enumerate}
+\item Vérifier que $D_f$ est symétrique par rapport à $a$.
+\item Calculer $f(a + h)$ et $f(a - h)$ pour tout $h$ tel que $a + h \in D_f$.
+\item Montrer que $\dfrac{f(a + h) + f(a - h)}{2} = b$, c'est-à-dire :
+\[ f(a + h) + f(a - h) = 2b. \]
+\item Conclure : $\Omega(a ; b)$ est \cle{centre de symétrie} de $\mathcal{C}_f$.
+\end{enumerate}
+\textbf{Cas particulier} : $\Omega(0 ; 0)$ redonne la définition d'une fonction impaire : $f(-h) = -f(h)$ équivaut à $f(h) + f(-h) = 0$.
+\end{methode}
+
+\begin{exoresolu}[Centre de symétrie d'une hyperbole]
+Soit $f$ la fonction définie par $f(x) = \dfrac{2x + 3}{x - 1}$.
+\begin{enumerate}
+\item Déterminer $D_f$.
+\item Vérifier que pour tout $x \in D_f$ : $f(x) = 2 + \dfrac{5}{x - 1}$.
+\item Démontrer que le point $\Omega(1 ; 2)$ est centre de symétrie de la courbe $\mathcal{C}_f$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $f(x)$ existe si et seulement si $x - 1 \neq 0$, c'est-à-dire $x \neq 1$. Donc $D_f = \mathbb{R} \setminus \{1\}$.
+
+\textbf{2.} Pour tout $x \in D_f$ :
+\[ 2 + \frac{5}{x-1} = \frac{2(x-1) + 5}{x - 1} = \frac{2x - 2 + 5}{x - 1} = \frac{2x + 3}{x - 1} = f(x). \]
+L'égalité est vérifiée.
+
+\textbf{3.} $D_f$ est symétrique par rapport à $1$ : si $1 + h \in D_f$ alors $h \neq 0$, donc $1 - h \in D_f$.
+
+Soit $h \neq 0$. Calculons avec la forme de la question 2 :
+\begin{align*}
+f(1 + h) &= 2 + \frac{5}{(1+h) - 1} = 2 + \frac{5}{h} ; \\
+f(1 - h) &= 2 + \frac{5}{(1-h) - 1} = 2 + \frac{5}{-h} = 2 - \frac{5}{h}.
+\end{align*}
+Additionnons :
+\[ f(1 + h) + f(1 - h) = 2 + \frac{5}{h} + 2 - \frac{5}{h} = 4 = 2 \times 2. \]
+Donc $\dfrac{f(1+h) + f(1-h)}{2} = 2$ pour tout $h \neq 0$.
+
+\textbf{Conclusion} : le point $\Omega(1 ; 2)$ est \textbf{centre de symétrie} de la courbe $\mathcal{C}_f$.
+\end{exoresolu}
+
+\coursec{Parité et réduction du domaine d'étude}
+
+\begin{propriete}[Réduction de l'étude par parité]
+Soit $f$ une fonction définie sur un ensemble $D_f$ symétrique par rapport à $0$.
+\begin{itemize}
+\item Si $f$ est \textbf{paire} : les variations de $f$ sur $D_f \cap ]-\infty ; 0]$ sont \emph{symétriques} (inversées) de celles sur $D_f \cap [0 ; +\infty[$ par rapport à l'axe des ordonnées.
+\item Si $f$ est \textbf{impaire} : les variations de $f$ sur $D_f \cap ]-\infty ; 0]$ sont \emph{identiques} (conservées) à celles sur $D_f \cap [0 ; +\infty[$ par symétrie centrale par rapport à l'origine.
+\end{itemize}
+Il suffit donc d'étudier $f$ sur la moitié positive du domaine ($D_f \cap [0 ; +\infty[$) et de compléter le tableau de variations par symétrie.
+\end{propriete}
+
+\courssub{Méthode : Restreindre l'intervalle d'étude}
+
+\begin{methode}[Exploiter la parité pour simplifier le tableau de variations]
+\begin{enumerate}
+\item Démontrer que $f$ est \textbf{paire} ou \textbf{impaire} (symétrie de $D_f$ + calcul de $f(-x)$).
+\item Énoncer la règle : on peut alors étudier $f$ uniquement sur la \textbf{moitié positive} du domaine, c'est-à-dire $D_f \cap [0 ; +\infty[$.
+\item Dresser le tableau de variations sur cette moitié (signe de la dérivée, limites, valeurs remarquables).
+\item \textbf{Compléter par symétrie} :
+\begin{itemize}
+\item fonction paire : on complète par symétrie par rapport à l'axe des ordonnées (les variations sont \emph{inversées} : $\nearrow \leftrightarrow \searrow$) ;
+\item fonction impaire : on complète par symétrie par rapport à l'origine (les variations sont \emph{conservées} : $\nearrow \leftrightarrow \nearrow$, $\searrow \leftrightarrow \searrow$).
+\end{itemize}
+\end{enumerate}
+\textbf{Gain} : moitié moins de calculs, et un tableau de variations complet obtenu sans étude supplémentaire.
+\end{methode}
+
+\begin{exoresolu}[Réduction du domaine d'étude]
+Soit $f$ la fonction définie sur $\mathbb{R}$ par $f(x) = x^3 - 3x$.
+\begin{enumerate}
+\item Montrer que $f$ est impaire.
+\item On admet que sur $[0 ; +\infty[$, $f$ est décroissante sur $[0 ; 1]$ et croissante sur $[1 ; +\infty[$, avec $f(0) = 0$ et $f(1) = -2$. Dresser le tableau de variations complet de $f$ sur $\mathbb{R}$.
+\end{enumerate}
+\tcblower
+\textbf{1.} $D_f = \mathbb{R}$ est symétrique par rapport à $0$. Pour tout réel $x$ :
+\[ f(-x) = (-x)^3 - 3(-x) = -x^3 + 3x = -(x^3 - 3x) = -f(x). \]
+Donc $f$ est \textbf{impaire} : sa courbe admet l'origine pour centre de symétrie.
+
+\textbf{2.} Puisque $f$ est impaire, il suffit de l'étudier sur $[0 ; +\infty[$, puis de compléter par symétrie centrale de centre $O$, qui \emph{conserve} le sens de variation.
+
+Sur $[0 ; +\infty[$ : $f$ décroît de $f(0) = 0$ à $f(1) = -2$, puis croît vers $+\infty$.
+
+Par symétrie par rapport à l'origine : le point $(1 ; -2)$ a pour symétrique $(-1 ; 2)$, et $(0 ; 0)$ est son propre symétrique. Sur $]-\infty ; 0]$ : $f$ croît sur $]-\infty ; -1]$ de $-\infty$ à $f(-1) = 2$, puis décroît sur $[-1 ; 0]$ jusqu'à $f(0) = 0$.
+
+Tableau de variations complet :
+\begin{center}
+\begin{tabular}{|c|ccccccccc|}\hline
+$x$ & $-\infty$ & & $-1$ & & $0$ & & $1$ & & $+\infty$ \\ \hline
+$f'(x)$ & & $+$ & $0$ & $-$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+$f$ & $-\infty$ & $\nearrow$ & $2$ & $\searrow$ & $0$ & $\searrow$ & $-2$ & $\nearrow$ & $+\infty$ \\ \hline
+\end{tabular}
+\end{center}
+
+\textbf{Conclusion} : $f$ admet un maximum local $f(-1) = 2$ et un minimum local $f(1) = -2$, symétriques par rapport à l'origine, ce qui confirme l'imparité. L'étude sur la seule moitié positive du domaine a suffi.
+\end{exoresolu}
+
+\coursec{Applications concrètes et synthèse}
+
+\courssub{Méthode : Rédiger une réponse type Probatoire}
+
+\begin{methode}[Rédiger et justifier une démarche complète]
+Pour rédiger et justifier une démarche sur la parité ou la symétrie :
+\begin{enumerate}
+\item \textbf{Annoncer} ce que l'on va démontrer (« Montrons que $f$ est paire »).
+\item \textbf{Citer les hypothèses vérifiées} : ensemble de définition, symétrie de $D_f$.
+\item \textbf{Détailler le calcul} de $f(-x)$ (ou de $f(a+h)$ et $f(a-h)$) ligne par ligne, avec le « pour tout $x \in D_f$ ».
+\item \textbf{Conclure par une phrase complète} reliant le résultat algébrique à la propriété géométrique de la courbe.
+\item Dans une situation concrète, \textbf{interpréter} le résultat (économie de calculs, symétrie d'une pièce, d'un circuit, d'une toiture).
+\end{enumerate}
+\textbf{Formules à retenir} :
+\begin{itemize}
+\item Paire : $f(-x) = f(x)$, axe de symétrie : axe des ordonnées ($x=0$).
+\item Impaire : $f(-x) = -f(x)$, centre de symétrie : l'origine $O(0;0)$.
+\item Axe $x = a$ : $f(a+h) = f(a-h)$.
+\item Centre $\Omega(a;b)$ : $f(a+h) + f(a-h) = 2b$.
+\end{itemize}
+\end{methode}
+
+\begin{exoresolu}[Situation concrète : toiture symétrique d'un hangar]
+Sur un chantier à Douala, la charpente d'un hangar a un profil modélisé, dans un repère orthonormé (unité : le mètre), par la fonction $f$ définie sur $[-4 ; 4]$ par $f(x) = 5 - \dfrac{x^2}{4}$.
+\begin{enumerate}
+\item Montrer que $f$ est paire.
+\item Quelle propriété géométrique de la charpente en déduit-on ?
+\item Calculer la hauteur du hangar au point d'abscisse $3$, puis au point d'abscisse $-3$, sans refaire le calcul complet.
+\end{enumerate}
+\tcblower
+\textbf{1.} Montrons que $f$ est paire.
+
+$D_f = [-4 ; 4]$ est symétrique par rapport à $0$ : si $x \in [-4 ; 4]$, alors $-x \in [-4 ; 4]$.
+
+Pour tout $x \in [-4 ; 4]$ :
+\[ f(-x) = 5 - \frac{(-x)^2}{4} = 5 - \frac{x^2}{4} = f(x). \]
+Donc $f$ est \textbf{paire}.
+
+\textbf{2.} La courbe de $f$ admet l'axe des ordonnées pour axe de symétrie. Concrètement, la charpente du hangar est \textbf{symétrique par rapport à la poutre centrale verticale} (d'équation $x = 0$). Le chef de chantier peut donc ne mesurer qu'un seul côté de la toiture : l'autre côté est identique par symétrie, ce qui divise le travail de vérification par deux.
+
+\textbf{3.} Calculons :
+\[ f(3) = 5 - \frac{3^2}{4} = 5 - \frac{9}{4} = \frac{20 - 9}{4} = \frac{11}{4} = 2,75. \]
+Comme $f$ est paire, $f(-3) = f(3)$, donc $f(-3) = 2,75$ \textbf{sans aucun calcul supplémentaire}.
+
+\textbf{Conclusion} : la hauteur du hangar est de $2,75$ m aux points d'abscisses $3$ et $-3$. La parité de $f$ traduit et justifie rigoureusement la symétrie de la toiture.
+\end{exoresolu}
+
+\begin{savaistu}[Parité et séries de Fourier — Application industrielle]
+En traitement du signal (électricité, télécoms, acoustique), toute fonction périodique se décompose en somme de sinus (impairs) et de cosinus (pairs) : c'est la \emph{série de Fourier}.
+\begin{itemize}
+\item Si le signal est \textbf{pair} (ex. tension alternative redressée), sa série de Fourier ne contient que des \textbf{cosinus} (termes pairs) : calculs simplifiés (coefficient $b_n = 0$).
+\item Si le signal est \textbf{impair} (ex. signal triangulaire centré), sa série ne contient que des \textbf{sinus} (termes impairs) : coefficient $a_n = 0$.
+\end{itemize}
+Connaître la parité d'un signal permet donc de diviser par deux le travail de calcul des coefficients spectraux — un gain majeur pour l'ingénieur en électronique ou en automatique.
+\end{savaistu}
+
+\begin{exercice}[Entraînement — Parité et symétries]
+\begin{enumerate}
+\item Étudier la parité des fonctions suivantes sur leur ensemble de définition :
+      \begin{itemize}
+      \item $f_1(x) = \dfrac{x^3}{x^2+1}$
+      \item $f_2(x) = \sqrt{4 - x^2}$
+      \item $f_3(x) = \dfrac{x+1}{x-1}$
+      \end{itemize}
+\item Soit $f(x) = \dfrac{3x-2}{x+1}$. Montrer que la courbe $\mathcal{C}_f$ admet un centre de symétrie $\Omega$ et donner ses coordonnées.
+\item Une poutre métallique a une flèche modélisée par $f(x) = 2 - \dfrac{(x-3)^2}{9}$ sur $[0 ; 6]$.
+      \begin{enumerate}
+      \item Quelle est l'axe de symétrie de la courbe ? Interpréter physiquement.
+      \item Calculer $f(1)$ et en déduire $f(5)$ sans calcul.
+      \end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\textbf{1.}
+\begin{itemize}
+\item $f_1(x) = \frac{x^3}{x^2+1}$ : $D_f = \mathbb{R}$ (symétrique). $f_1(-x) = \frac{-x^3}{x^2+1} = -f_1(x)$ $\Rightarrow$ \textbf{impaire}.
+\item $f_2(x) = \sqrt{4-x^2}$ : $4-x^2 \geq 0 \iff x \in [-2;2]$ (symétrique). $f_2(-x) = \sqrt{4-(-x)^2} = f_2(x)$ $\Rightarrow$ \textbf{paire}.
+\item $f_3(x) = \frac{x+1}{x-1}$ : $D_f = \mathbb{R} \setminus \{1\}$. $-1 \in D_f$ mais $-(-1)=1 \notin D_f$ $\Rightarrow$ $D_f$ non symétrique $\Rightarrow$ \textbf{ni paire ni impaire}.
+\end{itemize}
+\textbf{2.} $f(x) = \frac{3x-2}{x+1}$, $D_f = \mathbb{R} \setminus \{-1\}$. Réécriture : $f(x) = 3 - \frac{5}{x+1}$.
+$D_f$ symétrique par rapport à $-1$. $f(-1+h) = 3 - \frac{5}{h}$, $f(-1-h) = 3 + \frac{5}{h}$.
+Somme $= 6 = 2 \times 3$. Centre de symétrie $\Omega(-1 ; 3)$.
+\textbf{3.}
+\begin{enumerate}
+\item $f(x) = 2 - \frac{(x-3)^2}{9}$. Forme canonique : sommet $(3;2)$. Axe de symétrie $x=3$. Physiquement : l'axe vertical passant par le milieu de la poutre (abscisse 3 m).
+\item $f(1) = 2 - \frac{4}{9} = \frac{14}{9} \approx 1,56$ m. Par symétrie par rapport à $x=3$, $f(5) = f(1) = \frac{14}{9}$ m.
+\end{enumerate}
+\end{corrige}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Oublier de vérifier la symétrie de $D_f$ avant de calculer $f(-x)$.} Si $D_f$ n'est pas symétrique par rapport à $0$ (ex. $D_f = \mathbb{R} \setminus \{2\}$), la fonction ne peut être ni paire ni impaire : le calcul de $f(-x)$ est inutile et la conclusion doit s'appuyer sur l'ensemble de définition.
+\item \textbf{Conclure « paire » ou « impaire » à partir d'un seul contre-exemple mal utilisé.} Une égalité vérifiée pour une seule valeur ne prouve rien : il faut démontrer $f(-x) = f(x)$ \emph{pour tout} $x \in D_f$. En revanche, un seul contre-exemple suffit pour prouver qu'une fonction n'est ni paire ni impaire.
+\item \textbf{Se tromper dans les puissances de $-x$.} Erreurs classiques : écrire $(-x)^2 = -x^2$ (faux, $(-x)^2 = x^2$) ou $(-x)^3 = x^3$ (faux, $(-x)^3 = -x^3$). Bien distinguer $-x^2$ (toujours négatif ou nul) et $(-x)^2$ (toujours positif ou nul).
+\item \textbf{Confondre les formules de symétrie.} Axe de symétrie $x = a$ : $f(a+h) = f(a-h)$. Centre de symétrie $\Omega(a ; b)$ : $f(a+h) + f(a-h) = 2b$. Mélanger les deux relations fausse toute la démonstration.
+\item \textbf{Compléter le tableau de variations dans le mauvais sens.} Pour une fonction paire, la symétrie par rapport à l'axe des ordonnées \emph{inverse} les variations ; pour une fonction impaire, la symétrie par rapport à l'origine les \emph{conserve}. Ne pas oublier non plus la phrase de conclusion reliant le résultat algébrique à la propriété graphique.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[Vrai ou faux ? Justifiez]
+Déterminer si les affirmations suivantes sont vraies ou fausses. Justifiez chaque réponse par un contre-exemple ou une propriété du cours.
+\begin{enumerate}
+    \item « Si pour une fonction $f$ on a $f(-3)=f(3)$, alors $f$ est paire. »
+    \item « Une fonction impaire définie en $0$ s'annule nécessairement en $0$. »
+    \item « Toute fonction définie sur $\mathbb{R}$ est soit paire, soit impaire. »
+    \item « Si $f$ est paire et $g$ est impaire, alors la fonction $h(x)=f(x)+g(x)$ n'est ni paire ni impaire. »
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Parité : calculs directs]
+Étudier la parité des fonctions suivantes (préciser l'ensemble de définition $D_f$, calculer $f(-x)$ et conclure).
+\begin{enumerate}
+    \item $f(x)=5x^2-3$
+    \item $g(x)=x^3+x$
+    \item $h(x)=x^2-2x$
+    \item $k(x)=\dfrac{x^2+1}{x}$
+    \item $\ell(x)=|x|-x^2$
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Symétrie graphique]
+La courbe représentative $\mathcal{C}_f$ d'une fonction $f$ définie sur $[-4\,;\,4]$ est tracée ci-dessous uniquement sur l'intervalle $[0\,;\,4]$.
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+\draw[->] (-0.5,0) -- (4.5,0) node[right] {$x$};
+\draw[->] (0,-0.5) -- (0,3.5) node[above] {$y$};
+\foreach \x in {1,2,3,4} \draw (\x,0.1) -- (\x,-0.1) node[below] {\x};
+\foreach \y in {1,2,3} \draw (0.1,\y) -- (-0.1,\y) node[left] {\y};
+\draw[thick, popblue, domain=0:4, samples=100] plot (\x, {0.5*\x*\x - 2*\x + 2});
+\node[popblue] at (3.5, 3) {$\mathcal{C}_f$ sur $[0;4]$};
+\draw[dashed, popmuted] (-4,0) -- (0,0);
+\draw[dashed, popmuted] (0,-0.5) -- (0,3.5);
+\end{tikzpicture}
+\end{center}
+\begin{enumerate}
+    \item Sachant que $f$ est \textbf{impaire}, reproduire le repère et compléter la courbe sur $[-4\,;\,0]$.
+    \item Déduire graphiquement les valeurs de $f(-2)$ et $f(-4)$.
+    \item Préciser les variations de $f$ sur $[-4\,;\,0]$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Axe de symétrie d'un trinôme]
+Soit la fonction $f$ définie sur $\mathbb{R}$ par $f(x)=x^2-2x+4$.
+\begin{enumerate}
+    \item Démontrer que la droite d'équation $x=1$ est un axe de symétrie de la courbe $\mathcal{C}_f$.
+    \item En exploitant cette symétrie, dresser le tableau de valeurs de $f$ pour $x \in \{-1\,;\,0\,;\,1\,;\,2\,;\,3\}$ sans recalculer $f(3)$ et $f(-1)$ après avoir trouvé $f(0)$ et $f(2)$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Étude de parité complète]
+Étudier la parité des fonctions suivantes. On précisera à chaque fois l'ensemble de définition $D_f$, le calcul de $f(-x)$ et la conclusion rédigée.
+\begin{enumerate}
+    \item $f(x) = \dfrac{2x}{x^2+1}$
+    \item $g(x) = \sqrt{4-x^2}$
+    \item $h(x) = x^3 - 4x$
+    \item $k(x) = \dfrac{x^2-1}{x^2+1}$
+    \item $\ell(x) = |x+1| - |x-1|$
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Complétion de courbe par symétrie]
+On donne ci-dessous une portion de la courbe $\mathcal{C}_f$ d'une fonction $f$ définie sur $[-3\,;\,3]$.
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+\draw[->] (-3.5,0) -- (3.5,0) node[right] {$x$};
+\draw[->] (0,-0.5) -- (0,3.5) node[above] {$y$};
+\foreach \x in {-3,-2,-1,1,2,3} \draw (\x,0.1) -- (\x,-0.1) node[below] {\x};
+\foreach \y in {1,2,3} \draw (0.1,\y) -- (-0.1,\y) node[left] {\y};
+\draw[thick, poporange, domain=0:3, samples=100] plot (\x, {-\x*\x/3 + 3});
+\node[poporange] at (2.5, 2.5) {$\mathcal{C}_f$ sur $[0;3]$};
+\draw[dashed, popmuted] (-3,0) -- (0,0);
+\end{tikzpicture}
+\end{center}
+\begin{enumerate}
+    \item Reproduire le repère. Sachant que $f$ est \textbf{paire}, compléter la courbe sur $[-3\,;\,0]$.
+    \item Sachant maintenant que $f$ est \textbf{impaire} (on repart de la portion initiale sur $[0;3]$), compléter la courbe sur $[-3\,;\,0]$.
+    \item Dans les deux cas, donner $f(-2)$ et $f(-3)$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Symétrie axiale et trinôme : application concrète]
+Le coût de production (en milliers de FCFA) pour un atelier de menuiserie fabriquant $x$ chaises est modélisé par la fonction $C(x)=2x^2-12x+30$ pour $x \in [0\,;\,10]$.
+\begin{enumerate}
+    \item Exprimer $C(x)$ sous la forme canonique $a(x-\alpha)^2+\beta$.
+    \item En déduire que la courbe $\mathcal{C}_C$ admet un axe de symétrie. Donner son équation.
+    \item Quelle production $x$ minimise le coût ? Quel est ce coût minimal ?
+    \item Vérifier par le calcul que $C(1)=C(5)$ et interpréter ce résultat au vu de la symétrie.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Tableau de valeurs et parité]
+Une fonction $f$ est \textbf{paire} et définie sur $[-3\,;\,3]$. On donne son tableau de valeurs pour $x \ge 0$ :
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}\hline
+$x$ & 0 & 1 & 2 & 3 \\ \hline
+$f(x)$ & 4 & 2 & 0 & 2 \\ \hline
+\end{tabular}
+\end{center}
+\begin{enumerate}
+    \item Compléter le tableau pour $x \in \{-3\,;\,-2\,;\,-1\}$.
+    \item Tracer la courbe $\mathcal{C}_f$ dans un repère orthonormé (1 cm par unité).
+    \item Déterminer graphiquement les solutions de l'équation $f(x)=2$.
+    \item Préciser les variations de $f$ sur $[-3\,;\,0]$ et sur $[0\,;\,3]$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Centre de symétrie — Fonction homographique (Type Bac)]
+Soit la fonction $f$ définie sur $D_f = \mathbb{R} \setminus \{2\}$ par $f(x) = \dfrac{3}{x-2} + 1$.
+On note $\mathcal{C}_f$ sa courbe représentative dans un repère orthonormé $(O\,;\,\vec{\imath}\,;\,\vec{\jmath})$.
+\begin{enumerate}
+    \item Déterminer les limites de $f$ aux bornes de $D_f$ (aux voisinages de $2$ et aux infinis).
+    \item En déduire les équations des asymptotes à $\mathcal{C}_f$.
+    \item Démontrer que le point $\Omega(2\,;\,1)$ est un centre de symétrie de $\mathcal{C}_f$.
+    \item Dresser le tableau de variations de $f$ sur $D_f$.
+    \item Tracer $\mathcal{C}_f$ et ses asymptotes. On prendra 2 cm pour unité sur l'axe des abscisses et 1 cm pour unité sur l'axe des ordonnées.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Parité, tableau de valeurs et résolution graphique]
+Soit une fonction $f$ \textbf{paire}, continue et strictement décroissante sur $[0\,;\,+\infty[$. On sait que $f(0)=5$, $f(1)=3$, $f(2)=1$, $f(3)=-1$ et $\lim\limits_{x \to +\infty} f(x) = -2$.
+\begin{enumerate}
+    \item Compléter le tableau de valeurs ci-dessous pour $x \in \{-3\,;\,-2\,;\,-1\,;\,0\,;\,1\,;\,2\,;\,3\}$.
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+    $x$ & -3 & -2 & -1 & 0 & 1 & 2 & 3 \\ \hline
+    $f(x)$ & & & & & & & \\ \hline
+    \end{tabular}
+    \end{center}
+    \item Tracer la courbe $\mathcal{C}_f$ dans un repère orthonormé (unité 2 cm).
+    \item En exploitant la symétrie de la courbe, déterminer le nombre de solutions de l'équation $f(x)=2$ et donner un encadrement de ces solutions.
+    \item Étudier le signe de $f(x)$ sur $\mathbb{R}$.
+    \item La fonction $f$ admet-elle un maximum ? un minimum ? Justifier.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Problème synthétique : Tension dans un circuit]
+Dans un dipôle non linéaire, la tension $U$ (en volts) en fonction de l'intensité $I$ (en ampères) est modélisée par la fonction $f$ définie sur $[-3\,;\,3]$ par $f(I) = I^3 - 4I$.
+\begin{enumerate}
+    \item Étudier la parité de $f$. Quel type de symétrie possède la courbe $\mathcal{C}_f$ ?
+    \item Calculer $f'(I)$ et dresser le tableau de variations de $f$ sur $[-3\,;\,3]$.
+    \item L'intensité $I$ varie entre $-2$ A et $2$ A. Déterminer les valeurs extrêmes de la tension $U$ sur cet intervalle.
+    \item On souhaite que la tension soit nulle. Déterminer les valeurs d'intensité correspondantes.
+    \item Tracer $\mathcal{C}_f$ dans un repère (unité : 2 cm pour 1 A en abscisse, 1 cm pour 1 V en ordonnée). Mettre en évidence la symétrie trouvée en 1.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Corrigés détaillés — Parité et symétrie des fonctions}
+
+\begin{corrige}[Exercice 1 — Vrai ou faux ? Justifiez]
+\begin{enumerate}
+    \item \textbf{FAUX.} Une seule égalité $f(-3)=f(3)$ ne suffit pas : la parité exige $f(-x)=f(x)$ pour \emph{tout} $x$ de l'ensemble de définition.
+    Contre-exemple : la fonction $f(x)=x^3-9x$ définie sur $\mathbb{R}$. On a $f(3)=27-27=0$ et $f(-3)=-27+27=0$, donc $f(-3)=f(3)$, pourtant $f$ n'est pas paire (elle est impaire : $f(-x)=-x^3+9x=-f(x)$).
+    \item \textbf{VRAI.} Si $f$ est impaire et définie en $0$, alors $f(-0)=-f(0)$, c'est-à-dire $f(0)=-f(0)$, donc $2f(0)=0$ et $f(0)=0$. C'est une propriété du cours (exigible au Probatoire).
+    \item \textbf{FAUX.} Contre-exemple : $f(x)=x^2+x$ sur $\mathbb{R}$. On a $f(-x)=x^2-x$, qui n'est égal ni à $f(x)$ ni à $-f(x)$ : $f$ n'est ni paire ni impaire.
+    \item \textbf{FAUX en général} (l'affirmation est trop catégorique). Si $f$ est paire et $g$ impaire, alors $h(-x)=f(-x)+g(-x)=f(x)-g(x)$. Si $f$ et $g$ sont toutes deux non nulles, $h$ n'est effectivement ni paire ni impaire ; mais si $g$ est la fonction nulle (qui est à la fois paire et impaire), alors $h=f$ est paire. L'affirmation « nécessairement » est donc fausse.
+\end{enumerate}
+\begin{attention}[Points de vigilance]
+Un contre-exemple unique suffit pour infirmer une affirmation ; pour prouver une propriété vraie, il faut un raisonnement valable pour \emph{tout} $x$ de l'ensemble de définition. Vérifiez toujours la symétrie de l'ensemble de définition par rapport à $0$ avant d'étudier la parité.
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Parité : calculs directs]
+\begin{enumerate}
+    \item $f(x)=5x^2-3$. $D_f=\mathbb{R}$, symétrique par rapport à $0$. $f(-x)=5(-x)^2-3=5x^2-3=f(x)$. \textbf{$f$ est paire.}
+    \item $g(x)=x^3+x$. $D_g=\mathbb{R}$. $g(-x)=(-x)^3+(-x)=-x^3-x=-(x^3+x)=-g(x)$. \textbf{$g$ est impaire.}
+    \item $h(x)=x^2-2x$. $D_h=\mathbb{R}$. $h(-x)=x^2+2x$ : ni égal à $h(x)$, ni à $-h(x)=-x^2+2x$. \textbf{$h$ n'est ni paire ni impaire.}
+    \item $k(x)=\dfrac{x^2+1}{x}$. $D_k=\mathbb{R}\setminus\{0\}=\mathbb{R}^*$, symétrique par rapport à $0$. $k(-x)=\dfrac{(-x)^2+1}{-x}=\dfrac{x^2+1}{-x}=-k(x)$. \textbf{$k$ est impaire.}
+    \item $\ell(x)=|x|-x^2$. $D_\ell=\mathbb{R}$. $\ell(-x)=|-x|-(-x)^2=|x|-x^2=\ell(x)$ car $|-x|=|x|$. \textbf{$\ell$ est paire.}
+\end{enumerate}
+\begin{attention}[Point de vigilance]
+Toujours vérifier \emph{d'abord} que l'ensemble de définition est symétrique par rapport à $0$ ; sinon la fonction ne peut être ni paire ni impaire.
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Symétrie graphique : complétion par symétrie centrale]
+\begin{enumerate}
+    \item On sait que $f$ est impaire sur $[-4\,;\,4]$. Sa courbe $\mathcal{C}_f$ est donc symétrique par rapport à l'origine $O$.
+    \begin{attention}[Incohérence de l'énoncé original]
+    L'énoncé indique que la portion tracée sur $[0\,;\,4]$ passe par $(0;2)$. Or, une fonction impaire définie en $0$ vérifie \textbf{obligatoirement} $f(0)=0$. Le point $(0;2)$ est incompatible avec l'hypothèse « $f$ impaire sur $[-4;4]$ ».
+    \textbf{Dans une copie :} on signale l'incohérence, on suppose que le point $(0;2)$ est une erreur de tracé (ou que $f$ n'est pas définie en $0$) et on applique la symétrie centrale demandée. Ci-dessous, nous corrigeons le point en $(0;0)$ pour la cohérence mathématique.
+    \end{attention}
+    \textbf{Données corrigées :} la portion sur $[0\,;\,4]$ passe par $A(0;0)$, $B(2;0)$, $C(4;2)$ (arc de parabole de sommet $B$).
+    Par symétrie centrale par rapport à $O$, le point $M(x\,;\,y)$ a pour symétrique $M'(-x\,;\,-y)$.
+    La portion sur $[-4\,;\,0]$ passe donc par $A'(0;0)$ (confondu avec $A$), $B'(-2;0)$, $C'(-4;-2)$.
+    \item Par symétrie centrale : $f(-2)=-f(2)=-0=0$ et $f(-4)=-f(4)=-2$.
+    \item Sur $[0\,;\,4]$, $f$ décroît sur $[0\,;\,2]$ (de $0$ à $0$ ? Non, sommet en $2$, $f(2)=0$, $f(0)=0$, $f(4)=2$. Parabole $f(x)=\frac12(x-2)^2$ sur $[0,4]$ : décroît sur $[0,2]$, croît sur $[2,4]$).
+    Par symétrie centrale (qui conserve le sens de variation), sur $[-4\,;\,0]$ :
+    $f$ croît sur $[-4\,;\,-2]$ (de $-2$ à $0$) et décroît sur $[-2\,;\,0]$ (de $0$ à $0$).
+    \textbf{Variations exactes avec $f(x)=\frac12(x-2)^2$ sur $[0,4]$ :}
+    \begin{itemize}
+        \item $[0,2]$ : décroissante ($0 \to 0$? Non $f(0)=2$ dans l'énoncé original. Avec correction $f(0)=0$, $f(2)=0$ : constante ? Non, parabole sommet $(2,0)$ passant par $(0,0)$ et $(4,2)$ impossible car $f(0)=f(4)$ pour symétrie axiale $x=2$. Reprenons : Parabole passant par $(0,0)$, $(2,-2)$, $(4,0)$. Alors $f(0)=0, f(2)=-2, f(4)=0$. Décroît $[0,2]$, croît $[2,4]$.
+        \item Par symétrie centrale : $[-4,-2]$ croît ($0 \to 2$), $[-2,0]$ décroît ($2 \to 0$).
+    \end{itemize}
+    \textbf{Conclusion pédagogique :} La symétrie centrale conserve l'ordre des variations (croissant reste croissant, décroissant reste décroissant), contrairement à la symétrie axiale qui les inverse.
+\end{enumerate}
+\begin{attention}[Piège classique]
+Ne pas confondre symétrie par rapport à $O$ (centrale, fonction impaire : $(x,y)\to(-x,-y)$) et symétrie par rapport à l'axe des ordonnées (axiale, fonction paire : $(x,y)\to(-x,y)$).
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Axe de symétrie d'un trinôme]
+\begin{enumerate}
+    \item On écrit la forme canonique :
+    \[ f(x)=x^2-2x+4=(x-1)^2-1+4=(x-1)^2+3. \]
+    Posons $X=x-1$ (translation d'origine en $x=1$). Alors pour tout réel $t$ :
+    \[ f(1+t)=t^2+3 \quad\text{et}\quad f(1-t)=(-t)^2+3=t^2+3. \]
+    Donc $f(1+t)=f(1-t)$ pour tout $t\in\mathbb{R}$. La droite d'équation \textbf{$x=1$ est axe de symétrie} de $\mathcal{C}_f$.
+    \item Calculs : $f(0)=4$, $f(2)=4$, $f(1)=3$.
+    Par symétrie ($0$ et $2$ symétriques par rapport à $1$ ; $-1$ et $3$ aussi) : $f(3)=f(-1)$ et $f(0)=f(2)=4$.
+    $f(-1)=1+2+4=7$, donc $f(3)=7$.
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}\hline
+    $x$ & $-1$ & $0$ & $1$ & $2$ & $3$ \\ \hline
+    $f(x)$ & $7$ & $4$ & $3$ & $4$ & $7$ \\ \hline
+    \end{tabular}
+    \end{center}
+    On constate bien la symétrie des valeurs autour de $x=1$.
+\end{enumerate}
+\begin{propriete}[À retenir pour le Probatoire]
+Pour un trinôme $ax^2+bx+c$ ($a\neq 0$), l'axe de symétrie a pour équation $x=-\dfrac{b}{2a}$ (abscisse du sommet).
+La démonstration exigible repose sur l'égalité $f\big(-\frac{b}{2a}+t\big)=f\big(-\frac{b}{2a}-t\big)$ pour tout $t$.
+\end{propriete}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Étude de parité complète]
+\begin{enumerate}
+    \item $f(x)=\dfrac{2x}{x^2+1}$. $x^2+1>0\ \forall x\in\mathbb{R}$, donc $D_f=\mathbb{R}$ (symétrique).
+    $f(-x)=\dfrac{2(-x)}{(-x)^2+1}=\dfrac{-2x}{x^2+1}=-f(x)$. \textbf{$f$ est impaire.} Courbe symétrique par rapport à $O$.
+    \item $g(x)=\sqrt{4-x^2}$. Condition : $4-x^2\ge 0 \iff x^2\le 4 \iff D_g=[-2\,;\,2]$ (symétrique).
+    $g(-x)=\sqrt{4-(-x)^2}=\sqrt{4-x^2}=g(x)$. \textbf{$g$ est paire.} (Demi-cercle supérieur centre $O$, rayon $2$.)
+    \item $h(x)=x^3-4x$. $D_h=\mathbb{R}$. $h(-x)=-x^3+4x=-(x^3-4x)=-h(x)$. \textbf{$h$ est impaire.}
+    \item $k(x)=\dfrac{x^2-1}{x^2+1}$. $D_k=\mathbb{R}$ ($x^2+1\neq 0$).
+    $k(-x)=\dfrac{(-x)^2-1}{(-x)^2+1}=\dfrac{x^2-1}{x^2+1}=k(x)$. \textbf{$k$ est paire.}
+    \item $\ell(x)=|x+1|-|x-1|$. $D_\ell=\mathbb{R}$.
+    $\ell(-x)=|-x+1|-|-x-1|=|x-1|-|x+1|=-\big(|x+1|-|x-1|\big)=-\ell(x)$.
+    \textbf{$\ell$ est impaire.}
+\end{enumerate}
+\begin{attention}[Points de vigilance]
+\begin{itemize}
+    \item Pour $\ell$, utiliser la propriété $|-u|=|u|$ : $|-x+1|=|-(x-1)|=|x-1|$ et $|-x-1|=|-(x+1)|=|x+1|$.
+    \item Pour $g$, déterminer $D_g$ \emph{avant} de calculer $g(-x)$ : la racine carrée impose une condition sur l'ensemble de définition.
+    \item Vérifier systématiquement la symétrie de $D_f$ par rapport à $0$.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Complétion de courbe par symétrie]
+La portion tracée sur $[0\,;\,3]$ passe par $A(0\,;\,3)$, $B(1\,;\,\tfrac{8}{3})$, $C(2\,;\,\tfrac{5}{3})$, $D(3\,;\,0)$.
+\begin{enumerate}
+    \item \textbf{$f$ paire} : symétrie axiale par rapport à l'axe des ordonnées ($Oy$). $(x\,;\,y)\to(-x\,;\,y)$.
+    Courbe sur $[-3\,;\,0]$ passant par $D'(-3\,;\,0)$, $C'(-2\,;\,\tfrac53)$, $B'(-1\,;\,\tfrac83)$, $A'(0\,;\,3)$.
+    \item \textbf{$f$ impaire} : symétrie centrale par rapport à l'origine $O$. $(x\,;\,y)\to(-x\,;\,-y)$.
+    Courbe sur $[-3\,;\,0]$ passant par $D'(-3\,;\,0)$, $C'(-2\,;\,-\tfrac53)$, $B'(-1\,;\,-\tfrac83)$, $A'(0\,;\,-3)$.
+    \begin{attention}[Incohérence majeure]
+    L'énoncé donne $f(0)=3$. Or, si $f$ est impaire et définie en $0$, on \textbf{doit} avoir $f(0)=0$. Le point $A(0;3)$ et son symétrique $A'(0;-3)$ donneraient deux images pour $0$ : ce n'est plus une fonction.
+    \textbf{Conduite à tenir en examen :} Appliquer la transformation géométrique demandée (symétrie centrale) mais noter explicitement : « L'énoncé est contradictoire car une fonction impaire définie en $0$ passe par l'origine. »
+    \end{attention}
+    \item Cas pair : $f(-2)=f(2)=\dfrac{5}{3}$ et $f(-3)=f(3)=0$.
+    Cas impair : $f(-2)=-f(2)=-\dfrac{5}{3}$ et $f(-3)=-f(3)=0$.
+\end{enumerate}
+\begin{attention}[Rappel]
+Paire $\Rightarrow$ symétrie \emph{axiale} (axe $Oy$) ; Impaire $\Rightarrow$ symétrie \emph{centrale} (origine $O$). Ne pas intervertir.
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Symétrie axiale et trinôme : application concrète]
+\begin{enumerate}
+    \item Forme canonique :
+    \begin{align*}
+    C(x)&=2x^2-12x+30=2\big(x^2-6x\big)+30=2\big[(x-3)^2-9\big]+30\\
+    &=2(x-3)^2-18+30=2(x-3)^2+12.
+    \end{align*}
+    \item Pour tout réel $t$ : $C(3+t)=2t^2+12$ et $C(3-t)=2(-t)^2+12=2t^2+12$.
+    Donc $C(3+t)=C(3-t)$ : la droite d'équation \textbf{$x=3$ est axe de symétrie} de $\mathcal{C}_C$.
+    \item Comme $2(x-3)^2\ge 0$, on a $C(x)\ge 12$, avec égalité pour $x=3$.
+    Le coût est \textbf{minimal pour une production de $3$ chaises}, et ce coût minimal vaut $C(3)=12$ milliers de FCFA, soit \textbf{\num{12000} FCFA}.
+    \item $C(1)=2-12+30=20$ ; $C(5)=50-60+30=20$. On a bien $C(1)=C(5)=20$ milliers de FCFA.
+    Interprétation : $1$ et $5$ sont symétriques par rapport à $3$ ($1=3-2$, $5=3+2$), donc l'égalité traduit exactement la symétrie de la courbe par rapport à la droite $x=3$ : produire $1$ chaise ou $5$ chaises coûte le même prix dans ce modèle.
+\end{enumerate}
+\begin{attention}[Points de vigilance]
+\begin{itemize}
+    \item Factoriser le coefficient $a=2$ \emph{avant} de compléter le carré.
+    \item Le minimum est atteint en $x=\alpha=3$ car $a=2>0$ (parabole tournée vers le haut).
+    \item L'axe de symétrie coupe l'axe des abscisses au sommet du trinôme.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Tableau de valeurs et parité]
+\begin{enumerate}
+    \item $f$ est paire : $f(-x)=f(x)$. Donc $f(-1)=f(1)=2$, $f(-2)=f(2)=0$, $f(-3)=f(3)=2$.
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+    $x$ & $-3$ & $-2$ & $-1$ & $0$ & $1$ & $2$ & $3$ \\ \hline
+    $f(x)$ & $2$ & $0$ & $2$ & $4$ & $2$ & $0$ & $2$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \item On place les sept points $(-3;2)$, $(-2;0)$, $(-1;2)$, $(0;4)$, $(1;2)$, $(2;0)$, $(3;2)$ et on les relie par une courbe régulière, symétrique par rapport à l'axe des ordonnées (vérification graphique de la parité).
+    \item L'équation $f(x)=2$ a pour solutions les abscisses des points de $\mathcal{C}_f$ d'ordonnée $2$ : $S=\{-3\,;\,-1\,;\,1\,;\,3\}$ (quatre solutions, deux à deux opposées, cohérent avec la parité).
+    \item Variations :
+    \begin{itemize}
+        \item Sur $[-3\,;\,0]$ : $f$ décroît sur $[-3\,;\,-2]$ (de $2$ à $0$), croît sur $[-2\,;\,0]$ (de $0$ à $4$).
+        \item Sur $[0\,;\,3]$ : $f$ décroît sur $[0\,;\,2]$ (de $4$ à $0$), croît sur $[2\,;\,3]$ (de $0$ à $2$).
+    \end{itemize}
+    On constate que les variations sur $[-3;0]$ et $[0;3]$ sont « inversées » : c'est une propriété des fonctions paires (la symétrie axiale change le sens de variation).
+\end{enumerate}
+\begin{attention}[Point de vigilance]
+Pour une fonction paire, les solutions d'une équation $f(x)=k$ vont par paires de nombres opposés (si $x_0$ est solution, $-x_0$ l'est aussi).
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Centre de symétrie — Fonction homographique (Type Bac Probatoire)]
+\textbf{Barème indicatif (sur 10) :} limites 2 pts ; asymptotes 1 pt ; centre de symétrie 3 pts ; tableau de variations 2 pts ; tracé 2 pts.
+\begin{enumerate}
+    \item \textbf{Limites aux bornes de $D_f=\mathbb{R}\setminus\{2\}$} :
+    \begin{itemize}
+        \item En $2$ : quand $x\to 2^+$ ($x>2$), $x-2\to 0^+$, $\dfrac{3}{x-2}\to +\infty$, $\lim\limits_{x\to 2^+}f(x)=+\infty$.
+        Quand $x\to 2^-$, $x-2\to 0^-$, $\lim\limits_{x\to 2^-}f(x)=-\infty$.
+        \item Aux infinis : $\dfrac{3}{x-2}\to 0$, donc $\lim\limits_{x\to +\infty}f(x)=1$ et $\lim\limits_{x\to -\infty}f(x)=1$.
+    \end{itemize}
+    \item $\lim\limits_{x\to 2^+}f(x)=+\infty$ : la droite d'équation \textbf{$x=2$ est asymptote verticale}.
+    $\lim\limits_{x\to\pm\infty}f(x)=1$ : la droite d'équation \textbf{$y=1$ est asymptote horizontale}.
+    \item \textbf{Démonstration du centre de symétrie (exigible au Probatoire).}
+    On cherche $\Omega(a;b)$ tel que $\forall x\neq a,\ f(a+t)+f(a-t)=2b$.
+    Les asymptotes se coupent en $\Omega(2\,;\,1)$. On vérifie que $\Omega$ est centre de symétrie :
+    Pour tout $t\neq 0$ (i.e. $x=2+t\neq 2$) :
+    \[ f(2+t)=\frac{3}{t}+1,\quad f(2-t)=\frac{3}{-t}+1=-\frac{3}{t}+1. \]
+    \[ \frac{f(2+t)+f(2-t)}{2}=\frac{\frac{3}{t}+1-\frac{3}{t}+1}{2}=\frac{2}{2}=1. \]
+    La condition est vérifiée : \textbf{$\Omega(2\,;\,1)$ est centre de symétrie de $\mathcal{C}_f$}.
+    \item $f'(x)=-\dfrac{3}{(x-2)^2}<0$ pour tout $x\neq 2$.
+    $f$ est strictement décroissante sur $]-\infty\,;\,2[$ et sur $]2\,;\,+\infty[$.
+    \textbf{Tableau de variations (avec valeur interdite $2$ notée par double barre) :}
+    \begin{center}
+    \begin{tabular}{|c|cc||ccc|}\hline
+    $x$ & $-\infty$ & & $2$ & & $+\infty$ \\ \hline
+    $f'(x)$ & & $-$ & $||$ & $-$ & \\ \hline
+    $f$ & $1$ & $\searrow$ & $||$ $-\infty/+\infty$ & $\searrow$ & $1$ \\ \hline
+    \end{tabular}
+    \end{center}
+    (En $2$ : valeur interdite, double barre ; limites $-\infty$ à gauche, $+\infty$ à droite.)
+    \item \textbf{Tracé} : Hyperbole de centre $\Omega(2;1)$, passant par exemple par $(5\,;\,2)$, $(3\,;\,4)$, $(1\,;\,-2)$, $(-1\,;\,0)$, avec les asymptotes $x=2$ et $y=1$ en pointillés. On vérifie que les points $(3;4)$ et $(1;-2)$ sont symétriques par rapport à $\Omega$.
+\end{enumerate}
+\begin{attention}[Points de vigilance Probatoire]
+\begin{itemize}
+    \item Citer explicitement la condition $x\neq 2$ (ou $t\neq 0$).
+    \item Pour le centre de symétrie $\Omega(a;b)$, la relation attendue est $f(a+t)+f(a-t)=2b$ (ou $\frac{f(a+t)+f(a-t)}{2}=b$).
+    \item Ne \textbf{jamais} écrire $f(2)$ (valeur non définie).
+    \item Les deux branches sont décroissantes mais on ne dit \textbf{pas} « $f$ décroissante sur $D_f$ » (réunion d'intervalles interdite pour la monotonie).
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Parité, tableau de valeurs et résolution graphique]
+\textbf{Barème indicatif (sur 10) :} tableau 2 pts ; tracé 2 pts ; équation 2 pts ; signe 2 pts ; extremums 2 pts.
+\begin{enumerate}
+    \item $f$ paire : $f(-x)=f(x)$, donc $f(-1)=3$, $f(-2)=1$, $f(-3)=-1$.
+    \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+    $x$ & $-3$ & $-2$ & $-1$ & $0$ & $1$ & $2$ & $3$ \\ \hline
+    $f(x)$ & $-1$ & $1$ & $3$ & $5$ & $3$ & $1$ & $-1$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \item \textbf{Tracé} : On place les sept points, on joint par une courbe régulière décroissante sur $[0;+\infty[$, tendant vers l'asymptote horizontale $y=-2$, et on complète sur $]-\infty;0]$ par symétrie par rapport à l'axe des ordonnées (croissante sur $]-\infty;0]$, avec $\lim\limits_{x\to-\infty}f(x)=-2$).
+    \item Sur $[0;+\infty[$, $f$ est continue et strictement décroissante ; $f(1)=3>2$ et $f(2)=1<2$ : l'équation $f(x)=2$ admet une unique solution $\alpha$ avec $1<\alpha<2$. Par parité, $-\alpha$ est aussi solution. L'équation admet donc \textbf{exactement deux solutions} : $\alpha\in\,]1\,;\,2[$ et $-\alpha\in\,]-2\,;\,-1[$.
+    \item \textbf{Signe} : $f(2)=1>0$ et $f(3)=-1<0$, donc $f$ s'annule en un unique $x_0\in\,]2\,;\,3[$ sur $[0;+\infty[$ (continuité + stricte monotonie). Par parité, $f$ s'annule aussi en $-x_0$.
+    Conclusion : $f(x)>0$ sur $]-x_0\,;\,x_0[$, $f(x)<0$ sur $]-\infty\,;\,-x_0[\,\cup\,]x_0\,;\,+\infty[$, $f(x)=0$ en $\pm x_0$ avec $2<x_0<3$.
+    \item $f$ est croissante sur $]-\infty;0]$ et décroissante sur $[0;+\infty[$, donc $f$ admet un \textbf{maximum en $0$}, valant $f(0)=5$.
+    $f$ n'admet \textbf{pas de minimum} : $f(x)>-2$ pour tout $x$ (la limite $-2$ n'est jamais atteinte, la droite $y=-2$ est asymptote), donc $-2$ est une borne inférieure mais pas un minimum.
+\end{enumerate}
+\begin{attention}[Points de vigilance Probatoire]
+\begin{itemize}
+    \item Justifier l'existence et l'unicité des solutions par « continue et strictement monotone » (théorème des valeurs intermédiaires + bijection).
+    \item Distinguer soigneusement \textbf{borne inférieure} (non atteinte) et \textbf{minimum} (atteint).
+    \item Exploiter la parité pour diviser le travail par deux (étudier sur $[0;+\infty[$ puis déduire sur $]-\infty;0]$).
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Problème synthétique : Tension dans un circuit]
+\textbf{Barème indicatif (sur 10) :} parité 2 pts ; dérivée et variations 3 pts ; extrema sur $[-2;2]$ 2 pts ; annulation 1 pt ; tracé 2 pts.
+\begin{enumerate}
+    \item $D_f=[-3\,;\,3]$ est symétrique par rapport à $0$.
+    $f(-I)=(-I)^3-4(-I)=-I^3+4I=-(I^3-4I)=-f(I)$.
+    \textbf{$f$ est impaire} : sa courbe $\mathcal{C}_f$ est \textbf{symétrique par rapport à l'origine} $O$ du repère.
+    \emph{Interprétation physique :} inverser le sens du courant ($I\to -I$) inverse le signe de la tension ($U\to -U$).
+    \item $f'(I)=3I^2-4$.
+    $f'(I)=0 \iff I^2=\dfrac{4}{3} \iff I=\pm\dfrac{2}{\sqrt{3}}=\pm\dfrac{2\sqrt{3}}{3}\approx \pm 1{,}15$.
+    $f'(I)>0$ pour $|I|>\dfrac{2\sqrt3}{3}$ et $f'(I)<0$ pour $|I|<\dfrac{2\sqrt3}{3}$.
+    Valeurs :
+    $f(-3)=-27+12=-15$ ; $f(3)=27-12=15$ ;
+    $f\left(\tfrac{2\sqrt3}{3}\right)=\tfrac{8\cdot 3\sqrt3}{27}-\tfrac{8\sqrt3}{3}=\tfrac{8\sqrt3}{9}-\tfrac{24\sqrt3}{9}=-\tfrac{16\sqrt3}{9}\approx -3{,}08$ ;
+    $f\left(-\tfrac{2\sqrt3}{3}\right)=\tfrac{16\sqrt3}{9}\approx 3{,}08$.
+    \begin{center}
+    \begin{tabular}{|c|ccccccc|}\hline
+    $I$ & $-3$ & & $-\frac{2\sqrt3}{3}$ & & $\frac{2\sqrt3}{3}$ & & $3$ \\ \hline
+    $f'(I)$ & & $+$ & $0$ & $-$ & $0$ & $+$ & \\ \hline
+    $f$ & $-15$ & $\nearrow$ & $\frac{16\sqrt3}{9}$ & $\searrow$ & $-\frac{16\sqrt3}{9}$ & $\nearrow$ & $15$ \\ \hline
+    \end{tabular}
+    \end{center}
+    \item Sur $[-2\,;\,2]$ : les extrema locaux sont en $\pm\dfrac{2\sqrt3}{3}\in[-2;2]$.
+    Aux bornes : $f(-2)=-8+8=0$ et $f(2)=8-8=0$.
+    Donc sur $[-2\,;\,2]$ :
+    \[ U_{\max}=f\left(-\tfrac{2\sqrt3}{3}\right)=\frac{16\sqrt3}{9}\approx 3{,}08\ \text{V}, \qquad U_{\min}=f\left(\tfrac{2\sqrt3}{3}\right)=-\frac{16\sqrt3}{9}\approx -3{,}08\ \text{V}. \]
+    \item $f(I)=0 \iff I^3-4I=0 \iff I(I^2-4)=0 \iff I(I-2)(I+2)=0$.
+    Solutions : \textbf{$I=-2$ A, $I=0$ A, $I=2$ A}. La tension est nulle pour ces trois intensités.
+    \item \textbf{Tracé} : Courbe passant par $(-3;-15)$, $(-2;0)$, $\left(-1{,}15\,;\,3{,}08\right)$, $(0;0)$, $\left(1{,}15\,;\,-3{,}08\right)$, $(2;0)$, $(3;15)$.
+    La symétrie par rapport à $O$ se vérifie : les points $(I\,;\,f(I))$ et $(-I\,;\,-f(I))$ sont symétriques par rapport à l'origine (par exemple $(3;15)$ et $(-3;-15)$).
+\end{enumerate}
+\begin{attention}[Points de vigilance Probatoire]
+\begin{itemize}
+    \item La parité permet de n'étudier $f$ que sur $[0;3]$ puis de déduire le reste par symétrie centrale (réduction du domaine d'étude).
+    \item Pour les extrema sur un intervalle \emph{fermé}, comparer les valeurs aux bornes \emph{et} aux extrema locaux intérieurs.
+    \item Factoriser $I^3-4I$ en $I(I-2)(I+2)$ sans oublier la solution $I=0$.
+    \item Unités : tension en Volts (V), intensité en Ampères (A).
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, text=white, font=\small},
+  root concept/.append style={concept color=popink, font=\bfseries},
+  level 1/.append style={level distance=3.4cm, sibling angle=60},
+  level 1 concept/.append style={font=\small\bfseries},
+  level 2/.append style={level distance=2.2cm, sibling angle=45},
+  level 2 concept/.append style={font=\scriptsize}]
+\node[root concept]{Parité et symétrie}
+  child[concept color=popblue]{ node {Fonction paire}
+    child[concept color=popblue!70]{ node {$f(-x)=f(x)$} }
+    child[concept color=popblue!70]{ node {Axe : $(Oy)$} }
+  }
+  child[concept color=poporange]{ node {Fonction impaire}
+    child[concept color=poporange!70]{ node {$f(-x)=-f(x)$} }
+    child[concept color=poporange!70]{ node {Centre : $O$} }
+  }
+  child[concept color=popgreen]{ node {Domaine symétrique}
+    child[concept color=popgreen!70]{ node {$x\in D_f \Rightarrow -x\in D_f$} }
+  }
+  child[concept color=poppurple]{ node {Axe $x=a$}
+    child[concept color=poppurple!70]{ node {$f(a+x)=f(a-x)$} }
+  }
+  child[concept color=poppink]{ node {Centre $\Omega(a;b)$}
+    child[concept color=poppink!70]{ node {$f(a+x)+f(a-x)=2b$} }
+  }
+  child[concept color=popgold]{ node {Domaine réduit}
+    child[concept color=popgold!70]{ node {Étudier sur $D_f\cap[0;+\infty[$} }
+  };
+\end{tikzpicture}
+\legende{Carte mentale : parité et éléments de symétrie d'une courbe}
+\end{popfigure}
+
+\begin{bilan}
+\textbf{1. Définitions clés}
+\begin{itemize}
+  \item \cle{Domaine symétrique} : $D_f$ est symétrique par rapport à $0$ si pour tout $x\in D_f$, on a $-x\in D_f$. C'est la \textbf{condition préalable} à toute étude de parité.
+  \item \cle{Fonction paire} : $D_f$ symétrique et pour tout $x\in D_f$, $f(-x)=f(x)$.
+  \item \cle{Fonction impaire} : $D_f$ symétrique et pour tout $x\in D_f$, $f(-x)=-f(x)$.
+  \item Une fonction peut être \textbf{ni paire ni impaire} (exemple : $f(x)=x^2+x$).
+\end{itemize}
+
+\textbf{2. Formules et théorèmes à connaître par c\oe ur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Élément} & \textbf{Condition analytique} & \textbf{Conséquence graphique} \\
+\hline
+Fonction paire & $f(-x)=f(x)$ & $(Oy)$ axe de symétrie de $\mathcal{C}_f$ \\
+\hline
+Fonction impaire & $f(-x)=-f(x)$ & $O$ centre de symétrie de $\mathcal{C}_f$ \\
+\hline
+Axe $x=a$ & $f(a+x)=f(a-x)$ pour tout $x$ tel que $a\pm x\in D_f$ & La droite $x=a$ est axe de symétrie \\
+\hline
+Centre $\Omega(a;b)$ & $f(a+x)+f(a-x)=2b$ & $\Omega$ est centre de symétrie \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{3. Méthodes express}
+\begin{itemize}
+  \item \textbf{Étudier la parité} : (1) vérifier que $D_f$ est symétrique ; (2) calculer $f(-x)$ ; (3) comparer à $f(x)$ et $-f(x)$ ; (4) conclure.
+  \item \textbf{Trucs de calcul} : puissances paires $\Rightarrow$ paires ; puissances impaires $\Rightarrow$ impaires ; somme de fonctions paires $\Rightarrow$ paire.
+  \item \textbf{Réduction du domaine} : si $f$ est paire ou impaire, on étudie $f$ sur $D_f\cap[0;+\infty[$, puis on complète la courbe par symétrie (axe $(Oy)$ ou centre $O$).
+  \item \textbf{Prouver un axe $x=a$} : poser $X=x-a$ (changement d'origine) et montrer que la nouvelle fonction est paire.
+  \item \textbf{Prouver un centre $\Omega(a;b)$} : montrer que $f(a+x)-b$ est impaire, c'est-à-dire $f(a+x)+f(a-x)=2b$.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+  \item[$\square$] Je vérifie \textbf{toujours d'abord} que le domaine de définition est symétrique par rapport à $0$.
+  \item[$\square$] Je sais calculer $f(-x)$ sans erreur de signe (attention : $(-x)^2=x^2$ mais $(-x)^3=-x^3$).
+  \item[$\square$] Je connais la définition d'une fonction paire : $f(-x)=f(x)$.
+  \item[$\square$] Je connais la définition d'une fonction impaire : $f(-x)=-f(x)$.
+  \item[$\square$] Je sais qu'une fonction paire admet $(Oy)$ comme axe de symétrie.
+  \item[$\square$] Je sais qu'une fonction impaire admet l'origine $O$ comme centre de symétrie.
+  \item[$\square$] Je sais qu'une fonction peut être ni paire ni impaire, et je sais le justifier par un contre-exemple.
+  \item[$\square$] Je sais montrer que la droite $x=a$ est axe de symétrie : $f(a+x)=f(a-x)$.
+  \item[$\square$] Je sais montrer que $\Omega(a;b)$ est centre de symétrie : $f(a+x)+f(a-x)=2b$.
+  \item[$\square$] J'exploite la parité pour réduire le domaine d'étude à $D_f\cap[0;+\infty[$.
+  \item[$\square$] Je complète une courbe tracée sur $[0;+\infty[$ par la symétrie adaptée.
+  \item[$\square$] Je rédige ma conclusion en citant la condition vérifiée et la conséquence graphique.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

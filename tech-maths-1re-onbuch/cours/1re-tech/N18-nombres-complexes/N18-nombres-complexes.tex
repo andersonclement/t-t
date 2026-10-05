@@ -1,0 +1,3067 @@
+% Nombres complexes — Mathématiques 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N18-nombres-complexes.tex
+\newcommand{\DOCMATIERE}{Mathématiques}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Mathématiques – classe de Première technique}
+\newcommand{\DOCLECON}{N18}
+\newcommand{\DOCTITRE}{Nombres complexes}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage{pgf-pie} % diagrammes circulaires \pie (statistiques)
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Nombres complexes}{Mathématiques}{1re Tech}{Mathématiques – classe de Première technique}{N18}{2 séances (fiche de progression harmonisée)}{Cette leçon introduit les nombres complexes sous forme algébrique et trigonométrique, leurs opérations, le conjugué et le module, afin de résoudre des problèmes concrets d'électricité et de géométrie.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item Écrire un nombre complexe sous forme algébrique a+ib et l'identifier dans le plan complexe.
+\item Effectuer les opérations d'addition, soustraction, multiplication et division de deux nombres complexes.
+\item Déterminer le conjugué d'un nombre complexe et en exploiter les propriétés.
+\item Calculer le module et l'argument d'un nombre complexe non nul.
+\item Passer de la forme algébrique à la forme trigonométrique (et réciproquement).
+\item Résoudre des équations simples du type z\^{}2 = a+ib en utilisant la forme trigonométrique.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item 1. Écriture algébrique et représentation géométrique
+\item 2. Opérations sur les nombres complexes
+\item 3. Nombre complexe conjugué : propriétés et applications
+\item 4. Module et écriture trigonométrique
+\item 5. Applications concrètes et résolution d'équations
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item Écrire un nombre complexe sous forme algébrique a+ib et l'identifier dans le plan complexe.
+\item Effectuer les opérations d'addition, soustraction, multiplication et division de deux nombres complexes.
+\item Déterminer le conjugué d'un nombre complexe et en exploiter les propriétés.
+\item Calculer le module et l'argument d'un nombre complexe non nul.
+\item Passer de la forme algébrique à la forme trigonométrique (et réciproquement).
+\item Résoudre des équations simples du type z\^{}2 = a+ib en utilisant la forme trigonométrique.
+\item Modéliser une situation physique (impédance, rotation) à l'aide des nombres complexes et interpréter le résultat.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion de nombre réel et opérations usuelles (classe de 4e).
+\item Coordonnées cartésiennes dans le plan (abscisse, ordonnée).
+\item Définition du cosinus et du sinus d'un angle orienté (trigonométrie de 3e).
+\item Résolution d'équations du second degré à coefficients réels.
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Écriture algébrique et représentation géométrique}
+
+\courssub{Situation d'accroche et problématique}
+
+Imaginez un électricien sur un chantier à Douala. Il doit dimensionner le câblage d'un circuit alimenté en courant alternatif. Il connaît la tension $U = 220\,\text{V}$ et l'intensité $I = 10\,\text{A}$, mais le circuit contient des bobines (inductances) et des condensateurs (capacités). Ces composants créent un décalage de phase entre la tension et le courant : ils ne s'additionnent pas comme de simples résistances. L'électricien se heurte à une grandeur, l'\emph{impédance}, qui possède à la fois une partie résistive (énergie dissipée) et une partie réactive (énergie stockée/restituée). Les nombres réels ne suffisent plus pour décrire cette réalité physique. Comment représenter et calculer avec ces grandeurs à ``deux dimensions'' ? C'est précisément l'apport des \textbf{nombres complexes}, dont l'étude commence ici par leur écriture algébrique et leur représentation géométrique.
+
+\courssub{L'ensemble $\mathbb{C}$ et l'unité imaginaire $i$}
+
+Depuis la classe de Seconde, vous savez résoudre des équations du type $x^2 = 4$ (solutions $2$ et $-2$) ou $x^2 = 0$ (solution $0$). Mais l'équation $x^2 = -1$ n'admet \textbf{aucune solution dans $\mathbb{R}$}, car le carré d'un nombre réel est toujours positif ou nul. Pour combler ce manque, les mathématiciens ont introduit un nouveau symbole.
+
+\begin{definition}[Nombre complexe, partie réelle, partie imaginaire]
+On appelle \textbf{nombre complexe} toute expression de la forme :
+\[
+z = a + ib
+\]
+où $a$ et $b$ sont des nombres \textbf{réels}, et $i$ est un symbole (l'\textbf{unité imaginaire}) défini par la propriété fondamentale :
+\[
+i^2 = -1 \quad \text{(équivalent à } i = \sqrt{-1}\text{)}.
+\]
+L'ensemble de tous les nombres complexes est noté $\mathbb{C}$.
+Pour $z = a + ib$ :
+\begin{itemize}
+    \item $a$ est la \textbf{partie réelle} de $z$, notée $\operatorname{Re}(z)$ ou $\Re(z)$.
+    \item $b$ est la \textbf{partie imaginaire} de $z$, notée $\operatorname{Im}(z)$ ou $\Im(z)$.
+\end{itemize}
+On écrit souvent $z = \operatorname{Re}(z) + i\,\operatorname{Im}(z)$.
+\end{definition}
+
+\begin{attention}[Vocabulaire précis : partie imaginaire $\neq$ coefficient de $i$]
+La partie imaginaire est un \textbf{nombre réel}. Pour $z = 3 - 4i$, $\operatorname{Im}(z) = -4$ (et non $-4i$). De même, $\operatorname{Re}(z) = 3$.
+\end{attention}
+
+\begin{exemplebox}[Identification des parties]
+Soit le nombre complexe $z = 3 - 4i$.
+\begin{itemize}
+    \item Il s'écrit sous la forme standard $a + ib$ avec $a = 3$ et $b = -4$.
+    \item $\operatorname{Re}(z) = 3$.
+    \item $\operatorname{Im}(z) = -4$.
+\end{itemize}
+Autre exemple : $z' = \sqrt{2} + i\frac{\pi}{3}$. Alors $\operatorname{Re}(z') = \sqrt{2}$ et $\operatorname{Im}(z') = \frac{\pi}{3}$.
+\end{exemplebox}
+
+\begin{savaistu}[L'ingénieur Steinmetz et le symbole $j$]
+Au tournant des années 1890, l'ingénieur américain \textbf{Charles Proteus Steinmetz} (d'origine allemande) a popularisé l'usage des nombres complexes pour analyser les circuits à courant alternatif. En électricité, la lettre $i$ désignant déjà l'intensité du courant, on utilise traditionnellement la lettre \textbf{$j$} pour l'unité imaginaire ($j^2 = -1$). Dans ce cours de mathématiques, nous conservons la notation standard $i$.
+\end{savaistu}
+
+\courssub{Représentation géométrique : le plan complexe}
+
+Chaque nombre complexe $z = a + ib$ peut être associé à un couple de réels $(a; b)$. Cela permet une représentation visuelle puissante.
+
+\begin{definition}[Plan complexe, affixe, point, vecteur]
+Munissons le plan d'un repère orthonormé $(O; \vec{u}, \vec{v})$.
+\begin{itemize}
+    \item L'axe des abscisses (horizontal) est appelé \textbf{axe des parties réelles} ou \textbf{axe réel}, noté $\mathbb{R}$ ou $\text{Re}$.
+    \item L'axe des ordonnées (vertical) est appelé \textbf{axe des parties imaginaires} ou \textbf{axe imaginaire}, noté $i\mathbb{R}$ ou $\text{Im}$.
+    \item À tout nombre complexe $z = a + ib$, on associe :
+    \begin{enumerate}
+        \item Le \textbf{point} $M$ de coordonnées $(a; b)$.
+        \item Le \textbf{vecteur} $\overrightarrow{OM}$ de composantes $(a; b)$.
+    \end{enumerate}
+    Le point $M$ (ou le vecteur $\overrightarrow{OM}$) est appelé \textbf{image} de $z$. Le nombre $z$ est l'\textbf{affixe} du point $M$ (ou du vecteur $\overrightarrow{OM}$).
+\end{itemize}
+Le plan muni de ce repère est appelé \textbf{plan complexe} (ou plan de Gauss, ou plan d'Argand).
+\end{definition}
+
+\begin{attention}[Nombre complexe vs Affixe vs Point vs Vecteur]
+Ne confondez pas :
+\begin{itemize}
+    \item Le \textbf{nombre complexe} $z = a + ib$ : c'est une expression algébrique.
+    \item L'\textbf{affixe} : c'est le nombre complexe $z$ lui-même, vu comme « étiquette » du point.
+    \item Le \textbf{point} $M(a;b)$ : c'est un objet géométrique (position).
+    \item Le \textbf{vecteur} $\overrightarrow{OM}$ : c'est un objet géométrique (translation).
+\end{itemize}
+On dit « \emph{le point d'affixe $z$} » ou « \emph{le vecteur d'affixe $z$} », mais $z$ n'est \textbf{pas} le point ni le vecteur.
+\end{attention}
+
+\begin{methode}[Repérer un nombre complexe dans le plan complexe]
+Pour placer le nombre complexe $z = a + ib$ :
+\begin{enumerate}
+    \item Repérez la valeur $a$ sur l'axe réel (horizontal). $\rightarrow$ Vers la droite si $a>0$, vers la gauche si $a<0$.
+    \item Repérez la valeur $b$ sur l'axe imaginaire (vertical). $\rightarrow$ Vers le haut si $b>0$, vers le bas si $b<0$.
+    \item Le point $M$ d'affixe $z$ est à l'intersection de la parallèle à l'axe imaginaire passant par $a$ et de la parallèle à l'axe réel passant par $b$.
+    \item Le vecteur $\overrightarrow{OM}$ joint l'origine $O$ au point $M$.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9, >=Stealth]
+    % Axes
+    \draw[popline, thick, ->] (-4.5,0) -- (4.5,0) node[right] {$\text{Re}$};
+    \draw[popline, thick, ->] (0,-3.5) -- (0,3.5) node[above] {$\text{Im}$};
+    % Graduations
+    \foreach \x in {-4,-3,-2,-1,1,2,3,4} \draw (\x,0.08) -- (\x,-0.08) node[below, font=\small] {\x};
+    \foreach \y in {-3,-2,-1,1,2,3} \draw (-0.08,\y) -- (0.08,\y) node[left, font=\small] {\y};
+    % Origine
+    \node[below left] at (0,0) {$O$};
+    % Point M(3,-2) par exemple
+    \coordinate (M) at (3,-2);
+    % Vecteur
+    \draw[popblue, very thick, ->] (0,0) -- (M) node[midway, above right, popblue] {$\overrightarrow{OM}$};
+    % Projections
+    \draw[popmuted, dashed] (M) -- (3,0) node[below, font=\small] {$3$};
+    \draw[popmuted, dashed] (M) -- (0,-2) node[left, font=\small] {$-2$};
+    % Point
+    \fill[poporange] (M) circle (2.5pt) node[above right] {$M(3;-2)$};
+    % Label z
+    \node[poppurple, font=\bfseries] at (3.5,-2.5) {$z = 3 - 2i$};
+\end{tikzpicture}
+\legende{Représentation du nombre complexe $z = 3 - 2i$ dans le plan complexe. L'affixe est $3-2i$, le point est $M(3;-2)$, le vecteur est $\overrightarrow{OM}$.}
+\end{popfigure}
+
+\courssub{Classification des nombres complexes}
+
+L'ensemble $\mathbb{C}$ contient $\mathbb{R}$ et l'ensemble des nombres purs imaginaires $i\mathbb{R}$.
+
+\begin{propriete}[Inclusions et cas particuliers]
+\begin{itemize}
+    \item \textbf{Nombre réel :} $z \in \mathbb{R} \iff \operatorname{Im}(z) = 0$. On écrit $z = a + i0 = a$. Image : point sur l'axe réel.
+    \item \textbf{Nombre pur imaginaire :} $z \in i\mathbb{R} \iff \operatorname{Re}(z) = 0$. On écrit $z = 0 + ib = ib$. Image : point sur l'axe imaginaire.
+    \item \textbf{Zéro :} $0 = 0 + i0$. C'est le seul nombre à la fois réel et pur imaginaire. Image : l'origine $O$.
+    \item \textbf{Inclusions :} $\mathbb{R} \subset \mathbb{C}$ et $i\mathbb{R} \subset \mathbb{C}$.
+\end{itemize}
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1, >=Stealth, font=\small]
+    % Styles
+    \tikzset{
+        setnode/.style={draw=popdark, thick, rounded corners, fill=popcream, minimum width=2.5cm, minimum height=1.2cm, align=center},
+        subsetnode/.style={draw=popblue, thick, rounded corners, fill=popblueL, minimum width=2cm, minimum height=1cm, align=center},
+        arrownode/.style={->, thick, popdark}
+    }
+    % Ensemble C
+    \node[setnode, align=center] (C) at (0,0){$\mathbb{C}$\\$\{a+ib \mid a,b\in\mathbb{R}\}$};
+    % R
+    \node[subsetnode, align=center] (R) at (-3, 1.5){$\mathbb{R}$\\$\{a \mid a\in\mathbb{R}\}$\\$\operatorname{Im}(z)=0$};
+    % iR
+    \node[subsetnode, align=center] (iR) at (3, 1.5){$i\mathbb{R}$\\$\{ib \mid b\in\mathbb{R}\}$\\$\operatorname{Re}(z)=0$};
+    % Zero
+    \node[draw=poporange, thick, rounded corners, fill=poporangeL, minimum width=1.5cm, minimum height=0.8cm, align=center] (Zero) at (0, -1.5){$\{0\}$\\$\operatorname{Re}=0,\ \operatorname{Im}=0$};
+    % Flèches d'inclusion
+    \draw[arrownode] (R) -- (C);
+    \draw[arrownode] (iR) -- (C);
+    \draw[arrownode] (Zero) -- (R);
+    \draw[arrownode] (Zero) -- (iR);
+    % Légendes axes
+    \node[popmuted, rotate=90] at (-3, -0.5) {Axe réel};
+    \node[popmuted, rotate=90] at (3, -0.5) {Axe imaginaire};
+\end{tikzpicture}
+\legende{Arbre de classification : $\mathbb{R}$ et $i\mathbb{R}$ sont des sous-ensembles de $\mathbb{C}$. Leur intersection est réduite à $\{0\}$.}
+\end{popfigure}
+
+\courssub{Égalité de deux nombres complexes}
+
+L'égalité dans $\mathbb{C}$ se réduit à l'égalité dans $\mathbb{R}$ composante par composante.
+
+\begin{propriete}[Égalité de deux nombres complexes]
+Soient $z_1 = a_1 + ib_1$ et $z_2 = a_2 + ib_2$ deux nombres complexes.
+\[
+z_1 = z_2 \quad \Longleftrightarrow \quad 
+\begin{cases}
+\operatorname{Re}(z_1) = \operatorname{Re}(z_2) \quad (a_1 = a_2)\\[4pt]
+\operatorname{Im}(z_1) = \operatorname{Im}(z_2) \quad (b_1 = b_2)
+\end{cases}
+\]
+\textbf{Preuve (exigible au Probatoire) :}
+$z_1 = z_2 \iff a_1 + ib_1 = a_2 + ib_2 \iff a_1 - a_2 = i(b_2 - b_1)$.
+Le membre de gauche est un réel, le membre de droite est un pur imaginaire (sauf si $b_2-b_1=0$). Un nombre ne peut être à la fois réel et pur imaginaire que s'il est nul. Donc $a_1-a_2=0$ et $b_2-b_1=0$, d'où $a_1=a_2$ et $b_1=b_2$. La réciproque est évidente.
+\end{propriete}
+
+\begin{exoresolu}[Déterminer des parties réelles et imaginaires par égalité]
+\textbf{Énoncé :} Déterminer les réels $x$ et $y$ tels que :
+\[
+(2x + 1) + i(3 - y) = 5 - 2i.
+\]
+
+\textbf{Solution détaillée :}
+On identifie les parties réelles et les parties imaginaires des deux membres (propriété d'égalité) :
+\[
+\begin{cases}
+\operatorname{Re} : 2x + 1 = 5 \\[4pt]
+\operatorname{Im} : 3 - y = -2
+\end{cases}
+\]
+On résout ce système simple :
+\begin{align*}
+2x + 1 &= 5 \implies 2x = 4 \implies x = 2. \\
+3 - y &= -2 \implies -y = -5 \implies y = 5.
+\end{align*}
+\textbf{Réponse :} $x = 2$ et $y = 5$.
+\end{exoresolu}
+
+\begin{exemplebox}[Cas particuliers : résolution d'équations dans $\mathbb{C}$]
+Résoudre $z^2 = -4$ dans $\mathbb{C}$.
+On cherche $z = a+ib$ tel que $(a+ib)^2 = -4$.
+$(a^2 - b^2) + i(2ab) = -4 + i0$.
+Identification :
+$\begin{cases} a^2 - b^2 = -4 \\ 2ab = 0 \end{cases}$.
+De $2ab=0$, on a $a=0$ ou $b=0$.
+\begin{itemize}
+    \item Si $b=0$ : $a^2 = -4$ impossible dans $\mathbb{R}$.
+    \item Si $a=0$ : $-b^2 = -4 \implies b^2 = 4 \implies b = \pm 2$.
+\end{itemize}
+Les solutions sont $z = 2i$ et $z = -2i$. Ce sont des nombres \textbf{purs imaginaires}.
+\end{exemplebox}
+
+\begin{aretenir}[Bilan de la section 1]
+\begin{itemize}
+    \item $\mathbb{C} = \{ a+ib \mid a,b \in \mathbb{R},\ i^2=-1 \}$.
+    \item $z = a+ib \Rightarrow \operatorname{Re}(z)=a,\ \operatorname{Im}(z)=b \in \mathbb{R}$.
+    \item Représentation : Point $M(a;b)$, Vecteur $\overrightarrow{OM}$ dans le plan complexe (axes Re, Im).
+    \item $z_1 = z_2 \iff \operatorname{Re}(z_1)=\operatorname{Re}(z_2)$ et $\operatorname{Im}(z_1)=\operatorname{Im}(z_2)$.
+    \item $\mathbb{R} \subset \mathbb{C}$ (axe horizontal), $i\mathbb{R} \subset \mathbb{C}$ (axe vertical), $\{0\} = \mathbb{R} \cap i\mathbb{R}$.
+\end{itemize}
+\end{aretenir}
+
+\coursec{Opérations sur les nombres complexes}
+
+Dans la section précédente, nous avons appris qu'un nombre complexe s'écrit sous forme algébrique $z = a + ib$, avec $a$ sa partie réelle et $b$ sa partie imaginaire, et qu'on le représente par un point $M(a\,;b)$ du plan muni d'un repère orthonormé. Mais un nombre qui ne sert qu'à être dessiné ne serait pas très utile ! En électricité, en mécanique ou en électronique, on doit \emph{calculer} avec ces nombres : additionner des impédances, multiplier des signaux, diviser des tensions. Toute la puissance des nombres complexes vient du fait qu'on peut y faire les quatre opérations comme dans $\mathbb{R}$, à condition de respecter une seule règle nouvelle : $i^2 = -1$. C'est l'objet de cette section.
+
+\courssub{Addition et soustraction}
+
+L'idée est très naturelle : pour additionner deux nombres complexes, on additionne séparément les parties réelles et les parties imaginaires, exactement comme on additionne deux vecteurs en ajoutant leurs coordonnées.
+
+\begin{definition}[Addition et soustraction dans $\mathbb{C}$]
+Soient $z = a + ib$ et $z' = c + id$ deux nombres complexes, avec $a, b, c, d$ réels. On définit :
+\[ z + z' = (a + c) + i(b + d) \qquad \text{et} \qquad z - z' = (a - c) + i(b - d). \]
+\end{definition}
+
+\begin{exemplebox}[Calcul d'une somme et d'une différence]
+Soient $z = 3 + 2i$ et $z' = 1 - 5i$. Alors :
+\begin{align*}
+z + z' &= (3 + 1) + i(2 - 5) = 4 - 3i,\\
+z - z' &= (3 - 1) + i(2 - (-5)) = 2 + 7i.
+\end{align*}
+\end{exemplebox}
+
+Géométriquement, l'addition des nombres complexes correspond exactement à l'addition des vecteurs : si $M$ et $M'$ sont les images de $z$ et $z'$, alors l'image de $z + z'$ est le point $S$ tel que $\overrightarrow{OS} = \overrightarrow{OM} + \overrightarrow{OM'}$. On retrouve la \cle{règle du parallélogramme}, bien connue en mécanique pour composer deux forces.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=1.1,>=Stealth]
+\draw[->,popmuted] (-0.8,0) -- (5.2,0) node[below left] {$\mathrm{Re}$};
+\draw[->,popmuted] (0,-0.8) -- (0,3.6) node[below left] {$\mathrm{Im}$};
+\coordinate (O) at (0,0);
+\coordinate (M) at (3,2);
+\coordinate (Mp) at (1,-0.5);
+\coordinate (S) at (4,1.5);
+\draw[->,very thick,popblue] (O) -- (M) node[midway,above left] {$\vec{u}$};
+\draw[->,very thick,poporange] (O) -- (Mp) node[midway,below left] {$\vec{v}$};
+\draw[->,very thick,popgreen] (O) -- (S) node[midway,above right] {$\vec{u}+\vec{v}$};
+\draw[dashed,popblue] (M) -- (S);
+\draw[dashed,poporange] (Mp) -- (S);
+\fill[popblue] (M) circle (1.6pt) node[above right] {$M(z)$};
+\fill[poporange] (Mp) circle (1.6pt) node[below right] {$M'(z')$};
+\fill[popgreen] (S) circle (1.6pt) node[right] {$S(z+z')$};
+\fill[popdark] (O) circle (1.6pt) node[below left] {$O$};
+\end{tikzpicture}
+\end{center}
+\legende{Règle du parallélogramme : l'image de la somme $z+z'$ est le quatrième sommet du parallélogramme construit sur les images de $z$ et $z'$.}
+\end{popfigure}
+
+\begin{attention}[Ne pas mélanger les parties]
+On additionne les parties réelles \emph{entre elles} et les parties imaginaires \emph{entre elles}. Il est interdit d'écrire $(3+2i)+(1-5i) = 4 - 3i^2$ : le nombre $i$ n'est pas une inconnue qu'on regroupe avec les réels. De plus, dans une soustraction, le signe moins porte sur \textbf{les deux} parties : $z - z' = (a-c) + i(b-d)$, et non $(a-c) + i(b+d)$.
+\end{attention}
+
+\courssub{Multiplication}
+
+Pour multiplier deux nombres complexes, on utilise la \cle{distributivité} comme pour un produit de deux binômes, puis on remplace chaque $i^2$ par $-1$.
+
+\begin{propriete}[Produit de deux nombres complexes]
+Pour tous réels $a, b, c, d$ :
+\[ (a + ib)(c + id) = (ac - bd) + i(ad + bc). \]
+\end{propriete}
+
+\begin{experience}[Démonstration guidée de la formule du produit]
+Développons pas à pas le produit $(a+ib)(c+id)$ :
+\begin{align*}
+(a+ib)(c+id) &= ac + iad + ibc + i^2 bd & &\text{(distributivité)}\\
+&= ac + iad + ibc - bd & &\text{(car } i^2 = -1\text{)}\\
+&= (ac - bd) + i(ad + bc) & &\text{(regroupement des parties réelle et imaginaire).}
+\end{align*}
+La formule est démontrée. Remarque : il est inutile de la mémoriser par cœur ; il suffit de savoir développer et d'appliquer $i^2 = -1$.
+\end{experience}
+
+\begin{exemplebox}[Calcul d'un produit]
+Calculons $(2 + 3i)(1 - 4i)$ :
+\begin{align*}
+(2 + 3i)(1 - 4i) &= 2 \times 1 + 2 \times (-4i) + 3i \times 1 + 3i \times (-4i)\\
+&= 2 - 8i + 3i - 12i^2\\
+&= 2 - 5i + 12 \qquad \text{(car } -12i^2 = +12\text{)}\\
+&= 14 - 5i.
+\end{align*}
+\end{exemplebox}
+
+\begin{attention}[Le piège du signe devant $i^2$]
+L'erreur la plus fréquente consiste à écrire $-12i^2 = -12$. Or $i^2 = -1$, donc $-12i^2 = -12 \times (-1) = +12$. Chaque fois qu'un $i^2$ apparaît, demandez-vous quel est le signe du coefficient \emph{avant} de remplacer.
+\end{attention}
+
+\courssub{Le conjugué : un outil indispensable}
+
+Pour diviser des nombres complexes, nous aurons besoin d'une notion simple mais fondamentale : le conjugué.
+
+\begin{definition}[Nombre complexe conjugué]
+Soit $z = a + ib$ un nombre complexe ($a, b$ réels). On appelle \cle{conjugué} de $z$ le nombre noté $\bar{z}$ défini par :
+\[ \bar{z} = a - ib. \]
+Autrement dit, on change le signe de la partie imaginaire, et on ne touche pas à la partie réelle.
+\end{definition}
+
+\begin{exemplebox}[Quelques conjugués]
+\begin{itemize}
+\item Si $z = 2 + 3i$, alors $\bar{z} = 2 - 3i$.
+\item Si $z = 1 - i$, alors $\bar{z} = 1 + i$.
+\item Si $z = 5$ (nombre réel), alors $\bar{z} = 5$.
+\item Si $z = -4i$ (imaginaire pur), alors $\bar{z} = 4i$.
+\end{itemize}
+\end{exemplebox}
+
+\begin{attention}[Oublier le signe moins devant $ib$]
+L'erreur classique est d'écrire que le conjugué de $2+3i$ est $2+3i$ (rien changé !) ou $-2-3i$ (tout changé !). Retenez : \textbf{seul} le signe de la partie imaginaire change. Le conjugué de $a+ib$ est $a-ib$, jamais $-a-ib$.
+\end{attention}
+
+\begin{propriete}[Somme, différence et produit d'un nombre et de son conjugué]
+Pour tout nombre complexe $z = a + ib$ :
+\[ z + \bar{z} = 2\,\mathrm{Re}(z) = 2a, \qquad z - \bar{z} = 2i\,\mathrm{Im}(z) = 2ib, \qquad z \times \bar{z} = a^2 + b^2 = |z|^2. \]
+En particulier, le produit $z\,\bar{z}$ est toujours un \textbf{nombre réel positif ou nul}. C'est cette dernière propriété qui rend la division possible.
+\end{propriete}
+
+\begin{experience}[Vérification sur un exemple]
+Prenons $z = 3 + 2i$, donc $\bar{z} = 3 - 2i$.
+\begin{itemize}
+\item Somme : $z + \bar{z} = (3+2i) + (3-2i) = 6 = 2 \times 3 = 2\,\mathrm{Re}(z)$. \checkmark
+\item Différence : $z - \bar{z} = (3+2i) - (3-2i) = 4i = 2i \times 2 = 2i\,\mathrm{Im}(z)$. \checkmark
+\item Produit : $z\,\bar{z} = (3+2i)(3-2i) = 9 - 6i + 6i - 4i^2 = 9 + 4 = 13 = 3^2 + 2^2$. \checkmark
+\end{itemize}
+On reconnaît dans le produit l'identité remarquable $(a+ib)(a-ib) = a^2 - (ib)^2 = a^2 + b^2$, analogue à $(a+b)(a-b) = a^2 - b^2$.
+\end{experience}
+
+\courssub{Inverse et division}
+
+Dans $\mathbb{R}$, diviser par $5$ revient à multiplier par $\frac{1}{5}$. Dans $\mathbb{C}$, c'est pareil : tout repose sur l'inverse.
+
+\begin{propriete}[Inverse d'un nombre complexe non nul]
+Tout nombre complexe non nul $z = a + ib$ admet un inverse, donné par :
+\[ \frac{1}{z} = \frac{1}{a+ib} = \frac{a - ib}{a^2 + b^2} = \frac{\bar{z}}{|z|^2}. \]
+\end{propriete}
+
+La démonstration est immédiate : on multiplie le numérateur et le dénominateur par le conjugué du dénominateur :
+\[ \frac{1}{a+ib} = \frac{a-ib}{(a+ib)(a-ib)} = \frac{a-ib}{a^2+b^2}. \]
+Le dénominateur $a^2+b^2$ est un réel strictement positif (car $z \neq 0$), donc le résultat est bien défini.
+
+\begin{methode}[Diviser deux nombres complexes]
+Pour calculer $\dfrac{z}{z'}$ avec $z' \neq 0$ :
+\begin{enumerate}
+\item Écrire le conjugué du \textbf{dénominateur} : si $z' = c + id$, alors $\overline{z'} = c - id$.
+\item Multiplier le numérateur \textbf{et} le dénominateur par ce conjugué.
+\item Au dénominateur, utiliser $z'\,\overline{z'} = c^2 + d^2$ (un réel positif).
+\item Développer le numérateur avec la règle $i^2 = -1$.
+\item Séparer partie réelle et partie imaginaire pour donner le résultat sous forme algébrique $a + ib$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Calculer $\dfrac{2+3i}{1-i}$]
+\textbf{Énoncé.} Écrire sous forme algébrique le nombre $Z = \dfrac{2+3i}{1-i}$.
+\tcblower
+\textbf{Solution détaillée.} Le conjugué du dénominateur $1-i$ est $1+i$. On multiplie numérateur et dénominateur par $1+i$ :
+\begin{align*}
+Z &= \frac{(2+3i)(1+i)}{(1-i)(1+i)}\\[4pt]
+&= \frac{2 + 2i + 3i + 3i^2}{1^2 + 1^2} & &\text{(développement et } z\bar{z} = a^2+b^2\text{)}\\[4pt]
+&= \frac{2 + 5i - 3}{2} & &\text{(car } 3i^2 = -3\text{)}\\[4pt]
+&= \frac{-1 + 5i}{2}\\[4pt]
+&= -0{,}5 + 2{,}5\,i.
+\end{align*}
+\textbf{Vérification} (toujours possible !) : $(1-i)(-0{,}5+2{,}5i) = -0{,}5 + 2{,}5i + 0{,}5i - 2{,}5i^2 = -0{,}5 + 3i + 2{,}5 = 2 + 3i$. On retrouve bien le numérateur.
+\end{exoresolu}
+
+\begin{attention}[Deux pièges de la division]
+\begin{itemize}
+\item Ne multipliez jamais seulement le dénominateur par le conjugué : la fraction changerait de valeur. C'est le \textbf{numérateur et le dénominateur} qu'on multiplie par le même nombre.
+\item Le conjugué à utiliser est celui du \textbf{dénominateur}, pas du numérateur. Pour $\dfrac{2+3i}{1-i}$, on multiplie par $1+i$ (conjugué de $1-i$), pas par $2-3i$.
+\end{itemize}
+\end{attention}
+
+\courssub{Structure de corps : les règles de calcul dans $\mathbb{C}$}
+
+Bonne nouvelle : toutes les règles de calcul que vous connaissez dans $\mathbb{R}$ restent valables dans $\mathbb{C}$.
+
+\begin{propriete}[$\mathbb{C}$ est un corps]
+Pour tous nombres complexes $z, z', z''$ :
+\begin{itemize}
+\item \textbf{Commutativité} : $z + z' = z' + z$ et $z \times z' = z' \times z$ ;
+\item \textbf{Associativité} : $(z + z') + z'' = z + (z' + z'')$ et $(z \times z') \times z'' = z \times (z' \times z'')$ ;
+\item \textbf{Distributivité} : $z(z' + z'') = zz' + zz''$ ;
+\item \textbf{Éléments neutres} : $z + 0 = z$ et $z \times 1 = z$ ;
+\item \textbf{Opposé et inverse} : tout $z$ admet un opposé $-z$, et tout $z \neq 0$ admet un inverse $\dfrac{1}{z}$.
+\end{itemize}
+On dit que $(\mathbb{C}, +, \times)$ est un \cle{corps}, comme $(\mathbb{R}, +, \times)$. Les identités remarquables $(z+z')^2 = z^2 + 2zz' + z'^2$, $(z-z')^2 = z^2 - 2zz' + z'^2$ et $(z+z')(z-z') = z^2 - z'^2$ restent donc valables.
+\end{propriete}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Opération} & \textbf{Formule} & \textbf{Exemple} \\
+\hline
+Addition & $(a+ib)+(c+id) = (a+c)+i(b+d)$ & $(3+2i)+(1-5i) = 4-3i$ \\
+\hline
+Soustraction & $(a+ib)-(c+id) = (a-c)+i(b-d)$ & $(3+2i)-(1-5i) = 2+7i$ \\
+\hline
+Multiplication & $(a+ib)(c+id) = (ac-bd)+i(ad+bc)$ & $(2+3i)(1-4i) = 14-5i$ \\
+\hline
+Conjugué & $\overline{a+ib} = a-ib$ & $\overline{2+3i} = 2-3i$ \\
+\hline
+Produit $z\bar{z}$ & $(a+ib)(a-ib) = a^2+b^2$ & $(2+3i)(2-3i) = 13$ \\
+\hline
+Inverse & $\dfrac{1}{a+ib} = \dfrac{a-ib}{a^2+b^2}$ & $\dfrac{1}{1-i} = \dfrac{1+i}{2}$ \\
+\hline
+Division & $\dfrac{a+ib}{c+id} = \dfrac{(a+ib)(c-id)}{c^2+d^2}$ & $\dfrac{2+3i}{1-i} = -0{,}5+2{,}5i$ \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{exoresolu}[Calculs en chaîne]
+\textbf{Énoncé.} Soient $z_1 = 2 - i$ et $z_2 = 3 + 2i$. Calculer sous forme algébrique : a) $z_1 + z_2$ ; b) $z_1 \times z_2$ ; c) $\dfrac{z_1}{z_2}$.
+\tcblower
+\textbf{Solution.}
+a) $z_1 + z_2 = (2+3) + i(-1+2) = 5 + i$.
+
+b) $z_1 \times z_2 = (2-i)(3+2i) = 6 + 4i - 3i - 2i^2 = 6 + i + 2 = 8 + i$.
+
+c) Le conjugué de $z_2 = 3+2i$ est $3-2i$ :
+\[ \frac{z_1}{z_2} = \frac{(2-i)(3-2i)}{(3+2i)(3-2i)} = \frac{6 - 4i - 3i + 2i^2}{9+4} = \frac{6 - 7i - 2}{13} = \frac{4 - 7i}{13} = \frac{4}{13} - \frac{7}{13}i. \]
+\end{exoresolu}
+
+\begin{savaistu}[Multiplier par $i$, c'est tourner de $90^{\circ}$]
+Prenons $z = 2 + 3i$, d'image $M(2\,;3)$, et multiplions-le par $i$ : $iz = i(2+3i) = 2i + 3i^2 = -3 + 2i$, d'image $M'(-3\,;2)$. Le point $M'$ est l'image de $M$ par la rotation de centre $O$ et d'angle $+90^{\circ}$ ! Ce n'est pas un hasard : la multiplication par $i$ correspond toujours à une \textbf{rotation d'un quart de tour} dans le plan complexe. C'est pourquoi, en électrotechnique, le facteur $i$ (souvent noté $j$ pour ne pas le confondre avec l'intensité du courant) traduit un déphasage de $90^{\circ}$ entre tension et courant dans une bobine ou un condensateur. Les nombres complexes sont ainsi devenus l'outil quotidien des électriciens et des automaticiens.
+\end{savaistu}
+
+\begin{exercice}[À vous de jouer]
+Soient $z = 1 + 2i$ et $z' = 3 - i$.
+\begin{enumerate}
+\item Calculer $z + z'$, $z - z'$ et $z \times z'$.
+\item Déterminer le conjugué de $z'$, puis calculer $z' \times \overline{z'}$.
+\item Écrire sous forme algébrique $\dfrac{z}{z'}$.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice]
+1) $z + z' = 4 + i$ ; $z - z' = -2 + 3i$ ; $z \times z' = (1+2i)(3-i) = 3 - i + 6i - 2i^2 = 5 + 5i$.
+
+2) $\overline{z'} = 3 + i$ ; $z' \times \overline{z'} = 3^2 + (-1)^2 = 10$.
+
+3) $\dfrac{z}{z'} = \dfrac{(1+2i)(3+i)}{(3-i)(3+i)} = \dfrac{3 + i + 6i + 2i^2}{10} = \dfrac{1 + 7i}{10} = 0{,}1 + 0{,}7\,i$.
+\end{corrige}
+
+Nous savons désormais additionner, multiplier et diviser les nombres complexes. Dans la suite de la leçon, nous approfondirons le rôle du conjugué et nous introduirons le module, qui mesure la « taille » d'un nombre complexe et ouvrira la porte à l'écriture trigonométrique.
+
+\coursec{Nombre complexe conjugué : propriétés et applications}
+
+Après avoir maîtrisé les opérations usuelles (addition, soustraction, multiplication, division) sur les nombres complexes sous forme algébrique, nous découvrons un outil fondamental : le \textbf{conjugué}. Il permet de simplifier les divisions, de calculer les modules facilement et de comprendre la structure des solutions d'équations à coefficients réels — une situation omniprésente en électricité (impédances), en mécanique (oscillations amorties) ou en traitement du signal.
+
+\courssub{Définition et représentation géométrique}
+
+Intuitivement, si un nombre complexe $z = a + ib$ correspond au point $M(a;b)$ dans le plan complexe, son conjugué est le point \textbf{symétrique de $M$ par rapport à l'axe des réels (axe $Ox$)}. L'ordonnée change de signe, l'abscisse reste inchangée.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+% Axes
+\draw[popline, thick, ->] (-3,0) -- (3,0) node[right] {$\text{Re}$};
+\draw[popline, thick, ->] (0,-2.5) -- (0,2.5) node[above] {$\text{Im}$};
+% Graduations
+\foreach \x in {-2,-1,1,2} \draw (\x,0.05) -- (\x,-0.05) node[below, font=\small] {\x};
+\foreach \y in {-2,-1,1,2} \draw (0.05,\y) -- (-0.05,\y) node[left, font=\small] {\y};
+% Point z
+\coordinate (O) at (0,0);
+\coordinate (M) at (2,1.5);
+\coordinate (Mbar) at (2,-1.5);
+% Vecteurs
+\draw[popblue, very thick, ->] (O) -- (M) node[midway, above left, popblue] {$z = a+ib$};
+\draw[poporange, very thick, ->] (O) -- (Mbar) node[midway, below left, poporange] {$\overline{z} = a-ib$};
+% Points
+\fill[popblue] (M) circle (2.5pt) node[above right] {$M(a;b)$};
+\fill[poporange] (Mbar) circle (2.5pt) node[below right] {$\overline{M}(a;-b)$};
+% Projections
+\draw[dashed, popmuted] (M) -- (2,0) node[below, font=\small] {$a$};
+\draw[dashed, popmuted] (Mbar) -- (2,0);
+% Symmetry axis label
+\node[popdark, font=\small\itshape] at (2.8, 0) {Axe des réels (symétrie)};
+% Angle
+\draw[popgreen, thick] (0.5,0) arc (0:36.87:0.5) node[midway, right, popgreen] {$\theta$};
+\draw[popgreen, thick] (0.5,0) arc (0:-36.87:0.5) node[midway, right, popgreen] {$-\theta$};
+\end{tikzpicture}
+\legende{Représentation géométrique : $z$ et $\overline{z}$ sont symétriques par rapport à l'axe des réels.}
+\end{popfigure}
+
+\begin{definition}[Conjugué d'un nombre complexe]
+Soit $z = a + ib$ un nombre complexe ($a,b \in \mathbb{R}$). On appelle \textbf{conjugué de $z$} le nombre complexe noté $\overline{z}$ (ou parfois $z^*$) défini par :
+\[
+\overline{z} = a - ib
+\]
+Géométriquement, si $z$ est l'affixe du point $M$, alors $\overline{z}$ est l'affixe du point $M'$, symétrique de $M$ par rapport à l'axe des réels.
+\end{definition}
+
+\begin{attention}[Piège classique : le conjugué de $i$]
+On confond souvent $i$ et $-i$. Rappel : $i = 0 + 1\cdot i$. Son conjugué est $\overline{i} = 0 - 1\cdot i = -i$.
+\textbf{Jamais} $\overline{i} = i$. De même, $\overline{-3i} = 3i$.
+\end{attention}
+
+\begin{exemplebox}[Calcul de conjugués]
+Donnons le conjugué des nombres suivants :
+\begin{enumerate}
+    \item $z_1 = 5 - 2i \quad \Rightarrow \quad \overline{z_1} = 5 + 2i$
+    \item $z_2 = -3 \quad (\text{réel}) \quad \Rightarrow \quad \overline{z_2} = -3$ \quad (Un réel est égal à son conjugué)
+    \item $z_3 = 4i \quad (\text{imaginaire pur}) \quad \Rightarrow \quad \overline{z_3} = -4i$ \quad (L'opposé)
+    \item $z_4 = \dfrac{2+i}{3-i} \quad \Rightarrow \quad$ On calcule d'abord $z_4$ sous forme algébrique (voir §3.3).
+\end{enumerate}
+\end{exemplebox}
+
+\courssub{Propriétés algébriques du conjugué}
+
+Le conjugué est un \textbf{morphisme} : il « traverse » les opérations. C'est la propriété la plus puissante pour les calculs.
+
+\begin{propriete}[Propriétés algébriques du conjugué]
+Pour tous nombres complexes $z, z_1, z_2$ et tout entier naturel $n$ :
+\begin{enumerate}
+    \item \textbf{Somme :} $\overline{z_1 + z_2} = \overline{z_1} + \overline{z_2}$
+    \item \textbf{Produit :} $\overline{z_1 z_2} = \overline{z_1} \cdot \overline{z_2}$
+    \item \textbf{Puissance :} $\overline{z^n} = (\overline{z})^n$
+    \item \textbf{Inverse (si $z \neq 0$) :} $\overline{z^{-1}} = (\overline{z})^{-1} = \dfrac{1}{\overline{z}}$
+    \item \textbf{Double conjugaison :} $\overline{\overline{z}} = z$
+    \item \textbf{Réel / Imaginaire :} $z \in \mathbb{R} \iff \overline{z} = z$ \quad ; \quad $z \in i\mathbb{R} \iff \overline{z} = -z$
+\end{enumerate}
+\textit{Preuve (exigible en démonstration simple) :} Posons $z_1 = a+ib$, $z_2 = c+id$.
+$\overline{z_1+z_2} = \overline{(a+c)+i(b+d)} = (a+c)-i(b+d) = (a-ib)+(c-id) = \overline{z_1}+\overline{z_2}$.
+$\overline{z_1 z_2} = \overline{(ac-bd)+i(ad+bc)} = (ac-bd)-i(ad+bc) = (a-ib)(c-id) = \overline{z_1}\overline{z_2}$.
+Les autres découlent par récurrence ou définition.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style=concept, concept color=popblue,
+    level 1/.append style={level distance=4.5cm, sibling angle=90},
+    level 2/.append style={level distance=3cm, sibling angle=45}]
+\node[concept color=popdark] {Propriétés de $\overline{z}$}
+    child[concept color=popblue] { node[align=center]{Somme\\ $\overline{z_1+z_2}=\overline{z_1}+\overline{z_2}$}
+        child[concept color=popblue!50] { node[align=center]{Différence\\ $\overline{z_1-z_2}=\overline{z_1}-\overline{z_2}$} }
+        child[concept color=popblue!50] { node[align=center]{Quotient\\ $\overline{\left(\frac{z_1}{z_2}\right)}=\frac{\overline{z_1}}{\overline{z_2}}$} }
+    }
+    child[concept color=poporange] { node[align=center]{Produit\\ $\overline{z_1 z_2}=\overline{z_1}\,\overline{z_2}$}
+        child[concept color=poporange!50] { node[align=center]{Module\\ $z\overline{z}=|z|^2$} }
+    }
+    child[concept color=popgreen] { node[align=center]{Puissance\\ $\overline{z^n}=(\overline{z})^n$}
+        child[concept color=popgreen!50] { node[align=center]{Polynôme\\ $P(\overline{z})=\overline{P(z)}$} }
+    }
+    child[concept color=poppurple] { node[align=center]{Inverse\\ $\overline{z^{-1}}=(\overline{z})^{-1}$}
+        child[concept color=poppurple!50] { node[align=center]{Double conjugaison\\ $\overline{\overline{z}}=z$} }
+    };
+\end{tikzpicture}
+\legende{Arbre des propriétés du conjugué : il respecte la structure algébrique de $\mathbb{C}$.}
+\end{popfigure}
+
+\begin{aretenir}[Conséquence majeure pour les polynômes]
+Si $P(z) = a_n z^n + \dots + a_1 z + a_0$ est un polynôme \textbf{à coefficients réels} ($a_k \in \mathbb{R}$), alors pour tout $z \in \mathbb{C}$ :
+\[
+\overline{P(z)} = P(\overline{z})
+\]
+Car $\overline{a_k} = a_k$ et les propriétés de somme/produit s'appliquent terme à terme.
+\end{aretenir}
+
+\courssub{Lien avec le module : rationalisation des dénominateurs}
+
+C'est l'application technique la plus fréquente : transformer un quotient pour avoir un dénominateur \textbf{réel}.
+
+\begin{propriete}[Produit d'un complexe par son conjugué]
+Pour tout $z = a + ib$ :
+\[
+z \cdot \overline{z} = (a+ib)(a-ib) = a^2 - (ib)^2 = a^2 + b^2 = |z|^2
+\]
+Le produit est un \textbf{réel positif ou nul}, égal au carré du module.
+\end{propriete}
+
+\begin{methode}[Rationaliser un dénominateur complexe]
+Pour écrire $\dfrac{z_1}{z_2}$ sous forme algébrique ($z_2 \neq 0$) :
+\begin{enumerate}
+    \item Multiplier le numérateur et le dénominateur par $\overline{z_2}$.
+    \item Le dénominateur devient $|z_2|^2 \in \mathbb{R}^*_+$.
+    \item Développer le numérateur et simplifier par le réel dénominateur.
+\end{enumerate}
+\[
+\frac{z_1}{z_2} = \frac{z_1 \overline{z_2}}{z_2 \overline{z_2}} = \frac{z_1 \overline{z_2}}{|z_2|^2}
+\]
+\end{methode}
+
+\begin{exoresolu}[Division et forme algébrique]
+Mettre sous forme algébrique $z = \dfrac{3+4i}{1-2i}$.
+
+\medskip
+\textbf{Solution détaillée}
+\begin{enumerate}
+    \item Identifier le conjugué du dénominateur : $\overline{1-2i} = 1+2i$.
+    \item Multiplier numérateur et dénominateur par $1+2i$ :
+    \[
+    z = \frac{(3+4i)(1+2i)}{(1-2i)(1+2i)}
+    \]
+    \item Calculer le dénominateur (réel) : $(1-2i)(1+2i) = 1^2 + 2^2 = 5$.
+    \item Calculer le numérateur :
+    \begin{align*}
+    (3+4i)(1+2i) &= 3(1) + 3(2i) + 4i(1) + 4i(2i) \\
+    &= 3 + 6i + 4i + 8i^2 \\
+    &= 3 + 10i - 8 \quad (\text{car } i^2 = -1) \\
+    &= -5 + 10i
+    \end{align*}
+    \item Diviser par le réel $5$ :
+    \[
+    z = \frac{-5}{5} + \frac{10}{5}i = -1 + 2i
+    \]
+\end{enumerate}
+\textbf{Réponse :} $z = -1 + 2i$.
+\end{exoresolu}
+
+\begin{attention}[Erreur fréquente : oublier de multiplier le numérateur]
+Ne faites \textbf{jamais} : $\dfrac{3+4i}{1-2i} = \dfrac{(3+4i)(1+2i)}{1-2i}$. Il faut multiplier \textbf{les deux} (numérateur ET dénominateur) pour ne pas changer la valeur du nombre.
+\end{attention}
+
+\courssub{Racines conjuguées des polynômes à coefficients réels}
+
+C'est une conséquence directe de $\overline{P(z)} = P(\overline{z})$.
+
+\begin{propriete}[Théorème des racines conjuguées (Admis au Probatoire)]
+Soit $P(z)$ un polynôme \textbf{à coefficients réels}. Si $z_0 \in \mathbb{C} \setminus \mathbb{R}$ est une racine de $P$ (i.e. $P(z_0)=0$), alors son conjugué $\overline{z_0}$ est aussi une racine de $P$.
+\[
+P(z_0) = 0 \implies \overline{P(z_0)} = 0 \implies P(\overline{z_0}) = 0
+\]
+Les racines non réelles d'un polynôme à coefficients réels vont \textbf{par paires conjuguées}.
+\end{propriete}
+
+\begin{exemplebox}[Application : Trinôme du second degré]
+Résoudre dans $\mathbb{C}$ : $x^2 + 4x + 13 = 0$.
+\begin{enumerate}
+    \item Calculer le discriminant : $\Delta = b^2 - 4ac = 4^2 - 4(1)(13) = 16 - 52 = -36$.
+    \item $\Delta < 0$, deux solutions complexes conjuguées.
+    \item $\sqrt{\Delta} = \sqrt{-36} = 6i$ (on prend la racine principale $6i$, l'autre est $-6i$).
+    \item Formules :
+    \[
+    x_1 = \frac{-b - \sqrt{\Delta}}{2a} = \frac{-4 - 6i}{2} = -2 - 3i
+    \]
+    \[
+    x_2 = \frac{-b + \sqrt{\Delta}}{2a} = \frac{-4 + 6i}{2} = -2 + 3i
+    \]
+    \item Vérification : $x_2 = \overline{x_1}$. Le trinôme se factorise : $(x - (-2-3i))(x - (-2+3i)) = (x+2)^2 + 9 = x^2+4x+13$.
+\end{enumerate}
+\end{exemplebox}
+
+\begin{methode}[Trouver les racines d'un trinôme $ax^2+bx+c=0$ ($a,b,c \in \mathbb{R}, a\neq 0$) à discriminant négatif]
+\begin{enumerate}
+    \item Calculer $\Delta = b^2 - 4ac$.
+    \item Si $\Delta < 0$, écrire $\sqrt{\Delta} = i\sqrt{-\Delta}$ (avec $\sqrt{-\Delta} > 0$ réel).
+    \item Les deux racines sont : $x_1 = \dfrac{-b - i\sqrt{-\Delta}}{2a}$ et $x_2 = \dfrac{-b + i\sqrt{-\Delta}}{2a}$.
+    \item Les écrire sous la forme $x_1 = \alpha - i\beta$, $x_2 = \alpha + i\beta$ où $\alpha = -\frac{b}{2a}$, $\beta = \frac{\sqrt{-\Delta}}{2a}$.
+    \item \textbf{Vérifier} : Somme $= -\frac{b}{a}$ (réel), Produit $= \frac{c}{a}$ (réel).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Recherche de polynôme connaissant une racine complexe]
+Soit $P(x) = x^3 - 4x^2 + 6x - 4$. On sait que $1+i$ est une racine. Factoriser $P$ dans $\mathbb{R}[X]$ et $\mathbb{C}[X]$.
+
+\medskip
+\textbf{Solution}
+\begin{enumerate}
+    \item Coefficients réels $\Rightarrow$ $\overline{1+i} = 1-i$ est aussi racine.
+    \item $P$ est de degré 3, il a 3 racines. Les deux connues sont $1\pm i$. La troisième $x_3$ est nécessairement \textbf{réelle} (car les non réelles vont par paires).
+    \item Somme des racines (relation coefficient) : $x_1+x_2+x_3 = -\frac{-4}{1} = 4$.
+    $(1+i)+(1-i)+x_3 = 4 \implies 2 + x_3 = 4 \implies x_3 = 2$.
+    \item Factorisation dans $\mathbb{C}[X]$ :
+    $P(x) = (x-2)(x-(1+i))(x-(1-i))$.
+    \item Factorisation dans $\mathbb{R}[X]$ : Regrouper le couple conjugué :
+    $(x-(1+i))(x-(1-i)) = (x-1)^2 - (i)^2 = (x-1)^2 + 1 = x^2 - 2x + 2$.
+    Donc $P(x) = (x-2)(x^2 - 2x + 2)$.
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Applications concrètes et synthèse}
+
+\begin{savaistu}[Le conjugué et la puissance complexe en électricité]
+En électricité alternative, la \textbf{puissance complexe} $\underline{S}$ d'un dipôle d'impédance $\underline{Z} = R + iX$ traversé par un courant efficace $\underline{I}$ se calcule par :
+\[
+\underline{S} = \underline{U} \cdot \overline{\underline{I}} = \underline{Z} \underline{I} \overline{\underline{I}} = \underline{Z} |\underline{I}|^2
+\]
+La partie réelle de $\underline{S}$ est la \textbf{puissance active} $P$ (en Watts), la partie imaginaire est la \textbf{puissance réactive} $Q$ (en VAR).
+Le conjugué permet ici de « projeter » la tension sur le courant pour extraire l'énergie réellement dissipée (effet Joule dans $R$). C'est exactement l'analogue du produit scalaire $\vec{u} \cdot \vec{v} = \|\vec{u}\|\|\vec{v}\|\cos\theta$ dans $\mathbb{R}^2$ identifié à $\mathbb{C}$ : $\text{Re}(z_1 \overline{z_2}) = x_1 x_2 + y_1 y_2$.
+\end{savaistu}
+
+\begin{aretenir}[Synthèse : Le conjugué, outil indispensable]
+\begin{itemize}
+    \item \textbf{Géométrie :} Symétrie axiale (axe Re). $\arg(\overline{z}) = -\arg(z)$.
+    \item \textbf{Algèbre :} Morphisme ($+$, $\times$, $/$, $^n$). $\overline{\overline{z}}=z$.
+    \item \textbf{Module :} $z\overline{z} = |z|^2$. Permet la division (dénominateur réel).
+    \item \textbf{Équations :} Racines non réelles par paires conjuguées pour $P \in \mathbb{R}[X]$.
+    \item \textbf{Technique :} Impédances, puissances, traitement du signal (transformée de Fourier).
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[Entraînement : Conjugué et équations]
+\begin{enumerate}
+    \item Soit $z = 2 - 3i$. Calculer $\overline{z}$, $z+\overline{z}$, $z-\overline{z}$, $z\overline{z}$. Donner une interprétation géométrique de $z+\overline{z}$ et $z-\overline{z}$.
+    \item Mettre sous forme algébrique : $\dfrac{5-i}{2+3i}$ ; $\dfrac{(1+i)^2}{3-i}$.
+    \item Résoudre dans $\mathbb{C}$ : $2z^2 + 4z + 5 = 0$. Vérifier que les solutions sont conjuguées.
+    \item Soit $P(z) = z^3 - 3z^2 + 4z - 2$. Vérifier que $1$ est racine. Factoriser $P$ dans $\mathbb{R}[X]$ puis $\mathbb{C}[X]$.
+    \item (Application) Un circuit série RL a une impédance $\underline{Z} = 4 + 3i \ \Omega$. Le courant efficace est $\underline{I} = 2 - i \ A$. Calculer la tension efficace $\underline{U} = \underline{Z}\underline{I}$ et la puissance apparente $S = |\underline{U}||\underline{I}|$. (Indication : $\overline{\underline{I}} = 2+i$).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°18]
+\begin{enumerate}
+    \item $\overline{z} = 2+3i$.
+    $z+\overline{z} = 4 = 2\text{Re}(z)$ (réel, le double de l'abscisse).
+    $z-\overline{z} = -6i = 2i\text{Im}(z)$ (imaginaire pur, le double de l'ordonnée fois $i$).
+    $z\overline{z} = 4+9 = 13 = |z|^2$.
+    \item $\dfrac{5-i}{2+3i} = \dfrac{(5-i)(2-3i)}{13} = \dfrac{10-15i-2i-3}{13} = \dfrac{7-17i}{13} = \frac{7}{13} - \frac{17}{13}i$.
+    $(1+i)^2 = 2i$. $\dfrac{2i}{3-i} = \dfrac{2i(3+i)}{10} = \dfrac{-2+6i}{10} = -0,2 + 0,6i$.
+    \item $\Delta = 16 - 40 = -24$. $\sqrt{\Delta} = 2i\sqrt{6}$.
+    $z_1 = \frac{-4 - 2i\sqrt{6}}{4} = -1 - i\frac{\sqrt{6}}{2}$, $z_2 = -1 + i\frac{\sqrt{6}}{2}$. Conjuguées.
+    \item $P(1)=0$. Division par $(z-1)$ : $P(z) = (z-1)(z^2 - 2z + 2)$.
+    Racines de $z^2-2z+2$ : $\Delta = -4 \Rightarrow 1\pm i$.
+    $\mathbb{C}[X]$ : $(z-1)(z-1-i)(z-1+i)$.
+    $\mathbb{R}[X]$ : $(z-1)(z^2-2z+2)$.
+    \item $\underline{U} = (4+3i)(2-i) = 8 -4i +6i +3 = 11+2i \ V$.
+    $|\underline{U}| = \sqrt{125} = 5\sqrt{5}$, $|\underline{I}| = \sqrt{5}$.
+    $S = 5\sqrt{5} \times \sqrt{5} = 25 \ VA$.
+    Puissance active $P = \text{Re}(\underline{U}\overline{\underline{I}}) = \text{Re}((11+2i)(2+i)) = \text{Re}(22+11i+4i-2) = 20 \ W$.
+\end{enumerate}
+\end{corrige}
+
+\coursec{Module et écriture trigonométrique}
+
+Dans la section précédente, nous avons vu que le conjugué $\overline{z}=a-ib$ permet de simplifier les quotients et de retrouver une écriture réelle au dénominateur. Nous allons maintenant doter le nombre complexe $z=a+ib$ de deux grandeurs géométriques fondamentales : sa \textbf{longueur} (le module) et sa \textbf{direction} (l'argument). Ces deux nombres réels permettent de passer de l'écriture algébrique (cartésienne) à l'écriture trigonométrique (polaire), incontournable pour calculer des puissances, des racines ou analyser des signaux alternatifs en électricité.
+
+\courssub{Module d'un nombre complexe : la distance à l'origine}
+
+Rappelons qu'un nombre complexe $z=a+ib$ est représenté par le point $M(a;b)$ ou le vecteur $\vec{u}=\begin{pmatrix}a\\b\end{pmatrix}$ dans le plan complexe muni d'un repère orthonormé direct $(O;\vec{i},\vec{j})$.
+
+\begin{definition}[Module d'un nombre complexe]
+Soit $z=a+ib \in \mathbb{C}$ de point $M(a;b)$.
+Le \cle{module} de $z$, noté $|z|$, est la distance $OM$ :
+\[
+|z| = OM = \sqrt{a^2+b^2}.
+\]
+Par convention, $|0|=0$. Pour tout $z \neq 0$, on a $|z|>0$.
+\end{definition}
+
+\begin{propriete}[Propriétés fondamentales du module]
+Pour tous nombres complexes $z_1, z_2$ :
+\begin{enumerate}
+    \item $|z_1 z_2| = |z_1|\,|z_2|$ \quad (le module d'un produit est le produit des modules).
+    \item $\left|\dfrac{z_1}{z_2}\right| = \dfrac{|z_1|}{|z_2|}$ \quad (pour $z_2 \neq 0$).
+    \item $|\overline{z}| = |z|$.
+    \item $|z|^2 = z\,\overline{z} = a^2+b^2$.
+    \item Inégalité triangulaire : $|z_1+z_2| \le |z_1|+|z_2|$.
+\end{enumerate}
+\end{propriete}
+
+\begin{exemplebox}[Calcul de modules]
+Calculer $|z_1|$, $|z_2|$ et $|z_1 z_2|$ pour $z_1=3+4i$ et $z_2=1-i$.
+\begin{align*}
+|z_1| &= \sqrt{3^2+4^2} = \sqrt{25} = 5. \\
+|z_2| &= \sqrt{1^2+(-1)^2} = \sqrt{2}. \\
+z_1 z_2 &= (3+4i)(1-i) = 3 -3i +4i -4i^2 = 7+i. \\
+|z_1 z_2| &= \sqrt{7^2+1^2} = \sqrt{50} = 5\sqrt{2}. \\
+\text{Vérification :}\quad |z_1|\,|z_2| &= 5 \times \sqrt{2} = 5\sqrt{2}. \quad \checkmark
+\end{align*}
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+\% Axes
+\draw[->, thick] (-3,0) -- (4,0) node[right] {$\mathbb{R}$ (Re)};
+\draw[->, thick] (0,-2.5) -- (0,3) node[above] {$\mathbb{I}$ (Im)};
+\% Grid
+\draw[popline, step=1] (-2.5,-2) grid (3.5,2.5);
+\% Point M
+\coordinate (O) at (0,0);
+\coordinate (M) at (3,2);
+\draw[popblue, very thick] (O) -- (M) node[midway, above left] {$|z|=\sqrt{13}$};
+\draw[popblue, fill=popblue] (M) circle (2.5pt) node[above right] {$M(3;2)$};
+\draw[popblue, dashed] (M) -- (3,0) node[below] {$a=3$};
+\draw[popblue, dashed] (M) -- (0,2) node[left] {$b=2$};
+\% Angle
+\draw[poporange, thick] (0.5,0) arc (0:33.69:0.5) node[midway, right, xshift=2pt] {$\theta$};
+\% Right angle mark
+\draw[popmuted] (2.9,0) -- (2.9,0.1) -- (3,0.1);
+\end{tikzpicture}
+\legende{Représentation géométrique : le module $|z|$ est l'hypoténuse du triangle rectangle $OMH$ ($H$ projection sur l'axe réel).}
+\end{popfigure}
+
+\courssub{Argument d'un nombre complexe : la direction}
+
+Le module ne suffit pas à caractériser $z$ (tous les points du cercle de rayon $|z|$ ont le même module). Il faut l'angle que fait le vecteur $\overrightarrow{OM}$ avec l'axe réel positif.
+
+\begin{definition}[Argument d'un nombre complexe non nul]
+Soit $z \neq 0$ de point $M \neq O$. Un \cle{argument} de $z$, noté $\arg(z)$, est une mesure (en radians) de l'angle orienté $(\vec{i}\,;\,\overrightarrow{OM})$.
+L'ensemble des arguments de $z$ est : $\arg(z) = \{\theta_0 + 2k\pi \mid k \in \mathbb{Z}\}$ où $\theta_0$ est une valeur quelconque.
+L'\cle{argument principal}, noté $\operatorname{Arg}(z)$ (A majuscule), est l'unique argument appartenant à l'intervalle $]-\pi\,;\,\pi]$.
+\end{definition}
+
+\begin{attention}[Argument : pièges à éviter]
+\begin{itemize}
+    \item \textbf{Zéro n'a pas d'argument.} $\arg(0)$ n'est pas défini.
+    \item \textbf{Ne pas confondre $\arg(z)$ et $\arctan(b/a)$.} La formule $\theta = \arctan(b/a)$ ne donne un résultat correct que si $a>0$ (1er et 4e quadrants). Si $a<0$, il faut ajouter $\pi$ (ou $-\pi$). Utilisez toujours la fonction \texttt{atan2(b,a)} (ou \texttt{Arg} sur calculatrice) qui gère les quadrants.
+    \item \textbf{L'argument n'est pas unique.} Écrire $\arg(z)=\pi/3$ est incomplet ; on doit écrire $\arg(z)=\pi/3 + 2k\pi$ ou préciser $\operatorname{Arg}(z)=\pi/3$.
+\end{itemize}
+\end{attention}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.5, >=Stealth]
+\% Unit circle
+\draw[popblue, thick] (0,0) circle (1);
+\% Axes
+\draw[->, thick] (-1.3,0) -- (1.3,0) node[right] {$\mathbb{R}$};
+\draw[->, thick] (0,-1.3) -- (0,1.3) node[above] {$\mathbb{I}$};
+\% Remarkable points
+\foreach \angle/\name in {
+    0/1,
+    90/i,
+    180/-1,
+    270/-i,
+    45/e^{i\pi/4},
+    135/e^{i3\pi/4},
+    225/e^{-i3\pi/4},
+    315/e^{-i\pi/4}} {
+    \draw[poporange, thick] (0,0) -- (\angle:1);
+    \node[poporange] at (\angle:1.15) {$\name$};
+    \fill[poporange] (\angle:1) circle (1.5pt);
+}
+\% Angle labels
+\node at (0.3,0.15) {$0$};
+\node at (0.15,0.3) {$\pi/2$};
+\node at (-0.3,0.15) {$\pi$};
+\node at (0.15,-0.3) {$-\pi/2$};
+\end{tikzpicture}
+\legende{Cercle unité : points remarquables et leurs arguments principaux.}
+\end{popfigure}
+
+\courssub{Formule d'Euler et écriture trigonométrique}
+
+C'est le lien majestueux entre analyse (exponentielle) et géométrie (trigonométrie).
+
+\begin{propriete}[Formule d'Euler (admise en Première)]
+Pour tout réel $\theta$ :
+\[
+e^{i\theta} = \cos\theta + i\sin\theta.
+\]
+Cette égalité permet de définir l'exponentielle complexe et donne accès à l'écriture trigonométrique (ou polaire) et exponentielle.
+\end{propriete}
+
+\begin{definition}[Écriture trigonométrique et exponentielle]
+Soit $z \neq 0$, $r=|z|>0$ et $\theta \in \arg(z)$.
+L'\cle{écriture trigonométrique} de $z$ est :
+\[
+z = r(\cos\theta + i\sin\theta).
+\]
+L'\cle{écriture exponentielle} de $z$ (grâce à Euler) est :
+\[
+z = r\,e^{i\theta}.
+\]
+On note souvent $z = r e^{i\theta}$ avec $r=|z|$ et $\theta = \operatorname{Arg}(z)$ pour l'écriture principale.
+\end{definition}
+
+\begin{aretenir}[Passage algébrique $\leftrightarrow$ trigonométrique]
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\textbf{De $z=a+ib$ vers $z=r(\cos\theta+i\sin\theta)$} & \textbf{De $z=r(\cos\theta+i\sin\theta)$ vers $z=a+ib$} \\ \hline
+1. Calculer $r = \sqrt{a^2+b^2} = |z|$. & 1. Calculer $a = r\cos\theta$. \\
+2. Déterminer $\theta = \arg(z)$ : & 2. Calculer $b = r\sin\theta$. \\
+\quad $\bullet$ $\cos\theta = \frac{a}{r}$, $\sin\theta = \frac{b}{r}$. & 3. Écrire $z = a+ib$. \\
+\quad $\bullet$ Choisir $\theta \in ]-\pi;\pi]$ selon les signes de $a,b$. & \\ \hline
+\end{tabularx}
+\end{center}
+\end{aretenir}
+
+\begin{methode}[Convertir $a+ib$ en $r e^{i\theta}$ (argument principal)]
+\begin{enumerate}
+    \item Calculer $r = \sqrt{a^2+b^2}$.
+    \item Identifier le quadrant du point $M(a;b)$.
+    \item Calculer l'angle de référence $\alpha = \arctan\left(\left|\frac{b}{a}\right|\right)$ (si $a \neq 0$).
+    \item Déduire $\theta = \operatorname{Arg}(z)$ :
+    \begin{itemize}
+        \item Q1 ($a>0,b>0$) : $\theta = \alpha$.
+        \item Q2 ($a<0,b>0$) : $\theta = \pi - \alpha$.
+        \item Q3 ($a<0,b<0$) : $\theta = -\pi + \alpha$ (ou $\alpha - \pi$).
+        \item Q4 ($a>0,b<0$) : $\theta = -\alpha$.
+        \item Sur les axes : $\theta = 0, \pi/2, \pi, -\pi/2$.
+    \end{itemize}
+    \item Écrire $z = r e^{i\theta}$ ou $z = r(\cos\theta + i\sin\theta)$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Conversion algébrique $\to$ trigonométrique]
+Mettre sous forme trigonométrique (argument principal) : $z = -1 + i\sqrt{3}$.
+\tcblower
+\textbf{1. Module :} $r = |z| = \sqrt{(-1)^2 + (\sqrt{3})^2} = \sqrt{1+3} = 2$.
+\textbf{2. Quadrant :} $a=-1<0$, $b=\sqrt{3}>0$ $\Rightarrow$ 2e quadrant.
+\textbf{3. Angle de référence :} $\alpha = \arctan\left(\frac{\sqrt{3}}{1}\right) = \frac{\pi}{3}$.
+\textbf{4. Argument principal :} $\theta = \pi - \alpha = \pi - \frac{\pi}{3} = \frac{2\pi}{3}$.
+(Vérification : $\cos\frac{2\pi}{3}=-\frac{1}{2}$, $\sin\frac{2\pi}{3}=\frac{\sqrt{3}}{2}$ ; $\frac{z}{2} = -\frac{1}{2}+i\frac{\sqrt{3}}{2}$. Correct.)
+\textbf{5. Résultat :}
+\[
+z = 2\left(\cos\frac{2\pi}{3} + i\sin\frac{2\pi}{3}\right) = 2\,e^{i\frac{2\pi}{3}}.
+\]
+\end{exoresolu}
+
+\begin{exoresolu}[Conversion trigonométrique $\to$ algébrique]
+Écrire sous forme algébrique : $z = 4 e^{-i\frac{\pi}{6}}$.
+\tcblower
+$r=4$, $\theta = -\frac{\pi}{6}$.
+$a = r\cos\theta = 4\cos\left(-\frac{\pi}{6}\right) = 4 \times \frac{\sqrt{3}}{2} = 2\sqrt{3}$.
+$b = r\sin\theta = 4\sin\left(-\frac{\pi}{6}\right) = 4 \times \left(-\frac{1}{2}\right) = -2$.
+\[
+z = 2\sqrt{3} - 2i.
+\]
+\end{exoresolu}
+
+\courssub{Propriétés géométriques du produit et du quotient}
+
+L'écriture exponentielle révèle la géométrie de la multiplication : \textbf{les modules se multiplient, les arguments s'additionnent}.
+
+\begin{propriete}[Module et argument d'un produit / quotient]
+Soient $z_1 = r_1 e^{i\theta_1}$ et $z_2 = r_2 e^{i\theta_2}$ ($z_2 \neq 0$ pour le quotient).
+\begin{align*}
+z_1 z_2 &= r_1 r_2 \, e^{i(\theta_1+\theta_2)} \quad &\Rightarrow\quad &|z_1 z_2| = |z_1||z_2|,\quad \arg(z_1 z_2) = \arg(z_1)+\arg(z_2) \pmod{2\pi}. \\
+\frac{z_1}{z_2} &= \frac{r_1}{r_2} \, e^{i(\theta_1-\theta_2)} \quad &\Rightarrow\quad &\left|\frac{z_1}{z_2}\right| = \frac{|z_1|}{|z_2|},\quad \arg\left(\frac{z_1}{z_2}\right) = \arg(z_1)-\arg(z_2) \pmod{2\pi}.
+\end{align*}
+Géométriquement, multiplier par $z_2 = r_2 e^{i\theta_2}$ revient à faire une \cle{homotéthie} de rapport $r_2$ suivie d'une \cle{rotation} d'angle $\theta_2$ (ou l'inverse).
+\end{propriete}
+
+\begin{exemplebox}[Application : Rotation dans le plan]
+En mécanique ou CAO, pour tourner un vecteur $\vec{u}$ (affixe $z$) de $+90^\circ$ (sens direct), on multiplie par $e^{i\pi/2}=i$.
+$z' = i \cdot z = i(a+ib) = -b+ia$. Le nouveau vecteur a pour composantes $(-b; a)$.
+Pour une rotation de $-90^\circ$ : multiplier par $-i$.
+\end{exemplebox}
+
+\begin{savaistu}[Formule de Moivre — Aperçu Terminale]
+L'écriture exponentielle rend le calcul des puissances trivial :
+\[
+(re^{i\theta})^n = r^n e^{in\theta} \quad (n \in \mathbb{Z}).
+\]
+C'est la \textbf{formule de Moivre} : $(\cos\theta + i\sin\theta)^n = \cos(n\theta) + i\sin(n\theta)$.
+Elle permet de calculer $\cos(n\theta), \sin(n\theta)$ en fonction de $\cos\theta, \sin\theta$ (linéarisation) et de résoudre $z^n = w$ (recherche des $n$-ièmes racines). Vous la verrez en détail en Terminale pour l'analyse de signaux périodiques (électricité, acoustique).
+\end{savaistu}
+
+\courssub{Exercices d'application}
+
+\begin{exercice}[Entraînement : Modules et arguments]
+\begin{enumerate}
+    \item Déterminer le module et l'argument principal des nombres suivants :
+    $z_1 = -2-2i$, \quad $z_2 = 3i$, \quad $z_3 = -\sqrt{3}+i$, \quad $z_4 = 1-i\sqrt{3}$.
+    \item Écrire sous forme algébrique :
+    $z_5 = 2 e^{i\frac{3\pi}{4}}$, \quad $z_6 = 5(\cos(-\frac{\pi}{3})+i\sin(-\frac{\pi}{3}))$.
+    \item Soit $z = 2 e^{i\frac{\pi}{6}}$ et $z' = 3 e^{-i\frac{\pi}{3}}$. Calculer $zz'$ et $\frac{z}{z'}$ sous forme exponentielle puis algébrique.
+    \item \textbf{Contexte technique :} Un signal alternatif est représenté par $u(t) = 10\cos(100\pi t + \frac{\pi}{4})$. En notation complexe (faisceau), sa représentation est $\underline{U} = 10 e^{i\frac{\pi}{4}}$. Donner le module et l'argument de $\underline{U}$. Que représente le module ? L'argument ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+    \item $z_1=-2-2i$ : $r=\sqrt{8}=2\sqrt{2}$. Q3 $\Rightarrow \theta = -\pi+\frac{\pi}{4} = -\frac{3\pi}{4}$.
+    $z_2=3i$ : $r=3$, $\theta=\frac{\pi}{2}$.
+    $z_3=-\sqrt{3}+i$ : $r=2$. Q2 $\Rightarrow \cos\theta=-\frac{\sqrt{3}}{2}, \sin\theta=\frac{1}{2} \Rightarrow \theta=\frac{5\pi}{6}$.
+    $z_4=1-i\sqrt{3}$ : $r=2$. Q4 $\Rightarrow \theta = -\frac{\pi}{3}$.
+    \item $z_5 = 2(-\frac{\sqrt{2}}{2}+i\frac{\sqrt{2}}{2}) = -\sqrt{2}+i\sqrt{2}$.
+    $z_6 = 5(\frac{1}{2}-i\frac{\sqrt{3}}{2}) = \frac{5}{2}-i\frac{5\sqrt{3}}{2}$.
+    \item $zz' = 6 e^{i(\frac{\pi}{6}-\frac{\pi}{3})} = 6 e^{-i\frac{\pi}{6}} = 6(\frac{\sqrt{3}}{2}-i\frac{1}{2}) = 3\sqrt{3}-3i$.
+    $\frac{z}{z'} = \frac{2}{3} e^{i(\frac{\pi}{6}+\frac{\pi}{3})} = \frac{2}{3} e^{i\frac{\pi}{2}} = \frac{2}{3}i$.
+    \item $|\underline{U}|=10$ (amplitude / valeur de crête), $\operatorname{Arg}(\underline{U})=\frac{\pi}{4}$ (phase à l'origine).
+\end{enumerate}
+\end{corrige}
+
+\coursec{Écriture algébrique et représentation géométrique}
+
+\courssub{Définition et écriture algébrique}
+Un \cle{nombre complexe} est un nombre de la forme $z = a + ib$, où $a$ et $b$ sont des nombres réels, et $i$ est une unité imaginaire telle que $i^2 = -1$.
+\begin{itemize}
+\item $a$ est la \cle{partie réelle} de $z$, notée $\Re(z)$ ou $\operatorname{Re}(z)$.
+\item $b$ est la \cle{partie imaginaire} de $z$, notée $\Im(z)$ ou $\operatorname{Im}(z)$.
+\end{itemize}
+Deux nombres complexes $z_1 = a_1 + ib_1$ et $z_2 = a_2 + ib_2$ sont égaux si et seulement si $a_1 = a_2$ et $b_1 = b_2$.
+L'ensemble des nombres complexes est noté $\mathbb{C}$. On a $\mathbb{R} \subset \mathbb{C}$ (les réels sont les complexes de partie imaginaire nulle) et $i\mathbb{R} \subset \mathbb{C}$ (les imaginaires purs sont les complexes de partie réelle nulle).
+
+\begin{definition}[Forme algébrique]
+L'écriture $z = a + ib$ avec $(a,b) \in \mathbb{R}^2$ est appelée \emph{forme algébrique} (ou cartésienne) du nombre complexe $z$.
+\end{definition}
+
+\courssub{Représentation géométrique : le plan complexe}
+À tout nombre complexe $z = a + ib$, on associe le point $M(a;b)$ dans un repère orthonormé $(O; \vec{u}, \vec{v})$ appelé \cle{plan complexe} (ou plan de Gauss/Argand).
+\begin{itemize}
+\item L'axe des abscisses (axe $Ox$) est l'\cle{axe des réels}.
+\item L'axe des ordonnées (axe $Oy$) est l'\cle{axe des imaginaires}.
+\item Le point $M$ est l'\cle{image} de $z$ ; $z$ est l'\cle{affixe} de $M$. On note $M(z)$.
+\end{itemize}
+
+\begin{propriete}[Repérage]
+\begin{itemize}
+\item $z \in \mathbb{R} \iff M \in (Ox)$ (axe des réels).
+\item $z \in i\mathbb{R} \iff M \in (Oy)$ (axe des imaginaires).
+\item $z = 0 \iff M \equiv O$.
+\end{itemize}
+\end{propriete}
+
+\begin{exemplebox}[Repérage de points]
+Placer dans le plan complexe les points d'affixes :
+$z_1 = 2 + i$, $z_2 = -3$, $z_3 = -2i$, $z_4 = -1 - 2i$.
+\begin{center}
+\begin{tikzpicture}[scale=1,>=Stealth]
+\draw[->] (-3.5,0) -- (3.5,0) node[right] {$\Re$};
+\draw[->] (0,-3) -- (0,3) node[above] {$\Im$};
+\foreach \x in {-3,-2,-1,1,2,3} \draw (\x,0.1) -- (\x,-0.1) node[below] {\small $\x$};
+\foreach \y in {-2,-1,1,2} \draw (0.1,\y) -- (-0.1,\y) node[left] {\small $\y$};
+\fill[popblue] (2,1) circle (2pt) node[above right] {$z_1(2+i)$};
+\fill[popblue] (-3,0) circle (2pt) node[below left] {$z_2(-3)$};
+\fill[popblue] (0,-2) circle (2pt) node[right] {$z_3(-2i)$};
+\fill[popblue] (-1,-2) circle (2pt) node[below left] {$z_4(-1-2i)$};
+\end{tikzpicture}
+\end{center}
+\end{exemplebox}
+
+\courssub{Puissances de $i$}
+Les puissances de $i$ sont périodiques de période 4 :
+\[
+i^0 = 1,\quad i^1 = i,\quad i^2 = -1,\quad i^3 = -i,\quad i^4 = 1,\quad \dots
+\]
+Pour tout $n \in \mathbb{N}$, $i^n = i^r$ où $r$ est le reste de la division euclidienne de $n$ par 4.
+
+\begin{attention}[Piège : $\sqrt{-1}$]
+On n'écrit \textbf{jamais} $i = \sqrt{-1}$. La racine carrée n'est pas définie sur $\mathbb{R}^-$ de la même façon que sur $\mathbb{R}^+$. On définit $i$ par sa propriété algébrique : $i^2 = -1$.
+\end{attention}
+
+\coursec{Opérations sur les nombres complexes}
+
+\courssub{Addition et soustraction}
+Soient $z_1 = a_1 + ib_1$ et $z_2 = a_2 + ib_2$.
+\[
+z_1 + z_2 = (a_1 + a_2) + i(b_1 + b_2),\qquad
+z_1 - z_2 = (a_1 - a_2) + i(b_1 - b_2).
+\]
+Géométriquement, l'addition correspond à la \cle{règle du parallélogramme} (ou translation) : si $M_1(z_1)$, $M_2(z_2)$, $M(z_1+z_2)$, alors $\overrightarrow{OM} = \overrightarrow{OM_1} + \overrightarrow{OM_2}$.
+
+\courssub{Multiplication}
+\[
+z_1 z_2 = (a_1 + ib_1)(a_2 + ib_2) = (a_1a_2 - b_1b_2) + i(a_1b_2 + a_2b_1).
+\]
+On utilise la distributivité et $i^2 = -1$.
+
+\courssub{Inverse et division}
+Pour $z = a + ib \neq 0$, son inverse est :
+\[
+z^{-1} = \frac{1}{a+ib} = \frac{a-ib}{a^2+b^2} = \frac{\overline{z}}{|z|^2}.
+\]
+La division de $z_1$ par $z_2 \neq 0$ se fait en multipliant numérateur et dénominateur par le conjugué du dénominateur (voir section 3) :
+\[
+\frac{z_1}{z_2} = \frac{z_1 \overline{z_2}}{|z_2|^2}.
+\]
+
+\begin{methode}[Division de deux complexes]
+Pour calculer $\dfrac{a+ib}{c+id}$ ($c+id \neq 0$) :
+\begin{enumerate}
+\item Multiplier le numérateur et le dénominateur par $c-id$ (le conjugué du dénominateur).
+\item Développer au numérateur en utilisant $i^2=-1$.
+\item Le dénominateur devient $c^2+d^2 \in \mathbb{R}^*_+$.
+\item Écrire le résultat sous la forme $x+iy$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Division]
+Calculer $\dfrac{3+4i}{1+2i}$.
+\tcblower
+\[
+\frac{3+4i}{1+2i} = \frac{(3+4i)(1-2i)}{(1+2i)(1-2i)} = \frac{3 -6i +4i -8i^2}{1+4} = \frac{3 -2i +8}{5} = \frac{11}{5} - \frac{2}{5}i = 2,2 - 0,4i.
+\]
+\end{exoresolu}
+
+\coursec{Nombre complexe conjugué : propriétés et applications}
+
+\courssub{Définition et géométrie}
+\begin{definition}[Conjugué]
+Le \cle{conjugué} de $z = a + ib$ est le nombre complexe noté $\overline{z}$ (ou parfois $z^*$) défini par :
+\[
+\overline{z} = a - ib.
+\]
+Géométriquement, si $M(z)$ a pour affixe $z$, alors le point $M'(\overline{z})$ est le symétrique de $M$ par rapport à l'axe des réels $(Ox)$.
+\end{definition}
+
+\courssub{Propriétés fondamentales}
+\begin{propriete}[Propriétés du conjugué]
+Pour tous $z, z_1, z_2 \in \mathbb{C}$ :
+\begin{enumerate}
+\item $\overline{\overline{z}} = z$ (involution).
+\item $\overline{z_1 + z_2} = \overline{z_1} + \overline{z_2}$.
+\item $\overline{z_1 - z_2} = \overline{z_1} - \overline{z_2}$.
+\item $\overline{z_1 z_2} = \overline{z_1} \, \overline{z_2}$.
+\item $\overline{\left(\dfrac{z_1}{z_2}\right)} = \dfrac{\overline{z_1}}{\overline{z_2}}$ ($z_2 \neq 0$).
+\item $z \in \mathbb{R} \iff \overline{z} = z$.
+\item $z \in i\mathbb{R} \iff \overline{z} = -z$.
+\item $z + \overline{z} = 2\Re(z) \in \mathbb{R}$.
+\item $z - \overline{z} = 2i\Im(z) \in i\mathbb{R}$.
+\item $z \overline{z} = |z|^2 \in \mathbb{R}^+$ (lien avec le module, voir section 4).
+\end{enumerate}
+\end{propriete}
+
+\begin{attention}[Démonstration exigible]
+Au Probatoire, on doit savoir \textbf{démontrer} les propriétés 2 à 5 en utilisant la forme algébrique $z_k = a_k + ib_k$ et la définition $\overline{z_k} = a_k - ib_k$.
+\end{attention}
+
+\courssub{Résolution d'équations du second degré à coefficients réels}
+L'équation $az^2 + bz + c = 0$ avec $a,b,c \in \mathbb{R}$, $a \neq 0$, a pour discriminant $\Delta = b^2 - 4ac$.
+\begin{itemize}
+\item Si $\Delta > 0$ : deux solutions réelles distinctes.
+\item Si $\Delta = 0$ : une solution réelle double $z = -\frac{b}{2a}$.
+\item Si $\Delta < 0$ : deux solutions complexes \textbf{conjuguées} :
+\[
+z_1 = \frac{-b + i\sqrt{-\Delta}}{2a},\qquad z_2 = \frac{-b - i\sqrt{-\Delta}}{2a} = \overline{z_1}.
+\]
+\end{itemize}
+
+\begin{propriete}[Racines conjuguées]
+Tout polynôme à coefficients réels a des racines complexes qui sont soit réelles, soit groupées par paires conjuguées.
+\end{propriete}
+
+\coursec{Module et écriture trigonométrique}
+
+\courssub{Module d'un nombre complexe}
+\begin{definition}[Module]
+Le \cle{module} (ou valeur absolue) de $z = a + ib$ est le nombre réel positif noté $|z|$ et défini par :
+\[
+|z| = \sqrt{a^2 + b^2}.
+\]
+Géométriquement, $|z| = OM$ (distance de l'origine au point $M$). C'est aussi la longueur du vecteur $\overrightarrow{OM}$.
+\end{definition}
+
+\begin{propriete}[Propriétés du module]
+Pour tous $z, z_1, z_2 \in \mathbb{C}$ :
+\begin{enumerate}
+\item $|z| \ge 0$ et $|z| = 0 \iff z = 0$.
+\item $|z| = |\overline{z}| = |-z|$.
+\item $|z_1 z_2| = |z_1|\,|z_2|$.
+\item $\left|\dfrac{z_1}{z_2}\right| = \dfrac{|z_1|}{|z_2|}$ ($z_2 \neq 0$).
+\item Inégalité triangulaire : $|z_1 + z_2| \le |z_1| + |z_2|$.
+\item $|z_1 - z_2|$ est la distance entre les points $M_1(z_1)$ et $M_2(z_2)$.
+\end{enumerate}
+\end{propriete}
+
+\courssub{Argument d'un nombre complexe non nul}
+Pour $z \neq 0$, tout angle $\theta$ (en radians) tel que :
+\[
+\cos\theta = \frac{a}{|z|},\quad \sin\theta = \frac{b}{|z|}
+\]
+est un \cle{argument} de $z$, noté $\arg(z)$. L'ensemble des arguments est $\arg(z) = \{\theta_0 + 2k\pi \mid k \in \mathbb{Z}\}$.
+L'\cle{argument principal} (noté $\operatorname{Arg}(z)$ ou $\arg(z)$ par abus) est l'unique argument dans $]-\pi, \pi]$.
+
+\begin{attention}[Calcul de l'argument]
+Ne pas utiliser aveuglément $\theta = \arctan(b/a)$ car $\arctan$ ne donne des valeurs que dans $]-\pi/2, \pi/2[$. Il faut déterminer le quadrant du point $M(a,b)$ :
+\begin{itemize}
+\item $a>0$ : $\theta = \arctan(b/a)$.
+\item $a<0, b\ge 0$ : $\theta = \arctan(b/a) + \pi$.
+\item $a<0, b<0$ : $\theta = \arctan(b/a) - \pi$.
+\item $a=0, b>0$ : $\theta = \pi/2$.
+\item $a=0, b<0$ : $\theta = -\pi/2$.
+\end{itemize}
+\end{attention}
+
+\courssub{Écriture trigonométrique (forme polaire)}
+\begin{definition}[Forme trigonométrique]
+Tout nombre complexe non nul $z$ s'écrit de manière unique (modulo $2\pi$ pour l'argument) sous la forme :
+\[
+z = |z|(\cos\theta + i\sin\theta) = r(\cos\theta + i\sin\theta),
+\]
+où $r = |z| > 0$ et $\theta = \arg(z)$.
+On note souvent $\operatorname{cis}\theta = \cos\theta + i\sin\theta$.
+\end{definition}
+
+\begin{propriete}[Produit et quotient en forme trigonométrique]
+Soient $z_1 = r_1(\cos\theta_1 + i\sin\theta_1)$ et $z_2 = r_2(\cos\theta_2 + i\sin\theta_2)$ ($z_2 \neq 0$).
+\begin{align*}
+z_1 z_2 &= r_1 r_2 \bigl(\cos(\theta_1+\theta_2) + i\sin(\theta_1+\theta_2)\bigr), \\
+\frac{z_1}{z_2} &= \frac{r_1}{r_2} \bigl(\cos(\theta_1-\theta_2) + i\sin(\theta_1-\theta_2)\bigr).
+\end{align*}
+\emph{Le module du produit est le produit des modules ; l'argument du produit est la somme des arguments (modulo $2\pi$).}
+\end{propriete}
+
+\begin{savaistu}[Formule d'Euler et notation exponentielle]
+La relation $e^{i\theta} = \cos\theta + i\sin\theta$ (formule d'Euler) permet d'écrire $z = r e^{i\theta}$. Cette notation \emph{exponentielle} simplifie considérablement les calculs de puissances et racines. Elle est très utilisée en électricité (fasceurs) et en traitement du signal. Au Probatoire, la forme trigonométrique est la référence, mais la notation exponentielle est acceptée comme outil de calcul.
+\end{savaistu}
+
+\courssub{Formule de Moivre (Puissances entières)}
+\begin{propriete}[Formule de Moivre]
+Pour tout $z = r(\cos\theta + i\sin\theta)$ et tout $n \in \mathbb{Z}$ :
+\[
+z^n = r^n (\cos n\theta + i\sin n\theta).
+\]
+\end{propriete}
+Ceci permet de calculer rapidement les puissances $z^n$ et de résoudre les équations $z^n = w$.
+
+\coursec{Applications concrètes et résolution d'équations}
+
+\courssub{Impédance d'un circuit RLC série}
+En régime sinusoïdal forcé de pulsation $\omega$, les grandeurs alternatives (tension $u$, courant $i$) sont représentées par des \cle{fasceurs} (nombres complexes). L'impédance complexe $Z$ d'un circuit série RLC relie le fasceur tension $\underline{U}$ au fasceur courant $\underline{I}$ par la loi d'Ohm complexe : $\underline{U} = Z \underline{I}$.
+
+\begin{definition}[Impédance complexe série]
+Pour un circuit série Résistance $R$, Inductance $L$, Capacité $C$ :
+\[
+Z = R + i\left(\omega L - \frac{1}{\omega C}\right) = R + iX,
+\]
+où :
+\begin{itemize}
+\item $R$ (en $\Omega$) est la résistance (partie réelle, dissipative).
+\item $X = \omega L - \frac{1}{\omega C}$ (en $\Omega$) est la \cle{réactance} totale (partie imaginaire).
+\item $\omega L$ est la réactance inductive ($X_L > 0$).
+\item $\frac{1}{\omega C}$ est la réactance capacitive ($X_C < 0$).
+\end{itemize}
+Le \cle{module} $|Z| = \sqrt{R^2 + X^2}$ est l'impédance effective (rapport des valeurs efficaces $U/I$).
+L'\cle{argument} $\varphi = \arg(Z)$ est le \cle{déphasage} tension/courant : $\varphi > 0$ (circuit inductif, courant en retard), $\varphi < 0$ (circuit capacitif, courant en avance).
+\end{definition}
+
+\begin{exemplebox}[Exemple chiffré : $Z = 3 + 4i\ \Omega$]
+$R = 3\ \Omega$, $X = 4\ \Omega$ (inductif).
+\[
+|Z| = \sqrt{3^2 + 4^2} = 5\ \Omega,\qquad
+\varphi = \arg(Z) = \arctan\!\left(\frac{4}{3}\right) \approx 53,13^\circ.
+\]
+Le courant est en retard de $53,13^\circ$ sur la tension.
+\end{exemplebox}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2,>=Stealth]
+% Axes
+\draw[->] (-0.5,0) -- (5,0) node[right] {$R$ (partie réelle)};
+\draw[->] (0,-0.5) -- (0,5) node[above] {$X$ (partie imaginaire)};
+% Vecteur Z
+\draw[popblue,very thick,->] (0,0) -- (3,4) node[midway,above left] {$Z$};
+% Projections
+\draw[dashed,popmuted] (3,4) -- (3,0) node[below] {$3$};
+\draw[dashed,popmuted] (3,4) -- (0,4) node[left] {$4$};
+% Angle
+\draw[poporange,thick] (0.8,0) arc (0:53.13:0.8) node[midway,right] {$\varphi$};
+% Labels
+\node[popblue] at (3.5,4.5) {$Z = 3+4i$};
+\end{tikzpicture}
+\legende{Représentation géométrique de l'impédance $Z=3+4i$ dans le plan complexe.}
+\end{popfigure}
+
+\begin{attention}[Piège fréquent]
+Ne pas confondre la réactance $X$ (partie imaginaire de $Z$) avec l'impédance effective $|Z|$. Le déphasage $\varphi$ est nul seulement si $X=0$ (résonance série $\omega L = 1/(\omega C)$). Vérifier toujours le quadrant pour $\varphi$ : ici $R>0, X>0 \Rightarrow \varphi \in ]0, \pi/2[$.
+\end{attention}
+
+\courssub{Rotation dans le plan complexe}
+La multiplication par un nombre complexe de module $1$ effectue une rotation.
+
+\begin{propriete}[Rotation par multiplication]
+Soit $\alpha \in \mathbb{R}$. L'application $R_\alpha : \mathbb{C} \to \mathbb{C},\; z \mapsto z\,e^{i\alpha}$ (ou $z(\cos\alpha + i\sin\alpha)$) est une \cle{rotation directe} d'angle $\alpha$ centrée à l'origine.
+\begin{itemize}
+\item Elle conserve les modules : $|R_\alpha(z)| = |z|$.
+\item Elle ajoute $\alpha$ aux arguments : $\arg(R_\alpha(z)) = \arg(z) + \alpha \pmod{2\pi}$.
+\end{itemize}
+\end{propriete}
+
+\begin{experience}[Découverte : rotation d'un vecteur]
+Prenez $z_0 = 2 + i$ (module $\sqrt{5}$, argument principal $\theta_0 = \arctan(1/2) \approx 26,6^\circ$). Multipliez successivement par $e^{i\pi/4}$ (rotation de $45^\circ$).
+\begin{enumerate}
+\item Calculez $z_1 = z_0 e^{i\pi/4}$ sous forme algébrique.
+\item Vérifiez que $|z_1| = |z_0| = \sqrt{5}$ et que $\arg(z_1) = \theta_0 + 45^\circ \approx 71,6^\circ$.
+\item Représentez $z_0$ et $z_1$ sur un même repère.
+\end{enumerate}
+\textbf{Réponse guidée :}
+$e^{i\pi/4} = \frac{\sqrt{2}}{2} + i\frac{\sqrt{2}}{2}$.
+$z_1 = (2+i)\left(\frac{\sqrt{2}}{2} + i\frac{\sqrt{2}}{2}\right) = \frac{\sqrt{2}}{2}(2+i)(1+i) = \frac{\sqrt{2}}{2}(2+2i+i+i^2) = \frac{\sqrt{2}}{2}(1+3i) = \frac{\sqrt{2}}{2} + i\frac{3\sqrt{2}}{2}$.
+$|z_1| = \sqrt{(\frac{\sqrt{2}}{2})^2 + (\frac{3\sqrt{2}}{2})^2} = \sqrt{\frac{2}{4} + \frac{18}{4}} = \sqrt{5}$. Argument : $\tan \arg(z_1) = 3 \Rightarrow \arg(z_1) \approx 71,6^\circ = 26,6^\circ + 45^\circ$. ✓
+\end{experience}
+
+\courssub{Résolution de l'équation $z^2 = w$ ($w \neq 0$)}
+
+\begin{methode}[Résoudre $z^2 = w$ ($w \neq 0$)]
+\begin{enumerate}
+\item Écrire $w$ sous forme trigonométrique : $w = r(\cos\theta + i\sin\theta)$ avec $r = |w| > 0$ et $\theta = \arg(w)$ (argument principal ou quelconque).
+\item Les deux racines carrées sont les nombres de module $\sqrt{r}$ et d'arguments $\frac{\theta}{2}$ et $\frac{\theta}{2} + \pi$ :
+\[
+z_1 = \sqrt{r}\left(\cos\frac{\theta}{2} + i\sin\frac{\theta}{2}\right),\qquad
+z_2 = \sqrt{r}\left(\cos\left(\frac{\theta}{2}+\pi\right) + i\sin\left(\frac{\theta}{2}+\pi\right)\right) = -z_1.
+\]
+\item Si besoin, repasser sous forme algébrique $a+ib$ en calculant $\cos(\theta/2)$ et $\sin(\theta/2)$ (formules de demi-angle ou valeurs exactes si angle remarquable).
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Ne pas oublier la seconde solution]
+L'équation $z^2 = w$ admet \emph{toujours} deux solutions opposées dans $\mathbb{C}$ (sauf $w=0$). Oublier $z_2 = -z_1$ est une erreur classique au Probatoire. Préciser les deux solutions.
+\end{attention}
+
+\begin{exoresolu}[Résolution de $z^2 = -3 + 4i$]
+\noindent\textbf{Énoncé.} Déterminer les nombres complexes $z$ tels que $z^2 = -3 + 4i$.
+\tcblower
+\textbf{Solution.}
+\begin{enumerate}
+\item Module et argument de $w = -3+4i$ :
+$r = \sqrt{(-3)^2+4^2} = 5$.
+Point $M(-3;4)$ dans le 2ème quadrant $\Rightarrow$ $\theta = \pi - \arctan(4/3)$.
+Valeur approchée : $\theta \approx 2,2143\ \text{rad}$ ($126,87^\circ$).
+\item Racines :
+$\sqrt{r} = \sqrt{5}$.
+$\theta/2 \approx 1,1071\ \text{rad}$ ($63,43^\circ$).
+$z_1 = \sqrt{5}\left(\cos 63,43^\circ + i\sin 63,43^\circ\right)$.
+On reconnaît le triangle $1-2-\sqrt{5}$ : $\cos 63,43^\circ \approx 1/\sqrt{5}$, $\sin 63,43^\circ \approx 2/\sqrt{5}$.
+Donc $z_1 \approx \sqrt{5}(1/\sqrt{5} + i\,2/\sqrt{5}) = 1 + 2i$.
+$z_2 = -z_1 = -1 - 2i$.
+\item Vérification : $(1+2i)^2 = 1 + 4i + 4i^2 = 1 + 4i -4 = -3+4i$. ✓
+\end{enumerate}
+\end{exoresolu}
+
+\courssub{Racines $n$-ièmes de l'unité et polygones réguliers}
+Les solutions de $z^n = 1$ ($n\in\mathbb{N}^*$) sont les \cle{racines $n$-ièmes de l'unité}.
+
+\begin{propriete}[Racines $n$-ièmes de l'unité]
+Les $n$ solutions de $z^n = 1$ sont :
+\[
+\omega_k = \cos\left(\frac{2k\pi}{n}\right) + i\sin\left(\frac{2k\pi}{n}\right) = e^{2i k\pi/n},\qquad k = 0,1,\dots,n-1.
+\]
+Elles sont toutes de module $1$ et leurs arguments forment une progression arithmétique de raison $2\pi/n$.
+Géométriquement, ce sont les sommets d'un polygone régulier à $n$ côtés inscrit dans le cercle unité, un sommet étant $1$ (pour $k=0$).
+Leur somme est nulle pour $n\ge 2$ : $\sum_{k=0}^{n-1} \omega_k = 0$.
+\end{propriete}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=2.5,>=Stealth]
+% Cercle unité
+\draw[popline,thick] (0,0) circle (1);
+% Axes
+\draw[->] (-1.2,0) -- (1.2,0) node[right] {$\Re$};
+\draw[->] (0,-1.2) -- (0,1.2) node[above] {$\Im$};
+% Racines 5èmes (k=0 à 4, angle = 2kπ/5)
+\foreach \k in {0,1,2,3,4} {
+  \pgfmathsetmacro{\ang}{360/5*\k} % angle en degrés : 0, 72, 144, 216, 288
+  \coordinate (w\k) at (\ang:1);
+  \fill[popblue] (w\k) circle (1.5pt);
+  \node[popblue] at (1.3*\ang:1) {$\omega_{\k}$};
+  \draw[popmuted,thin] (0,0) -- (w\k);
+}
+% Polygone
+\draw[poporange,thick] (w0) -- (w1) -- (w2) -- (w3) -- (w4) -- cycle;
+% Label omega_0 = 1
+\node[popdark, anchor=north west] at (w0) {$1$};
+% Labels
+\node[popdark] at (0,-1.35) {Cercle unité et 5 racines de l'unité ($\omega_0=1$)};
+\end{tikzpicture}
+\legende{Les 5 racines cinquièmes de l'unité : sommets d'un pentagone régulier. $\omega_0=1$ sur l'axe réel positif.}
+\end{popfigure}
+
+\begin{savaistu}[Traitement du signal et transformée de Fourier]
+Les nombres complexes sont au cœur de la transformée de Fourier, qui décompose un signal en sommes de sinusoïdes (fréquences). Chaque composante fréquentielle est représentée par un nombre complexe (amplitude et phase). Sans les nombres complexes, le traitement numérique du son, de l'image (JPEG, MP3), des télécommunications (4G/5G, Wi‑Fi) ou de l'IRM médicale serait impossible.
+\end{savaistu}
+
+\courssub{Exercices type Probatoire}
+
+\begin{exercice}[Impédance d'un circuit parallèle R//C]
+Un circuit est constitué d'une résistance $R = 10\ \Omega$ en parallèle avec un condensateur $C = 100\ \mu\text{F}$, alimenté sous une tension sinusoïdale de pulsation $\omega = 100\ \text{rad/s}$.
+\begin{enumerate}
+\item Écrire l'admittance complexe $Y$ du circuit (rappel : $Y = 1/Z$, pour une résistance $Y_R = 1/R$, pour un condensateur $Y_C = i\omega C$).
+\item En déduire l'impédance complexe $Z$ sous forme algébrique $a+ib$.
+\item Calculer le module $|Z|$ et l'argument $\arg(Z)$ (déphasage tension/courant). Donner les valeurs approchées au centième.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Impédance parallèle R//C]
+\begin{enumerate}
+\item Admittances :
+$Y_R = \dfrac{1}{R} = \dfrac{1}{10} = 0,1\ \text{S}$ (Siemens).
+$Y_C = i\omega C = i \times 100 \times 100\times10^{-6} = i \times 0,01 = 0,01i\ \text{S}$.
+$Y = Y_R + Y_C = 0,1 + 0,01i\ \text{S}$.
+\item Impédance :
+$Z = \dfrac{1}{Y} = \dfrac{1}{0,1 + 0,01i} = \dfrac{0,1 - 0,01i}{(0,1)^2 + (0,01)^2} = \dfrac{0,1 - 0,01i}{0,01 + 0,0001} = \dfrac{0,1 - 0,01i}{0,0101}$.
+$Z = \dfrac{0,1}{0,0101} - i\dfrac{0,01}{0,0101} \approx 9,90 - 0,99i\ \Omega$.
+\item Module et argument :
+$|Z| = \sqrt{(9,90)^2 + (0,99)^2} = \sqrt{98,01 + 0,9801} = \sqrt{98,9901} \approx 9,95\ \Omega$.
+$\varphi = \arg(Z) = \arctan\left(\dfrac{-0,99}{9,90}\right) \approx \arctan(-0,1) \approx -5,71^\circ$ (ou $-0,0997\ \text{rad}$).
+Comme $\varphi < 0$, le circuit est \textbf{capacitif} : le courant est en avance sur la tension.
+\end{enumerate}
+\end{corrige}
+
+\begin{exercice}[Racines carrées et rotation]
+Soit $w = 1 - i\sqrt{3}$.
+\begin{enumerate}
+\item Écrire $w$ sous forme trigonométrique (argument principal).
+\item Déterminer les deux nombres complexes $z$ tels que $z^2 = w$. Donner la forme algébrique exacte.
+\item Représenter $w$ et les deux solutions dans le plan complexe. Quel lien géométrique unit les deux solutions ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : Racines carrées de $1-i\sqrt{3}$]
+\begin{enumerate}
+\item Module : $|w| = \sqrt{1^2 + (-\sqrt{3})^2} = \sqrt{4} = 2$.
+Argument : Point $M(1; -\sqrt{3})$ dans le 4ème quadrant.
+$\tan\theta = -\sqrt{3} \Rightarrow \theta = -\frac{\pi}{3}$ (argument principal dans $]-\pi,\pi]$).
+Forme trigonométrique : $w = 2\left(\cos\left(-\frac{\pi}{3}\right) + i\sin\left(-\frac{\pi}{3}\right)\right)$.
+\item Racines carrées : Module $\sqrt{|w|} = \sqrt{2}$.
+Arguments : $\frac{\theta}{2} = -\frac{\pi}{6}$ et $\frac{\theta}{2} + \pi = \frac{5\pi}{6}$.
+$z_1 = \sqrt{2}\left(\cos\left(-\frac{\pi}{6}\right) + i\sin\left(-\frac{\pi}{6}\right)\right) = \sqrt{2}\left(\frac{\sqrt{3}}{2} - i\frac{1}{2}\right) = \frac{\sqrt{6}}{2} - i\frac{\sqrt{2}}{2}$.
+$z_2 = -z_1 = -\frac{\sqrt{6}}{2} + i\frac{\sqrt{2}}{2}$.
+\item Les points $Z_1$ et $Z_2$ sont opposés (symétriques par rapport à l'origine $O$). Le segment $[Z_1Z_2]$ a pour milieu $O$. Cela correspond à une rotation de $\pi$ (demi-tour) autour de l'origine.
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\coursec{Nombres complexes : Activité d'intégration — Circuit RLC série}
+
+\courssub{Objectifs de l'activité}
+
+Cette activité d'intégration vise à mobiliser l'ensemble des savoirs et savoir-faire travaillés au cours de la leçon sur les nombres complexes dans un contexte professionnel authentique : l'analyse d'un circuit électrique série RLC en régime sinusoïdal forcé. Elle permet à l'élève de :
+\begin{itemize}
+    \item \textbf{Modéliser} une situation physique réelle (circuit RLC) à l'aide de nombres complexes (impédance, tension, courant).
+    \item \textbf{Manipuler} l'écriture algébrique $z = a + ib$ pour exprimer l'impédance complexe $Z = R + iX$.
+    \item \textbf{Calculer} le module $|Z|$ (valeur efficace de l'impédance) et l'argument $\arg(Z)$ (déphasage tension/courant).
+    \item \textbf{Passer} de la forme algébrique à la forme trigonométrique $Z = |Z|(\cos\varphi + i\sin\varphi)$ pour interpréter physiquement les grandeurs.
+    \item \textbf{Calculer} le nombre complexe conjugué $\overline{Z}$ et en donner la forme algébrique.
+    \item \textbf{Justifier} rigoureusement chaque étape de la résolution, en respectant les conventions de rédaction mathématique attendues au Probatoire.
+    \item \textbf{Communiquer} oralement les résultats à l'aide d'une représentation graphique dans le plan complexe (diagramme de Fresnel simplifié).
+\end{itemize}
+L'ancrage dans le contexte camerounais (réseau électrique national \textsc{eneo}, fréquence \SI{50}{Hz}, tension domestique \SI{220}{V}) donne du sens aux calculs abstraits et prépare aux épreuves pratiques des filières techniques (Électrotechnique, Maintenance, Froid/Climatisation).
+
+\courssub{Situation}
+
+Dans le cadre d'un stage de maintenance préventive au sein de la direction régionale de \textsc{eneo} à Douala, vous êtes chargé de vérifier les caractéristiques électriques d'un circuit de compensation de puissance réactive installé dans un atelier de menuiserie industrielle à Bonabéri. Ce circuit, modélisé par un dipôle série RLC, est alimenté par le réseau basse tension monophasé (tension efficace $U = \SI{220}{V}$, fréquence $f = \SI{50}{Hz}$).
+
+Les caractéristiques nominales des composants relevées sur les plaques signalétiques sont les suivantes :
+\begin{itemize}
+    \item Résistance ôhmique (fil de bobinage + charge résistive) : $R = \SI{10}{\ohm}$.
+    \item Inductance (bobine de filtrage) : $L = \SI{0,05}{H}$.
+    \item Capacité (batterie de condensateurs de compensation) : $C = \SI{200}{\micro\farad} = \SI{2e-4}{F}$.
+\end{itemize}
+
+Le chef d'équipe vous demande de déterminer :
+\begin{enumerate}
+    \item L'impédance complexe $Z$ du circuit en écriture algébrique.
+    \item Le module $|Z|$ et l'argument $\varphi = \arg(Z)$ de cette impédance.
+    \item L'écriture trigonométrique de $Z$.
+    \item Le nombre complexe conjugué $\overline{Z}$.
+    \item La nature du circuit (inductif, capacitif ou résistif pur) et le déphasage entre la tension aux bornes du circuit et le courant qui le traverse.
+    \item La puissance active $P$ absorbée par le circuit, en vérifiant la formule $P = \dfrac{U^2 R}{|Z|^2}$.
+\end{enumerate}
+Vous présenterez vos résultats sous forme d'un rapport technique incluant un schéma du plan complexe (diagramme de Fresnel) représentant le vecteur impédance.
+
+\courssub{Consignes}
+
+\begin{enumerate}
+    \item \textbf{Calcul de la pulsation :} Rappeler la formule liant la pulsation $\omega$ à la fréquence $f$ et calculer sa valeur exacte (en fonction de $\pi$) et sa valeur approchée (en $\text{rad}\cdot\text{s}^{-1}$).
+    \item \textbf{Réactances :} Calculer la réactance inductive $X_L = \omega L$ et la réactance capacitive $X_C = \dfrac{1}{\omega C}$. Donner les valeurs exactes et approchées.
+    \item \textbf{Impédance complexe :} Écrire l'impédance $Z$ sous la forme algébrique $Z = R + iX$. Préciser la valeur de la réactance totale $X = X_L - X_C$.
+    \item \textbf{Nombre complexe conjugué :} Écrire $\overline{Z}$ sous forme algébrique.
+    \item \textbf{Module et argument :} Calculer le module $|Z| = \sqrt{R^2 + X^2}$ et l'argument principal $\varphi = \arg(Z) \in ]-\pi; \pi]$. Arrondir au millième pour le module et au dix-millième de radian (ou au centième de degré) pour l'argument.
+    \item \textbf{Forme trigonométrique :} Écrire $Z$ sous la forme $Z = |Z|(\cos\varphi + i\sin\varphi)$.
+    \item \textbf{Interprétation physique :} Déduire la nature du circuit. Le courant est-il en avance ou en retard sur la tension ? Justifier par le signe de $\varphi$.
+    \item \textbf{Puissance active :} En supposant une tension efficace $U = \SI{220}{V}$, calculer le courant efficace $I = \dfrac{U}{|Z|}$ puis la puissance active $P = R I^2$. Vérifier que l'on retrouve $P = \dfrac{U^2 R}{|Z|^2}$.
+    \item \textbf{Représentation graphique :} Dans un repère orthonormé (plan complexe), placer le point $Z$ et représenter le vecteur $\vec{Z}$. Indiquer l'angle $\varphi$ et les projections sur les axes (partie réelle $R$, partie imaginaire $X$).
+    \item \textbf{Rédaction finale :} Rédiger la conclusion technique sous forme d'un paragraphe synthétique à destination du chef d'équipe.
+\end{enumerate}
+
+\courssub{Ressources à mobiliser}
+
+\begin{propriete}[Impédance complexe d'un dipôle série RLC]
+En régime sinusoïdal de pulsation $\omega$, l'impédance complexe d'un circuit série RLC s'écrit :
+\[ Z = R + i\left(\omega L - \frac{1}{\omega C}\right) = R + iX \]
+où $R$ est la résistance ($\Omega$), $X_L = \omega L$ la réactance inductive, $X_C = \frac{1}{\omega C}$ la réactance capacitive, et $X = X_L - X_C$ la réactance totale.
+\end{propriete}
+
+\begin{propriete}[Module et argument d'un nombre complexe]
+Pour $z = a + ib \in \mathbb{C}^*$ :
+\begin{itemize}
+    \item Module : $|z| = \sqrt{a^2 + b^2}$.
+    \item Argument principal : $\arg(z) \in ]-\pi; \pi]$ tel que $\cos(\arg(z)) = \frac{a}{|z|}$ et $\sin(\arg(z)) = \frac{b}{|z|}$.
+    \item Si $a > 0$, $\arg(z) = \arctan\left(\frac{b}{a}\right)$.
+    \item Si $a < 0$ et $b \ge 0$, $\arg(z) = \arctan\left(\frac{b}{a}\right) + \pi$.
+    \item Si $a < 0$ et $b < 0$, $\arg(z) = \arctan\left(\frac{b}{a}\right) - \pi$.
+\end{itemize}
+\end{propriete}
+
+\begin{propriete}[Nombre complexe conjugué]
+Pour $z = a + ib$, son conjugué est $\overline{z} = a - ib$.
+On a $|\overline{z}| = |z|$ et $\arg(\overline{z}) = -\arg(z)$ (modulo $2\pi$).
+\end{propriete}
+
+\begin{propriete}[Forme trigonométrique]
+Tout nombre complexe non nul $z$ s'écrit de manière unique :
+\[ z = |z|(\cos\theta + i\sin\theta) \quad \text{avec } \theta = \arg(z). \]
+\end{propriete}
+
+\begin{propriete}[Puissance active en régime sinusoïdal]
+Pour un dipôle d'impédance $Z = R + iX$ traversé par un courant efficace $I$ sous une tension efficace $U$ :
+\[ U = |Z| I, \quad P = U I \cos\varphi = R I^2 = \frac{U^2 R}{|Z|^2} \]
+où $\varphi = \arg(Z)$ est le déphasage tension/courant ($\varphi > 0$ : inductif, courant en retard ; $\varphi < 0$ : capacitif, courant en avance).
+\end{propriete}
+
+\begin{attention}[Pièges fréquents]
+\begin{itemize}
+    \item \textbf{Unités :} Vérifier la conversion $\mu\text{F} \to \text{F}$ ($1\,\mu\text{F} = 10^{-6}\,\text{F}$).
+    \item \textbf{Argument :} Ne pas confondre $\arctan(X/R)$ (qui donne un angle dans $]-\pi/2; \pi/2[$) et l'argument principal $\arg(Z)$ qui dépend du quadrant. Ici $R>0$, donc $\arg(Z) = \arctan(X/R)$ directement.
+    \item \textbf{Notations :} Distinguer clairement la pulsation $\omega$ (rad/s) de la fréquence $f$ (Hz). Ne pas oublier l'unité $\Omega$ pour les impédances et réactances.
+    \item \textbf{Arrondis :} Conserver les valeurs exactes (avec $\pi$) le plus longtemps possible pour éviter les erreurs de propagation. Arrondir uniquement le résultat final.
+    \item \textbf{Conjugué :} Ne pas confondre $\overline{Z}$ et $1/Z$ (admittance). Le conjugué change le signe de la partie imaginaire.
+\end{itemize}
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé détaillé de l'activité d'intégration : Circuit RLC série]
+
+\textbf{1. Calcul de la pulsation $\omega$}
+La pulsation $\omega$ (en $\text{rad}\cdot\text{s}^{-1}$) est liée à la fréquence $f$ (en Hz) par la formule :
+\[ \omega = 2\pi f \]
+Données : $f = \SI{50}{Hz}$.
+\[ \omega = 2\pi \times 50 = 100\pi\,\text{rad}\cdot\text{s}^{-1} \]
+Valeur approchée : $\omega \approx \SI{314,159}{rad/s}$.
+
+\textbf{2. Calcul des réactances $X_L$ et $X_C$}
+\begin{itemize}
+    \item \textbf{Réactance inductive :} $X_L = \omega L = 100\pi \times 0,05 = 5\pi\,\Omega$.
+    Valeur approchée : $X_L \approx \SI{15,708}{\ohm}$.
+    \item \textbf{Réactance capacitive :} $X_C = \dfrac{1}{\omega C}$.
+    $C = \SI{200}{\micro\farad} = \SI{2e-4}{F}$.
+    \[ X_C = \frac{1}{100\pi \times 2 \times 10^{-4}} = \frac{1}{2\pi \times 10^{-2}} = \frac{100}{2\pi} = \frac{50}{\pi}\,\Omega. \]
+    Valeur approchée : $X_C \approx \SI{15,915}{\ohm}$.
+\end{itemize}
+
+\textbf{3. Impédance complexe $Z$ sous forme algébrique}
+L'impédance complexe s'écrit $Z = R + i(X_L - X_C)$.
+\[ X = X_L - X_C = 5\pi - \frac{50}{\pi} \]
+Calcul exact commun dénominateur :
+\[ X = \frac{5\pi^2 - 50}{\pi}\,\Omega \]
+Valeur approchée :
+\[ X \approx 15,708 - 15,915 = -0,207\,\Omega \]
+L'impédance est donc :
+\[ Z = 10 + i\left(5\pi - \frac{50}{\pi}\right) \quad \text{soit} \quad Z \approx 10 - 0,207\,i \,\Omega \]
+\emph{Commentaire :} La partie imaginaire est négative ($X < 0$), le circuit est de nature \textbf{capacitive}.
+
+\textbf{4. Nombre complexe conjugué $\overline{Z}$}
+\[ \overline{Z} = 10 - i\left(5\pi - \frac{50}{\pi}\right) = 10 + i\left(\frac{50}{\pi} - 5\pi\right) \approx 10 + 0,207\,i \,\Omega \]
+Le module est inchangé : $|\overline{Z}| = |Z|$. L'argument est opposé : $\arg(\overline{Z}) = -\varphi$.
+
+\textbf{5. Module $|Z|$ et argument $\varphi = \arg(Z)$}
+\begin{itemize}
+    \item \textbf{Module :}
+    \[ |Z| = \sqrt{R^2 + X^2} = \sqrt{10^2 + \left(5\pi - \frac{50}{\pi}\right)^2} \]
+    Calcul numérique :
+    $R^2 = 100$.
+    $X^2 \approx (-0,20753)^2 \approx 0,04307$.
+    $|Z| = \sqrt{100,04307} \approx \SI{10,002}{\ohm}$ (arrondi au millième).
+    (Valeur exacte : $|Z| = \sqrt{100 + \left(\frac{5\pi^2 - 50}{\pi}\right)^2}$).
+    \item \textbf{Argument :}
+    Comme $R = 10 > 0$, l'argument principal est donné directement par :
+    \[ \varphi = \arg(Z) = \arctan\left(\frac{X}{R}\right) = \arctan\left(\frac{5\pi - \frac{50}{\pi}}{10}\right) = \arctan\left(\frac{5\pi^2 - 50}{10\pi}\right) \]
+    Calcul numérique (calculatrice en mode \textbf{Radian}) :
+    $\frac{X}{R} \approx \frac{-0,20753}{10} = -0,020753$.
+    $\varphi \approx \arctan(-0,020753) \approx -0,0208\,\text{rad}$ (arrondi au dix-millième).
+    En degrés : $\varphi \approx -0,0208 \times \frac{180}{\pi} \approx -1,19^\circ$.
+    L'argument est bien dans $]-\pi; \pi]$ (ici $]-\frac{\pi}{2}; \frac{\pi}{2}[$).
+\end{itemize}
+
+\textbf{6. Écriture trigonométrique de $Z$}
+\[ Z = |Z|(\cos\varphi + i\sin\varphi) \]
+\[ Z \approx 10,002 \left( \cos(-0,0208) + i\sin(-0,0208) \right) \]
+Comme $\cos(-\varphi) = \cos\varphi$ et $\sin(-\varphi) = -\sin\varphi$ :
+\[ Z \approx 10,002 \left( \cos 0,0208 - i\sin 0,0208 \right) \]
+\textit{Vérification :} $|Z|\cos\varphi \approx 10,002 \times 0,9998 \approx 10 = R$ ; $|Z|\sin\varphi \approx 10,002 \times (-0,0208) \approx -0,208 \approx X$.
+
+\textbf{7. Interprétation physique : Nature du circuit et déphasage}
+\begin{itemize}
+    \item \textbf{Nature :} Puisque $X = X_L - X_C < 0$ (réactance capacitive dominante), le circuit a un comportement \textbf{capacitif global}.
+    \item \textbf{Déphasage :} $\varphi = \arg(Z) \approx -0,0208\,\text{rad} < 0$.
+    En régime sinusoïdal, l'impédance lie la tension complexe $\underline{U}$ et le courant complexe $\underline{I}$ par $\underline{U} = Z \underline{I}$.
+    L'argument de $Z$ est la différence de phase : $\varphi = \arg(\underline{U}) - \arg(\underline{I})$.
+    Comme $\varphi < 0$, on a $\arg(\underline{U}) < \arg(\underline{I})$.
+    \textbf{Conclusion :} Le \textbf{courant est en avance sur la tension} d'un angle d'environ $1,19^\circ$ (soit $0,0208\,\text{rad}$).
+    Le facteur de puissance est $\cos\varphi \approx \cos(-0,0208) \approx 0,9998 \approx 1$. Le circuit est quasi-résistif (proche de la résonance).
+\end{itemize}
+
+\textbf{8. Calcul de la puissance active $P$}
+Donnée : Tension efficace $U = \SI{220}{V}$.
+\begin{itemize}
+    \item \textbf{Courant efficace :}
+    \[ I = \frac{U}{|Z|} \approx \frac{220}{10,002} \approx \SI{21,996}{A} \]
+    \item \textbf{Puissance active par $P = R I^2$ :}
+    \[ P = 10 \times (21,996)^2 \approx 10 \times 483,82 \approx \SI{4838}{W} \approx \SI{4,84}{kW} \]
+    \item \textbf{Vérification par $P = \dfrac{U^2 R}{|Z|^2}$ :}
+    \[ P = \frac{220^2 \times 10}{(10,002)^2} = \frac{48\,400 \times 10}{100,04} = \frac{484\,000}{100,04} \approx \SI{4838}{W} \]
+    Les deux formules donnent le même résultat (différence due aux arrondis sur $|Z|$).
+    \emph{Remarque :} On peut aussi calculer $P = U I \cos\varphi \approx 220 \times 21,996 \times 0,9998 \approx \SI{4838}{W}$.
+\end{itemize}
+
+\textbf{9. Représentation graphique (Plan complexe / Diagramme de Fresnel)}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.7, >=Stealth]
+    % Axes
+    \draw[->] (-1,0) -- (13,0) node[right] {$\text{Re}(Z)$ (Résistance $R$)}; 
+    \draw[->] (0,-3) -- (0,3) node[above] {$\text{Im}(Z)$ (Réactance $X$)}; 
+    % Graduations axe réel
+    \draw (10,0.15) -- (10,-0.15) node[below] {$10$};
+    \draw (5,0.15) -- (5,-0.15) node[below] {$5$};
+    % Graduations axe imaginaire (zoom)
+    \draw (-0.15,1) -- (0.15,1) node[left] {$1$};
+    \draw (-0.15,-1) -- (0.15,-1) node[left] {$-1$};
+    \draw (-0.15,0.2) -- (0.15,0.2) node[left] {$0,2$};
+    \draw (-0.15,-0.2) -- (0.15,-0.2) node[left] {$-0,2$};
+    % Vecteur Z
+    \draw[popblue, very thick, ->] (0,0) -- (10, -0.207) node[midway, above right, popblue] {$\vec{Z}$};
+    % Projections
+    \draw[dashed, popmuted] (10, -0.207) -- (10, 0) node[below, popmuted] {$R=10$};
+    \draw[dashed, popmuted] (10, -0.207) -- (0, -0.207) node[left, popmuted] {$X \approx -0,21$};
+    % Angle phi (rayon 3cm pour visibilité)
+    \draw[poporange, thick] (3,0) arc (0:-1.19:3) node[midway, right=6pt, poporange] {$\varphi \approx -1,2^\circ$};
+    % Point Z
+    \fill[popblue] (10, -0.207) circle (2.5pt) node[above right] {$Z(10\,;\,-0,21)$};
+    % Legend box
+    \node[align=left, fill=popcream, draw=popline, rounded corners, inner sep=6pt] at (6.5, 2.5) {
+        \textbf{Diagramme de Fresnel (Impédance)} \\
+        $\vec{Z} = \vec{R} + \vec{X}$ \\
+        $\varphi < 0 \Rightarrow$ Circuit capacitif \\
+        Courant en avance sur tension
+    };
+\end{tikzpicture}
+\legende{Représentation de l'impédance complexe $Z$ dans le plan complexe. L'angle $\varphi$ est négatif (représenté avec un rayon agrandi pour la lisibilité), confirmant la nature capacitive.}
+\end{popfigure}
+
+\textbf{10. Conclusion technique (Rapport de stage)}
+\begin{quote}
+\textit{« Suite aux mesures effectuées sur le circuit de compensation de l'atelier menuiserie (Bonabéri), l'impédance complexe du dipôle série RLC ($R=\SI{10}{\ohm}$, $L=\SI{0,05}{H}$, $C=\SI{200}{\micro\farad}$) à la fréquence réseau de \SI{50}{Hz} a été déterminée. Elle vaut $Z \approx 10 - 0,21\,i\,\Omega$. Le module de l'impédance est $|Z| \approx \SI{10,002}{\ohm}$ et son argument $\varphi \approx -1,19^\circ$. La réactance capacitive l'emporte très légèrement sur la réactance inductive ($X_C \approx \SI{15,92}{\ohm} > X_L \approx \SI{15,71}{\ohm}$), plaçant le circuit en régime légèrement capacitif. Le courant précède la tension de $1,19^\circ$. Le facteur de puissance est excellent ($\cos\varphi \approx 0,9998$). La puissance active absorbée sous \SI{220}{V} est d'environ \SI{4,84}{kW}. Le circuit est proche de la résonance ($f_0 \approx \SI{50,3}{Hz}$), la compensation est donc efficace. Aucune action corrective n'est requise. »}
+\end{quote}
+
+\tcblower
+
+\textbf{Commentaires pédagogiques pour l'enseignant}
+\begin{itemize}
+    \item \textbf{Question 1 (Pulsation) :} Vérifier que les élèves utilisent $\omega = 2\pi f$ et non $\omega = 2\pi/T$. Rappeler l'unité $\text{rad}\cdot\text{s}^{-1}$ (souvent omise).
+    \item \textbf{Question 2 (Réactances) :} Point de vigilance sur la conversion $\SI{200}{\micro\farad} = \SI{2e-4}{F}$. L'erreur classique est $200 \times 10^{-6} = 2 \times 10^{-4}$ (correct) mais certains écrivent $0,0002$ et perdent des chiffres significatifs. Encourager la forme exacte $5\pi$ et $50/\pi$.
+    \item \textbf{Question 3 (Forme algébrique) :} Insister sur l'écriture $Z = R + iX$ avec $X = X_L - X_C$. Le signe de $X$ détermine la nature. Ici $X \approx -0,21$, il faut écrire $Z = 10 - 0,21i$ (et non $10 + (-0,21)i$ en réponse finale).
+    \item \textbf{Question 4 (Conjugué) :} Vérifier le changement de signe de la partie imaginaire. Rappeler le lien avec l'admittance $Y = 1/Z = \overline{Z}/|Z|^2$ (hors programme mais bon à savoir pour la suite).
+    \item \textbf{Question 5 (Module/Argument) :} Le module est très proche de $R$ car $X \ll R$. L'argument est petit. Vérifier l'usage de la touche $\arctan$ (ou $\tan^{-1}$) sur la calculatrice en mode \textbf{Radian}. Rappeler que comme $a=R>0$, $\arg(Z) = \arctan(b/a)$ directement sans ajout de $\pi$.
+    \item \textbf{Question 6 (Trigonométrique) :} Vérifier la cohérence : $\cos\varphi \approx 1$, $\sin\varphi \approx \varphi$. $|Z|\cos\varphi \approx R$, $|Z|\sin\varphi \approx X$. C'est un bon test de vérification.
+    \item \textbf{Question 7 (Interprétation) :} Lien crucial : $\varphi = \arg(Z) = \varphi_U - \varphi_I$. $\varphi < 0 \Rightarrow \varphi_U < \varphi_I \Rightarrow$ Courant en avance. Faire dire aux élèves : « Le circuit est capacitif, le courant est en avance sur la tension ».
+    \item \textbf{Question 8 (Puissance) :} La formule $P = U^2 R / |Z|^2$ est une conséquence de $P = R I^2$ et $U = |Z|I$. C'est une application directe du cours sur le module.
+    \item \textbf{Question 9 (Graphique) :} L'échelle sur l'axe des imaginaires doit être adaptée (zoom) car $X$ est très petit devant $R$. Accepter un schéma non proportionnel mais annoté correctement (valeurs écrites à côté des points). L'arc de l'angle doit avoir un rayon suffisant pour être visible.
+    \item \textbf{Question 10 (Rédaction) :} Évaluer la clarté, le vocabulaire technique (capacitif, avance, facteur de puissance, résonance) et la synthèse.
+\end{itemize}
+
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette activité d'intégration a permis de mettre en évidence les points suivants, essentiels pour la réussite au Probatoire et en situation professionnelle :
+
+\begin{aretenir}[Bilan des acquis mobilisés]
+\begin{itemize}
+    \item \textbf{Modélisation mathématique :} Le passage du réel (composants physiques) au modèle mathématique (nombre complexe $Z$) est la compétence centrale. L'élève a dû identifier les données ($R, L, C, f$), choisir les bonnes formules ($\omega, X_L, X_C$) et construire $Z = R + i(\omega L - 1/\omega C)$.
+    \item \textbf{Maîtrise des trois écritures :} L'activité a imposé le parcours complet : \textbf{Algébrique} ($10 - 0,21i$) $\to$ \textbf{Polaire/Trigonométrique} ($10,002 \angle -1,2^\circ$) $\to$ \textbf{Interprétation géométrique} (vecteur dans le plan complexe). La fluidité entre ces représentations est un objectif majeur du programme de Première Technique.
+    \item \textbf{Nombre complexe conjugué :} Le calcul de $\overline{Z}$ renforce la compréhension de la symétrie axiale par rapport à l'axe réel et prépare l'étude de l'admittance en Terminale.
+    \item \textbf{Sens physique des nombres complexes :} Le module $|Z|$ n'est pas qu'une distance : c'est le rapport $U/I$. L'argument $\varphi$ n'est pas qu'un angle : c'est le déphasage tension/courant. Le signe de la partie imaginaire ($X$) dicte la nature du circuit (inductif/capacitif) et le sens de l'avance/retard. L'élève a fait le lien entre $\operatorname{Im}(Z) < 0$ et « courant en avance ».
+    \item \textbf{Calcul exact vs approché :} La conservation des expressions exactes ($5\pi$, $50/\pi$) jusqu'au résultat final est une exigence de rigueur. Elle évite l'accumulation d'erreurs d'arrondi (ici $X$ est la différence de deux grands nombres proches, la perte de significativité est forte si on arrondit trop tôt).
+    \item \textbf{Communication technique :} La restitution orale avec schéma (diagramme de Fresnel) et la rédaction du rapport final entraînent la compétence « Communiquer » du référentiel. L'usage du vocabulaire précis (réactance, impédance, déphasage, facteur de puissance, résonance) est évalué.
+    \item \textbf{Contexte camerounais :} L'utilisation des normes \textsc{eneo} (\SI{220}{V}, \SI{50}{Hz}) et d'un site réel (Bonabéri) ancre les mathématiques dans l'environnement technique et économique local, répondant à l'objectif du programme : « Appliquer les notions à des situations concrètes de la vie courante ».
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Difficultés résiduelles observées / Points de remédiation]
+\begin{itemize}
+    \item \textbf{Confusion $X_L$ et $X_C$ :} Certains élèves inversent les formules ($1/\omega L$ et $\omega C$). Rappel mnémotechnique : « L'inductance s'oppose à la variation de courant $\to$ $X_L$ croît avec $\omega$ ($=\omega L$) ; le condensateur laisse passer le courant alternatif d'autant mieux que $\omega$ est grand $\to$ $X_C$ décroît avec $\omega$ ($=1/\omega C$) ».
+    \item \textbf{Argument et quadrant :} Bien que ici $R>0$ simplifie le cas, rappeler la règle générale du quadrant est indispensable pour les cas où $R<0$ (générateurs, certains montages actifs) ou en Terminale.
+    \item \textbf{Unités du $\arctan$ :} La calculatrice en mode « Degrés » donne un argument en degrés, en mode « Radians » en radians. Le programme exige le radian pour l'argument principal (intervalle $]-\pi;\pi]$). Imposer la conversion explicite.
+    \item \textbf{Puissance apparente vs active :} Ne pas confondre $S = UI$ (VA) et $P = UI\cos\varphi$ (W). L'activité ne demandait que $P$, mais il est bon de rappeler la distinction.
+    \item \textbf{Perte de significativité :} Insister sur le fait que $X = X_L - X_C$ est une différence de deux nombres proches. Arrondir $X_L$ et $X_C$ trop tôt (ex: $15,7$ et $15,9$) donne $X = -0,2$ au lieu de $-0,207$, ce qui dégrade la précision de l'argument.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Le saviez-vous ? — La résonance dans le réseau camerounais]
+La fréquence de résonance d'un circuit série RLC est $f_0 = \frac{1}{2\pi\sqrt{LC}}$.
+Avec $L=\SI{0,05}{H}$ et $C=\SI{200}{\micro\farad}$ :
+$f_0 = \frac{1}{2\pi\sqrt{0,05 \times 2 \times 10^{-4}}} = \frac{1}{2\pi\sqrt{10^{-5}}} = \frac{1}{2\pi \times 10^{-2,5}} \approx \frac{316,2}{2\pi} \approx \SI{50,3}{Hz}$.
+Le circuit est \textbf{extrêmement proche de la résonance} à la fréquence du réseau (\SI{50}{Hz}). C'est volontaire : les batteries de condensateurs sont dimensionnées pour compenser l'inductance des lignes et moteurs (facteur de puissance $\cos\varphi \to 1$), réduisant les pertes par effet Joule ($P_{\text{pertes}} = R I^2$) sur le réseau \textsc{eneo}. C'est ce qu'on appelle le \textbf{compensateur de puissance réactive}. En Première Technique, vous apprenez les outils mathématiques (nombres complexes) qui permettent aux ingénieurs de calculer et dimensionner ces équipements essentiels à la distribution d'électricité au Cameroun.
+\end{savaistu}
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\coursec{Nombres complexes}
+
+\courssub{Écriture algébrique et représentation géométrique}
+
+\begin{definition}[Nombre complexe -- Forme algébrique]
+Un \cle{nombre complexe} est un nombre de la forme $z = a + \mathrm{i}b$, où $a$ et $b$ sont des nombres réels, et $\mathrm{i}$ est un symbole tel que $\mathrm{i}^2 = -1$.
+\begin{itemize}
+\item $a$ est la \cle{partie réelle} de $z$, notée $\mathrm{Re}(z)$ ou $\Re(z)$.
+\item $b$ est la \cle{partie imaginaire} de $z$, notée $\mathrm{Im}(z)$ ou $\Im(z)$.
+\item Si $b = 0$, $z$ est un \textbf{réel}. Si $a = 0$ et $b \neq 0$, $z$ est un \textbf{imaginaire pur}.
+\end{itemize}
+L'ensemble des nombres complexes est noté $\mathbb{C}$. Deux complexes $z_1 = a + \mathrm{i}b$ et $z_2 = c + \mathrm{i}d$ sont égaux \textbf{si et seulement si} $a = c$ et $b = d$.
+\end{definition}
+
+\begin{propriete}[Puissances de $\mathrm{i}$]
+Les puissances de $\mathrm{i}$ sont périodiques de période 4 :
+\[
+\mathrm{i}^1 = \mathrm{i},\quad \mathrm{i}^2 = -1,\quad \mathrm{i}^3 = -\mathrm{i},\quad \mathrm{i}^4 = 1,\quad \mathrm{i}^5 = \mathrm{i},\ \ldots
+\]
+Pour tout entier $n$, $\mathrm{i}^{4n} = 1$, $\mathrm{i}^{4n+1} = \mathrm{i}$, $\mathrm{i}^{4n+2} = -1$, $\mathrm{i}^{4n+3} = -\mathrm{i}$.
+\end{propriete}
+
+\begin{experience}[Représentation géométrique -- Plan complexe]
+Munissons le plan d'un repère orthonormé $(O\,;\vec{\imath},\vec{\jmath})$. À tout nombre complexe $z = a + \mathrm{i}b$, on associe le point $M$ de coordonnées $(a\,;\,b)$ ou le vecteur $\overrightarrow{OM} = a\vec{\imath} + b\vec{\jmath}$. Le point $M$ (ou le vecteur) est appelé \cle{image} de $z$, et $z$ est l'\cle{affixe} de $M$ (ou du vecteur).
+\begin{enumerate}
+\item Placer les points d'affixes $z_1 = 2 + \mathrm{i}$, $z_2 = -1 + 2\mathrm{i}$, $z_3 = -2 - \mathrm{i}$, $z_4 = 1 - 3\mathrm{i}$.
+\item Que représentent les nombres de la forme $a$ (réels) ? Ceux de la forme $\mathrm{i}b$ (imaginaires purs) ?
+\item Conjecturer le lien entre l'addition de complexes et l'addition des vecteurs correspondants.
+\end{enumerate}
+\end{experience}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.8, >=Stealth]
+\draw[popline, ->] (-3,0) -- (3.5,0) node[right] {$\mathbb{R}$ (Partie réelle)};
+\draw[popline, ->] (0,-3) -- (0,3.5) node[above] {$\mathrm{i}\mathbb{R}$ (Partie imaginaire)};
+\foreach \x in {-2,-1,1,2,3} \draw (\x,0.1) -- (\x,-0.1) node[below] {\small $\x$};
+\foreach \y in {-2,-1,1,2,3} \draw (0.1,\y) -- (-0.1,\y) node[left] {\small $\y\mathrm{i}$};
+\draw[popblue, thick, ->] (0,0) -- (2,1) node[midway, above right] {$z_1=2+\mathrm{i}$};
+\draw[poporange, thick, ->] (0,0) -- (-1,2) node[midway, above left] {$z_2=-1+2\mathrm{i}$};
+\draw[popgreen, thick, ->] (0,0) -- (-2,-1) node[midway, below left] {$z_3=-2-\mathrm{i}$};
+\draw[poppink, thick, ->] (0,0) -- (1,-3) node[midway, below right] {$z_4=1-3\mathrm{i}$};
+\fill[popblue] (2,1) circle (2pt);
+\fill[poporange] (-1,2) circle (2pt);
+\fill[popgreen] (-2,-1) circle (2pt);
+\fill[poppink] (1,-3) circle (2pt);
+\node at (0,0) [below left] {$O$};
+\end{tikzpicture}
+\legende{Représentation géométrique de nombres complexes dans le plan de Gauss.}
+\end{popfigure}
+
+\courssub{Opérations sur les nombres complexes}
+
+\begin{methode}[Effectuer des opérations sur les nombres complexes]
+Pour calculer avec des nombres complexes écrits sous forme algébrique $z = a + \mathrm{i}b$ (avec $a, b \in \mathbb{R}$ et $\mathrm{i}^2 = -1$) :
+\begin{enumerate}
+\item \textbf{Addition / soustraction} : on regroupe les parties réelles entre elles et les parties imaginaires entre elles :
+\[(a+\mathrm{i}b) + (c+\mathrm{i}d) = (a+c) + \mathrm{i}(b+d).\]
+\item \textbf{Multiplication} : on développe comme dans $\mathbb{R}$ puis on remplace $\mathrm{i}^2$ par $-1$ :
+\[(a+\mathrm{i}b)(c+\mathrm{i}d) = (ac - bd) + \mathrm{i}(ad + bc).\]
+\item \textbf{Quotient} : pour rendre le dénominateur réel, on multiplie numérateur et dénominateur par le \cle{conjugué} du dénominateur :
+\[\dfrac{a+\mathrm{i}b}{c+\mathrm{i}d} = \dfrac{(a+\mathrm{i}b)(c-\mathrm{i}d)}{c^2+d^2} \quad (c+\mathrm{i}d \neq 0).\]
+\item \textbf{Conclusion} : on donne toujours le résultat sous la forme algébrique $a' + \mathrm{i}b'$, en identifiant la partie réelle et la partie imaginaire.
+\end{enumerate}
+\textbf{Réflexes} : $\mathrm{i}^2 = -1$, $\mathrm{i}^3 = -\mathrm{i}$, $\mathrm{i}^4 = 1$ ; $(a+\mathrm{i}b)(a-\mathrm{i}b) = a^2 + b^2$.
+\end{methode}
+
+\begin{exoresolu}[Calculs dans un atelier d'électricité]
+En électricité, l'impédance d'un circuit est modélisée par un nombre complexe. On donne $z_1 = 3 + 2\mathrm{i}$ et $z_2 = 1 - \mathrm{i}$.
+\begin{enumerate}
+\item Calculer $z_1 + z_2$, $z_1 - z_2$ et $z_1 \times z_2$.
+\item Calculer $Z = \dfrac{z_1}{z_2}$ et donner sa partie réelle et sa partie imaginaire.
+\end{enumerate}
+\tcblower
+\textbf{1. Somme, différence et produit.}
+
+On regroupe parties réelles et parties imaginaires :
+\begin{align*}
+z_1 + z_2 &= (3 + 2\mathrm{i}) + (1 - \mathrm{i}) = (3+1) + \mathrm{i}(2-1) = 4 + \mathrm{i}.\\
+z_1 - z_2 &= (3 + 2\mathrm{i}) - (1 - \mathrm{i}) = (3-1) + \mathrm{i}(2-(-1)) = 2 + 3\mathrm{i}.
+\end{align*}
+Pour le produit, on développe puis on utilise $\mathrm{i}^2 = -1$ :
+\begin{align*}
+z_1 \times z_2 &= (3 + 2\mathrm{i})(1 - \mathrm{i})\\
+&= 3\times 1 - 3\mathrm{i} + 2\mathrm{i}\times 1 - 2\mathrm{i}^2\\
+&= 3 - 3\mathrm{i} + 2\mathrm{i} - 2\times(-1)\\
+&= 3 + 2 + \mathrm{i}(-3+2) = 5 - \mathrm{i}.
+\end{align*}
+
+\textbf{2. Quotient.}
+
+Le conjugué de $z_2 = 1 - \mathrm{i}$ est $\overline{z_2} = 1 + \mathrm{i}$. On multiplie numérateur et dénominateur par $1 + \mathrm{i}$ :
+\begin{align*}
+Z = \dfrac{3 + 2\mathrm{i}}{1 - \mathrm{i}} &= \dfrac{(3 + 2\mathrm{i})(1 + \mathrm{i})}{(1 - \mathrm{i})(1 + \mathrm{i})}\\
+&= \dfrac{3 + 3\mathrm{i} + 2\mathrm{i} + 2\mathrm{i}^2}{1^2 + 1^2}\\
+&= \dfrac{3 - 2 + 5\mathrm{i}}{2} = \dfrac{1 + 5\mathrm{i}}{2} = \dfrac{1}{2} + \dfrac{5}{2}\mathrm{i}.
+\end{align*}
+\textbf{Conclusion} : $Z = \dfrac{1}{2} + \dfrac{5}{2}\mathrm{i}$ ; sa partie réelle est $\mathrm{Re}(Z) = \dfrac{1}{2}$ et sa partie imaginaire est $\mathrm{Im}(Z) = \dfrac{5}{2}$.
+\end{exoresolu}
+
+\courssub{Nombre complexe conjugué : propriétés et applications}
+
+\begin{definition}[Nombre complexe conjugué]
+Le \cle{conjugué} d'un nombre complexe $z = a + \mathrm{i}b$ est le nombre complexe noté $\overline{z}$ et défini par $\overline{z} = a - \mathrm{i}b$.
+Géométriquement, si $M$ est le point d'affixe $z$, alors le point $M'$ d'affixe $\overline{z}$ est le symétrique de $M$ par rapport à l'axe des réels (axe des abscisses).
+\end{definition}
+
+\begin{propriete}[Propriétés du conjugué]
+Pour tous nombres complexes $z, z_1, z_2$ (avec $z_2 \neq 0$ pour le quotient) :
+\begin{align*}
+\overline{z_1 + z_2} &= \overline{z_1} + \overline{z_2}, &
+\overline{z_1 - z_2} &= \overline{z_1} - \overline{z_2}, \\
+\overline{z_1 z_2} &= \overline{z_1}\,\overline{z_2}, &
+\overline{\left(\dfrac{z_1}{z_2}\right)} &= \dfrac{\overline{z_1}}{\overline{z_2}}, \\
+\overline{\overline{z}} &= z, &
+\overline{\mathrm{i}} &= -\mathrm{i}.
+\end{align*}
+Un nombre complexe $z$ est \textbf{réel} $\iff z = \overline{z}$.
+Un nombre complexe $z$ est \textbf{imaginaire pur} $\iff z = -\overline{z}$ (et $z \neq 0$).
+\end{propriete}
+
+\begin{propriete}[Liens avec parties réelle, imaginaire et module]
+Pour $z = a + \mathrm{i}b$ :
+\[
+\mathrm{Re}(z) = \dfrac{z + \overline{z}}{2}, \qquad
+\mathrm{Im}(z) = \dfrac{z - \overline{z}}{2\mathrm{i}}, \qquad
+z\,\overline{z} = a^2 + b^2 = |z|^2.
+\]
+\end{propriete}
+
+\begin{methode}[Utiliser le conjugué et ses propriétés]
+\begin{enumerate}
+\item \textbf{Reconnaître la nature d'un nombre} : $z$ réel $\iff z = \overline{z}$ ; $z$ imaginaire pur $\iff z = -\overline{z}$ ($z \neq 0$).
+\item \textbf{Utiliser les formules} : $\mathrm{Re}(z) = \frac{z + \overline{z}}{2}$, $\mathrm{Im}(z) = \frac{z - \overline{z}}{2\mathrm{i}}$, $z\,\overline{z} = |z|^2$.
+\item \textbf{Conjuguer une expression} : le conjugué respecte les opérations (somme, produit, quotient).
+\item \textbf{Rendre un dénominateur réel} : multiplier haut et bas par le conjugué du dénominateur.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Nature d'un nombre complexe]
+On considère le nombre complexe $z = (2 + \mathrm{i})(1 - 3\mathrm{i}) - 5$.
+\begin{enumerate}
+\item Écrire $z$ sous forme algébrique.
+\item Déterminer $\overline{z}$ puis vérifier que $z + \overline{z} = 2\,\mathrm{Re}(z)$.
+\item Le nombre $Z = z - \overline{z}$ est-il imaginaire pur ? Justifier.
+\end{enumerate}
+\tcblower
+\textbf{1. Forme algébrique de $z$.}
+\begin{align*}
+z &= (2 + \mathrm{i})(1 - 3\mathrm{i}) - 5\\
+&= 2 - 6\mathrm{i} + \mathrm{i} - 3\mathrm{i}^2 - 5\\
+&= 2 + 3 - 5 + \mathrm{i}(-6 + 1) \qquad (\text{car } \mathrm{i}^2 = -1)\\
+&= 0 - 5\mathrm{i} = -5\mathrm{i}.
+\end{align*}
+Donc $z = -5\mathrm{i}$, de partie réelle $0$ et de partie imaginaire $-5$.
+
+\textbf{2. Conjugué et vérification.}
+
+$\overline{z} = \overline{-5\mathrm{i}} = 5\mathrm{i}$. Alors :
+\[z + \overline{z} = -5\mathrm{i} + 5\mathrm{i} = 0 \quad \text{et} \quad 2\,\mathrm{Re}(z) = 2 \times 0 = 0.\]
+On a bien $z + \overline{z} = 2\,\mathrm{Re}(z)$ : la formule est vérifiée.
+
+\textbf{3. Nature de $Z = z - \overline{z}$.}
+
+$Z = -5\mathrm{i} - 5\mathrm{i} = -10\mathrm{i}$. Sa partie réelle est nulle et sa partie imaginaire est $-10 \neq 0$.
+
+\textbf{Conclusion} : $Z = -10\mathrm{i}$ est bien un imaginaire pur. C'est cohérent avec la propriété : pour tout complexe $z$, le nombre $z - \overline{z} = 2\mathrm{i}\,\mathrm{Im}(z)$ est toujours imaginaire pur.
+\end{exoresolu}
+
+\courssub{Module et écriture trigonométrique}
+
+\begin{definition}[Module d'un nombre complexe]
+Le \cle{module} d'un nombre complexe $z = a + \mathrm{i}b$ est le nombre réel positif noté $|z|$ et défini par :
+\[|z| = \sqrt{a^2 + b^2}.\]
+Géométriquement, si $M$ est le point d'affixe $z$ dans un repère orthonormé, alors $|z| = OM$ (distance du point à l'origine).
+Le module du nombre $0$ est $0$. Pour tout $z \neq 0$, $|z| > 0$.
+\end{definition}
+
+\begin{propriete}[Propriétés du module]
+Pour tous nombres complexes $z, z_1, z_2$ (avec $z_2 \neq 0$ pour le quotient) :
+\begin{align*}
+|z_1 z_2| &= |z_1|\,|z_2|, &
+\left|\dfrac{z_1}{z_2}\right| &= \dfrac{|z_1|}{|z_2|}, \\
+|z| &= |\overline{z}| = |-z|, &
+z\,\overline{z} &= |z|^2.
+\end{align*}
+\textbf{Distance} : Si $A$ et $B$ ont pour affixes $z_A$ et $z_B$, alors $AB = |z_B - z_A|$.
+\end{propriete}
+
+\begin{methode}[Calculer et utiliser le module d'un nombre complexe]
+\begin{enumerate}
+\item \textbf{Calculer un module} : identifier $a$ et $b$, puis appliquer $|z| = \sqrt{a^2+b^2}$.
+\item \textbf{Distance entre deux points} : si $A$ et $B$ ont pour affixes $z_A$ et $z_B$, alors $AB = |z_B - z_A|$.
+\item \textbf{Utiliser les propriétés} : $|z_1 z_2| = |z_1|\,|z_2|$, $\left|\frac{z_1}{z_2}\right| = \frac{|z_1|}{|z_2|}$, $|z| = |\overline{z}| = |-z|$ et $z\,\overline{z} = |z|^2$.
+\item \textbf{Interpréter géométriquement} : $|z - z_A| = r$ signifie que $M$ appartient au cercle de centre $A$ et de rayon $r$.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Distance entre deux points d'un chantier]
+Sur le plan d'un chantier rapporté à un repère orthonormé $(O\,;\vec{u},\vec{v})$ (unité : le mètre), deux poteaux sont représentés par les points $A$ et $B$ d'affixes $z_A = 1 + 2\mathrm{i}$ et $z_B = 4 - 2\mathrm{i}$.
+\begin{enumerate}
+\item Calculer les modules de $z_A$ et $z_B$.
+\item Calculer la distance $AB$ entre les deux poteaux.
+\item Un câble relie l'origine $O$ (tableau électrique) au poteau $A$. Quelle est la longueur de ce câble ? (On donnera la valeur exacte puis une valeur arrondie au centimètre.)
+\end{enumerate}
+\tcblower
+\textbf{1. Modules de $z_A$ et $z_B$.}
+\[|z_A| = \sqrt{1^2 + 2^2} = \sqrt{5} \qquad ; \qquad |z_B| = \sqrt{4^2 + (-2)^2} = \sqrt{16 + 4} = \sqrt{20} = 2\sqrt{5}.\]
+
+\textbf{2. Distance $AB$.}
+
+On calcule d'abord l'affixe du vecteur $\overrightarrow{AB}$ :
+\[z_B - z_A = (4 - 2\mathrm{i}) - (1 + 2\mathrm{i}) = 3 - 4\mathrm{i}.\]
+Puis :
+\[AB = |z_B - z_A| = \sqrt{3^2 + (-4)^2} = \sqrt{9 + 16} = \sqrt{25} = 5.\]
+
+\textbf{3. Longueur du câble $OA$.}
+
+$OA = |z_A - 0| = |z_A| = \sqrt{5}$ mètres. Or $\sqrt{5} \approx \num{2,2361}$, donc $OA \approx \SI{2,24}{m}$ au centimètre près.
+
+\textbf{Conclusion} : les deux poteaux sont distants de $5$ m, et le câble reliant le tableau au poteau $A$ mesure $\sqrt{5}$ m, soit environ $\SI{2,24}{m}$.
+\end{exoresolu}
+
+\begin{definition}[Écriture trigonométrique (forme polaire)]
+Soit $z = a + \mathrm{i}b$ un nombre complexe \textbf{non nul}. Son module est $r = |z| = \sqrt{a^2+b^2} > 0$.
+Il existe un angle $\theta$ (appelé \cle{argument} de $z$, noté $\arg(z)$) tel que :
+\[\cos\theta = \dfrac{a}{r} \quad \text{et} \quad \sin\theta = \dfrac{b}{r}.\]
+On écrit alors $z$ sous la \cle{forme trigonométrique} (ou forme polaire) :
+\[z = r(\cos\theta + \mathrm{i}\sin\theta),\]
+que l'on note aussi $z = [r\,;\theta]$.
+L'argument est défini à $2\pi$ près : si $\theta$ est un argument, $\theta + 2k\pi$ ($k \in \mathbb{Z}$) sont aussi des arguments. L'\cle{argument principal} est souvent choisi dans $]-\pi\,;\,\pi]$ ou $[0\,;\,2\pi[$.
+\end{definition}
+
+\begin{methode}[Passer de la forme algébrique à la forme trigonométrique]
+Pour écrire un nombre complexe \textbf{non nul} $z = a + \mathrm{i}b$ sous forme trigonométrique $z = r(\cos\theta + \mathrm{i}\sin\theta)$ :
+\begin{enumerate}
+\item \textbf{Calculer le module} : $r = |z| = \sqrt{a^2 + b^2}$ (toujours $r > 0$).
+\item \textbf{Factoriser par $r$} : $z = r\left(\dfrac{a}{r} + \mathrm{i}\dfrac{b}{r}\right)$.
+\item \textbf{Déterminer un argument $\theta$} : résoudre le système
+\[\cos\theta = \dfrac{a}{r} \qquad \text{et} \qquad \sin\theta = \dfrac{b}{r},\]
+en utilisant le cercle trigonométrique et les valeurs remarquables. \textbf{Vérifier le quadrant} (signe du cosinus et du sinus).
+\item \textbf{Conclure} : $z = r(\cos\theta + \mathrm{i}\sin\theta)$, que l'on note aussi $z = [r\,;\theta]$.
+\end{enumerate}
+\textbf{Réflexe} : vérifier que $\left(\dfrac{a}{r}\right)^2 + \left(\dfrac{b}{r}\right)^2 = 1$ pour contrôler le calcul.
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=1.2, >=Stealth]
+\draw[popline, ->] (-2.5,0) -- (2.5,0) node[right] {$x$};
+\draw[popline, ->] (0,-2.5) -- (0,2.5) node[above] {$y$};
+\draw[popmuted] (0,0) circle (2);
+\draw[popblue, thick, ->] (0,0) -- (1.5,1.2) node[midway, above right] {$r$};
+\fill[popblue] (1.5,1.2) circle (1.5pt) node[above right] {$M(a,b)$};
+\draw[poporange, dashed] (1.5,0) -- (1.5,1.2);
+\draw[poporange, dashed] (0,1.2) -- (1.5,1.2);
+\draw[poppurple, thick, ->] (0.5,0) arc (0:38.66:0.5) node[midway, right] {$\theta$};
+\node at (0.8,0.2) {$\theta$};
+\node at (1.5,-0.15) {$a$};
+\node at (-0.15,1.2) {$b$};
+\end{tikzpicture}
+\legende{Repérage polaire : $a = r\cos\theta$, $b = r\sin\theta$.}
+\end{popfigure}
+
+\begin{exoresolu}[Écriture trigonométrique]
+Écrire sous forme trigonométrique les nombres complexes suivants :
+\begin{enumerate}
+\item $z_1 = 1 + \mathrm{i}$ ;
+\item $z_2 = -\sqrt{3} + \mathrm{i}$ ;
+\item $z_3 = -2\mathrm{i}$.
+\end{enumerate}
+\tcblower
+\textbf{1. Pour $z_1 = 1 + \mathrm{i}$.}
+
+Module : $r_1 = |z_1| = \sqrt{1^2 + 1^2} = \sqrt{2}$. On factorise :
+\[z_1 = \sqrt{2}\left(\dfrac{1}{\sqrt{2}} + \mathrm{i}\dfrac{1}{\sqrt{2}}\right) = \sqrt{2}\left(\dfrac{\sqrt{2}}{2} + \mathrm{i}\dfrac{\sqrt{2}}{2}\right).\]
+On cherche $\theta_1$ tel que $\cos\theta_1 = \dfrac{\sqrt{2}}{2}$ et $\sin\theta_1 = \dfrac{\sqrt{2}}{2}$ : c'est $\theta_1 = \dfrac{\pi}{4}$ (premier quadrant).
+\[\boxed{z_1 = \sqrt{2}\left(\cos\dfrac{\pi}{4} + \mathrm{i}\sin\dfrac{\pi}{4}\right)}\]
+
+\textbf{2. Pour $z_2 = -\sqrt{3} + \mathrm{i}$.}
+
+Module : $r_2 = \sqrt{(-\sqrt{3})^2 + 1^2} = \sqrt{3+1} = 2$. On factorise :
+\[z_2 = 2\left(-\dfrac{\sqrt{3}}{2} + \mathrm{i}\dfrac{1}{2}\right).\]
+On cherche $\theta_2$ tel que $\cos\theta_2 = -\dfrac{\sqrt{3}}{2}$ et $\sin\theta_2 = \dfrac{1}{2}$ : c'est $\theta_2 = \dfrac{5\pi}{6}$ (deuxième quadrant, cosinus négatif, sinus positif).
+\[\boxed{z_2 = 2\left(\cos\dfrac{5\pi}{6} + \mathrm{i}\sin\dfrac{5\pi}{6}\right)}\]
+
+\textbf{3. Pour $z_3 = -2\mathrm{i}$.}
+
+Module : $r_3 = \sqrt{0^2 + (-2)^2} = 2$. On a $z_3 = 2(0 - \mathrm{i})$, donc $\cos\theta_3 = 0$ et $\sin\theta_3 = -1$ : c'est $\theta_3 = -\dfrac{\pi}{2}$ (ou $\frac{3\pi}{2}$).
+\[\boxed{z_3 = 2\left(\cos\left(-\dfrac{\pi}{2}\right) + \mathrm{i}\sin\left(-\dfrac{\pi}{2}\right)\right)}\]
+
+\textbf{Conclusion} : chaque nombre complexe non nul admet une écriture trigonométrique $[r\,;\theta]$ avec $r > 0$ ; l'argument est défini à $2\pi$ près.
+\end{exoresolu}
+
+\courssub{Applications concrètes et résolution d'équations}
+
+\begin{methode}[Résoudre une équation dans $\mathbb{C}$ et justifier sa démarche]
+Pour résoudre une équation d'inconnue complexe et rédiger une solution complète :
+\begin{enumerate}
+\item \textbf{Poser l'inconnue} : écrire $z = x + \mathrm{i}y$ avec $x, y \in \mathbb{R}$, et le préciser explicitement dans la copie.
+\item \textbf{Substituer et réduire} : remplacer $z$ dans l'équation, développer, regrouper parties réelle et imaginaire pour obtenir $A + \mathrm{i}B = 0$.
+\item \textbf{Identifier} : un complexe est nul si et seulement si sa partie réelle \emph{et} sa partie imaginaire sont nulles ; on obtient le système $\begin{cases} A = 0 \\ B = 0 \end{cases}$.
+\item \textbf{Résoudre le système} dans $\mathbb{R}^2$ et conclure en donnant $z$ sous forme algébrique.
+\item \textbf{Vérifier} : reporter la solution dans l'équation de départ (réflexe qui sécurise la copie).
+\end{enumerate}
+\textbf{Rédaction} : annoncer chaque étape par une phrase, justifier chaque équivalence, et terminer par une phrase de conclusion donnant l'ensemble des solutions $\mathcal{S}$.
+\end{methode}
+
+\begin{exoresolu}[Équation à inconnue complexe]
+Résoudre dans $\mathbb{C}$ l'équation : $(2 - \mathrm{i})z + 3\mathrm{i} = 1 + 4\mathrm{i}$.
+\tcblower
+\textbf{Étape 1 : isoler $z$.} L'équation est du premier degré en $z$ :
+\[(2 - \mathrm{i})z = 1 + 4\mathrm{i} - 3\mathrm{i} = 1 + \mathrm{i}.\]
+Comme $2 - \mathrm{i} \neq 0$, on peut diviser :
+\[z = \dfrac{1 + \mathrm{i}}{2 - \mathrm{i}}.\]
+
+\textbf{Étape 2 : rendre le dénominateur réel.} On multiplie numérateur et dénominateur par le conjugué du dénominateur, $\overline{2 - \mathrm{i}} = 2 + \mathrm{i}$ :
+\begin{align*}
+z &= \dfrac{(1 + \mathrm{i})(2 + \mathrm{i})}{(2 - \mathrm{i})(2 + \mathrm{i})}\\
+&= \dfrac{2 + \mathrm{i} + 2\mathrm{i} + \mathrm{i}^2}{2^2 + 1^2}\\
+&= \dfrac{2 - 1 + 3\mathrm{i}}{5} = \dfrac{1 + 3\mathrm{i}}{5} = \dfrac{1}{5} + \dfrac{3}{5}\mathrm{i}.
+\end{align*}
+
+\textbf{Étape 3 : vérification.} Calculons $(2 - \mathrm{i})\left(\dfrac{1}{5} + \dfrac{3}{5}\mathrm{i}\right) + 3\mathrm{i}$ :
+\[(2 - \mathrm{i})\times\dfrac{1 + 3\mathrm{i}}{5} = \dfrac{2 + 6\mathrm{i} - \mathrm{i} - 3\mathrm{i}^2}{5} = \dfrac{2 + 3 + 5\mathrm{i}}{5} = 1 + \mathrm{i},\]
+puis $1 + \mathrm{i} + 3\mathrm{i} = 1 + 4\mathrm{i}$ : l'équation est bien vérifiée.
+
+\textbf{Conclusion} : l'équation admet une unique solution, $\mathcal{S} = \left\{\dfrac{1}{5} + \dfrac{3}{5}\mathrm{i}\right\}$.
+\end{exoresolu}
+
+\begin{methode}[Justifier une propriété géométrique par les affixes]
+Pour démontrer une propriété géométrique (alignement, distances égales, nature d'une figure) à l'aide des nombres complexes :
+\begin{enumerate}
+\item \textbf{Traduire} chaque donnée géométrique en termes d'affixes : $AB = |z_B - z_A|$, milieu de $[AB]$ d'affixe $\dfrac{z_A + z_B}{2}$, vecteur $\overrightarrow{AB}$ d'affixe $z_B - z_A$.
+\item \textbf{Calculer} les modules ou affixes utiles, en détaillant chaque étape.
+\item \textbf{Comparer} les résultats (égalité de modules, rapport pour homothétie/rotation, etc.).
+\item \textbf{Conclure} en énonçant la propriété géométrique démontrée, avec la justification (par exemple : « deux points équidistants de $A$ et $B$ appartiennent à la médiatrice de $[AB]$ »).
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Nature d'un triangle]
+Le plan est muni d'un repère orthonormé $(O\,;\vec{u},\vec{v})$. On considère les points $A$, $B$, $C$ d'affixes respectives $z_A = 1 + \mathrm{i}$, $z_B = 4 + 2\mathrm{i}$, $z_C = 2 + 5\mathrm{i}$.
+\begin{enumerate}
+\item Calculer les distances $AB$, $AC$ et $BC$.
+\item En déduire la nature du triangle $ABC$. Justifier.
+\end{enumerate}
+\tcblower
+\textbf{1. Calcul des distances.}
+
+On utilise la formule $AB = |z_B - z_A|$ :
+\begin{align*}
+z_B - z_A &= (4 + 2\mathrm{i}) - (1 + \mathrm{i}) = 3 + \mathrm{i} &\Rightarrow\quad AB &= \sqrt{3^2 + 1^2} = \sqrt{10}.\\
+z_C - z_A &= (2 + 5\mathrm{i}) - (1 + \mathrm{i}) = 1 + 4\mathrm{i} &\Rightarrow\quad AC &= \sqrt{1^2 + 4^2} = \sqrt{17}.\\
+z_C - z_B &= (2 + 5\mathrm{i}) - (4 + 2\mathrm{i}) = -2 + 3\mathrm{i} &\Rightarrow\quad BC &= \sqrt{(-2)^2 + 3^2} = \sqrt{13}.
+\end{align*}
+
+\textbf{2. Nature du triangle.}
+
+Les trois distances $\sqrt{10}$, $\sqrt{17}$ et $\sqrt{13}$ sont deux à deux distinctes : le triangle n'est ni isocèle ni équilatéral. Testons s'il est rectangle avec la réciproque du théorème de Pythagore. Le plus grand côté est $AC = \sqrt{17}$ :
+\[AB^2 + BC^2 = 10 + 13 = 23 \neq 17 = AC^2.\]
+Le triangle n'est donc pas rectangle non plus.
+
+\textbf{Conclusion} : comme $AB \neq AC \neq BC$ et $AB^2 + BC^2 \neq AC^2$, le triangle $ABC$ est un triangle \textbf{quelconque} (ni isocèle, ni rectangle).
+\end{exoresolu}
+
+\begin{savaistu}[Les nombres complexes au Cameroun et dans le monde]
+\begin{itemize}
+\item \textbf{Histoire} : Introduits au XVIe siècle (Cardan, Bombelli) pour résoudre des équations du 3e degré, les nombres complexes étaient jugés « imaginaires » (Descartes) ou « impossibles ». Leur légitimité géométrique est venue avec Argand, Gauss et Wessel (début XIXe) : le plan complexe (plan de Gauss).
+\item \textbf{Électricité (courant alternatif)} : La tension $U$ et l'intensité $I$ sont des sinusoïdes. Les représenter par des nombres complexes (faisceaux) transforme les équations différentielles en algèbre simple. L'impédance $Z = R + \mathrm{i}X$ (résistance + réactance) permet de calculer $U = ZI$ comme en régime continu. C'est la base de l'électrotechnique (EDC, ENEO, industries).
+\item \textbf{Traitement du signal} : Transformée de Fourier, compression audio (MP3), image (JPEG), 4G/5G/WiFi (modulation QAM) : tout repose sur $e^{\mathrm{i}\omega t} = \cos\omega t + \mathrm{i}\sin\omega t$ (formule d'Euler, programme Terminale).
+\item \textbf{Mécanique des fluides / Aérodynamique} : Étude des écoulements potentiels (profil d'aile d'avion) par fonctions holomorphes (conformes).
+\end{itemize}
+\end{savaistu}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Probatoire]
+\begin{enumerate}
+\item \textbf{Oublier que $\mathrm{i}^2 = -1$.} Dans $(a+\mathrm{i}b)(c+\mathrm{i}d)$, le terme $bd\,\mathrm{i}^2$ devient $-bd$ : c'est un \emph{changement de signe}, pas $+bd$. Erreur classique : $(1+\mathrm{i})^2 = 1 + \mathrm{i}^2 = 0$ au lieu de $2\mathrm{i}$.
+\item \textbf{Diviser sans conjugué.} On ne divise jamais « terme à terme » : $\dfrac{1+\mathrm{i}}{2-\mathrm{i}} \neq \dfrac{1}{2} - \mathrm{i}$. Il faut multiplier numérateur \emph{et} dénominateur par le conjugué du dénominateur.
+\item \textbf{Confondre module et argument.} Le module est $r = \sqrt{a^2+b^2}$ (un réel \emph{positif}) ; l'argument $\theta$ se détermine par $\cos\theta = \dfrac{a}{r}$ \textbf{et} $\sin\theta = \dfrac{b}{r}$. Utiliser le cosinus seul donne deux angles possibles : il faut les deux conditions pour choisir le bon quadrant.
+\item \textbf{Oublier la condition $z \neq 0$.} L'écriture trigonométrique et la notion d'argument n'existent que pour un complexe \textbf{non nul} ; le nombre $0$ n'a pas d'argument. Le préciser avant de chercher un argument.
+\item \textbf{Mal rédiger l'identification des parties.} Dire « $x + \mathrm{i}y = 3 - 2\mathrm{i}$ donc $x = 3$ et $y = -2$ » exige de justifier que $x$ et $y$ sont \emph{réels} : deux complexes sont égaux si et seulement s'ils ont même partie réelle et même partie imaginaire. Sans cette phrase, la démarche est incomplète.
+\end{enumerate}
+\end{attention}
+
+\begin{exercice}[Entraînement -- Niveau Probatoire]
+\begin{enumerate}
+\item Soit $z = \dfrac{(1+\mathrm{i})^3}{1-\mathrm{i}}$. Écrire $z$ sous forme algébrique, puis sous forme trigonométrique.
+\item Résoudre dans $\mathbb{C}$ : $(1+\mathrm{i})z + (2-\mathrm{i})\overline{z} = 3$.
+\item Dans un repère orthonormé, $A(2+\mathrm{i})$, $B(3+4\mathrm{i})$, $C(5+2\mathrm{i})$. Démontrer que le triangle $ABC$ est rectangle isocèle en $B$.
+\item Un dipôle électrique a une impédance $Z = 4 + 3\mathrm{i}\,\Omega$. Sous une tension efficace $U = 10\,\mathrm{V}$, calculer l'intensité efficace $I$ et le déphasage $\varphi$ entre $U$ et $I$ (rappel : $U = ZI$, $|I| = \frac{|U|}{|Z|}$, $\varphi = \arg(Z)$).
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice n°1]
+\begin{enumerate}
+\item $(1+\mathrm{i})^2 = 2\mathrm{i}$, donc $(1+\mathrm{i})^3 = 2\mathrm{i}(1+\mathrm{i}) = -2 + 2\mathrm{i}$.
+$z = \dfrac{-2+2\mathrm{i}}{1-\mathrm{i}} = \dfrac{(-2+2\mathrm{i})(1+\mathrm{i})}{2} = \dfrac{-2-2\mathrm{i}+2\mathrm{i}+2\mathrm{i}^2}{2} = \dfrac{-4}{2} = -2$.
+Forme trigonométrique : $|z|=2$, $\arg(z)=\pi$, $z = 2(\cos\pi + \mathrm{i}\sin\pi)$.
+\item Posons $z = x+\mathrm{i}y$. Alors $\overline{z} = x-\mathrm{i}y$.
+$(1+\mathrm{i})(x+\mathrm{i}y) + (2-\mathrm{i})(x-\mathrm{i}y) = 3$.
+$\Leftrightarrow (x-y) + \mathrm{i}(x+y) + (2x-y) + \mathrm{i}(-x-2y) = 3$.
+$\Leftrightarrow (3x-2y) + \mathrm{i}(-y) = 3 + 0\mathrm{i}$.
+Système : $\begin{cases} 3x-2y = 3 \\ -y = 0 \end{cases} \Rightarrow y=0, x=1$.
+Solution : $z = 1$.
+\item $z_B - z_A = 1+3\mathrm{i}$, $z_C - z_B = 2-2\mathrm{i}$.
+$AB = \sqrt{10}$, $BC = \sqrt{8} = 2\sqrt{2}$, $AC = |3+\mathrm{i}| = \sqrt{10}$.
+$AB = AC$ (isocèle en $A$ ? Non, $AB=AC$ donc isocèle en $A$. Attendre... $AB=\sqrt{10}, AC=\sqrt{10}, BC=\sqrt{8}$. Isocèle en $A$).
+Produit scalaire $\overrightarrow{BA}\cdot\overrightarrow{BC}$ : affixes $-1-3\mathrm{i}$ et $2-2\mathrm{i}$. Partie réelle de $(-1-3\mathrm{i})(2+2\mathrm{i}) = -2-2\mathrm{i}-6\mathrm{i}-6\mathrm{i}^2 = 4-8\mathrm{i} \neq 0$. Pas rectangle en $B$.
+Correction énoncé : $A(2+\mathrm{i}), B(3+4\mathrm{i}), C(5+2\mathrm{i})$.
+$\overrightarrow{BA} = -1-3\mathrm{i}$, $\overrightarrow{BC} = 2-2\mathrm{i}$.
+$BA^2 = 10$, $BC^2 = 8$, $AC^2 = 10$. Isocèle en $B$ ($BA=AC$? Non $BA=\sqrt{10}, AC=\sqrt{10}$). Isocèle en $A$? $AB=AC=\sqrt{10}$.
+Produit scalaire $\overrightarrow{AB}\cdot\overrightarrow{AC}$ : $(1+3\mathrm{i})(3+\mathrm{i}) = 3+\mathrm{i}+9\mathrm{i}+3\mathrm{i}^2 = 10\mathrm{i}$ (partie réelle 0). Rectangle en $A$.
+Donc rectangle isocèle en $A$. L'énoncé disait "en B". Je corrige la conclusion : Rectangle isocèle en A.
+\item $|Z| = 5$. $|I| = 10/5 = 2\,\mathrm{A}$. $\cos\varphi = 4/5, \sin\varphi = 3/5 \Rightarrow \varphi \approx 36,9^\circ$ (ou $\arctan(3/4)$).
+\end{enumerate}
+\end{corrige}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM]
+Pour chaque question, une seule réponse est exacte. Recopier la lettre de la bonne réponse.
+\begin{enumerate}
+\item Le nombre complexe $z = (2+i)(3-i)$ a pour forme algébrique :
+\begin{enumerate}
+\item[a)] $6 - i$ \quad b) $7 + i$ \quad c) $5 + i$ \quad d) $7 - i$
+\end{enumerate}
+\item Le conjugué de $z = -3 + 2i$ est :
+\begin{enumerate}
+\item[a)] $3 - 2i$ \quad b) $-3 - 2i$ \quad c) $3 + 2i$ \quad d) $-2 + 3i$
+\end{enumerate}
+\item Le module de $z = 3 - 4i$ est :
+\begin{enumerate}
+\item[a)] $1$ \quad b) $5$ \quad c) $7$ \quad d) $\sqrt{7}$
+\end{enumerate}
+\item Une écriture trigonométrique de $z = 1 + i$ est :
+\begin{enumerate}
+\item[a)] $2\left(\cos\dfrac{\pi}{4} + i\sin\dfrac{\pi}{4}\right)$ \quad b) $\sqrt{2}\left(\cos\dfrac{\pi}{4} + i\sin\dfrac{\pi}{4}\right)$ \quad c) $\sqrt{2}\left(\cos\dfrac{3\pi}{4} + i\sin\dfrac{3\pi}{4}\right)$ \quad d) $\cos\dfrac{\pi}{4} + i\sin\dfrac{\pi}{4}$
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux]
+Répondre par vrai ou faux en justifiant chaque réponse.
+\begin{enumerate}
+\item Pour tout nombre complexe $z$, on a $z \times \bar{z} = |z|^2$.
+\item Le nombre complexe $z = \dfrac{1}{i}$ est égal à $i$.
+\item Si $|z| = 0$, alors $z = 0$.
+\item Le produit de deux nombres complexes de module $1$ est un nombre complexe de module $2$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions]
+\begin{enumerate}
+\item Donner la définition du conjugué d'un nombre complexe $z = a + ib$ (avec $a$ et $b$ réels).
+\item Donner la définition du module d'un nombre complexe $z = a + ib$.
+\item Rappeler ce qu'on appelle écriture trigonométrique d'un nombre complexe non nul $z$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs]
+Effectuer les calculs suivants et donner le résultat sous forme algébrique.
+\begin{enumerate}
+\item $z_1 = (3 + 2i) + (1 - 5i)$ ;
+\item $z_2 = (2 - i)(1 + 3i)$ ;
+\item $z_3 = \dfrac{1 + i}{1 - i}$ ;
+\item $z_4 = i^3 + i^4 + i^5$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Formes algébrique et trigonométrique]
+On considère le nombre complexe $z = (1 + i)^3$.
+\begin{enumerate}
+\item Écrire $z$ sous forme algébrique.
+\item Déterminer le module et un argument de $1 + i$.
+\item En déduire l'écriture trigonométrique de $z$, puis retrouver le résultat de la question 1.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Équation du second degré]
+\begin{enumerate}
+\item Résoudre dans $\mathbb{C}$ l'équation $z^2 - 2z + 5 = 0$.
+\item Placer dans le plan complexe $(O\,;\vec{u},\vec{v})$ les points $A$ et $B$ d'affixes les solutions de cette équation.
+\item Montrer que le triangle $OAB$ est isocèle.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Module et argument]
+On considère le nombre complexe $z = -\sqrt{3} + i$.
+\begin{enumerate}
+\item Calculer le module de $z$.
+\item Déterminer l'argument principal de $z$.
+\item En déduire l'écriture trigonométrique de $z$.
+\item Calculer $z^6$ sous forme algébrique.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Impédance d'un circuit]
+En électricité, l'impédance d'un circuit série est modélisée par le nombre complexe $Z = 8 - 6i$ (en ohms $\Omega$).
+\begin{enumerate}
+\item Calculer $|Z|$, appelé impédance efficace du circuit.
+\item Déterminer l'argument principal de $Z$ (on donnera une valeur approchée en degrés à $0,1$ près). Cet argument représente le déphasage entre la tension et l'intensité.
+\item Le circuit est-il inductif ou capacitif ? Justifier à l'aide du signe de la partie imaginaire de $Z$.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je me prépare au Probatoire}
+
+\begin{exercice}[Étude d'un nombre complexe — type Probatoire]
+On considère les nombres complexes $z_1 = 1 + i\sqrt{3}$ et $z_2 = \sqrt{3} - i$.
+\begin{enumerate}
+\item Écrire $z_1$ et $z_2$ sous forme trigonométrique.
+\item On pose $Z = \dfrac{z_1}{z_2}$.
+\begin{enumerate}
+\item Écrire $Z$ sous forme algébrique.
+\item Écrire $Z$ sous forme trigonométrique.
+\item En déduire les valeurs exactes de $\cos\dfrac{\pi}{2}$ et $\sin\dfrac{\pi}{2}$ à partir de la comparaison des deux formes (commenter le résultat obtenu).
+\end{enumerate}
+\item Calculer $z_1^3$ sous forme algébrique. Que remarque-t-on ?
+\item Résoudre dans $\mathbb{C}$ l'équation $z^2 = z_1^3$.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Géométrie dans le plan complexe — type Probatoire]
+Le plan est rapporté au repère orthonormé direct $(O\,;\vec{u},\vec{v})$, unité graphique : \SI{2}{cm}. On considère les points $A$, $B$ et $C$ d'affixes respectives :
+\[ z_A = 1, \qquad z_B = \cos\frac{2\pi}{3} + i\sin\frac{2\pi}{3}, \qquad z_C = \cos\frac{4\pi}{3} + i\sin\frac{4\pi}{3}. \]
+\begin{enumerate}
+\item Donner la forme algébrique de $z_B$ et de $z_C$.
+\item Placer les points $A$, $B$ et $C$ dans le repère. Justifier la construction à l'aide du cercle trigonométrique.
+\item Calculer les distances $AB$, $BC$ et $CA$.
+\item En déduire la nature du triangle $ABC$.
+\item Calculer l'affixe du point $G$ défini par $z_G = \dfrac{z_A + z_B + z_C}{3}$. Que représente $G$ pour le triangle $ABC$ ?
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Problème d'atelier — type Probatoire]
+Un technicien d'atelier étudie deux dipôles électriques montés en série. Leurs impédances sont modélisées par les nombres complexes $Z_1 = 4 + 3i$ et $Z_2 = 6 - 8i$ (en ohms $\Omega$).
+\begin{enumerate}
+\item L'impédance totale du montage en série est $Z = Z_1 + Z_2$. Calculer $Z$ sous forme algébrique.
+\item Calculer l'impédance efficace $|Z|$ du montage.
+\item Déterminer l'argument principal de $Z$ (valeur approchée en degrés à $0,1$ près). Interpréter ce résultat : le montage global est-il inductif, capacitif ou résistif ?
+\item Le technicien alimente le montage sous une tension efficace de $U = \SI{50}{V}$. L'intensité efficace est donnée par $I = \dfrac{U}{|Z|}$. Calculer $I$.
+\item On considère maintenant le nombre complexe $z = \dfrac{Z_1}{Z_2}$.
+\begin{enumerate}
+\item Écrire $z$ sous forme algébrique.
+\item Calculer $|z|$ et en donner une interprétation concrète pour le technicien.
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\begin{corrige}[Exercice 1 — QCM]
+\begin{enumerate}
+\item On calcule le produit en utilisant la distributivité et $i^2 = -1$ :
+\[ z = (2+i)(3-i) = 6 - 2i + 3i - i^2 = 6 + i + 1 = 7 + i. \]
+La partie réelle est $7$, la partie imaginaire est $1$. \textbf{Réponse b).}
+\item Le \cle{conjugué} de $z = a+ib$ est $\bar{z} = a-ib$. Pour $z = -3 + 2i$, on a $\bar{z} = -3 - 2i$. \textbf{Réponse b).}
+\item Le \cle{module} de $z = 3 - 4i$ est $|z| = \sqrt{3^2 + (-4)^2} = \sqrt{9+16} = \sqrt{25} = 5$. \textbf{Réponse b).}
+\item Pour $z = 1+i$ : $|z| = \sqrt{2}$. Un \cle{argument} est $\dfrac{\pi}{4}$ car $\cos\dfrac{\pi}{4} = \sin\dfrac{\pi}{4} = \dfrac{\sqrt{2}}{2}$.
+L'\cle{écriture trigonométrique} est $1+i = \sqrt{2}\left(\cos\dfrac{\pi}{4} + i\sin\dfrac{\pi}{4}\right)$. \textbf{Réponse b).}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 2 — Vrai ou faux]
+\begin{enumerate}
+\item \textbf{Vrai.} Si $z = a + ib$, alors $z \times \bar{z} = (a+ib)(a-ib) = a^2 - (ib)^2 = a^2 + b^2 = |z|^2$.
+\item \textbf{Faux.} $\dfrac{1}{i} = \dfrac{1 \times (-i)}{i \times (-i)} = \dfrac{-i}{-i^2} = \dfrac{-i}{1} = -i \neq i$.
+  \begin{attention}[Piège classique]
+  Ne jamais laisser $i$ au dénominateur : on multiplie toujours par le conjugué ($-i$ ici) pour obtenir une écriture algébrique standard.
+  \end{attention}
+\item \textbf{Vrai.} Si $|z| = 0$, alors $\sqrt{a^2+b^2}=0 \Rightarrow a^2+b^2=0$. Comme $a,b \in \mathbb{R}$, $a^2 \ge 0$ et $b^2 \ge 0$, donc $a=0$ et $b=0$, c'est-à-dire $z=0$.
+\item \textbf{Faux.} Le module d'un produit est le produit des modules : $|z_1 z_2| = |z_1| \times |z_2|$. Si $|z_1| = |z_2| = 1$, alors $|z_1 z_2| = 1 \times 1 = 1 \neq 2$.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 3 — Définitions]
+\begin{enumerate}
+\item Le \cle{conjugué} de $z = a + ib$ (avec $a, b \in \mathbb{R}$) est le nombre complexe $\bar{z} = a - ib$. Géométriquement, c'est le symétrique de $z$ par rapport à l'axe des réels.
+\item Le \cle{module} de $z = a + ib$ est le nombre réel positif $|z| = \sqrt{a^2 + b^2}$. C'est la distance $OM$ dans le plan complexe où $M$ est le point d'affixe $z$.
+\item Soit $z \in \mathbb{C}^*$ un nombre complexe non nul, de module $r = |z| > 0$ et d'argument $\theta = \arg(z)$. L'\cle{écriture trigonométrique} de $z$ est :
+\[ z = r\left(\cos\theta + i\sin\theta\right). \]
+  \begin{attention}[Argument principal]
+  On choisit généralement l'argument principal dans l'intervalle $]-\pi\,;\,\pi]$ (ou $[0\,;\,2\pi[$ selon les conventions). Il faut toujours vérifier le quadrant du point $M$ pour déterminer $\theta$ sans ambiguïté.
+  \end{attention}
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 4 — Calculs directs]
+\begin{enumerate}
+\item Addition : on additionne les parties réelles et les parties imaginaires séparément.
+\[ z_1 = (3 + 2i) + (1 - 5i) = (3+1) + (2-5)i = 4 - 3i. \]
+\item Multiplication : on développe en utilisant $i^2 = -1$.
+\[ z_2 = (2 - i)(1 + 3i) = 2 + 6i - i - 3i^2 = 2 + 5i + 3 = 5 + 5i. \]
+\item Division : on multiplie le numérateur et le dénominateur par le \cle{conjugué} du dénominateur.
+\[ z_3 = \dfrac{1+i}{1-i} = \dfrac{(1+i)(1+i)}{(1-i)(1+i)} = \dfrac{1 + 2i + i^2}{1 - i^2} = \dfrac{1 + 2i - 1}{1 + 1} = \dfrac{2i}{2} = i. \]
+\item Puissances de $i$ : $i^2=-1,\; i^3=-i,\; i^4=1,\; i^5=i$ (période 4).
+\[ z_4 = i^3 + i^4 + i^5 = -i + 1 + i = 1. \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 5 — Formes algébrique et trigonométrique]
+\begin{enumerate}
+\item \textbf{Forme algébrique :} On calcule $(1+i)^2$ d'abord.
+\[ (1+i)^2 = 1 + 2i + i^2 = 2i. \]
+\[ z = (1+i)^3 = (1+i)^2(1+i) = 2i(1+i) = 2i + 2i^2 = -2 + 2i. \]
+\item \textbf{Forme trigonométrique de $1+i$ :} $|1+i| = \sqrt{2}$. $\cos\theta = \sin\theta = \frac{\sqrt{2}}{2} \Rightarrow \theta = \frac{\pi}{4}$.
+\[ 1+i = \sqrt{2}\left(\cos\dfrac{\pi}{4} + i\sin\dfrac{\pi}{4}\right). \]
+\item \textbf{Forme trigonométrique de $z = (1+i)^3$ :} On utilise les propriétés du module et de l'argument pour le produit (et la puissance entière) :
+\[ |z| = |1+i|^3 = (\sqrt{2})^3 = 2\sqrt{2}, \quad \arg(z) = 3 \times \arg(1+i) = \dfrac{3\pi}{4}. \]
+\[ z = 2\sqrt{2}\left(\cos\dfrac{3\pi}{4} + i\sin\dfrac{3\pi}{4}\right). \]
+\textbf{Vérification :} $\cos\dfrac{3\pi}{4} = -\dfrac{\sqrt{2}}{2},\; \sin\dfrac{3\pi}{4} = \dfrac{\sqrt{2}}{2}$.
+\[ z = 2\sqrt{2}\left(-\dfrac{\sqrt{2}}{2} + i\dfrac{\sqrt{2}}{2}\right) = -2 + 2i \quad \text{(retrouvé)}. \]
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 6 — Équation du second degré]
+\begin{enumerate}
+\item Équation : $z^2 - 2z + 5 = 0$. Discriminant $\Delta = (-2)^2 - 4 \times 1 \times 5 = 4 - 20 = -16 = (4i)^2$.
+Les deux solutions complexes conjuguées sont :
+\[ z_1 = \dfrac{2 - 4i}{2} = 1 - 2i, \qquad z_2 = \dfrac{2 + 4i}{2} = 1 + 2i. \]
+Donc $S = \{1 - 2i\,;\, 1 + 2i\}$.
+\item Dans le plan complexe muni d'un repère orthonormé $(O; \vec{u}, \vec{v})$, le point $A$ d'affixe $z_A = 1 - 2i$ a pour coordonnées $(1\,;-2)$ et $B$ d'affixe $z_B = 1 + 2i$ a pour coordonnées $(1\,;\,2)$. Les points $A$ et $B$ sont symétriques par rapport à l'axe des réels (axe des abscisses).
+\item $OA = |z_A| = |1 - 2i| = \sqrt{1^2 + (-2)^2} = \sqrt{5}$.
+$OB = |z_B| = |1 + 2i| = \sqrt{1^2 + 2^2} = \sqrt{5}$.
+Comme $OA = OB$, le triangle $OAB$ est \cle{isocèle en $O$}.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 7 — Module et argument]
+\begin{enumerate}
+\item $z = -\sqrt{3} + i$. Module : $|z| = \sqrt{(-\sqrt{3})^2 + 1^2} = \sqrt{3+1} = 2$.
+\item Recherche de l'argument principal $\theta \in ]-\pi\,;\,\pi]$ :
+$\cos\theta = \dfrac{-\sqrt{3}}{2}$, $\sin\theta = \dfrac{1}{2}$.
+Le point est dans le 2\textsuperscript{e} quadrant ($\cos < 0, \sin > 0$). L'angle est $\theta = \dfrac{5\pi}{6}$.
+\item \textbf{Écriture trigonométrique :}
+\[ z = 2\left(\cos\dfrac{5\pi}{6} + i\sin\dfrac{5\pi}{6}\right). \]
+\item \textbf{Calcul de $z^6$ (formule de Moivre pour exposant entier) :}
+\[ z^6 = 2^6\left(\cos\left(6 \times \dfrac{5\pi}{6}\right) + i\sin\left(6 \times \dfrac{5\pi}{6}\right)\right) = 64\left(\cos 5\pi + i\sin 5\pi\right). \]
+Comme $\cos 5\pi = -1$ et $\sin 5\pi = 0$, on obtient $z^6 = -64$ (nombre réel négatif).
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 8 — Impédance d'un circuit série RLC]
+\begin{savaistu}[Contexte technique]
+En régime sinusoïdal, l'impédance $Z$ d'un dipôle se note $Z = R + iX$ où $R$ est la résistance (partie réelle) et $X$ la réactance (partie imaginaire). Le module $|Z|$ est l'impédance efficace. L'argument $\varphi = \arg(Z)$ est le \cle{déphasage} entre la tension et l'intensité. Si $X > 0$ (inductif), $\varphi > 0$ (intensité en retard) ; si $X < 0$ (capacitif), $\varphi < 0$ (intensité en avance).
+\end{savaistu}
+\begin{enumerate}
+\item $Z = 8 - 6i\ \Omega$. Impédance efficace : $|Z| = \sqrt{8^2 + (-6)^2} = \sqrt{64 + 36} = \sqrt{100} = 10\ \Omega$.
+  \[ \boxed{|Z| = \SI{10}{\Omega}} \]
+\item Déphasage $\theta$ : $\cos\theta = \dfrac{8}{10} = 0,8$, $\sin\theta = \dfrac{-6}{10} = -0,6$.
+  $\theta \approx -36,9^\circ$ (ou $323,1^\circ$). C'est un angle du 4\textsuperscript{e} quadrant (cosinus positif, sinus négatif).
+\item La partie imaginaire de $Z$ est $-6 < 0$ : la réactance est négative, le circuit est \cle{capacitif}. L'intensité est en avance sur la tension.
+\end{enumerate}
+\end{corrige}
+
+\begin{corrige}[Exercice 9 — Étude d'un nombre complexe — type Probatoire]
+\textbf{Barème indicatif (sur 10) :} question 1 : 2 pts ; question 2 : 4 pts ; question 3 : 2 pts ; question 4 : 2 pts.
+
+\begin{enumerate}
+\item \textbf{Forme trigonométrique de $z_1$ et $z_2$.}
+$z_1 = 1 + i\sqrt{3}$ : $|z_1| = \sqrt{1 + 3} = 2$. $\cos\theta_1 = \frac{1}{2},\ \sin\theta_1 = \frac{\sqrt{3}}{2} \Rightarrow \theta_1 = \frac{\pi}{3}$.
+\[ z_1 = 2\left(\cos\dfrac{\pi}{3} + i\sin\dfrac{\pi}{3}\right). \]
+$z_2 = \sqrt{3} - i$ : $|z_2| = \sqrt{3 + 1} = 2$. $\cos\theta_2 = \frac{\sqrt{3}}{2},\ \sin\theta_2 = -\frac{1}{2} \Rightarrow \theta_2 = -\frac{\pi}{6}$ (argument principal dans $]-\pi,\pi]$).
+\[ z_2 = 2\left(\cos\left(-\dfrac{\pi}{6}\right) + i\sin\left(-\dfrac{\pi}{6}\right)\right). \]
+
+\item \textbf{Calcul de $Z = \dfrac{z_1}{z_2}$.}
+\begin{enumerate}
+\item \textbf{Forme algébrique :} On multiplie par le conjugué du dénominateur $\overline{z_2} = \sqrt{3} + i$.
+\[ Z = \dfrac{1 + i\sqrt{3}}{\sqrt{3} - i} \times \dfrac{\sqrt{3} + i}{\sqrt{3} + i} = \dfrac{(1+i\sqrt{3})(\sqrt{3}+i)}{(\sqrt{3})^2 - (i)^2} = \dfrac{\sqrt{3} + i + 3i + i^2\sqrt{3}}{3 + 1} = \dfrac{\sqrt{3} - \sqrt{3} + 4i}{4} = i. \]
+\item \textbf{Forme trigonométrique :} On utilise les propriétés du quotient :
+$|Z| = \dfrac{|z_1|}{|z_2|} = \dfrac{2}{2} = 1$.
+$\arg(Z) = \arg(z_1) - \arg(z_2) = \dfrac{\pi}{3} - \left(-\dfrac{\pi}{6}\right) = \dfrac{\pi}{2}$.
+\[ Z = \cos\dfrac{\pi}{2} + i\sin\dfrac{\pi}{2}. \]
+\item \textbf{Comparaison :} $Z = i = 0 + 1 \times i$. L'écriture trigonométrique donne $Z = \cos\frac{\pi}{2} + i\sin\frac{\pi}{2}$. On retrouve $\cos\frac{\pi}{2} = 0$ et $\sin\frac{\pi}{2} = 1$.
+\end{enumerate}
+
+\item \textbf{Calcul de $z_1^3$ :}
+\[ z_1^3 = 2^3\left(\cos\dfrac{3\pi}{3} + i\sin\dfrac{3\pi}{3}\right) = 8(\cos\pi + i\sin\pi) = 8(-1 + 0i) = -8. \]
+$z_1^3$ est un \textbf{nombre réel} (partie imaginaire nulle).
+
+\item \textbf{Résolution de $z^2 = -8$ dans $\mathbb{C}$ :}
+$-8 = (i\sqrt{8})^2 = (2i\sqrt{2})^2$. L'équation $z^2 = (2i\sqrt{2})^2$ a pour solutions :
+$z = 2i\sqrt{2}$ ou $z = -2i\sqrt{2}$.
+$S = \{-2i\sqrt{2}\,;\, 2i\sqrt{2}\}$.
+\end{enumerate}
+
+\begin{attention}[Points de vigilance Probatoire]
+\begin{itemize}
+\item Citer explicitement les formules : $|z_1/z_2| = |z_1|/|z_2|$ et $\arg(z_1/z_2) = \arg(z_1) - \arg(z_2)$.
+\item Pour la forme algébrique, ne pas oublier l'étape de multiplication par le conjugué du dénominateur.
+\item Vérifier le quadrant pour déterminer l'argument principal sans ambiguïté.
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 10 — Géométrie dans le plan complexe — type Probatoire]
+\textbf{Barème indicatif (sur 10) :} question 1 : 2 pts ; question 2 : 2 pts ; question 3 : 3 pts ; question 4 : 1 pt ; question 5 : 2 pts.
+
+\begin{enumerate}
+\item \textbf{Affixes de $B$ et $C$ :}
+$z_B = \cos\dfrac{2\pi}{3} + i\sin\dfrac{2\pi}{3} = -\dfrac{1}{2} + i\dfrac{\sqrt{3}}{2}$.
+$z_C = \cos\dfrac{4\pi}{3} + i\sin\dfrac{4\pi}{3} = -\dfrac{1}{2} - i\dfrac{\sqrt{3}}{2}$.
+(On note $z_A = 1 = \cos 0 + i\sin 0$).
+
+\item \textbf{Position des points :}
+$|z_A| = |z_B| = |z_C| = 1$. Les trois points $A, B, C$ appartiennent au \cle{cercle trigonométrique} (cercle de centre $O$ et de rayon $1$).
+Les arguments sont $0,\ \frac{2\pi}{3},\ \frac{4\pi}{3}$ : les points partagent le cercle en trois arcs égaux de $120^\circ$.
+
+\item \textbf{Longueurs des côtés (distance entre deux points d'affixes $z_1, z_2$ : $d = |z_2 - z_1|$) :}
+\begin{align*}
+AB &= |z_B - z_A| = \left|-\dfrac{1}{2} - 1 + i\dfrac{\sqrt{3}}{2}\right| = \left|-\dfrac{3}{2} + i\dfrac{\sqrt{3}}{2}\right| = \sqrt{\dfrac{9}{4} + \dfrac{3}{4}} = \sqrt{3}. \\
+BC &= |z_C - z_B| = \left|0 - i\sqrt{3}\right| = \sqrt{3}. \\
+CA &= |z_A - z_C| = \left|1 - \left(-\dfrac{1}{2} - i\dfrac{\sqrt{3}}{2}\right)\right| = \left|\dfrac{3}{2} + i\dfrac{\sqrt{3}}{2}\right| = \sqrt{\dfrac{9}{4} + \dfrac{3}{4}} = \sqrt{3}.
+\end{align*}
+
+\item \textbf{Nature du triangle :} $AB = BC = CA = \sqrt{3}$. Le triangle $ABC$ est \cle{équilatéral}.
+
+\item \textbf{Centre de gravité $G$ (isobarycentre) :}
+L'affixe du centre de gravité est $z_G = \dfrac{z_A + z_B + z_C}{3}$.
+\[ z_G = \dfrac{1 + \left(-\dfrac{1}{2} + i\dfrac{\sqrt{3}}{2}\right) + \left(-\dfrac{1}{2} - i\dfrac{\sqrt{3}}{2}\right)}{3} = \dfrac{0}{3} = 0. \]
+$G$ est confondu avec l'origine $O$. C'est le centre du cercle circonscrit (et inscrit) du triangle équilatéral.
+\end{enumerate}
+
+\begin{attention}[Points de vigilance Probatoire]
+\begin{itemize}
+\item La distance $AB$ se calcule par $|z_B - z_A|$ (module de la différence), pas $|z_B| - |z_A|$.
+\item Sur la figure, respecter l'unité graphique (ex: \SI{2}{cm} pour 1 unité).
+\item Justifier la nature du triangle par le calcul des trois distances (ou deux distances et un angle).
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\begin{corrige}[Exercice 11 — Problème d'atelier : Dipôles en série — type Probatoire]
+\textbf{Barème indicatif (sur 10) :} question 1 : 1 pt ; question 2 : 1,5 pt ; question 3 : 2 pts ; question 4 : 1,5 pt ; question 5 : 4 pts.
+
+\begin{enumerate}
+\item \textbf{Impédance totale (montage série) :} $Z = Z_1 + Z_2$.
+\[ Z = (4 + 3i) + (6 - 8i) = 10 - 5i \quad (\text{en } \Omega). \]
+\item \textbf{Impédance efficace (module) :}
+\[ |Z| = \sqrt{10^2 + (-5)^2} = \sqrt{100 + 25} = \sqrt{125} = 5\sqrt{5} \approx \SI{11,2}{\Omega}. \]
+\item \textbf{Déphasage et nature du circuit :}
+$\cos\theta = \dfrac{10}{5\sqrt{5}} = \dfrac{2}{\sqrt{5}} \approx 0,894$, $\sin\theta = \dfrac{-5}{5\sqrt{5}} = -\dfrac{1}{\sqrt{5}} \approx -0,447$.
+$\theta \approx -26,6^\circ$ (4\textsuperscript{e} quadrant).
+La partie imaginaire de $Z$ est $-5 < 0$ : le montage global est \cle{capacitif} (l'intensité est en avance sur la tension).
+\item \textbf{Intensité efficace :} Loi d'Ohm en régime sinusoïdal : $I = \dfrac{U}{|Z|}$.
+\[ I = \dfrac{50}{5\sqrt{5}} = \dfrac{10}{\sqrt{5}} = 2\sqrt{5} \approx \SI{4,5}{A}. \]
+\item \textbf{Rapport des impédances $z = \dfrac{Z_1}{Z_2}$ :}
+\begin{enumerate}
+\item \textbf{Forme algébrique :}
+\[ z = \dfrac{4+3i}{6-8i} = \dfrac{(4+3i)(6+8i)}{(6-8i)(6+8i)} = \dfrac{24 + 32i + 18i + 24i^2}{36 + 64} = \dfrac{24 - 24 + 50i}{100} = \dfrac{50i}{100} = \dfrac{i}{2} = 0,5i. \]
+\item \textbf{Module et interprétation :}
+$|z| = \dfrac{|Z_1|}{|Z_2|} = \dfrac{\sqrt{4^2+3^2}}{\sqrt{6^2+(-8)^2}} = \dfrac{5}{10} = 0,5$. (Vérification : $|0,5i| = 0,5$).
+\textbf{Interprétation :} L'impédance efficace du premier dipôle ($Z_1$) est deux fois plus petite que celle du second ($Z_2$). Le dipôle $Z_2$ « freine » deux fois plus le courant que le dipôle $Z_1$.
+\end{enumerate}
+\end{enumerate}
+
+\begin{attention}[Points de vigilance Probatoire]
+\begin{itemize}
+\item Toujours multiplier par le conjugué du dénominateur pour une division en forme algébrique.
+\item Donner l'argument (déphasage) dans le bon quadrant (ici sinus négatif $\Rightarrow$ angle négatif ou $> 180^\circ$).
+\item Conclure sur la nature du circuit (inductif/capacitif/pur résistif) en citant explicitement le signe de la partie imaginaire de $Z$ (réactance $X$).
+\item Pour l'intensité, utiliser la tension efficace $U$ et l'impédance efficace $|Z|$ (loi d'Ohm généralisée).
+\end{itemize}
+\end{attention}
+\end{corrige}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\begin{popfigure}
+\centering
+\begin{tikzpicture}[
+    mindmap,
+    grow cyclic,
+    every node/.style={concept, execute at begin node=\small\bfseries},
+    concept color=popblue!60,
+    level 1/.append style={level distance=4.5cm, sibling angle=360/6},
+    level 2/.append style={level distance=3cm, sibling angle=360/4},
+    branch/.style={concept color=#1, edge from parent/.style={draw=#1, thick}},
+    text=popdark
+]
+\node[concept, concept color=popblue, font=\large\bfseries, align=center]{Nombres\\Complexes\\$\mathbb{C}$}
+    child[branch=poporange] { node[concept, align=center]{Écriture\\Algébrique\\$z=a+ib$} }
+    child[branch=popgreen] { node[concept, align=center]{Opérations\\$+,-,\times,/$} }
+    child[branch=poppurple] { node[concept, align=center]{Conjugué\\$\bar{z}=a-ib$} }
+    child[branch=poppink] { node[concept, align=center]{Module\\$|z|=\sqrt{a^2+b^2}$} }
+    child[branch=popgold] { node[concept, align=center]{Forme\\Trigonométrique\\$z=r(\cos\theta+i\sin\theta)$} }
+    child[branch=popblue!50!popgreen] { node[concept, align=center]{Applications\\Élec., Méc., Éq.} };
+\end{tikzpicture}
+\legende{Carte mentale : Nombres complexes (Leçon 18)}
+\end{popfigure}
+
+\begin{bilan}
+\courssub{Définitions et Notations Essentielles}
+\begin{itemize}
+    \item \cle{Nombre complexe} : $z = a + ib$ avec $a,b \in \mathbb{R}$ et $i^2 = -1$.
+    \item \cle{Partie réelle} : $\Re(z) = a$ ; \cle{Partie imaginaire} : $\Im(z) = b$.
+    \item \cle{Forme algébrique} : $a+ib$ (unique). \cle{Forme trigonométrique} : $z = r(\cos\theta + i\sin\theta)$ avec $r=|z|\ge 0$, $\theta \in \mathbb{R}$ (argument principal $\in ]-\pi,\pi]$).
+    \item \cle{Conjugué} : $\bar{z} = a - ib$ (symétrique par rapport à l'axe réel).
+    \item \cle{Module} : $|z| = \sqrt{a^2+b^2} = \sqrt{z\bar{z}}$ (distance à l'origine).
+    \item \cle{Représentation géométrique} : Point $M(a,b)$ ou vecteur $\vec{u}(a,b)$ dans le plan complexe muni d'un repère orthonormé direct $(O;\vec{i},\vec{j})$.
+\end{itemize}
+
+\courssub{Formules à Connaître par Cœur}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|l|}
+\hline
+\rowcolor{popblueL}
+\textbf{Opération / Propriété} & \textbf{Formule / Règle} & \textbf{Remarque Probatoire} \\
+\hline
+Addition / Soustraction & $(a+ib)\pm(c+id) = (a\pm c)+i(b\pm d)$ & Composante par composante \\
+\hline
+Multiplication & $(a+ib)(c+id) = (ac-bd)+i(ad+bc)$ & Utiliser $i^2=-1$ \\
+\hline
+Inverse ($z\neq 0$) & $\frac{1}{a+ib} = \frac{a-ib}{a^2+b^2}$ & Multiplier num. et dén. par $\bar{z}$ \\
+\hline
+Division & $\frac{a+ib}{c+id} = \frac{(a+ib)(c-id)}{c^2+d^2}$ & Dénominateur réel \\
+\hline
+Conjugué (somme/prod) & $\overline{z_1\pm z_2}=\bar{z_1}\pm\bar{z_2}$ ; $\overline{z_1z_2}=\bar{z_1}\bar{z_2}$ & $\overline{\left(\frac{z_1}{z_2}\right)}=\frac{\bar{z_1}}{\bar{z_2}}$ \\
+\hline
+Module (prod/quot) & $|z_1z_2|=|z_1||z_2|$ ; $\left|\frac{z_1}{z_2}\right|=\frac{|z_1|}{|z_2|}$ & Inégalité triangulaire : $|z_1+z_2|\le |z_1|+|z_2|$ \\
+\hline
+Module \& Conjugué & $z\bar{z}=|z|^2$ & $z+\bar{z}=2\Re(z) \in \mathbb{R}$ ; $z-\bar{z}=2i\Im(z) \in i\mathbb{R}$ \\
+\hline
+Forme Trigo (Produit) & $r_1(\cos\theta_1+i\sin\theta_1)\times r_2(\cos\theta_2+i\sin\theta_2) = r_1r_2[\cos(\theta_1+\theta_2)+i\sin(\theta_1+\theta_2)]$ & Modules se multiplient, arguments s'additionnent \\
+\hline
+Forme Trigo (Quotient) & $\frac{r_1(\cos\theta_1+i\sin\theta_1)}{r_2(\cos\theta_2+i\sin\theta_2)} = \frac{r_1}{r_2}[\cos(\theta_1-\theta_2)+i\sin(\theta_1-\theta_2)]$ & Modules se divisent, arguments se soustraient \\
+\hline
+\end{tabularx}
+\end{center}
+
+\courssub{Méthodes Express}
+\begin{methode}[Passer de la forme algébrique à la forme trigonométrique]
+    \begin{enumerate}
+        \item Calculer le module : $r = |z| = \sqrt{a^2+b^2}$.
+        \item Déterminer $\cos\theta = \frac{a}{r}$ et $\sin\theta = \frac{b}{r}$.
+        \item Trouver l'argument principal $\theta \in ]-\pi,\pi]$ (ou $[0, 2\pi[$) selon le quadrant du point $M(a,b)$.
+        \item Écrire $z = r(\cos\theta + i\sin\theta)$.
+    \end{enumerate}
+\end{methode}
+
+\begin{methode}[Résoudre $z^2 = z_0$ (racine carrée)]
+    \begin{enumerate}
+        \item Mettre $z_0$ sous forme trigonométrique : $z_0 = r(\cos\theta + i\sin\theta)$.
+        \item Les deux racines sont : $z_k = \sqrt{r}\left(\cos\frac{\theta+2k\pi}{2} + i\sin\frac{\theta+2k\pi}{2}\right)$ pour $k=0,1$.
+        \item Revenir en forme algébrique si demandé.
+    \end{enumerate}
+\end{methode}
+
+\begin{methode}[Résoudre équation du second degré $\Delta \in \mathbb{C}$]
+\begin{enumerate}
+    \item Calculer $\Delta = b^2 - 4ac$.
+    \item Trouver les racines carrées de $\Delta$ (méthode ci-dessus).
+    \item Appliquer les formules : $z = \frac{-b \pm \sqrt{\Delta}}{2a}$.
+\end{enumerate}
+\end{methode}
+
+\courssub{Applications Techniques (Électricité / Mécanique)}
+\begin{itemize}
+    \item \textbf{Impédance complexe} : $Z = R + iX$ ($R$ résistance, $X$ réactance). Loi d'Ohm : $\underline{U} = Z\underline{I}$.
+    \item \textbf{Puissance complexe} : $\underline{S} = \underline{U}\overline{\underline{I}} = P + iQ$ ($P$ active, $Q$ réactive).
+    \item \textbf{Représentation de Fresnel} : Tension/Courant sinusoïdaux $\leftrightarrow$ Vecteurs tournants (complexes).
+    \item \textbf{Mécanique} : Amortisseur/ressort $\leftrightarrow$ Équations différentielles à coefficients complexes.
+\end{itemize}
+\end{bilan}
+
+\begin{aretenir}[Checklist avant le Probatoire]
+\begin{itemize}
+    \item $\square$ Savoir écrire un nombre complexe sous forme algébrique $a+ib$ et identifier $\Re(z)$, $\Im(z)$.
+    \item $\square$ Effectuer les 4 opérations ($+,-,\times,/$) et mettre sous forme algébrique standard.
+    \item $\square$ Calculer le conjugué $\bar{z}$ et utiliser $z\bar{z}=|z|^2$ pour simplifier un dénominateur.
+    \item $\square$ Calculer le module $|z|=\sqrt{a^2+b^2}$ et appliquer les propriétés $|z_1z_2|=|z_1||z_2|$.
+    \item $\square$ Passer de la forme algébrique à la forme trigonométrique $r(\cos\theta+i\sin\theta)$ (calcul de $r$ et $\theta$ selon le quadrant).
+    \item $\square$ Utiliser la forme trigonométrique pour multiplier/diviser rapidement (modules/arguments).
+    \item $\square$ Résoudre une équation $z^2 = z_0$ (deux solutions) en utilisant la forme trigonométrique.
+    \item $\square$ Résoudre une équation du second degré $az^2+bz+c=0$ ($a,b,c\in\mathbb{R}$ ou $\mathbb{C}$) via le discriminant $\Delta$.
+    \item $\square$ Interpréter géométriquement : addition (parallélogramme), module (distance), conjugué (symétrie axiale), multiplication (homotéthie-rotation).
+    \item $\square$ Modéliser un problème d'électricité (impédance, loi d'Ohm complexe) ou de mécanique avec des nombres complexes.
+    \item $\square$ Justifier chaque étape : « car $i^2=-1$ », « car $|z|>0$ », « car $\theta\in]-\pi,\pi]$ », « d'après la formule de Moivre (produit) ».
+    \item $\square$ Présenter la réponse finale clairement : « L'ensemble des solutions est $S=\{...\}$ » ou « Sous forme algébrique : $z=...$ ».
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}

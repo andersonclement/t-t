@@ -1,0 +1,2300 @@
+% Contraction de texte : le résumé (reformuler les idées essentielles d’un texte à résumer) — Français 1re Tech — Cours signé OnBuch+
+% Programme officiel MINESEC. Compiler avec : tectonic N05-contraction-texte-resume-reformuler-idees-essentielles.tex
+\newcommand{\DOCMATIERE}{Français}
+\newcommand{\DOCNIVEAU}{1re Tech}
+\newcommand{\DOCMODULE}{Français – classe de Première technique}
+\newcommand{\DOCLECON}{N05}
+\newcommand{\DOCTITRE}{Contraction de texte : le résumé (reformuler les idées essentielles d’un texte à résumer)}
+% OnBuch+ — préambule « cours signés » ENRICHI (compilé avec tectonic / XeLaTeX)
+% Système visuel « Pop » d'OnBuch+ : fond crème (jamais blanc), bordures encre
+% épaisses, ombres « dures » décalées, titres Archivo Black en capitales.
+% Version MATHÉMATIQUES : graphes (pgfplots/tikz), boîtes pédagogiques
+% (définition, propriété, méthode, attention, le savais-tu, exercice résolu,
+% exercice, TP, bilan), page de garde et signature OnBuch+ ancrée en bas.
+%
+% Macros attendues dans main.tex AVANT \input{preamble} :
+%   \DOCMATIERE  \DOCNIVEAU  \DOCMODULE  \DOCLECON (numéro)  \DOCTITRE
+\documentclass[11pt]{article}
+
+\usepackage{fontspec}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm,top=3.4cm,bottom=2.8cm,headheight=1.4cm,footskip=1.3cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools} % \xmapsto, \coloneqq... souvent utilisés par les modèles
+\usepackage{cancel} % simplifications barrées (bilans de forces)
+% \abs{z} (module, valeur absolue) et \norm{u} (norme), utilisés par les modèles
+\providecommand{\abs}{}\let\abs\relax\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\providecommand{\norm}{}\let\norm\relax\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\usepackage[table]{xcolor} % [table] : fournit aussi \rowcolors (alternance de lignes)
+\usepackage{pagecolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,shapes.misc,shapes.arrows,decorations.pathmorphing,decorations.pathreplacing,decorations.markings,patterns,shadows,mindmap,trees,fit,backgrounds,matrix,intersections,angles,quotes}
+\usepackage{pgfplots}
+\usepackage[version=4]{mhchem} % équations nucléaires \ce{^{235}_{92}U}
+\usepackage[european,siunitx]{circuitikz} % schémas électriques
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween,groupplots} % aires entre courbes (calcul intégral)
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+% [most] charge toutes les bibliothèques tcolorbox (listings, minted, raster,
+% documentation...) et gonfle inutilement la mémoire TeX sur un document long
+% (~300 boîtes) : on ne charge que ce qui est réellement utilisé.
+\usepackage[skins,breakable]{tcolorbox}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{diagbox} % case d'en-tête diagonale des tableaux à double entrée
+% Colonnes extensibles centrée / gauche / droite (C, L, R), souvent utilisées par les modèles
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}
+\usepackage{array}
+\usepackage{multicol}
+\usepackage{siunitx}
+% parse-numbers=false : accepte aussi \SI{2,5 \times 10^{-3}}{...}
+\sisetup{locale=FR,output-decimal-marker={,},group-minimum-digits=4,parse-numbers=false}
+\DeclareSIUnit\ohm{\ensuremath{\symup{\Omega}}} % U+2126 absent de la police
+\DeclareSIUnit\division{div} % réglages d'oscilloscope (ms/div, V/div)
+\DeclareSIUnit\tr{tr} % tours (vitesse de rotation, ex. \SI{1500}{\tr\per\minute})
+\DeclareSIUnit\molar{M} % concentration molaire (ex. \SI{3}{\molar}, \SI{1}{\micro\molar})
+\DeclareSIUnit\an{an} % année (le modèle confond parfois avec \year, un compteur TeX) — ex. \SI{5}{\kilo\meter\per\an}
+\DeclareSIUnit\FCFA{FCFA} % franc CFA (ex. \SI{500}{\FCFA\per\kilo\gram})
+\DeclareSIUnit\degreeBrix{\textdegree Brix} % teneur en sucre d'un sirop/jus (réfractométrie)
+\DeclareSIUnit\month{mois} % le modèle utilise parfois \month, un compteur TeX, comme unité de durée
+\DeclareSIUnit\microliter{\micro\liter} % le modèle écrit parfois \microliter en un seul token
+\DeclareSIUnit\million{millions} % dénombrement (ex. \SI{15}{\million\per\mL} spermatozoïdes)
+\usepackage{qrcode}
+% \degree : commande fréquemment utilisée par les modèles pour un angle ou une
+% température en dehors de \SI{}{} (non fournie par les paquets chargés).
+\providecommand{\degree}{^{\circ}}
+% \qed (fin de démonstration), utilisé par les modèles sans amsthm
+\providecommand{\qed}{\hfill$\square$}
+% \barre : double barre des valeurs interdites dans un tableau de variations (tkz-tab)
+\providecommand{\barre}{\ensuremath{\|}}
+% environnement proof (amsthm non chargé) utilisé par les modèles
+\ifdefined\proof\else\newenvironment{proof}[1][Démonstration]{\par\noindent\textit{#1.}\ }{\qed\par}\fi
+\usepackage{lastpage}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+
+% ============================================================
+% Palette « Pop » OnBuch+ — mêmes hex que la classe P (plus_ui.dart)
+% ============================================================
+\definecolor{poporange}{HTML}{F59321}
+\definecolor{popdark}{HTML}{E07A0C}
+\definecolor{popcream}{HTML}{FFF6E8}
+\definecolor{popink}{HTML}{1C1714}
+\definecolor{poppurple}{HTML}{7A5AE0}
+\definecolor{popgreen}{HTML}{2E9E6A}
+\definecolor{poppink}{HTML}{E0457B}
+\definecolor{popblue}{HTML}{2F7DE1}
+\definecolor{popgold}{HTML}{C98A12}
+\definecolor{popmuted}{HTML}{8A7F76}
+\definecolor{popline}{HTML}{EADFD2}
+\definecolor{popgray}{HTML}{8A7F76}
+\colorlet{popgrey}{popgray}
+% Alias tolérants (le modèle nomme parfois les couleurs différemment)
+\colorlet{popwhite}{white}
+\colorlet{popblack}{popink}
+\colorlet{popred}{poppink}
+\colorlet{popyellow}{popgold}
+% Teintes claires (fonds de tableaux/encadrés) — le modèle nomme parfois
+% les couleurs avec un suffixe L (ex. popblueL) sans les avoir définies.
+\colorlet{poporangeL}{poporange!20}
+\colorlet{popdarkL}{popdark!20}
+\colorlet{poppurpleL}{poppurple!20}
+\colorlet{popgreenL}{popgreen!20}
+\colorlet{poppinkL}{poppink!20}
+\colorlet{popblueL}{popblue!20}
+\colorlet{popgoldL}{popgold!20}
+\colorlet{popredL}{popred!20}
+\colorlet{popgrayL}{popgray!20}
+% Teintes claires pour fonds de tableaux / zones
+\colorlet{popblueL}{popblue!10!white}
+\colorlet{poporangeL}{poporange!14!white}
+\colorlet{popgreenL}{popgreen!12!white}
+\colorlet{poppurpleL}{poppurple!12!white}
+\colorlet{poppinkL}{poppink!12!white}
+\colorlet{popgoldL}{popgold!14!white}
+
+\pagecolor{popcream}
+
+% ============================================================
+% Typographie
+% ============================================================
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,BoldFont=PlusJakartaSans-Bold.ttf]
+% Maths en sans-serif (Fira Math) avec chiffres et lettres droites de Plus
+% Jakarta, pour que les formules se fondent dans le texte.
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+\setmathfont{FiraMath-Regular.otf}[Path=../../../fonts/]
+\setmathfont{PlusJakartaSans-Medium.ttf}[Path=../../../fonts/,range={up/num,up/{Latin,latin},\mathup}]
+\usepackage{icomma} % virgule décimale sans espace en mode math
+% Caractères mathématiques Unicode absents des polices de texte (Plus Jakarta,
+% Archivo Black) : rendus par leur équivalent mathématique, en texte comme en
+% formule — sinon ils s'affichent en carré vide (ex. « Arithmétique dans ℤ »).
+\usepackage{newunicodechar}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℂ}{\ensuremath{\mathbb{C}}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{𝔻}{\ensuremath{\mathbb{D}}}
+\newunicodechar{α}{\ensuremath{\alpha}}
+\newunicodechar{β}{\ensuremath{\beta}}
+\newunicodechar{γ}{\ensuremath{\gamma}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{θ}{\ensuremath{\theta}}
+\newunicodechar{λ}{\ensuremath{\lambda}}
+\newunicodechar{μ}{\ensuremath{\mu}}
+\newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{τ}{\ensuremath{\tau}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+\newunicodechar{ψ}{\ensuremath{\psi}}
+\newunicodechar{ω}{\ensuremath{\omega}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+% majuscules produites par \MakeUppercase dans les titres (α-aminés -> Α)
+\newunicodechar{Α}{\ensuremath{\alpha}}
+\newunicodechar{Β}{\ensuremath{\beta}}
+\newunicodechar{Γ}{\ensuremath{\Gamma}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{Ε}{\ensuremath{\varepsilon}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Λ}{\ensuremath{\Lambda}}
+\newunicodechar{Μ}{\ensuremath{\mu}}
+\newunicodechar{Τ}{\ensuremath{\tau}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{↦}{\ensuremath{\mapsto}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{⟺}{\ensuremath{\Longleftrightarrow}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⟹}{\ensuremath{\Longrightarrow}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∛}{\ensuremath{\sqrt[3]{\,}}}
+\newunicodechar{∜}{\ensuremath{\sqrt[4]{\,}}}
+\newunicodechar{⃗}{\ensuremath{{}^{\to}}}
+\newunicodechar{ⁿ}{\ifmmode^{n}\else\textsuperscript{\ensuremath{n}}\fi}
+\newunicodechar{ˣ}{\ifmmode^{x}\else\textsuperscript{\ensuremath{x}}\fi}
+\newunicodechar{ᵇ}{\ifmmode^{b}\else\textsuperscript{\ensuremath{b}}\fi}
+\newunicodechar{ʳ}{\ifmmode^{r}\else\textsuperscript{\ensuremath{r}}\fi}
+\newunicodechar{ᵘ}{\ifmmode^{u}\else\textsuperscript{\ensuremath{u}}\fi}
+\newunicodechar{ʸ}{\ifmmode^{y}\else\textsuperscript{\ensuremath{y}}\fi}
+\newunicodechar{ᵃ}{\ifmmode^{a}\else\textsuperscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵉ}{\ifmmode^{e}\else\textsuperscript{\ensuremath{e}}\fi}
+\newunicodechar{ᵏ}{\ifmmode^{k}\else\textsuperscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵖ}{\ifmmode^{p}\else\textsuperscript{\ensuremath{p}}\fi}
+\newunicodechar{ᴺ}{\ifmmode^{N}\else\textsuperscript{\ensuremath{N}}\fi}
+\newunicodechar{ᶜ}{\ifmmode^{c}\else\textsuperscript{\ensuremath{c}}\fi}
+\newunicodechar{ʰ}{\ifmmode^{h}\else\textsuperscript{\ensuremath{h}}\fi}
+\newunicodechar{ᵠ}{\ifmmode^{q}\else\textsuperscript{\ensuremath{q}}\fi}
+\newunicodechar{ₙ}{\ifmmode_{n}\else\textsubscript{\ensuremath{n}}\fi}
+\newunicodechar{ₐ}{\ifmmode_{a}\else\textsubscript{\ensuremath{a}}\fi}
+\newunicodechar{ᵢ}{\ifmmode_{i}\else\textsubscript{\ensuremath{i}}\fi}
+\newunicodechar{ᵣ}{\ifmmode_{r}\else\textsubscript{\ensuremath{r}}\fi}
+\newunicodechar{ₖ}{\ifmmode_{k}\else\textsubscript{\ensuremath{k}}\fi}
+\newunicodechar{ᵦ}{\ifmmode_{\beta}\else\textsubscript{\ensuremath{\beta}}\fi}
+\newunicodechar{ₓ}{\ifmmode_{x}\else\textsubscript{\ensuremath{x}}\fi}
+\newfontfamily\popdisplay{ArchivoBlack-Regular.ttf}[Path=../../../fonts/]
+\newfontfamily\poplogo{SpaceGrotesk-Bold.ttf}[Path=../../../fonts/]
+\newfontfamily\popsemi{PlusJakartaSans-SemiBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxbold{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/]
+\newfontfamily\popxboldls{PlusJakartaSans-ExtraBold.ttf}[Path=../../../fonts/,LetterSpace=3.0]
+
+\setlist[enumerate]{leftmargin=1.7em,itemsep=5pt,topsep=4pt}
+\setlist[itemize]{leftmargin=1.7em,itemsep=4pt,topsep=4pt,label={\color{poporange}\textbullet}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\renewcommand{\arraystretch}{1.25}
+
+% pgfplots : style Pop par défaut
+\pgfplotsset{
+  every axis/.append style={axis line style={popink,line width=1pt},tick style={popink},
+    grid style={popline,line width=0.5pt},label style={font=\small},tick label style={font=\footnotesize}},
+  popcurve/.style={poporange,line width=1.8pt,no markers,smooth},
+}
+% Même style disponible dans un \draw TikZ simple (hors pgfplots)
+\tikzset{popcurve/.style={poporange,line width=1.8pt}}
+\tikzset{popgrid/.style={popline,very thin}}
+\colorlet{popcurve}{poporange} % le nom du style est parfois utilisé comme couleur
+
+% ============================================================
+% Pill / squiggle
+% ============================================================
+\newcommand{\poppill}[3]{%
+  \tikz[baseline=-0.55ex]\node[draw=popink,line width=1.2pt,rounded corners=2.6pt,%
+    fill=#2,inner xsep=6.5pt,inner ysep=3pt]{%
+    \popxboldls\fontsize{7}{7}\selectfont\color{#3}\MakeUppercase{#1}};%
+}
+\newcommand{\popsquiggle}[1]{%
+  \tikz[baseline=-0.4ex]{
+    \draw[#1,line width=2.6pt,line cap=round]
+      plot [smooth] coordinates {(0,0.09) (0.34,0.01) (0.68,0.21) (1.02,0.01) (1.36,0.10)};
+  }%
+}
+% Mot-clé surligné (marqueur orange sous le texte)
+\newcommand{\cle}[1]{{\popxbold\color{popdark}#1}}
+
+% ============================================================
+% En-tête / pied
+% ============================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\lhead{\raisebox{-0.15ex}{\poplogo\fontsize{13}{13}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\rhead{\poppill{\DOCMATIERE\ \textbullet\ \DOCNIVEAU\ \textbullet\ Leçon \DOCLECON}{white}{popink}}
+\lfoot{\popxbold\fontsize{7.6}{7.6}\selectfont\color{popmuted}\MakeUppercase{Cours signé OnBuch+}\ \textbullet\ {\popsemi\DOCTITRE}}
+\rfoot{\tikz[baseline=-0.6ex]\node[rounded corners=8.5pt,fill=popink,minimum height=17pt,minimum width=17pt,inner xsep=5pt,inner sep=0]{\popxbold\fontsize{8}{8}\selectfont\color{popcream}\thepage\,/\,\pageref*{LastPage}};}
+
+% ============================================================
+% Titres
+% ============================================================
+\newcommand{\chaptitre}[2]{%
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.6pt,arc=11pt,
+      drop shadow=popink,left=15pt,right=15pt,top=12pt,bottom=11pt,before skip=3pt,after skip=18pt]
+    \poppill{#2}{popink}{popcream}\par\vspace{9pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{22}{24}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+  \end{tcolorbox}
+}
+% Section numérotée : pastille orange avec le numéro + titre Archivo
+\newcounter{popsec}
+\newcommand{\coursec}[1]{%
+  \stepcounter{popsec}\setcounter{popsub}{0}%
+  \par\vspace{16pt}\noindent
+  \begin{minipage}{\linewidth}
+  \tikz[baseline=-0.7ex]\node[draw=popink,line width=1.6pt,fill=poporange,rounded corners=4pt,minimum size=22pt,inner sep=0]{\popdisplay\fontsize{12}{12}\selectfont\color{popcream}\thepopsec};%
+  \hspace{8pt}{\popdisplay\fontsize{15}{17}\selectfont\color{popink}\MakeUppercase{#1}}\par
+  \vspace{4pt}\noindent{\color{poporange}\rule{36pt}{3.6pt}}
+  \end{minipage}\par\nopagebreak\vspace{8pt}
+}
+\newcounter{popsub}
+\newcommand{\courssub}[1]{%
+  \stepcounter{popsub}%
+  \par\vspace{9pt}\noindent{\popxbold\fontsize{11.5}{13}\selectfont\color{popink}{\color{poporange}\thepopsec.\thepopsub}\hspace{6pt}#1}\par\nopagebreak\vspace{4pt}
+}
+
+% ============================================================
+% Boîtes pédagogiques — même recette : fond blanc, bordure épaisse colorée,
+% ombre dure encre, badge plein. Titre optionnel [#1].
+% ============================================================
+\tcbset{popbase/.style={breakable,enhanced,colback=white,boxrule=2.3pt,arc=9pt,
+  shadow={3pt}{-3pt}{0pt}{popink},left=14pt,right=14pt,top=11pt,bottom=11pt,before skip=11pt,after skip=15pt,
+  fontupper=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink},
+  fontlower=\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+% Coche dessinée (le glyphe ✓ n'existe pas dans les polices du document)
+\newcommand{\popcheck}[1]{\tikz[baseline=-0.5ex]\draw[#1,line width=1.6pt,line cap=round,line join=round](-0.13,0.0)--(-0.04,-0.09)--(0.13,0.1);}
+\providecommand{\coche}{\popcheck{popgreen}}
+\providecommand{\resultat}[1]{\par\smallskip\noindent\fcolorbox{popgreen}{popgreenL}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\textbf{Résultat.} #1}}\par\smallskip}
+\newcommand{\popboxhead}[3]{\poppill{#1}{#2}{white}\ifx\relax#3\relax\else\hspace{6pt}{\popxbold\fontsize{10.6}{12}\selectfont\color{popink}#3}\fi\par\vspace{7pt}}
+
+\newtcolorbox{aretenir}[1][]{popbase,colframe=popgreen,before upper={\popboxhead{À retenir}{popgreen}{#1}}}
+\newtcolorbox{exemplebox}[1][]{popbase,colframe=poporange,before upper={\popboxhead{Exemple}{poporange}{#1}}}
+\newtcolorbox{definition}[1][]{popbase,colframe=popblue,before upper={\popboxhead{Définition}{popblue}{#1}}}
+\newtcolorbox{propriete}[1][]{popbase,colframe=poppurple,before upper={\popboxhead{Propriété}{poppurple}{#1}}}
+\newtcolorbox{methode}[1][]{popbase,colframe=popgold,before upper={\popboxhead{Méthode}{popgold}{#1}}}
+\newtcolorbox{attention}[1][]{popbase,colframe=poppink,before upper={\popboxhead{Attention}{poppink}{#1}}}
+\newtcolorbox{experience}[1][]{popbase,colframe=popblue,colback=popblueL,before upper={\popboxhead{Expérience}{popblue}{#1}}}
+% « Le savais-tu ? » : carte violette pleine (contexte, culture, Cameroun)
+\newtcolorbox{savaistu}[1][]{popbase,colback=poppurple,colframe=popink,
+  fontupper=\popsemi\fontsize{10.4}{14.2}\selectfont\color{white},
+  before upper={\poppill{Le savais-tu\,?}{white}{poppurple}\ifx\relax#1\relax\else\hspace{6pt}{\popxbold\color{white}#1}\fi\par\vspace{7pt}}}
+% Exercice résolu : énoncé en haut, \tcblower puis la solution sur fond crème
+\newcounter{popexo}\newcounter{popexr}
+\newtcolorbox{exoresolu}[1][]{popbase,colframe=poporange,colbacklower=popcream,
+  segmentation style={popink,line width=1.2pt,dashed},
+  before upper={\stepcounter{popexr}\popboxhead{Exercice résolu \thepopexr}{poporange}{#1}},
+  before lower={\poppill{Solution}{popink}{popcream}\par\vspace{6pt}}}
+% Exercice (non résolu en place) — la correction est dans la partie Corrigés
+\newtcolorbox{exercice}[1][]{popbase,colframe=popink,
+  before upper={\stepcounter{popexo}\popboxhead{Exercice \thepopexo}{popink}{#1}}}
+% Corrigé
+\newtcolorbox{corrige}[1][]{popbase,colframe=popgreen,colback=popgreenL,
+  before upper={\popboxhead{Corrigé}{popgreen}{#1}}}
+% Objectifs / prérequis / bilan
+\newtcolorbox{objectifs}{popbase,colframe=popink,colback=poporangeL,
+  before upper={\popboxhead{Objectifs de la leçon}{popink}{}}}
+\newtcolorbox{prerequis}{popbase,colframe=popink,colback=popblueL,
+  before upper={\popboxhead{Prérequis}{popblue}{}}}
+\newtcolorbox{bilan}{popbase,colframe=popink,colback=white,boxrule=2.8pt,
+  before upper={\popboxhead{Fiche bilan}{poporange}{L'essentiel à connaître pour l'examen}}}
+% Figure encadrée avec légende
+\newtcolorbox{popfigure}[1][]{enhanced,breakable=false,colback=white,colframe=popline,boxrule=1.4pt,arc=8pt,
+  left=10pt,right=10pt,top=10pt,bottom=8pt,before skip=10pt,after skip=12pt,halign=center,
+  lower separated=false,halign lower=center,
+  fontlower=\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted},
+  #1}
+\newcommand{\legende}[1]{\par\vspace{6pt}{\popsemi\fontsize{9}{11.5}\selectfont\color{popmuted}#1}}
+
+% ============================================================
+% Signature OnBuch+
+% ============================================================
+\newcommand{\poplogoinline}[1]{{\poplogo\fontsize{#1}{#1}\selectfont\color{popink}OnBuch\color{poporange}+}}
+\newcommand{\signatureonbuch}{%
+  \begin{tcolorbox}[enhanced,colback=popink,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=poporange,left=14pt,right=14pt,top=10pt,bottom=10pt,before skip=0pt,after skip=0pt]
+    \tikz[baseline=-0.7ex]\node[circle,fill=popgreen,draw=popcream,line width=1.3pt,minimum size=22pt,inner sep=0]{\popcheck{white}};%
+    \hspace{9pt}\begin{minipage}[c]{0.62\linewidth}
+      {\popxbold\fontsize{12}{13}\selectfont\color{popcream}Signé\ \textbullet\ {\poplogo OnBuch\color{poporange}+}}\par\vspace{2pt}
+      {\raggedright\popsemi\fontsize{8}{10.5}\selectfont\color{popline}\MakeUppercase{Équipe pédagogique OnBuch+}\\\MakeUppercase{Conforme au programme officiel MINESEC}\par}
+    \end{minipage}\hfill
+    {\poplogo\fontsize{22}{22}\selectfont\color{popcream}OnBuch\color{poporange}+}
+  \end{tcolorbox}%
+}
+
+% ============================================================
+% Page de garde
+% #1 titre · #2 matière · #3 niveau · #4 module · #5 n° leçon · #6 durée ·
+% #7 description / objectifs (texte ou itemize)
+% ============================================================
+\newcommand{\pagegarde}[7]{%
+  \thispagestyle{empty}
+  \newgeometry{a4paper,margin=1.7cm,top=1.6cm,bottom=1.4cm}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[poporange!18] ([xshift=-3.2cm,yshift=-3.6cm]current page.north east) circle (4.6cm);
+    \fill[poppurple!14] ([xshift=2.4cm,yshift=7.6cm]current page.south west) circle (3.8cm);
+  \end{tikzpicture}%
+  {\poplogo\fontsize{30}{30}\selectfont\color{popink}OnBuch\color{poporange}+}\hfill
+  \raisebox{0.6ex}{\poppill{Cours signé \textbullet\ Premium}{popink}{popcream}}\par
+  \vspace{1pt}\popsquiggle{poppurple}\par
+  \vspace{8pt}
+  \begin{tcolorbox}[enhanced,colback=poporange,colframe=popink,boxrule=2.8pt,arc=13pt,
+      drop shadow=popink,left=18pt,right=18pt,top=12pt,bottom=13pt,after skip=10pt]
+    \poppill{#2 \textbullet\ #3}{popink}{popcream}\hspace{5pt}\poppill{#4}{white}{popink}\par\vspace{8pt}
+    {\popdisplay\fontsize{14}{14}\selectfont\color{popink}LEÇON #5}\par\vspace{4pt}
+    {\raggedright\hyphenpenalty=10000\exhyphenpenalty=10000\popdisplay\fontsize{25}{27}\selectfont\color{popcream}\MakeUppercase{#1}\par}
+    \vspace{8pt}
+    {\popxbold\fontsize{9.5}{9.5}\selectfont\color{popink}\MakeUppercase{Durée conseillée : #6}}
+  \end{tcolorbox}
+  \begin{tcolorbox}[enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+      drop shadow=popink,left=16pt,right=16pt,top=10pt,bottom=10pt,after skip=8pt]
+    \poppill{Dans cette leçon}{poppurple}{white}\par\vspace{5pt}
+    \popsemi\fontsize{9.3}{12.6}\selectfont\color{popink}#7
+  \end{tcolorbox}
+  \noindent\begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=popgreen,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tcbox[colback=white,colframe=popink,boxrule=1.3pt,arc=5pt,boxsep=0pt,nobeforeafter,
+        left=3pt,right=3pt,top=3pt,bottom=3pt,valign=center]{\qrcode[height=1.9cm]{https://play.google.com/store/apps/details?id=com.luvvix.onbuch&hl=fr}}%
+      \hspace{8pt}\begin{minipage}[c]{0.5\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Télécharge OnBuch}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Gratuit \textbullet\ Google Play\\Tuteur IA, annales, concours, résultats\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.487\linewidth}
+    \begin{tcolorbox}[enhanced,colback=poppurple,colframe=popink,boxrule=2.2pt,arc=10pt,
+        drop shadow=popink,left=11pt,right=11pt,top=10pt,bottom=10pt,height=3.1cm,valign=center]
+      \tikz[baseline=-0.7ex]\node[circle,fill=white,draw=popink,line width=1.3pt,minimum size=1.6cm,inner sep=0]{\popdisplay\fontsize{24}{24}\selectfont\color{poppurple}+};%
+      \hspace{8pt}\begin{minipage}[c]{0.6\linewidth}
+        {\popdisplay\fontsize{11}{12.5}\selectfont\color{white}\MakeUppercase{Passe à OnBuch+}}\par\vspace{4pt}
+        {\raggedright\popsemi\fontsize{8.4}{11}\selectfont\color{white}Tous les cours signés, Tuteur IA illimité, fiches PDF — onglet OnBuch+ de l'app\par}
+      \end{minipage}
+    \end{tcolorbox}
+  \end{minipage}
+  \vspace{8pt}
+  \popcontenu
+  \vfill
+  \signatureonbuch
+  \restoregeometry
+  \newpage
+}
+
+% Rangée « Ce cours contient » (page de garde)
+\newcommand{\poptile}[3]{% #1 couleur #2 gros texte #3 légende
+  \begin{tcolorbox}[enhanced,colback=#1,colframe=popink,boxrule=2pt,arc=9pt,shadow={2.5pt}{-2.5pt}{0pt}{popink},
+      left=6pt,right=6pt,top=9pt,bottom=9pt,halign=center,valign=center,height=1.75cm,width=\linewidth,nobeforeafter]
+    {\popdisplay\fontsize{12.5}{13}\selectfont\color{white}\MakeUppercase{#2}}\par\vspace{3pt}
+    {\centering\popsemi\fontsize{7.8}{9.5}\selectfont\color{white}#3\par}
+  \end{tcolorbox}}
+\newcommand{\popcontenu}{%
+  \par\noindent{\popxboldls\fontsize{7.5}{7.5}\selectfont\color{popmuted}CE COURS SIGNÉ CONTIENT}\par\vspace{7pt}
+  \noindent\begin{minipage}[t]{0.235\linewidth}\poptile{popblue}{Cours}{complet, illustré, pas à pas}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poporange}{Méthodes}{et exercices résolus}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{poppink}{Exercices}{type examen + corrigés}\end{minipage}\hfill
+  \begin{minipage}[t]{0.235\linewidth}\poptile{popgreen}{Fiche bilan}{l'essentiel à retenir}\end{minipage}\par}
+
+% Sommaire
+\newtcolorbox{sommaire}{enhanced,colback=white,colframe=popink,boxrule=2.2pt,arc=10pt,
+  drop shadow=popink,left=18pt,right=18pt,top=13pt,bottom=13pt,before skip=6pt,after skip=20pt,
+  before upper={\poppill{Sommaire}{poppurple}{white}\par\vspace{9pt}\popsemi\fontsize{10.6}{14.5}\selectfont\color{popink}}}
+
+% Signature de fin de cours — poussée tout en bas de la dernière page
+\newcommand{\findecours}{%
+  \par\vfill\nopagebreak
+  \begin{center}\popsquiggle{poporange}\end{center}\vspace{4pt}
+  \signatureonbuch
+}
+\AtBeginDocument{\def\llbracket{\mathopen{[\mkern-3.5mu[}}\def\rrbracket{\mathclose{]\mkern-3.5mu]}}} % intervalles d'entiers (glyphe ⟦ absent de la police)
+% Glyphes absents de Fira Math : redéfinis à partir de glyphes disponibles
+\AtBeginDocument{%
+  \def\setminus{\mathbin{\backslash}}\let\smallsetminus\setminus
+  \def\vdots{\mathord{\vbox{\baselineskip3.2pt\lineskiplimit0pt\kern4pt\hbox{.}\hbox{.}\hbox{.}}}}%
+  \def\ddots{\mathinner{\mkern1mu\raise6.5pt\hbox{.}\mkern2mu\raise3.6pt\hbox{.}\mkern2mu\raise0.7pt\hbox{.}\mkern1mu}}%
+  \def\triangle{\mathord{\scalebox{0.9}{$\symup{\Delta}$}}}%
+  \def\nabla{\mathord{\raisebox{\depth}{\scalebox{1}[-1]{$\symup{\Delta}$}}}}%
+  \def\checkmark{\popcheck{popdark}}%
+  \def\star{\mathbin{\ast}}\def\bigstar{\mathord{\ast}}%
+  \def\diamond{\mathbin{\scalebox{0.6}{$\Diamond$}}}%
+  \def\bigcup{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cup$}}}{\scalebox{1.25}{$\cup$}}{\cup}{\cup}}\displaylimits}%
+  \def\bigcap{\mathop{\mathchoice{\raisebox{-0.3em}{\scalebox{1.7}{$\cap$}}}{\scalebox{1.25}{$\cap$}}{\cap}{\cap}}\displaylimits}%
+  \def\lesseqqgtr{\mathrel{\lessgtr}}\def\bigoplus{\mathop{\oplus}\displaylimits}%
+}
+\providecommand{\ssi}{si et seulement si} % abréviation fréquente
+\AtBeginDocument{\providecommand{\wideparen}{\overparen}} % arc de cercle
+
+\begin{document}
+
+\pagegarde{Contraction de texte : le résumé (reformuler les idées essentielles d’un texte à résumer)}{Français}{1re Tech}{Français – classe de Première technique}{N05}{14 séances (fiche de progression harmonisée)}{Cette leçon développe la compétence de contraction de texte (résumé) en s'appuyant sur l'étude intégrale du "Lion et la Perle" de Wole Soyinka et l'analyse des figures d'amplification et du lexique. Elle vise à rendre l'élève autonome dans l'identification de la structure argumentative, la réduction contrôlée et la reformulation fidèle, gages de réussite au Probatoire et en vie professionnelle.
+\vspace{4pt}
+\begin{multicols}{2}\small
+\begin{itemize}
+\item Identifier et analyser les figures d'amplification (hyperbole, gradation) et le lexique (commun, spécialisé, néologismes) dans "Le Lion et la Perle" pour en saisir les effets de sens.
+\item Découper un texte argumentatif ou narratif en macro-structures logiques (thèses, arguments, illustrations, conclusion).
+\item Appliquer les techniques de réduction (suppression, généralisation, intégration, substitution) sans perte d'information essentielle.
+\item Rédiger un résumé respectant la contrainte de longueur (1/4 du texte original ± 10\%), la neutralité énonciative et la cohérence syntaxique.
+\item Justifier ses choix de coupure et de reformulation en référence aux procédés linguistiques étudiés.
+\item Évaluer et améliorer une production d'élève (auto-correction et hetero-correction) à l'aide d'une grille critériée.
+\end{itemize}\end{multicols}}
+
+\begin{sommaire}
+\begin{multicols}{2}
+\begin{enumerate}
+\item 1. Entrée en matière : Le résumé, compétence technique et citoyenne
+\item 2. Outils langagiers pour l'analyse : Amplification et Lexique dans "Le Lion et la Perle" (Lectures 4 \& 5)
+\item 3. Méthodologie de la contraction : Structure argumentative et Techniques de réduction (Séances 3, 6, 9)
+\item 4. Atelier de rédaction et confrontation : De la Lecture 6 aux Exposés 1 \& 2
+\item 5. Synthèse transversale : Dissertation, Compte-rendu et Remédiation (Séances 10-14)
+\item Activité d'intégration
+\item Méthodes et exercices résolus
+\item Exercices
+\item Corrigés des exercices
+\item Fiche bilan
+\end{enumerate}
+\end{multicols}
+\end{sommaire}
+
+\begin{objectifs}
+\begin{itemize}
+\item Identifier et analyser les figures d'amplification (hyperbole, gradation) et le lexique (commun, spécialisé, néologismes) dans "Le Lion et la Perle" pour en saisir les effets de sens.
+\item Découper un texte argumentatif ou narratif en macro-structures logiques (thèses, arguments, illustrations, conclusion).
+\item Appliquer les techniques de réduction (suppression, généralisation, intégration, substitution) sans perte d'information essentielle.
+\item Rédiger un résumé respectant la contrainte de longueur (1/4 du texte original ± 10\%), la neutralité énonciative et la cohérence syntaxique.
+\item Justifier ses choix de coupure et de reformulation en référence aux procédés linguistiques étudiés.
+\item Évaluer et améliorer une production d'élève (auto-correction et hetero-correction) à l'aide d'une grille critériée.
+\item Mobiliser les acquis lexicaux et stylistiques pour produire un compte-rendu de lecture structuré de l'œuvre au programme.
+\end{itemize}
+\end{objectifs}
+
+\begin{prerequis}
+\begin{itemize}
+\item Notion de paragraphe et de connecteurs logiques (classe de 4e/3e).
+\item Identification des idées principales et secondaires dans un texte court (Seconde).
+\item Connaissance basique des figures de style (comparaison, métaphore, personne).
+\item Maîtrise de la phrase complexe (subordination, coordination) pour la reformulation.
+\item Culture générale sur le théâtre africain anglophone et le contexte nigérian (Seconde).
+\end{itemize}
+\end{prerequis}
+
+\newpage
+
+\coursec{Entrée en matière : Le résumé, compétence technique et citoyenne}
+
+\courssub{Situation d'accroche et problématique}
+
+Au bureau d'un chef de service à la Mairie de Yaoundé, une pile de rapports techniques de cinquante pages attend d'être lue ; le décideur n'a que dix minutes pour en saisir l'essentiel avant une réunion cruciale. De même, l'élève de Première technique, face à son sujet de contraction de texte au Probatoire, doit extraire la substantifique moelle d'un texte de quatre cents mots en une centaine de mots, sans en trahir l'esprit. Dans les deux cas, la même compétence est à l'œuvre : lire vite, comprendre juste, reformuler court.
+
+Cette compétence n'est pas un exercice scolaire artificiel. Le technicien supérieur camerounais — qu'il soit comptable, infirmier, électrotechnicien, secrétaire de direction ou gestionnaire — sera chaque jour confronté à des documents longs qu'il devra condenser pour ses supérieurs : un rapport d'inspection, un procès-verbal de réunion, un dossier de projet. Savoir résumer, c'est savoir servir la décision.
+
+\textbf{Problématique :} Comment passer de la lecture méthodique du \emph{Lion et la Perle} à la rédaction d'un résumé efficace, outil indispensable du technicien supérieur camerounais ?
+
+Pour répondre à cette question, nous allons d'abord définir précisément ce qu'est la contraction de texte, puis la distinguer des exercices voisins (compte-rendu, synthèse, analyse), avant de présenter l'organisation de l'unité et de mesurer nos acquis par un diagnostic initial.
+
+\courssub{Qu'est-ce que la contraction de texte ?}
+
+Commençons par une intuition simple. Imaginez un avocat (le fruit) : il est gros, il contient une peau, une chair et un noyau. Si l'on vous demande de rapporter l'essentiel de l'avocat, vous ne rapporterez ni la peau ni la pulpe entière, mais le noyau — ce qui contient l'essence du fruit. Le résumé fait exactement cela avec un texte : il enlève les ornements, les exemples, les répétitions, les figures de style, pour ne garder que les \cle{idées essentielles}.
+
+\begin{definition}[La contraction de texte (résumé)]
+La \cle{contraction de texte} (ou \cle{résumé}) est une réécriture \textbf{objective} qui restitue les idées essentielles d'un texte source en réduisant significativement son volume (généralement au \textbf{quart} de la longueur initiale), sans interprétation ni commentaire personnel. Le résumé obéit à trois exigences fondamentales :
+\begin{itemize}
+\item la \cle{fidélité} : il ne trahit ni le sens ni l'intention de l'auteur ;
+\item la \cle{concision} : il respecte la limite de mots imposée (par exemple 100 mots pour un texte de 400 mots) ;
+\item la \cle{correction} : il est rédigé dans une langue claire, grammaticalement irréprochable, avec des phrases complètes et des connecteurs logiques.
+\end{itemize}
+\end{definition}
+
+\begin{attention}[Résumé n'est pas commentaire]
+Erreur fréquente : confondre résumé et commentaire. Le résumé :
+\begin{itemize}
+\item n'utilise \textbf{jamais} la première personne (\og je \fg{}, \og à mon avis \fg{}) ;
+\item ne donne \textbf{aucune opinion} personnelle sur le texte ;
+\item ne cite \textbf{pas} d'exemples détaillés ni de citations longues ;
+\item ne conserve \textbf{pas} les figures de style ornementales (hyperboles, gradations, images poétiques), qui doivent être traduites en langage neutre.
+\end{itemize}
+Dire \og l'auteur a raison de montrer que... \fg{} est déjà un commentaire : c'est une faute lourde à l'examen.
+\end{attention}
+
+\courssub{Résumé, compte-rendu, synthèse, analyse : ne plus confondre}
+
+Dans la vie administrative et professionnelle camerounaise, plusieurs exercices de condensation coexistent. Les distinguer est indispensable, car l'examinateur comme l'employeur attendent le bon exercice au bon moment.
+
+\begin{itemize}
+\item Le \cle{résumé} condense \textbf{un seul} texte, en suivant sa structure et sans rien ajouter. Usage : épreuve du Probatoire technique, résumé d'un rapport pour un supérieur.
+\item Le \cle{compte-rendu} restitue fidèlement un \textbf{événement} (réunion, conférence, visite) : qui, quoi, où, quand, quelles décisions. Usage : compte-rendu de réunion de service à la mairie ou à l'hôpital.
+\item La \cle{synthèse} confronte \textbf{plusieurs documents} sur un même sujet et en dégage les convergences et divergences, selon un plan construit par le rédacteur. Usage : note de synthèse à l'ENAM, dossier de projet au MINEE ou à la MINSANTE.
+\item L'\cle{analyse} (ou commentaire) \textbf{interprète} le texte, en dégage les intentions, en apprécie la valeur. C'est un exercice subjectif assumé, contraire au résumé.
+\end{itemize}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  every node/.style={font=\small},
+  crit/.style={fill=popblueL, font=\bfseries\small, text width=2.6cm, align=center, minimum height=0.9cm},
+  cell/.style={text width=2.9cm, align=center, minimum height=0.9cm},
+  head/.style={fill=poporangeL, font=\bfseries\small, text width=2.9cm, align=center, minimum height=0.9cm}
+]
+\matrix (m) [matrix of nodes, nodes in empty cells, column sep=2pt, row sep=2pt,
+  nodes={draw=popline, anchor=center}]{
+  |[crit, fill=popblue!40]| Critères & |[head]| Résumé & |[head]| Compte-rendu & |[head]| Synthèse \\
+  |[crit]| Subjectivité & |[cell]| Nulle : objectivité totale & |[cell]| Nulle : fidélité aux faits & |[cell]| Faible : plan personnel mais neutre \\
+  |[crit]| Structure & |[cell]| Suit le plan du texte source & |[cell]| Chronologique ou thématique & |[cell]| Plan construit par le rédacteur \\
+  |[crit]| Longueur & |[cell]| 1/4 du texte source & |[cell]| Variable, selon l'événement & |[cell]| Imposée (note de synthèse) \\
+  |[crit]| Public cible & |[cell]| Correcteur, décideur pressé & |[cell]| Absents, hiérarchie & |[cell]| Jury de concours, administration \\
+};
+\end{tikzpicture}
+\legende{Tableau comparatif : résumé, compte-rendu et synthèse. Le résumé se distingue par l'objectivité absolue et le respect du plan du texte source.}
+\end{popfigure}
+
+\begin{savaistu}[Du lycée à la Fonction Publique]
+Au Cameroun, les concours d'entrée à l'ENAM (École Nationale d'Administration et de Magistrature), à l'IRIC (Institut des Relations Internationales du Cameroun) ou les recrutements directs à la Fonction Publique incluent souvent une épreuve de \og note de synthèse \fg{} ou de \og résumé de dossier \fg{}. La compétence que vous construisez cette année en classe de Première technique se monnaiera donc littéralement à l'âge adulte : c'est un investissement de citoyen et de professionnel.
+\end{savaistu}
+
+\courssub{Présentation de l'unité : quatorze séances, trois chantiers}
+
+Cette unité d'apprentissage s'étend sur \textbf{quatorze séances} et articule trois chantiers qui se nourrissent mutuellement :
+
+\begin{enumerate}
+\item \textbf{La réception des textes} : la lecture méthodique du \emph{Lion et la Perle} de Wole Soyinka (lectures n\textsuperscript{o} 4, 5 et 6, puis exposés n\textsuperscript{o} 1 et 2). L'affrontement entre Lakunle, le jeune instituteur moderniste, et Baroka, le vieux chef traditionnel, nous fournira des extraits argumentatifs parfaits pour s'entraîner à repérer les idées forces.
+\item \textbf{La langue française} : d'une part la stylistique et la rhétorique (les figures d'\cle{amplification} : hyperbole et gradation), d'autre part la sémantique et la lexicologie (le \cle{lexique commun} et le \cle{lexique spécialisé}, les \cle{néologismes}). Pourquoi ces outils ? Parce que résumer, c'est savoir \emph{traduire} une hyperbole en constat neutre et remplacer un lexique ornemental par le mot juste.
+\item \textbf{La production des textes} : la contraction de texte proprement dite — étude de la \cle{structure argumentative} du texte, techniques de \cle{réduction} et de rédaction, reformulation des idées essentielles, puis confrontation et amélioration des productions, compte-rendu et remédiation.
+\end{enumerate}
+
+La logique est celle d'un artisan : on observe d'abord le bel ouvrage (lecture), on s'équipe d'outils (langue), puis on fabrique soi-même (production).
+
+\courssub{Les quatre temps de la lecture active}
+
+Tout bon résumé commence avant l'écriture : il commence par une lecture méthodique. Voici la démarche que nous appliquerons tout au long de l'unité.
+
+\begin{methode}[Les 4 temps de la lecture active pour le résumé]
+\begin{enumerate}
+\item \textbf{Lecture globale} : lire le texte en entier, une première fois, sans stylo. Identifier le sujet, le ton (polémique, didactique, narratif), le type de texte et sa structure générale.
+\item \textbf{Lecture analytique} : relire en découpant le texte en parties (souvent une idée par paragraphe). Souligner les idées forces et entourer les connecteurs logiques (\emph{d'abord, en effet, cependant, donc, enfin}) qui révèlent la charpente argumentative.
+\item \textbf{Sélection et hiérarchisation} : distinguer l'\cle{essentiel} (thèse, arguments principaux) de l'\cle{accessoire} (exemples, répétitions, anecdotes, figures ornementales). Règle pratique : si l'on supprime une phrase, l'argumentation tient-elle encore ? Si oui, elle était accessoire.
+\item \textbf{Prise de notes schématisée} : noter les mots-clés de chaque partie sous forme de schéma ou de liste fléchée, jamais de phrases recopiées. C'est à partir de ces notes — et non du texte — que l'on rédigera.
+\end{enumerate}
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+  node distance=0.55cm and 1.1cm,
+  etape/.style={draw=popblue, fill=popblueL, rounded corners=3pt, text width=3.1cm, align=center, minimum height=0.95cm, font=\small},
+  fleche/.style={-{Stealth[length=3mm]}, thick, poporange}
+]
+\node[etape, align=center] (l){\textbf{1. Lecture active}\\ sujet, ton, structure};
+\node[etape, right=of l, align=center] (d){\textbf{2. Découpage}\\ parties, idées forces};
+\node[etape, right=of d, align=center] (s){\textbf{3. Sélection}\\ essentiel / accessoire};
+\node[etape, below=of s, align=center] (r){\textbf{4. Réduction}\\ suppression, reformulation};
+\node[etape, left=of r, align=center] (red){\textbf{5. Rédaction}\\ phrases liées, 1/4 du volume};
+\node[etape, left=of red, align=center] (rel){\textbf{6. Relecture}\\ fidélité, comptage, langue};
+\draw[fleche] (l) -- (d);
+\draw[fleche] (d) -- (s);
+\draw[fleche] (s) -- (r);
+\draw[fleche] (r) -- (red);
+\draw[fleche] (red) -- (rel);
+\draw[fleche, dashed, popgreen] (rel.north) .. controls +(0,0.8) and +(0,-0.8) .. node[above, font=\scriptsize\itshape, popdark]{si infidélité : retour au texte} (l.south);
+\end{tikzpicture}
+\legende{Le processus de contraction en six étapes (lecture active + rédaction + relecture). La relecture peut renvoyer à la lecture active si le résumé trahit le texte source.}
+\end{popfigure}
+
+\courssub{Diagnostic initial : à vos stylos !}
+
+Avant d'aller plus loin, mesurons nos acquis. Voici un paragraphe inspiré de la scène 1 du \emph{Lion et la Perle}, où Lakunle reproche à Sidi de refuser sa modernité. Résumons-le ensemble, en appliquant la lecture active.
+
+\begin{exoresolu}[Contraction guidée d'un paragraphe (scène 1 : Lakunle face à Sidi)]
+\textbf{Énoncé.} Texte source (environ 120 mots) : \og Tu refuses de porter mes idées comme tu refuses de porter des vêtements décents, Sidi ! Regarde-toi : tu vas les épaules nues, comme au temps de nos grands-pères, alors que la civilisation frappe à notre porte avec ses machines, ses routes, ses écoles ! Moi, Lakunle, je veux transformer Ilujinle en une ville moderne, plus grande que Lagos, plus riche qu'Ibadan, où les femmes seront l'égales des hommes et où le prix de la fiancée, cette coutume barbare, ce marchandage honteux, cette vente à l'encan des filles, sera aboli à jamais ! \fg{} Résumez ce paragraphe en environ 30 mots.
+\tcblower
+\textbf{Solution détaillée.}
+\emph{Étape 1 — Lecture globale} : le locuteur (Lakunle) reproche à son interlocutrice son attachement aux traditions et défend la modernité.
+
+\emph{Étape 2 — Lecture analytique} : deux idées forces : (a) Sidi s'accroche aux coutumes (tenue, refus du changement) ; (b) Lakunle rêve d'un village modernisé et égalitaire, sans le prix de la fiancée. Les hyperboles (\og plus grande que Lagos, plus riche qu'Ibadan \fg{}) et la gradation (\og coutume barbare, marchandage honteux, vente à l'encan \fg{}) sont des ornements à éliminer.
+
+\emph{Étape 3 — Sélection et prise de notes} : essentiel = reproche d'attachement à la tradition + projet de modernité égalitaire. Accessoire = comparaisons avec Lagos/Ibadan, détails vestimentaires, gradation insultante.
+
+\emph{Étape 4 — Rédaction} (29 mots) : \og Lakunle reproche à Sidi son attachement aux traditions, notamment vestimentaires. Il souhaite moderniser Ilujinle, instaurer l'égalité entre hommes et femmes et abolir le prix de la fiancée. \fg{}
+
+\emph{Vérification} : fidélité (les deux idées y sont), concision (environ le quart), correction (phrases liées, aucun \og je \fg{}, aucune figure de style conservée).
+\end{exoresolu}
+
+Ce diagnostic révèle les trois difficultés classiques que l'unité va traiter : repérer l'essentiel (séances sur la structure argumentative), traduire les figures d'amplification en langage neutre (séances de stylistique), et reformuler sans recopier (séances de réduction et de rédaction).
+
+\courssub{Les attendus du Probatoire technique}
+
+Au Probatoire technique, l'épreuve de français évalue la contraction de texte parmi les exercices de production d'écrits. L'épreuve dure généralement \textbf{trois heures} et la langue y joue un rôle déterminant dans la notation. Le texte à résumer compte en général entre 350 et 450 mots, et le candidat doit produire un résumé d'environ \textbf{un quart} de ce volume, avec une tolérance de plus ou moins 10 \%.
+
+\begin{aretenir}[Les trois critères d'évaluation du résumé]
+\begin{itemize}
+\item \textbf{Fidélité} (le fond) : toutes les idées essentielles sont présentes, aucune idée étrangère au texte n'est ajoutée, la thèse de l'auteur n'est pas déformée.
+\item \textbf{Concision} (la forme quantitative) : la limite de mots est respectée ; les mots comptés en trop ou en moins sont pénalisés.
+\item \textbf{Correction} (la langue) : orthographe, grammaire, ponctuation, connecteurs logiques ; le résumé est un texte rédigé, pas une liste de notes.
+\end{itemize}
+Un résumé fidèle mais mal écrit perd des points ; un résumé bien écrit mais infidèle en perd davantage. Les trois critères sont indissociables.
+\end{aretenir}
+
+\begin{exercice}[Pour vérifier la compréhension de la section]
+\begin{enumerate}
+\item Un chef de service vous remet un rapport de 60 pages et vous demande \og votre avis sur ce document \fg{}. S'agit-il d'une demande de résumé ? Justifiez.
+\item Classez ces formulations selon qu'elles relèvent du résumé (R) ou du commentaire (C) : \og L'auteur dénonce la corruption \fg{} ; \og L'auteur a raison de dénoncer la corruption \fg{} ; \og Selon le texte, la modernité menace les traditions \fg{} ; \og Ce texte magnifique m'a profondément touché \fg{}.
+\item Un texte source compte 440 mots. Quelle fourchette de longueur votre résumé doit-il respecter ?
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : vérification de la section]
+\begin{enumerate}
+\item Non. Demander un avis, c'est solliciter une opinion personnelle : cela relève de l'analyse ou du commentaire. Le résumé, lui, se contente de restituer objectivement les idées du document, sans aucune appréciation.
+\item R : \og L'auteur dénonce la corruption \fg{} et \og Selon le texte, la modernité menace les traditions \fg{} (reformulations neutres). C : \og L'auteur a raison de... \fg{} (jugement de valeur) et \og Ce texte magnifique m'a profondément touché \fg{} (opinion et première personne).
+\item Le quart de 440 mots est 110 mots. Avec la tolérance de 10 \%, le résumé doit compter entre 99 et 121 mots environ.
+\end{enumerate}
+\end{corrige}
+
+En guise de transition : nous savons désormais ce qu'est un résumé et ce que l'examen attend de nous. Mais pour condenser un texte, encore faut-il en comprendre les ruses langagières. La section suivante nous armera de deux outils d'analyse issus de notre lecture du \emph{Lion et la Perle} : les figures d'amplification (hyperbole, gradation) et l'étude du lexique.
+
+\coursec{Outils langagiers pour l'analyse : Amplification et Lexique dans "Le Lion et la Perle" (Lectures 4 et 5)}
+
+Dans la section précédente, nous avons montré que le résumé est une compétence à la fois scolaire, technique et citoyenne : savoir dire l'essentiel d'un texte en moins de mots, sans le trahir. Mais comment reconnaître cet « essentiel » ? Comment distinguer, dans une pièce de théâtre comme \emph{Le Lion et la Perle} de Wole Soyinka, ce qui est argument majeur de ce qui est ornement ? C'est précisément ici que la langue française devient un outil d'analyse. Les figures d'amplification (hyperbole, gradation) agissent comme des \cle{signaux} : elles éclairent les moments forts du texte. La lexicologie (lexique commun, lexique spécialisé, néologismes) nous apprend ensuite à \cle{reformuler} : remplacer les termes trop particuliers par des termes généraux. Cette section fournit donc la boîte à outils linguistique indispensable avant d'aborder la technique de réduction proprement dite.
+
+\courssub{Lecture méthodique 4 : la scène de la séduction et le retour de Baroka}
+
+\courssub{Rappel du contexte de la pièce}
+
+\emph{Le Lion et la Perle} (1963) met en scène le village d'Ilujinle, au Nigeria. Deux hommes se disputent Sidi, la « perle » du village, devenue célèbre depuis que ses photos ont paru dans un magazine : \cle{Lakunle}, le jeune instituteur moderniste qui refuse de payer la dot, et \cle{Baroka}, le Baalé (chef) du village, surnommé le « Lion », âgé de soixante-deux ans mais redoutablement rusé. La lecture méthodique 4 porte sur la scène où Baroka, ayant fait courir le bruit de son impuissance, attire Sidi dans son palais et la séduit par la parole. Cette scène est un sommet d'\cle{éloquence} : Baroka déploie une rhétorique de l'exagération qui écrase littéralement les arguments de Lakunle.
+
+\courssub{Observation : deux styles de parole opposés}
+
+Lisons attentivement les répliques des deux rivaux. Lakunle parle en intellectuel : il accumule les mots anglais, les projets abstraits, les promesses de modernité (« \emph{bush-school} », routes, voitures). Baroka, lui, parle en chef : il exagère, il vante, il déploie des images grandioses (la machine à imprimer les timbres, la force du Lion, la beauté incomparable de Sidi). L'observation du texte révèle un fait mesurable : les figures d'amplification ne sont pas réparties également entre les personnages.
+
+\begin{exemplebox}[Comptage des figures d'amplification dans la scène de séduction]
+Dans la scène étudiée (lecture méthodique 4), un relevé rigoureux donne environ \cle{12 hyperboles} dans les répliques de Baroka contre seulement \cle{3} dans celles de Lakunle. Cette statistique n'est pas anodine : elle indique que le centre de gravité argumentatif de la scène est Baroka. Pour le résumé, cela signifie que la victoire rhétorique du Baalé est une \textbf{idée essentielle} à conserver, tandis que les tirades de Lakunle peuvent être fortement réduites.
+\end{exemplebox}
+
+\courssub{L'hyperbole : exagérer pour frapper l'esprit}
+
+\courssub{Intuition}
+
+Quand un élève dit : « J'ai un \emph{tonneau} de devoirs ce soir », personne ne le croit littéralement, mais tout le monde comprend qu'il est débordé. L'exagération volontaire et invraisemblable est un procédé quotidien du langage. Le théâtre, art de la parole publique, en fait un usage systématique.
+
+\begin{definition}[L'hyperbole]
+L'\cle{hyperbole} est une figure d'amplification qui consiste à \textbf{exagérer la réalité au-delà du vraisemblable} pour frapper l'esprit, susciter une émotion (admiration, rire, pitié) ou souligner une qualité. Exemple : « Il a une voix de tonnerre » ; « Sidi est plus belle que toutes les femmes du monde ».
+\end{definition}
+
+\courssub{Formation de l'hyperbole}
+
+L'hyperbole n'est pas un mot magique : elle repose sur des procédés grammaticaux identifiables, qu'il faut savoir repérer à l'examen.
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Procédé} & \textbf{Explication} & \textbf{Exemple} \\
+\hline
+Adverbes de quantité & \emph{très, extrêmement, infiniment, terriblement} poussés à l'extrême & « infiniment plus sage que les livres » \\
+\hline
+Superlatifs & \emph{le plus, la meilleure, le plus grand} absolus & « la plus belle perle du pays » \\
+\hline
+Comparaisons démesurées & comparer à ce qui dépasse l'humain & « une voix de tonnerre », « une force de lion » \\
+\hline
+Méga-nombres & chiffres impossibles ou symboliques & « mille femmes », « cent épouses » \\
+\hline
+Vocabulaire de l'absolu & \emph{jamais, toujours, unique, éternel} & « personne ne l'égale, jamais » \\
+\hline
+\end{tabularx}
+\end{center}
+
+\courssub{Effets de sens}
+
+Une figure ne s'identifie pas pour elle-même : il faut toujours dire \textbf{à quoi elle sert}. L'hyperbole produit trois grands effets :
+
+\begin{itemize}
+\item l'\cle{admiration} : Baroka vante la beauté de Sidi en termes excessifs pour la flatter et la conquérir ;
+\item le \cle{ridicule} : les exagérations de Lakunle sur le progrès (il promet à Sidi une vie de ville irréaliste) le rendent naïf et prétentieux aux yeux du spectateur ;
+\item l'\cle{ironie} : Baroka exagère sa propre faiblesse (« je suis un vieillard fini ») pour mieux piéger Sidi : l'hyperbole inverse devient une ruse.
+\end{itemize}
+
+\begin{exemplebox}[Hyperboles chez les deux rivaux]
+\textbf{Chez Baroka} : lorsqu'il déclare que la machine à imprimer les timbres portera le visage de Sidi « sur chaque lettre du pays », il transforme la jeune fille en icône nationale : hyperbole de flatterie, instrument de séduction. \textbf{Chez Lakunle} : lorsqu'il affirme que dans un an ou deux, Ilujinle aura « des routes, des voitures, le progrès partout », l'exagération temporelle rend ses promesses invraisemblables : hyperbole qui le ridiculise.
+\end{exemplebox}
+
+\courssub{La gradation : l'art de l'emballement et de l'apaisement}
+
+\courssub{Intuition et définition}
+
+Écoutez un vendeur au marché de Mokolo : « Ce tissu est beau, il est solide, il est rare, il est \emph{unique} ! » Chaque mot monte d'un cran. C'est la gradation.
+
+\begin{definition}[La gradation]
+La \cle{gradation} est une figure d'amplification qui dispose plusieurs termes (mots, groupes de mots, propositions) dans un \textbf{ordre croissant ou décroissant d'intensité}. On distingue :
+\begin{itemize}
+\item la \textbf{gradation ascendante} : l'intensité monte (« Il parle, il crie, il hurle ») ;
+\item la \textbf{gradation descendante} : l'intensité descend (« Il est riche, aisé, presque pauvre »).
+\end{itemize}
+\end{definition}
+
+\courssub{Structure et connecteurs}
+
+La gradation repose sur une \cle{structure énumérative} : au moins trois termes coordonnés ou juxtaposés. Les \cle{connecteurs} typiques sont : \emph{et, puis, même, surtout, enfin, voire}. Le dernier terme, placé en position de force, porte le sens principal.
+
+\begin{exemplebox}[Gradations dans la pièce]
+\textbf{Gradation ascendante} : quand Sadiku et les villageoises racontent la gloire de Sidi, la renommée s'étend « du village, à la ville, jusqu'à la capitale » : l'emballement géographique mime la célébrité croissante de la « perle ». \textbf{Gradation descendante} : quand Baroka feint le déclin de sa virilité, il se dit « fatigué, usé, fini » : l'affaissement progressif des termes produit un effet d'\cle{apaisement} qui désarme la méfiance de Sidi.
+\end{exemplebox}
+
+\courssub{Effets de sens}
+
+La gradation ascendante crée un effet d'\cle{emballement} : elle entraîne le lecteur ou l'auditeur vers un sommet (enthousiasme, colère, éloge). La gradation descendante crée un effet d'\cle{apaisement} ou de chute (découragement feint, dérision). Au théâtre, ces deux mouvements rythment les tirades et révèlent la stratégie du locuteur.
+
+\begin{popfigure}
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style={concept, font=\small}, root concept/.append style={concept color=popblue, font=\small\bfseries}, level 1/.append style={level distance=3.4cm, sibling angle=90}, level 2/.append style={level distance=2.4cm, sibling angle=50}]
+\node[concept color=popblue, text=white]{Figures d'amplification dans \emph{Le Lion et la Perle}}
+  child[concept color=poporange]{ node {Hyperbole} 
+      child { node[concept color=poporangeL, text=popdark] {« voix de tonnerre »} }
+      child { node[concept color=poporangeL, text=popdark] {« la plus belle perle du pays »} } }
+  child[concept color=popgreen]{ node {Gradation} 
+      child { node[concept color=popgreenL, text=popdark] {ascendante : « village, ville, capitale »} }
+      child { node[concept color=popgreenL, text=popdark] {descendante : « fatigué, usé, fini »} } }
+  child[concept color=poppurple]{ node {Accumulation} 
+      child { node[concept color=poppurpleL, text=popdark] {listes de promesses de Lakunle : routes, voitures, écoles} } }
+  child[concept color=poppink]{ node {Anaphore} 
+      child { node[concept color=poppinkL, text=popdark] {reprises rythmées dans les chants et tirades} } };
+\end{tikzpicture}
+\legende{Carte mentale des figures d'amplification : chaque figure est rattachée à un exemple repéré dans la pièce. Ces quatre figures signalent les passages à forte valeur argumentative.}
+\end{popfigure}
+
+\begin{propriete}[Figures d'amplification et sélection des idées essentielles]
+Dans un texte argumentatif ou théâtral, les figures d'amplification \textbf{signalent les arguments majeurs} ou participent de la \textbf{caractérisation des personnages}. Conséquence pour la contraction de texte : on ne supprime pas ces passages, on les \textbf{reformule}. Exemple : au lieu de citer l'hyperbole de Baroka, on écrira dans le résumé : « Baroka, excessivement vaniteux et habile, flatte Sidi avec une exagération calculée pour la séduire. » La figure disparaît, l'idée essentielle demeure.
+\end{propriete}
+
+\courssub{Lexicologie : lexique commun et lexique spécialisé}
+
+\courssub{Définitions}
+
+\begin{definition}[Lexique commun et lexique spécialisé]
+Le \cle{lexique commun} est l'ensemble des mots de la langue courante, compris et employés par tous les locuteurs (\emph{manger, village, beau, parler}). Le \cle{lexique spécialisé} est l'ensemble des termes propres à un domaine, un métier, une science ou une culture, compris seulement par les initiés (ex. : \emph{didascalie, acte, tirade} pour le théâtre ; \emph{Baalé, Sango} pour la culture yoruba ; \emph{district officer} pour l'administration coloniale).
+\end{definition}
+
+\courssub{Repérage dans la pièce}
+
+\emph{Le Lion et la Perle} mêle trois lexiques spécialisés, qu'il faut savoir classer :
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Champ lexical} & \textbf{Exemples dans la pièce} & \textbf{Reformulation possible (lexique commun)} \\
+\hline
+Théâtre & didascalie, scène, tirade, réplique & indications de mise en scène, longue parole, réponse \\
+\hline
+Culture yoruba & Baalé, Sango, dot, vin de palme & chef du village, dieu du tonnerre, prix payé pour épouser une femme, boisson traditionnelle \\
+\hline
+Administration coloniale / anglais nigérian & district officer, \emph{bush-school}, magazine & administrateur colonial, école de brousse, revue illustrée \\
+\hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Ne pas confondre les réalités culturelles yoruba]
+Dans la pièce, \cle{Sango} est le \textbf{dieu yoruba du tonnerre}, auquel Baroka est comparé ; ce n'est pas une boisson. La boisson traditionnelle que Baroka offre à Sidi est le \textbf{vin de palme}. Dans un résumé, confondre les deux serait une erreur de compréhension du texte, sanctionnée à l'examen : la reformulation suppose d'abord une lecture exacte.
+\end{attention}
+
+\courssub{Les néologismes : des mots neufs pour un monde neuf}
+
+\courssub{Définition et mécanismes}
+
+\begin{definition}[Le néologisme]
+Un \cle{néologisme} est un mot nouveau, ou un mot ancien employé avec un sens nouveau, créé pour nommer une réalité récente ou pour produire un effet stylistique. Les principaux mécanismes de formation sont :
+\begin{itemize}
+\item l'\textbf{emprunt} : mot pris à une autre langue (\emph{week-end}, \emph{bush-school}) ;
+\item la \textbf{dérivation} : mot formé par préfixe ou suffixe (\emph{débrouillard} à partir de \emph{se débrouiller}) ;
+\item la \textbf{composition} : assemblage de deux mots (\emph{porte-monnaie}, \emph{prison-graduate}) ;
+\item le \textbf{sigle} : initiales devenues mot (\emph{ONU}, \emph{MINESEC}).
+\end{itemize}
+\end{definition}
+
+\courssub{Néologismes dans la pièce et dans le français camerounais}
+
+Soyinka, écrivant en anglais nigérian, forge des composés expressifs que la traduction conserve souvent : \emph{bush-school} (« école de brousse ») et \emph{prison-graduate} (« diplômé de prison »), insulte ironique désignant quelqu'un qui a fait ses études en détention. Ces mots-valises caractérisent le discours hybride de Lakunle, coincé entre deux cultures. Dans le français courant du Cameroun, on observe le même phénomène : \emph{débrouillard} (personne ingénieuse qui survit par ses propres moyens), \emph{mbenguiste}, ou les expressions calquées comme « appeler un chat un chat » (dire les choses franchement). Ces créations prouvent que la langue est vivante, mais elles posent un problème précis au résumé.
+
+\begin{popfigure}
+\begin{tikzpicture}[scale=0.9]
+\draw[thick, popblue] (-2.2,0) circle (2.6);
+\draw[thick, poporange] (2.2,0) circle (2.6);
+\draw[thick, popgreen] (0,2.4) circle (2.2);
+\node[popblue, font=\small\bfseries] at (-3.6,1.4) {Lexique commun};
+\node[poporange, font=\small\bfseries] at (3.6,1.4) {Lexique spécialisé};
+\node[popgreen!60!black, font=\small\bfseries] at (0,4.6) {Néologismes};
+\node[font=\footnotesize, text width=2.2cm, align=center] at (-2.9,-0.6) {manger, beau, village, parler};
+\node[font=\footnotesize, text width=2.6cm, align=center] at (3.0,-0.6) {didascalie, Baalé, Sango, district officer};
+\node[font=\footnotesize, text width=2.4cm, align=center] at (0,2.2) {\emph{bush-school}, débrouillard};
+\node[font=\footnotesize, text width=2.6cm, align=center] at (0,0.1) {zone de reformulation : terme générique};
+\end{tikzpicture}
+\legende{Diagramme de Venn des trois ensembles lexicaux. L'intersection centrale correspond aux mots qu'un résumé doit traiter avec soin : les néologismes et termes spécialisés y sont remplacés par des termes du lexique commun.}
+\end{popfigure}
+
+\courssub{Application à la contraction : repérer l'essentiel, reformuler juste}
+
+Nous pouvons maintenant relier ces connaissances linguistiques à notre objectif : le résumé. Deux gestes techniques en découlent.
+
+\textbf{Premier geste : sélectionner.} Les figures d'amplification sont des balises. Là où Baroka hyperbolise et gradue, là se trouve l'enjeu de la scène (la conquête de Sidi, la ruse du Lion). Le résumé doit donc conserver l'\emph{idée} portée par ces figures, en sacrifiant leur forme.
+
+\textbf{Second geste : reformuler.} Le résumé s'écrit dans un français clair et soutenu, accessible à tout lecteur. Les termes spécialisés et néologismes doivent donc être généralisés.
+
+\begin{methode}[Reformuler un lexique spécialisé en trois étapes]
+\begin{enumerate}
+\item \textbf{Identifier} le terme spécialisé ou le néologisme dans la phrase à résumer (ex. : \emph{Baalé}).
+\item \textbf{Déterminer son hyperonyme}, c'est-à-dire le terme générique qui le contient (ex. : \emph{Baalé} $\rightarrow$ « chef du village » ; \emph{vin de palme} $\rightarrow$ « boisson traditionnelle »).
+\item \textbf{Vérifier la conformité} au registre soutenu : la phrase reformulée doit rester correcte, neutre et fluide (ex. : « Baroka offre à Sidi une boisson traditionnelle »).
+\end{enumerate}
+\end{methode}
+
+\begin{attention}[Pièges fréquents dans le résumé]
+Deux erreurs reviennent souvent dans les copies. \textbf{Première erreur} : conserver les néologismes ou termes culturels (\emph{bush-school}, \emph{Sango}) sans explication ni mise en italique, ce qui rend le résumé obscur pour le lecteur. \textbf{Seconde erreur} : les remplacer par des approximations fausses (traduire \emph{Baalé} par « roi » alors qu'il s'agit d'un chef de village, ou prendre \emph{Sango} pour une boisson alors qu'il s'agit du dieu du tonnerre). \textbf{Solution} : généraliser (« dieu du tonnerre », « chef du village », « boisson locale ») ou, si le terme est vraiment incontournable, le conserver entre guillemets avec une brève explication.
+\end{attention}
+
+\begin{exoresolu}[Reformuler un passage chargé de figures et de lexique spécialisé]
+\textbf{Énoncé.} Voici une phrase inspirée de la scène de séduction : « Le Baalé, ce Lion à la voix de tonnerre, véritable Sango parmi les hommes, offre à Sidi du vin de palme et lui promet que son visage, mille fois plus beau que celui de toutes les femmes, brillera sur chaque timbre du pays, dans chaque ville, dans chaque village, jusque dans la plus petite case. » Reformulez cette phrase en une phrase de résumé, en lexique commun, sans figure d'amplification.
+\tcblower
+\textbf{Solution détaillée.} Étape 1 : je repère les marques à traiter : \emph{Baalé} (lexique spécialisé yoruba), \emph{Sango} (lexique spécialisé : dieu du tonnerre), \emph{vin de palme} (terme culturel), « voix de tonnerre » (hyperbole), « mille fois plus beau » (hyperbole), « chaque timbre, chaque ville, chaque village, la plus petite case » (gradation descendante). Étape 2 : je remplace chaque terme par son hyperonyme et je supprime les exagérations en gardant l'idée : le chef, puissant et flatteur, promet à Sidi une célébrité nationale. Étape 3 : rédaction au registre soutenu. \textbf{Résumé} : « Le chef du village, comparant sa puissance à celle du dieu du tonnerre, séduit Sidi en lui offrant une boisson traditionnelle et en lui promettant que son portrait, diffusé sur les timbres, la rendra célèbre dans tout le pays. » L'idée essentielle (la ruse flatteuse de Baroka) est conservée ; les figures et le lexique spécialisé ont disparu.
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la section]
+\begin{itemize}
+\item L'\cle{hyperbole} exagère au-delà du vraisemblable (adverbes de quantité, superlatifs, comparaisons démesurées) ; la \cle{gradation} ordonne les termes par intensité croissante ou décroissante.
+\item Ces figures signalent les arguments forts : on les repère, on les reformule, on ne les recopie pas.
+\item Le \cle{lexique commun} s'oppose au \cle{lexique spécialisé} (théâtre, culture yoruba, administration coloniale) ; les \cle{néologismes} (emprunt, dérivation, composition, sigle) enrichissent la langue mais doivent être généralisés dans un résumé.
+\item Méthode de reformulation : identifier le terme, trouver l'hyperonyme, vérifier le registre soutenu.
+\end{itemize}
+\end{aretenir}
+
+\begin{exercice}[Entraînement au repérage et à la reformulation]
+1. Dans la lecture méthodique 4, relevez trois hyperboles de Baroka et précisez pour chacune l'effet de sens (admiration, ridicule ou ironie). 2. Classez les mots suivants dans un tableau à deux colonnes « lexique commun / lexique spécialisé » : \emph{tirade, manger, Baalé, beau, didascalie, village}. 3. Reformulez en une phrase de résumé : « Lakunle, ce \emph{prison-graduate} de la modernité, promet à Sidi des routes, des voitures, des écoles, un paradis sur terre, et cela dans un an, dans six mois, demain peut-être. »
+\end{exercice}
+
+\begin{corrige}[Exercice : repérage et reformulation]
+1. Exemples attendus : la promesse des timbres (admiration calculée, flatterie) ; l'éloge de la beauté de Sidi « plus belle que toutes les femmes » (admiration hyperbolique) ; l'aveu feint d'impuissance « vieillard fini » (ironie, ruse). 2. Lexique commun : \emph{manger, beau, village}. Lexique spécialisé : \emph{tirade, didascalie} (théâtre), \emph{Baalé} (culture yoruba). 3. Reformulation possible : « Lakunle, que son expérience de la prison a endurci, fait à Sidi des promesses de modernité exagérées et irréalistes. » On note la suppression de la gradation temporelle (« un an, six mois, demain »), remplacée par l'idée d'urgence irréaliste, et la mise entre guillemets ou la paraphrase du néologisme.
+\end{corrige}
+
+Ces outils langagiers maîtrisés, nous disposons désormais des moyens de reconnaître les idées fortes et de les exprimer autrement. La section suivante mettra ces acquis au service de la méthodologie complète de la contraction : analyse de la structure argumentative et techniques de réduction.
+
+\coursec{Méthodologie de la contraction : Structure argumentative et Techniques de réduction (Séances 3, 6, 9)}
+
+Dans la section précédente, nous avons appris à \emph{lire finement} : repérer l'hyperbole et la gradation chez Baroka, distinguer le lexique commun du lexique spécialisé, identifier les néologismes. Ces outils servent à comprendre \emph{comment} un texte dit les choses. Nous passons maintenant à l'opération inverse : dire \emph{la même chose en beaucoup moins de mots}. C'est toute la difficulté du résumé, exercice phare du Probatoire et du Baccalauréat technique : il faut avoir compris le texte dans ses moindres nuances pour pouvoir le contracter sans le trahir. Cette section vous donne la méthode complète, en trois temps : analyser la structure argumentative, appliquer les trois techniques de réduction, contrôler le résultat par le calcul du taux de compression.
+
+\courssub{Analyser la structure argumentative du texte support}
+
+\textbf{L'intuition.} Imaginez un arbre : le tronc porte tout, les branches portent les feuilles, les feuilles ne servent qu'à décorer et à capter la lumière. Un texte argumentatif est construit pareil : une \cle{thèse} (le tronc), des \cle{arguments} (les branches), des \cle{exemples} et illustrations (les feuilles). Résumer un texte, c'est garder le tronc et les branches, et sacrifier la plupart des feuilles. Celui qui résume sans avoir repéré cette architecture coupe au hasard : il risque de scier une branche maîtresse et de garder des feuilles.
+
+\begin{definition}[Structure argumentative d'un texte]
+Un texte argumentatif est organisé autour de quatre éléments :
+\begin{itemize}
+\item la \cle{thèse} : l'idée principale que l'auteur défend (parfois une thèse rejetée, que l'auteur combat d'abord) ;
+\item les \cle{arguments} : les raisons logiques qui justifient la thèse ;
+\item les \cle{exemples} : les faits, anecdotes, citations qui illustrent chaque argument ;
+\item la \cle{conclusion} : le point d'arrivée, qui reformule la thèse ou ouvre une perspective.
+\end{itemize}
+Un texte bien construit peut aussi contenir un \cle{contre-argument} : une objection que l'auteur anticipe pour mieux la réfuter.
+\end{definition}
+
+\textbf{Observation sur notre texte support.} Prenons un extrait critique du \emph{Lion et la Perle} de Wole Soyinka : « Baroka, le Baale d'Ilujinle, refuse le progrès par orgueil. En effet, il a détourné la voie ferrée de son village. Par exemple, il a soudoyé le géomètre pour que les rails passent ailleurs. De plus, il se moque ouvertement des manières modernes de Lakunle. Certes, il prétend défendre la tradition. Mais en réalité, il ne protège que son propre pouvoir. Baroka est donc un conservateur habile, non un sage. »
+
+Numérotons les idées : (1) thèse annoncée : Baroka refuse le progrès par orgueil ; (2) argument 1 : il a détourné la voie ferrée ; (3) exemple : le soudoiement du géomètre ; (4) argument 2 : il ridiculise le modernisme ; (5) contre-argument concédé : « certes, il prétend défendre la tradition » ; (6) réfutation : « il ne protège que son pouvoir » ; (7) conclusion : « conservateur habile, non un sage ». Le résumé devra conserver 1, 2, 4, 6, 7 et pourra supprimer 3 et 5 (l'exemple et la concession, qui sont de l'habillage).
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[
+  grow=down,
+  level distance=1.15cm,
+  sibling distance=4.6cm,
+  every node/.style={font=\small, align=center, rounded corners=2pt, draw, inner sep=3pt},
+  these/.style={fill=popgreenL, draw=popgreen, thick},
+  arg/.style={fill=poporangeL, draw=poporange},
+  ex/.style={fill=poppinkL, draw=poppink},
+  edge from parent/.style={draw=popmuted, -{Stealth[length=2mm]}}
+]
+\node[these, align=center]{THÈSE\\ \emph{(conserver)}}
+  child { node[arg, align=center]{Argument 1\\ \emph{(conserver, réduit)}}
+    child { node[ex, align=center]{Exemple 1\\ \emph{(supprimer)}} }
+  }
+  child { node[arg, align=center]{Argument 2\\ \emph{(conserver, réduit)}}
+    child { node[ex, align=center]{Exemple 2\\ \emph{(supprimer)}} }
+  }
+  child { node[ex, align=center]{Contre-argument\\ \emph{(supprimer ou fondre)}} }
+  child { node[these, align=center]{CONCLUSION\\ \emph{(conserver)}} };
+\end{tikzpicture}
+\end{center}
+\legende{Schéma heuristique de la structure argumentative type. Code couleur : vert = éléments à conserver intégralement (thèse, conclusion) ; orange = éléments à conserver mais à réduire (arguments) ; rose = éléments à supprimer ou à fondre (exemples, illustrations, contre-argument mineur).}
+\end{popfigure}
+
+\begin{aretenir}[Règle d'or de la sélection]
+Dans un résumé, on conserve la \cle{thèse}, les \cle{arguments} et la \cle{conclusion} ; on supprime les \cle{exemples}, les anecdotes, les citations, les comparaisons ornementales et les répétitions. Le résumé est le squelette du texte, pas sa chair.
+\end{aretenir}
+
+\courssub{Les trois techniques de réduction}
+
+Une fois le plan dégagé, il faut réduire la matière. Trois techniques complémentaires, à combiner, permettent d'atteindre le quart du texte sans en perdre le sens.
+
+\textbf{Technique 1 : la suppression (les coupures).}
+
+\begin{definition}[Suppression]
+La \cle{suppression} consiste à éliminer purement et simplement les éléments non essentiels : exemples et illustrations, répétitions et paraphrases, détails descriptifs, commentaires personnels de l'auteur, connecteurs devenus inutiles (« en effet », « par exemple », « de plus » disparaissent souvent avec ce qu'ils introduisaient).
+\end{definition}
+
+\begin{exemplebox}[Coupures sur une phrase du corpus]
+Texte : « Baroka, ce vieux lion rusé, aux nombreuses épouses, au palais vaste et ombragé, a, il faut bien le reconnaître, habilement soudoyé le géomètre de la compagnie ferroviaire. »\\
+Résumé : « Baroka a soudoyé le géomètre. »\\
+Coupés : les expansions descriptives (« ce vieux lion rusé, aux nombreuses épouses, au palais vaste et ombragé »), le commentaire de l'auteur (« il faut bien le reconnaître »), l'adverbe de manière redondant (« habilement », déjà contenu dans « soudoyer »).
+\end{exemplebox}
+
+\textbf{Technique 2 : la généralisation (l'intégration).}
+
+\begin{definition}[Généralisation]
+La \cle{généralisation} consiste à remplacer une énumération de termes précis par leur \cle{hyperonyme} (le mot générique qui les englobe), ou à regrouper plusieurs phrases en une seule idée plus large.
+\end{definition}
+
+\begin{exemplebox}[De l'énumération à l'hyperonyme]
+« Les villageois apportèrent des ignames, du maïs, du manioc et des plantains au palais du Baale. » $\rightarrow$ « Les villageois apportèrent des vivres de base au Baale. »\\
+Autre cas : « Sidi se pavane. Sidi refuse l'offre de Lakunle. Sidi exige le prix de la dot. » $\rightarrow$ « Sidi, vaniteuse, rejette Lakunle en exigeant la dot. » (trois phrases regroupées en une).
+\end{exemplebox}
+
+\textbf{Technique 3 : la substitution (reformulation lexicale et syntaxique).}
+
+\begin{definition}[Substitution]
+La \cle{substitution} consiste à remplacer un mot ou une tournure par un équivalent plus court ou plus dense : synonyme (« redouter » pour « avoir très peur de »), antonyme préfixé (« inutile » pour « qui ne sert à rien »), ou transformation syntaxique : passage de la voix passive à l'active, fusion de propositions subordonnées, et surtout \cle{nominalisation}.
+\end{definition}
+
+\begin{definition}[La nominalisation (transposition)]
+La \cle{nominalisation} consiste à transformer un verbe ou une proposition entière en groupe nominal. Exemple : « Baroka trompe Sidi » (construction verbale) $\rightarrow$ « la tromperie de Baroka envers Sidi » (construction nominale). Le gain est double : économie de mots et style technique, plus impersonnel, donc parfaitement adapté au résumé.
+\end{definition}
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[font=\small]
+\node[draw=popblue, fill=popblueL, rounded corners=3pt, inner sep=5pt, align=center] (a) at (0,3) {Phrase complète\\ « Baroka a détourné le train »};
+\node[draw=popgreen, fill=popgreenL, rounded corners=3pt, inner sep=5pt, align=center] (b) at (9,3) {Nominalisation\\ « le détournement du train par Baroka »};
+\draw[-{Stealth[length=2.5mm]}, very thick, popgreen] (a) -- (b) node[midway, above, font=\footnotesize]{verbe $\rightarrow$ nom};
+\node[draw=popblue, fill=popblueL, rounded corners=3pt, inner sep=5pt, align=center] (c) at (0,1.5) {Subordonnée\\ « parce qu'il craignait le progrès »};
+\node[draw=popgreen, fill=popgreenL, rounded corners=3pt, inner sep=5pt, align=center] (d) at (9,1.5) {Participiale / GN\\ « par crainte du progrès »};
+\draw[-{Stealth[length=2.5mm]}, very thick, popgreen] (c) -- (d) node[midway, above, font=\footnotesize]{conjonction + verbe $\rightarrow$ préposition + nom};
+\node[draw=popblue, fill=popblueL, rounded corners=3pt, inner sep=5pt, align=center] (e) at (0,0) {Coordination\\ « il rit et il se moque et il insulte »};
+\node[draw=popgreen, fill=popgreenL, rounded corners=3pt, inner sep=5pt, align=center] (f) at (9,0) {Énumération nominale\\ « ses rires, ses moqueries, ses insultes »};
+\draw[-{Stealth[length=2.5mm]}, very thick, popgreen] (e) -- (f) node[midway, above, font=\footnotesize]{verbes coordonnés $\rightarrow$ noms énumérés};
+\end{tikzpicture}
+\end{center}
+\legende{Tableau de conversion des techniques de réduction syntaxique : à gauche, la forme développée (à réduire) ; à droite, la forme contractée (à produire dans le résumé).}
+\end{popfigure}
+
+\courssub{Gérer l'énonciation : neutraliser le ton}
+
+Le résumé n'est pas seulement plus court : il est plus \emph{neutre}. Vous n'êtes pas l'auteur du texte ; vous en rendez compte. Toute trace de subjectivité personnelle doit donc être effacée.
+
+\begin{propriete}[Règles de neutralisation de l'énonciation]
+\begin{enumerate}
+\item Le « je » et le « nous » de l'auteur disparaissent : « Je soutiens que Baroka est un tyran » $\rightarrow$ « L'auteur soutient que Baroka est un tyran » ou « Baroka est présenté comme un tyran ».
+\item Le discours direct passe au discours indirect : « Sidi cria : "Jamais sans la dot !" » $\rightarrow$ « Sidi refusa tout mariage sans dot. »
+\item Les tournures personnelles deviennent impersonnelles : « Il faut que le village change » $\rightarrow$ « Il est nécessaire que le village change » ou « le village doit changer ».
+\item Le ton polémique ou ironique est aplani : « Ce ridicule instituteur » $\rightarrow$ « l'instituteur ».
+\end{enumerate}
+\end{propriete}
+
+\begin{attention}[Danger : la sur-généralisation]
+Généraliser ne veut pas dire déformer. Remplacer « Baroka utilise la ruse et la tradition pour conserver son pouvoir » par « Baroka est méchant » est une \cle{faute de résumé} : la nuance argumentative (les moyens : ruse et tradition ; le but : le pouvoir) a disparu. Le résumé doit rendre compte de la \emph{logique interne} du texte, pas la remplacer par un jugement simpliste. Toute idée du résumé doit pouvoir être retrouvée dans le texte source.
+\end{attention}
+
+\courssub{La méthode complète et le contrôle chiffré}
+
+\begin{methode}[Le traitement de l'information par blocs]
+\begin{enumerate}
+\item \textbf{Numéroter} les paragraphes du texte source (P1, P2, P3...).
+\item \textbf{Titrer} chaque paragraphe : formuler en quelques mots son idée force (c'est déjà un mini-résumé du bloc).
+\item \textbf{Construire le plan détaillé} : assembler les titres pour faire apparaître thèse, arguments, conclusion.
+\item \textbf{Rédiger le résumé} en suivant ce plan, bloc par bloc, en appliquant les trois techniques : suppression des exemples et répétitions, généralisation des énumérations, substitution (nominalisations, synonymes, fusions de propositions).
+\item \textbf{Compter les mots} et vérifier le taux de compression ; \textbf{relire} pour contrôler la neutralité du ton et la fidélité au sens.
+\end{enumerate}
+\end{methode}
+
+\begin{propriete}[Calcul du taux de compression]
+Le taux de compression mesure l'efficacité de la contraction :
+\[ \text{Taux} = \frac{\text{nombre de mots du résumé}}{\text{nombre de mots du texte original}} \times 100 \]
+Au Probatoire et au Baccalauréat technique, la cible est d'environ $25\,\% \pm 10\,\%$ : le résumé doit représenter environ le quart du texte source.
+\end{propriete}
+
+\begin{exemplebox}[Étalonnage chiffré]
+Texte source : 385 mots. Résumé cible : $385 \times 0{,}25 \approx 96$ mots (25 \%). Marge tolérée : de 86 à 106 mots. Tout résumé inférieur à 80 mots (sur-contraction, perte d'idées) ou supérieur à 115 mots (simple recopie abrégée) est sanctionné. Autre cas d'école : un texte de 200 mots doit donner un résumé d'environ 50 mots.
+\end{exemplebox}
+
+\begin{exoresolu}[Résumé d'un paragraphe argumentatif (200 mots $\rightarrow$ 50 mots)]
+\textbf{Énoncé.} Résumez en environ 50 mots le passage suivant (200 mots) : « Je pense personnellement que Lakunle, l'instituteur du village, représente un modernisme superficiel et, franchement, assez ridicule. En effet, il veut moderniser Ilujinle, mais il ne comprend rien à la culture de son propre peuple. Par exemple, il refuse de payer la dot pour épouser Sidi, alors que cette coutume, aussi discutable soit-elle, structure toute la vie sociale du village, les mariages, les alliances entre familles, la solidarité entre générations. De plus, il récite des mots anglais savants — "romantic", "progress", "civilization" — sans jamais les appliquer concrètement à la vie quotidienne : il ne construit ni école nouvelle, ni dispensaire, ni puits. Certes, son intention de libérer les femmes est louable. Mais comment peut-on réformer une société que l'on méprise ? On ne bâtit rien sur le mépris. Lakunle est donc un bavard impuissant : son modernisme n'est qu'un vernis, une coquille vide, un masque emprunté à l'Occident, et c'est précisément pour cela que Sidi, la perle du village, finit par lui préférer le vieux Baroka, qui, lui, au moins, connaît et maîtrise les règles du jeu traditionnel. »
+\tcblower
+\textbf{Solution détaillée.} Étape 1 — plan du bloc : thèse (Lakunle = modernisme superficiel) ; argument 1 (il méprise la culture, ex. de la dot) ; argument 2 (mots sans actes, ex. des réalisations) ; contre-argument (intention louable) ; réfutation (on ne bâtit pas sur le mépris) ; conclusion (Sidi préfère Baroka). Étape 2 — coupures : les exemples chiffrés (école, dispensaire, puits), l'énumération anglaise, les métaphores redondantes (« vernis, coquille vide, masque » : on n'en garde qu'une ou on généralise), le commentaire « franchement, assez ridicule ». Étape 3 — rédaction neutralisée :\\
+« Selon l'auteur, Lakunle incarne un modernisme superficiel : ignorant de la culture de son peuple, il refuse la dot et accumule les discours sans actes. Malgré une intention louable de libération des femmes, son mépris de la tradition le rend impuissant : Sidi lui préfère Baroka, maître des règles traditionnelles. » (50 mots.) Vérification : $50/200 \times 100 = 25\,\%$. Ton neutre, aucun « je », logique (thèse + 2 arguments + conclusion) préservée.
+\end{exoresolu}
+
+\begin{attention}[Pièges fréquents à l'examen]
+\begin{itemize}
+\item Recopier des phrases entières du texte : c'est de la citation déguisée, non une reformulation — le correcteur le repère immédiatement.
+\item Ajouter son avis (« je trouve que l'auteur a raison ») : le résumé est neutre, il ne juge pas.
+\item Oublier un argument entier : vérifier le résumé en le comparant au plan, bloc par bloc.
+\item Laisser des exemples « parce qu'ils sont jolis » : tout exemple est coupé, sans exception.
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[La nominalisation, langue du technicien]
+La nominalisation est la marque distinctive de l'écrit technique et administratif camerounais : rapports d'inspection, procès-verbaux de réunion, notes de service, comptes rendus de chantier. « L'équipe a réparé la pompe et le chef a validé les travaux » devient, dans un rapport : « Réparation de la pompe et validation des travaux par le chef de chantier ». Maîtriser la contraction de texte au lycée, c'est donc s'entraîner dès maintenant à l'écriture professionnelle qui vous attend dans les entreprises et les administrations.
+\end{savaistu}
+
+\begin{exercice}[À vous de jouer]
+Texte de 200 mots distribué en classe (extrait critique sur Sidi). 1) Numérotez et titre les paragraphes. 2) Construisez le plan (thèse, arguments, conclusion). 3) Rédigez un résumé de 50 mots $\pm$ 5. 4) Calculez votre taux de compression et justifiez vos coupures par écrit.
+\end{exercice}
+
+\begin{corrige}[Exercice — grille d'évaluation attendue]
+Le corrigé dépend du texte choisi, mais la grille est constante : plan exact (3 points) ; suppression de tous les exemples (2 points) ; au moins deux nominalisations correctes (2 points) ; énonciation neutre, sans « je » (1 point) ; taux de compression entre 20 \% et 30 \% (1 point) ; fidélité au sens, aucune idée ajoutée (1 point). La remédiation de la séance 14 reprendra les productions faibles sur chacun de ces critères.
+\end{corrige}
+
+En résumé de cette section : on ne réduit bien que ce qu'on a d'abord structuré. Le plan (thèse, arguments, exemples, conclusion) guide la sélection ; les trois techniques (suppression, généralisation, substitution) assurent la réduction ; la neutralisation de l'énonciation garantit le ton ; le calcul du taux de compression valide le résultat. La section suivante vous fera passer du geste méthodique à la pratique réelle : l'atelier de rédaction, de la lecture méthodique n° 6 jusqu'à la confrontation des productions lors des exposés.
+
+\coursec{Atelier de rédaction et confrontation : De la Lecture 6 aux Exposés 1 \& 2}
+
+Dans la section précédente, nous avons posé les fondations théoriques de la contraction de texte : repérer la structure argumentative d'un texte (thèse, arguments, exemples), puis appliquer les trois techniques de réduction que sont la \cle{suppression}, la \cle{généralisation} et la \cle{reformulation}. Mais une méthode ne vaut que si elle est pratiquée. Cette quatrième section est donc un véritable \emph{atelier} : nous allons rédiger ensemble un résumé complet, nous auto-évaluer avec une grille critériée, confronter nos productions lors des exposés oraux, puis construire collectivement une version de référence. C'est ici que le savoir devient savoir-faire, compétence exigée au Probatoire et au Baccalauréat technique.
+
+\courssub{Rédaction guidée en classe : contraction du dénouement (Lecture 6)}
+
+\textbf{Le texte de travail.} La lecture méthodique n°6 du \emph{Lion et la Perle} de Wole Soyinka nous a conduit au dénouement de la pièce : malgré les manœuvres de Lakunle, le jeune instituteur « moderniste », c'est Baroka, le vieux chef du village d'Ilujinlé, qui épouse finalement Sidi, la belle jeune fille rendue célèbre par les photographies du magazine. La tradition triomphe de la modernité superficielle. Cet extrait, riche et dense, est un excellent terrain d'entraînement car il mêle narration, dialogue et argumentation implicite.
+
+\textbf{Consigne de travail (type épreuve).} « Résumez cet extrait de 385 mots en un quart de sa longueur, soit environ 96 mots (tolérance : plus ou moins 10 mots). Vous indiquerez le nombre de mots à la fin de votre copie. »
+
+\begin{methode}[Application pas-à-pas des trois techniques de réduction]
+\begin{enumerate}
+\item \textbf{Lecture analytique et découpage.} Relire l'extrait en soulignant la thèse implicite (le triomphe de la tradition incarnée par Baroka) et en numérotant les arguments : (1) l'astuce de Baroka qui feint l'impuissance pour attendrir Sidi ; (2) la naïveté de Sidi qui se laisse prendre ; (3) l'échec final de Lakunle, dont la « modernité » n'est qu'un vernis.
+\item \textbf{Suppression.} Rayer tout ce qui est redondant : les descriptions physiques répétées de Sidi, les répliques de la foule, les interjections, les exemples secondaires (la danse, les chants de louange). On supprime les \emph{illustrations}, on garde les \emph{idées}.
+\item \textbf{Généralisation.} Remplacer les énumérations par un terme générique : « les tambours, les danses, les chants et les offrandes » devient « les célébrations traditionnelles ».
+\item \textbf{Reformulation.} Traduire les longues phrases du texte en phrases brèves avec ses propres mots : « Baroka, rusé, simula la faiblesse pour éveiller la pitié de Sidi » au lieu de citer le dialogue.
+\item \textbf{Rédaction et enchaînement.} Rédiger un paragraphe unique, lié par des connecteurs, sans aucune phrase copiée du texte.
+\item \textbf{Comptage et relecture.} Compter les mots, vérifier la fidélité au sens, corriger la langue.
+\end{enumerate}
+\end{methode}
+
+\begin{exoresolu}[Un résumé guidé du dénouement]
+Énoncé : à partir de l'extrait étudié (385 mots), rédigez un résumé d'environ 96 mots.
+\tcblower
+Solution détaillée. Après application des trois techniques, voici une production possible :
+
+\emph{« Dans le dénouement de la pièce, Baroka, le chef d'Ilujinlé, triomphe de son rival Lakunle et épouse Sidi. Par ruse, il a feint d'être devenu impuissant afin d'attirer la jeune fille dans son palais et d'éveiller sa compassion. Naïve et flattée, Sidi se laisse séduire, tandis que Lakunle, malgré ses discours sur la modernité et le progrès, arrive trop tard et échoue. Ainsi, la tradition, incarnée par la ruse et l'expérience du vieux Lion, l'emporte sur une modernité superficielle, et le village célèbre ce mariage selon les coutumes ancestrales. »}
+
+Comptage : 92 mots. Vérification : la thèse (triomphe de la tradition) est présente, les trois arguments sont conservés, aucun exemple secondaire n'a survécu, aucune phrase n'est copiée, les connecteurs (« par ruse », « tandis que », « ainsi ») assurent l'enchaînement. Le résumé est conforme.
+\end{exoresolu}
+
+\begin{methode}[La relecture « à froid » en trois passes]
+Après la rédaction, faites une pause de cinq minutes : détournez les yeux de la copie. Cette distance permet de retrouver un regard neuf. Puis procédez à trois relectures distinctes, une seule question à la fois :
+\begin{enumerate}
+\item \textbf{Sens global.} Ai-je tout compris à ce que j'ai écrit ? Mon résumé se lit-il seul, sans le texte original ? Une personne étrangère à la pièce comprendrait-elle l'essentiel ?
+\item \textbf{Fidélité.} Comparez texte source et résumé : manque-t-il une idée essentielle (la thèse, un argument majeur) ? Ai-je ajouté une idée absente du texte (jugement personnel, interprétation) ? Tout ajout est une faute grave de contraction.
+\item \textbf{Forme.} Comptez précisément les mots. Vérifiez les accords (sujet-verbe, adjectifs), la ponctuation, et la présence de connecteurs logiques. Une seule faute d'accord peut coûter un point.
+\end{enumerate}
+\end{methode}
+
+\courssub{Auto-évaluation guidée : la grille critériée}
+
+Avant de remettre sa copie ou de la présenter, chaque élève évalue sa propre production à l'aide d'une grille identique à celle utilisée par le correcteur. Cette démarche développe l'autonomie et l'esprit critique : on n'attend pas la note pour savoir ce qui va et ce qui cloche. La grille comporte quatre critères, notés sur un total de 20 points.
+
+\begin{popfigure}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Critère} & \textbf{Insatisfaisant} & \textbf{Fragile} & \textbf{Satisfaisant} & \textbf{Excellent} \\
+\hline
+\textbf{Contenu : idées essentielles (6 pts)} & Thèse absente, arguments majeurs omis (0--2) & Thèse présente mais un argument manquant (3--4) & Thèse et arguments présents, hiérarchie correcte (5) & Toutes les idées essentielles, fidélité parfaite, aucun ajout (6) \\
+\hline
+\rowcolor{popcream} \textbf{Structure : enchaînement (4 pts)} & Suite de phrases sans liens (0--1) & Connecteurs rares ou mal employés (2) & Progression logique claire, connecteurs variés (3) & Enchaînement fluide, paragraphe unique cohérent (4) \\
+\hline
+\textbf{Langue : reformulation (5 pts)} & Phrases copiées du texte, fautes nombreuses (0--2) & Reformulation partielle, quelques fautes (3) & Reformulation réelle, langue quasi correcte (4) & Reformulation totale, langue irréprochable (5) \\
+\hline
+\rowcolor{popcream} \textbf{Consignes : longueur (5 pts)} & Hors tolérance, mots non comptés (0--2) & Écart de plus de 15 mots (3) & Tolérance respectée, nombre indiqué (4) & Longueur exacte, présentation soignée (5) \\
+\hline
+\end{tabularx}
+\end{center}
+\legende{Grille d'auto-évaluation critériée du résumé (total : 20 points). L'élève s'attribue un niveau par critère, puis justifie oralement sa notation devant le groupe.}
+\end{popfigure}
+
+\begin{attention}[Le piège de la copie mot à mot]
+Le correcteur repère immédiatement les phrases recopiées du texte source : elles sonnent différemment du reste de la copie. Une phrase copiée annule le bénéfice de la reformulation sur tout le critère « Langue ». Mieux vaut une phrase simple et personnelle qu'une belle phrase volée. De même, ne copiez jamais les exemples : ils sont par définition supprimables.
+\end{attention}
+
+\begin{exemplebox}[Comparatif chiffré de trois productions sur le même texte (385 mots)]
+Trois élèves résument le même extrait, avec la consigne « environ 96 mots ».
+\begin{itemize}
+\item \textbf{Élève A : 120 mots.} Trop long. En analysant sa copie, on découvre qu'il a conservé l'exemple de la danse de Sidi et une description du palais de Baroka. Ces 28 mots d'exemples auraient dû disparaître : la suppression est incomplète.
+\item \textbf{Élève B : 60 mots.} Trop court. Il a supprimé non seulement les exemples, mais aussi l'argument de la ruse de Baroka ; pire, la thèse du triomphe de la tradition n'apparaît nulle part. La généralisation a été poussée jusqu'à vider le texte de son sens.
+\item \textbf{Élève C : 92 mots.} Conforme. Thèse en tête, trois arguments enchaînés par des connecteurs, aucun exemple, aucune phrase copiée. Note obtenue avec la grille : 17/20.
+\end{itemize}
+Leçon à retenir : la longueur est un \emph{indice} de qualité. Un écart important signale presque toujours une erreur de méthode, soit dans la suppression (trop long), soit dans la conservation des idées essentielles (trop court).
+\end{exemplebox}
+
+\courssub{Organisation des Exposés 1 \& 2 : la confrontation des productions}
+
+\textbf{Dispositif.} La classe est répartie en groupes de quatre ou cinq élèves. Chaque groupe compare les résumés de ses membres, en choisit un (ou en fusionne plusieurs) et prépare une présentation orale de cinq minutes au tableau. L'enseignant anime ensuite un débat contradictoire : chaque choix doit être \emph{justifié}, jamais simplement affirmé.
+
+\begin{attention}[Le piège de l'exposé oral : lire au lieu de présenter]
+L'erreur la plus fréquente est de lire son résumé mot à mot, yeux rivés sur la feuille. Or l'exposé ne consiste pas à réciter le résultat, mais à \cle{justifier la démarche}. Le bon exposé dit : « J'ai supprimé l'exemple de la danse parce qu'il illustrait l'argument 2, que j'ai conservé ; j'ai généralisé "tambours, chants et offrandes" en "célébrations traditionnelles" ; j'ai reformulé le dialogue de Baroka en une phrase déclarative. » Préparez donc deux documents distincts : le résumé lui-même, et la liste de vos choix techniques avec leurs raisons.
+\end{attention}
+
+\textbf{Questions-types du débat contradictoire.} L'enseignant relance chaque groupe : « Pourquoi ce mot plutôt que celui du texte ? Pourquoi cette coupure ? Que perdez-vous en supprimant cette phrase ? Ce connecteur est-il le bon : "ainsi" marque la conséquence, or ici n'avez-vous pas une opposition ? » Ce questionnement oblige à verbaliser la méthode et transforme chaque exposé en leçon collective.
+
+\courssub{Amélioration collaborative : construire la version de référence}
+
+Après les exposés, la classe construit au tableau une \cle{version de référence} unique, en intégrant les meilleures propositions de chaque groupe : l'introduction du groupe 1, la formulation de la ruse du groupe 3, la chute du groupe 2. Cette version collective n'est pas la copie d'un seul : c'est la preuve que la contraction obéit à des règles objectives sur lesquelles des lecteurs différents peuvent converger.
+
+\begin{popfigure}
+\begin{center}
+\begin{tikzpicture}[scale=0.92, every node/.style={transform shape}]
+% Cadre version élève
+\draw[thick, popdark, rounded corners] (0,0) rectangle (7.2,6.4);
+\node[anchor=north west, font=\bfseries\small, text=popdark] at (0.15,6.3) {Version élève annotée};
+% Lignes surlignées (idées gardées)
+\fill[popgreenL, rounded corners=1pt] (0.3,5.1) rectangle (6.9,5.5);
+\node[anchor=west, font=\scriptsize] at (0.4,5.3) {Baroka triomphe de Lakunle et épouse Sidi.};
+\fill[popgreenL, rounded corners=1pt] (0.3,4.3) rectangle (5.9,4.7);
+\node[anchor=west, font=\scriptsize] at (0.4,4.5) {Par ruse, il feint l'impuissance...};
+% Ligne barrée (idée supprimée)
+\node[anchor=west, font=\scriptsize, text=popmuted] at (0.4,3.7) {Sidi danse, vêtue de pagnes éclatants,};
+\draw[thick, poppink] (0.35,3.7) -- (5.2,3.7);
+\node[anchor=west, font=\scriptsize, text=popmuted] at (0.4,3.1) {sous les tambours et les chants du village.};
+\draw[thick, poppink] (0.35,3.1) -- (5.6,3.1);
+% Reformulation avec flèche
+\node[anchor=west, font=\scriptsize] at (0.4,2.3) {\emph{Texte :} « Je suis un vieux lion sans force... »};
+\draw[-{Stealth}, very thick, poporange] (3.6,2.0) -- (3.6,1.35);
+\node[anchor=west, font=\scriptsize, text=poporange] at (0.4,1.0) {\emph{Résumé :} Baroka simule la faiblesse.};
+% Légende interne
+\fill[popgreenL] (0.35,0.25) rectangle (0.75,0.5); \node[anchor=west, font=\scriptsize] at (0.85,0.38) {idée gardée};
+\draw[thick, poppink] (2.6,0.38) -- (3.1,0.38); \node[anchor=west, font=\scriptsize] at (3.2,0.38) {idée supprimée};
+\draw[-{Stealth}, thick, poporange] (5.4,0.38) -- (5.9,0.38); \node[anchor=west, font=\scriptsize] at (6.0,0.38) {reformulé};
+% Cadre version de référence
+\draw[thick, popblue, rounded corners] (8.1,0) rectangle (14.6,6.4);
+\node[anchor=north west, font=\bfseries\small, text=popblue] at (8.25,6.3) {Version de référence collective};
+\node[anchor=north west, font=\scriptsize, text width=6cm, align=flush left] at (8.35,5.7) {Dans le dénouement, Baroka triomphe de son rival Lakunle et épouse Sidi. Par ruse, il feint l'impuissance pour éveiller sa compassion. Naïve, Sidi se laisse séduire, tandis que Lakunle échoue malgré ses discours \emph{modernistes}. Ainsi, la tradition l'emporte sur une modernité superficielle, célébrée selon les coutumes ancestrales.};
+\node[anchor=west, font=\scriptsize\itshape, text=popmuted] at (8.35,1.6) {92 mots --- néologisme « moderniste » en italique};
+\end{tikzpicture}
+\end{center}
+\legende{Capture simulée de l'atelier : à gauche, la version d'un élève annotée (surlignage vert = idées conservées, barré rose = passages supprimés, flèche orange = reformulation d'un dialogue) ; à droite, la version de référence construite collectivement au tableau.}
+\end{popfigure}
+
+\textbf{Intégration du lexique étudié en Section 2.} La version finale doit tenir compte des travaux de lexicologie menés dans les lectures précédentes. Trois cas se présentent :
+\begin{itemize}
+\item \textbf{Lexique commun} : il passe sans problème dans le résumé (« village », « mariage », « ruse »).
+\item \textbf{Lexique spécialisé} (termes de la culture yoruba, vocabulaire du théâtre) : on le généralise si possible (« le Bale » devient « le chef du village »), sauf s'il est porteur de sens essentiel.
+\item \textbf{Néologismes} (mots forgés par les personnages, comme les anglicismes de Lakunle ou le terme « moderniste ») : trois traitements possibles au choix --- le mettre en \emph{italique} pour signaler qu'on le reprend sans l'adopter, le remplacer par un terme généralisé (« ses idées modernes »), ou simuler une note de bas de page explicative si le mot est indispensable à la compréhension.
+\end{itemize}
+
+\begin{aretenir}[Boîte à outils : les connecteurs du résumé]
+Connecteurs indispensables pour enchaîner les idées d'un résumé :
+\begin{itemize}
+\item Ouverture : \emph{Dans un premier temps}, \emph{D'abord}, \emph{L'auteur montre que} ;
+\item Progression : \emph{Ensuite}, \emph{Puis}, \emph{Par ailleurs}, \emph{De plus} ;
+\item Opposition : \emph{Tandis que}, \emph{En revanche}, \emph{Cependant} ;
+\item Conclusion : \emph{Ainsi}, \emph{En définitive}, \emph{Finalement}.
+\end{itemize}
+Connecteurs et formules \textbf{interdits} dans un résumé : \emph{Je pense que}, \emph{À mon avis}, \emph{Selon moi}, \emph{C'est intéressant de noter que}, \emph{J'ai aimé ce passage}. Le résumé est un exercice de \cle{fidélité} : votre personne, vos goûts et vos jugements n'ont pas leur place dans la contraction. Vous êtes le porte-parole du texte, pas son critique.
+\end{aretenir}
+
+\courssub{Rédaction individuelle finale : simulation d'examen}
+
+L'atelier se clôt par une épreuve blanche individuelle, dans les conditions réelles du Probatoire et du Baccalauréat technique : un texte argumentatif inconnu, une durée totale de 1 h 30, aucun document autorisé.
+
+\begin{methode}[Gérer les 90 minutes de l'épreuve blanche]
+\begin{enumerate}
+\item \textbf{Lecture et analyse (25 min)} : deux lectures du texte, soulignage de la thèse, numérotation des arguments, repérage des exemples à supprimer.
+\item \textbf{Plan de contraction au brouillon (10 min)} : liste des idées essentielles dans l'ordre, choix des généralisations, calcul du nombre de mots visé (un quart du texte, tolérance de ±10 mots, soit 10 \% de la longueur cible).
+\item \textbf{Rédaction (35 min)} : un paragraphe par grande étape du texte, connecteurs variés, reformulation systématique.
+\item \textbf{Relecture « à froid » (20 min)} : les trois passes (sens global, fidélité, forme), comptage précis des mots, inscription du total en fin de copie, auto-notation avec la grille critériée.
+\end{enumerate}
+\end{methode}
+
+\begin{exercice}[À vous de jouer]
+On vous remet un extrait argumentatif de 400 mots sur un sujet de société (par exemple : « Le téléphone portable à l'école : outil ou obstacle ? »).
+\begin{enumerate}
+\item Repérez la thèse et les trois arguments principaux ; entourez les exemples.
+\item Rédigez un résumé de 100 mots (tolérance : 90 à 110 mots) en appliquant les trois techniques de réduction.
+\item Auto-évaluez votre production avec la grille critériée et notez-vous sur 20.
+\item En groupe de quatre, comparez vos versions et rédigez ensemble une version de référence, en justifiant chaque choix.
+\end{enumerate}
+\end{exercice}
+
+\begin{corrige}[Exercice : éléments de réussite]
+\begin{enumerate}
+\item La thèse se trouve généralement dans l'introduction ou la conclusion de l'extrait ; les arguments sont annoncés par des connecteurs du texte source ; les exemples sont introduits par « par exemple », « ainsi », « c'est le cas de ».
+\item Un bon résumé contient : la thèse (environ 20 mots), chaque argument reformulé (environ 25 mots chacun), une phrase de conclusion (environ 15 mots). Aucun exemple, aucune citation, aucune appréciation personnelle.
+\item Notation honnête : un écart de longueur supérieur à 10 mots doit vous coûter des points sur le critère « Consignes » ; une phrase copiée vous fait perdre le critère « Langue ».
+\item La version de référence du groupe doit être accompagnée d'une justification orale de chaque suppression, généralisation et reformulation, comme lors des exposés.
+\end{enumerate}
+\end{corrige}
+
+\begin{aretenir}[L'essentiel de l'atelier]
+La contraction de texte se maîtrise par la pratique répétée et la confrontation. Retenez la démarche complète : rédaction guidée pas-à-pas (suppression, généralisation, reformulation), relecture « à froid » en trois passes, auto-évaluation avec la grille sur 20 points, exposé oral qui \emph{justifie} les choix au lieu de lire le résultat, construction collective d'une version de référence, puis épreuve blanche chronométrée. Cette méthode, appliquée régulièrement, garantit la réussite à l'épreuve de résumé du Probatoire et du Baccalauréat technique.
+\end{aretenir}
+
+\coursec{Synthèse transversale : Dissertation, Compte-rendu et Remédiation (Séances 10-14)}
+
+Après avoir confronté et amélioré vos productions lors des exposés oraux (Section 4), nous entrons dans la phase décisive de consolidation. Les séances 10 à 14 ne sont pas une simple révision : elles visent à \textbf{transférer} la compétence de contraction hors du cadre scolaire strict pour en faire un outil professionnel (dissertation, rapports techniques, veille informationnelle) et à \textbf{certifier} vos acquis via une simulation d'examen probatoire. C'est ici que la « reformulation des idées essentielles » devient une preuve d'autonomie intellectuelle.
+
+\courssub{Le résumé, propédeutique à la dissertation (Séance 10)}
+
+\begin{aretenir}[Lien Contraction / Dissertation]
+Au Probatoire comme au Baccalauréat technique, le sujet de dissertation est souvent un texte court (citation, paragraphe argumentatif) ou une commande complexe. La première étape invisible mais notée de la dissertation est la \textbf{contraction du sujet} : le reformuler pour en extraire la \cle{problématique}, les \cle{termes clés} à définir et les \cle{tensions} à résoudre. Qui ne sait pas résumer le sujet ne peut pas le traiter.
+\end{aretenir}
+
+\begin{methode}[Analyser un sujet de dissertation par la contraction]
+\textbf{Étape 1 : Lecture active.} Souligner les mots-clés, les connecteurs logiques (\emph{donc, cependant, parce que}), les modalisateurs (\emph{il faut, peut-on}).
+\textbf{Étape 2 : Découpage en unités de sens.} Identifier la thèse défendue, les arguments, les concessions, la conclusion.
+\textbf{Étape 3 : Reformulation synthétique (1 phrase).} Écrire : « Ce sujet invite à discuter l'idée selon laquelle [Thèse], en montrant que [Argument 1] mais que [Argument 2/Concession], pour conclure que [Problématique ouverte]. »
+\textbf{Étape 4 : Extraction du plan.} Les arguments reformulés deviennent les grandes parties (I, II) ; la tension devient la transition.
+\end{methode}
+
+\begin{exoresolu}[Exercice : Contraction de sujet type Bac Tech]
+\textbf{Sujet :} « La technologie moderne, en libérant l'homme des tâches pénibles, lui a-t-elle offert la liberté ou l'a-t-elle asservi à de nouveaux besoins ? » (Type Bac Tech, Séries STI/STT).
+
+\textbf{Contraction en phrase-problème (brouillon) :}
+Le sujet pose l'ambivalence de la technologie : facteur de libération (suppression de la peine) et facteur d'aliénation (création de besoins artificiels, dépendance). Il demande d'arbitrer entre liberté gagnée et servitude nouvelle.
+
+\textbf{Phrase-problème finale (à écrire sur la copie) :}
+\emph{« Dans quelle mesure le progrès technique, s'il affranchit l'homme de la contrainte naturelle, ne le soumet-il pas paradoxalement à l'empire de la technique elle-même ? »}
+
+\textbf{Plan issu de la contraction :}
+I. La technique comme libératrice : maîtrise de la nature, gain de temps, accès au confort (Thèse).
+II. La technique comme nouvelle servitude : aliénation au travail taylorien/numérique, consumérisme, dépendance énergétique/numérique (Antithèse).
+III. Vers une liberté responsable : éthique de la technique, low-tech, appropriation critique par l'ingénieur/citoyen (Synthèse).
+\tcblower
+\textbf{Analyse de la correction :} La contraction a permis d'identifier le couple conceptuel \textbf{Libération / Asservissement} et le glissement sémantique \emph{besoins $\to$ dépendance}. La phrase-problème intègre la dialectique (paradoxe) exigée en dissertation technique.
+\end{exoresolu}
+
+\courssub{Le Compte-rendu de lecture : « Le Lion et la Perle » (Séances 11-12)}
+
+L'épreuve orale ou écrite du Probatoire exige souvent un compte-rendu d'œuvre intégrale. Pour \emph{Le Lion et la Perle} de Wole Soyinka, la contraction n'est pas un exercice à part : elle structure le rapport de lecture. Le résumé de l'intrigue est une \cle{contraction narrative} (chronologie, causalité) ; l'étude thématique est une \cle{contraction argumentative} (thèse/arguments/textes).
+
+\begin{methode}[Structure type du Compte-rendu d'œuvre au Bac]
+1. \textbf{En-tête (Fiche signalétique) :} Auteur, Titre, Genre (Pièce de théâtre / Comédie satirique), Date de publication (1963), Éditeur, Collection.
+2. \textbf{Contexte :} Biographie rapide (Wole Soyinka, Prix Nobel 1986, Nigeria, engagement politique), Mouvement (Théâtre africain d'expression anglaise, synthèse tradition/modernité), Genèse de l'œuvre.
+3. \textbf{Résumé de l'intrigue (Max 15 lignes, Présent de narration) :} \textbf{Contraction narrative.} Situation initiale (Ilujinlé, Baroka vs Lakunle pour Sidi) $\to$ Péripéties (Le photographe, la ruse de Baroka, la danse du développement) $\to$ Dénouement (Sidi choisit Baroka, triomphe de la tradition vivante).
+4. \textbf{Étude thématique (2-3 thèmes majeurs) :} \textbf{Contraction argumentative.} Pour chaque thème : Énoncé $\to$ Argument textuel (citation/scène) $\to$ Analyse (figures de style, portée).
+   \begin{itemize}
+   \item Thème 1 : Tradition vs Modernité (Baroka vs Lakunle, non pas statique mais dynamique).
+   \item Thème 2 : La condition féminine / Le pouvoir de la séduction (Sidi, Sadiku, la « perle »).
+   \item Thème 3 : Le langage comme pouvoir (Proverbes, rhétorique yoruba vs anglais scolaire de Lakunle).
+   \end{itemize}
+5. \textbf{Portraits principaux (Fonction dramatique) :} Baroka (Le Lion, rusé, conservateur moderne), Lakunle (Le maître d'école, moderne ridicule, stérile), Sidi (La Perle, beauté vaniteuse puis lucide), Sadiku (L'aînée, gardienne de la tradition, manipulée/manipulatrice).
+6. \textbf{Conclusion / Ouverture / Appréciation personnelle justifiée :} Actualité du débat (développement durable, identité culturelle), qualité littéraire (humour, musique, proverbes), avis personnel \emph{argumenté}.
+\end{methode}
+
+\begin{popfigure}
+\begin{tikzpicture}[
+    node distance=1.2cm and 1.5cm,
+    box/.style={draw=popblue, thick, rounded corners, fill=popblue!10, text width=3.2cm, align=center, minimum height=1.8cm, font=\small},
+    arrow/.style={-Stealth, thick, popdark},
+    labelbox/.style={draw=poporange, fill=poporange!15, rounded corners, font=\scriptsize, align=center, text width=2.5cm}
+]
+% Nœuds principaux
+\node[box, align=center] (titre){1. Fiche Signalétique\\ \& Contexte};
+\node[box, below=of titre, align=center] (resume){2. Résumé de l'intrigue\\(Contraction Narrative)};
+\node[box, below=of resume, align=center] (themes){3. Étude Thématique\\(Contraction Argumentative)};
+\node[box, below=of themes, align=center] (persos){4. Portraits\\ \& Fonctions};
+\node[box, below=of persos, align=center] (conclu){5. Conclusion\\ \& Appréciation};
+% Flèches principales
+\draw[arrow] (titre) -- (resume);
+\draw[arrow] (resume) -- (themes);
+\draw[arrow] (themes) -- (persos);
+\draw[arrow] (persos) -- (conclu);
+% Annotations "Contraction" sur les côtés
+\node[labelbox, left=0.5cm of resume, align=center] (cn){Sélection événements\\ Causalité chronologique};
+\node[labelbox, right=0.5cm of themes, align=center] (ca){Sélection arguments\\ Hiérarchie thèses};
+\node[labelbox, left=0.5cm of persos, align=center] (cp){Sélection traits\\ Lien fct dramatique};
+\draw[poporange, dashed, thick] (cn.east) -- (resume.west);
+\draw[poporange, dashed, thick] (ca.west) -- (themes.east);
+\draw[poporange, dashed, thick] (cp.east) -- (persos.west);
+% Titre global
+\node[above=0.3cm of titre, font=\bfseries\large, text=popdark] {Architecture du Compte-rendu : Double flux de contraction};
+\end{tikzpicture}
+\legende{Organigramme : Le compte-rendu intègre deux types de contraction. La contraction narrative (intrigue) sert de base factuelle ; la contraction argumentative (thèmes, portraits) construit l'analyse critique.}
+\end{popfigure}
+
+\begin{exemplebox}[Application à « Le Lion et la Perle » - Extrait de contraction narrative (Intrigue)]
+\textbf{Consigne :} Résumer l'intrigue en 10 lignes max (présent de narration).
+\textbf{Production élève (modèle) :}
+À Ilujinlé, le chef Baroka (le Lion) convoite Sidi (la Perle), belle villageoise courtisée aussi par Lakunle, instituteur occidentalisé qui refuse la dot. Un photographe de passage rend Sidi célèbre (images dans un magazine). Baroka, feignant l'impuissance, use de ruse : il invite Sidi à un festin, la séduit par sa verve proverbiale et sa modernité assumée (machine à timbres). Sidi, vaincue, accepte de l'épouser. Lakunle, délaissé, se console en dansant avec une jeune fille. La tradition, loin d'être figée, absorbe la modernité pour mieux régner.
+\end{exemplebox}
+
+\courssub{Remédiation ciblée : Ateliers différenciés (Séance 13)}
+
+\begin{definition}[La Remédiation : Réparation Didactique]
+La remédiation n'est pas une punition ni un « rattrapage » générique. C'est une \textbf{réparation didactique ciblée} : elle repose sur l'analyse fine des erreurs (typologie : \emph{erreur de compréhension globale, erreur de sélection d'idées, maladresse de reformulation/syntaxe, défaut de correction orthographique/grammaticale}) pour proposer \textbf{un exercice unique, court et spécifique} à chaque élève ou groupe de besoins. L'objectif : lever l'obstacle précis avant l'évaluation sommative.
+\end{definition}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Groupe / Besoin} & \textbf{Diagnostic type (Exemples vus en Séances 3-9)} & \textbf{Atelier de remédiation (20 min)} \\ \hline
+\textbf{Groupe A : Sélection} & « Tout semble important », résumé = copie partielle, dépasse 120 mots pour 100 demandés. & \textbf{Exercice « Titrage \& Poubelle » :} Texte 200 mots. 1. Donner un titre à \emph{chaque} paragraphe. 2. Barrer (poubelle) 30\% des phrases (exemples, détails, répétitions). 3. Ne garder que les phrases-titres. \\ \hline
+\textbf{Groupe B : Reformulation} & Phrases collées au texte (plagiat involontaire), syntaxe lourde, verbes faibles, pas de nominalisation. & \textbf{Exercice « Paraphrase Contrainte » :} 5 phrases sources complexes. Consignes : « Réécrivez en 1 phrase simple (Sujet + Verbe + COD) + 1 nominalisation ». Ex: « Baroka trompe Sidi en faisant semblant d'être impotent » $\to$ « La feinte impuissance de Baroka assure sa séduction. » \\ \hline
+\textbf{Groupe C : Gestion Longueur} & « J'ai tout dit mais c'est trop long » ou « C'est trop court, j'ai rien dit ». Pas de repère visuel. & \textbf{Exercice « Étalonnage Visuel » :} Texte source 400 mots $\to$ Cible 100 mots (25\%). 1. Compter mots source (repère : 1 ligne $\approx$ 8-10 mots). 2. Calculer lignes cibles (ex: 12 lignes). 3. Rédiger en \emph{visant} le nombre de lignes (brouillon quadrillé). 4. Compter résultat final. \\ \hline
+\end{tabularx}
+\end{center}
+
+\begin{attention}[Piège de la remédiation : L'effet « Pansement »]
+Ne pas faire « un peu de tout » (dictée + grammaire + résumé) en 20 min. \textbf{Un élève = Un atelier = Un objectif unique.} Si un élève cumule sélection ET reformulation, on traite \textbf{d'abord la sélection} (structure), car reformuler du hors-sujet est inutile. La correction orthographique ne se remédie pas ici (c'est du travail personnel quotidien), sauf si elle empêche la lisibilité du résumé.
+\end{attention}
+
+\courssub{Bilan des savoir-faire : Transfert vers la vie courante et technique (Séances 13-14)}
+
+Le programme MINESEC exige : « \emph{Appliquer les notions de l'unité à des situations concrètes de la vie courante} ». La contraction n'est pas un exercice scolaire décoratif ; c'est une compétence \textbf{transversale} (Compétence 3 du Référentiel : Communiquer).
+
+\begin{experience}[Transfert : Trois situations professionnelles types]
+\textbf{Matériel :} Trois documents authentiques (ou simulés réalistes) : 1. Article \emph{Cameroon Tribune} (300 mots, économie locale). 2. Notice technique / Mode d'emploi (ex: notice pompe hydraulique, 250 mots). 3. Procès-verbal de réunion chantier/entreprise (400 mots).
+\textbf{Protocole :} En groupes de 3 (simulation équipe projet). Chaque groupe reçoit un document.
+\begin{enumerate}
+\item \textbf{Diagnostic :} Identifier le \emph{type} de texte (argumentatif, injonctif/prescriptif, narratif/dialogué) et la \emph{finalité} du résumé (décision, action, archive).
+\item \textbf{Contraction ciblée :}
+  \item Article presse $\to$ \textbf{Brève de veille (3 lignes)} pour directeur : « Hausse cacao +5\% $\to$ relance filière Sud-Ouest. »
+  \item Notice technique $\to$ \textbf{Check-list sécurité (5 points)} pour opérateur : « 1. Vérifier huile. 2. Purger air. 3. Démarrer lent... »
+  \item PV réunion $\to$ \textbf{Tableau de décisions (Colonnes : Décision / Responsable / Échéance)} pour suivi.
+\item \textbf{Restitution orale (1 min/groupe) :} Justifier les choix de sélection (pourquoi cette info ? pourquoi pas celle-là ?).
+\end{enumerate}
+\textbf{Interprétation :} La contraction change de forme selon le \textbf{genre} du texte source et la \textbf{finalité} professionnelle. L'ingénieur/technicien ne fait pas de « résumé scolaire » mais de la \textbf{synthèse opérationnelle}.
+\end{experience}
+
+\begin{exercice}[Entraînement Transfert - Travail Personnel]
+Choisir UN des trois documents ci-dessous et produire la contraction adaptée (format libre, max 1/4 source) :
+1. \textbf{Article :} Extrait éditorial \emph{Cameroon Tribune} sur « Zones Économiques Spéciales : enjeux pour la jeunesse ».
+2. \textbf{Technique :} Fiche de sécurité « Manipulation acide sulfurique concentré » (extrait 150 mots).
+3. \textbf{Administratif :} Compte-rendu de la réunion du Conseil de Classe (extrait décisions orientation).
+\textbf{Critères :} Pertinence sélection (infos vitales conservées), Adaptation format (phrase, liste, tableau), Correction langue.
+\end{exercice}
+
+\courssub{Évaluation sommative finale : Simulation Probatoire (Séance 14)}
+
+Cette séance reproduit \textbf{exactement} les conditions de l'épreuve de Contraction de texte du Probatoire / Baccalauréat Technique (Durée : 1h30 à 2h selon académies, souvent couplée à la dissertation).
+
+\begin{attention}[Règle d'or : La longueur contractuelle ($\pm$10\%)]
+Au Bac, la consigne impose une longueur (ex: « 100 mots environ » ou « 1/4 du texte »).
+\begin{itemize}
+\item \textbf{Respect strict :} Si texte source = 400 mots $\to$ Cible = 100 mots. Fourchette tolérée : \textbf{90 à 110 mots}.
+\item \textbf{Pénalité automatique :} \textbf{-2 points} si hors fourchette (89 ou 111 mots), \textbf{-4 points} si écart $>$ 20\% (ex: 75 ou 130 mots), \textbf{même si le contenu est excellent}.
+\item \textbf{Compétence notée :} L'étalonnage (compter, tailler, reformuler pour ajuster) fait partie de la note. \textbf{Entraînez-vous à viser le nombre de lignes visuel sur brouillon quadrillé.}
+\end{itemize}
+\end{attention}
+
+\begin{savaistu}[Méta-cognition : L'oral du Bac et l'entretien d'embauche]
+Le programme 2026-27 insiste : « \emph{Rédiger et justifier une démarche} ». À l'oral du Probatoire (épreuve orale de français) ou en entretien d'embauche (SONARA, CAMTEL, ENEO, PME du secteur informel), le jury/recruteur ne demande pas seulement le résultat. Il demande : \textbf{« Comment avez-vous procédé pour résumer ce dossier / cette notice / ce rapport ? »}.
+Réponse attendue (méta-langage) : « 1. J'ai lu pour identifier le thème et la structure. 2. J'ai segmenté en unités de sens. 3. J'ai éliminé les illustrations/détails (sélection). 4. J'ai reformulé les idées forces en les nominalisant (condensation). 5. J'ai relu pour corriger et ajuster la longueur (étalonnage). » \textbf{Cette explication vaut des points.}
+\end{savaistu}
+
+\begin{popfigure}
+\begin{tikzpicture}
+\begin{axis}[
+    ybar=5pt,
+    bar width=18pt,
+    width=\linewidth,
+    height=8cm,
+    symbolic x coords={Sélection, Reformulation, Correction/Étallon.},
+    xtick=data,
+    x tick label style={rotate=30, anchor=east, font=\small},
+    ylabel={Nombre d'élèves (sur effectif 35)},
+    ymin=0, ymax=35,
+    ymajorgrids=true,
+    grid style={popline},
+    legend style={at={(0.5,-0.25)}, anchor=north, legend columns=3, font=\footnotesize},
+    nodes near coords,
+    nodes near coords align={vertical},
+    every node near coord/.append style={font=\scriptsize, popdark},
+]
+\addplot[fill=popgreen!70] coordinates {(Sélection, 22) (Reformulation, 18) (Correction/Étallon., 20)};
+\addplot[fill=poporange!70] coordinates {(Sélection, 10) (Reformulation, 12) (Correction/Étallon., 10)};
+\addplot[fill=poppink!70] coordinates {(Sélection, 3) (Reformulation, 5) (Correction/Étallon., 5)};
+\legend{Acquisition (Vert), En cours (Orange), Non acquis (Rouge)}
+\end{axis}
+\end{tikzpicture}
+\legende{Profil de classe prévisionnel post-remédiation (Séance 13). Objectif : Zéro « Non acquis » en Sélection et Correction avant l'évaluation. La Reformulation reste le point dur (transfert vers dissertation).}
+\end{popfigure}
+
+\begin{exoresolu}[Sujet Type Bac Probatoire - Contraction de Texte (Simulation Séance 14)]
+\textbf{TEXTE INÉDIT (Environ 400 mots)}
+\textit{Source : Adaptation d'un rapport technique ONUDI / Banque Mondiale sur l'industrialisation verte au Cameroun.}
+
+\textbf{Texte :}
+Le Cameroun, fort de son potentiel hydroélectrique (second d'Afrique après la RDC) et de ses ressources minières (fer, bauxite, cobalt), ambitionne de devenir une économie émergente à l'horizon 2035. Pourtant, son tissu industriel reste fragile : il ne contribue qu'à 17\% du PIB et emploie moins de 10\% de la population active. La cause structurelle est connue : le coût de l'énergie, bien que décarbonée en production (barrages), reste élevé pour l'industriel à cause des pertes de transport (vétusté du réseau) et de la fiscalité. Paradoxe : le pays exporte de l'électricité vers le Nigéria tandis que ses usines subissent des délestages.
+
+La Stratégie Nationale de Développement (SND30) pose le diagnostic : pas d'industrialisation sans énergie compétitive et fiable. Le projet « Énergie pour l'Industrie » vise à dédier des lignes haute tension directes aux zones économiques spéciales (ZES) de Kribi, Limbé et Ngaoundéré. Mais l'énergie ne fait pas tout. La matière première est exportée brute (grumes, minerais non transformés) par manque d'unités de transformation locale. La fiscalité incitative (exonérations TVA, droits de douane) attire des investisseurs « porte-valises » qui importent des kits d'assemblage plutôt que de créer de la valeur ajoutée. Le contenu local reste marginal.
+
+Face à ce constat, une nouvelle approche émerge : l'\textbf{écologie industrielle}. Il ne s'agit plus seulement de produire « propre » (énergie verte), mais de produire « en boucle » : les déchets de l'usine A (chaleur fatale, scories, CO2) deviennent la ressource de l'usine B (serres agricoles, cimenterie, chimie verte). Le projet pilote de la cimenterie de Figuil, qui utilise des déchets agricoles (balles de riz, coques d'arachide) comme combustible de substitution, réduit son empreinte carbone de 15\% et son coût énergétique de 20\%.
+
+Cependant, la transition exige des compétences techniques nouvelles : maintenance prédictive, gestion des flux matière/énergie, ingénierie de la symbiose industrielle. Le système de formation technique (Lycées techniques, IUT, ENSET) doit pivoter : moins de théorie déconnectée, plus d'alternance en entreprise, modules « économie circulaire » et « efficacité énergétique » intégrés aux BTS et DUT. L'État doit garantir la stabilité réglementaire (code minier, code de l'électricité) pour sécuriser les investissements longs (15-20 ans).
+
+En résumé, l'industrialisation verte camerounaise n'est pas un slogan. C'est une équation à trois inconnues : \textbf{Énergie abordable + Matière transformée localement + Capital humain technique adapté}. Résoudre l'une sans les autres condamne à l'assemblage stérile. L'ingénieur technicien camerounais est la variable d'ajustement principale.
+
+\vspace{0.5cm}
+\textbf{CONSIGNES :}
+\begin{enumerate}
+\item \textbf{Contraction :} Résumer le texte ci-dessus en \textbf{100 mots exactement ($\pm$10\%, soit 90 à 110 mots)}. Vous respecterez la structure argumentative du texte (Diagnostic $\to$ Solutions sectorielles $\to$ Innovation systémique $\to$ Condition formation/État $\to$ Synthèse finale). \textbf{Comptez vos mots et indiquez le total en fin de production.}
+\item \textbf{Question de langue 1 (Figures d'amplification) :} Relever dans le texte \textbf{deux figures d'amplification} (hyperbole, gradation, accumulation...), les citer, les nommer et expliquer leur effet de sens dans le contexte.
+\item \textbf{Question de langue 2 (Lexique spécialisé / Néologismes) :} Identifier \textbf{trois termes relevant du lexique spécialisé (technique/économique)} et \textbf{un néologisme ou mot formé par dérivation/composition récente}. Pour chacun, donner la définition contextuelle.
+\end{enumerate}
+
+\tcblower
+\textbf{CORRECTION TYPE ET BARÈME OFFICIEL MINESEC (Sur 20 points)}
+
+\textbf{1. CONTRACTION (10 points)}
+
+\textbf{Production attendue (Modèle 98 mots) :}
+Le Cameroun, malgré un potentiel hydroélectrique et minier majeur, peine à industrialiser son économie (17\% PIB). Causes : coût énergétique final élevé (pertes réseau, fiscalité), exportation de matières premières brutes et investissements d'assemblage à faible valeur ajoutée. La SND30 mise sur des lignes dédiées aux ZES. L'innovation majeure est l'écologie industrielle : boucler les flux (déchets $\to$ ressources), comme à Figuil (biomasse agricole $\to$ -15\% CO2, -20\% coût). Cela exige une refonte de la formation technique (alternance, économie circulaire) et une stabilité juridique (codes minier, électricité). L'équation gagnante : énergie abordable + transformation locale + capital humain technique compétent.
+
+\textbf{Barème détaillé Contraction (10 pts) :}
+\begin{itemize}
+\item \textbf{Contenu / Sélection des idées essentielles (4 pts) :} 5 idées forces obligatoires : 1. Diagnostic (potentiel vs réalité fragile). 2. Causes (énergie, matière brute, assemblages). 3. Solution infrastructurelle (ZES, lignes dédiées). 4. Solution systémique (écologie industrielle, ex Figuil). 5. Conditions successives (Formation technique adaptée + Stabilité État) + Synthèse finale (équation 3 inconnues). \emph{0,8 pt par idée présente et bien formulée.}
+\item \textbf{Structure / Organisation (2 pts) :} Respect de l'enchaînement logique (Diagnostic $\to$ Causes $\to$ Réponses $\to$ Conditions $\to$ Synthèse). Connecteurs logiques variés et pertinents (\emph{Pourtant, Paradoxe, Mais, Cependant, En résumé}). Pénalité -1 si liste sans liens.
+\item \textbf{Reformulation / Condensation (2 pts) :} Nominalisations (\emph{l'exportation brute, la transformation locale, la refonte}), suppression des métadiscours (\emph{La cause structurelle est connue}), fusion de phrases. Pénalité -1 si phrases collées au texte (plagiat) ou syntaxe défaillante.
+\item \textbf{Longueur / Étalonnage (1 pt) :} \textbf{90-110 mots = 1 pt.} 80-89 ou 111-120 = 0.5pt. $<$80 ou $>$120 = 0 pt (pénalité barème officiel).
+\item \textbf{Correction linguistique (1 pt) :} Orthographe, grammaire, ponctuation. 1 faute = -0.25pt (plafond 1 pt).
+\end{itemize}
+
+\textbf{2. QUESTION DE LANGUE 1 : Figures d'amplification (4 points)}
+
+\begin{itemize}
+\item \textbf{Occurrence 1 :} « \emph{Le Cameroun, fort de son potentiel hydroélectrique (second d'Afrique après la RDC) et de ses ressources minières (fer, bauxite, cobalt), ambitionne...} » $\to$ \textbf{Accumulation (énumération)}. \textbf{Effet :} Insiste sur l'abondance et la diversité des atouts naturels pour renforcer le paradoxe immédiat (richesse potentielle vs pauvreté industrielle réelle).
+\item \textbf{Occurrence 2 :} « \emph{Énergie abordable + Matière transformée localement + Capital humain technique adapté} » (ou « \emph{moins de théorie déconnectée, plus d'alternance...} ») $\to$ \textbf{Gradation (ou Parallélisme/Accumulation structurée)}. \textbf{Effet :} Hiérarchise les trois piliers indissociables de la réussite ; la forme « équation à trois inconnues » + liste finale crée une amplification logique : l'absence d'un seul terme annule le résultat.
+\item \textbf{Autre occurrence possible :} « \emph{exonérations TVA, droits de douane} » (Accumulation) ou « \emph{maintenance prédictive, gestion des flux matière/énergie, ingénierie de la symbiose industrielle} » (Accumulation technique).
+\end{itemize}
+\textbf{Barème :} 2 figures $\times$ (Identification 0,5 pt + Citation 0,5 pt + Nomination 0,5 pt + Explication effet 0,5 pt) = 4 pts.
+
+\textbf{3. QUESTION DE LANGUE 2 : Lexique spécialisé / Néologismes (6 points)}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Terme / Mot} & \textbf{Catégorie} & \textbf{Définition contextuelle} \\ \hline
+\textbf{Valeur ajoutée} & Lexique spécialisé (Économie/Gestion) & Différence entre la valeur du produit fini et le coût des consommations intermédiaires (matières, énergie). Ici : transformer le minerai/bois sur place pour capter cette richesse au lieu de l'exporter brute. \\ \hline
+\textbf{Symbiose industrielle} & Lexique spécialisé (Écologie industrielle / Génie des procédés) & Organisation volontaire d'entreprises distinctes où les déchets/résidus (énergie, matière) de l'une deviennent les ressources de l'autre, imitant les écosystèmes naturels. \\ \hline
+\textbf{Contenu local} & Lexique spécialisé (Politique économique / Droit minier/pétrolier) & Part de la valeur ajoutée, des emplois, des biens et services fournis par des entreprises/ressources nationales dans un projet industriel. Ici : critère pour distinguer investisseur industriel réel et « porte-valises ». \\ \hline
+\textbf{Écologie industrielle} & Néologisme / Composition savante récente (Années 90-2000, Frosch \& Gallopoulos) & Concept scientifique désignant l'approche systémique de l'industrie comme écosystème : optimisation conjointe de l'économie de matière, d'énergie et de la réduction des impacts environnementaux. \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Barème :} 4 items $\times$ (Catégorie justifiée 0,5 pt + Définition contextuelle précise 1 pt) = 6 pts. (Néologisme : accepter « Écologie industrielle » ou « Décarbonée » (participe passé adjectivé récent) ou « Low-tech » si présent).
+
+\vspace{0.3cm}
+\textbf{TOTAL : 20/20}
+
+\end{exoresolu}
+
+\begin{aretenir}[Bilan final de l'Unité « Contraction de texte »]
+Vous maîtrisez désormais la chaîne complète : \textbf{Analyser la structure (argumentative/narrative)} $\to$ \textbf{Sélectionner (titrer, hiérarchiser)} $\to$ \textbf{Condenser (nominaliser, fusionner, prononimaliser)} $\to$ \textbf{Reformuler (style propre, connecteurs)} $\to$ \textbf{Étalonner (compter, tailler)} $\to$ \textbf{Justifier la démarche (méta-cognition)}. Cette compétence est votre « passeport » pour la dissertation, le rapport de stage, la veille technique et l'oral professionnel.
+\end{aretenir}
+
+\newpage
+
+\coursec{Activité d'intégration}
+
+\courssub{Objectifs de l'activité}
+
+Cette activité d'intégration clôt la leçon sur la contraction de texte. Elle demande à l'élève de mobiliser, dans une situation professionnelle simulée, l'ensemble des acquis de la séquence :
+
+\begin{itemize}
+\item \textbf{Réception des textes} : lire méthodiquement un texte argumentatif inédit (repérage du thème, de la thèse, des arguments), en prolongeant les compétences travaillées sur \emph{Le Lion et la Perle}.
+\item \textbf{Langue française} : identifier et nommer les figures d'amplification (\cle{hyperbole}, \cle{gradation}) ; distinguer \cle{lexique commun} et \cle{lexique spécialisé} ; reconnaître un \cle{néologisme}.
+\item \textbf{Production des textes} : repérer la \cle{structure argumentative} d'un texte, appliquer les \cle{techniques de réduction} (suppression, généralisation, condensation) et \cle{reformuler} les idées essentielles dans un résumé conforme à la contrainte de longueur.
+\item \textbf{Savoir-faire transversaux} : rédiger et \textbf{justifier} une démarche (note méta-cognitive), confronter sa production à celle des pairs et l'améliorer.
+\end{itemize}
+
+\begin{aretenir}[Compétence visée]
+Savoir produire, en temps limité et dans des conditions proches de l'examen, un résumé fidèle, clair et correct, et savoir expliquer les choix de réduction et de reformulation opérés. C'est exactement la double exigence de l'épreuve de contraction de texte au Probatoire et au Baccalauréat technique : une production conforme et une démarche maîtrisée.
+\end{aretenir}
+
+\courssub{Situation}
+
+\textbf{Synthèse pour le Chef de Division.}
+
+Vous êtes stagiaire au Ministère de l'Éducation de Base (MINEDUB), à Yaoundé, dans le cadre de votre formation en classe de Première technique. Lundi matin, 8 heures, votre Chef de Division vous convoque : « Le Ministre préside demain une réunion interministérielle sur l'insertion professionnelle des jeunes. Il n'aura qu'\textbf{une minute} pour prendre connaissance de ce rapport. Vous me rédigez pour 15 heures un résumé de \textbf{110 mots} (à 10 \% près, soit entre 99 et 121 mots), accompagné d'une note expliquant vos choix. »
+
+Voici le document remis (environ 450 mots) :
+
+\begin{exemplebox}[Texte à résumer : extrait d'un rapport sur le bilinguisme et l'emploi]
+\textbf{L'impact du bilinguisme sur l'employabilité des jeunes techniciens au Cameroun}
+
+Au Cameroun, pays officiellement bilingue où le français et l'anglais cohabitent avec plus de deux cent cinquante langues nationales, la maîtrise des deux langues officielles est devenue un enjeu économique considérable. Le marché du travail, notamment dans les secteurs techniques, exige désormais des compétences linguistiques que le système éducatif peine encore à garantir uniformément.
+
+Les chiffres sont éloquents. Selon les enquêtes récentes sur l'insertion professionnelle, un jeune technicien bilingue — titulaire d'un CAP, d'un Probatoire ou d'un Baccalauréat technique — trouve un emploi stable en moyenne huit mois après l'obtention de son diplôme, contre dix-huit mois pour son homologue unilingue. Son salaire d'embauche est supérieur de 20 \% à 35 \%. Dans les régions du Littoral et du Centre, où se concentrent les entreprises industrielles et les administrations, la demande de profils bilingues a littéralement explosé : certaines offres d'emploi reçoivent des milliers et des milliers de candidatures, un véritable tsunami de dossiers qui submerge les services de recrutement.
+
+Pourquoi un tel écart ? Les employeurs avancent trois raisons. D'abord, le technicien bilingue peut lire les notices techniques, les catalogues de pièces détachées et les normes internationales, souvent rédigés en anglais. Ensuite, il communique avec les partenaires, les fournisseurs et les clients des deux communautés linguistiques, du Nigeria voisin aux investisseurs de Douala. Enfin, il fait preuve de ce que les recruteurs appellent des « compétences transverses » : adaptabilité, ouverture culturelle, capacité d'apprentissage. L'employabilité — c'est-à-dire l'aptitude durable à trouver et à conserver un emploi — devient ainsi le premier critère de recrutement, avant même l'expérience.
+
+Les obstacles demeurent pourtant immenses, gigantesques, vertigineux : insuffisance des enseignants d'anglais dans les lycées techniques francophones, manque de manuels, faiblesse des programmes de formation continue, inégalités criantes entre les zones urbaines et rurales. À Bafoussam comme à Ngaoundéré, des ateliers entiers renoncent à des marchés faute de personnel capable de rédiger un devis en anglais.
+
+Les recommandations du rapport s'articulent autour de trois axes : renforcer l'enseignement de l'anglais technique dès la classe de Seconde ; développer les passerelles entre établissements francophones et anglophones ; certifier les compétences linguistiques par un examen reconnu par les employeurs. Le coût de ces mesures est estimé à douze milliards de francs CFA sur cinq ans, investissement que les auteurs jugent rentable au regard des gains de productivité attendus.
+
+En conclusion, le bilinguisme n'est plus un luxe scolaire : il est une condition de l'insertion professionnelle et un levier de croissance pour l'économie camerounaise.
+\end{exemplebox}
+
+\courssub{Consignes}
+
+\begin{enumerate}
+\item \textbf{Analyse langagière (sur le texte).} Surlignez ou recopiez : deux \cle{hyperboles}, une \cle{gradation}, cinq termes du \cle{lexique spécialisé} (économie/éducation) et un \cle{néologisme}. Pour chaque élément, nommez précisément le procédé et dites quel effet il produit sur le lecteur.
+\item \textbf{Repérage de la structure.} Relevez la thèse défendue par le rapport, puis classez les paragraphes selon le plan : constat chiffré / explications / obstacles / recommandations / conclusion.
+\item \textbf{Production.} Rédigez le résumé de \textbf{110 mots} ($\pm$ 10 \%), destiné à être lu en une minute en réunion. Respectez les règles du résumé : fidélité à l'auteur, aucune opinion personnelle, aucune citation longue, phrases complètes et articulées, emploi de la troisième personne.
+\item \textbf{Méta-cognition.} Rédigez une note de cinq lignes justifiant vos \textbf{trois principales coupures} (ce que vous avez supprimé et pourquoi) et vos \textbf{deux principales reformulations syntaxiques} (par exemple une nominalisation ou la fusion de deux phrases).
+\item \textbf{Mise en commun.} En plénière, confrontez les résumés, votez la meilleure version « prête pour le Ministre » et analysez collectivement les justifications les plus convaincantes.
+\end{enumerate}
+
+\textbf{Durée} : 1 h 30 en individuel (conditions d'examen), puis 30 minutes de plénière.
+
+\courssub{Ressources à mobiliser}
+
+\begin{aretenir}[Boîte à outils de la contraction]
+\begin{itemize}
+\item \textbf{Figures d'amplification} : l'\cle{hyperbole} exagère pour frapper l'esprit (« un tsunami de dossiers ») ; la \cle{gradation} ordonne des termes d'intensité croissante ou décroissante (« immenses, gigantesques, vertigineux »).
+\item \textbf{Lexique} : le \cle{lexique commun} est compris de tous ; le \cle{lexique spécialisé} appartient à un domaine (ici : « insertion professionnelle », « productivité ») ; le \cle{néologisme} est un mot récent ou d'usage nouveau (« employabilité »).
+\item \textbf{Structure argumentative} : thèse $\rightarrow$ arguments $\rightarrow$ exemples/chiffres $\rightarrow$ conclusion. Le résumé conserve la thèse et les arguments, sacrifie la plupart des exemples.
+\item \textbf{Techniques de réduction} : \emph{suppression} (exemples, répétitions, figures, énumérations), \emph{généralisation} (« à Bafoussam comme à Ngaoundéré » $\rightarrow$ « en province »), \emph{condensation} (une phrase pour deux).
+\item \textbf{Techniques de reformulation} : nominalisation (« il trouve un emploi » $\rightarrow$ « l'accès à l'emploi »), changement de voix, connecteurs logiques (« car », « cependant », « c'est pourquoi »).
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Pièges fréquents]
+Ne recopiez jamais les figures du texte dans le résumé : l'hyperbole et la gradation doivent être \emph{neutralisées} (« un tsunami de dossiers » devient « de très nombreuses candidatures »). Interdiction d'ajouter votre avis (« je pense que... »), de dépasser la fourchette de mots, ou de résumer paragraphe par paragraphe sans hiérarchiser. Comptez vos mots \emph{après} la relecture, pas avant : toute correction peut faire varier le total.
+\end{attention}
+
+\courssub{Démarche et corrigé commenté}
+
+\begin{exoresolu}[Corrigé intégral de l'activité]
+\textbf{Étape 1 — Analyse langagière.}
+
+\emph{Hyperboles} : « la demande de profils bilingues a littéralement explosé » et « un véritable tsunami de dossiers qui submerge les services de recrutement ». Procédé : exagération par image ; effet : dramatiser l'ampleur du phénomène et marquer l'esprit du lecteur. On peut ajouter « des milliers et des milliers de candidatures », amplification par répétition.
+
+\emph{Gradation} : « Les obstacles demeurent pourtant immenses, gigantesques, vertigineux » : trois adjectifs d'intensité croissante qui amplifient la difficulté.
+
+\emph{Lexique spécialisé} (5 termes) : « insertion professionnelle », « marché du travail », « salaire d'embauche », « formation continue », « gains de productivité ». Ces termes appartiennent au champ de l'économie et de l'éducation ; ils signalent que le texte est un rapport technique et non un récit.
+
+\emph{Néologisme} : « employabilité », mot récent formé sur « employé », défini dans le texte lui-même (« aptitude durable à trouver et à conserver un emploi »). On accepte aussi « compétences transverses » comme expression d'usage nouveau.
+
+\textbf{Étape 2 — Structure argumentative.} Thèse : le bilinguisme est devenu une condition de l'employabilité des jeunes techniciens. Plan : §1 constat général ; §2 constat chiffré (8 mois contre 18 mois de recherche d'emploi ; salaire supérieur de 20 \% à 35 \%) ; §3 trois arguments (lecture des notices techniques, communication avec les deux communautés, compétences transverses) ; §4 obstacles ; §5 trois recommandations et coût (douze milliards de francs CFA sur cinq ans) ; §6 conclusion.
+
+\textbf{Étape 3 — Résumé proposé (112 mots).}
+
+« Au Cameroun, la maîtrise du français et de l'anglais conditionne désormais l'insertion des jeunes techniciens : les bilingues accèdent à un emploi stable plus de deux fois plus vite et gagnent nettement plus que les unilingues. Les employeurs apprécient leur capacité à lire des documents techniques en anglais, à communiquer avec des partenaires des deux communautés linguistiques et à faire preuve d'adaptabilité. Cependant, la formation reste insuffisante et inégale, surtout en milieu rural. Le rapport recommande de renforcer l'enseignement de l'anglais technique, de créer des passerelles entre établissements et de certifier les compétences linguistiques, pour un coût de douze milliards de francs CFA sur cinq ans. Le bilinguisme apparaît ainsi comme un levier d'emploi et de croissance. »
+
+(112 mots : conforme à la fourchette 99-121. La formule « plus de deux fois plus vite » traduit fidèlement l'écart du texte : 18 mois contre 8 mois, soit un rapport de 2,25.)
+
+\textbf{Étape 4 — Note de justification (5 lignes).}
+
+\emph{Coupures} : 1) j'ai supprimé les deux hyperboles et la gradation, procédés d'amplification incompatibles avec la neutralité du résumé ; 2) j'ai généralisé les exemples géographiques (Bafoussam, Ngaoundéré, Littoral) en « milieu rural » ; 3) j'ai éliminé les chiffres secondaires (250 langues, 8/18 mois) pour ne garder que l'idée d'écart, sauf le coût des mesures, donnée décisionnelle pour le Ministre.
+
+\emph{Reformulations} : 1) nominalisation : « un jeune technicien bilingue trouve un emploi » devient « les bilingues accèdent à un emploi stable », ce qui condense une phrase entière ; 2) fusion : les trois recommandations du §5 sont resserrées en une seule phrase énumérative introduite par « le rapport recommande ».
+\tcblower
+\textbf{Commentaire de la correction.} La démarche suit l'ordre exigible : comprendre (analyse), hiérarchiser (structure), réduire (résumé), justifier (note). Le résumé modèle conserve la thèse, les trois arguments, les obstacles et les recommandations ; il respecte la contrainte de longueur, la troisième personne et l'absence d'opinion. En plénière, le vote « prête pour le Ministre » doit s'appuyer sur trois critères objectifs : fidélité, économie de mots, clarté de la langue. Les écarts entre productions servent de base à la remédiation : faire compter les mots à voix haute, faire repérer les opinions parasites et les recopies de figures.
+\end{exoresolu}
+
+\courssub{Bilan de l'activité}
+
+Cette simulation professionnelle a permis de vérifier que les savoirs de la leçon ne sont pas des connaissances isolées mais une \textbf{chaîne cohérente} : on ne peut réduire un texte qu'après l'avoir compris (lecture méthodique), on ne peut le reformuler correctement qu'en maîtrisant la langue (figures, lexique, néologismes), et l'on ne peut défendre sa copie qu'en sachant \textbf{justifier sa démarche} — exigence explicite du programme. La situation du stagiaire du MINEDUB montre enfin l'utilité citoyenne et professionnelle du résumé : au Cameroun, techniciens, secrétaires et cadres doivent quotidiennement condenser des rapports pour des décideurs pressés. La confrontation des productions en plénière, suivie du compte rendu et de la remédiation, transforme l'erreur en outil d'apprentissage et prépare directement à l'épreuve de contraction de texte du Probatoire et du Baccalauréat technique.
+
+\newpage
+
+\coursec{Méthodes et exercices résolus}
+
+\courssub{Savoir-faire 1 : Dégager la structure argumentative d'un texte}
+
+\begin{definition}[Texte argumentatif et résumé]
+Un \cle{texte argumentatif} est un texte dans lequel un auteur défend une \cle{thèse} (une position, une opinion) en s'appuyant sur des \cle{arguments} (des raisons) illustrés par des \cle{exemples}. Le \cle{résumé} (ou contraction de texte) consiste à reformuler, avec ses propres mots et en un quart environ de la longueur initiale, les idées essentielles de ce texte, sans rien ajouter ni rien trahir.
+\end{definition}
+
+\begin{methode}[Repérer la structure argumentative d'un texte]
+Pour résumer un texte argumentatif, il faut d'abord comprendre comment il est construit.
+\begin{enumerate}
+\item \textbf{Lire le texte deux fois} : une première lecture pour le sens général, une seconde pour repérer les articulations.
+\item \textbf{Identifier la thèse de l'auteur} : c'est l'idée principale qu'il défend. Elle se trouve souvent au début ou à la fin du texte.
+\item \textbf{Repérer les arguments} : ce sont les raisons qui soutiennent la thèse. Les connecteurs logiques les signalent : \emph{d'abord, ensuite, en effet, car, de plus, enfin}.
+\item \textbf{Repérer les exemples} : ils illustrent les arguments. Attention : dans le résumé, les exemples seront supprimés ou réduits à une courte allusion.
+\item \textbf{Construire le schéma du texte} : thèse $\rightarrow$ argument 1 $\rightarrow$ argument 2 $\rightarrow$ conclusion. Ce schéma sera le plan du résumé.
+\end{enumerate}
+\textbf{Réflexe} : souligne au brouillon les connecteurs logiques ; ils dessinent le squelette du texte.
+\end{methode}
+
+\begin{exoresolu}[Analyser la structure d'un paragraphe argumentatif]
+\textbf{Énoncé} : Voici un extrait inspiré des débats soulevés par \emph{Le Lion et la Perle} de Wole Soyinka : « Le progrès technique transforme nos villages. D'abord, il facilite la vie quotidienne : l'eau courante et l'électricité soulagent les corvées. Ensuite, il ouvre les villages sur le monde grâce à la radio et au téléphone. Cependant, il menace nos traditions, car les jeunes délaissent les coutumes ancestrales. Il faut donc adopter le progrès sans renier notre identité. »
+Dégage la thèse, les arguments et la conclusion de ce texte.
+\tcblower
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{Thèse} : le texte ne rejette pas le progrès ; il affirme qu'il faut l'adopter. La phrase finale « Il faut donc adopter le progrès sans renier notre identité » exprime la position de l'auteur.
+\item \textbf{Arguments en faveur du progrès} (annoncés par \emph{d'abord}, \emph{ensuite}) :
+\begin{itemize}
+\item argument 1 : le progrès facilite la vie quotidienne (exemple : eau courante, électricité) ;
+\item argument 2 : il ouvre les villages sur le monde (exemple : radio, téléphone).
+\end{itemize}
+\item \textbf{Objection} (annoncée par \emph{cependant}) : le progrès menace les traditions, car les jeunes délaissent les coutumes.
+\item \textbf{Conclusion} (annoncée par \emph{donc}) : il faut concilier progrès et identité culturelle.
+\end{enumerate}
+\textbf{Schéma du texte} : thèse (le progrès transforme nos villages) $\rightarrow$ deux arguments favorables $\rightarrow$ une objection $\rightarrow$ conclusion nuancée (adopter le progrès sans renier l'identité).
+\textbf{Conclusion} : ce texte est bien argumentatif : il défend une position en la justifiant et en répondant à une objection, ce qui est typique du débat sur la modernité dans \emph{Le Lion et la Perle}.
+\end{exoresolu}
+
+\courssub{Savoir-faire 2 : Identifier et exploiter les figures d'amplification}
+
+\begin{methode}[Reconnaître l'hyperbole et la gradation]
+L'amplification sert à grossir une idée pour frapper le lecteur. Deux figures sont au programme.
+\begin{enumerate}
+\item \textbf{L'hyperbole} : exagération manifeste (« je meurs de faim », « il l'a répété mille fois »). Elle amplifie une réalité sans être prise au pied de la lettre.
+\item \textbf{La gradation} : énumération de termes dont l'intensité croît (gradation ascendante : « va, cours, vole et nous venge ») ou décroît (gradation descendante).
+\item \textbf{Méthode d'analyse} : repérer la figure, la nommer, puis expliquer son \cle{effet de sens} (insister, émouvoir, convaincre, ridiculiser).
+\item \textbf{Dans le résumé} : les figures d'amplification doivent être \textbf{neutralisées} : on remplace l'exagération par l'idée réelle exprimée.
+\end{enumerate}
+\textbf{Réflexe} : demande-toi toujours « quelle idée cette exagération exprime-t-elle ? » : c'est cette idée, et non l'image, qui entrera dans le résumé.
+\end{methode}
+
+\begin{exoresolu}[Neutraliser des figures d'amplification]
+\textbf{Énoncé} : Dans une tirade, un personnage déclare : « Baroka est un géant, une montagne, un dieu ! Son ombre couvre tout le village ; quand il parle, la terre tremble et les rois se taisent. »
+1) Relève les figures d'amplification et nomme-les. 2) Reformule le passage en langage neutre, comme dans un résumé.
+\tcblower
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{Repérage} :
+\begin{itemize}
+\item « un géant, une montagne, un dieu » : \cle{gradation ascendante} (trois termes d'intensité croissante) associée à une comparaison amplifiée ;
+\item « son ombre couvre tout le village », « la terre tremble », « les rois se taisent » : \cle{hyperboles} (exagérations impossibles à prendre au sens propre).
+\end{itemize}
+\item \textbf{Effet de sens} : ces figures exaltent la puissance et le prestige écrasants du personnage ; elles montrent l'admiration ou la crainte qu'il inspire.
+\item \textbf{Reformulation neutre} (étape par étape) :
+\begin{itemize}
+\item « géant, montagne, dieu » $\rightarrow$ « un homme très puissant » ;
+\item « son ombre couvre tout le village » $\rightarrow$ « son autorité s'étend à tout le village » ;
+\item « la terre tremble et les rois se taisent » $\rightarrow$ « sa parole impressionne tout le monde ».
+\end{itemize}
+\item \textbf{Phrase résumée} : « Baroka est un chef très puissant dont l'autorité s'impose à tout le village et dont la parole impressionne tous. »
+\end{enumerate}
+\textbf{Conclusion} : le résumé conserve l'idée essentielle (la puissance de Baroka) en supprimant les images exagérées, qui appartiennent au style et non au contenu.
+\end{exoresolu}
+
+\courssub{Savoir-faire 3 : Maîtriser le lexique pour reformuler}
+
+\begin{methode}[Distinguer lexique commun, lexique spécialisé et néologismes]
+\begin{enumerate}
+\item \textbf{Lexique commun} : mots utilisés par tous les locuteurs dans la vie quotidienne (\emph{maison, manger, parler}).
+\item \textbf{Lexique spécialisé} : mots propres à un domaine (médecine : \emph{diagnostic} ; informatique : \emph{logiciel} ; droit : \emph{plaidoyer}).
+\item \textbf{Néologisme} : mot nouveau créé pour nommer une réalité nouvelle (\emph{internaute, courriel, numériser}).
+\item \textbf{Pour reformuler} : remplacer un mot spécialisé par une périphrase en lexique commun (ou l'inverse si le contexte l'exige), en veillant à conserver exactement le sens.
+\item \textbf{Vérification} : relire la phrase reformulée et contrôler qu'aucune idée n'a été ajoutée ni perdue.
+\end{enumerate}
+\textbf{Réflexe} : dans un résumé, un mot technique peut être gardé s'il est indispensable, mais jamais expliqué longuement : une périphrase courte suffit.
+\end{methode}
+
+\begin{exoresolu}[Reformuler en changeant de registre lexical]
+\textbf{Énoncé} : « Le numérique bouleverse la transmission des savoirs : les internautes consultent des encyclopédies en ligne et les enseignants numérisent leurs cours. »
+1) Relève deux néologismes et un mot du lexique spécialisé. 2) Reformule la phrase en lexique commun.
+\tcblower
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{Repérage lexical} :
+\begin{itemize}
+\item néologismes : \emph{internautes} (mot créé avec Internet), \emph{numérisent} (verbe récent formé sur \emph{numérique}) ;
+\item lexique spécialisé (domaine informatique) : \emph{numérique}, \emph{en ligne}.
+\end{itemize}
+\item \textbf{Reformulation en lexique commun}, mot par mot :
+\begin{itemize}
+\item « le numérique » $\rightarrow$ « les nouvelles machines et les nouveaux moyens de communication » (ou plus court : « l'informatique ») ;
+\item « les internautes » $\rightarrow$ « les personnes qui utilisent Internet » ;
+\item « numérisent leurs cours » $\rightarrow$ « mettent leurs cours sur ordinateur ».
+\end{itemize}
+\item \textbf{Phrase reformulée} : « L'informatique change la façon de transmettre les connaissances : les personnes qui utilisent Internet consultent des encyclopédies sur le réseau, et les enseignants mettent leurs cours sur ordinateur. »
+\item \textbf{Vérification} : les deux idées (consultation par les usagers, mise en ligne par les enseignants) sont conservées ; aucune idée n'a été ajoutée.
+\end{enumerate}
+\textbf{Conclusion} : reformuler, c'est dire la même chose avec d'autres mots ; la maîtrise du lexique commun et spécialisé permet de changer de vocabulaire sans changer le sens.
+\end{exoresolu}
+
+\courssub{Savoir-faire 4 : Appliquer les techniques de réduction}
+
+\begin{methode}[Réduire un texte : les quatre techniques]
+Pour passer du texte long au texte résumé, on applique quatre techniques complémentaires.
+\begin{enumerate}
+\item \textbf{La suppression} : éliminer les exemples, les répétitions, les citations, les détails descriptifs, les anecdotes.
+\item \textbf{Le regroupement} : fondre en une seule phrase plusieurs phrases qui expriment la même idée.
+\item \textbf{La substitution} : remplacer une périphrase ou une énumération par un mot générique (« chiens, chats, lapins » $\rightarrow$ « les animaux domestiques »).
+\item \textbf{La reformulation} : dire les idées avec ses propres mots, sans recopier les phrases de l'auteur.
+\end{enumerate}
+\textbf{Formule à retenir} : un résumé fait en général \textbf{le quart} de la longueur du texte original (consigne classique : « réduire au quart »). Il est rédigé au \textbf{présent de vérité générale}, sans « je », sans citation, sans commentaire personnel.
+\end{methode}
+
+\begin{exoresolu}[Réduire un paragraphe au quart]
+\textbf{Énoncé} : Résume le paragraphe suivant (environ 80 mots) en une vingtaine de mots.
+« Dans le village d'Ilujinle, la modernité arrive sous la forme d'une photographie publiée dans un magazine. Sidi, la belle du village, découvre son image et comprend soudain sa valeur. Elle se croit désormais plus importante que le chef lui-même. Elle dédaigne les prétendants, elle refuse les conseils des anciens, elle rêve de gloire et de célébrité. Sa beauté, devenue image, circule partout, dans les villes, dans les journaux, dans les maisons. »
+\tcblower
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{Idées essentielles repérées} : (a) la photographie du magazine révèle à Sidi sa beauté ; (b) elle devient orgueilleuse ; (c) son image circule partout.
+\item \textbf{Suppressions} : les détails (« la belle du village », « les conseils des anciens »), l'énumération finale (« dans les villes, dans les journaux, dans les maisons »).
+\item \textbf{Regroupement} : « elle dédaigne les prétendants, refuse les conseils, rêve de gloire » $\rightarrow$ une seule idée : « elle devient orgueilleuse ».
+\item \textbf{Substitution} : « la photographie publiée dans un magazine » $\rightarrow$ « une photographie » ; l'énumération $\rightarrow$ « partout ».
+\item \textbf{Reformulation finale} (21 mots) : « Rendue célèbre par une photographie, Sidi prend conscience de sa beauté, devient orgueilleuse et voit son image circuler partout. »
+\item \textbf{Contrôle} : environ le quart de 80 mots ; présent de vérité générale ; aucun mot du texte recopié en bloc ; aucun jugement personnel.
+\end{enumerate}
+\textbf{Conclusion} : le résumé conserve les trois idées essentielles du passage en un quart de sa longueur, dans une formulation personnelle et neutre.
+\end{exoresolu}
+
+\courssub{Savoir-faire 5 : Rédiger le résumé final}
+
+\begin{methode}[Rédiger et présenter le résumé]
+\begin{enumerate}
+\item \textbf{Compter les mots} du texte original et calculer le quart : c'est la longueur cible (tolérance de 10 \% environ).
+\item \textbf{Rédiger une première phrase} qui annonce le thème et la thèse de l'auteur.
+\item \textbf{Enchaîner les idées} dans l'ordre du texte, reliées par des connecteurs logiques (\emph{d'abord, ensuite, en effet, cependant, enfin}).
+\item \textbf{Respecter les interdits} : pas de « je », pas d'avis personnel, pas de citation, pas d'exemple, pas de titre inventé si aucun n'est demandé.
+\item \textbf{Relire et corriger} : orthographe, accords, ponctuation ; vérifier que le résumé se comprend seul, sans le texte original.
+\item \textbf{Indiquer le nombre de mots} à la fin, entre parenthèses, si la consigne l'exige.
+\end{enumerate}
+\textbf{Réflexe} : le résumé est un texte \emph{autonome} : quelqu'un qui n'a pas lu l'original doit comprendre l'essentiel en te lisant.
+\end{methode}
+
+\begin{exoresolu}[Rédiger un résumé complet]
+\textbf{Énoncé} : Résume en 40 mots environ le texte suivant (160 mots) :
+« L'école est-elle encore utile à l'ère d'Internet ? Certains prétendent que tout savoir est désormais accessible en un clic et que l'école est dépassée. Cette opinion est fausse. D'abord, l'école transmet des méthodes : elle apprend à chercher, à vérifier, à hiérarchiser l'information, tâches qu'aucun écran ne peut accomplir à notre place. Ensuite, l'école forme le jugement : face aux fausses nouvelles qui inondent les réseaux, seul un esprit entraîné distingue le vrai du faux. Enfin, l'école est un lieu de vie commune : on y apprend le respect, la coopération, le débat. Ces compétences sociales ne s'acquièrent pas devant un ordinateur. Internet est un outil précieux, certes, mais un outil ne remplace pas un maître. L'école demeure donc irremplaçable, à condition de s'adapter et d'intégrer les nouvelles technologies au service de sa mission. »
+\tcblower
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{Longueur cible} : $160 \div 4 = 40$ mots.
+\item \textbf{Structure dégagée} : question (utilité de l'école) $\rightarrow$ thèse adverse rejetée $\rightarrow$ trois arguments (méthodes, jugement, vie commune) $\rightarrow$ concession sur Internet $\rightarrow$ conclusion (l'école reste irremplaçable si elle s'adapte).
+\item \textbf{Suppressions} : exemples (« fausses nouvelles », « respect, coopération, débat » réduits à « compétences sociales »), formules oratoires.
+\item \textbf{Rédaction} avec connecteurs :
+« L'école reste utile malgré Internet. Elle transmet d'abord des méthodes de travail, forme ensuite l'esprit critique, et enseigne enfin la vie en société. Outil précieux mais insuffisant, Internet ne remplace pas le maître : l'école demeure irremplaçable si elle intègre les nouvelles technologies. »
+\item \textbf{Comptage} : 43 mots, soit dans la tolérance de 10 \% autour de 40 mots ($40 \pm 4$).
+\item \textbf{Vérification} : aucun « je », aucune citation, ordre du texte respecté, présent de vérité générale, texte autonome.
+\end{enumerate}
+\textbf{Conclusion} : le résumé rend compte fidèlement de la thèse et des trois arguments de l'auteur en un quart du texte, dans une langue correcte et personnelle.
+\end{exoresolu}
+
+\courssub{Savoir-faire 6 : Confronter, corriger et améliorer sa production}
+
+\begin{methode}[Améliorer un résumé après confrontation]
+Lors des séances de confrontation et de remédiation, on compare sa copie à un corrigé ou aux productions des camarades.
+\begin{enumerate}
+\item \textbf{Comparer les idées retenues} : une idée essentielle manque-t-elle ? Une idée secondaire a-t-elle été gardée ?
+\item \textbf{Contrôler la fidélité} : le résumé ne doit ni trahir la pensée de l'auteur ni y ajouter un avis personnel.
+\item \textbf{Mesurer la longueur} : trop long, c'est que des détails subsistent ; trop court, c'est qu'une idée essentielle a été sacrifiée.
+\item \textbf{Corriger la langue} : orthographe, accords, connecteurs logiques, répétitions.
+\item \textbf{Réécrire une version améliorée} en intégrant toutes les corrections : c'est la \cle{remédiation}.
+\end{enumerate}
+\textbf{Réflexe} : lis ton résumé à voix haute : toute phrase qui « sonne » comme le texte original est probablement recopiée et doit être reformulée.
+\end{methode}
+
+\begin{exoresolu}[Corriger un résumé défectueux]
+\textbf{Énoncé} : Un élève a résumé ainsi le texte sur l'école (exercice précédent) :
+« Je pense que l'école est très importante. Comme le dit l'auteur, "l'école transmet des méthodes". Par exemple, les fausses nouvelles inondent les réseaux sociaux. L'école apprend aussi le respect, la coopération et le débat. Internet est un outil précieux. En conclusion, l'école est irremplaçable. » (environ 50 mots)
+Relève cinq défauts de ce résumé et propose une version corrigée.
+\tcblower
+\textbf{Solution détaillée} :
+\begin{enumerate}
+\item \textbf{« Je pense que »} : avis personnel interdit ; le résumé doit être neutre. $\rightarrow$ supprimer.
+\item \textbf{La citation « l'école transmet des méthodes »} : interdite dans un résumé ; il faut reformuler avec ses propres mots. $\rightarrow$ « elle donne des méthodes de travail ».
+\item \textbf{L'exemple des fausses nouvelles} : un exemple doit être supprimé ou réduit à l'idée qu'il illustre (former l'esprit critique).
+\item \textbf{L'énumération « respect, coopération, débat »} : à substituer par un terme générique : « la vie en société ».
+\item \textbf{Idées manquantes} : l'argument sur le jugement et la condition finale (l'école doit s'adapter aux technologies) ont disparu ; la concession sur Internet est isolée de sa fonction.
+\item \textbf{Version corrigée} : « Malgré Internet, l'école reste utile : elle donne des méthodes, forme l'esprit critique et enseigne la vie en société. Outil précieux mais insuffisant, Internet ne remplace pas le maître ; l'école demeure irremplaçable si elle s'adapte aux nouvelles technologies. » (40 mots)
+\end{enumerate}
+\textbf{Conclusion} : la confrontation des productions permet de repérer les fautes de méthode (avis personnel, citation, exemple conservé) et de langue, puis de produire une version améliorée : c'est le principe de la remédiation.
+\end{exoresolu}
+
+\begin{aretenir}[L'essentiel de la leçon]
+\begin{itemize}
+\item Le résumé reformule les \cle{idées essentielles} d'un texte en environ \textbf{le quart} de sa longueur, avec ses propres mots.
+\item Avant de réduire, on dégage la \cle{structure argumentative} : thèse, arguments, exemples, objection, conclusion.
+\item Les figures d'amplification (\cle{hyperbole}, \cle{gradation}) sont neutralisées en idées simples ; les exemples et citations disparaissent.
+\item Quatre techniques de réduction : \cle{suppression}, \cle{regroupement}, \cle{substitution}, \cle{reformulation}.
+\item Le résumé est neutre (pas de « je »), autonome, rédigé au présent, avec des connecteurs logiques, et relu avant d'être rendu.
+\end{itemize}
+\end{aretenir}
+
+\begin{attention}[Les 5 erreurs qui coûtent des points au Bac]
+\begin{enumerate}
+\item \textbf{Recopier des phrases du texte} : un résumé doit être entièrement reformulé. Toute phrase reprise mot pour mot (même sans guillemets) est sanctionnée comme un hors-sujet de méthode.
+\item \textbf{Donner son avis} : « je pense », « à mon avis », « l'auteur a raison » sont interdits. Le résumé rend compte de la pensée de l'auteur, pas de la tienne.
+\item \textbf{Conserver exemples, citations et figures d'amplification} : hyperboles et gradations doivent être neutralisées en idées simples ; les exemples doivent disparaître ou être réduits à une allusion générique.
+\item \textbf{Négliger la longueur imposée} : un résumé deux fois trop long ou deux fois trop court perd des points. Calcule le quart du texte, compte tes mots et indique le total si la consigne le demande.
+\item \textbf{Oublier les connecteurs logiques et la relecture} : une suite de phrases juxtaposées sans \emph{d'abord, ensuite, cependant, enfin} rend la progression invisible ; et les fautes d'orthographe et d'accord non corrigées alourdissent la note de langue, souvent décisive.
+\end{enumerate}
+\end{attention}
+
+\newpage
+
+\coursec{Exercices}
+
+\courssub{Je vérifie mes connaissances}
+
+\begin{exercice}[QCM : les bases du résumé]
+Pour chaque question, choisis la bonne réponse.
+\begin{enumerate}
+\item Le résumé d'un texte de 400 mots, avec une consigne de contraction au quart, doit comporter environ :
+\begin{enumerate}
+\item[a)] 200 mots \quad b)] 100 mots \quad c)] 40 mots \quad d)] 25 mots
+\end{enumerate}
+\item Dans un résumé, il est interdit de :
+\begin{enumerate}
+\item[a)] reformuler les idées de l'auteur \quad b)] donner son avis personnel \quad c)] utiliser des connecteurs logiques \quad d)] employer des pronoms
+\end{enumerate}
+\item La nominalisation consiste à :
+\begin{enumerate}
+\item[a)] remplacer un nom par un verbe \quad b)] transformer un verbe ou une phrase en nom \quad c)] supprimer tous les noms \quad d)] citer l'auteur
+\end{enumerate}
+\item Une hyperbole est une figure qui :
+\begin{enumerate}
+\item[a)] atténue une réalité \quad b)] oppose deux termes \quad c)] exagère une réalité pour frapper l'esprit \quad d)] répète un mot
+\end{enumerate}
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Vrai ou faux, à justifier]
+Dis si chaque affirmation est vraie ou fausse, puis justifie ta réponse en une phrase.
+\begin{enumerate}
+\item On peut recopier des phrases entières du texte dans un résumé.
+\item La gradation est une énumération de termes dont l'intensité va en croissant ou en décroissant.
+\item Un néologisme est un mot qui a disparu de la langue française.
+\item Le résumé doit conserver l'organisation argumentative du texte (thèse, arguments, conclusion).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Définitions]
+Définis en deux ou trois phrases chacun des termes suivants, puis donne un exemple tiré de ta lecture du \emph{Lion et la perle} ou de ta propre invention :
+\begin{enumerate}
+\item le \cle{lexique spécialisé} ;
+\item le \cle{lexique commun} ;
+\item le \cle{néologisme} ;
+\item la \cle{reformulation}.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Calculs directs : la règle du quart]
+Un examinateur demande de résumer des textes au quart de leur longueur. Calcule le nombre de mots attendu (à 5 mots près) pour chaque texte :
+\begin{enumerate}
+\item un texte de 320 mots ;
+\item un texte de 400 mots ;
+\item un texte de 260 mots ;
+\item un article de presse de 600 mots à résumer au tiers cette fois.
+\end{enumerate}
+\end{exercice}
+
+\courssub{Je m'entraîne}
+
+\begin{exercice}[Repérage des figures d'amplification]
+Voici des phrases inspirées de situations du \emph{Lion et la perle}. Pour chacune, indique s'il s'agit d'une hyperbole ou d'une gradation, et explique son effet.
+\begin{enumerate}
+\item « Baroka, le Lion, possède mille ruses, dix mille sourires, cent mille mensonges. »
+\item « Sidi est la perle la plus précieuse que le monde ait jamais portée. »
+\item « Le bruit courut dans le village, puis dans la ville, puis dans tout le pays. »
+\item « Il est plus fort que tous les hommes de la terre réunis. »
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Lexique commun ou lexique spécialisé ?]
+Classe les mots suivants dans un tableau à deux colonnes (lexique commun / lexique spécialisé) et précise, pour les mots spécialisés, le domaine auquel ils appartiennent :
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|X|}
+\hline
+\rowcolor{popblueL} entrepreneur & marché & rentabilité \\
+\hline
+village & investissement & danse \\
+\hline
+microcrédit & perle & subvention \\
+\hline
+\end{tabularx}
+\end{center}
+\end{exercice}
+
+\begin{exercice}[Nominalisation]
+Transforme les phrases suivantes en les nominalisant, comme on le fait dans un résumé pour gagner de la place.
+\begin{enumerate}
+\item « Les jeunes créent des entreprises, ce qui développe l'économie locale. »
+\item « Parce que la ville s'étend rapidement, les transports sont saturés. »
+\item « Les habitants recyclent les déchets et ils réduisent ainsi la pollution. »
+\end{enumerate}
+\emph{Exemple de transformation attendue : « Les jeunes créent des entreprises » devient « la création d'entreprises par les jeunes ».}
+\end{exercice}
+
+\begin{exercice}[Vie courante : résumé pour un groupe WhatsApp professionnel]
+Voici un article de presse (rubrique Économie). Résume-le en \textbf{50 mots maximum} pour informer rapidement les membres d'un groupe WhatsApp de jeunes entrepreneurs. Seules les idées-forces doivent apparaître ; les abréviations claires sont acceptées.
+
+\emph{« Douala — La chambre de commerce a annoncé hier l'ouverture d'un programme d'accompagnement destiné aux porteurs de projets de moins de 30 ans. Ce programme, doté d'un budget de 200 millions de francs CFA, propose des formations gratuites en gestion, un accès facilité au microcrédit et un suivi personnalisé pendant deux ans. Selon le directeur du programme, plus de 500 jeunes pourront en bénéficier dès le premier trimestre. Les inscriptions se font en ligne ou dans les antennes régionales. Les candidats devront présenter un projet écrit et passer un entretien de sélection. Les responsables espèrent ainsi réduire le chômage des jeunes, qui touche particulièrement les diplômés des filières techniques, et dynamiser le tissu économique local. »} (environ 120 mots)
+\end{exercice}
+
+\courssub{Je me prépare au Bac}
+
+\begin{exercice}[Sujet type Probatoire : l'entrepreneuriat jeune au Cameroun]
+\textbf{Texte à résumer} (environ 350 mots) :
+
+\emph{« L'entrepreneuriat des jeunes est aujourd'hui présenté partout comme la solution miracle au chômage. Dans les discours officiels, dans les médias, sur les réseaux sociaux, on ne compte plus les éloges du "self-made-man" camerounais qui aurait réussi grâce à son seul courage. Cette vision, séduisante, mérite pourtant d'être nuancée.}
+
+\emph{Il est vrai que l'entrepreneuriat offre des opportunités réelles. De Yaoundé à Bafoussam, de nombreux jeunes ont créé des entreprises prospères dans l'agriculture, le numérique ou l'artisanat. Ces initiatives créent des emplois, dynamisent les quartiers et prouvent que la jeunesse camerounaise ne manque ni d'idées ni d'énergie. L'État lui-même encourage ce mouvement par des programmes de financement et des incubateurs.}
+
+\emph{Cependant, les obstacles demeurent immenses. L'accès au crédit reste le principal problème : les banques exigent des garanties que les jeunes ne possèdent pas. S'ajoutent la lourdeur des démarches administratives, l'instabilité du marché et le manque de formation en gestion. Combien d'entreprises prometteuses disparaissent avant leur troisième année ? Beaucoup trop.}
+
+\emph{Dès lors, que faut-il faire ? Il ne suffit pas d'encourager les jeunes : il faut leur donner les moyens de réussir. Simplifier les procédures, développer le microcrédit, renforcer la formation technique et professionnelle : telles sont les conditions d'un entrepreneuriat véritablement créateur de richesses. L'entrepreneuriat jeune n'est pas une baguette magique ; c'est un chantier collectif qui exige l'engagement de tous : État, banques, écoles et jeunes eux-mêmes. »}
+
+\textbf{Travail à faire :}
+\begin{enumerate}
+\item Dégage la thèse du texte et ses trois grandes étapes argumentatives.
+\item Relève dans le texte une hyperbole et une gradation, et explique leur rôle dans l'argumentation.
+\item Identifie deux mots du lexique spécialisé de l'économie et propose pour chacun un équivalent du lexique commun.
+\item Rédige un résumé du texte en \textbf{85 mots (à 5 mots près)}, en reformulant entièrement et en indiquant le nombre de mots à la fin.
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Sujet type Baccalauréat technique : la ville africaine durable]
+\textbf{Texte à résumer} (extrait d'un essai sociologique, environ 400 mots) :
+
+\emph{« La ville africaine connaît une croissance sans précédent. Douala, Lagos, Nairobi, Kinshasa : ces métropoles accueillent chaque année des centaines de milliers de nouveaux habitants. Cette urbanisation galopante pose une question brûlante : comment construire des villes vivables pour tous ?}
+
+\emph{Le premier défi est celui du logement. Faute de logements abordables, les populations s'entassent dans des quartiers précaires, sans eau potable ni électricité. À Douala, certains quartiers inondables sont régulièrement submergés pendant la saison des pluies, transformant les rues en rivières boueuses. Construire des logements décents et accessibles est donc une urgence absolue.}
+
+\emph{Le deuxième défi concerne les transports. Les embouteillages monstres paralysent les grandes villes : on passe parfois trois heures pour parcourir dix kilomètres ! Cette congestion coûte cher à l'économie, pollue l'air et épuise les habitants. Développer des transports en commun efficaces — bus, trains urbains, pistes cyclables — permettrait de désengorger les centres-villes.}
+
+\emph{Troisième défi, non le moindre : la gestion des déchets. Des montagnes d'ordures s'accumulent dans les rues, menaçant la santé publique. Pourtant, des solutions existent : le tri, le recyclage, le compostage peuvent transformer ce problème en ressource. Certaines coopératives de jeunes transforment déjà le plastique en pavés de construction.}
+
+\emph{Face à ces défis, des raisons d'espérer existent. Les technologies numériques facilitent les services urbains ; les initiatives citoyennes se multiplient ; les architectes africains inventent des constructions adaptées au climat, utilisant les matériaux locaux. La ville durable n'est pas un rêve lointain : elle se construit déjà, pierre par pierre, idée par idée, dans les quartiers de nos métropoles. Encore faut-il que les gouvernants, les urbanistes et les citoyens travaillent ensemble, avec une volonté politique réelle et des financements suffisants. »}
+
+\textbf{Travail à faire :}
+\begin{enumerate}
+\item Relevez le champ lexical de la ville dans le premier paragraphe (au moins cinq mots).
+\item « on passe parfois trois heures pour parcourir dix kilomètres ! » : quelle figure d'amplification est employée ici ? Justifiez.
+\item « urbanisation galopante » : ce mot « galopante » est-il un néologisme ? Expliquez la différence entre un néologisme et un emploi imagé d'un mot existant.
+\item Transformez par nominalisation : « Les populations s'entassent dans des quartiers précaires » et « Les coopératives transforment le plastique en pavés ».
+\item Rédigez un résumé du texte en \textbf{100 mots (à 5 mots près)}. Vous serez évalué selon la grille suivante : fidélité aux idées de l'auteur (6 pts) ; concision et structure (4 pts) ; reformulation et qualité de la langue (5 pts) ; respect des consignes, dont le nombre de mots (5 pts).
+\end{enumerate}
+\end{exercice}
+
+\begin{exercice}[Remédiation : le jeu des 7 erreurs]
+Voici le résumé produit par un élève à partir du texte « L'entrepreneuriat jeune au Cameroun » (exercice type Probatoire ci-dessus, consigne : 85 mots) :
+
+\emph{« Moi je pense que l'entrepreneuriat c'est vraiment bien pour les jeunes. L'auteur dit que "de Yaoundé à Bafoussam, de nombreux jeunes ont créé des entreprises prospères dans l'agriculture, le numérique ou l'artisanat". Par exemple, mon cousin a ouvert un cybercafé à Douala et ça marche. Mais les banques ne prêtent pas facilement l'argent. Il y a aussi les problèmes d'administration. En conclusion, ce texte est très intéressant et je le recommande à tout le monde car il parle de notre avenir à nous les jeunes du Cameroun qui voulons réussir dans la vie et créer nos propres entreprises demain. »} (110 mots)
+
+\textbf{Travail à faire :}
+\begin{enumerate}
+\item Ce résumé contient \textbf{sept erreurs} relevant des catégories suivantes : subjectivité, exemple personnel ajouté, phrase copiée du texte, dépassement de la longueur, absence de connecteurs logiques, oubli d'idées essentielles, commentaire sur le texte au lieu de résumé. Identifie chaque erreur en citant le passage fautif.
+\item Classe ces erreurs dans un tableau : erreur / catégorie / correction proposée.
+\item Réécris entièrement ce résumé en respectant la consigne (85 mots à 5 mots près), sans aucune des erreurs relevées.
+\item Prépare-toi à présenter oralement, en 2 minutes, ta démarche de correction : plan du texte, choix des coupures, difficultés rencontrées, auto-évaluation. Tes camarades t'évalueront sur la justification de ta démarche.
+\end{enumerate}
+\end{exercice}
+
+\newpage
+
+\coursec{Corrigés des exercices}
+
+\coursec{Contraction de texte : le résumé — Reformuler les idées essentielles}
+
+\courssub{Entrée en matière : Le résumé, compétence technique et citoyenne}
+
+\begin{exoresolu}[Exercice 1 — QCM : les bases du résumé]
+\begin{enumerate}
+\item \textbf{Réponse b) 100 mots.} La consigne « au quart » signifie diviser la longueur par 4 : $400 \div 4 = 100$ mots.
+\item \textbf{Réponse b) donner son avis personnel.} Le résumé est un exercice de fidélité : il restitue les idées de l'auteur, sans aucun jugement ni opinion du rédacteur. Reformuler (a) est au contraire obligatoire ; les connecteurs (c) sont indispensables pour marquer la logique du texte.
+\item \textbf{Réponse b) transformer un verbe ou une phrase en nom.} Exemple : « les jeunes créent des entreprises » devient « la création d'entreprises par les jeunes ». C'est un procédé majeur de contraction.
+\item \textbf{Réponse c) exagère une réalité pour frapper l'esprit.} L'atténuation (a) relève de la litote, l'opposition (b) de l'antithèse, la répétition (d) de l'anaphore.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Exercice 2 — Vrai ou faux, à justifier]
+\begin{enumerate}
+\item \textbf{Faux.} Le résumé exige une reformulation complète : recopier des phrases entières est considéré comme du plagiat et est sanctionné à l'examen (on ne peut reprendre que les termes techniques irremplaçables).
+\item \textbf{Vrai.} La gradation est une suite de termes ordonnés selon une intensité croissante (gradation ascendante) ou décroissante (gradation descendante).
+\item \textbf{Faux.} Un néologisme est un mot \emph{nouveau}, créé récemment pour nommer une réalité nouvelle (ex. « courriel », « infodémie ») ; un mot disparu est un mot \emph{désuet} ou \emph{archaïque}.
+\item \textbf{Vrai.} Le résumé doit respecter l'économie du texte : la thèse, les arguments dans leur ordre logique et la conclusion doivent être conservés, seuls les exemples, répétitions et détails sont supprimés.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Exercice 3 — Définitions]
+\begin{enumerate}
+\item Le \cle{lexique spécialisé} est l'ensemble des mots propres à un domaine précis (science, technique, métier, art), compris pleinement par les spécialistes de ce domaine. Exemple : « microcrédit », « incubateur » (domaine de l'économie).
+\item Le \cle{lexique commun} est l'ensemble des mots employés et compris par tous les locuteurs dans les échanges quotidiens, sans formation particulière. Exemple : « village », « maison », « perle ».
+\item Le \cle{néologisme} est un mot nouvellement créé ou nouvellement entré dans l'usage pour désigner une réalité, une technique ou une notion nouvelle. Exemple : « start-up », « déconfinement ».
+\item La \cle{reformulation} consiste à exprimer une idée avec d'autres mots que ceux du texte d'origine, en conservant rigoureusement son sens. Exemple : « l'accès au crédit reste le principal problème » devient « la difficulté majeure est d'obtenir des prêts ».
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Exercice 4 — Calculs directs : la règle du quart]
+\begin{enumerate}
+\item $320 \div 4 = 80$ mots (fourchette acceptée : 75 à 85 mots).
+\item $400 \div 4 = 100$ mots (95 à 105 mots).
+\item $260 \div 4 = 65$ mots (60 à 70 mots).
+\item Au tiers : $600 \div 3 = 200$ mots (195 à 205 mots).
+\end{enumerate}
+\begin{attention}[Point de vigilance]
+Bien lire la consigne : quart, tiers ou nombre de mots imposé. Une erreur de division entraîne un non-respect de la consigne, sanctionné dans le barème (« respect des consignes »).
+\end{attention}
+\end{exoresolu}
+
+\courssub{Outils langagiers pour l'analyse : Amplification et Lexique dans « Le Lion et la Perle » (Lectures 4 \& 5)}
+
+\begin{exoresolu}[Exercice 5 — Repérage des figures d'amplification]
+\begin{enumerate}
+\item \textbf{Gradation ascendante} : « mille ruses, dix mille sourires, cent mille mensonges » — les nombres croissent. Effet : dresser un portrait démesuré et inquiétant de Baroka, dont la duplicité semble infinie.
+\item \textbf{Hyperbole} : « la perle la plus précieuse que le monde ait jamais portée » — exagération absolue. Effet : magnifier la beauté de Sidi et souligner l'admiration (ou la convoitise) qu'elle inspire.
+\item \textbf{Gradation ascendante spatiale} : « le village, puis la ville, puis tout le pays » — élargissement progressif. Effet : montrer la propagation irrésistible de la rumeur.
+\item \textbf{Hyperbole} : « plus fort que tous les hommes de la terre réunis » — comparaison impossible, donc exagérée. Effet : glorifier la puissance du personnage au-delà du réel.
+\end{enumerate}
+\end{exoresolu}
+
+\begin{exoresolu}[Exercice 6 — Lexique commun ou lexique spécialisé ?]
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|X|}
+\hline
+\rowcolor{popblueL} \textbf{Lexique commun} & \textbf{Lexique spécialisé (domaine)} \\
+\hline
+marché & entrepreneur (économie/gestion) \\
+\hline
+village & rentabilité (économie/gestion) \\
+\hline
+danse & investissement (économie/finance) \\
+\hline
+perle & microcrédit (finance) \\
+\hline
+ & subvention (économie/administration) \\
+\hline
+\end{tabularx}
+\end{center}
+Remarque : « marché » appartient au lexique commun, même s'il possède aussi un sens technique en économie ; c'est son emploi courant qui prime ici.
+\end{exoresolu}
+
+\courssub{Méthodologie de la contraction : Structure argumentative et Techniques de réduction}
+
+\begin{exoresolu}[Exercice 7 — Nominalisation]
+\begin{enumerate}
+\item « La création d'entreprises par les jeunes développe l'économie locale » ou « La création d'entreprises par les jeunes entraîne le développement de l'économie locale ».
+\item « L'extension rapide de la ville provoque la saturation des transports. »
+\item « Le recyclage des déchets par les habitants entraîne la réduction de la pollution. »
+\end{enumerate}
+On observe le gain de place : verbes transformés en noms (créent $\rightarrow$ création ; s'étend $\rightarrow$ extension ; recyclent $\rightarrow$ recyclage ; réduisent $\rightarrow$ réduction), subordonnées supprimées.
+\end{exoresolu}
+
+\courssub{Atelier de rédaction et confrontation : De la Lecture 6 aux Exposés 1 \& 2}
+
+\begin{exoresolu}[Exercice 8 — Vie courante : résumé pour un groupe WhatsApp]
+\textbf{Résumé proposé (48 mots) :}
+
+\emph{La chambre de commerce de Douala lance un programme pour les porteurs de projets de moins de 30 ans : formations gratuites en gestion, microcrédit facilité, suivi de deux ans (budget : 200 millions FCFA, 500 bénéficiaires). Inscription en ligne ou en antenne régionale, avec projet écrit et entretien.}
+
+\textbf{Démarche de correction :}
+\begin{itemize}
+\item Idées-forces conservées : qui (chambre de commerce), pour qui (moins de 30 ans), quoi (formation, microcrédit, suivi), combien (200 millions, 500 jeunes), comment s'inscrire (en ligne, projet écrit, entretien).
+\item Coupures : la date « hier », les citations du directeur, les justifications finales (réduire le chômage, dynamiser l'économie) — secondaires pour un message d'information rapide.
+\end{itemize}
+\end{exoresolu}
+
+\begin{exoresolu}[Exercice 9 — Sujet type Probatoire : l'entrepreneuriat jeune au Cameroun]
+\textbf{1. Thèse et étapes argumentatives.}
+Thèse : l'entrepreneuriat jeune, souvent présenté comme une solution miracle au chômage, est une réelle opportunité mais exige des conditions concrètes et un engagement collectif. Trois étapes : (a) constat nuancé — l'entrepreneuriat offre des opportunités réelles ; (b) mais les obstacles sont immenses (crédit, administration, marché, formation) ; (c) conclusion — des solutions et un chantier collectif (État, banques, écoles, jeunes).
+
+\textbf{2. Figures d'amplification.}
+\begin{itemize}
+\item Hyperbole : « la solution miracle » (ou « une baguette magique ») : exagération ironique qui dénonce la vision naïve des discours officiels.
+\item Gradation : « Dans les discours officiels, dans les médias, sur les réseaux sociaux » : accumulation d'espaces de plus en plus larges, qui souligne l'omniprésence du discours laudateur.
+\end{itemize}
+
+\textbf{3. Lexique spécialisé.} « microcrédit » $\rightarrow$ petit prêt d'argent ; « incubateurs » $\rightarrow$ structures d'aide aux jeunes entreprises (on accepte aussi « financement » $\rightarrow$ argent accordé).
+
+\textbf{4. Résumé (85 mots) :}
+
+\emph{L'entrepreneuriat jeune, souvent présenté comme un remède miraculeux au chômage, doit être nuancé. Certes, il offre des débouchés réels : des jeunes créent des entreprises dynamiques, soutenues par l'État. Mais les obstacles demeurent considérables : crédit inaccessible, démarches lourdes, formation insuffisante. Réussir exige donc des moyens concrets : procédures simplifiées, microcrédit développé, formation renforcée. L'entrepreneuriat n'est pas magique : c'est un chantier collectif engageant État, banques, écoles et jeunes.} (85 mots)
+
+\textbf{Barème indicatif (sur 20) :} thèse et plan (4 pts) ; figures relevées et expliquées (4 pts) ; lexique (2 pts) ; résumé : fidélité (4 pts), reformulation et langue (4 pts), respect des 85 mots (2 pts).
+
+\textbf{Points de vigilance :} ne pas recopier « de Yaoundé à Bafoussam... » ; conserver l'ordre concession/opposition/solution ; annoncer le nombre de mots.
+\end{exoresolu}
+
+\begin{exoresolu}[Exercice 10 — Sujet type Baccalauréat technique : la ville africaine durable]
+\textbf{1. Champ lexical de la ville (paragraphe 1) :} ville, métropoles, habitants, urbanisation, construire, vivables (au moins cinq exigés).
+
+\textbf{2. Figure d'amplification :} il s'agit d'une \textbf{hyperbole} : « trois heures pour parcourir dix kilomètres » exagère la lenteur du trajet (avec la gradation implicite du contraste temps/distance) pour dénoncer avec force la congestion urbaine. Le point d'exclamation renforce l'effet.
+
+\textbf{3. « Galopante » : néologisme ?} Non. « Galopant » est un mot existant (participe présent de « galoper ») employé ici de façon \emph{imagée} (sens figuré) pour qualifier une urbanisation rapide comme un galop. Un néologisme serait un mot nouvellement créé, absent du lexique traditionnel (ex. « vélotaf »).
+
+\textbf{4. Nominalisations :}
+\begin{itemize}
+\item « Les populations s'entassent dans des quartiers précaires » $\rightarrow$ « l'entassement des populations dans des quartiers précaires ».
+\item « Les coopératives transforment le plastique en pavés » $\rightarrow$ « la transformation du plastique en pavés par les coopératives ».
+\end{itemize}
+
+\textbf{5. Résumé (100 mots) :}
+
+\emph{La croissance rapide des villes africaines pose la question de leur habitabilité. Trois défis majeurs se présentent : le logement, car les populations s'entassent dans des quartiers précaires ; les transports, dont la congestion coûteuse exige des transports en commun massifs et efficaces ; la gestion des déchets, que le tri et le recyclage peuvent transformer en ressource. Des raisons d'espérer existent cependant : technologies numériques, initiatives citoyennes, architectures adaptées. La ville durable est déjà en construction, à condition que gouvernants, urbanistes et citoyens coopèrent, avec une volonté politique forte et des financements suffisants.} (100 mots)
+
+\textbf{Barème indicatif (sur 20) :} champ lexical (2 pts) ; hyperbole justifiée (2 pts) ; distinction néologisme/sens figuré (3 pts) ; nominalisations (3 pts) ; résumé selon la grille de l'énoncé : fidélité (6 pts) — thèse, trois défis, espoir et conditions ; concision et structure (4 pts) ; reformulation et langue (5 pts) ; respect des consignes et des 100 mots (5 pts) — total résumé ramené à 10 pts dans le barème global.
+
+\textbf{Points de vigilance :} justifier la figure par l'exagération invraisemblable ; ne pas confondre mot nouveau et sens figuré ; conserver les trois défis dans l'ordre du texte ; indiquer le nombre de mots.
+\end{exoresolu}
+
+\courssub{Synthèse transversale : Dissertation, Compte-rendu et Remédiation (Séances 10-14)}
+
+\begin{exoresolu}[Exercice 11 — Remédiation : le jeu des 7 erreurs]
+\textbf{1. et 2. Identification et classement des erreurs :}
+\begin{center}
+\begin{tabularx}{\linewidth}{|X|l|X|}
+\hline
+\rowcolor{popblueL} \textbf{Passage fautif} & \textbf{Catégorie} & \textbf{Correction proposée} \\
+\hline
+« Moi je pense que... c'est vraiment bien » & Subjectivité & Supprimer tout avis personnel ; rapporter objectivement la thèse de l'auteur. \\
+\hline
+« mon cousin a ouvert un cybercafé à Douala » & Exemple personnel ajouté & Le supprimer : rien ne doit être ajouté au texte. \\
+\hline
+« de Yaoundé à Bafoussam... l'artisanat » (citation) & Phrase copiée & Reformuler : « des jeunes réussissent dans divers secteurs ». \\
+\hline
+110 mots pour 85 demandés & Dépassement de longueur & Compter les mots ; couper détails et redites. \\
+\hline
+Enchaînement sans liens logiques & Absence de connecteurs & Employer « certes... mais... donc ». \\
+\hline
+Solutions du texte ignorées (microcrédit, formation, chantier collectif) & Oubli d'idées essentielles & Restituer la conclusion : moyens concrets et engagement collectif. \\
+\hline
+« ce texte est très intéressant et je le recommande » & Commentaire au lieu de résumé & Supprimer tout jugement sur le texte. \\
+\hline
+\end{tabularx}
+\end{center}
+
+\textbf{3. Résumé réécrit (85 mots) :}
+
+\emph{L'entrepreneuriat jeune, souvent présenté comme un remède miraculeux au chômage, doit être nuancé. Certes, il offre des débouchés réels : des jeunes créent des entreprises dynamiques, soutenues par l'État. Mais les obstacles demeurent considérables : crédit inaccessible, démarches lourdes, formation insuffisante. Réussir exige donc des moyens concrets : procédures simplifiées, microcrédit développé, formation renforcée. L'entrepreneuriat n'est pas magique : c'est un chantier collectif engageant État, banques, écoles et jeunes.} (85 mots)
+
+\textbf{4. Préparation de l'oral (2 minutes) — trame attendue :}
+\begin{itemize}
+\item \textbf{Plan du texte} : concession (opportunités) $\rightarrow$ opposition (obstacles) $\rightarrow$ solution (chantier collectif).
+\item \textbf{Choix des coupures} : suppression des exemples, des énumérations de lieux, des formules rhétoriques (« solution miracle » remplacée par « remède miraculeux » ou supprimée).
+\item \textbf{Difficultés rencontrées} : tenir la longueur sans perdre la conclusion ; reformuler le lexique économique sans le trahir.
+\item \textbf{Auto-évaluation} : vérification des 7 critères (objectivité, fidélité, connecteurs, longueur, reformulation, exhaustivité, langue).
+\end{itemize}
+\end{exoresolu}
+
+\newpage
+
+\coursec{Fiche bilan}
+
+\courssub{Carte mentale de la leçon}
+\begin{popfigure}
+\begin{tikzpicture}[
+  mindmap,
+  concept color=popblue,
+  level 1 concept/.append style={level distance=3.5cm, sibling angle=60, font=\small\bfseries},
+  level 2 concept/.append style={level distance=2.5cm, font=\footnotesize},
+  every node/.style={concept, execute at begin node=\hskip0pt},
+  text=white
+]
+\node[concept color=popdark, align=center]{Leçon 05\\Contraction / Résumé}
+  child[concept color=popblue] {node[align=center]{Œuvre : \emph{Le Lion et la Perle}\\Lect. 4, 5, 6\\Exposés 1 \& 2}
+    child {node[align=center]{Analyse\\thématique}}
+    child {node[align=center]{Personnages\\\& conflits}}
+  }
+  child[concept color=poporange] {node {Figures d'amplification}
+    child {node {Hyperbole}}
+    child {node {Gradation}}
+  }
+  child[concept color=popgreen] {node {Lexicologie}
+    child {node[align=center]{Commun vs\\Spécialisé}}
+    child {node {Néologismes}}
+  }
+  child[concept color=poppurple] {node {Méthode contraction}
+    child {node[align=center]{Structure\\argumentative}}
+    child {node[align=center]{Techniques\\réduction}}
+    child {node[align=center]{Rédaction\\reformulée}}
+  }
+  child[concept color=poppink] {node {Atelier rédaction}
+    child {node[align=center]{Confrontation\\productions}}
+    child {node[align=center]{Amélioration\\collaborative}}
+  }
+  child[concept color=popgold] {node {Évaluation}
+    child {node {Dissertation}}
+    child {node {Compte-rendu}}
+    child {node {Remédiation}}
+  };
+\end{tikzpicture}
+\legende{Synthèse visuelle de la Leçon 05 : articulation entre étude de l'œuvre, outils langagiers, méthodologie de la contraction et évaluation.}
+\end{popfigure}
+
+\courssub{Bilan des savoirs et savoir-faire}
+\begin{bilan}
+
+\textbf{Définitions clés}
+\begin{itemize}
+  \item \cle{Contraction de texte} : Réduction significative d'un texte source (généralement 1/4 à 1/3) en conservant \emph{uniquement} les idées essentielles et la structure argumentative, sans commentaire personnel.
+  \item \cle{Résumé} : Synonyme de contraction dans le cadre scolaire ; exige neutralité, concision et fidélité au sens global.
+  \item \cle{Hyperbole} : Figure d'amplification par l'exagération volontaire (ex : « J'ai mille fois répété »).
+  \item \cle{Gradation} : Figure d'amplification par l'enchaînement de termes de force croissante (ascendante) ou décroissante (descendante).
+  \item \cle{Lexique commun} : Mots compris de tous, usage courant (ex : \emph{maison, manger}).
+  \item \cle{Lexique spécialisé} : Mots propres à un domaine technique, scientifique, professionnel (ex : \emph{thermistance, déboguer}).
+  \item \cle{Néologisme} : Mot nouveau créé pour nommer une nouvelle réalité (emprunt, dérivation, composition, acronyme).
+\end{itemize}
+
+\textbf{Tableau récapitulatif : Figures d'amplification \& Lexique}
+\begin{center}
+\begin{tabularx}{\linewidth}{|l|X|X|}\hline
+\rowcolor{popblueL}
+\textbf{Notion} & \textbf{Mécanisme / Définition} & \textbf{Effet / Exemple (Le Lion et la Perle)} \\ \hline
+Hyperbole & Exagération outrancière & Ridiculiser ou magnifier (ex : Baroka « lion » tout-puissant) \\ \hline
+Gradation & Suite ordonnée (croissante/décroissante) & Montée tension dramatique (ex : préparation du piège) \\ \hline
+Lexique commun & Langue générale, vie courante & Dialogues villageois, proverbes \\ \hline
+Lexique spécialisé & Domaine précis (admin, tech, moderne) & Vocabulaire de Lakunle (école, progrès, termes anglais) \\ \hline
+Néologisme & Création lexicale (emprunt, sigle, etc.) & Mots anglais intégrés (\emph{« secretary », « machine »}) \\ \hline
+\end{tabularx}
+\end{center}
+
+\textbf{Méthode express : La contraction en 5 étapes}
+\begin{enumerate}
+  \item \textbf{Lecture active} : Identifier le \cle{thème}, la \cle{thèse}, le \cle{type} et le \cle{plan} (structure argumentative) du texte.
+  \item \textbf{Découpage / Survol} : Segmenter en \cle{macro-structures} (intro, arguments 1, 2, 3, conclusion). Repérer les \cle{connecteurs logiques}.
+  \item \textbf{Sélection / Gommage} : Supprimer exemples, détails, répétitions, reformulations, adjectifs qualificatifs non essentiels. Garder \textbf{sujet + verbe + complément essentiel}.
+  \item \textbf{Rédaction / Reformulation} : Réécrire \emph{avec ses mots} (changement de syntaxe, synonymes, nominalisation), en respectant l'ordre logique et les articulations. \textbf{Ne pas copier-coller}.
+  \item \textbf{Contrôle} : Compter les mots (cible $\pm 10\%$), vérifier fidélité du sens, cohérence syntaxique, absence de « je », orthographe.
+\end{enumerate}
+
+\textbf{Points de vigilance (Pièges fréquents)}
+\begin{itemize}
+  \item Confondre \emph{résumé} et \emph{commentaire} (pas d'analyse, pas d'opinion).
+  \item Conserver des citations ou des phrases entières du texte original.
+  \item Modifier le sens (contradiction, ajout d'infos extérieures).
+  \item Négliger les connecteurs logiques $\rightarrow$ texte haché, illogique.
+  \item Dépasser la longueur imposée (souvent 1/4 du texte original $\pm 10\%$).
+\end{itemize}
+
+\end{bilan}
+
+\courssub{Checklist avant le Bac}
+\begin{aretenir}[Checklist avant le Bac -- Leçon 05]
+\begin{itemize}
+  \item $\square$ Je sais définir la contraction de texte et la distinguer du commentaire.
+  \item $\square$ Je repère la structure argumentative (thèse, arguments, exemples, conclusion) d'un texte.
+  \item $\square$ J'identifie et j'explique l'effet d'une hyperbole et d'une gradation dans \emph{Le Lion et la Perle}.
+  \item $\square$ Je distingue lexique commun, lexique spécialisé et néologismes ; je donne des exemples de la pièce.
+  \item $\square$ J'applique la méthode en 5 étapes (Lecture $\rightarrow$ Découpage $\rightarrow$ Sélection $\rightarrow$ Rédaction $\rightarrow$ Contrôle).
+  \item $\square$ Je reformule sans copier : nominalisation, changement de voix, synonymes, fusion de phrases.
+  \item $\square$ J'utilise les connecteurs logiques pour assurer la cohérence de mon résumé.
+  \item $\square$ Je respecte la contrainte de longueur (généralement 1/4 du texte $\pm 10\%$).
+  \item $\square$ Je relis pour éliminer les répétitions, lourdeurs et fautes d'accord/orthographe.
+  \item $\square$ Je suis capable de confronter ma production à celle d'un pair et d'accepter la remédiation.
+  \item $\square$ Je maîtrise le vocabulaire technique de la contraction (macro-structure, connecteur, reformulation, fidélité).
+  \item $\square$ Je sais rédiger un compte-rendu structuré de mes activités d'apprentissage.
+\end{itemize}
+\end{aretenir}
+
+\findecours
+
+\end{document}
