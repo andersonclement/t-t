@@ -6,7 +6,7 @@ Ludovic A.
 
 ---
 
-⟦À COMPLÉTER PAR LUDOVIC : la dédicace, si tu en veux une — à qui, en une ligne⟧
+⟦À COMPLÉTER PAR LUDOVIC : la dédicace, si tu en veux une — à qui, en une ligne⟧
 
 ---
 
@@ -14,4 +14,4 @@ Ludovic A.
 
 ---
 
-<small>Les prénoms et les parcours de ce livre sont composés à partir de situations réelles et typiques ; aucun n'est une personne précise.</small>
+<small>Les prénoms et les parcours de ce livre sont composés à partir de situations réelles et typiques ; aucun n'est une personne précise.</small>
